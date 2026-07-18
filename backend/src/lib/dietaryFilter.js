@@ -127,10 +127,27 @@ const CATEGORY_SYNONYMS = {
     "noodle", "noodles", "tortilla", "tortillas", "cereal", "breadcrumb",
     "breadcrumbs", "flour", "orzo", "panko",
     "stock cube", "stock powder", "bouillon", "gravy mix", "gravy granules",
+    // Stage-C audit: gluten carriers the celiac live-test found on the plate —
+    // pasta shapes, pastry, dumpling wrappers, and the hidden-wheat sauces
+    // (standard soy/hoisin/teriyaki are wheat-brewed; beer is barley).
+    "spaghetti", "macaroni", "penne", "lasagne", "lasagna", "lasagne sheets",
+    "fettuccine", "linguine", "tagliatelle", "ravioli", "tortellini", "gnocchi",
+    "vermicelli", "udon", "ramen", "filo", "phyllo", "puff pastry", "shortcrust",
+    "pastry", "wonton", "won ton", "dumpling", "gyoza", "pierogi", "perogi",
+    "biscuit", "biscuits", "cookie", "cookies", "pretzel", "pretzels", "beer",
+    "ale", "lager", "pita", "naan", "bun", "buns", "bagel", "brioche",
+    "croissant", "pancake", "pancakes", "waffle", "waffles", "muffin", "scone",
+    "pie crust", "batter", "digestive", "soy sauce", "hoisin", "teriyaki",
+    "worcestershire",
   ],
   shellfish: [
     "shellfish", "shrimp", "prawn", "crab", "lobster", "scallop", "mussel",
-    "clam", "oyster", "crawfish", "crayfish",
+    "clam", "oyster", "crawfish", "crayfish", "langoustine", "scampi",
+    "cockle", "whelk", "abalone",
+    // Stage-C audit: cephalopods and gastropods reached a shellfish-allergic
+    // user's plate/library/swaps live (squid, calamari, conch) — they are
+    // shellfish (molluscs) and were entirely absent before.
+    "squid", "calamari", "octopus", "cuttlefish", "conch",
     // Compound/generic product names that legitimately contain shellfish but
     // don't literally spell out any species word - confirmed real case:
     // "Frozen Seafood mix" on "Spanish seafood rice" (PABLO_REVIEW.md §2.5).
@@ -140,28 +157,51 @@ const CATEGORY_SYNONYMS = {
     // over-exclude fish-only dishes for a shellfish-only allergy. The
     // multi-word phrases below are specific enough to reliably mean a
     // blended/mixed product, which in practice is shellfish-inclusive.
-    "seafood mix", "seafood medley", "mixed seafood", "surimi",
+    "seafood mix", "seafood medley", "mixed seafood", "seafood stock", "surimi",
   ],
   dairy: [
     "dairy", "milk", "cheese", "yogurt", "yoghurt", "whey", "casein",
-    "butter", "cream", "ghee", "custard", "kefir",
+    "butter", "cream", "ghee", "custard", "kefir", "buttermilk", "curd",
+    "skyr", "quark",
+    // Stage-C audit: cheese-variety names (no literal "cheese") reached a
+    // dairy-allergic user — Mozzarella 90 g on the plate. Over-exclusion is
+    // the safe direction for an allergy.
+    "mozzarella", "parmesan", "parmigiano", "cheddar", "feta", "ricotta",
+    "gouda", "brie", "camembert", "gruyere", "gruyère", "pecorino", "provolone",
+    "gorgonzola", "mascarpone", "halloumi", "paneer", "queso", "manchego",
+    "emmental", "edam", "havarti", "roquefort", "stilton", "creme fraiche",
+    "crème fraîche", "dulce de leche", "clotted cream",
   ],
   soy: [
     "soy", "soya", "tofu", "edamame", "tempeh", "miso", "soybean",
     "stock cube", "stock powder", "bouillon", "gravy mix", "gravy granules",
+  ],
+  // A free-text "soy protein" exclusion (this app's original primary account
+  // uses it, permitting soybean OIL) must catch the protein forms without
+  // touching oil. Mirrors aiRecipeClient's own definition of this allergy.
+  "soy protein": [
+    "soy protein", "tofu", "tempeh", "edamame", "soy milk", "tvp",
+    "textured vegetable protein", "miso",
   ],
   nuts: [
     "almond", "walnut", "cashew", "pecan", "pistachio", "hazelnut",
     "macadamia", "peanut", "nut",
     "mixed nuts", "nut mix", "trail mix",
   ],
-  egg: ["egg", "eggs", "mayonnaise", "meringue"],
+  // egg carriers include the emulsions built on raw egg (Stage-C: aioli and
+  // custard reached an egg-allergic user).
+  egg: ["egg", "eggs", "mayonnaise", "meringue", "aioli", "aïoli", "custard", "hollandaise"],
   // Phase 3 allergy checkboxes — one key per checkbox, matching the UI values.
-  eggs: ["egg", "eggs", "mayonnaise", "meringue"],
+  eggs: ["egg", "eggs", "mayonnaise", "meringue", "aioli", "aïoli", "custard", "hollandaise"],
   fish: [
     "fish", "salmon", "tuna", "cod", "haddock", "tilapia", "halibut", "trout",
     "mackerel", "sardine", "anchovy", "anchovies", "herring", "sea bass",
     "snapper", "kipper", "surimi",
+    // Stage-C audit: fish species present in the pool but absent here reached
+    // a fish-allergic user (pilchards on the plate, barramundi/monkfish shown).
+    "pilchard", "pilchards", "barramundi", "monkfish", "pollock", "pollack",
+    "bream", "pangasius", "catfish", "sole", "plaice", "whiting", "hake",
+    "mahi", "swordfish", "pike", "perch", "carp", "eel", "smelt", "whitebait",
     // Hidden-fish carriers (same plausibility bar as gluten's stock cubes):
     // Worcestershire and Caesar dressing are anchovy-based by standard recipe.
     "fish sauce", "worcestershire", "caesar dressing",
@@ -175,7 +215,7 @@ const CATEGORY_SYNONYMS = {
     "macadamia", "brazil nut", "pine nut", "praline", "marzipan", "amaretto",
     "nut butter", "mixed nuts", "nut mix", "trail mix",
   ],
-  sesame: ["sesame", "tahini", "halva", "benne", "gomashio"],
+  sesame: ["sesame", "tahini", "halva", "benne", "gomashio", "hummus", "houmous"],
 };
 
 // Default keto threshold is on carb-per-100g of the raw ingredient, not a
@@ -352,7 +392,9 @@ const DIETARY_STYLES = ["none", "mediterranean", "vegetarian", "vegan", "paleo",
 // pure so callers can apply the exact same rule to recipe.ingredients[].name,
 // not just food.name.
 function matchesExclusionTerm(name, term) {
-  const key = (term || "").trim().toLowerCase();
+  // Defense-in-depth: a non-string term (e.g. a number that slipped past
+  // validation) must never throw here — it would 500 every recipe screen.
+  const key = String(term ?? "").trim().toLowerCase();
   if (!key) return false;
   const synonyms = CATEGORY_SYNONYMS[key];
   if (synonyms) {
@@ -362,7 +404,15 @@ function matchesExclusionTerm(name, term) {
     // entries ("seafood mix", "stock cube") use substring matching via
     // matchesTermList(); single-word entries keep the stricter
     // word-boundary/plural match.
-    return synonyms.some((word) => (word === "milk" ? isDairyMilk(name) : matchesTermList(name, word)));
+    return synonyms.some((word) => {
+      // milk/cream/butter get the same plant-qualifier guards the style filter
+      // uses, so a dairy allergy doesn't wrongly remove coconut cream, almond
+      // milk, or peanut butter (plant foods a dairy-allergic person can eat).
+      if (word === "milk") return isDairyMilk(name);
+      if (word === "cream") return hasWord(name, "cream") && !hasPhrase(name, "cream of tartar") && !matchesAny(name, PLANT_MILK_QUALIFIERS);
+      if (word === "butter") return isDairyButterOrCream(name);
+      return matchesTermList(name, word);
+    });
   }
   // Not a known category - literal substring fallback. Covers free-text
   // entries like "kiwi" and specific multi-word phrases like "soy protein"
@@ -388,7 +438,7 @@ function applyDietaryFilters(pool, profile) {
 function traceExclusions(pool, excludedFoods) {
   const counts = {};
   (excludedFoods || []).forEach((term) => {
-    const key = (term || "").trim().toLowerCase();
+    const key = String(term ?? "").trim().toLowerCase();
     if (!key) return;
     counts[key] = (pool || []).filter((food) => matchesExclusionTerm(food.name, key)).length;
   });
@@ -402,7 +452,7 @@ function traceExclusions(pool, excludedFoods) {
 function traceRecipeExclusions(recipes, excludedFoods) {
   const counts = {};
   (excludedFoods || []).forEach((term) => {
-    const key = (term || "").trim().toLowerCase();
+    const key = String(term ?? "").trim().toLowerCase();
     if (!key) return;
     counts[key] = (recipes || []).filter((recipe) =>
       (recipe.ingredients || []).some((ing) => matchesExclusionTerm(ing.name, key))

@@ -193,12 +193,16 @@ test("soy exclusion (category term) catches tofu, soy sauce, and soy protein ali
   assert.ok(!names.some((n) => n.includes("soy protein")), "soy protein isolate is soy, must be excluded by category");
 });
 
-test("'soy protein' as a custom (non-category-key) term only removes that specific item, not all soy", () => {
+// Stage-C audit fix (finding C4): a declared "soy protein" allergy must catch
+// the protein FORMS (tofu/tempeh/edamame/TVP/miso), matching aiRecipeClient's
+// own definition of this allergy — but must still spare soy sauce and soybean
+// OIL, which the original account explicitly permits.
+test("'soy protein' exclusion catches tofu (protein form) but spares soy sauce — matches the AI blocklist scope", () => {
   const result = applyDietaryFilters(SYNONYM_TEST_POOL, { dietaryStyle: "none", excludedFoods: ["soy protein"] });
   const names = result.map((f) => f.name.toLowerCase());
-  assert.ok(!names.some((n) => n.includes("soy protein")), "the exact 'soy protein' phrase must be excluded");
-  assert.ok(names.some((n) => n.includes("tofu")), "tofu does not literally contain 'soy protein' and must survive a phrase-only exclusion");
-  assert.ok(names.some((n) => n.includes("soy sauce")), "soy sauce does not literally contain 'soy protein' and must survive a phrase-only exclusion");
+  assert.ok(!names.some((n) => n.includes("soy protein")), "the 'soy protein' phrase must be excluded");
+  assert.ok(!names.some((n) => n.includes("tofu")), "tofu IS a soy-protein form and must now be excluded (was leaking to the primary account's plans)");
+  assert.ok(names.some((n) => n.includes("soy sauce")), "soy sauce is not a soy-protein-isolate form and stays (matches the AI blocklist definition)");
 });
 
 test("custom term not in any synonym map (kiwi) still falls back to literal substring match", () => {
@@ -222,12 +226,15 @@ test("combined exclusions (gluten + shellfish + kiwi + soy protein) leave zero v
   assert.equal(violatesShellfish, false, "shellfish violation leaked through");
   assert.equal(violatesKiwi, false, "kiwi violation leaked through");
   assert.equal(violatesSoyProtein, false, "soy protein violation leaked through");
-  assert.ok(names.some((n) => n.includes("tofu")), "tofu must survive - only 'soy protein' phrase was excluded, not the whole soy category");
+  assert.ok(!names.some((n) => n.includes("tofu")), "tofu must now be excluded by the soy-protein allergy (Stage C fix C4)");
 });
 
 test("traceExclusions reports a per-term count so the UI can show 'N excluded for: gluten' - never a silent filter", () => {
   const counts = traceExclusions(SYNONYM_TEST_POOL, ["gluten", "shellfish", "kiwi"]);
-  assert.equal(counts.gluten, 3, "couscous + pasta + crackers");
+  // couscous + pasta + crackers + the tamari "soy sauce" row (Stage-C added
+  // "soy sauce" as a hidden-wheat gluten carrier — over-exclusion is the safe
+  // direction for a celiac; the pool's item is literally named "Soy sauce…").
+  assert.equal(counts.gluten, 4, "couscous + pasta + crackers + soy sauce");
   assert.equal(counts.shellfish, 2, "shrimp + crab");
   assert.equal(counts.kiwi, 1, "kiwi, raw");
 });
@@ -300,4 +307,57 @@ test("recipeExcludedByStyle actually delegates for paleo/carnivore, not just veg
   assert.equal(recipeExcludedByStyle({ ingredients: [{ name: "Broccoli, raw" }] }, "carnivore"), true);
   assert.equal(recipeExcludedByStyle({ ingredients: [{ name: "Chicken breast" }] }, "none"), false);
   assert.equal(recipeExcludedByStyle({ ingredients: [{ name: "Chicken breast" }] }, null), false);
+});
+
+// ===================================================================
+// STAGE C AUDIT REGRESSION GUARDS — the allergy leaks the live audit
+// (docs/audit/02-live-audit.md L1) served to real allergic users. Each
+// ingredient name below is a real food-DB row that reached a plan/library.
+// ===================================================================
+
+test("REGRESSION (Stage C / L1): shellfish allergy catches cephalopods and gastropods that leaked live", () => {
+  // These exact recipes were shown to a shellfish-allergic user's library and
+  // reached generated plans/swaps in the packaged app.
+  for (const name of ["Squid", "Fried calamari", "Octopus", "Cuttlefish", "Conchs", "Raw King Prawns", "Clams", "Mussels", "Seafood stock"]) {
+    assert.equal(matchesExclusionTerm(name, "shellfish"), true, `"${name}" must be excluded for a shellfish allergy`);
+  }
+  // Fish-only items must still NOT be excluded for a shellfish-only allergy.
+  assert.equal(matchesExclusionTerm("Smoked Haddock", "shellfish"), false, "plain fish is not shellfish");
+  assert.equal(matchesExclusionTerm("Chicken breast", "shellfish"), false);
+});
+
+test("REGRESSION (Stage C / L1): dairy allergy catches cheese varieties with no literal 'cheese' in the name", () => {
+  for (const name of ["Mozzarella", "Grated Parmesan", "Feta", "Ricotta", "Gruyère", "Halloumi", "Paneer", "Mature Cheddar", "Buttermilk", "Crème Fraîche"]) {
+    assert.equal(matchesExclusionTerm(name, "dairy"), true, `"${name}" must be excluded for a dairy allergy`);
+  }
+  assert.equal(matchesExclusionTerm("Almond milk", "dairy"), false, "plant milk is not dairy");
+  assert.equal(matchesExclusionTerm("Coconut cream", "dairy"), false, "coconut cream is not dairy");
+});
+
+test("REGRESSION (Stage C / L1): gluten allergy catches pasta shapes, pastry, dumpling wrappers, and hidden-wheat sauces", () => {
+  for (const name of ["Spaghetti", "Lasagne Sheets", "Macaroni", "Filo Pastry", "Wonton Skin", "Digestive Biscuits", "Beer", "Soy Sauce", "Hoisin Sauce", "Pretzels"]) {
+    assert.equal(matchesExclusionTerm(name, "gluten"), true, `"${name}" must be excluded for a gluten allergy`);
+  }
+  assert.equal(matchesExclusionTerm("White rice, cooked", "gluten"), false, "rice is gluten-free");
+});
+
+test("REGRESSION (Stage C / L1): fish/eggs/sesame allergies catch the species and hidden carriers that leaked", () => {
+  assert.equal(matchesExclusionTerm("Pilchards", "fish"), true);
+  assert.equal(matchesExclusionTerm("Barramundi fillet", "fish"), true);
+  assert.equal(matchesExclusionTerm("Monkfish", "fish"), true);
+  assert.equal(matchesExclusionTerm("Smoky Aïoli", "eggs"), true);
+  assert.equal(matchesExclusionTerm("Vanilla Custard", "eggs"), true);
+  assert.equal(matchesExclusionTerm("Hummus", "sesame"), true);
+});
+
+test("REGRESSION (Stage C / #4+#32): a non-string exclusion term never throws — it 500-bricked every recipe screen", () => {
+  // excludedFoods:[5] was accepted and then 500'd GET /recipes + plan generation.
+  assert.doesNotThrow(() => matchesExclusionTerm("Chicken breast", 5));
+  assert.equal(matchesExclusionTerm("Chicken breast", 5), false, "a numeric term matches nothing, silently and safely");
+  assert.doesNotThrow(() => matchesExclusionTerm("Chicken breast", null));
+  assert.doesNotThrow(() => matchesExclusionTerm("Chicken breast", { junk: true }));
+  // And the whole filter must survive a poisoned excludedFoods array.
+  assert.doesNotThrow(() => applyDietaryFilters(SYNONYM_TEST_POOL, { dietaryStyle: "none", excludedFoods: [5, null, "shellfish"] }));
+  const survived = applyDietaryFilters(SYNONYM_TEST_POOL, { dietaryStyle: "none", excludedFoods: [5, null, "shellfish"] });
+  assert.ok(!survived.some((f) => /shrimp|crab/i.test(f.name)), "the valid 'shellfish' term still filters even alongside junk");
 });
