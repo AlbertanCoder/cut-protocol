@@ -1,0 +1,79 @@
+# Activated from roadmap/examples/backend-and-frontend-ci.yml.
+# Adapted to match reality, not the aspirational sketch: prod/dev both run
+# SQLite (see backend/prisma/schema.prisma, railway.json) — the Postgres
+# migration in roadmap §1.1 hasn't landed, so this runs against SQLite until
+# it does. Swap in the Postgres service block from the roadmap example when
+# that migration ships.
+
+name: CI
+
+on:
+  pull_request:
+    branches: [master]
+  push:
+    branches: [master]
+
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+
+    env:
+      DATABASE_URL: file:./ci.db
+      JWT_SECRET: ci-only-not-a-real-secret
+      SEED_EMAIL: ci@example.com
+      SEED_PASSWORD: ci-only-not-a-real-secret
+      # No ANTHROPIC_API_KEY / USDA_API_KEY on purpose — the blocking test
+      # suite must not depend on live external services.
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+          cache-dependency-path: backend/package-lock.json
+
+      - name: Install dependencies
+        working-directory: backend
+        run: npm ci
+
+      - name: Apply migrations
+        working-directory: backend
+        run: npx prisma migrate deploy
+
+      # recipeGeneration.test.js asserts real Food rows exist in the DB
+      # (it borrows them read-only) — same seed steps as README setup.
+      - name: Seed
+        working-directory: backend
+        run: |
+          npm run seed
+          npm run seed:recipes
+
+      - name: Run backend tests
+        working-directory: backend
+        run: npm test
+
+  frontend:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        working-directory: frontend
+        run: npm ci
+
+      - name: Lint
+        working-directory: frontend
+        run: npm run lint
+
+      - name: Build
+        working-directory: frontend
+        run: npm run build
