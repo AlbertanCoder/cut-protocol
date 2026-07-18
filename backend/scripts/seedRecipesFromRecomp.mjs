@@ -19,18 +19,14 @@ import { RECIPES } from "../src/lib/portedFromRecomp/recipeLibrary.mjs";
 import { FDC_MACRO_CACHE } from "../src/lib/portedFromRecomp/fdcMacroCache.mjs";
 import { TIER1_FOODS } from "../src/lib/portedFromRecomp/foodLibrary.mjs";
 import { ADJUSTERS } from "../src/lib/portedFromRecomp/adjusters.mjs";
-import groceryListPkg from "../src/lib/groceryList.js";
-const { classifyStoreSection } = groceryListPkg;
+import categoriesPkg from "../src/lib/foodCategories.js";
+const { classifyFood } = categoriesPkg;
 
-// cut-protocol's Food.category has no per-ingredient source in recomp-v2's
-// recipe data (only TIER1_FOODS/ADJUSTERS carry a real category) — best-effort
-// derive one from groceryList.js's own store-section classifier rather than
-// defaulting everything to "other". This is an approximation, not verified
-// truth, same spirit as cut-protocol's own ingredientResolver.js doing
-// best-effort category guessing for AI-drafted ingredients.
-const SECTION_TO_CATEGORY = { produce: "veg", protein: "protein", dairy: "dairy", pantry: "carb", spices: "other", other: "other" };
+// Phase 2: every seeded food gets its category from the shared grocery-store
+// classifier (foodCategories.js), the same rules the app and audit enforce —
+// re-running this seed can no longer reintroduce the legacy category scheme.
 function guessCategory(name) {
-  return SECTION_TO_CATEGORY[classifyStoreSection(name)] ?? "other";
+  return classifyFood(name).category;
 }
 
 async function main() {
@@ -60,7 +56,7 @@ async function main() {
   for (const f of TIER1_FOODS) {
     if (foodByName.has(f.name)) continue;
     foodByName.set(f.name, {
-      name: f.name, category: f.category, fdcId: f.fdcId,
+      name: f.name, category: guessCategory(f.name), fdcId: f.fdcId,
       kcal: f.kcal, protein: f.protein, fat: f.fat, carb: f.carb, fiber: f.fiber ?? 0,
       source: f.sourceTag === "USDA-VERIFIED" ? "usda" : "manual",
     });

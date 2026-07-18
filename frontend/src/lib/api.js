@@ -32,6 +32,7 @@ export const api = {
   getSummary: () => request("/weighins/summary"),
 
   getFoods: () => request("/foods"),
+  putFood: (id, patch) => request(`/foods/${id}`, { method: "PUT", body: JSON.stringify(patch) }),
 
   getRecipes: () => request("/recipes"),
   generateRecipeDrafts: (params) => request("/recipes/generate-drafts", { method: "POST", body: JSON.stringify(params) }),

@@ -96,6 +96,25 @@ challenged. Never suggest intake below the safety floor.
   build clean. Sub-1280px stacking is Tailwind mobile-first default —
   re-verify visually in Phase 7 QA. Next: Phase 2 — food & recipe data
   integrity.
+- 2026-07-18 · **Phase 2 complete.** Food library audited + repaired: 969→854
+  foods (115 case/plural/synonym duplicates merged with recipe-ingredient
+  re-pointing), 192 bad rows fixed (zero-kcal USDA Foundation records
+  recomputed via fiber-adjusted Atwater; ~90 wrong-record matches corrected
+  through curated `backend/data/foodOverrides.json` with per-entry provenance
+  notes — Water 19kcal→0, Salt carried butter data, Eggs carried egg-white
+  data, Porridge oats/Walnuts/Sardines/Avocado carried OIL records, Milk
+  carried powder data). All foods recategorized to the 7 grocery-store
+  categories; every recipe's cached macros recomputed from ingredients (616
+  recipes total across both passes). Guardrails: shared validator
+  (`foodValidation.js` — fiber-adjusted Atwater ±15%, high-fiber 30% band,
+  name-shape rules incl. pure-fat-under-non-oil-name, documented exemptions
+  for alcohol/acetic acid/carbonates), startup `[data-audit]` log, validated
+  admin-only PUT /foods/:id that recomputes affected recipe caches, hardened
+  ingredientResolver/usdaClient/seeder, 22 new CI-safe tests (79 total pass).
+  Foods UX: collapsed category groups + search + detail card (edit,
+  add-to-recipe; "Log today" disabled until a food diary exists — no such
+  feature yet, deliberately not faked). Audit exits clean: 0 failures,
+  0 dupes, 0 recipe drift. Next: Phase 3 — profile + TDEE engine.
 
 ## Archive
 

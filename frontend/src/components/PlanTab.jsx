@@ -8,8 +8,15 @@ import { api } from "../lib/api.js";
 
 const kc = (n) => Math.round(n).toLocaleString("en-CA");
 const g1 = (n) => Math.round(n * 10) / 10;
-// Matches groceryList.js's bySection keys exactly (produce/protein/dairy/pantry/spices/other).
-const SECTION_LABELS = { produce: "Produce", protein: "Protein", dairy: "Dairy", pantry: "Pantry / dry goods", spices: "Spices", other: "Other" };
+// Matches groceryList.js's bySection keys (produce/protein/dairy/pantry/
+// spices/other), plus legacy + Phase-2 category slugs that appear in OLD
+// persisted grocery-list snapshots' fallback `category` field.
+const SECTION_LABELS = {
+  produce: "Produce", protein: "Protein", dairy: "Dairy", pantry: "Pantry / dry goods", spices: "Spices", other: "Other",
+  carb: "Carbs", veg: "Veg", fat: "Fats", fruit: "Fruit",
+  "dairy-eggs": "Dairy & Eggs", "fruit-veg": "Fruit & Veg", "grains": "Grains & Carbs",
+  "fats-nuts-oils": "Fats, Nuts & Oils", "drinks": "Drinks",
+};
 const DAY_NAMES = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
 function sumSlots(slots) {

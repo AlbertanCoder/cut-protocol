@@ -12,8 +12,14 @@ const g1 = (n) => Math.round(n * 10) / 10;
 const getInpStyle = () => ({ background: C.card2, border: `1.5px solid ${C.rule}`, color: C.ink });
 const CUISINES = ["", "weeknight", "steakhouse", "tex-mex", "breakfast", "weekend", "other"];
 const PROTEINS = ["", "chicken", "beef", "elk/game", "salmon", "turkey", "eggs", "pork"];
-// Matches groceryList.js's bySection keys exactly (same list PlanTab.jsx uses).
-const SECTION_LABELS = { produce: "Produce", protein: "Protein", dairy: "Dairy", pantry: "Pantry / dry goods", spices: "Spices", other: "Other" };
+// Matches groceryList.js's bySection keys (same list PlanTab.jsx uses),
+// plus legacy + Phase-2 category slugs for old snapshot fallbacks.
+const SECTION_LABELS = {
+  produce: "Produce", protein: "Protein", dairy: "Dairy", pantry: "Pantry / dry goods", spices: "Spices", other: "Other",
+  carb: "Carbs", veg: "Veg", fat: "Fats", fruit: "Fruit",
+  "dairy-eggs": "Dairy & Eggs", "fruit-veg": "Fruit & Veg", "grains": "Grains & Carbs",
+  "fats-nuts-oils": "Fats, Nuts & Oils", "drinks": "Drinks",
+};
 
 const MacroChips = ({ x }) => (
   <>

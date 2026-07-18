@@ -1,5 +1,8 @@
 const { prisma } = require("./prisma.js");
 const { searchFoods } = require("./usdaClient.js");
+const { validateFood, checkNameShape } = require("./foodValidation.js");
+const { classifyFood } = require("./foodCategories.js");
+const { loadFoodOverrides } = require("./foodOverrides.js");
 
 const normalize = (s) => s.toLowerCase().replace(/[^a-z0-9\s]/g, " ").split(/\s+/).filter(Boolean);
 
@@ -12,17 +15,6 @@ function similarity(a, b) {
   let overlap = 0;
   for (const t of ta) if (tb.has(t)) overlap++;
   return overlap / Math.min(ta.size, tb.size);
-}
-
-function guessCategoryFromName(name) {
-  const s = name.toLowerCase();
-  if (/(butter|oil|nuts?|seeds?)/.test(s)) return "fat";
-  if (/(milk|yogurt|cheese|dairy)/.test(s)) return "dairy";
-  if (/(pepper|cucumber|broccoli|spinach|lettuce|salad|greens|vegetable)/.test(s)) return "veg";
-  if (/(rice|potato|bread|pasta|grain|oat|cereal|bean|legume)/.test(s)) return "carb";
-  if (/(beef|pork|poultry|chicken|turkey|fish|seafood|sausage|meat|egg)/.test(s)) return "protein";
-  if (/(fruit|berry|berries|apple|banana)/.test(s)) return "fruit";
-  return "other";
 }
 
 const MATCH_THRESHOLD = 0.6;
@@ -42,13 +34,21 @@ async function resolveIngredient(name) {
 
   try {
     const hits = await searchFoods(name, { pageSize: 5 });
-    // Some USDA "Foundation" records are detailed analytical entries (fatty
-    // acid breakdowns, vitamins) with no general macro data at all — e.g.
-    // "Oil, canola" (fdcId 748278) has 38 nutrients and not one of them is
-    // energy/protein/fat/carb. Taking the top hit blindly created several
-    // real all-zero foods. Skip hits with no usable macro data and try the
-    // next candidate instead of silently accepting an empty record.
-    const usableHit = hits.find((h) => h.per100g.kcal > 0 || h.per100g.protein > 0 || h.per100g.fat > 0 || h.per100g.carb > 0);
+    // Phase 2 guardrail: a hit must pass full food validation under its own
+    // USDA name (rejects the zero-energy Foundation records AND internally
+    // inconsistent data), and must not violate the SEARCHED name's implied
+    // shape — this is exactly how "Porridge oats" once ended up storing
+    // 884 kcal of oil data. Bad hits fall through to the next candidate.
+    const usableHit = hits.find((h) => {
+      const candidate = {
+        name: h.name, category: h.category, kcal: h.per100g.kcal,
+        protein: h.per100g.protein, fat: h.per100g.fat, carb: h.per100g.carb,
+        fiber: h.per100g.fiber, source: "usda",
+      };
+      const own = validateFood(candidate, { exemptions: loadFoodOverrides() });
+      const shapeVsRequest = checkNameShape({ ...candidate, name });
+      return own.ok && shapeVsRequest.length === 0;
+    });
     if (usableHit) {
       const food = await prisma.food.create({
         data: {
@@ -65,7 +65,7 @@ async function resolveIngredient(name) {
 
   const food = await prisma.food.create({
     data: {
-      name, category: guessCategoryFromName(name),
+      name, category: classifyFood(name).category,
       kcal: 0, protein: 0, fat: 0, carb: 0, fiber: 0,
       source: "manual-placeholder",
     },

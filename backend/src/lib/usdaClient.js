@@ -34,23 +34,14 @@ function extractPer100g(foodNutrients) {
   };
 }
 
-function guessCategory(foodCategory = "", name = "") {
-  const s = (foodCategory + " " + name).toLowerCase();
-  if (/(butter|oil|nuts?|seeds?|nut butter)/.test(s)) return "fat";
-  if (/(milk|yogurt|cheese|dairy)/.test(s)) return "dairy";
-  if (/(vegetable|greens|pepper|cucumber|broccoli|spinach|salad)/.test(s)) return "veg";
-  if (/(rice|potato|bread|pasta|grain|oat|cereal|starch|bean|legume)/.test(s)) return "carb";
-  if (/(beef|pork|poultry|chicken|turkey|fish|seafood|sausage|meat|egg|protein)/.test(s)) return "protein";
-  if (/(fruit|berry|berries|apple|banana)/.test(s)) return "fruit";
-  return "other";
-}
+const { classifyFood } = require("./foodCategories.js");
 
 function normalize(item) {
   return {
     fdcId: item.fdcId,
     name: item.description,
     dataType: item.dataType,
-    category: guessCategory(item.foodCategory, item.description),
+    category: classifyFood(item.description).category,
     per100g: extractPer100g(item.foodNutrients),
   };
 }

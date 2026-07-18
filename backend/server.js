@@ -41,4 +41,19 @@ app.get(/^(?!\/api).*/, (req, res) => {
 });
 
 const PORT = process.env.PORT || 3001;
-app.listen(PORT, () => console.log(`Cut Protocol backend listening on :${PORT}`));
+app.listen(PORT, () => {
+  console.log(`Cut Protocol backend listening on :${PORT}`);
+  // Phase 2 guardrail: bad food/recipe data can never come back silently —
+  // every boot re-audits the library and says so out loud.
+  const { runDataQualityAudit } = require("./src/lib/dataQualityAudit.js");
+  runDataQualityAudit()
+    .then((s) => {
+      const status = s.clean ? "CLEAN" : "ATTENTION NEEDED";
+      console.log(`[data-audit] ${status} — foods ${s.foods} (${s.foodFailures.length} failing), recipes ${s.recipes} (${s.recipeFailures.length} failing), duplicate groups ${s.duplicateGroups}`);
+      if (!s.clean) {
+        for (const f of s.foodFailures.slice(0, 10)) console.log(`[data-audit]   food "${f.name}": ${f.issues.join(", ")}`);
+        for (const r of s.recipeFailures.slice(0, 10)) console.log(`[data-audit]   recipe "${r.name}": ${r.issues.join(", ")}`);
+      }
+    })
+    .catch((e) => console.error("[data-audit] failed to run:", e.message));
+});

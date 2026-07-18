@@ -10,11 +10,15 @@ backend/prisma/dev.db.template
 **/.env
 **/.env.local
 
-# Local databases
+# Local databases + phase backups
 backend/prisma/dev.db
 backend/prisma/dev.db-journal
+backend/prisma/dev.db.backup-*
 *.db
 *.db-journal
+
+# Audit/fix run artifacts (regenerate with scripts/auditFoodData.mjs)
+backend/reports/
 
 # Logs
 *.log
