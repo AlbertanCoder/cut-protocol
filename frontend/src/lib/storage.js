@@ -31,20 +31,18 @@ export const uiState = {
   },
 };
 
-// Display preference only (light/dark) — same local-only rationale as
-// uiState above, kept as a separate key since it's unrelated data.
-const THEME_KEY = "shadcut:theme";
+// Sidebar collapse preference — display-only, same local-only rationale.
+const SIDEBAR_KEY = "shadcut:sidebar";
 
-export const themePref = {
+export const sidebarPref = {
   get() {
     try {
-      const v = window.localStorage.getItem(THEME_KEY);
-      return v === "light" || v === "dark" ? v : "dark";
+      return window.localStorage.getItem(SIDEBAR_KEY) === "collapsed";
     } catch {
-      return "dark";
+      return false;
     }
   },
-  set(mode) {
-    window.localStorage.setItem(THEME_KEY, mode);
+  set(collapsed) {
+    window.localStorage.setItem(SIDEBAR_KEY, collapsed ? "collapsed" : "open");
   },
 };

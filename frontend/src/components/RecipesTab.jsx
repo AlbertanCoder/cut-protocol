@@ -1,21 +1,28 @@
 import { useState, useEffect, useCallback } from "react";
-import { Sparkles, Pencil, Trash2, Save, X, Search, ShoppingCart, Check, Mail, MessageSquare, Copy } from "lucide-react";
+import { Sparkles, Pencil, Trash2, Save, X, Search, ShoppingCart, Check, Mail, MessageSquare, Copy, Database } from "lucide-react";
 import { C } from "../lib/theme.js";
 import { toHouseholdUnit } from "../lib/householdUnits.js";
-import { Card, Btn, Chip } from "./ui/Parts.jsx";
+import { Card, Btn, Chip, PageHead } from "./ui/Parts.jsx";
 import { api } from "../lib/api.js";
 import { FRIDGE, EXCLUDED, ROTATION, BATCH, SUPPS, SUPP_RULES, CHILI } from "../data/constants.js";
 import { uiState } from "../lib/storage.js";
 
 const kc = (n) => Math.round(n).toLocaleString("en-CA");
 const g1 = (n) => Math.round(n * 10) / 10;
-// Function, not a frozen module-level object, so each caller reads the
-// live palette at render time and re-themes on toggle.
-const getInpStyle = () => ({ background: C.paper, border: `1.5px solid ${C.rule}`, color: C.ink });
+const getInpStyle = () => ({ background: C.card2, border: `1.5px solid ${C.rule}`, color: C.ink });
 const CUISINES = ["", "weeknight", "steakhouse", "tex-mex", "breakfast", "weekend", "other"];
 const PROTEINS = ["", "chicken", "beef", "elk/game", "salmon", "turkey", "eggs", "pork"];
 // Matches groceryList.js's bySection keys exactly (same list PlanTab.jsx uses).
 const SECTION_LABELS = { produce: "Produce", protein: "Protein", dairy: "Dairy", pantry: "Pantry / dry goods", spices: "Spices", other: "Other" };
+
+const MacroChips = ({ x }) => (
+  <>
+    <Chip>{kc(x.kcal)} kcal</Chip>
+    <Chip color={C.proteinText} bg={`${C.protein}1F`}>{g1(x.protein)}P</Chip>
+    <Chip color={C.fatText} bg={`${C.fat}1F`}>{g1(x.fat)}F</Chip>
+    <Chip color={C.carbText} bg={`${C.carb}1F`}>{g1(x.carb)}C</Chip>
+  </>
+);
 
 function RecipeCard({ recipe, onSave, onDelete, expanded, onToggleExpand, inCart, onToggleCart, cartBusy }) {
   const inpStyle = getInpStyle();
@@ -55,7 +62,7 @@ function RecipeCard({ recipe, onSave, onDelete, expanded, onToggleExpand, inCart
 
   if (editing) {
     return (
-      <div className="mb-3 p-3 rounded-2xl" style={{ background: C.card, border: `1.5px solid ${C.accent}` }}>
+      <div className="p-3 rounded-2xl" style={{ background: C.card, border: `1.5px solid ${C.accent}` }}>
         <input className="text-sm px-3 py-2 rounded-xl w-full mb-2" style={inpStyle} value={draft.name}
           onChange={(e) => setDraft((d) => ({ ...d, name: e.target.value }))} placeholder="Name" />
         <textarea className="text-sm px-3 py-2 rounded-xl w-full mb-2" style={inpStyle} rows={2} value={draft.description}
@@ -80,7 +87,7 @@ function RecipeCard({ recipe, onSave, onDelete, expanded, onToggleExpand, inCart
               onChange={(e) => setIng(idx, { role: e.target.value })}>
               {["protein", "carb", "veg", "fat", "dairy", "other"].map((r) => <option key={r} value={r}>{r}</option>)}
             </select>
-            <input type="checkbox" checked={ing.scalable} onChange={(e) => setIng(idx, { scalable: e.target.checked })} />
+            <input type="checkbox" checked={ing.scalable} onChange={(e) => setIng(idx, { scalable: e.target.checked })} style={{ accentColor: C.accent }} />
             <button onClick={() => removeIng(idx)} style={{ color: C.red }}><X size={13} /></button>
           </div>
         ))}
@@ -95,17 +102,14 @@ function RecipeCard({ recipe, onSave, onDelete, expanded, onToggleExpand, inCart
   }
 
   return (
-    <div className="mb-2.5 p-3 rounded-2xl cursor-pointer" onClick={() => onToggleExpand(recipe.id)}
+    <div className="p-3 rounded-2xl cursor-pointer" onClick={() => onToggleExpand(recipe.id)}
       style={{ background: C.card, border: `1px solid ${C.rule}` }}>
       <div className="flex justify-between items-start gap-2">
         <div className="min-w-0">
           <div className="text-sm font-extrabold" style={{ color: C.ink }}>{recipe.name}</div>
           <div className="text-xs font-semibold mt-1" style={{ color: C.faint }}>{recipe.slotType} · {recipe.cuisine || "—"}</div>
           <div className="flex flex-wrap gap-1.5 mt-1.5">
-            <Chip>{kc(recipe.kcal)} kcal</Chip>
-            <Chip color={C.protein} bg={`${C.protein}1F`}>{g1(recipe.protein)}P</Chip>
-            <Chip color={C.fat} bg={`${C.fat}1F`}>{g1(recipe.fat)}F</Chip>
-            <Chip color={C.carb} bg={`${C.carb}1F`}>{g1(recipe.carb)}C</Chip>
+            <MacroChips x={recipe} />
             {recipe.source === "ai-generated" && <Chip color={C.accent} bg={C.accentBg}>AI</Chip>}
           </div>
         </div>
@@ -140,16 +144,13 @@ function RecipeCard({ recipe, onSave, onDelete, expanded, onToggleExpand, inCart
 function CartRecipeCard({ item, expanded, onToggleExpand, onRemove, busy }) {
   const recipe = item.recipe;
   return (
-    <div className="mb-2.5 p-3 rounded-2xl cursor-pointer" onClick={() => onToggleExpand(item.recipeId)}
-      style={{ background: C.card, border: `1px solid ${C.rule}` }}>
+    <div className="p-3 rounded-2xl cursor-pointer" onClick={() => onToggleExpand(item.recipeId)}
+      style={{ background: C.card2, border: `1px solid ${C.rule}` }}>
       <div className="flex justify-between items-start gap-2">
         <div className="min-w-0">
           <div className="text-sm font-extrabold" style={{ color: C.ink }}>{recipe.name}</div>
           <div className="flex flex-wrap gap-1.5 mt-1.5">
-            <Chip>{kc(recipe.kcal)} kcal</Chip>
-            <Chip color={C.protein} bg={`${C.protein}1F`}>{g1(recipe.protein)}P</Chip>
-            <Chip color={C.fat} bg={`${C.fat}1F`}>{g1(recipe.fat)}F</Chip>
-            <Chip color={C.carb} bg={`${C.carb}1F`}>{g1(recipe.carb)}C</Chip>
+            <MacroChips x={recipe} />
           </div>
         </div>
         <button onClick={(e) => { e.stopPropagation(); onRemove(item.recipeId); }} disabled={busy}
@@ -173,14 +174,11 @@ function CartRecipeCard({ item, expanded, onToggleExpand, onRemove, busy }) {
 function DraftCard({ draft, onSave, onEditGrams, saving }) {
   const inpStyle = getInpStyle();
   return (
-    <div className="mb-3 p-3 rounded-2xl" style={{ background: C.card, border: `1.5px solid ${C.good}` }}>
+    <div className="p-3 rounded-2xl" style={{ background: C.card, border: `1.5px solid ${C.good}` }}>
       <div className="text-sm font-extrabold" style={{ color: C.ink }}>{draft.name}</div>
       <div className="text-xs italic mb-1.5 font-semibold" style={{ color: C.faint }}>{draft.description}</div>
       <div className="flex flex-wrap gap-1.5 mb-2.5">
-        <Chip>{kc(draft.kcal)} kcal</Chip>
-        <Chip color={C.protein} bg={`${C.protein}1F`}>{g1(draft.protein)}P</Chip>
-        <Chip color={C.fat} bg={`${C.fat}1F`}>{g1(draft.fat)}F</Chip>
-        <Chip color={C.carb} bg={`${C.carb}1F`}>{g1(draft.carb)}C</Chip>
+        <MacroChips x={draft} />
         <Chip>serves {draft.servings}</Chip>
       </div>
       {draft.ingredients.map((ing, idx) => (
@@ -214,18 +212,17 @@ function ReferenceSection() {
   const phase1Done = FRIDGE.every((f) => done[f.id]);
 
   return (
-    <details className="mb-3">
+    <details className="mt-4">
       <summary className="text-xs font-semibold uppercase tracking-wide cursor-pointer px-1" style={{ color: C.faintLight }}>
         Reference — fridge burn-down, rotation, supplements
       </summary>
-      <div className="mt-2">
-        <div className="mb-3">
-          <Chip color={phase1Done ? C.good : C.warn} bg={phase1Done ? C.goodBg : C.warnBg}>
-            {phase1Done ? "Phase 2 — steady state" : "Phase 1 — fridge burn-down"}
-          </Chip>
-        </div>
-
+      <div className="mt-3 grid grid-cols-1 xl:grid-cols-3 gap-4 items-start">
         <Card section="§5" title="Fridge burn-down — fixed slots">
+          <div className="mb-2">
+            <Chip color={phase1Done ? C.good : C.warn} bg={phase1Done ? C.goodBg : C.warnBg}>
+              {phase1Done ? "Phase 2 — steady state" : "Phase 1 — fridge burn-down"}
+            </Chip>
+          </div>
           <div className="text-xs font-semibold mb-2" style={{ color: C.faint }}>
             Items rent slots. Nothing rides on top of the plan. Check off when gone.
           </div>
@@ -251,50 +248,46 @@ function ReferenceSection() {
           </div>
         </Card>
 
-        <Card section="§6" title="Dinner rotation — equal swaps">
-          {ROTATION.map((r) => (
-            <div key={r.main} className="flex justify-between items-baseline py-1.5 gap-2"
-              style={{ borderBottom: `1px solid ${C.rule}` }}>
-              <span className="text-sm font-semibold" style={{ color: C.ink }}>
-                {r.main} <span className="text-xs font-semibold" style={{ color: C.faint }}>{r.amt}</span>
-              </span>
-              <span className="text-xs text-right font-bold" style={{ color: r.butter === "NO butter" ? C.red : C.faint }}>
-                {r.butter}{r.note && <span style={{ color: C.faint }}> · {r.note}</span>}
-              </span>
+        <div className="flex flex-col gap-4">
+          <Card section="§6" title="Dinner rotation — equal swaps">
+            {ROTATION.map((r) => (
+              <div key={r.main} className="flex justify-between items-baseline py-1.5 gap-2"
+                style={{ borderBottom: `1px solid ${C.rule}` }}>
+                <span className="text-sm font-semibold" style={{ color: C.ink }}>
+                  {r.main} <span className="text-xs font-semibold" style={{ color: C.faint }}>{r.amt}</span>
+                </span>
+                <span className="text-xs text-right font-bold" style={{ color: r.butter === "NO butter" ? C.red : C.faint }}>
+                  {r.butter}{r.note && <span style={{ color: C.faint }}> · {r.note}</span>}
+                </span>
+              </div>
+            ))}
+          </Card>
+
+          <Card section="§6" title="Sunday batch — ~1 hr">
+            {BATCH.map((b, i) => (
+              <div key={i} className="flex gap-2 py-1.5 text-sm font-semibold" style={{ borderBottom: `1px solid ${C.rule}`, color: C.ink }}>
+                <span className="text-xs pt-0.5 font-extrabold" style={{ color: C.accent }}>{String(i + 1).padStart(2, "0")}</span>
+                {b}
+              </div>
+            ))}
+            <div className="text-xs font-semibold mt-2" style={{ color: C.faint }}>
+              Groceries ~$110–125/wk · Superstore West Edmonton
             </div>
-          ))}
-        </Card>
+          </Card>
+        </div>
 
-        <Card section="§6" title="Sunday batch — ~1 hr">
-          {BATCH.map((b, i) => (
-            <div key={i} className="flex gap-2 py-1.5 text-sm font-semibold" style={{ borderBottom: `1px solid ${C.rule}`, color: C.ink }}>
-              <span className="text-xs pt-0.5 font-extrabold" style={{ color: C.accent }}>{String(i + 1).padStart(2, "0")}</span>
-              {b}
+        <div className="flex flex-col gap-4">
+          <Card title="Street chili — saved recipe">
+            <div className="text-xs space-y-2 font-semibold" style={{ color: C.ink }}>
+              <div>{CHILI.ing}</div>
+              <div style={{ color: C.faint }}>{CHILI.steps}</div>
             </div>
-          ))}
-          <div className="text-xs font-semibold mt-2" style={{ color: C.faint }}>
-            Groceries ~$110–125/wk · Superstore West Edmonton
-          </div>
-        </Card>
+          </Card>
 
-        <details className="mb-3 px-1">
-          <summary className="text-xs font-semibold uppercase tracking-wide cursor-pointer" style={{ color: C.faintLight }}>
-            Street chili — saved recipe
-          </summary>
-          <div className="text-xs mt-2 space-y-2 font-semibold" style={{ color: C.ink }}>
-            <div>{CHILI.ing}</div>
-            <div style={{ color: C.faint }}>{CHILI.steps}</div>
-          </div>
-        </details>
-
-        <details className="mb-3 px-1">
-          <summary className="text-xs font-semibold uppercase tracking-wide cursor-pointer" style={{ color: C.faintLight }}>
-            §7 supplement stack
-          </summary>
-          <div className="mt-2">
+          <Card section="§7" title="Supplement stack">
             {SUPPS.map((s) => (
               <div key={s.t} className="flex gap-3 py-1.5 text-xs font-semibold" style={{ borderBottom: `1px solid ${C.rule}` }}>
-                <span className="font-extrabold w-10 shrink-0" style={{ color: C.accent }}>{s.t}</span>
+                <span className="font-extrabold w-12 shrink-0" style={{ color: C.accent }}>{s.t}</span>
                 <span style={{ color: C.ink }}>{s.s}</span>
               </div>
             ))}
@@ -303,18 +296,17 @@ function ReferenceSection() {
                 <div key={r} className="text-xs font-semibold" style={{ color: C.faint }}>· {r}</div>
               ))}
             </div>
-          </div>
-        </details>
-
-        <div className="text-xs font-bold px-1" style={{ color: C.red }}>
-          Allergy-level: shellfish · kiwi · soy protein (soybean oil OK). No pork as weekly staple.
+            <div className="text-xs font-bold mt-3" style={{ color: C.red }}>
+              Allergy-level: shellfish · kiwi · soy protein (soybean oil OK). No pork as weekly staple.
+            </div>
+          </Card>
         </div>
       </div>
     </details>
   );
 }
 
-export default function RecipesTab({ isAdmin }) {
+export default function RecipesTab({ isAdmin, openFoods }) {
   const inpStyle = getInpStyle();
   const [recipes, setRecipes] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -453,147 +445,165 @@ export default function RecipesTab({ isAdmin }) {
 
   return (
     <div>
-      <Card section="GENERATE" title="New recipe from AI">
-        <div className="grid grid-cols-2 gap-2 mb-2">
-          <select className="text-xs px-2 py-2 rounded-xl" style={inpStyle} value={form.slotType}
-            onChange={(e) => setForm((f) => ({ ...f, slotType: e.target.value }))}>
-            <option value="meal">Meal</option><option value="snack">Snack</option>
-          </select>
-          <select className="text-xs px-2 py-2 rounded-xl" style={inpStyle} value={form.protein}
-            onChange={(e) => setForm((f) => ({ ...f, protein: e.target.value }))}>
-            {PROTEINS.map((p) => <option key={p} value={p}>{p || "Any protein"}</option>)}
-          </select>
-          <select className="text-xs px-2 py-2 rounded-xl" style={inpStyle} value={form.cuisine}
-            onChange={(e) => setForm((f) => ({ ...f, cuisine: e.target.value }))}>
-            {CUISINES.map((c) => <option key={c} value={c}>{c || "Any cuisine"}</option>)}
-          </select>
-          <input type="number" placeholder="Max prep (min)" className="text-xs px-2 py-2 rounded-xl" style={inpStyle}
-            value={form.prepTimeMin} onChange={(e) => setForm((f) => ({ ...f, prepTimeMin: e.target.value }))} />
-        </div>
-        <textarea placeholder="Anything else? e.g. 'something spicy, uses the crockpot'" rows={2}
-          className="text-sm px-3 py-2 rounded-xl w-full mb-2" style={inpStyle}
-          value={form.freeText} onChange={(e) => setForm((f) => ({ ...f, freeText: e.target.value }))} />
-        <div className="flex flex-wrap gap-4 items-center mb-3">
-          <label className="flex items-center gap-1.5 text-xs font-semibold" style={{ color: C.ink }}>
-            <input type="radio" checked={form.batchStyle === "single"} onChange={() => setForm((f) => ({ ...f, batchStyle: "single" }))} />
-            Single serving
-          </label>
-          <label className="flex items-center gap-1.5 text-xs font-semibold" style={{ color: C.ink }}>
-            <input type="radio" checked={form.batchStyle === "batch"} onChange={() => setForm((f) => ({ ...f, batchStyle: "batch" }))} />
-            Batch-cook
-          </label>
-          <label className="flex items-center gap-1.5 text-xs font-semibold" style={{ color: C.red }}>
-            <input type="checkbox" checked={form.allowAllergens} onChange={(e) => setForm((f) => ({ ...f, allowAllergens: e.target.checked }))} />
-            Allow allergens this time
-          </label>
-        </div>
-        <Btn onClick={handleGenerate} disabled={generating}>
-          <Sparkles size={13} className="inline mr-1" />{generating ? "Generating…" : drafts ? "Regenerate all 3" : "Generate 3 options"}
+      <PageHead title="Recipes" sub="Library, AI generation, and the cart that feeds your grocery list.">
+        <Btn small kind="ghost" onClick={openFoods}>
+          <Database size={12} className="inline mr-1" />Food database
         </Btn>
-      </Card>
+      </PageHead>
 
       {error && <div className="text-xs font-semibold px-1 mb-3" style={{ color: C.red }}>{error}</div>}
 
-      {droppedForAllergies.length > 0 && (
-        <div className="text-xs font-semibold px-1 mb-3" style={{ color: C.warn }}>
-          Dropped {droppedForAllergies.length} option(s) for allergy rules: {droppedForAllergies.map((d) => `${d.name} (${d.reason})`).join(", ")}
-        </div>
-      )}
+      <div className="grid grid-cols-1 xl:grid-cols-12 gap-4 items-start">
+        {/* ── left: generate + cart ── */}
+        <div className="xl:col-span-5 flex flex-col gap-4 min-w-0">
+          <Card section="GENERATE" title="New recipe from AI">
+            <div className="grid grid-cols-2 gap-2 mb-2">
+              <select className="text-xs px-2 py-2 rounded-xl" style={inpStyle} value={form.slotType}
+                onChange={(e) => setForm((f) => ({ ...f, slotType: e.target.value }))}>
+                <option value="meal">Meal</option><option value="snack">Snack</option>
+              </select>
+              <select className="text-xs px-2 py-2 rounded-xl" style={inpStyle} value={form.protein}
+                onChange={(e) => setForm((f) => ({ ...f, protein: e.target.value }))}>
+                {PROTEINS.map((p) => <option key={p} value={p}>{p || "Any protein"}</option>)}
+              </select>
+              <select className="text-xs px-2 py-2 rounded-xl" style={inpStyle} value={form.cuisine}
+                onChange={(e) => setForm((f) => ({ ...f, cuisine: e.target.value }))}>
+                {CUISINES.map((c) => <option key={c} value={c}>{c || "Any cuisine"}</option>)}
+              </select>
+              <input type="number" placeholder="Max prep (min)" className="text-xs px-2 py-2 rounded-xl" style={inpStyle}
+                value={form.prepTimeMin} onChange={(e) => setForm((f) => ({ ...f, prepTimeMin: e.target.value }))} />
+            </div>
+            <textarea placeholder="Anything else? e.g. 'something spicy, uses the crockpot'" rows={2}
+              className="text-sm px-3 py-2 rounded-xl w-full mb-2" style={inpStyle}
+              value={form.freeText} onChange={(e) => setForm((f) => ({ ...f, freeText: e.target.value }))} />
+            <div className="flex flex-wrap gap-4 items-center mb-3">
+              <label className="flex items-center gap-1.5 text-xs font-semibold" style={{ color: C.ink }}>
+                <input type="radio" checked={form.batchStyle === "single"} onChange={() => setForm((f) => ({ ...f, batchStyle: "single" }))} style={{ accentColor: C.accent }} />
+                Single serving
+              </label>
+              <label className="flex items-center gap-1.5 text-xs font-semibold" style={{ color: C.ink }}>
+                <input type="radio" checked={form.batchStyle === "batch"} onChange={() => setForm((f) => ({ ...f, batchStyle: "batch" }))} style={{ accentColor: C.accent }} />
+                Batch-cook
+              </label>
+              <label className="flex items-center gap-1.5 text-xs font-semibold" style={{ color: C.red }}>
+                <input type="checkbox" checked={form.allowAllergens} onChange={(e) => setForm((f) => ({ ...f, allowAllergens: e.target.checked }))} style={{ accentColor: C.red }} />
+                Allow allergens this time
+              </label>
+            </div>
+            <Btn onClick={handleGenerate} disabled={generating}>
+              <Sparkles size={13} className="inline mr-1" />{generating ? "Generating…" : drafts ? "Regenerate all 3" : "Generate 3 options"}
+            </Btn>
+          </Card>
 
-      {drafts && (
-        <Card section="PREVIEW" title={`${drafts.length} option(s) — edit grams, then save`}>
-          {drafts.length === 0 ? (
-            <div className="text-sm font-semibold" style={{ color: C.faint }}>No options survived — try regenerating or allowing allergens.</div>
+          {droppedForAllergies.length > 0 && (
+            <div className="text-xs font-semibold px-1" style={{ color: C.warn }}>
+              Dropped {droppedForAllergies.length} option(s) for allergy rules: {droppedForAllergies.map((d) => `${d.name} (${d.reason})`).join(", ")}
+            </div>
+          )}
+
+          {drafts && (
+            <Card section="PREVIEW" title={`${drafts.length} option(s) — edit grams, then save`}>
+              {drafts.length === 0 ? (
+                <div className="text-sm font-semibold" style={{ color: C.faint }}>No options survived — try regenerating or allowing allergens.</div>
+              ) : (
+                <div className="flex flex-col gap-3">
+                  {drafts.map((d, idx) => (
+                    <DraftCard key={idx} draft={d} saving={savingIdx === idx}
+                      onEditGrams={(ingIdx, grams) => editDraftGrams(idx, ingIdx, grams)}
+                      onSave={() => handleSaveDraft(idx)} />
+                  ))}
+                </div>
+              )}
+            </Card>
+          )}
+
+          <Card section="CART" title={`Cart (${cartItems.length})`}>
+            {cartLoading ? (
+              <div className="text-sm font-semibold" style={{ color: C.faint }}>Loading…</div>
+            ) : cartItems.length === 0 ? (
+              <div className="text-sm font-semibold" style={{ color: C.faint }}>Tap the cart icon on any recipe to collect it here.</div>
+            ) : (
+              <>
+                <div className="flex flex-col gap-2.5">
+                  {cartItems.map((item) => (
+                    <CartRecipeCard key={item.id} item={item} expanded={expandedCartId === item.recipeId}
+                      onToggleExpand={(id) => setExpandedCartId((cur) => (cur === id ? null : id))}
+                      onRemove={toggleCart} busy={cartBusyId === item.recipeId} />
+                  ))}
+                </div>
+                <div className="flex gap-2 mt-3 flex-wrap">
+                  <Btn small onClick={onGenerateCartGroceryList} disabled={cartGroceryBusy}>
+                    <ShoppingCart size={12} className="inline mr-1" />
+                    {cartGroceryList ? "Regenerate from cart" : "Generate grocery list from cart"}
+                  </Btn>
+                  {cartGroceryList && (
+                    <Btn small kind="ghost" onClick={copyCartGroceryList}>
+                      <Copy size={12} className="inline mr-1" />Copy
+                    </Btn>
+                  )}
+                </div>
+                {cartGroceryError && <div className="text-xs font-semibold mt-2" style={{ color: C.red }}>{cartGroceryError}</div>}
+                {cartGroceryList && (
+                  <div className="mt-3 pt-3" style={{ borderTop: `1px solid ${C.rule}` }}>
+                    <div className="flex gap-2 mb-3">
+                      <a href={cartGrocerySmsHref()} className="text-xs font-bold px-2.5 py-1.5 rounded-lg flex items-center gap-1" style={{ background: C.card2, border: `1px solid ${C.rule}`, color: C.ink }}>
+                        <MessageSquare size={12} />Text
+                      </a>
+                      <a href={cartGroceryMailtoHref()} className="text-xs font-bold px-2.5 py-1.5 rounded-lg flex items-center gap-1" style={{ background: C.card2, border: `1px solid ${C.rule}`, color: C.ink }}>
+                        <Mail size={12} />Email
+                      </a>
+                    </div>
+                    {Object.entries(cartGroceryList.bySection || {})
+                      .filter(([, items]) => items.length > 0)
+                      .map(([section, items]) => (
+                        <div key={section} className="mb-2.5">
+                          <div className="text-[10.5px] font-extrabold uppercase tracking-wide mb-1" style={{ color: C.faintLight }}>{SECTION_LABELS[section] || section}</div>
+                          {items.map((i) => {
+                            const grams = cartItemGrams(i);
+                            const hh = toHouseholdUnit(i.name, grams);
+                            return (
+                              <div key={i.name} className="flex justify-between text-sm py-1" style={{ borderBottom: `1px solid ${C.rule}` }}>
+                                <span className="font-semibold" style={{ color: C.ink }}>{i.name}</span>
+                                <span className="mono text-xs font-bold text-right" style={{ color: C.faint }}>
+                                  {grams}g{hh ? ` (≈${hh})` : ""} {cartItemForm(i)}
+                                  {i.cost != null && <span style={{ color: C.faintLight }}> · ${i.cost.amountCad.toFixed(2)}</span>}
+                                </span>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      ))}
+                    <div className="text-xs font-semibold mt-1 pt-2" style={{ color: C.faint, borderTop: `1px solid ${C.rule}` }}>
+                      {cartGroceryList.totalEstimatedCostCad != null && <>Est. total: <b style={{ color: C.ink }}>${cartGroceryList.totalEstimatedCostCad.toFixed(2)} CAD</b> · </>}
+                      {cartGroceryList.costCoverageNote}
+                    </div>
+                  </div>
+                )}
+              </>
+            )}
+          </Card>
+        </div>
+
+        {/* ── right: library ── */}
+        <Card section="LIBRARY" title={`Recipes (${recipes.length})`} className="xl:col-span-7 min-w-0">
+          <div className="relative mb-3">
+            <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: C.faintLight }} />
+            <input placeholder="Search…" className="text-sm pl-9 pr-3 py-2 rounded-xl w-full" style={inpStyle}
+              value={query} onChange={(e) => setQuery(e.target.value)} />
+          </div>
+          {loading ? (
+            <div className="text-sm font-semibold" style={{ color: C.faint }}>Loading…</div>
           ) : (
-            drafts.map((d, idx) => (
-              <DraftCard key={idx} draft={d} saving={savingIdx === idx}
-                onEditGrams={(ingIdx, grams) => editDraftGrams(idx, ingIdx, grams)}
-                onSave={() => handleSaveDraft(idx)} />
-            ))
+            <div className="flex flex-col gap-2.5">
+              {filtered.map((r) => (
+                <RecipeCard key={r.id} recipe={r} onSave={handleUpdate} onDelete={handleDelete}
+                  expanded={expandedId === r.id} onToggleExpand={toggleExpand}
+                  inCart={cartRecipeIds.has(r.id)} onToggleCart={toggleCart} cartBusy={cartBusyId === r.id} />
+              ))}
+            </div>
           )}
         </Card>
-      )}
-
-      <Card section="CART" title={`Cart (${cartItems.length})`}>
-        {cartLoading ? (
-          <div className="text-sm font-semibold" style={{ color: C.faint }}>Loading…</div>
-        ) : cartItems.length === 0 ? (
-          <div className="text-sm font-semibold" style={{ color: C.faint }}>Tap the cart icon on any recipe below to collect it here.</div>
-        ) : (
-          <>
-            {cartItems.map((item) => (
-              <CartRecipeCard key={item.id} item={item} expanded={expandedCartId === item.recipeId}
-                onToggleExpand={(id) => setExpandedCartId((cur) => (cur === id ? null : id))}
-                onRemove={toggleCart} busy={cartBusyId === item.recipeId} />
-            ))}
-            <div className="flex gap-2 mt-1">
-              <Btn small onClick={onGenerateCartGroceryList} disabled={cartGroceryBusy}>
-                <ShoppingCart size={12} className="inline mr-1" />
-                {cartGroceryList ? "Regenerate from cart" : "Generate grocery list from cart"}
-              </Btn>
-              {cartGroceryList && (
-                <Btn small kind="ghost" onClick={copyCartGroceryList}>
-                  <Copy size={12} className="inline mr-1" />Copy
-                </Btn>
-              )}
-            </div>
-            {cartGroceryError && <div className="text-xs font-semibold mt-2" style={{ color: C.red }}>{cartGroceryError}</div>}
-            {cartGroceryList && (
-              <div className="mt-3 pt-3" style={{ borderTop: `1px solid ${C.rule}` }}>
-                <div className="flex gap-2 mb-3">
-                  <a href={cartGrocerySmsHref()} className="text-xs font-bold px-2.5 py-1.5 rounded-lg flex items-center gap-1" style={{ background: C.paper, border: `1px solid ${C.rule}`, color: C.ink }}>
-                    <MessageSquare size={12} />Text
-                  </a>
-                  <a href={cartGroceryMailtoHref()} className="text-xs font-bold px-2.5 py-1.5 rounded-lg flex items-center gap-1" style={{ background: C.paper, border: `1px solid ${C.rule}`, color: C.ink }}>
-                    <Mail size={12} />Email
-                  </a>
-                </div>
-                {Object.entries(cartGroceryList.bySection || {})
-                  .filter(([, items]) => items.length > 0)
-                  .map(([section, items]) => (
-                    <div key={section} className="mb-2.5">
-                      <div className="text-[10.5px] font-extrabold uppercase tracking-wide mb-1" style={{ color: C.faintLight }}>{SECTION_LABELS[section] || section}</div>
-                      {items.map((i) => {
-                        const grams = cartItemGrams(i);
-                        const hh = toHouseholdUnit(i.name, grams);
-                        return (
-                          <div key={i.name} className="flex justify-between text-sm py-1" style={{ borderBottom: `1px solid ${C.rule}` }}>
-                            <span className="font-semibold" style={{ color: C.ink }}>{i.name}</span>
-                            <span className="mono text-xs font-bold text-right" style={{ color: C.faint }}>
-                              {grams}g{hh ? ` (≈${hh})` : ""} {cartItemForm(i)}
-                              {i.cost != null && <span style={{ color: C.faintLight }}> · ${i.cost.amountCad.toFixed(2)}</span>}
-                            </span>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  ))}
-                <div className="text-xs font-semibold mt-1 pt-2" style={{ color: C.faint, borderTop: `1px solid ${C.rule}` }}>
-                  {cartGroceryList.totalEstimatedCostCad != null && <>Est. total: <b style={{ color: C.ink }}>${cartGroceryList.totalEstimatedCostCad.toFixed(2)} CAD</b> · </>}
-                  {cartGroceryList.costCoverageNote}
-                </div>
-              </div>
-            )}
-          </>
-        )}
-      </Card>
-
-      <Card section="LIBRARY" title={`Recipes (${recipes.length})`}>
-        <div className="relative mb-2.5">
-          <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: C.faintLight }} />
-          <input placeholder="Search…" className="text-sm pl-9 pr-3 py-2 rounded-xl w-full" style={inpStyle}
-            value={query} onChange={(e) => setQuery(e.target.value)} />
-        </div>
-        {loading ? (
-          <div className="text-sm font-semibold" style={{ color: C.faint }}>Loading…</div>
-        ) : (
-          filtered.map((r) => (
-            <RecipeCard key={r.id} recipe={r} onSave={handleUpdate} onDelete={handleDelete}
-              expanded={expandedId === r.id} onToggleExpand={toggleExpand}
-              inCart={cartRecipeIds.has(r.id)} onToggleCart={toggleCart} cartBusy={cartBusyId === r.id} />
-          ))
-        )}
-      </Card>
+      </div>
 
       {isAdmin && <ReferenceSection />}
     </div>

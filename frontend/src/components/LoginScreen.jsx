@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { TrendingDown } from "lucide-react";
 import { C } from "../lib/theme.js";
 import { Card, Btn } from "./ui/Parts.jsx";
 import { api } from "../lib/api.js";
@@ -8,7 +9,7 @@ export default function LoginScreen({ onLoggedIn }) {
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
   const [busy, setBusy] = useState(false);
-  const inpStyle = { background: C.paper, border: `1.5px solid ${C.rule}`, color: C.ink };
+  const inpStyle = { background: C.card2, border: `1.5px solid ${C.rule}`, color: C.ink };
 
   const submit = async (e) => {
     e.preventDefault();
@@ -25,11 +26,16 @@ export default function LoginScreen({ onLoggedIn }) {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4" style={{ background: C.paper }}>
-      <div className="w-full max-w-xs">
-        <div className="flex items-center gap-2.5 mb-5 justify-center">
-          <div className="w-9 h-9 rounded-xl flex items-center justify-center font-extrabold text-base" style={{ background: C.accent, color: "#fff" }}>C</div>
-          <div className="text-xl font-extrabold" style={{ color: C.ink, letterSpacing: "-.01em" }}>Cut Protocol</div>
+    <div className="min-h-svh flex items-center justify-center px-4" style={{ background: C.paper }}>
+      <div className="w-full max-w-sm">
+        <div className="flex items-center gap-3 mb-6 justify-center">
+          <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: C.accent }}>
+            <TrendingDown size={22} strokeWidth={2.8} style={{ color: C.accentInk }} />
+          </div>
+          <div className="leading-none">
+            <div className="text-xl font-black uppercase" style={{ color: C.ink, letterSpacing: ".01em" }}>Cut Protocol</div>
+            <div className="text-[10px] font-bold uppercase mt-1" style={{ color: C.faintLight, letterSpacing: ".08em" }}>Recomp Engine</div>
+          </div>
         </div>
         <Card>
           <form onSubmit={submit} className="space-y-3">

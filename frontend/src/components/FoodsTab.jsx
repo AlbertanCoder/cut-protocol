@@ -1,13 +1,16 @@
 import { useState, useEffect, useMemo } from "react";
-import { Search } from "lucide-react";
+import { Search, ArrowLeft } from "lucide-react";
 import { C } from "../lib/theme.js";
-import { Card } from "./ui/Parts.jsx";
+import { Card, Btn, PageHead } from "./ui/Parts.jsx";
 import { api } from "../lib/api.js";
 
 const g1 = (n) => Math.round(n * 10) / 10;
 const CATS = ["all", "protein", "carb", "veg", "fat", "dairy", "fruit", "other"];
 
-export default function FoodsTab() {
+// Reference data, not a daily destination — reached from Recipes/Engine
+// ("Food database"), not from top-level nav. The real browse/detail UX
+// overhaul is Phase 2 scope.
+export default function FoodsTab({ onBack }) {
   const CAT_COLOR = {
     protein: C.protein, carb: C.carb, fat: C.fat,
     veg: C.good, dairy: C.carb, fruit: C.good, other: C.faintLight,
@@ -27,29 +30,38 @@ export default function FoodsTab() {
   }, [foods, query, cat]);
 
   return (
-    <div>
-      <div className="relative mb-3">
-        <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: C.faintLight }} />
-        <input
-          type="text" placeholder="Search your foods…" value={query} onChange={(e) => setQuery(e.target.value)}
-          className="w-full text-sm pl-9 pr-3 py-2.5 rounded-xl"
-          style={{ background: C.card, border: `1px solid ${C.rule}`, color: C.ink }}
-        />
+    <div className="max-w-4xl">
+      <PageHead title="Food database" sub="Reference nutrition data, per 100 g. Used by recipes, plans, and the AI generator.">
+        <Btn small kind="ghost" onClick={onBack}>
+          <ArrowLeft size={12} className="inline mr-1" />Back to Recipes
+        </Btn>
+      </PageHead>
+
+      <div className="flex gap-3 items-center mb-3 flex-wrap">
+        <div className="relative flex-1 min-w-[240px]">
+          <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: C.faintLight }} />
+          <input
+            type="text" placeholder="Search your foods…" value={query} onChange={(e) => setQuery(e.target.value)}
+            className="w-full text-sm pl-9 pr-3 py-2.5 rounded-xl"
+            style={{ background: C.card, border: `1px solid ${C.rule}`, color: C.ink }}
+          />
+        </div>
+        <div className="text-xs font-semibold" style={{ color: C.faintLight }}>
+          {loading ? "Loading…" : `${filtered.length} food${filtered.length === 1 ? "" : "s"}`}
+        </div>
       </div>
-      <div className="flex gap-1.5 overflow-x-auto pb-1 mb-2">
+
+      <div className="flex gap-1.5 overflow-x-auto pb-1 mb-3">
         {CATS.map((c) => (
           <button key={c} onClick={() => setCat(c)}
             className="shrink-0 text-xs font-bold px-3 py-1.5 rounded-full"
             style={{
-              background: cat === c ? C.accent : C.card, color: cat === c ? "#fff" : C.faint,
+              background: cat === c ? C.accent : C.card, color: cat === c ? C.accentInk : C.faint,
               border: `1px solid ${cat === c ? C.accent : C.rule}`,
             }}>
             {c === "all" ? "All" : c[0].toUpperCase() + c.slice(1)}
           </button>
         ))}
-      </div>
-      <div className="text-xs font-semibold px-1 mb-2" style={{ color: C.faintLight }}>
-        {loading ? "Loading…" : `${filtered.length} food${filtered.length === 1 ? "" : "s"}`}
       </div>
 
       <Card>

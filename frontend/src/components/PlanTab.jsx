@@ -3,7 +3,7 @@ import { Lock, LockOpen, RefreshCw, ChefHat, ShoppingCart, Copy, Utensils, Apple
 import { toHouseholdUnit } from "../lib/householdUnits.js";
 import { C } from "../lib/theme.js";
 import { addDays, fmtD } from "../lib/dates.js";
-import { Card, Btn, Chip } from "./ui/Parts.jsx";
+import { Card, Btn, Chip, PageHead } from "./ui/Parts.jsx";
 import { api } from "../lib/api.js";
 
 const kc = (n) => Math.round(n).toLocaleString("en-CA");
@@ -21,7 +21,7 @@ function SlotCard({ slot, expanded, onToggleExpand, onLockToggle, onSwap, busy }
   const Icon = slot.slotType === "snack" ? Apple : Utensils;
   const roleColor = slot.ingredients?.[0]?.role === "carb" ? C.carb : slot.ingredients?.[0]?.role === "fat" ? C.fat : C.protein;
   return (
-    <div className="mb-2.5 p-3 rounded-2xl flex gap-3 cursor-pointer" onClick={() => onToggleExpand(slot.id)}
+    <div className="p-3.5 rounded-2xl flex gap-3 cursor-pointer" onClick={() => onToggleExpand(slot.id)}
       style={{ background: C.card, border: `1px solid ${C.rule}` }}>
       <div className="w-11 h-11 rounded-xl flex items-center justify-center shrink-0" style={{ background: `${roleColor}22` }}>
         <Icon size={19} style={{ color: roleColor }} />
@@ -35,13 +35,13 @@ function SlotCard({ slot, expanded, onToggleExpand, onLockToggle, onSwap, busy }
           <div className="flex gap-1.5 shrink-0">
             <button onClick={(e) => { e.stopPropagation(); onLockToggle(slot); }} disabled={busy}
               className="w-7 h-7 rounded-lg flex items-center justify-center"
-              style={{ color: slot.locked ? C.good : C.faint, background: C.paper, border: `1px solid ${C.rule}` }} aria-label="Toggle lock">
+              style={{ color: slot.locked ? C.good : C.faint, background: C.card2, border: `1px solid ${C.rule}` }} aria-label="Toggle lock">
               {slot.locked ? <Lock size={14} /> : <LockOpen size={14} />}
             </button>
             {!slot.locked && (
               <button onClick={(e) => { e.stopPropagation(); onSwap(slot); }} disabled={busy}
                 className="w-7 h-7 rounded-lg flex items-center justify-center"
-                style={{ color: C.faint, background: C.paper, border: `1px solid ${C.rule}` }} aria-label="Swap recipe">
+                style={{ color: C.faint, background: C.card2, border: `1px solid ${C.rule}` }} aria-label="Swap recipe">
                 <RefreshCw size={14} />
               </button>
             )}
@@ -49,9 +49,9 @@ function SlotCard({ slot, expanded, onToggleExpand, onLockToggle, onSwap, busy }
         </div>
         <div className="flex flex-wrap gap-1.5 mt-2">
           <Chip>{kc(slot.kcal)} kcal</Chip>
-          <Chip color={C.protein} bg={`${C.protein}1F`}>{g1(slot.protein)}P</Chip>
-          <Chip color={C.fat} bg={`${C.fat}1F`}>{g1(slot.fat)}F</Chip>
-          <Chip color={C.carb} bg={`${C.carb}1F`}>{g1(slot.carb)}C</Chip>
+          <Chip color={C.proteinText} bg={`${C.protein}1F`}>{g1(slot.protein)}P</Chip>
+          <Chip color={C.fatText} bg={`${C.fat}1F`}>{g1(slot.fat)}F</Chip>
+          <Chip color={C.carbText} bg={`${C.carb}1F`}>{g1(slot.carb)}C</Chip>
         </div>
         {slot.warning && (
           <div className="text-xs font-semibold mt-1.5" style={{ color: C.red }}>{slot.warning}</div>
@@ -73,7 +73,7 @@ function SlotCard({ slot, expanded, onToggleExpand, onLockToggle, onSwap, busy }
 }
 
 export default function PlanTab({ profile, summary, refresh }) {
-  const inpStyle = { background: C.paper, border: `1.5px solid ${C.rule}`, color: C.ink };
+  const inpStyle = { background: C.card2, border: `1.5px solid ${C.rule}`, color: C.ink };
   const [plan, setPlan] = useState(undefined); // undefined = loading, null = none yet
   const [expandedId, setExpandedId] = useState(null);
   const [busySlotId, setBusySlotId] = useState(null);
@@ -186,133 +186,137 @@ export default function PlanTab({ profile, summary, refresh }) {
 
   return (
     <div>
-      <Card section="PLAN" title="Meal structure">
-        <div className="grid grid-cols-2 gap-2">
-          <label className="block">
-            <span className="text-xs font-bold" style={{ color: C.faint }}>Meals / day</span>
-            <input type="number" min={1} max={6} value={mealsDraft.meals}
-              onChange={(e) => setMealsDraft((d) => ({ ...d, meals: Math.max(1, +e.target.value || 1) }))}
-              onBlur={commitMealConfig}
-              className="text-sm px-3 py-2 rounded-xl w-full mt-1" style={inpStyle} />
-          </label>
-          <label className="block">
-            <span className="text-xs font-bold" style={{ color: C.faint }}>Snacks / day</span>
-            <input type="number" min={0} max={4} value={mealsDraft.snacks}
-              onChange={(e) => setMealsDraft((d) => ({ ...d, snacks: Math.max(0, +e.target.value || 0) }))}
-              onBlur={commitMealConfig}
-              className="text-sm px-3 py-2 rounded-xl w-full mt-1" style={inpStyle} />
-          </label>
-        </div>
-      </Card>
+      <PageHead title="Plan" sub={plan ? `Week of ${fmtD(plan.startDate)} · locked slots are kept on regenerate` : "Weekly meal plan, solved against your targets."}>
+        {plan !== undefined && (
+          <Btn onClick={generate} disabled={generating}>
+            {generating ? "Generating…" : plan ? "Regenerate week" : "Generate week plan"}
+          </Btn>
+        )}
+      </PageHead>
 
       {error && (
         <div className="text-xs font-semibold px-1 mb-3" style={{ color: C.red }}>{error}</div>
       )}
 
-      <Card section="WEEK" title="Recipe plan">
-        {plan === undefined ? (
-          <div className="text-sm font-semibold" style={{ color: C.faint }}>Loading…</div>
-        ) : (
-          <>
-            <Btn onClick={generate} disabled={generating}>
-              {generating ? "Generating…" : plan ? "Regenerate week" : "Generate week plan"}
-            </Btn>
-            {plan && (
-              <div className="text-xs font-semibold mt-2" style={{ color: C.faint }}>
-                Week of {fmtD(plan.startDate)} · locked slots are kept on regenerate
+      {plan === undefined ? (
+        <div className="text-sm font-semibold" style={{ color: C.faint }}>Loading…</div>
+      ) : !plan ? (
+        <div className="max-w-xl">
+          <Card>
+            <div className="flex items-start gap-2">
+              <ChefHat size={18} style={{ color: C.faintLight }} className="mt-0.5 shrink-0" />
+              <div className="text-sm font-semibold" style={{ color: C.ink }}>
+                No plan for this week yet — hit "Generate week plan" above.
               </div>
-            )}
-          </>
-        )}
-      </Card>
-
-      {plan && (
-        <>
-          <div className="flex gap-1.5 overflow-x-auto pb-1 mb-3">
-            {DAY_NAMES.map((d, i) => (
-              <button key={d} onClick={() => setActiveDay(i)}
-                className="shrink-0 w-12 py-2 rounded-xl text-center"
-                style={{ background: activeDay === i ? C.accent : C.card, border: `1px solid ${activeDay === i ? C.accent : C.rule}` }}>
-                <div className="text-[10px] font-bold" style={{ color: activeDay === i ? "#fff" : C.faintLight }}>{d}</div>
-                <div className="text-sm font-extrabold" style={{ color: activeDay === i ? "#fff" : C.ink }}>{fmtD(addDays(plan.startDate, i)).split(" ")[1]}</div>
-              </button>
-            ))}
-          </div>
-
-          <div className="text-xs font-semibold px-1 mb-2" style={{ color: C.faint }}>
-            Day total: <b className="mono" style={{ color: C.ink }}>{kc(dayTotals.kcal)}</b> kcal · {g1(dayTotals.protein)}P / {g1(dayTotals.fat)}F / {g1(dayTotals.carb)}C
-            {summary?.macros && <> vs {kc(summary.macros.kcal)} target</>}
-          </div>
-
-          {daySlots.map((slot) => (
-            <SlotCard key={slot.id} slot={slot} expanded={expandedId === slot.id}
-              onToggleExpand={(id) => setExpandedId((cur) => (cur === id ? null : id))}
-              onLockToggle={onLockToggle} onSwap={onSwap} busy={busySlotId === slot.id} />
-          ))}
-
-          <Card section="GROCERY" title="Shopping list — whole week">
-            <div className="flex gap-2 mb-2">
-              <Btn small onClick={onGenerateGroceryList} disabled={groceryBusy}>
-                <ShoppingCart size={12} className="inline mr-1" />
-                {plan.groceryList ? "Regenerate from this week" : "Generate from this week"}
-              </Btn>
-              {plan.groceryList && (
-                <Btn small kind="ghost" onClick={copyGroceryList}>
-                  <Copy size={12} className="inline mr-1" />Copy
-                </Btn>
-              )}
             </div>
-            {plan.groceryList ? (
-              <>
-                <div className="flex gap-2 mb-3">
-                  <a href={grocerySmsHref()} className="text-xs font-bold px-2.5 py-1.5 rounded-lg flex items-center gap-1" style={{ background: C.paper, border: `1px solid ${C.rule}`, color: C.ink }}>
-                    <MessageCircle size={12} />Text
-                  </a>
-                  <a href={groceryMailtoHref()} className="text-xs font-bold px-2.5 py-1.5 rounded-lg flex items-center gap-1" style={{ background: C.paper, border: `1px solid ${C.rule}`, color: C.ink }}>
-                    <Mail size={12} />Email
-                  </a>
-                </div>
-                {Object.entries(groceryBySection())
-                  .filter(([, items]) => items.length > 0)
-                  .map(([section, items]) => (
-                    <div key={section} className="mb-2.5">
-                      <div className="text-[10.5px] font-extrabold uppercase tracking-wide mb-1" style={{ color: C.faintLight }}>{SECTION_LABELS[section] || section}</div>
-                      {items.map((i) => {
-                        const grams = itemGrams(i);
-                        const hh = toHouseholdUnit(i.name, grams);
-                        return (
-                          <div key={i.name} className="flex justify-between text-sm py-1" style={{ borderBottom: `1px solid ${C.rule}` }}>
-                            <span className="font-semibold" style={{ color: C.ink }}>{i.name}</span>
-                            <span className="mono text-xs font-bold text-right" style={{ color: C.faint }}>
-                              {grams}g{hh ? ` (≈${hh})` : ""} {itemForm(i)}
-                              {i.cost != null && <span style={{ color: C.faintLight }}> · ${i.cost.amountCad.toFixed(2)}</span>}
-                            </span>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  ))}
-                <div className="text-xs font-semibold mt-1 pt-2" style={{ color: C.faint, borderTop: `1px solid ${C.rule}` }}>
-                  {plan.groceryList.totalEstimatedCostCad != null && <>Est. total: <b style={{ color: C.ink }}>${plan.groceryList.totalEstimatedCostCad.toFixed(2)} CAD</b> · </>}
-                  {plan.groceryList.costCoverageNote}
-                </div>
-              </>
-            ) : (
-              <div className="text-sm font-semibold" style={{ color: C.faint }}>Generate a list from this week's plan.</div>
-            )}
           </Card>
-        </>
-      )}
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 xl:grid-cols-12 gap-4 items-start">
+          {/* ── left: the week ── */}
+          <div className="xl:col-span-7 min-w-0">
+            <div className="grid grid-cols-7 gap-1.5 mb-3">
+              {DAY_NAMES.map((d, i) => (
+                <button key={d} onClick={() => setActiveDay(i)}
+                  className="py-2 rounded-xl text-center"
+                  style={{ background: activeDay === i ? C.accent : C.card, border: `1px solid ${activeDay === i ? C.accent : C.rule}` }}>
+                  <div className="text-[10px] font-bold" style={{ color: activeDay === i ? C.accentInk : C.faintLight }}>{d}</div>
+                  <div className="text-sm font-extrabold" style={{ color: activeDay === i ? C.accentInk : C.ink }}>{fmtD(addDays(plan.startDate, i)).split(" ")[1]}</div>
+                </button>
+              ))}
+            </div>
 
-      {!plan && plan !== undefined && (
-        <Card>
-          <div className="flex items-start gap-2">
-            <ChefHat size={18} style={{ color: C.faintLight }} className="mt-0.5 shrink-0" />
-            <div className="text-sm font-semibold" style={{ color: C.ink }}>
-              No plan for this week yet — hit "Generate week plan" above.
+            <div className="text-xs font-semibold px-1 mb-2" style={{ color: C.faint }}>
+              Day total: <b className="mono" style={{ color: C.ink }}>{kc(dayTotals.kcal)}</b> kcal · {g1(dayTotals.protein)}P / {g1(dayTotals.fat)}F / {g1(dayTotals.carb)}C
+              {summary?.macros && <> vs {kc(summary.macros.kcal)} target</>}
+            </div>
+
+            <div className="flex flex-col gap-2.5">
+              {daySlots.map((slot) => (
+                <SlotCard key={slot.id} slot={slot} expanded={expandedId === slot.id}
+                  onToggleExpand={(id) => setExpandedId((cur) => (cur === id ? null : id))}
+                  onLockToggle={onLockToggle} onSwap={onSwap} busy={busySlotId === slot.id} />
+              ))}
             </div>
           </div>
-        </Card>
+
+          {/* ── right: config + grocery ── */}
+          <div className="xl:col-span-5 flex flex-col gap-4 xl:sticky xl:top-8">
+            <Card section="PLAN" title="Meal structure">
+              <div className="grid grid-cols-2 gap-2">
+                <label className="block">
+                  <span className="text-xs font-bold" style={{ color: C.faint }}>Meals / day</span>
+                  <input type="number" min={1} max={6} value={mealsDraft.meals}
+                    onChange={(e) => setMealsDraft((d) => ({ ...d, meals: Math.max(1, +e.target.value || 1) }))}
+                    onBlur={commitMealConfig}
+                    className="text-sm px-3 py-2 rounded-xl w-full mt-1" style={inpStyle} />
+                </label>
+                <label className="block">
+                  <span className="text-xs font-bold" style={{ color: C.faint }}>Snacks / day</span>
+                  <input type="number" min={0} max={4} value={mealsDraft.snacks}
+                    onChange={(e) => setMealsDraft((d) => ({ ...d, snacks: Math.max(0, +e.target.value || 0) }))}
+                    onBlur={commitMealConfig}
+                    className="text-sm px-3 py-2 rounded-xl w-full mt-1" style={inpStyle} />
+                </label>
+              </div>
+              <div className="text-xs font-semibold mt-2" style={{ color: C.faint }}>
+                Applies on the next generate/regenerate.
+              </div>
+            </Card>
+
+            <Card section="GROCERY" title="Shopping list — whole week">
+              <div className="flex gap-2 mb-2 flex-wrap">
+                <Btn small onClick={onGenerateGroceryList} disabled={groceryBusy}>
+                  <ShoppingCart size={12} className="inline mr-1" />
+                  {plan.groceryList ? "Regenerate from this week" : "Generate from this week"}
+                </Btn>
+                {plan.groceryList && (
+                  <Btn small kind="ghost" onClick={copyGroceryList}>
+                    <Copy size={12} className="inline mr-1" />Copy
+                  </Btn>
+                )}
+              </div>
+              {plan.groceryList ? (
+                <>
+                  <div className="flex gap-2 mb-3">
+                    <a href={grocerySmsHref()} className="text-xs font-bold px-2.5 py-1.5 rounded-lg flex items-center gap-1" style={{ background: C.card2, border: `1px solid ${C.rule}`, color: C.ink }}>
+                      <MessageCircle size={12} />Text
+                    </a>
+                    <a href={groceryMailtoHref()} className="text-xs font-bold px-2.5 py-1.5 rounded-lg flex items-center gap-1" style={{ background: C.card2, border: `1px solid ${C.rule}`, color: C.ink }}>
+                      <Mail size={12} />Email
+                    </a>
+                  </div>
+                  {Object.entries(groceryBySection())
+                    .filter(([, items]) => items.length > 0)
+                    .map(([section, items]) => (
+                      <div key={section} className="mb-2.5">
+                        <div className="text-[10.5px] font-extrabold uppercase tracking-wide mb-1" style={{ color: C.faintLight }}>{SECTION_LABELS[section] || section}</div>
+                        {items.map((i) => {
+                          const grams = itemGrams(i);
+                          const hh = toHouseholdUnit(i.name, grams);
+                          return (
+                            <div key={i.name} className="flex justify-between text-sm py-1" style={{ borderBottom: `1px solid ${C.rule}` }}>
+                              <span className="font-semibold" style={{ color: C.ink }}>{i.name}</span>
+                              <span className="mono text-xs font-bold text-right" style={{ color: C.faint }}>
+                                {grams}g{hh ? ` (≈${hh})` : ""} {itemForm(i)}
+                                {i.cost != null && <span style={{ color: C.faintLight }}> · ${i.cost.amountCad.toFixed(2)}</span>}
+                              </span>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    ))}
+                  <div className="text-xs font-semibold mt-1 pt-2" style={{ color: C.faint, borderTop: `1px solid ${C.rule}` }}>
+                    {plan.groceryList.totalEstimatedCostCad != null && <>Est. total: <b style={{ color: C.ink }}>${plan.groceryList.totalEstimatedCostCad.toFixed(2)} CAD</b> · </>}
+                    {plan.groceryList.costCoverageNote}
+                  </div>
+                </>
+              ) : (
+                <div className="text-sm font-semibold" style={{ color: C.faint }}>Generate a list from this week's plan.</div>
+              )}
+            </Card>
+          </div>
+        </div>
       )}
     </div>
   );

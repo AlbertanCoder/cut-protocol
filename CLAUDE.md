@@ -82,6 +82,20 @@ challenged. Never suggest intake below the safety floor.
   branch + `pre-overhaul` tag pushed to GitHub; repo flipped PRIVATE;
   `.claude/settings.json` permission config added; this rules file rewritten
   (old RECOMP master archived). Next: Phase 1 — desktop layout + dark theme.
+- 2026-07-18 · **Phase 1 complete.** Dark-only athletic theme (tokens in
+  `frontend/src/index.css`, accent #2FD576, CVD-validated macro trio; light
+  mode retired). Collapsible left sidebar replaces bottom tab bar; nav order
+  Profile/Today/Plan/Recipes/Trend/Engine; Foods demoted to child view of
+  Recipes/Engine. New ProfileTab (inputs moved out of Engine) + 3-step
+  first-run SetupWizard (fires when GET /profile is null). Today rebuilt as
+  12-col dashboard (ring + macros + verdict + weigh-in + trend snapshot +
+  log). All screens converted to desktop grids. Verified in Chrome at
+  1568px: full tab walk on live account (read-only), complete wizard→
+  dashboard→weigh-in flow on a throwaway account (`phase1.test@local`, kept
+  in dev.db for future phase testing), zero console errors, oxlint + vite
+  build clean. Sub-1280px stacking is Tailwind mobile-first default —
+  re-verify visually in Phase 7 QA. Next: Phase 2 — food & recipe data
+  integrity.
 
 ## Archive
 

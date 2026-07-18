@@ -1,54 +1,46 @@
 @import "tailwindcss";
-@custom-variant dark (&:where(.dark, .dark *));
 
+/* ── Cut Protocol design tokens — dark athletic, single mode ──────────────
+   Every color in the app lives HERE and nowhere else. JS consumers (charts,
+   inline styles) read these via lib/theme.js (the C object). The macro trio
+   (protein/fat/carb) is validated for colorblind separation and ≥3:1
+   contrast on the dark surface; the *-text variants are lightened steps for
+   small text so chips stay AA-readable — bars/strips use the base marks. */
 :root {
-  --paper: #F6F7F5;
-  --card: #FFFFFF;
-  --ink: #16211C;
-  --faint: #5C6B62;
-  --faint-light: #93A79C;
-  --rule: #E4E7E2;
+  /* surfaces */
+  --paper: #0B0D0C;
+  --card: #131715;
+  --card-2: #1A201C;
+  --rule: #242B27;
 
-  --accent: #0E7C5C;
-  --accent-bg: #DCEFE7;
-
-  --protein: #12805F;
-  --carb: #2E6FA8;
-  --fat: #BC5B3A;
-
-  --good: #3F8F4F;
-  --good-bg: #E4F2E6;
-  --warn: #C7891F;
-  --warn-bg: #F5E9D3;
-  --red: #C33B3B;
-  --red-bg: #F6E1DF;
-
-  --shadow: 0 1px 2px rgba(22, 33, 28, .04), 0 8px 24px rgba(22, 33, 28, .07);
-}
-
-.dark {
-  --paper: #0C0F0E;
-  --card: #171C1A;
+  /* ink */
   --ink: #EDF2EF;
-  --faint: #93A79C;
-  --faint-light: #5C6B62;
-  --rule: #262E2A;
+  --faint: #9AABA1;
+  --faint-light: #5F6E66;
 
-  --accent: #34D399;
-  --accent-bg: #15332A;
+  /* athletic green accent */
+  --accent: #2FD576;
+  --accent-ink: #05130B;
+  --accent-bg: #103322;
 
-  --protein: #2FBE8D;
-  --carb: #5B9BD9;
-  --fat: #E08A5B;
+  /* macro marks (bars, strips, dots) — CVD-validated set */
+  --protein: #17A87A;
+  --fat: #D06F2B;
+  --carb: #3F86DB;
+  /* macro small-text variants (chips) */
+  --protein-text: #2FC793;
+  --fat-text: #EC9550;
+  --carb-text: #74A9EE;
 
-  --good: #5FBE72;
-  --good-bg: #16281A;
-  --warn: #E0A83F;
-  --warn-bg: #2E2210;
-  --red: #E56464;
-  --red-bg: #331A1A;
+  /* status — reserved, always paired with icon/label */
+  --good: #55C476;
+  --good-bg: #112B1B;
+  --warn: #E3AB42;
+  --warn-bg: #2E2310;
+  --red: #EA6A62;
+  --red-bg: #331A18;
 
-  --shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 6px 20px rgba(0, 0, 0, .35);
+  --shadow: 0 1px 2px rgba(0, 0, 0, .35), 0 8px 28px rgba(0, 0, 0, .38);
 }
 
 body {
@@ -57,17 +49,28 @@ body {
   color: var(--ink);
   font-family: -apple-system, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
   font-variant-numeric: tabular-nums;
-  transition: background-color .15s ease, color .15s ease;
+  -webkit-font-smoothing: antialiased;
 }
 
 #root {
   min-height: 100svh;
 }
 
+/* type helpers */
 .disp { font-weight: 800; letter-spacing: -.01em; }
 .mono { font-variant-numeric: tabular-nums; }
+.stat-hero { font-weight: 900; letter-spacing: -.03em; font-variant-numeric: tabular-nums; }
 
-input:focus-visible, select:focus-visible, button:focus-visible, summary:focus-visible {
+/* desktop chrome */
+* { scrollbar-width: thin; scrollbar-color: var(--rule) transparent; }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-thumb { background: var(--rule); border-radius: 8px; border: 2px solid var(--paper); }
+::-webkit-scrollbar-track { background: transparent; }
+
+::selection { background: var(--accent-bg); color: var(--ink); }
+
+input:focus-visible, select:focus-visible, textarea:focus-visible,
+button:focus-visible, summary:focus-visible, a:focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 1px;
 }
