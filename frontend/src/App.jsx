@@ -103,7 +103,7 @@ export default function App() {
           {tab === "engine" && <EngineTab profile={profile} summary={summary} refresh={refresh} openFoods={openFoods} openProfile={() => setTab("profile")} />}
           {tab === "plan" && <PlanTab profile={profile} summary={summary} refresh={refresh} />}
           {tab === "foods" && <FoodsTab onBack={() => setTab("recipes")} isAdmin={isAdmin} />}
-          {tab === "recipes" && <RecipesTab openFoods={openFoods} />}
+          {tab === "recipes" && <RecipesTab openFoods={openFoods} profile={profile} />}
         </main>
       </div>
     </div>

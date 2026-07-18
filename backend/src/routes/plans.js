@@ -4,7 +4,7 @@ const { requireAuth } = require("../lib/auth.js");
 const { computeMacros } = require("../lib/bmrEngine.js");
 const { getWeightNowKg } = require("../lib/weightNow.js");
 const { todayStr, mondayOf } = require("../lib/dates.js");
-const { generateWeekPlan, regenerateOneSlot, buildSlots, targetsForSlots } = require("../lib/weeklyPlanner.js");
+const { generateWeekPlan, regenerateOneSlot, buildSlots, targetsForSlots, scaleRecipe } = require("../lib/weeklyPlanner.js");
 const { generateDayCandidates, generateBestWeekPlan, alternatesForSlot, buildBias, applyPrepFilter } = require("../lib/mealSolver.js");
 const { buildCostCache } = require("../lib/recipeCost.js");
 const { recipeExcludedByStyle, matchesExclusionTerm } = require("../lib/dietaryFilter.js");
@@ -304,6 +304,111 @@ router.put("/:planId/slots/:slotId/apply", async (req, res) => {
     await upsertSlot(plan.id, record);
     const full = await prisma.planSlot.findFirst({ where: { planId: plan.id, dayOfWeek: target.dayOfWeek, slotType: target.slotType, slotIndex: target.slotIndex }, include: { recipe: true } });
     res.json(full);
+  } catch (e) {
+    res.status(e.status || 500).json({ error: e.message });
+  }
+});
+
+// Phase 5: place a specific recipe (from the library detail view) into a
+// chosen slot at a chosen serving scale. Pool membership = diet/allergy
+// compliance, exactly like accept-day.
+router.post("/place-recipe", async (req, res) => {
+  try {
+    const { dayOfWeek, slotType, slotIndex, recipeId, scale } = req.body || {};
+    if (!Number.isInteger(dayOfWeek) || dayOfWeek < 0 || dayOfWeek > 6) return res.status(400).json({ error: "dayOfWeek 0-6 required" });
+    const type = slotType === "snack" ? "snack" : "meal";
+    const idx = Number.isInteger(slotIndex) ? slotIndex : 0;
+    const s = Number(scale);
+    if (!(s >= 0.5 && s <= 2)) return res.status(400).json({ error: "scale must be between 0.5 and 2" });
+
+    const { recipePool } = await planContext(req.userId);
+    const recipe = recipePool.find((r) => r.id === recipeId);
+    if (!recipe) return res.status(400).json({ error: "recipe not in your allowed pool (diet/allergy rules or unknown id)" });
+
+    const monday = mondayOf(todayStr());
+    const plan = await prisma.plan.upsert({
+      where: { userId_startDate: { userId: req.userId, startDate: monday } },
+      update: {},
+      create: { userId: req.userId, startDate: monday },
+      include: { slots: true },
+    });
+    const existing = (plan.slots || []).find((x) => x.dayOfWeek === dayOfWeek && x.slotType === type && x.slotIndex === idx);
+    if (existing?.locked) return res.status(409).json({ error: "that slot is locked — unlock it first" });
+
+    const ingredients = recipe.ingredients.map((ing) => ({
+      foodId: ing.foodId, name: ing.food.name, role: ing.role,
+      grams: Math.round((ing.baseGrams * (ing.scalable ? s : 1)) / 5) * 5 || Math.round(ing.baseGrams * (ing.scalable ? s : 1)),
+    }));
+    const totals = ingredients.reduce((t, ing) => {
+      const food = recipe.ingredients.find((i) => i.foodId === ing.foodId).food;
+      const f = ing.grams / 100;
+      return { kcal: t.kcal + food.kcal * f, protein: t.protein + food.protein * f, fat: t.fat + food.fat * f, carb: t.carb + food.carb * f };
+    }, { kcal: 0, protein: 0, fat: 0, carb: 0 });
+
+    await upsertSlot(plan.id, {
+      dayOfWeek, slotType: type, slotIndex: idx,
+      recipeId: recipe.id, proteinScale: s, sidesScale: s,
+      ingredients, ...totals, warning: null, locked: false,
+    });
+    const full = await prisma.plan.findUnique({ where: { id: plan.id }, include: PLAN_INCLUDE });
+    res.json(full);
+  } catch (e) {
+    res.status(e.status || 500).json({ error: e.message });
+  }
+});
+
+// Phase 5: fill TODAY's slots from the cart, each recipe solver-scaled to
+// its slot's target. Locked slots keep their meals; extra cart items beyond
+// today's slot count are reported, not silently dropped.
+router.post("/fill-today-from-cart", async (req, res) => {
+  try {
+    const { dailyTarget, mealConfig, recipePool } = await planContext(req.userId);
+    const cart = await prisma.cartItem.findMany({ where: { userId: req.userId }, orderBy: { addedAt: "asc" } });
+    if (cart.length === 0) return res.status(400).json({ error: "your cart is empty" });
+
+    const poolById = new Map(recipePool.map((r) => [r.id, r]));
+    const usable = cart.map((c) => poolById.get(c.recipeId)).filter(Boolean);
+    const skippedForDiet = cart.length - usable.length;
+    if (usable.length === 0) return res.status(422).json({ error: "no cart recipe passes your current diet/allergy rules" });
+
+    const jsDay = new Date().getDay();
+    const today = jsDay === 0 ? 6 : jsDay - 1;
+    const monday = mondayOf(todayStr());
+    const plan = await prisma.plan.upsert({
+      where: { userId_startDate: { userId: req.userId, startDate: monday } },
+      update: {},
+      create: { userId: req.userId, startDate: monday },
+      include: { slots: true },
+    });
+
+    const dayTargets = targetsForSlots(dailyTarget, buildSlots(mealConfig)).filter((t) => t.dayOfWeek === 0);
+    let cartIdx = 0;
+    let placed = 0;
+    for (const target of dayTargets) {
+      if (cartIdx >= usable.length) break;
+      const existing = (plan.slots || []).find((x) => x.dayOfWeek === today && x.slotType === target.slotType && x.slotIndex === target.slotIndex);
+      if (existing?.locked) continue;
+      const recipe = usable[cartIdx++];
+      const scaled = scaleRecipe(recipe, target.kcalTarget, target.proteinTarget);
+      await upsertSlot(plan.id, {
+        dayOfWeek: today, slotType: target.slotType, slotIndex: target.slotIndex,
+        recipeId: recipe.id, proteinScale: scaled.proteinScale, sidesScale: scaled.sidesScale,
+        ingredients: scaled.ingredients, kcal: scaled.kcal, protein: scaled.protein, fat: scaled.fat, carb: scaled.carb,
+        warning: null, locked: false,
+      });
+      placed++;
+    }
+
+    const leftover = usable.length - cartIdx;
+    const full = await prisma.plan.findUnique({ where: { id: plan.id }, include: PLAN_INCLUDE });
+    res.json({
+      plan: full,
+      placed,
+      note: [
+        skippedForDiet ? `${skippedForDiet} cart item(s) skipped — outside your current diet/allergy rules.` : null,
+        leftover > 0 ? `${leftover} cart item(s) didn't fit today's ${dayTargets.length} slots.` : null,
+      ].filter(Boolean).join(" ") || null,
+    });
   } catch (e) {
     res.status(e.status || 500).json({ error: e.message });
   }

@@ -38,6 +38,9 @@ export const api = {
   getRecipes: () => request("/recipes"),
   generateRecipeDrafts: (params) => request("/recipes/generate-drafts", { method: "POST", body: JSON.stringify(params) }),
   saveRecipeDraft: (draft) => request("/recipes/save-draft", { method: "POST", body: JSON.stringify(draft) }),
+  importRecipe: (url) => request("/recipes/import", { method: "POST", body: JSON.stringify({ url }) }),
+  placeRecipe: (payload) => request("/plans/place-recipe", { method: "POST", body: JSON.stringify(payload) }),
+  fillTodayFromCart: () => request("/plans/fill-today-from-cart", { method: "POST" }),
   updateRecipe: (id, patch) => request(`/recipes/${id}`, { method: "PUT", body: JSON.stringify(patch) }),
   deleteRecipe: (id) => request(`/recipes/${id}`, { method: "DELETE" }),
 

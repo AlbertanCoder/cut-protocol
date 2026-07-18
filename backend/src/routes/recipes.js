@@ -63,8 +63,39 @@ router.post("/generate-drafts", async (req, res) => {
   }
 });
 
+// Phase 5: every save goes through the Phase 2 data validator — a recipe
+// built on a zero-macro placeholder or an invalid food row is rejected with
+// directions, never silently persisted. Cuisine is auto-classified when the
+// draft doesn't carry one; source is whitelisted (ai-generated | imported).
+const { validateFood } = require("../lib/foodValidation.js");
+const { loadFoodOverrides } = require("../lib/foodOverrides.js");
+const { classifyCuisine, CUISINES } = require("../lib/recipeCuisine.js");
+const { importRecipeFromUrl } = require("../lib/recipeImporter.js");
+
+function validateDraftFoods(ingredients, foodById) {
+  const problems = [];
+  const exemptions = loadFoodOverrides();
+  for (const ing of ingredients) {
+    const food = foodById.get(ing.foodId);
+    const { ok, issues } = validateFood(food, { exemptions });
+    if (!ok) {
+      const placeholder = issues.some((i) => i.code === "placeholder");
+      problems.push({
+        foodId: food.id, name: food.name,
+        reason: placeholder
+          ? "zero-macro placeholder — open it in the Food database and enter real values first"
+          : issues.map((i) => i.detail).join("; "),
+      });
+    }
+    if (!(Number(ing.grams) > 0)) {
+      problems.push({ foodId: food.id, name: food.name, reason: "amount must be above 0 g" });
+    }
+  }
+  return problems;
+}
+
 router.post("/save-draft", async (req, res) => {
-  const { name, description, cuisine, slotType, prepTimeMin, ingredients, steps } = req.body || {};
+  const { name, description, cuisine, slotType, prepTimeMin, ingredients, steps, source } = req.body || {};
   if (!name || !Array.isArray(ingredients) || ingredients.length === 0) {
     return res.status(400).json({ error: "name and at least one ingredient are required" });
   }
@@ -74,17 +105,39 @@ router.post("/save-draft", async (req, res) => {
   if (foods.length !== new Set(ingredients.map((i) => i.foodId)).size) {
     return res.status(400).json({ error: "one or more ingredient foodIds don't exist" });
   }
+
+  const problems = validateDraftFoods(ingredients, foodById);
+  if (problems.length) {
+    return res.status(422).json({ error: "recipe fails the data validator", invalidIngredients: problems });
+  }
+
   const macros = sumMacros(ingredients.map((i) => ({ food: foodById.get(i.foodId), grams: i.grams })));
+  const finalCuisine = cuisine && CUISINES.some((c) => c.key === cuisine)
+    ? cuisine
+    : classifyCuisine(name).cuisine;
 
   try {
     const recipe = await persistRecipe(
-      { name, description, cuisine, slotType, prepTimeMin, steps, ingredients, ...macros },
-      { source: "ai-generated" }
+      { name, description, cuisine: finalCuisine, slotType, prepTimeMin, steps, ingredients, ...macros },
+      { source: source === "imported" ? "imported" : "ai-generated" }
     );
     res.status(201).json(recipe);
   } catch (e) {
     if (e.code === "P2002") return res.status(409).json({ error: `a recipe named "${name}" already exists` });
     res.status(500).json({ error: e.message });
+  }
+});
+
+// Phase 5 importer: URL → reviewable draft (same shape as AI drafts — the
+// frontend reuses the draft editor). Nothing is saved here.
+router.post("/import", async (req, res) => {
+  const { url } = req.body || {};
+  if (typeof url !== "string" || !url.trim()) return res.status(400).json({ error: "url required" });
+  try {
+    const draft = await importRecipeFromUrl(url.trim());
+    res.json({ draft });
+  } catch (e) {
+    res.status(422).json({ error: e.message });
   }
 });
 
@@ -126,6 +179,10 @@ router.put("/:id", async (req, res) => {
     const foodById = new Map(foods.map((f) => [f.id, f]));
     if (foods.length !== new Set(ingredients.map((i) => i.foodId)).size) {
       return res.status(400).json({ error: "one or more ingredient foodIds don't exist" });
+    }
+    const problems = validateDraftFoods(ingredients, foodById);
+    if (problems.length) {
+      return res.status(422).json({ error: "recipe fails the data validator", invalidIngredients: problems });
     }
     Object.assign(patch, sumMacros(ingredients.map((i) => ({ food: foodById.get(i.foodId), grams: i.grams }))));
     await prisma.recipeIngredient.deleteMany({ where: { recipeId: recipe.id } });

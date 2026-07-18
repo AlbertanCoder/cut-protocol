@@ -154,6 +154,43 @@ challenged. Never suggest intake below the safety floor.
   Known cosmetic quirk: grocery SECTION classifier files "Butter Beans"
   under Dairy (name-keyword artifact; Phase 7 polish). Next: Phase 5 —
   recipes, cart, importer.
+- 2026-07-18 · **Phase 5 complete.** Recipe library rebuilt as grouped
+  browse — cuisine / meal-type / primary-protein groups (display taxonomy
+  from ingredient keywords), search, sort by name / kcal / protein density
+  (g P per 100 kcal shown per row) — no more endless scroll. Expandable
+  detail view: ×0.5–×2 serving scale with live macros+grams, add-to-plan-
+  slot picker (new POST /plans/place-recipe — server re-validates pool
+  membership, 409s locked slots, clamps scale 0.5–2), cart toggle, inline
+  edit, confirmed delete. Cart card: macro totals, one-click grocery list,
+  and POST /plans/fill-today-from-cart (scales each cart recipe to today's
+  slot targets via scaleRecipe, skips locked slots, honest skipped/leftover
+  note). AI generation kept but hardened: every draft passes the Phase 2
+  food validator before save (422 names offenders incl. zero-macro
+  placeholders), cuisine auto-classified, source tagged — AI (green) /
+  IMPORTED (blue) badges; allergen override rebuilt as a loud red
+  per-generation checkbox that auto-resets after every generation. New URL
+  importer (`backend/src/lib/recipeImporter.js`): fetch → schema.org/Recipe
+  JSON-LD (@graph walk, HowToStep, ISO-8601 durations) → ingredient-line
+  parser (unicode fractions, ranges→midpoint, weight units exact, volume
+  via density table with `estimated` flags, piece weights, honest null when
+  unconvertible) → resolveIngredient match to the validated food DB →
+  per-serving grams → review DraftCard (amber importNotes, editable grams,
+  red placeholder warnings) → validated save tagged `imported`. Provider
+  seam (`PROVIDERS` array) structured for Spoonacular/Edamam later; NO paid
+  API integrated; USDA stays nutrition truth. Verified live in Chrome on
+  the vegan test account: real BudgetBytes import end-to-end (404 error
+  path also exercised honestly), density sort, ×2 placement confirmed in
+  Plan tab (fill-from-cart later re-scaled that unlocked slot, as
+  designed), cart fill-today, loud allergen box, 578 recipes hidden
+  honestly, protein grouping (Plant protein 19 / Other 33 — meat groups
+  correctly absent for vegan). 119 backend tests green (9 new importer),
+  oxlint + vite build clean. Known cosmetics: cuisine classifier misses
+  "Curried" (keys on "curry"; row editable), unit-after-name piece lines
+  ("2 garlic cloves", "2 15 oz. cans") fall to honest set-manually notes
+  rather than guessed grams. Browser-automation lesson: setting a React
+  input via scripted DOM setter leaves component state stale — the UI looks
+  cleared but filters don't reset; always drive React inputs with real key
+  events. Next: Phase 6 — app icon.
 
 ## Archive
 
