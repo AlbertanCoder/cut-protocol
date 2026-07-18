@@ -1,10 +1,11 @@
 import { useState } from "react";
 import {
-  TrendingDown, User, Activity, CalendarDays, BookOpen, TrendingUp,
+  User, Activity, CalendarDays, BookOpen, TrendingUp,
   Calculator, LogOut, ChevronsLeft, ChevronsRight,
 } from "lucide-react";
 import { C } from "../lib/theme.js";
 import { sidebarPref } from "../lib/storage.js";
+import CutMark from "./ui/CutMark.jsx";
 
 const kc = (n) => Math.round(n).toLocaleString("en-CA");
 
@@ -33,8 +34,8 @@ export default function Sidebar({ tab, setTab, profile, summary, onLogout }) {
     >
       {/* brand */}
       <div className={`flex items-center gap-3 px-4 pt-5 pb-4 ${collapsed ? "justify-center px-0" : ""}`}>
-        <div className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0" style={{ background: C.accent }}>
-          <TrendingDown size={20} strokeWidth={2.8} style={{ color: C.accentInk }} />
+        <div className="shrink-0 flex items-center justify-center">
+          <CutMark size={40} />
         </div>
         {!collapsed && (
           <div className="leading-none">

@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { TrendingDown } from "lucide-react";
 import { C } from "../lib/theme.js";
 import { Card, Btn } from "./ui/Parts.jsx";
+import CutMark from "./ui/CutMark.jsx";
 import { api } from "../lib/api.js";
 
 export default function LoginScreen({ onLoggedIn }) {
@@ -29,8 +29,8 @@ export default function LoginScreen({ onLoggedIn }) {
     <div className="min-h-svh flex items-center justify-center px-4" style={{ background: C.paper }}>
       <div className="w-full max-w-sm">
         <div className="flex items-center gap-3 mb-6 justify-center">
-          <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: C.accent }}>
-            <TrendingDown size={22} strokeWidth={2.8} style={{ color: C.accentInk }} />
+          <div className="flex items-center justify-center">
+            <CutMark size={44} />
           </div>
           <div className="leading-none">
             <div className="text-xl font-black uppercase" style={{ color: C.ink, letterSpacing: ".01em" }}>Cut Protocol</div>

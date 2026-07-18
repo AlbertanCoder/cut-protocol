@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo } from "react";
-import { TrendingDown, ArrowRight, ArrowLeft, Check, Search, AlertTriangle } from "lucide-react";
+import { ArrowRight, ArrowLeft, Check, Search, AlertTriangle } from "lucide-react";
+import CutMark from "./ui/CutMark.jsx";
 import { C } from "../lib/theme.js";
 import { parseWeight, parseHeight, weightUnit, heightUnit } from "../lib/units.js";
 import { Btn } from "./ui/Parts.jsx";
@@ -99,8 +100,8 @@ export default function SetupWizard({ onDone }) {
     <div className="min-h-svh flex items-center justify-center px-6 py-10" style={{ background: C.paper }}>
       <div className="w-full max-w-2xl">
         <div className="flex items-center gap-3 mb-6">
-          <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: C.accent }}>
-            <TrendingDown size={22} strokeWidth={2.8} style={{ color: C.accentInk }} />
+          <div className="flex items-center justify-center">
+            <CutMark size={44} />
           </div>
           <div className="leading-none">
             <div className="font-black text-lg uppercase" style={{ color: C.ink }}>Cut Protocol</div>

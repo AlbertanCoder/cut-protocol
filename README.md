@@ -1,8 +1,14 @@
+<img src="assets/icon/png/icon-128.png" width="96" height="96" align="left" alt="Cut Protocol — shield badge icon">
+
 # Cut Protocol
 
 [![CI](https://github.com/AlbertanCoder/cut-protocol/actions/workflows/ci.yml/badge.svg)](https://github.com/AlbertanCoder/cut-protocol/actions/workflows/ci.yml)
 
 A cutting-focused nutrition coach — calibrated calorie targets, AI-assisted weekly meal planning, and honest weigh-in trend tracking.
+
+<br clear="left">
+
+> **Branding:** the shield-badge mark (a geometric six-pack inside a shield, athletic green `#2FD576` on charcoal) lives in `assets/icon/` — SVG masters (`cutprotocol-outline.svg` for 48px+, inverted `cutprotocol-solid.svg` for small sizes), the rendered PNG set, and the multi-size `CutProtocol.ico` at the repo root that Electron and the Windows build consume. The in-app mark is `frontend/src/components/ui/CutMark.jsx`.
 
 ## What it does
 

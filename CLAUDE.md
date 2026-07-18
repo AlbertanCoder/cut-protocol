@@ -191,6 +191,30 @@ challenged. Never suggest intake below the safety floor.
   input via scripted DOM setter leaves component state stale — the UI looks
   cleared but filters don't reset; always drive React inputs with real key
   events. Next: Phase 6 — app icon.
+- 2026-07-18 · **Phase 6 complete.** New brand mark: shield badge with a
+  geometric six-pack grid (2×3 rounded blocks, bottom row tapered into the
+  shield's point), athletic green #2FD576 on charcoal #131715 — both theme
+  tokens. Two SVG masters in `assets/icon/`: `cutprotocol-outline.svg`
+  (green outline shield + green blocks, used ≥48px) and
+  `cutprotocol-solid.svg` (inverted: solid green shield, dark carved
+  blocks, wider gaps sized so every separation ≥1px at 16px — used ≤32px).
+  All four spec sizes rendered and approved by Shad before applying
+  (16px taskbar legibility confirmed on dark AND light taskbar sims).
+  Applied: `CutProtocol.ico` regenerated (256/64/48 outline + 32/24/16
+  solid; directory entries parse-verified) — filename unchanged so
+  electron/main.cjs and build.win.icon needed no edits; PNG set in
+  `assets/icon/png/`; `frontend/public/favicon.svg` (link in index.html
+  was dangling scaffold — now real); index.html title "cut-protocol" →
+  "Cut Protocol"; new `ui/CutMark.jsx` (bare solid shield on theme tokens)
+  replaces the TrendingDown-in-green-tile mark in Sidebar, LoginScreen,
+  and SetupWizard; README gets the icon + a branding section. Verified:
+  oxlint + vite build clean, Electron dev boot clean, `npm run dist` exit
+  0, and the icon EXTRACTED from both the built `Cut Protocol.exe` and the
+  NSIS installer visually confirmed as the new shield (ExtractAssociatedIcon
+  → PNG → eyeball). Sidebar mark zoom-checked crisp in Chrome. Icon build
+  tooling (sharp + png-to-ico) lives in the session scratchpad, NOT the
+  repo — rebuilding the .ico needs those two packages against the SVG
+  masters. Next: Phase 7 — polish/QA.
 
 ## Archive
 
