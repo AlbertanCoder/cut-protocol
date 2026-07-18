@@ -12,6 +12,8 @@ import EngineTab from "./components/EngineTab.jsx";
 import PlanTab from "./components/PlanTab.jsx";
 import FoodsTab from "./components/FoodsTab.jsx";
 import RecipesTab from "./components/RecipesTab.jsx";
+import TrainingTab from "./components/TrainingTab.jsx";
+import { TRAINING } from "./lib/flags.js";
 
 export default function App() {
   const [authStatus, setAuthStatus] = useState("checking"); // checking | out | in
@@ -19,6 +21,11 @@ export default function App() {
   const [summary, setSummary] = useState(null);
   const [needsSetup, setNeedsSetup] = useState(false);
   const [tab, setTab] = useState("today");
+  // If the training flag is flipped off while Training is the active tab,
+  // land on Today instead of a blank pane.
+  useEffect(() => {
+    if (tab === "training" && TRAINING !== "on") setTab("today");
+  }, [tab]);
   const [error, setError] = useState(null);
   const [isAdmin, setIsAdmin] = useState(false);
 
@@ -104,6 +111,7 @@ export default function App() {
           {tab === "plan" && <PlanTab profile={profile} summary={summary} refresh={refresh} />}
           {tab === "foods" && <FoodsTab onBack={() => setTab("recipes")} isAdmin={isAdmin} />}
           {tab === "recipes" && <RecipesTab openFoods={openFoods} profile={profile} />}
+          {tab === "training" && TRAINING === "on" && <TrainingTab />}
         </main>
       </div>
     </div>

@@ -55,6 +55,11 @@ export const api = {
   generateGroceryList: (planId) => request(`/plans/${planId}/grocery-list`, { method: "POST" }),
   checkGroceryItem: (planId, name, checked) => request(`/plans/${planId}/grocery-list/check`, { method: "PUT", body: JSON.stringify({ name, checked }) }),
 
+  getTrainingMeta: () => request("/training/meta"),
+  getTrainingPlan: () => request("/training"),
+  generateTrainingPlan: (inputs) => request("/training/generate", { method: "POST", body: JSON.stringify(inputs) }),
+  deleteTrainingPlan: () => request("/training", { method: "DELETE" }),
+
   getCart: () => request("/cart"),
   addToCart: (recipeId) => request("/cart", { method: "POST", body: JSON.stringify({ recipeId }) }),
   removeFromCart: (recipeId) => request(`/cart/${recipeId}`, { method: "DELETE" }),

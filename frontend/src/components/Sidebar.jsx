@@ -1,9 +1,10 @@
 import { useState } from "react";
 import {
   User, Activity, CalendarDays, BookOpen, TrendingUp,
-  Calculator, LogOut, ChevronsLeft, ChevronsRight,
+  Calculator, Dumbbell, LogOut, ChevronsLeft, ChevronsRight,
 } from "lucide-react";
 import { C } from "../lib/theme.js";
+import { TRAINING } from "../lib/flags.js";
 import { sidebarPref } from "../lib/storage.js";
 import CutMark from "./ui/CutMark.jsx";
 
@@ -14,6 +15,9 @@ const NAV = [
   { id: "today", label: "Today", icon: Activity },
   { id: "plan", label: "Plan", icon: CalendarDays },
   { id: "recipes", label: "Recipes", icon: BookOpen },
+  // Training ships behind a flag (frontend/src/lib/flags.js): "on" |
+  // "soon" (greyed, SOON chip, not clickable) | "hidden".
+  ...(TRAINING !== "hidden" ? [{ id: "training", label: "Training", icon: Dumbbell, soon: TRAINING === "soon" }] : []),
   { id: "trend", label: "Trend", icon: TrendingUp },
   { id: "engine", label: "Engine", icon: Calculator },
 ];
@@ -53,14 +57,18 @@ export default function Sidebar({ tab, setTab, profile, summary, onLogout }) {
           return (
             <button
               key={t.id}
-              onClick={() => setTab(t.id)}
-              title={collapsed ? t.label : undefined}
+              onClick={t.soon ? undefined : () => setTab(t.id)}
+              disabled={t.soon}
+              title={t.soon ? "Coming soon" : collapsed ? t.label : undefined}
               className={`relative flex items-center gap-3 rounded-xl font-bold text-[13px] transition-colors duration-100 ${collapsed ? "justify-center py-2.5" : "px-3 py-2.5"}`}
-              style={{ color: active ? C.accent : C.faint, background: active ? C.accentBg : "transparent" }}
+              style={{ color: active ? C.accent : C.faint, background: active ? C.accentBg : "transparent", opacity: t.soon ? 0.45 : 1, cursor: t.soon ? "default" : "pointer" }}
             >
               {active && <span className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-5 rounded-full" style={{ background: C.accent }}></span>}
               <Icon size={18} strokeWidth={active ? 2.5 : 2} />
               {!collapsed && t.label}
+              {!collapsed && t.soon && (
+                <span className="ml-auto text-[9px] font-extrabold px-1.5 py-0.5 rounded" style={{ background: C.card2, color: C.faintLight, border: `1px solid ${C.rule}` }}>SOON</span>
+              )}
             </button>
           );
         })}

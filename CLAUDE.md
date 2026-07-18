@@ -253,6 +253,34 @@ challenged. Never suggest intake below the safety floor.
   food diary yet (Today shows planned, honestly labeled), Est. total on
   grocery hides when coverage low (by design). Next: Phase 8 (optional
   training scaffold) or backlog.
+- 2026-07-18 · **Phase 8 complete — the staged overhaul is DONE (0–8).**
+  Training scaffold, deliberately v1 and deliberately separate from the
+  meal engine (own Prisma models, own `src/lib/training/` + route file;
+  zero imports across the boundary). Data model: TrainingPlan →
+  TrainingWeek → TrainingSession → TrainingExercise (sets / reps-as-string
+  for ranges+time / nullable RPE / rest), cascade deletes, one active plan
+  per user (regenerate replaces transactionally). Migration
+  `20260718203518_training_scaffold`. v1 generator (`generator.js`, pure
+  functions): four templates (2-day + 3-day full body, 4-day upper/lower,
+  3-day conditioning circuits) matched from inputs — conditioning style
+  overrides, otherwise days pick the split, >4 days told honestly "walk,
+  don't add junk volume"; equipment tiers resolve exercise variants
+  (barbell > dumbbells > bands > bodyweight; full-gym implies all);
+  style×experience prescription tables (strength 4-6 @RPE7-8,
+  hypertrophy 8-12, general 8-10, conditioning timed circuits w/ null
+  RPE); session length trims accessories never mains; 4 weeks with honest
+  double-progression notes, not fake periodization. Routes:
+  GET /api/training(+/meta), POST /generate (422 w/ reasons), DELETE.
+  UI: `flags.js` — TRAINING = "on" | "soon" | "hidden" (soon = greyed
+  SOON-chip nav item; hidden = gone; App falls back to Today if the flag
+  flips while the tab is active); TrainingTab = functional inputs
+  (days/length/style/experience/equipment pills) + V1 TEMPLATES badge +
+  week-chip plan view with per-session exercise tables. Verified live on
+  qa7: generated 3-Day Full Body (beginner hypertrophy: mains 3×8-12
+  @RPE7, barbell variants from full-gym), flag toggled to "soon" and back
+  with HMR — both states confirmed in the sidebar. 130 tests green
+  (10 new generator tests incl. equipment-floor and trim-never-mains
+  guards), oxlint + vite build clean.
 
 ## Archive
 

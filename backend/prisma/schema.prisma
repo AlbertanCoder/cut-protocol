@@ -31,6 +31,7 @@ model User {
   plans        Plan[]
   cartItems    CartItem[]
   recipes      Recipe[]
+  trainingPlan TrainingPlan?
 }
 
 // All physical quantities stored in SI (kg, cm) regardless of the user's
@@ -227,4 +228,67 @@ model CartItem {
   addedAt   DateTime @default(now())
 
   @@unique([userId, recipeId])
+}
+
+// ── Training scaffold (Phase 8) ─────────────────────────────────────────
+// Deliberately separate from the meal engine: nothing here references
+// Recipe/Food/Plan, and the meal code never reads these tables. The tree
+// is plan → weeks → sessions → exercises, mirroring how a program is
+// actually periodized, so later versions (deloads, per-week progression,
+// exercise swaps, logging actual lifts) fit without a schema rewrite.
+
+model TrainingPlan {
+  id               String   @id @default(cuid())
+  userId           String   @unique // v1: one active plan; regenerating replaces it
+  user             User     @relation(fields: [userId], references: [id])
+  name             String
+  // The inputs the generator matched on — kept so regenerate can pre-fill
+  // the form and the plan can explain why it looks the way it does.
+  style            String // "strength" | "hypertrophy" | "general" | "conditioning"
+  experience       String // "beginner" | "intermediate" | "advanced"
+  daysPerWeek      Int
+  sessionLengthMin Int
+  equipment        Json // string[] of equipment keys
+  templateKey      String // which v1 template was chosen
+  generator        String   @default("v1-templates") // provenance label
+  createdAt        DateTime @default(now())
+  weeks            TrainingWeek[]
+}
+
+model TrainingWeek {
+  id         String            @id @default(cuid())
+  planId     String
+  plan       TrainingPlan      @relation(fields: [planId], references: [id], onDelete: Cascade)
+  weekNumber Int // 1-based
+  note       String? // week-level coaching note (progression guidance in v1)
+  sessions   TrainingSession[]
+
+  @@unique([planId, weekNumber])
+}
+
+model TrainingSession {
+  id        String             @id @default(cuid())
+  weekId    String
+  week      TrainingWeek       @relation(fields: [weekId], references: [id], onDelete: Cascade)
+  dayIndex  Int // 0-based order within the week — not tied to calendar days
+  name      String // "Full Body A", "Upper 1", …
+  focus     String?
+  exercises TrainingExercise[]
+
+  @@unique([weekId, dayIndex])
+}
+
+model TrainingExercise {
+  id        String          @id @default(cuid())
+  sessionId String
+  session   TrainingSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  order     Int
+  name      String
+  sets      Int
+  reps      String // "5", "8-12", "40s" — ranges and time-based work are real prescriptions
+  rpe       Float? // null where RPE isn't the dial (conditioning circuits)
+  restSec   Int?
+  notes     String?
+
+  @@unique([sessionId, order])
 }
