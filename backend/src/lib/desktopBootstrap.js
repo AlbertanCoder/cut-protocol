@@ -74,11 +74,45 @@ function getTemplateDbPath() {
  *     `node server.js` run outside a packaged Electron app with the env
  *     var set manually for testing).
  */
+// A real SQLite database starts with the 16-byte "SQLite format 3\0" magic
+// and is at least one 512-byte page. Stage-C fix (M6): Prisma creates a 0-byte
+// file at a missing DATABASE_URL path, and a failed/partial template copy
+// (disk full, AV interference, crash) leaves a truncated file — both used to
+// be treated as "initialized" by a bare existsSync, bricking every launch.
+function isValidSqlite(filePath) {
+  try {
+    if (fs.statSync(filePath).size < 512) return false;
+    const fd = fs.openSync(filePath, "r");
+    try {
+      const header = Buffer.alloc(16);
+      fs.readSync(fd, header, 0, 16, 0);
+      return header.toString("latin1").startsWith("SQLite format 3");
+    } finally {
+      fs.closeSync(fd);
+    }
+  } catch {
+    return false;
+  }
+}
+
 function ensureDatabaseReady() {
   const dbPath = process.env.CUT_PROTOCOL_DB_PATH;
   if (!dbPath) return; // normal dev mode, nothing to do
 
-  if (fs.existsSync(dbPath)) return; // already initialized, don't touch it
+  if (fs.existsSync(dbPath)) {
+    if (isValidSqlite(dbPath)) return; // already initialized, don't touch it
+    // A file exists but isn't a valid SQLite DB — a failed/partial first-run
+    // copy. Preserve it (never delete possible user data) under a .corrupt
+    // name and re-initialize from the template below, so the install self-heals.
+    const backup = `${dbPath}.corrupt-${Date.now()}`;
+    try {
+      fs.renameSync(dbPath, backup);
+      console.warn(`[desktopBootstrap] Invalid database at ${dbPath} (0-byte or truncated); moved to ${backup} and re-initializing from template.`);
+    } catch (e) {
+      console.error(`[desktopBootstrap] Invalid database at ${dbPath} and could not move it aside: ${e.message}`);
+      return;
+    }
+  }
 
   const dir = path.dirname(dbPath);
   fs.mkdirSync(dir, { recursive: true });
@@ -97,4 +131,4 @@ function ensureDatabaseReady() {
   console.log(`[desktopBootstrap] Initialized database at ${dbPath} from packaged template.`);
 }
 
-module.exports = { ensureDatabaseReady, getTemplateDbPath, TEMPLATE_DB_FILENAME };
+module.exports = { ensureDatabaseReady, getTemplateDbPath, TEMPLATE_DB_FILENAME, isValidSqlite };

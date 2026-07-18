@@ -189,16 +189,25 @@ router.put("/:id", async (req, res) => {
       return res.status(422).json({ error: "recipe fails the data validator", invalidIngredients: problems });
     }
     Object.assign(patch, sumMacros(ingredients.map((i) => ({ food: foodById.get(i.foodId), grams: i.grams }))));
-    await prisma.recipeIngredient.deleteMany({ where: { recipeId: recipe.id } });
-    await prisma.recipeIngredient.createMany({
-      data: ingredients.map((i) => ({
-        recipeId: recipe.id, foodId: i.foodId, baseGrams: i.grams, scalable: i.scalable ?? true, role: i.role || null,
-      })),
-    });
   }
 
   try {
-    const updated = await prisma.recipe.update({ where: { id: recipe.id }, data: patch, include: RECIPE_INCLUDE });
+    // Stage-C fix (M5): the ingredient replacement and the recipe update run
+    // in ONE transaction. Before, a P2002 name collision on the update (a
+    // handled 409) left the ingredients already replaced under the old cached
+    // macros — wrong nutrition data the solver then consumes; a crash between
+    // the delete and create left the recipe with zero ingredients.
+    const updated = await prisma.$transaction(async (tx) => {
+      if (ingredients !== undefined) {
+        await tx.recipeIngredient.deleteMany({ where: { recipeId: recipe.id } });
+        await tx.recipeIngredient.createMany({
+          data: ingredients.map((i) => ({
+            recipeId: recipe.id, foodId: i.foodId, baseGrams: i.grams, scalable: i.scalable ?? true, role: i.role || null,
+          })),
+        });
+      }
+      return tx.recipe.update({ where: { id: recipe.id }, data: patch, include: RECIPE_INCLUDE });
+    });
     res.json(updated);
   } catch (e) {
     if (e.code === "P2002") return res.status(409).json({ error: `a recipe named "${name}" already exists` });

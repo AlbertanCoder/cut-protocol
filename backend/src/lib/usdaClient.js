@@ -50,7 +50,11 @@ async function searchFoods(query, { includeBranded = false, pageSize = 10 } = {}
   const params = new URLSearchParams({ api_key: apiKey(), query, pageSize: String(pageSize) });
   if (!includeBranded) params.set("dataType", PREFERRED_DATA_TYPES);
 
-  const res = await fetch(`${BASE}/foods/search?${params.toString()}`);
+  // Stage-C fix (#30): bound the request so a hung (not cleanly-offline)
+  // network can't leave the import / AI-draft flow spinning for minutes —
+  // mirrors recipeImporter's own 12s cap. A clean offline failure already
+  // fast-fails and is caught by ingredientResolver (placeholder fallback).
+  const res = await fetch(`${BASE}/foods/search?${params.toString()}`, { signal: AbortSignal.timeout(10000) });
   if (!res.ok) throw new Error(`USDA search failed: ${res.status}`);
   const json = await res.json();
   return (json.foods || []).map(normalize);

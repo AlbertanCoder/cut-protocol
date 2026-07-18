@@ -75,6 +75,24 @@ function loadPackagedBackendEnv() {
 
 loadPackagedBackendEnv();
 
+// Stage-C fix (M3): single-instance lock. Without it, double-launching the
+// installed app started a SECOND in-process backend that raced for port 3001;
+// the loser threw an uncaught EADDRINUSE dialog and then rode the first
+// instance's server (or, if a foreign process held 3001, silently read the
+// wrong database). Acquire the lock BEFORE requiring the backend so the second
+// instance never binds the port — it just focuses the existing window and quits.
+if (!app.requestSingleInstanceLock()) {
+  app.quit();
+  process.exit(0);
+}
+app.on("second-instance", () => {
+  if (mainWindow) {
+    if (mainWindow.isMinimized()) mainWindow.restore();
+    mainWindow.show();
+    mainWindow.focus();
+  }
+});
+
 // ---------------------------------------------------------------------------
 // 1. Resolve env vars BEFORE requiring the backend. backend/server.js's very
 //    first line is `require("dotenv/config")`, and dotenv does NOT overwrite
