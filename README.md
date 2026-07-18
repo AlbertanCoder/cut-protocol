@@ -65,6 +65,7 @@ Fill in `backend/.env`:
 **3. Set up the database and seed an account:**
 
 ```
+npx prisma generate
 npx prisma migrate deploy
 npm run seed
 npm run seed:recipes
