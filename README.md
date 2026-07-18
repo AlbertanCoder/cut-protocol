@@ -1,5 +1,7 @@
 # Cut Protocol
 
+[![CI](https://github.com/AlbertanCoder/cut-protocol/actions/workflows/ci.yml/badge.svg)](https://github.com/AlbertanCoder/cut-protocol/actions/workflows/ci.yml)
+
 A cutting-focused nutrition coach — calibrated calorie targets, AI-assisted weekly meal planning, and honest weigh-in trend tracking.
 
 ## What it does
