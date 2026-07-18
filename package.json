@@ -7,7 +7,7 @@
   "scripts": {
     "start": "electron .",
     "build:frontend": "npm --prefix frontend run build",
-    "dist": "npm run build:frontend && electron-builder"
+    "dist": "npm run build:frontend && npm --prefix backend run build:dbtemplate && electron-builder"
   },
   "devDependencies": {
     "electron": "^43.1.1",
