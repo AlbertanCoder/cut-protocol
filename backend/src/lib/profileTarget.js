@@ -11,8 +11,8 @@ async function recomputeTarget(userId) {
   if (!profile) return null;
   const weightKg = await getWeightNowKg(userId, profile);
   const energy = computeEnergy(profile, weightKg);
-  const t = deriveTarget(profile, energy.tdee);
-  const safety = rateSafety(profile, weightKg, energy.tdee);
+  const t = deriveTarget(profile, energy.tdee, energy.rmr);
+  const safety = rateSafety(profile, weightKg, energy.tdee, energy.rmr);
   if (profile.targetKcal !== t.target) {
     await prisma.profile.update({ where: { userId }, data: { targetKcal: t.target } });
   }

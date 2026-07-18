@@ -50,8 +50,8 @@ router.get("/summary", async (req, res) => {
 
   const weightNowKg = avg7Kg != null ? avg7Kg : profile.startWeightKg;
   const energy = computeEnergy(profile, weightNowKg);
-  const target = deriveTarget(profile, energy.tdee);
-  const safety = rateSafety(profile, weightNowKg, energy.tdee);
+  const target = deriveTarget(profile, energy.tdee, energy.rmr);
+  const safety = rateSafety(profile, weightNowKg, energy.tdee, energy.rmr);
   const v = verdict({ rate, chosenRate: profile.rateLbPerWeek, daysIn, atFloor: target.floored });
   const macros = computeMacros(profile, weightNowKg, target.target);
 

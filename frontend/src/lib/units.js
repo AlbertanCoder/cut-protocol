@@ -23,5 +23,7 @@ export const parseHeight = (val, pref) => (pref === "metric" ? val : in2cm(val))
 // rate is stored in lb/wk (the option menu's native unit)
 export const displayRate = (lbPerWk, pref) => (lbPerWk == null ? null : r1(pref === "metric" ? lbPerWk * 0.453592 : lbPerWk));
 
-// sane weigh-in bounds in the DISPLAY unit (mirrors the backend's 35–300 kg)
-export const weightInputBounds = (pref) => (pref === "metric" ? { min: 35, max: 300 } : { min: 77, max: 660 });
+// sane weigh-in bounds in the DISPLAY unit (mirrors the backend's 35–300 kg).
+// Imperial min is 78, not 77: 77 lb = 34.9 kg, which the backend's <35 kg
+// guard rejects — the stated minimum must actually be accepted (Stage-C #29).
+export const weightInputBounds = (pref) => (pref === "metric" ? { min: 35, max: 300 } : { min: 78, max: 660 });

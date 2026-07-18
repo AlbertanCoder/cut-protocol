@@ -122,3 +122,66 @@ test("verdict bands derive from the CHOSEN rate — no hardcoded personal band",
 test("rate options are exactly the spec's menu", () => {
   assert.deepEqual(RATE_OPTIONS, [0.25, 0.5, 0.75, 1.0, 1.25, 1.5, 2.0]);
 });
+
+// ===================================================================
+// STAGE C AUDIT REGRESSION GUARDS
+// ===================================================================
+
+// Mandated: BMR math must match PUBLISHED formulas, not just look plausible.
+// Each expected value is hand-computed from the source equation.
+test("REGRESSION (Stage C): every BMR formula reproduces its published value to the kcal", () => {
+  const kg = 80, cm = 178, one = (p, k) => Math.round(bmrRows(p, kg).find((r) => r.key === k).v);
+  const M = { sex: "M", heightCm: cm, bodyFatPct: 20, excludedFormulas: [] };
+  const F = { sex: "F", heightCm: cm, bodyFatPct: 28, excludedFormulas: [] };
+  // Mifflin–St Jeor: 10kg + 6.25cm - 5a ± (5 M / -161 F)
+  assert.equal(one({ ...M, age: 40 }, "mifflin"), Math.round(10 * 80 + 6.25 * 178 - 5 * 40 + 5));
+  assert.equal(one({ ...F, age: 40 }, "mifflin"), Math.round(10 * 80 + 6.25 * 178 - 5 * 40 - 161));
+  // Harris–Benedict (1984 revised)
+  assert.equal(one({ ...M, age: 40 }, "harris"), Math.round(88.362 + 13.397 * 80 + 4.799 * 178 - 5.677 * 40));
+  // Katch–McArdle & Cunningham off LBM (20% BF → LBM 64 kg)
+  assert.equal(one({ ...M, age: 40 }, "katch"), Math.round(370 + 21.6 * 64));
+  assert.equal(one({ ...M, age: 40 }, "cunningham"), Math.round(500 + 22 * 64));
+});
+
+// Mandated + fixes the Oxford 60/70 band (#27): Henry 2005's four adult bands,
+// both sexes, at published coefficients.
+test("REGRESSION (Stage C / #27): Oxford (Henry) uses all four canonical age bands", () => {
+  const kg = 80, ox = (sex, age) => Math.round(bmrRows({ sex, heightCm: 175, bodyFatPct: 0, age, excludedFormulas: [] }, kg).find((r) => r.key === "oxford").v);
+  assert.equal(ox("M", 25), Math.round(16.0 * 80 + 545), "M 18-30");
+  assert.equal(ox("M", 45), Math.round(14.2 * 80 + 593), "M 30-60");
+  assert.equal(ox("M", 65), Math.round(13.0 * 80 + 567), "M 60-70 (was the merged non-canonical band)");
+  assert.equal(ox("M", 75), Math.round(13.7 * 80 + 481), "M >70");
+  assert.equal(ox("F", 25), Math.round(13.1 * 80 + 558), "F 18-30");
+  assert.equal(ox("F", 45), Math.round(9.74 * 80 + 694), "F 30-60");
+  assert.equal(ox("F", 65), Math.round(10.2 * 80 + 572), "F 60-70");
+  assert.equal(ox("F", 75), Math.round(10.0 * 80 + 577), "F >70");
+});
+
+// Mandated: the calorie floor. The constitution's RMR×0.95 rail was missing —
+// a high-RMR user at an aggressive rate could be prescribed below it.
+test("REGRESSION (Stage C / M1): the RMR×0.95 floor engages above the sex minimum", () => {
+  // RMR 2060 → RMR×0.95 = 1957, which is above the 1500 M sex floor.
+  const floorWithRmr = effectiveFloor({ sex: "M", floorKcal: null }, 2060);
+  assert.equal(floorWithRmr, Math.round(2060 * 0.95), "floor rises to RMR×0.95 = 1957");
+
+  // Aggressive-rate target must clamp UP to that floor, not to 1500.
+  const t = deriveTarget({ sex: "M", rateLbPerWeek: 2.0, floorKcal: null }, 2471, 2060);
+  assert.equal(t.raw, 1471, "TDEE 2471 − 1000 deficit");
+  assert.equal(t.floor, 1957, "floor is RMR×0.95, not the 1500 sex minimum");
+  assert.equal(t.target, 1957, "target clamps to the RMR floor — no longer ~450 kcal below it");
+  assert.equal(t.floored, true);
+
+  // The sex/user floors still win when they are stricter (higher).
+  assert.equal(effectiveFloor({ sex: "M", floorKcal: 2100 }, 2060), 2100, "user floor still beats a lower RMR floor");
+  // Low-RMR user: RMR×0.95 below the sex floor → sex floor wins, unchanged.
+  assert.equal(effectiveFloor({ sex: "F", floorKcal: null }, 1200), SAFE_FLOOR.F, "1200×0.95=1140 < 1200 F floor");
+});
+
+// Fix #28: macro carbs must never render negative for a lean/heavy/floored user.
+test("REGRESSION (Stage C / #28): carb range never goes negative when protein+fat exceed target", () => {
+  const { computeMacros } = require("../src/lib/bmrEngine.js");
+  // 120 kg, 8% BF, floored 1500 kcal target → protein+fat midpoint > target.
+  const m = computeMacros({ bodyFatPct: 8 }, 120, 1500);
+  assert.ok(m.carbMid >= 0, `carbMid must be >= 0, got ${m.carbMid}`);
+  assert.ok(m.carbLo >= 0 && m.carbHi >= 0, `carb range must be non-negative, got ${m.carbLo}–${m.carbHi}`);
+});

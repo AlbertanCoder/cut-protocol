@@ -29,9 +29,13 @@ const FORMULAS = [
   {
     key: "oxford", label: "Oxford (Henry)",
     applicable: () => true,
+    // Henry 2005 publishes FOUR adult bands (18-30, 30-60, 60-70, >70).
+    // Stage-C fix: the old code merged the two over-60 bands into one
+    // non-canonical line (13.5/514 M, 10.1/569 F) matching neither. Now the
+    // real 60-70 and >70 coefficients are used.
     fn: ({ kg, a, male }) => male
-      ? (a < 30 ? 16 * kg + 545 : a < 60 ? 14.2 * kg + 593 : 13.5 * kg + 514)
-      : (a < 30 ? 13.1 * kg + 558 : a < 60 ? 9.74 * kg + 694 : 10.1 * kg + 569),
+      ? (a < 30 ? 16 * kg + 545 : a < 60 ? 14.2 * kg + 593 : a < 70 ? 13.0 * kg + 567 : 13.7 * kg + 481)
+      : (a < 30 ? 13.1 * kg + 558 : a < 60 ? 9.74 * kg + 694 : a < 70 ? 10.2 * kg + 572 : 10.0 * kg + 577),
   },
   {
     key: "harris", label: "Harris–Benedict",
@@ -126,16 +130,22 @@ const RATE_OPTIONS = [0.25, 0.5, 0.75, 1.0, 1.25, 1.5, 2.0]; // lb/wk
 const SAFE_FLOOR = { M: 1500, F: 1200 }; // kcal/day
 const KCAL_PER_LB = 3500;
 
-function effectiveFloor(profile) {
+// The floor is the STRICTEST (highest) of: the sex minimum (1500 M / 1200 F),
+// the user's own floor, and — Stage-C fix (M1) — the constitution's
+// RMR×0.95 rail. Without the RMR term a high-RMR user at an aggressive rate
+// could be prescribed ~450 kcal below the documented minimum. `rmr` is the
+// BMR average (resting metabolic rate); pass it from computeEnergy().rmr.
+function effectiveFloor(profile, rmr) {
   const sexFloor = SAFE_FLOOR[profile.sex] ?? SAFE_FLOOR.M;
-  return Math.max(sexFloor, profile.floorKcal || 0);
+  const rmrFloor = rmr > 0 ? Math.round(rmr * 0.95) : 0;
+  return Math.max(sexFloor, rmrFloor, profile.floorKcal || 0);
 }
 
-function deriveTarget(profile, tdee) {
+function deriveTarget(profile, tdee, rmr) {
   const rate = profile.rateLbPerWeek ?? 1.0;
   const deficit = Math.round((rate * KCAL_PER_LB) / 7);
   const raw = Math.round(tdee - deficit);
-  const floor = effectiveFloor(profile);
+  const floor = effectiveFloor(profile, rmr);
   const target = Math.max(raw, floor);
   return { rate, deficit, raw, target, floor, floored: raw < floor };
 }
@@ -145,10 +155,10 @@ function deriveTarget(profile, tdee) {
  * the derived target lands on/below the floor. Unsafe rates require an
  * explicit acknowledgement (profile.rateAcknowledged) — the route enforces it.
  */
-function rateSafety(profile, weightKg, tdee) {
+function rateSafety(profile, weightKg, tdee, rmr) {
   const rate = profile.rateLbPerWeek ?? 1.0;
   const pctOfBw = (rate / kg2lb(weightKg)) * 100;
-  const t = deriveTarget(profile, tdee);
+  const t = deriveTarget(profile, tdee, rmr);
   const reasons = [];
   if (pctOfBw > 1.0) {
     reasons.push(`${rate} lb/wk is ${pctOfBw.toFixed(2)}% of your body weight per week — above the ~1% guideline`);
@@ -172,7 +182,11 @@ function computeMacros(profile, weightKg, targetKcal) {
   const fatHi = Math.round(lbmLb * 0.4);
   const proteinMid = (proteinLo + proteinHi) / 2;
   const fatMid = (fatLo + fatHi) / 2;
-  const carbMid = Math.round((targetKcal - proteinMid * 4 - fatMid * 9) / 4) - CARB_MIDPOINT_BUFFER_G;
+  // Stage-C fix (#28): clamp carbs at 0. For a lean, heavy, floor-clamped
+  // target, protein+fat alone can exceed the calorie budget, which used to
+  // render nonsensical negative carb grams ("~0–-131 g") and a broken macro
+  // bar. Carbs simply floor at zero (protein+fat already meet the target).
+  const carbMid = Math.max(0, Math.round((targetKcal - proteinMid * 4 - fatMid * 9) / 4) - CARB_MIDPOINT_BUFFER_G);
   const macroKcalGap = Math.round(targetKcal - (proteinMid * 4 + fatMid * 9 + carbMid * 4));
   return {
     lbmLb,

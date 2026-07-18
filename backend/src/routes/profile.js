@@ -126,7 +126,7 @@ router.put("/", async (req, res) => {
   if (touchesRate) {
     const weightKg = await getWeightNowKg(req.userId, candidate);
     const energy = computeEnergy(candidate, weightKg);
-    const safety = rateSafety(candidate, weightKg, energy.tdee);
+    const safety = rateSafety(candidate, weightKg, energy.tdee, energy.rmr);
     if (safety.unsafe && body.rateAcknowledged !== true) {
       return res.status(422).json({ requiresAck: true, reasons: safety.reasons, error: "this rate needs an explicit confirmation" });
     }
