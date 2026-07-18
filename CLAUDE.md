@@ -215,6 +215,44 @@ challenged. Never suggest intake below the safety floor.
   tooling (sharp + png-to-ico) lives in the session scratchpad, NOT the
   repo — rebuilding the .ico needs those two packages against the SVG
   masters. Next: Phase 7 — polish/QA.
+- 2026-07-18 · **Phase 7 complete.** Professional-polish sweep. CONSISTENCY: terminology
+  unified on "meal plan" (PlanTab buttons/copy), dead light-mode theme
+  script removed from index.html (`.dark` class had no consumers), zero
+  hardcoded hexes confirmed outside theme tokens, login's narrow card is
+  intentional. EMPTY STATES: shared `EmptyNote` component; Today + Trend
+  charts get a "First point logged — curve starts with your second
+  weigh-in" state instead of a floating single dot (0-entry states
+  already existed). ERROR STATES: shared `ErrorNote` panel (icon + what
+  happened + what to DO); applied to PlanTab (top + slot), ProfileTab,
+  FoodsTab (names the Atwater rule), RecipesTab (import hint);
+  solver slot warnings now carry "→ Fix it with the swap button…" action
+  line; App-level refresh banner copy explains recovery. DATA FIXES:
+  grocery store-section classifier — fresh peppers (bell/jalapeño/…) now
+  produce not spices, dairy words with plant/legume qualifiers (Butter
+  Beans, Peanut Butter, Almond Milk) now veto dairy, "buttermilk" added
+  as real dairy (was silently "other"); cuisine classifier learned
+  "curried"; 18 legacy occasion-tag cuisines (weeknight/steakhouse/
+  breakfast/weekend) reclassified through the real classifier; the
+  imported Curried Chickpeas re-tagged indian. Tests updated: the two
+  "known limitation" tests now assert the fixes (120 green). QA SCRIPT:
+  fresh user qa7.test@local ran the whole journey in Chrome — wizard
+  (4 steps, lb/in, carpenter ×1.45) → Engine math verified (BMR 2,050 avg
+  of 4, TDEE 3,134, target 2,384 floor-clamped) → generate meal plan
+  (instant; day 2,396 vs 2,384) → swap flagged slot via 3 alternates
+  (warning cleared, server rebuilt) → grocery list (Bell peppers under
+  PRODUCE proves fix live) → weigh-in via UI + 7 backdated fixture points
+  via API → Trend (curve, rate 2.4 lb/wk, goal date Oct 4 2026, target
+  re-derived 2,384→2,399 from moving average). SPEED: tab switches
+  render sub-second, week solve ms-level, no fixes needed (CDP screenshot
+  stalls are the automation harness, not the app). README: rewritten
+  feature list (fixed wrong "median" claim — engine takes the MEAN),
+  accurate importer/solver/derived-target descriptions, 5 fresh
+  screenshots from the QA account. Known punch list → next session:
+  Vite chunk >500 kB (code-split someday; local desktop app so cosmetic),
+  protein/mealtype group taxonomy is display-keyword based (fine), no
+  food diary yet (Today shows planned, honestly labeled), Est. total on
+  grocery hides when coverage low (by design). Next: Phase 8 (optional
+  training scaffold) or backlog.
 
 ## Archive
 

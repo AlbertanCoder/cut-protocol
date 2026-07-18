@@ -6,7 +6,7 @@ import {
 import { toHouseholdUnit } from "../lib/householdUnits.js";
 import { C } from "../lib/theme.js";
 import { addDays, fmtD } from "../lib/dates.js";
-import { Card, Btn, Chip, PageHead } from "./ui/Parts.jsx";
+import { Card, Btn, Chip, PageHead, ErrorNote } from "./ui/Parts.jsx";
 import { api } from "../lib/api.js";
 
 const kc = (n) => Math.round(n).toLocaleString("en-CA");
@@ -207,9 +207,18 @@ function SlotCard({ plan, slot, expanded, onToggleExpand, onLockToggle, busy, fi
             <Chip color={C.carbText} bg={`${C.carb}1F`}>{g1(slot.carb)}C</Chip>
           </div>
           {slot.warning && (
-            <div className="text-xs font-semibold mt-1.5" style={{ color: C.warn }}>{slot.warning}</div>
+            <div className="mt-1.5">
+              <div className="text-xs font-semibold" style={{ color: C.warn }}>{slot.warning}</div>
+              <div className="text-[10.5px] font-semibold mt-0.5" style={{ color: C.faintLight }}>
+                → Fix it with the swap button (3 alternates), or regenerate with looser filters.
+              </div>
+            </div>
           )}
-          {error && <div className="text-xs font-semibold mt-1.5" style={{ color: C.red }}>{error}</div>}
+          {error && (
+            <div className="mt-1.5">
+              <ErrorNote msg={error} hint="Swap and lock still work — retry, or regenerate the week if this slot is stuck." />
+            </div>
+          )}
 
           {alts && (
             <div className="mt-2.5 pt-2.5" onClick={(e) => e.stopPropagation()} style={{ borderTop: `1px solid ${C.rule}` }}>
@@ -414,13 +423,15 @@ export default function PlanTab({ profile, summary, refresh }) {
       <PageHead title="Plan" sub={plan ? `Week of ${fmtD(plan.startDate)} · locked slots survive regeneration · closest-fit by design` : "Complete days solved against your targets — closest-fit by design, not perfection."}>
         {plan !== undefined && (
           <Btn onClick={generate} disabled={generating}>
-            {generating ? "Generating…" : plan ? "Regenerate week" : "Generate week plan"}
+            {generating ? "Generating…" : plan ? "Regenerate meal plan" : "Generate meal plan"}
           </Btn>
         )}
       </PageHead>
 
       {error && (
-        <div className="text-xs font-semibold px-1 mb-3" style={{ color: C.red }}>{error}</div>
+        <div className="mb-3">
+          <ErrorNote msg={error} hint="Hit the button again — if it keeps failing, loosen the filters above (they can over-constrain the solver)." />
+        </div>
       )}
 
       <div className="mb-4">
@@ -467,9 +478,8 @@ export default function PlanTab({ profile, summary, refresh }) {
                 {dayOptions.candidates.length > 0 && (
                   <>
                     <DayCandidates data={dayOptions} targetKcal={targetKcal} onAccept={acceptCandidate} accepting={accepting} />
-                    {dayOptions.diagnosis?.feasible === false && null}
                     <div className="text-[10.5px] font-semibold mt-2" style={{ color: C.faintLight }}>
-                      Scores are closeness to your daily targets — closest-fit is the goal, 100% is rare and not required. Accepting writes this day into the week plan.
+                      Scores are closeness to your daily targets — closest-fit is the goal, 100% is rare and not required. Accepting writes this day into the meal plan.
                     </div>
                   </>
                 )}
@@ -481,7 +491,7 @@ export default function PlanTab({ profile, summary, refresh }) {
                 <div className="flex items-start gap-2">
                   <ChefHat size={18} style={{ color: C.faintLight }} className="mt-0.5 shrink-0" />
                   <div className="text-sm font-semibold" style={{ color: C.ink }}>
-                    No plan yet — hit "Generate week plan", or solve a single day with "3 options".
+                    No plan yet — hit "Generate meal plan", or solve a single day with "3 options".
                   </div>
                 </div>
               </Card>

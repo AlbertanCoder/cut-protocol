@@ -307,6 +307,7 @@ test("cuisine classifier: distinctive names route correctly, rest fall back hone
   assert.equal(classifyCuisine("Beef Tacos").cuisine, "mexican");
   assert.equal(classifyCuisine("Thai Green Curry").cuisine, "asian");
   assert.equal(classifyCuisine("Chicken Tikka Masala").cuisine, "indian");
+  assert.equal(classifyCuisine("Curried Chickpeas with Spinach").cuisine, "indian", "Phase 7: 'curried' routes indian, not fallback");
   assert.equal(classifyCuisine("Algerian Kefta (Meatballs)").cuisine, "middle-eastern");
   assert.equal(classifyCuisine("Spaghetti Bolognese").cuisine, "italian");
   assert.equal(classifyCuisine("Shepherd's Pie").cuisine, "british-irish");

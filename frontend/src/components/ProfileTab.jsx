@@ -5,7 +5,7 @@ import {
   displayWeight, parseWeight, displayHeight, parseHeight, displayRate,
   weightUnit, heightUnit, rateUnit,
 } from "../lib/units.js";
-import { Card, PageHead, Btn } from "./ui/Parts.jsx";
+import { Card, PageHead, Btn, ErrorNote } from "./ui/Parts.jsx";
 import { api } from "../lib/api.js";
 
 const r1 = (n) => Math.round(n * 10) / 10;
@@ -128,7 +128,11 @@ export default function ProfileTab({ profile, summary, refresh }) {
     <div>
       <PageHead title="Profile" sub="Your stats, activity, diet rules, and rate of loss. Everything else in the app derives from this tab." />
 
-      {error && <div className="text-xs font-semibold mb-3" style={{ color: C.red }}>{error}</div>}
+      {error && (
+        <div className="mb-3">
+          <ErrorNote msg={error} hint="Your last edit didn't save — re-enter the value. Fields commit when you click away from them." />
+        </div>
+      )}
 
       {pendingAck && (
         <div className="mb-4 p-4 rounded-2xl" style={{ background: C.warnBg, border: `1px solid ${C.warn}66` }}>

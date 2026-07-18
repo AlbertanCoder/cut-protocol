@@ -113,16 +113,23 @@ test("classifyStoreSection: plural ingredient names still match their singular k
   assert.equal(classifyStoreSection("Eggs"), "protein");
 });
 
-// Known, disclosed limitation (not a regression from this port, confirmed
-// present in the original recomp-v2 module too and already accepted there
-// per its own header comment on keyword-order ambiguity): "pepper" as a
-// spice keyword is checked before PRODUCE_WORDS, and PRODUCE_WORDS never
-// listed "pepper"/"bell pepper" - so "Bell peppers" misclassifies as
-// "spices". Documented here rather than silently left for someone to
-// discover as a surprise; not fixed as part of this port since it's the
-// original module's own accepted "keep it simple" trade-off, not new scope.
-test("classifyStoreSection: known limitation - 'Bell peppers' misclassifies as spices (word collision with 'pepper')", () => {
-  assert.equal(classifyStoreSection("Bell peppers"), "spices");
+// Phase 7 fix for the previously-documented limitation: fresh peppers are
+// produce; bare "pepper" (black pepper, flakes) stays a spice.
+test("classifyStoreSection: fresh peppers are produce, ground/black pepper stays a spice (Phase 7 fix)", () => {
+  assert.equal(classifyStoreSection("Bell peppers"), "produce");
+  assert.equal(classifyStoreSection("Jalapeno"), "produce");
+  assert.equal(classifyStoreSection("Black pepper, ground"), "spices");
+  assert.equal(classifyStoreSection("Red pepper flakes"), "spices");
+});
+
+// Phase 7 fix: a dairy word with a plant/legume qualifier is not dairy.
+// One-word "Buttermilk" has no qualifier and stays dairy.
+test("classifyStoreSection: butter beans / peanut butter / plant milks are not dairy; buttermilk is (Phase 7 fix)", () => {
+  assert.equal(classifyStoreSection("Butter Beans"), "pantry");
+  assert.equal(classifyStoreSection("Peanut Butter"), "pantry");
+  assert.equal(classifyStoreSection("Almond Milk"), "pantry");
+  assert.equal(classifyStoreSection("Buttermilk"), "dairy");
+  assert.equal(classifyStoreSection("Butter"), "dairy");
 });
 
 // ---------------------------------------------------------------------

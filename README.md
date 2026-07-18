@@ -14,25 +14,29 @@ A cutting-focused nutrition coach — calibrated calorie targets, AI-assisted we
 
 Cut Protocol is built for someone running a calorie deficit who wants the math shown, not hidden. Once you're logged in, it:
 
-- Computes your BMR/TDEE from **six independent formulas** (Mifflin–St Jeor, Oxford/Henry, Harris–Benedict, Katch–McArdle, Cunningham, and Schofield/WHO) and takes the median rather than trusting any single one.
-- Sets calorie and protein/fat/carb targets from your goal, with a hard floor you can't accidentally drop below.
-- Generates a full week of meals from a recipe library using a deterministic solver that fits each slot to your calorie and protein targets — with an AI-assisted option (via the Anthropic API) for generating new recipes on demand.
-- Filters every recipe and generated meal through your dietary style and food exclusions/allergies before it's ever shown to you.
-- Builds a real grocery list from your week's plan: raw/dry purchase quantities (not just as-cooked grams), grouped by store section, with rough cost estimates.
-- Tracks daily weigh-ins, smooths them into a 7-day trend, and gives a plain verdict — hold, step down, or add calories back — instead of reacting to daily scale noise.
+- Computes your BMR from **six independent formulas** (Mifflin–St Jeor, Oxford/Henry, Harris–Benedict, Schofield/WHO, plus Katch–McArdle and Cunningham once you supply a body-fat %) and averages the applicable ones — with per-formula exclude toggles and the spread shown, rather than trusting any single equation.
+- Builds TDEE from components you can see: BMR × a 36-occupation activity multiplier + MET-based training calories. Your calorie target is **derived** — TDEE minus the deficit your chosen rate of loss needs, clamped to a hard safety floor — and re-computes automatically as your weigh-ins move.
+- Generates a full week of meals from a 600+ recipe library using a deterministic solver: three scored candidates per day, portion scaling, honest match percentages, per-slot swap with three alternates, slot locking, and a plain-language diagnosis whenever your targets are genuinely out of reach (it names the binding constraint — it never silently misses).
+- Filters every recipe, plan, and AI generation through your dietary style (9 styles) and allergy checkboxes before anything reaches you. Allergy filtering is zero-tolerance and is never relaxed by a suggestion.
+- Imports recipes from the web: paste a URL, it reads the site's schema.org markup, converts amounts to grams (flagging estimates honestly), matches ingredients to the validated food database, and lets you review before anything saves.
+- Generates new recipes with AI (Anthropic API) that must pass the same nutrition validator as every other food before they can be saved.
+- Builds a real grocery list from your week: raw/dry purchase quantities (not just as-cooked grams), practical retail units, store-section grouping, and rough CAD cost estimates that admit their coverage.
+- Tracks daily weigh-ins, smooths them into a 7-day trend, verdicts the pace against your chosen band, and projects a goal date from your measured rate.
 - Runs as a normal web app, or as a packaged Windows desktop app via Electron.
 
 ## Features
 
-- Six-formula BMR/TDEE engine, medianed for a more stable estimate
-- Calorie floor enforcement
-- Weekly AI-assisted meal plan generator with a real calorie/protein-fit solver
-- Recipe library with per-recipe macros, editable ingredients, and AI-generated variants
-- Dietary style + allergy/exclusion filtering applied before recipes ever reach you
-- Grocery list generation with store-section grouping and cost estimates
-- Cart for collecting recipes into a combined shopping list
-- Weigh-in log with 7-day rolling average, rate-of-loss verdicts, and milestone/maintenance-break coaching
-- USDA FoodData Central integration for verified nutrition data
+- Six-formula BMR engine (averaged, excludable, spread shown) + occupation/training TDEE build
+- Derived calorie target with sex-based + user-set safety floors; unsafe rates require explicit acknowledgment
+- Weekly meal-plan solver: scored day candidates, swaps with alternates, locks, batch-cooking mode, cuisine/protein/budget steering
+- Recipe library grouped by cuisine / meal type / protein with search and protein-density sort
+- Recipe URL importer (schema.org) with honest unit-conversion flags — no paid API
+- AI recipe generation gated by the food-data validator; loud per-generation allergen override that auto-resets
+- Dietary style + allergy hard-filtering applied server-side before recipes ever reach you
+- Cart that totals macros, feeds today's plan, and produces its own grocery list
+- Grocery lists with practical purchase units, store sections, checkboxes, and labeled cost estimates
+- Weigh-in log with 7-day rolling average, rate verdicts, and goal-date projection
+- USDA FoodData Central as the nutrition source of truth, with a validated 850+ food database
 - Windows desktop build via Electron, alongside the standard web app
 
 ## Tech stack
@@ -100,13 +104,13 @@ From the repo root: `npm install`, then `npm run dist` builds a Windows installe
 **Trend** — 7-day weight average, projected goal date, and body-fat estimate.
 ![Trend tab](screenshots/trend.jpg)
 
-**Engine** — BMR/TDEE inputs, dietary preferences, and the underlying formula breakdown.
+**Engine** — the formula panel, TDEE component build, and the derived target. Every number shows its work.
 ![Engine tab](screenshots/engine.jpg)
 
-**Plan** — an AI-assisted, solver-fit weekly meal plan.
+**Plan** — the solver-fit weekly meal plan with steering filters, swaps, locks, and the sectioned grocery list.
 ![Plan tab](screenshots/plan.jpg)
 
-**Recipes** — the recipe library, AI recipe generation, and cart.
+**Recipes** — the grouped library, URL importer, AI generation, and cart.
 ![Recipes tab](screenshots/recipes.jpg)
 
 ---

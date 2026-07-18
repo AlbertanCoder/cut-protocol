@@ -9,7 +9,7 @@ import { mean } from "../lib/math.js";
 import { todayStr, addDays, fmtDY } from "../lib/dates.js";
 import { fmtD } from "../lib/dates.js";
 import { displayWeight, displayRate, weightUnit, rateUnit } from "../lib/units.js";
-import { Card, Stat, PageHead } from "./ui/Parts.jsx";
+import { Card, Stat, PageHead, EmptyNote } from "./ui/Parts.jsx";
 
 const r1 = (n) => Math.round(n * 10) / 10;
 
@@ -55,13 +55,11 @@ export default function TrendTab({ profile, summary }) {
       <div className="grid grid-cols-1 xl:grid-cols-12 gap-4 items-start">
         <Card section="CURVE" title="Weight" className="xl:col-span-8">
           {sorted.length === 0 ? (
-            <div className="flex flex-col items-center justify-center gap-2 text-center" style={{ height: 380 }}>
-              <LineChart size={22} style={{ color: C.faintLight }} />
-              <div className="text-sm font-semibold" style={{ color: C.faint }}>No weigh-ins yet</div>
-              <div className="text-xs font-medium max-w-[220px]" style={{ color: C.faintLight }}>
-                Log your first weight on the Today tab to start the curve.
-              </div>
-            </div>
+            <EmptyNote icon={LineChart} height={380} title="No weigh-ins yet"
+              hint="Log your first weight on the Today tab to start the curve." />
+          ) : sorted.length < 2 ? (
+            <EmptyNote icon={LineChart} height={380} title="First point logged"
+              hint="The curve starts with your second weigh-in — log again tomorrow. Verdicts and projections firm up after ~10 days of data." />
           ) : (
             <div style={{ width: "100%", height: 380 }}>
               <ResponsiveContainer>

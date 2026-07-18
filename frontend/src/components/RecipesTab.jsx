@@ -6,7 +6,7 @@ import {
 } from "lucide-react";
 import { C } from "../lib/theme.js";
 import { toHouseholdUnit } from "../lib/householdUnits.js";
-import { Card, Btn, Chip, PageHead } from "./ui/Parts.jsx";
+import { Card, Btn, Chip, PageHead, ErrorNote } from "./ui/Parts.jsx";
 import { api } from "../lib/api.js";
 
 const kc = (n) => Math.round(n).toLocaleString("en-CA");
@@ -484,7 +484,12 @@ export default function RecipesTab({ openFoods, profile }) {
         </Btn>
       </PageHead>
 
-      {error && <div className="text-xs font-semibold px-1 mb-3" style={{ color: C.red }}>{error}</div>}
+      {error && (
+        <div className="mb-3">
+          <ErrorNote msg={error}
+            hint={error.startsWith("Import failed") ? "Check the URL is a public recipe page — most recipe sites work; plain blog posts without recipe markup don't." : undefined} />
+        </div>
+      )}
 
       <div className="grid grid-cols-1 xl:grid-cols-12 gap-4 items-start">
         {/* ── left: import + generate + drafts + cart ── */}

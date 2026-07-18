@@ -1,3 +1,4 @@
+import { AlertTriangle } from "lucide-react";
 import { C } from "../../lib/theme.js";
 
 export const Eyebrow = ({ children }) => (
@@ -126,4 +127,28 @@ export const Chip = ({ children, color, bg }) => (
   <span className="text-xs font-bold px-2 py-1 rounded-lg" style={{ color: color || C.faint, background: bg || C.card2, border: bg ? "none" : `1px solid ${C.rule}` }}>
     {children}
   </span>
+);
+
+// Error panel — every error states what happened AND what to do about it.
+// `hint` overrides the generic recovery line for context-specific advice.
+export const ErrorNote = ({ msg, hint }) => (
+  <div className="p-3 rounded-xl flex items-start gap-2.5" style={{ background: C.redBg, border: `1px solid ${C.red}55` }}>
+    <AlertTriangle size={15} className="mt-0.5 shrink-0" style={{ color: C.red }} />
+    <div className="min-w-0">
+      <div className="text-xs font-bold" style={{ color: C.red }}>{msg}</div>
+      <div className="text-xs font-semibold mt-0.5" style={{ color: C.faint }}>
+        {hint || "Try the action again — if it keeps failing, restart the app and retry."}
+      </div>
+    </div>
+  </div>
+);
+
+// Empty-state block — icon, plain statement, and what unlocks it. The
+// "Projections unlock with weigh-in data" voice, everywhere.
+export const EmptyNote = ({ icon: Icon, title, hint, height }) => (
+  <div className="flex flex-col items-center justify-center gap-2 text-center" style={height ? { height } : { padding: "18px 0" }}>
+    {Icon && <Icon size={22} style={{ color: C.faintLight }} />}
+    <div className="text-sm font-semibold" style={{ color: C.faint }}>{title}</div>
+    {hint && <div className="text-xs font-medium max-w-[260px]" style={{ color: C.faintLight }}>{hint}</div>}
+  </div>
 );

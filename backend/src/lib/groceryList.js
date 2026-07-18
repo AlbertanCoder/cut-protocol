@@ -79,8 +79,8 @@ const PROTEIN_WORDS = [
   "egg", "eggs", "tofu", "tempeh",
 ];
 const DAIRY_WORDS = [
-  "milk", "cheese", "yogurt", "yoghurt", "cream", "butter", "ghee", "whey",
-  "casein", "kefir", "custard", "skyr",
+  "milk", "cheese", "yogurt", "yoghurt", "cream", "butter", "buttermilk",
+  "ghee", "whey", "casein", "kefir", "custard", "skyr",
 ];
 const SPICE_WORDS = [
   "salt", "pepper", "cumin", "paprika", "cinnamon", "nutmeg", "allspice",
@@ -113,11 +113,34 @@ function matchesAny(name, words) {
   return words.some((w) => hasWord(name, w));
 }
 
+// "Butter Beans", "Peanut Butter", "Coconut Cream", "Almond Milk" all carry a
+// dairy word without being dairy — a plant/legume qualifier vetoes the dairy
+// match. "Buttermilk" is one word, so no qualifier fires and it stays dairy.
+const NON_DAIRY_QUALIFIERS = [
+  "bean", "peanut", "almond", "cashew", "coconut", "soy", "soya", "oat",
+  "rice", "hemp", "nut",
+];
+function isDairyName(name) {
+  if (!matchesAny(name, DAIRY_WORDS)) return false;
+  return !matchesAny(name, NON_DAIRY_QUALIFIERS);
+}
+
+// Fresh peppers are produce; "pepper" alone (black pepper, pepper flakes)
+// stays a spice.
+const FRESH_PEPPER_WORDS = [
+  "bell pepper", "sweet pepper", "jalapeno", "jalapeño", "poblano",
+  "serrano", "habanero", "banana pepper",
+];
+function isSpiceName(name) {
+  if (!matchesAny(name, SPICE_WORDS)) return false;
+  return !matchesAny(name, FRESH_PEPPER_WORDS);
+}
+
 function classifyStoreSection(name) {
   if (matchesAny(name, PROTEIN_WORDS)) return "protein";
-  if (matchesAny(name, DAIRY_WORDS)) return "dairy";
-  if (matchesAny(name, SPICE_WORDS)) return "spices";
-  if (matchesAny(name, PRODUCE_WORDS)) return "produce";
+  if (isDairyName(name)) return "dairy";
+  if (isSpiceName(name)) return "spices";
+  if (matchesAny(name, PRODUCE_WORDS) || matchesAny(name, FRESH_PEPPER_WORDS)) return "produce";
   if (matchesAny(name, PANTRY_WORDS)) return "pantry";
   return "other";
 }

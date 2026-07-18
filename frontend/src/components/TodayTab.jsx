@@ -7,7 +7,7 @@ import { Camera, Trash2, CalendarDays, ArrowRight, LineChart } from "lucide-reac
 import { C, getStampStyle } from "../lib/theme.js";
 import { todayStr, dayNum, addDays, fmtD } from "../lib/dates.js";
 import { displayWeight, parseWeight, weightUnit, rateUnit, displayRate, weightInputBounds } from "../lib/units.js";
-import { Card, Stat, Btn, Stamp, Ring, MacroBar, PageHead } from "./ui/Parts.jsx";
+import { Card, Stat, Btn, Stamp, Ring, MacroBar, PageHead, EmptyNote } from "./ui/Parts.jsx";
 import { api } from "../lib/api.js";
 
 const kc = (n) => Math.round(n).toLocaleString("en-CA");
@@ -144,13 +144,11 @@ export default function TodayTab({ profile, summary, refresh, openTrend }) {
         {/* ── trend snapshot ── */}
         <Card section="CURVE" title="Trend snapshot" className="xl:col-span-7">
           {sorted.length === 0 ? (
-            <div className="flex flex-col items-center justify-center gap-2 text-center" style={{ height: 200 }}>
-              <LineChart size={22} style={{ color: C.faintLight }} />
-              <div className="text-sm font-semibold" style={{ color: C.faint }}>No weigh-ins yet</div>
-              <div className="text-xs font-medium max-w-[240px]" style={{ color: C.faintLight }}>
-                Log your first weight above to start the curve.
-              </div>
-            </div>
+            <EmptyNote icon={LineChart} height={200} title="No weigh-ins yet"
+              hint="Log your first weight above to start the curve." />
+          ) : sorted.length < 2 ? (
+            <EmptyNote icon={LineChart} height={200} title="First point logged"
+              hint="The curve starts with your second weigh-in — log again tomorrow." />
           ) : (
             <div style={{ width: "100%", height: 200 }}>
               <ResponsiveContainer>

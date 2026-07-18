@@ -92,7 +92,7 @@ export default function App() {
       <div className="flex-1 min-w-0">
         {error && (
           <div className="text-xs font-semibold px-8 py-2" style={{ color: C.red, background: C.redBg }}>
-            {error} — retry by making any change.
+            {error} — couldn't refresh your data. Repeat your last change to retry; if it keeps failing, restart the app.
           </div>
         )}
 

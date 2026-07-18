@@ -2,7 +2,7 @@ import { useState, useEffect, useMemo } from "react";
 import { Search, ArrowLeft, ChevronRight, ChevronDown, Save, BookOpen, NotebookPen } from "lucide-react";
 import { C } from "../lib/theme.js";
 import { FOOD_CATEGORIES, CATEGORY_LABEL, CATEGORY_COLOR, SOURCE_LABEL } from "../data/foodCategories.js";
-import { Card, Btn, Chip, PageHead, Stat } from "./ui/Parts.jsx";
+import { Card, Btn, Chip, PageHead, Stat, ErrorNote } from "./ui/Parts.jsx";
 import { api } from "../lib/api.js";
 
 const g1 = (n) => Math.round(n * 10) / 10;
@@ -202,7 +202,11 @@ function FoodDetail({ food, isAdmin, onSaved, refreshFoods }) {
         </div>
       )}
 
-      {error && <div className="text-xs font-semibold mt-3" style={{ color: C.red }}>{error}</div>}
+      {error && (
+        <div className="mt-3">
+          <ErrorNote msg={error} hint="Edits must pass the nutrition sanity check (kcal ≈ 4P + 9F + 4C) — fix the macros so they agree with the calories." />
+        </div>
+      )}
       {notice && <div className="text-xs font-semibold mt-3" style={{ color: C.good }}>{notice}</div>}
     </Card>
   );
