@@ -1,7 +1,8 @@
 import { useState, useEffect, useCallback } from "react";
-import { Activity, TrendingUp, Calculator, CalendarDays, Search, BookOpen, LogOut } from "lucide-react";
+import { Activity, TrendingUp, Calculator, CalendarDays, Search, BookOpen, LogOut, Sun, Moon } from "lucide-react";
 import { api } from "./lib/api.js";
-import { C } from "./lib/theme.js";
+import { C, applyTheme } from "./lib/theme.js";
+import { themePref } from "./lib/storage.js";
 
 import LoginScreen from "./components/LoginScreen.jsx";
 import TodayTab from "./components/TodayTab.jsx";
@@ -20,6 +21,22 @@ export default function App() {
   const [tab, setTab] = useState("today");
   const [error, setError] = useState(null);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [theme, setTheme] = useState(() => themePref.get());
+
+  // Applied synchronously during render (not in an effect): applyTheme just
+  // toggles a DOM class and mutates the C palette object in place, neither
+  // of which triggers a re-render on its own, so doing it in an effect left
+  // one stale paint between clicking the toggle and colors actually
+  // updating. Calling it here keeps C in sync with `theme` on every render,
+  // including the one caused by clicking the toggle itself. Idempotent and
+  // cheap (a classList.toggle + a handful of getComputedStyle reads).
+  applyTheme(theme);
+
+  const toggleTheme = () => {
+    const next = theme === "dark" ? "light" : "dark";
+    themePref.set(next);
+    setTheme(next);
+  };
 
   const loadData = useCallback(async () => {
     let p = await api.getProfile();
@@ -87,18 +104,26 @@ export default function App() {
   ];
 
   return (
-    <div className="min-h-screen" style={{ background: C.paper, color: C.ink, fontFamily: "-apple-system, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif" }}>
-      <header className="px-4 pt-4 pb-3 flex items-center justify-between" style={{ background: C.card, borderBottom: `1px solid ${C.rule}` }}>
+    <div className="min-h-screen transition-colors duration-150" style={{ background: C.paper, color: C.ink, fontFamily: "-apple-system, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif" }}>
+      <header className="px-4 pt-4 pb-3.5 flex items-center justify-between sticky top-0 z-10 transition-colors duration-150" style={{ background: C.card, borderBottom: `1px solid ${C.rule}` }}>
         <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-lg flex items-center justify-center font-extrabold text-sm" style={{ background: C.accent, color: "#fff" }}>C</div>
+          <div className="w-8 h-8 rounded-xl flex items-center justify-center font-extrabold text-sm" style={{ background: C.accent, color: "#fff" }}>C</div>
           <div>
             <div className="font-extrabold text-[15px] leading-none" style={{ letterSpacing: "-.01em" }}>Cut Protocol</div>
-            <div className="text-[11px] font-semibold" style={{ color: C.faint }}>Day {summary.daysIn} · {kc(profile.targetKcal)} kcal</div>
+            <div className="text-[11px] font-semibold mt-0.5" style={{ color: C.faint }}>Day {summary.daysIn} · {kc(profile.targetKcal)} kcal</div>
           </div>
         </div>
-        <button onClick={logout} className="flex items-center gap-1 text-xs font-semibold" style={{ color: C.faint }}>
-          <LogOut size={13} /> Log out
-        </button>
+        <div className="flex items-center gap-3">
+          <button onClick={toggleTheme}
+            aria-label="Toggle theme"
+            className="flex items-center justify-center w-7 h-7 rounded-lg transition-colors duration-150 hover:opacity-80"
+            style={{ color: C.faint, border: `1px solid ${C.rule}` }}>
+            {theme === "dark" ? <Sun size={14} /> : <Moon size={14} />}
+          </button>
+          <button onClick={logout} className="flex items-center gap-1 text-xs font-semibold hover:opacity-80" style={{ color: C.faint }}>
+            <LogOut size={13} /> Log out
+          </button>
+        </div>
       </header>
 
       {error && (
@@ -116,14 +141,14 @@ export default function App() {
         {tab === "recipes" && <RecipesTab isAdmin={isAdmin} />}
       </main>
 
-      <nav className="fixed bottom-0 left-0 right-0" style={{ background: C.card, borderTop: `1px solid ${C.rule}` }}>
-        <div className="max-w-xl mx-auto grid grid-cols-6 px-1 py-1.5 gap-1">
+      <nav className="fixed bottom-0 left-0 right-0 transition-colors duration-150" style={{ background: C.card, borderTop: `1px solid ${C.rule}` }}>
+        <div className="max-w-xl mx-auto grid grid-cols-6 px-1.5 py-2 gap-1">
           {TABS.map((t) => {
             const active = tab === t.id;
             const Icon = t.icon;
             return (
               <button key={t.id} onClick={() => setTab(t.id)}
-                className="text-[10.5px] font-bold py-1.5 rounded-xl flex flex-col items-center gap-0.5 transition-colors"
+                className="text-[10.5px] font-bold py-1.5 rounded-xl flex flex-col items-center gap-0.5 transition-colors duration-150"
                 style={{ color: active ? C.accent : C.faint, background: active ? C.accentBg : "transparent" }}>
                 <Icon size={18} strokeWidth={active ? 2.4 : 2} />
                 {t.label}

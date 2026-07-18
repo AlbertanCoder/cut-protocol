@@ -6,12 +6,12 @@ import { api } from "../lib/api.js";
 
 const g1 = (n) => Math.round(n * 10) / 10;
 const CATS = ["all", "protein", "carb", "veg", "fat", "dairy", "fruit", "other"];
-const CAT_COLOR = {
-  protein: C.protein, carb: C.carb, fat: C.fat,
-  veg: C.good, dairy: C.carb, fruit: C.good, other: C.faintLight,
-};
 
 export default function FoodsTab() {
+  const CAT_COLOR = {
+    protein: C.protein, carb: C.carb, fat: C.fat,
+    veg: C.good, dairy: C.carb, fruit: C.good, other: C.faintLight,
+  };
   const [foods, setFoods] = useState([]);
   const [loading, setLoading] = useState(true);
   const [query, setQuery] = useState("");

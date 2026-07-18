@@ -3,6 +3,7 @@ import {
   ComposedChart, Line, XAxis, YAxis, CartesianGrid, Tooltip,
   ReferenceLine, ResponsiveContainer,
 } from "recharts";
+import { LineChart } from "lucide-react";
 import { C } from "../lib/theme.js";
 import { mean } from "../lib/math.js";
 import { kg2lb } from "../lib/units.js";
@@ -59,27 +60,37 @@ export default function TrendTab({ profile, summary, isAdmin }) {
   return (
     <div>
       <Card section="CURVE" title="Weight">
-        <div style={{ width: "100%", height: 250 }}>
-          <ResponsiveContainer>
-            <ComposedChart data={chart} margin={{ top: 8, right: 8, left: -18, bottom: 0 }}>
-              <CartesianGrid stroke={C.rule} strokeDasharray="2 4" />
-              <XAxis dataKey="d" tick={{ fontSize: 10, fill: C.faint, fontWeight: 600 }} tickLine={false}
-                axisLine={{ stroke: C.rule }} minTickGap={24} />
-              <YAxis domain={[yMin, yMax]} tick={{ fontSize: 10, fill: C.faint, fontWeight: 600 }}
-                tickLine={false} axisLine={{ stroke: C.rule }} width={52} />
-              <Tooltip
-                contentStyle={{ background: C.card, border: `1px solid ${C.rule}`, borderRadius: 12, fontSize: 12, fontWeight: 600 }}
-                formatter={(val, name) => [val + " lb", name === "w" ? "daily" : "7-day avg"]}
-              />
-              <ReferenceLine y={goalLb} stroke={C.red} strokeDasharray="6 4"
-                label={{ value: "GOAL " + r1(goalLb), fill: C.red, fontSize: 10, fontWeight: 700, position: "insideBottomLeft" }} />
-              <Line type="monotone" dataKey="w" stroke={C.faintLight} strokeWidth={1.5}
-                dot={{ r: 2, fill: C.faintLight, strokeWidth: 0 }} isAnimationActive={false} />
-              <Line type="monotone" dataKey="a" stroke={C.accent} strokeWidth={2.5}
-                dot={false} isAnimationActive={false} />
-            </ComposedChart>
-          </ResponsiveContainer>
-        </div>
+        {sorted.length === 0 ? (
+          <div className="flex flex-col items-center justify-center gap-2 text-center" style={{ height: 250 }}>
+            <LineChart size={22} style={{ color: C.faintLight }} />
+            <div className="text-sm font-semibold" style={{ color: C.faint }}>No weigh-ins yet</div>
+            <div className="text-xs font-medium max-w-[220px]" style={{ color: C.faintLight }}>
+              Log your first weight on the Today tab to start the curve.
+            </div>
+          </div>
+        ) : (
+          <div style={{ width: "100%", height: 250 }}>
+            <ResponsiveContainer>
+              <ComposedChart data={chart} margin={{ top: 8, right: 8, left: -18, bottom: 0 }}>
+                <CartesianGrid stroke={C.rule} strokeDasharray="2 4" />
+                <XAxis dataKey="d" tick={{ fontSize: 10, fill: C.faint, fontWeight: 600 }} tickLine={false}
+                  axisLine={{ stroke: C.rule }} minTickGap={24} />
+                <YAxis domain={[yMin, yMax]} tick={{ fontSize: 10, fill: C.faint, fontWeight: 600 }}
+                  tickLine={false} axisLine={{ stroke: C.rule }} width={52} />
+                <Tooltip
+                  contentStyle={{ background: C.card, border: `1px solid ${C.rule}`, borderRadius: 12, fontSize: 12, fontWeight: 600 }}
+                  formatter={(val, name) => [val + " lb", name === "w" ? "daily" : "7-day avg"]}
+                />
+                <ReferenceLine y={goalLb} stroke={C.red} strokeDasharray="6 4"
+                  label={{ value: "GOAL " + r1(goalLb), fill: C.red, fontSize: 10, fontWeight: 700, position: "insideBottomLeft" }} />
+                <Line type="monotone" dataKey="w" stroke={C.faintLight} strokeWidth={1.5}
+                  dot={{ r: 2, fill: C.faintLight, strokeWidth: 0 }} isAnimationActive={false} />
+                <Line type="monotone" dataKey="a" stroke={C.accent} strokeWidth={2.5}
+                  dot={false} isAnimationActive={false} />
+              </ComposedChart>
+            </ResponsiveContainer>
+          </div>
+        )}
         <div className="text-xs font-semibold mt-1" style={{ color: C.faint }}>
           thin = daily · heavy = 7-day average · dashed = goal
         </div>
@@ -107,7 +118,7 @@ export default function TrendTab({ profile, summary, isAdmin }) {
             </div>
             {forkHold && (
               <>
-                <div className="text-xs font-bold uppercase tracking-widest pt-1" style={{ color: C.faintLight }}>
+                <div className="text-xs font-semibold uppercase tracking-wide pt-1" style={{ color: C.faintLight }}>
                   Week-10 fork — {fmtD(FORK_DATE)}
                 </div>
                 <div className="flex justify-between items-baseline py-1.5" style={{ borderBottom: `1px solid ${C.rule}` }}>

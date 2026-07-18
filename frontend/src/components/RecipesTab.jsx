@@ -9,13 +9,16 @@ import { uiState } from "../lib/storage.js";
 
 const kc = (n) => Math.round(n).toLocaleString("en-CA");
 const g1 = (n) => Math.round(n * 10) / 10;
-const inpStyle = { background: C.paper, border: `1.5px solid ${C.rule}`, color: C.ink };
+// Function, not a frozen module-level object, so each caller reads the
+// live palette at render time and re-themes on toggle.
+const getInpStyle = () => ({ background: C.paper, border: `1.5px solid ${C.rule}`, color: C.ink });
 const CUISINES = ["", "weeknight", "steakhouse", "tex-mex", "breakfast", "weekend", "other"];
 const PROTEINS = ["", "chicken", "beef", "elk/game", "salmon", "turkey", "eggs", "pork"];
 // Matches groceryList.js's bySection keys exactly (same list PlanTab.jsx uses).
 const SECTION_LABELS = { produce: "Produce", protein: "Protein", dairy: "Dairy", pantry: "Pantry / dry goods", spices: "Spices", other: "Other" };
 
 function RecipeCard({ recipe, onSave, onDelete, expanded, onToggleExpand, inCart, onToggleCart, cartBusy }) {
+  const inpStyle = getInpStyle();
   const [editing, setEditing] = useState(false);
   const [confirmingDelete, setConfirmingDelete] = useState(false);
   const [draft, setDraft] = useState(null);
@@ -168,6 +171,7 @@ function CartRecipeCard({ item, expanded, onToggleExpand, onRemove, busy }) {
 }
 
 function DraftCard({ draft, onSave, onEditGrams, saving }) {
+  const inpStyle = getInpStyle();
   return (
     <div className="mb-3 p-3 rounded-2xl" style={{ background: C.card, border: `1.5px solid ${C.good}` }}>
       <div className="text-sm font-extrabold" style={{ color: C.ink }}>{draft.name}</div>
@@ -211,7 +215,7 @@ function ReferenceSection() {
 
   return (
     <details className="mb-3">
-      <summary className="text-xs font-bold uppercase tracking-widest cursor-pointer px-1" style={{ color: C.faintLight }}>
+      <summary className="text-xs font-semibold uppercase tracking-wide cursor-pointer px-1" style={{ color: C.faintLight }}>
         Reference — fridge burn-down, rotation, supplements
       </summary>
       <div className="mt-2">
@@ -274,7 +278,7 @@ function ReferenceSection() {
         </Card>
 
         <details className="mb-3 px-1">
-          <summary className="text-xs font-bold uppercase tracking-widest cursor-pointer" style={{ color: C.faintLight }}>
+          <summary className="text-xs font-semibold uppercase tracking-wide cursor-pointer" style={{ color: C.faintLight }}>
             Street chili — saved recipe
           </summary>
           <div className="text-xs mt-2 space-y-2 font-semibold" style={{ color: C.ink }}>
@@ -284,7 +288,7 @@ function ReferenceSection() {
         </details>
 
         <details className="mb-3 px-1">
-          <summary className="text-xs font-bold uppercase tracking-widest cursor-pointer" style={{ color: C.faintLight }}>
+          <summary className="text-xs font-semibold uppercase tracking-wide cursor-pointer" style={{ color: C.faintLight }}>
             §7 supplement stack
           </summary>
           <div className="mt-2">
@@ -311,6 +315,7 @@ function ReferenceSection() {
 }
 
 export default function RecipesTab({ isAdmin }) {
+  const inpStyle = getInpStyle();
   const [recipes, setRecipes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);

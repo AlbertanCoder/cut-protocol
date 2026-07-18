@@ -246,7 +246,7 @@ export default function EngineTab({ profile, summary, refresh, isAdmin }) {
       </Card>
 
       <details className="px-1 mb-4">
-        <summary className="text-xs font-bold uppercase tracking-widest cursor-pointer" style={{ color: C.faintLight }}>
+        <summary className="text-xs font-semibold uppercase tracking-wide cursor-pointer" style={{ color: C.faintLight }}>
           Data backup (copy this JSON)
         </summary>
         <pre className="text-xs mt-2 p-3 rounded-xl overflow-x-auto"

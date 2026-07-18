@@ -3,13 +3,12 @@ import { C } from "../lib/theme.js";
 import { Card, Btn } from "./ui/Parts.jsx";
 import { api } from "../lib/api.js";
 
-const inpStyle = { background: C.paper, border: `1.5px solid ${C.rule}`, color: C.ink };
-
 export default function LoginScreen({ onLoggedIn }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
   const [busy, setBusy] = useState(false);
+  const inpStyle = { background: C.paper, border: `1.5px solid ${C.rule}`, color: C.ink };
 
   const submit = async (e) => {
     e.preventDefault();

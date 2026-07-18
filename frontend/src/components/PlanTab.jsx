@@ -10,7 +10,6 @@ const kc = (n) => Math.round(n).toLocaleString("en-CA");
 const g1 = (n) => Math.round(n * 10) / 10;
 // Matches groceryList.js's bySection keys exactly (produce/protein/dairy/pantry/spices/other).
 const SECTION_LABELS = { produce: "Produce", protein: "Protein", dairy: "Dairy", pantry: "Pantry / dry goods", spices: "Spices", other: "Other" };
-const inpStyle = { background: C.paper, border: `1.5px solid ${C.rule}`, color: C.ink };
 const DAY_NAMES = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
 function sumSlots(slots) {
@@ -74,6 +73,7 @@ function SlotCard({ slot, expanded, onToggleExpand, onLockToggle, onSwap, busy }
 }
 
 export default function PlanTab({ profile, summary, refresh }) {
+  const inpStyle = { background: C.paper, border: `1.5px solid ${C.rule}`, color: C.ink };
   const [plan, setPlan] = useState(undefined); // undefined = loading, null = none yet
   const [expandedId, setExpandedId] = useState(null);
   const [busySlotId, setBusySlotId] = useState(null);

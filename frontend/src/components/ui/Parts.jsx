@@ -1,18 +1,18 @@
 import { C } from "../../lib/theme.js";
 
 export const Eyebrow = ({ children }) => (
-  <div className="disp text-xs tracking-widest uppercase" style={{ color: C.faint }}>{children}</div>
+  <div className="text-xs font-semibold tracking-wide uppercase" style={{ color: C.faint, letterSpacing: ".04em" }}>{children}</div>
 );
 
 export const Card = ({ section, title, children, tint }) => (
   <section
-    className="mb-3 p-4 rounded-2xl"
-    style={{ background: tint || C.card, border: `1px solid ${C.rule}`, boxShadow: "0 1px 2px rgba(22,33,28,.04), 0 8px 24px rgba(22,33,28,.06)" }}
+    className="mb-3 p-5 rounded-2xl transition-colors duration-150"
+    style={{ background: tint || C.card, border: `1px solid ${C.rule}`, boxShadow: "var(--shadow)" }}
   >
     {(section || title) && (
-      <div className="flex items-baseline justify-between mb-2.5">
-        <div className="disp text-sm" style={{ color: C.ink }}>{title}</div>
-        {section && <div className="mono text-[11px] font-bold uppercase tracking-wide" style={{ color: C.faintLight }}>{section}</div>}
+      <div className="flex items-baseline justify-between mb-3">
+        <div className="text-[15px] font-bold" style={{ color: C.ink, letterSpacing: "-.01em" }}>{title}</div>
+        {section && <div className="text-[10.5px] font-semibold uppercase" style={{ color: C.faintLight, letterSpacing: ".06em" }}>{section}</div>}
       </div>
     )}
     {children}
@@ -28,21 +28,20 @@ export const Stat = ({ label, value, unit }) => (
   </div>
 );
 
-const KIND_STYLES = {
-  ink: { bg: C.accent, fg: "#FFFFFF", border: C.accent },
-  primary: { bg: C.accent, fg: "#FFFFFF", border: C.accent },
-  red: { bg: C.red, fg: "#FFFFFF", border: C.red },
-  green: { bg: C.good, fg: "#FFFFFF", border: C.good },
-  ghost: { bg: "transparent", fg: C.ink, border: C.rule },
-};
-
 export const Btn = ({ children, onClick, kind = "ink", small, disabled }) => {
+  const KIND_STYLES = {
+    ink: { bg: C.accent, fg: "#FFFFFF", border: C.accent },
+    primary: { bg: C.accent, fg: "#FFFFFF", border: C.accent },
+    red: { bg: C.red, fg: "#FFFFFF", border: C.red },
+    green: { bg: C.good, fg: "#FFFFFF", border: C.good },
+    ghost: { bg: "transparent", fg: C.ink, border: C.rule },
+  };
   const s = KIND_STYLES[kind] || KIND_STYLES.ink;
   return (
     <button
       onClick={onClick}
       disabled={disabled}
-      className={`font-bold rounded-xl transition-opacity ${small ? "text-xs px-3 py-1.5" : "text-sm px-4 py-2.5"}`}
+      className={`font-bold rounded-xl transition-all duration-150 hover:opacity-90 active:opacity-80 ${small ? "text-xs px-3 py-1.5" : "text-sm px-4 py-2.5"}`}
       style={{ background: s.bg, color: s.fg, border: `1.5px solid ${s.border}`, opacity: disabled ? 0.45 : 1 }}
     >
       {children}
@@ -55,7 +54,7 @@ export const Btn = ({ children, onClick, kind = "ink", small, disabled }) => {
 export const Stamp = ({ v, stampStyle }) => {
   const s = stampStyle[v.tone];
   return (
-    <div className="rounded-xl p-3 flex items-start gap-3" style={{ background: s.bg || C.paper, border: `1px solid ${s.color}33` }}>
+    <div className="rounded-xl p-3.5 flex items-start gap-3 transition-colors duration-150" style={{ background: s.bg || C.paper, border: `1px solid ${s.color}33` }}>
       <div className="w-1 self-stretch rounded-full shrink-0" style={{ background: s.color }}></div>
       <div>
         <div className="text-sm font-extrabold uppercase tracking-wide" style={{ color: s.color }}>{v.tag}</div>
@@ -84,8 +83,8 @@ export const MacroBar = ({ label, actual, target, unit = "g", color }) => {
           <b className="mono" style={{ color: over ? C.red : C.ink }}>{Math.round(actual)}</b> / {Math.round(target)}{unit}
         </span>
       </div>
-      <div className="h-2 rounded-full relative overflow-hidden" style={{ background: C.rule }}>
-        <div className="h-full rounded-full" style={{ width: `${pct}%`, background: fillColor }}></div>
+      <div className="h-2.5 rounded-full relative overflow-hidden transition-colors duration-150" style={{ background: C.rule }}>
+        <div className="h-full rounded-full transition-all duration-150" style={{ width: `${pct}%`, background: fillColor }}></div>
       </div>
     </div>
   );
@@ -104,7 +103,7 @@ export const Ring = ({ pct, size = 108, stroke = 10, color = C.accent, num, unit
       <svg width={size} height={size} style={{ transform: "rotate(-90deg)" }}>
         <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke={C.rule} strokeWidth={stroke} />
         <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke={ringColor} strokeWidth={stroke}
-          strokeLinecap="round" strokeDasharray={circ} strokeDashoffset={offset} />
+          strokeLinecap="round" strokeDasharray={circ} strokeDashoffset={offset} style={{ transition: "stroke-dashoffset .2s ease" }} />
       </svg>
       <div className="absolute inset-0 flex flex-col items-center justify-center">
         <div className="mono text-2xl font-extrabold" style={{ color: over ? C.red : C.ink, letterSpacing: "-.02em" }}>{num}</div>

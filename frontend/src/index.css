@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
 
 :root {
   --paper: #F6F7F5;
@@ -25,12 +26,38 @@
   --shadow: 0 1px 2px rgba(22, 33, 28, .04), 0 8px 24px rgba(22, 33, 28, .07);
 }
 
+.dark {
+  --paper: #0C0F0E;
+  --card: #171C1A;
+  --ink: #EDF2EF;
+  --faint: #93A79C;
+  --faint-light: #5C6B62;
+  --rule: #262E2A;
+
+  --accent: #34D399;
+  --accent-bg: #15332A;
+
+  --protein: #2FBE8D;
+  --carb: #5B9BD9;
+  --fat: #E08A5B;
+
+  --good: #5FBE72;
+  --good-bg: #16281A;
+  --warn: #E0A83F;
+  --warn-bg: #2E2210;
+  --red: #E56464;
+  --red-bg: #331A1A;
+
+  --shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 6px 20px rgba(0, 0, 0, .35);
+}
+
 body {
   margin: 0;
   background: var(--paper);
   color: var(--ink);
   font-family: -apple-system, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
   font-variant-numeric: tabular-nums;
+  transition: background-color .15s ease, color .15s ease;
 }
 
 #root {

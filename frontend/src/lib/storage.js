@@ -30,3 +30,21 @@ export const uiState = {
     return s;
   },
 };
+
+// Display preference only (light/dark) — same local-only rationale as
+// uiState above, kept as a separate key since it's unrelated data.
+const THEME_KEY = "shadcut:theme";
+
+export const themePref = {
+  get() {
+    try {
+      const v = window.localStorage.getItem(THEME_KEY);
+      return v === "light" || v === "dark" ? v : "dark";
+    } catch {
+      return "dark";
+    }
+  },
+  set(mode) {
+    window.localStorage.setItem(THEME_KEY, mode);
+  },
+};

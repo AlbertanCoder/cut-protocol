@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { AlertTriangle, CheckCircle2, Camera, Droplets, Trash2, CalendarDays } from "lucide-react";
-import { C, STAMP_STYLE } from "../lib/theme.js";
+import { C, getStampStyle } from "../lib/theme.js";
 import { todayStr, dayNum, addDays, fmtD } from "../lib/dates.js";
 import { lb2kg, kg2lb } from "../lib/units.js";
 import { FLOOR, MILESTONES, MAINT_ZONE_LOW, MAINT_ZONE_HIGH, MAINT_KCAL } from "../data/constants.js";
@@ -10,7 +10,6 @@ import { uiState } from "../lib/storage.js";
 
 const kc = (n) => Math.round(n).toLocaleString("en-CA");
 const r1 = (n) => Math.round(n * 10) / 10;
-const inpStyle = { background: C.paper, border: `1.5px solid ${C.rule}`, color: C.ink };
 
 // dayOfWeek in the plan model is 0=Monday..6=Sunday; JS getDay() is 0=Sunday.
 function isoWeekday() {
@@ -19,6 +18,7 @@ function isoWeekday() {
 }
 
 export default function TodayTab({ profile, summary, refresh, isAdmin }) {
+  const inpStyle = { background: C.paper, border: `1.5px solid ${C.rule}`, color: C.ink };
   const [wIn, setWIn] = useState("");
   const [dIn, setDIn] = useState(todayStr());
   const [acks, setAcks] = useState(uiState.get().acks);
@@ -116,7 +116,7 @@ export default function TodayTab({ profile, summary, refresh, isAdmin }) {
       </Card>
 
       <Card section="§9" title="Verdict">
-        <Stamp v={v} stampStyle={STAMP_STYLE} />
+        <Stamp v={v} stampStyle={getStampStyle()} />
         <div className="grid grid-cols-3 gap-3 mt-3">
           <Stat label="7-day avg" value={avg7 != null ? r1(avg7) : "—"} unit="lb" />
           <Stat label="Rate" value={rate != null ? r1(rate) : "—"} unit="lb/wk" />
@@ -199,7 +199,7 @@ export default function TodayTab({ profile, summary, refresh, isAdmin }) {
       </Card>
 
       <details className="px-1 mb-4">
-        <summary className="text-xs font-bold uppercase tracking-widest cursor-pointer" style={{ color: C.faintLight }}>
+        <summary className="text-xs font-semibold uppercase tracking-wide cursor-pointer" style={{ color: C.faintLight }}>
           §9 rules — reference
         </summary>
         <div className="text-xs mt-2 space-y-1 font-semibold" style={{ color: C.ink }}>
