@@ -1,0 +1,216 @@
+// Schema intentionally avoids Postgres-only features (native enums, arrays)
+// so it's a one-line provider swap ("sqlite" -> "postgresql") at deploy time.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String    @id @default(cuid())
+  email        String    @unique
+  passwordHash String
+  // "user" | "admin". Added for the recipe-ownership fix (roadmap/05-data-isolation-audit.md,
+  // roadmap/04-multi-tenancy-auth.md - both independently found the same gap):
+  // Recipe is a shared library with no owner column, and PUT/DELETE
+  // /api/recipes/:id had zero ownership check - harmless while there's one
+  // seeded account, armed the moment self-registration ships (any user could
+  // edit/delete any other user's or the curated library's recipes, cascading
+  // to silently wipe other users' carts/plan slots per the schema's own
+  // onDelete rules below). "admin" can mutate any recipe (the existing
+  // curated/AI-generated library, which predates per-user ownership and has
+  // no createdByUserId); a plain "user" can only mutate recipes they created.
+  role         String    @default("user")
+  createdAt    DateTime  @default(now())
+  profile      Profile?
+  weighins     Weighin[]
+  plans        Plan[]
+  cartItems    CartItem[]
+  recipes      Recipe[]
+}
+
+// All physical quantities stored in SI (kg, cm) regardless of the user's
+// display unit preference — conversion happens at the UI boundary only.
+model Profile {
+  id              String   @id @default(cuid())
+  userId          String   @unique
+  user            User     @relation(fields: [userId], references: [id])
+  sex             String // "M" | "F"
+  age             Int
+  heightCm        Float
+  bodyFatPct      Float
+  job             String // "desk" | "light" | "mixed" | "heavy"
+  sessionsPerWeek Int
+  startWeightKg   Float
+  goalWeightKg    Float
+  startDate       String // ISO date (yyyy-mm-dd)
+  unitPref        String   @default("imperial") // "imperial" | "metric"
+  targetKcal      Int
+  mealsPerDay     Int      @default(3)
+  snacksPerDay    Int      @default(1)
+  // JSON string array, not a native list — this schema deliberately avoids
+  // Postgres-only array types (see file header), and SQLite has no list type
+  // for Prisma to fall back to. No @default() here on purpose — matches
+  // every other Json field in this schema (Recipe.steps, PlanSlot.ingredients,
+  // GroceryList.items), none of which have one either. @default("[]") was
+  // tried and found broken: Prisma/SQLite generated `DEFAULT []` (unquoted,
+  // invalid JSON) in the migration SQL, silently corrupting existing rows
+  // with an empty string instead of "[]" — application code (profile.js's
+  // defaultProfile()) always supplies this explicitly on create instead.
+  excludedFoods   Json // e.g. ["shellfish","gluten"]
+  dietaryStyle    String? // e.g. "omnivore" | "pescatarian" | "vegetarian" | "vegan" | "keto" | "paleo" — null = no restriction
+  // AI recipe-generation preferences (recipeGeneration.js's
+  // generateAndSaveSlotRecipe()). Json array, no @default() - same reason as
+  // excludedFoods above (Prisma/SQLite generated broken unquoted JSON for
+  // @default("[]") once already; app code (defaultProfile()) supplies it).
+  cuisinePreferences Json // e.g. ["mexican","thai","mediterranean"]
+  mealPreferencesNote String? // freeform, e.g. "high protein, minimal dairy, I have an air fryer"
+  updatedAt       DateTime @updatedAt
+}
+
+model Weighin {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  date      String // ISO date (yyyy-mm-dd)
+  weightKg  Float
+  createdAt DateTime @default(now())
+
+  @@unique([userId, date])
+}
+
+// Foods/recipes are a shared library, not per-user — this is a single-user
+// app for now, and a shared curated library is the simpler model regardless.
+model Food {
+  id       String   @id @default(cuid())
+  name     String   @unique
+  category String // "protein" | "carb" | "veg" | "fat" | "dairy" | "other"
+  fdcId    Int? // USDA FoodData Central id — null for hand-entered items
+  // per 100g
+  kcal     Float
+  protein  Float
+  fat      Float
+  carb     Float
+  fiber    Float    @default(0)
+  source   String   @default("manual") // "manual" | "manual-placeholder" | "usda"
+  createdAt DateTime @default(now())
+
+  ingredientOf RecipeIngredient[]
+}
+
+model Recipe {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  description String?
+  steps       Json // ordered string array
+  slotType    String   @default("meal") // "meal" | "snack" | "either"
+  cuisine     String?
+  prepTimeMin Int?
+  source      String   @default("curated") // "curated" | "ai-generated"
+  // NEW (roadmap/03-recipe-curation.md §2): null = ordinary meal-eligible
+  // (the default for ~88% of the pool). Only set for recipes reviewed and
+  // found not to belong in a full lunch/dinner slot on their own merits.
+  // Additive - does not change what slotType means for any existing row or
+  // call site (slotType is read in 7+ places including a user-facing
+  // dropdown and the AI-generation JSON schema; overloading it to encode
+  // "this is a dessert" was considered and rejected - see the roadmap doc).
+  mealCategory String? // "dessert" | "beverage" | "bread_or_pastry_side" | "condiment_or_sauce" | "breakfast_only" | null
+  // cached macros per serving (base ingredient grams, scale=1), recomputed on save
+  kcal        Float
+  protein     Float
+  fat         Float
+  carb        Float
+  createdAt   DateTime @default(now())
+  // Nullable on purpose: the existing 629-row curated/AI-generated/imported
+  // library predates per-user ownership (single-user app originally) and has
+  // no real "creator" - null means "shared library content, admin-only to
+  // mutate" (see routes/recipes.js's ownership check). A non-null value
+  // means a specific user created this recipe and only that user (or an
+  // admin) may edit/delete it.
+  createdByUserId String?
+  createdBy       User?   @relation(fields: [createdByUserId], references: [id])
+
+  ingredients RecipeIngredient[]
+  planSlots   PlanSlot[]
+  cartItems   CartItem[]
+}
+
+model RecipeIngredient {
+  id        String  @id @default(cuid())
+  recipeId  String
+  recipe    Recipe  @relation(fields: [recipeId], references: [id])
+  foodId    String
+  food      Food    @relation(fields: [foodId], references: [id])
+  baseGrams Float
+  scalable  Boolean @default(true) // false = fixed (spices, a single egg, etc.) — not scaled with the recipe multiplier
+  role      String? // "protein" | "carb" | "veg" | "fat" | null — informational, not used for selection
+}
+
+model Plan {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  startDate String // ISO date, Monday of the week
+  createdAt DateTime @default(now())
+
+  slots       PlanSlot[]
+  groceryList GroceryList?
+
+  @@unique([userId, startDate])
+}
+
+model PlanSlot {
+  id          String  @id @default(cuid())
+  planId      String
+  plan        Plan    @relation(fields: [planId], references: [id])
+  dayOfWeek   Int // 0-6, 0 = Monday (matches plan.startDate)
+  slotType    String // "meal" | "snack"
+  slotIndex   Int // which meal/snack number within the day, 0-based
+  recipeId    String?
+  recipe      Recipe? @relation(fields: [recipeId], references: [id], onDelete: SetNull)
+  // Two independent scale factors — the protein-role ingredient(s) scale
+  // separately from the rest of the recipe, so the slot can hit both a
+  // calorie AND a protein target (one multiplier over the whole recipe
+  // can only hit one or the other unless the recipe's fixed ratio happens
+  // to already match).
+  proteinScale Float  @default(1)
+  sidesScale   Float  @default(1)
+  // Ground truth for display + grocery list: actual grams to cook per
+  // ingredient, resolved from the scale factors at generation time.
+  ingredients Json // [{ foodId, name, grams, role }]
+  kcal        Float   @default(0)
+  protein     Float   @default(0)
+  fat         Float   @default(0)
+  carb        Float   @default(0)
+  warning     String?
+  locked      Boolean @default(false)
+
+  @@unique([planId, dayOfWeek, slotType, slotIndex])
+}
+
+model GroceryList {
+  id        String   @id @default(cuid())
+  planId    String   @unique
+  plan      Plan     @relation(fields: [planId], references: [id])
+  items     Json // [{ foodId, name, category, grams }]
+  createdAt DateTime @default(now())
+}
+
+// User-curated recipe collection, independent of the auto-generated week
+// plan (PlanSlot). onDelete: Cascade here (not SetNull like PlanSlot) —
+// a cart entry pointing at a deleted recipe has no historical value once
+// the recipe itself is gone, unlike a past week's plan slot.
+model CartItem {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  recipeId  String
+  recipe    Recipe   @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+  addedAt   DateTime @default(now())
+
+  @@unique([userId, recipeId])
+}

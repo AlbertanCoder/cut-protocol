@@ -1,0 +1,266 @@
+// Dietary-style + exclusion-list filtering — narrows a recipe pool BEFORE it
+// ever reaches the solver, so the solver never has to know these rules
+// exist. Ported verbatim (CommonJS syntax only, zero logic changes) from
+// recomp-v2/src/engine/dietaryFilter.js, which itself had zero dependencies -
+// this is a self-contained module by design in both codebases.
+//
+// cut-protocol previously had NO dietary-exclusion filtering anywhere in its
+// actual meal-plan generation path (confirmed via grep across backend/src
+// before this file was added) - recipePool loaded in plans.js's
+// planContext() went straight to the solver unfiltered. That was a latent
+// safety gap even with the original 27-recipe curated library; it became a
+// real one once seedRecipesFromRecomp.mjs added 602 generic TheMealDB-sourced
+// recipes (shellfish, gluten, dairy, etc. all present) to the same pool.
+
+const MEAT_FISH_KEYWORDS = [
+  "chicken", "turkey", "duck", "beef", "pork", "bacon", "ham",
+  "steak", "sirloin", "flank", "jerky", "elk", "venison", "bison", "game",
+  "salmon", "tuna", "fish", "cod", "tilapia", "halibut", "trout",
+  "shrimp", "scallop", "prawn", "gelatin", "lard",
+];
+const ANIMAL_DERIVED_EXTRA_KEYWORDS = ["egg", "eggs", "cheese", "yogurt", "whey", "casein", "butter", "ghee", "honey"];
+const PLANT_MILK_QUALIFIERS = ["almond", "soy", "oat", "coconut", "cashew", "rice", "hemp", "pea"];
+
+// Paleo exclusions. Deliberately broader than the gluten-only synonym list
+// above (paleo excludes gluten-free grains too - rice, corn, oats).
+const GRAIN_KEYWORDS = [
+  "rice", "wheat", "corn", "oat", "oats", "barley", "rye", "pasta", "noodle",
+  "bread", "cereal", "couscous", "quinoa", "buckwheat", "cornmeal", "tortilla",
+  "cracker", "flour",
+];
+const LEGUME_KEYWORDS = [
+  "bean", "beans", "lentil", "lentils", "soy", "soya", "tofu", "tempeh",
+  "edamame", "chickpea", "chickpeas", "peanut", "peanuts",
+];
+const NON_BUTTER_DAIRY_KEYWORDS = ["cheese", "yogurt", "yoghurt", "whey", "casein", "kefir", "custard"];
+
+// Category synonym maps for hard exclusions (allergies/intolerances), keyed
+// by the term a user is expected to pick from a profile allergy list. Guards
+// against literal substring matching on "gluten" or "shellfish" matching
+// almost nothing, because no real food is literally named that - only
+// category members are ("wheat", "shrimp", "crab"...). A term that isn't a
+// key here falls back to literal substring matching (below), which covers
+// custom/free-text exclusions like "kiwi" or a specific product name.
+const CATEGORY_SYNONYMS = {
+  // "stock cube"/"bouillon"/"gravy mix" are common hidden-wheat AND
+  // hidden-soy carriers (both wheat flour and hydrolyzed soy protein are
+  // standard cheap thickener/flavor-enhancer fillers in commercial stock and
+  // gravy products) - added to both gluten and soy for that reason, same
+  // real-world-plausibility bar as the shellfish compound terms below.
+  // Measured against the real 629-recipe pool before shipping: scoping these
+  // terms to the specific categories they're actually plausible for (rather
+  // than treating every compound/blended product name as ambiguous for every
+  // exclusion, which was measured to newly exclude 38 recipes for this
+  // account's actual shellfish/kiwi/soy-protein exclusions - 36 of them for
+  // curry powder/five-spice, neither of which has an established
+  // hidden-allergen risk) keeps the fix targeted at the real gap instead of
+  // shrinking the pool for reasons unrelated to any declared allergy.
+  gluten: [
+    "gluten", "wheat", "barley", "rye", "couscous", "pasta", "bread", "farro",
+    "malt", "seitan", "spelt", "semolina", "bulgur", "cracker", "crackers",
+    "noodle", "noodles", "tortilla", "tortillas", "cereal", "breadcrumb",
+    "breadcrumbs", "flour", "orzo", "panko",
+    "stock cube", "stock powder", "bouillon", "gravy mix", "gravy granules",
+  ],
+  shellfish: [
+    "shellfish", "shrimp", "prawn", "crab", "lobster", "scallop", "mussel",
+    "clam", "oyster", "crawfish", "crayfish",
+    // Compound/generic product names that legitimately contain shellfish but
+    // don't literally spell out any species word - confirmed real case:
+    // "Frozen Seafood mix" on "Spanish seafood rice" (PABLO_REVIEW.md §2.5).
+    // "seafood" ALONE is deliberately not in this list - "seafood" also
+    // covers plain fish (see the "Smoked Haddock Kedgeree" case Pablo found
+    // was a correct non-match), and adding bare "seafood" here would
+    // over-exclude fish-only dishes for a shellfish-only allergy. The
+    // multi-word phrases below are specific enough to reliably mean a
+    // blended/mixed product, which in practice is shellfish-inclusive.
+    "seafood mix", "seafood medley", "mixed seafood", "surimi",
+  ],
+  dairy: [
+    "dairy", "milk", "cheese", "yogurt", "yoghurt", "whey", "casein",
+    "butter", "cream", "ghee", "custard", "kefir",
+  ],
+  soy: [
+    "soy", "soya", "tofu", "edamame", "tempeh", "miso", "soybean",
+    "stock cube", "stock powder", "bouillon", "gravy mix", "gravy granules",
+  ],
+  nuts: [
+    "almond", "walnut", "cashew", "pecan", "pistachio", "hazelnut",
+    "macadamia", "peanut", "nut",
+    "mixed nuts", "nut mix", "trail mix",
+  ],
+  egg: ["egg", "eggs", "mayonnaise", "meringue"],
+};
+
+// Default keto threshold is on carb-per-100g of the raw ingredient, not a
+// typical realistic serving size - a disclosed simplification.
+const DEFAULT_KETO_CARB_THRESHOLD = 15;
+
+function hasWord(name, word) {
+  return new RegExp("\\b" + word.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + "\\b", "i").test(name);
+}
+
+// Same word-boundary match as hasWord(), but tolerant of a trailing "s" or
+// "es" plural - CATEGORY_SYNONYMS lists singular keywords ("almond",
+// "cracker") but real ingredient names are very often plural ("Almonds").
+function hasWordOrPlural(name, word) {
+  const escaped = word.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  return new RegExp("\\b" + escaped + "(?:es|s)?\\b", "i").test(name);
+}
+
+function matchesAny(name, words) {
+  return words.some((w) => hasWord(name, w));
+}
+
+// hasWord()/hasWordOrPlural() are single-word, word-boundary regexes - they
+// don't handle multi-word phrases like "seafood mix" or "stock cube" (a
+// boundary-anchored regex per word would require matching word order and
+// adjacency, which \b-per-word doesn't give you for free). Plain
+// case-insensitive substring is the right tool for a fixed multi-word phrase;
+// single-word entries still get the stricter word-boundary/plural treatment.
+function hasPhrase(name, phrase) {
+  return name.toLowerCase().includes(phrase.toLowerCase());
+}
+
+function matchesTermList(name, term) {
+  return term.includes(" ") ? hasPhrase(name, term) : hasWordOrPlural(name, term);
+}
+
+// "milk" alone isn't a reliable animal-derived signal - "almond milk", "soy
+// milk", "oat milk" are all plant-based. Only treat a "milk" match as dairy
+// when no plant-milk qualifier is also present in the name.
+function isDairyMilk(n) {
+  return hasWord(n, "milk") && !matchesAny(n, PLANT_MILK_QUALIFIERS);
+}
+
+// Paleo's dairy exclusion, minus butter/ghee (see excludedByStyle's paleo
+// branch). Same plant-qualifier guard as isDairyMilk() so "coconut cream"
+// isn't excluded just because "cream" appears in the name.
+function isNonButterDairy(n) {
+  return isDairyMilk(n) || (hasWord(n, "cream") && !matchesAny(n, PLANT_MILK_QUALIFIERS)) || matchesAny(n, NON_BUTTER_DAIRY_KEYWORDS);
+}
+
+// A recipe is style-excluded if ANY of its ingredients matches the same
+// keyword logic used for flat foods. recipe: {ingredients:[{name}]}.
+// NOTE - keto is a real exception here: it depends on food.carb (a number),
+// and this function is only ever called with ingredient NAMES (carb
+// hardcoded to 0 below, since RecipeIngredient doesn't carry its own macro
+// data - only a foodId reference) - so this path can never actually catch a
+// high-carb recipe under keto. That's not fixable at the ingredient-name
+// level; routes/plans.js's filterRecipePool() does a separate, correct
+// per-recipe carb-ceiling check using the recipe's own cached `carb` total
+// instead, specifically because of this limitation.
+function recipeExcludedByStyle(recipe, dietaryStyle) {
+  if (!dietaryStyle || dietaryStyle === "none") return false;
+  return recipe.ingredients.some((ing) => excludedByStyle({ name: ing.name, carb: 0 }, dietaryStyle));
+}
+
+// Adjuster/single-food equivalent of recipeExcludedByStyle(). Same keto
+// caveat applies (adjusters are named ingredients here, not full Food rows).
+function adjusterExcludedByStyle(adjuster, dietaryStyle) {
+  if (!dietaryStyle || dietaryStyle === "none") return false;
+  return excludedByStyle({ name: adjuster.name, carb: 0 }, dietaryStyle);
+}
+
+function excludedByStyle(food, dietaryStyle) {
+  const n = food.name;
+  if (dietaryStyle === "vegan") {
+    return matchesAny(n, MEAT_FISH_KEYWORDS) || matchesAny(n, ANIMAL_DERIVED_EXTRA_KEYWORDS) || isDairyMilk(n);
+  }
+  if (dietaryStyle === "vegetarian") {
+    return matchesAny(n, MEAT_FISH_KEYWORDS);
+  }
+  if (dietaryStyle === "keto") {
+    return food.carb > DEFAULT_KETO_CARB_THRESHOLD;
+  }
+  if (dietaryStyle === "paleo") {
+    // Excludes grains, legumes, and dairy. Butter/ghee are deliberately NOT
+    // excluded (common paleo-friendly exception - mostly fat, milk solids
+    // removed). Disclosed simplification: doesn't try to distinguish white
+    // potato (excluded under some strict paleo interpretations) from sweet
+    // potato - genuinely contested even within paleo itself, so excluding
+    // either by default seemed more likely to be wrong than right.
+    return matchesAny(n, GRAIN_KEYWORDS) || matchesAny(n, LEGUME_KEYWORDS) || isNonButterDairy(n);
+  }
+  if (dietaryStyle === "carnivore") {
+    // Inverted vs. every style above: excludes everything that ISN'T an
+    // animal product, rather than excluding specific categories. Dairy is
+    // treated as allowed (common real-world carnivore practice, even though
+    // the strictest "lion diet" variant excludes it too - same
+    // mainstream-common-case-over-edge-case call paleo's potato question made).
+    return !(matchesAny(n, MEAT_FISH_KEYWORDS) || matchesAny(n, ANIMAL_DERIVED_EXTRA_KEYWORDS) || isDairyMilk(n));
+  }
+  return false;
+}
+
+// Does a single exclusion term match this food/ingredient name? Exported
+// pure so callers can apply the exact same rule to recipe.ingredients[].name,
+// not just food.name.
+function matchesExclusionTerm(name, term) {
+  const key = (term || "").trim().toLowerCase();
+  if (!key) return false;
+  const synonyms = CATEGORY_SYNONYMS[key];
+  if (synonyms) {
+    // "milk" needs the same plant-milk qualifier check the vegan/vegetarian
+    // style filter already uses - a dairy allergy must not remove almond
+    // milk just because "milk" is a dairy synonym. Multi-word synonym
+    // entries ("seafood mix", "stock cube") use substring matching via
+    // matchesTermList(); single-word entries keep the stricter
+    // word-boundary/plural match.
+    return synonyms.some((word) => (word === "milk" ? isDairyMilk(name) : matchesTermList(name, word)));
+  }
+  // Not a known category - literal substring fallback. Covers free-text
+  // entries like "kiwi" and specific multi-word phrases like "soy protein"
+  // that should NOT expand to the whole soy category.
+  return name.toLowerCase().includes(key);
+}
+
+function excludedByList(food, excludedFoods) {
+  if (!excludedFoods || !excludedFoods.length) return false;
+  return excludedFoods.some((term) => matchesExclusionTerm(food.name, term));
+}
+
+// profile: {dietaryStyle: "none"|"vegan"|"vegetarian"|"keto", excludedFoods: string[]}
+function applyDietaryFilters(pool, profile) {
+  const dietaryStyle = profile?.dietaryStyle || "none";
+  const excludedFoods = profile?.excludedFoods || [];
+  if (dietaryStyle === "none" && excludedFoods.length === 0) return pool;
+  return pool.filter((food) => !excludedByStyle(food, dietaryStyle) && !excludedByList(food, excludedFoods));
+}
+
+// Per-term exclusion counts against a flat food pool, so the UI can render
+// "N excluded for: gluten" - silent failure is banned.
+function traceExclusions(pool, excludedFoods) {
+  const counts = {};
+  (excludedFoods || []).forEach((term) => {
+    const key = (term || "").trim().toLowerCase();
+    if (!key) return;
+    counts[key] = (pool || []).filter((food) => matchesExclusionTerm(food.name, key)).length;
+  });
+  return counts;
+}
+
+// Recipe-level equivalent of traceExclusions() - a recipe's top-level .name
+// is its dish title ("Algerian Kefta"), not an ingredient, so matching a term
+// against it would silently undercount. Checks every ingredient name instead.
+// recipes: [{ingredients:[{name}]}]
+function traceRecipeExclusions(recipes, excludedFoods) {
+  const counts = {};
+  (excludedFoods || []).forEach((term) => {
+    const key = (term || "").trim().toLowerCase();
+    if (!key) return;
+    counts[key] = (recipes || []).filter((recipe) =>
+      (recipe.ingredients || []).some((ing) => matchesExclusionTerm(ing.name, key))
+    ).length;
+  });
+  return counts;
+}
+
+module.exports = {
+  recipeExcludedByStyle,
+  adjusterExcludedByStyle,
+  matchesExclusionTerm,
+  applyDietaryFilters,
+  traceExclusions,
+  traceRecipeExclusions,
+};

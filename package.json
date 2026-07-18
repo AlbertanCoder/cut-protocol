@@ -1,0 +1,69 @@
+{
+  "name": "cut-protocol-desktop",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Cut Protocol — Windows desktop shell (Electron) around the existing Express+Prisma+React app.",
+  "main": "electron/main.cjs",
+  "scripts": {
+    "start": "electron .",
+    "build:frontend": "npm --prefix frontend run build",
+    "dist": "npm run build:frontend && electron-builder"
+  },
+  "devDependencies": {
+    "electron": "^43.1.1",
+    "electron-builder": "^26.15.3"
+  },
+  "build": {
+    "appId": "com.cutprotocol.app",
+    "productName": "Cut Protocol",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "electron/**/*",
+      "backend/**/*",
+      "frontend/dist/**/*",
+      "CutProtocol.ico",
+      "!backend/prisma/dev.db",
+      "!backend/prisma/dev.db-journal",
+      "!backend/.env",
+      "!backend/.env.local",
+      "!backend/tests/**/*",
+      "!**/*.test.js",
+      "!**/*.map",
+      "!**/node_modules/.cache/**/*",
+      "!**/.git/**/*"
+    ],
+    "asarUnpack": [
+      "backend/node_modules/.prisma/**/*",
+      "backend/node_modules/@prisma/**/*",
+      "backend/node_modules/prisma/**/*",
+      "backend/prisma/**/*"
+    ],
+    "extraResources": [
+      {
+        "from": "backend/prisma/dev.db",
+        "to": "dev.db.template"
+      },
+      {
+        "from": "backend/.env.example",
+        "to": "backend.env.template"
+      }
+    ],
+    "win": {
+      "icon": "CutProtocol.ico",
+      "target": [
+        {
+          "target": "nsis",
+          "arch": ["x64"]
+        }
+      ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "shortcutName": "Cut Protocol"
+    }
+  }
+}

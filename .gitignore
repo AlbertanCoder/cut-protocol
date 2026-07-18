@@ -1,0 +1,36 @@
+# Dependencies
+**/node_modules
+
+# Build output
+**/dist
+release/
+backend/prisma/dev.db.template
+
+# Env / secrets
+**/.env
+**/.env.local
+
+# Local databases
+backend/prisma/dev.db
+backend/prisma/dev.db-journal
+*.db
+*.db-journal
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS junk
+.DS_Store
+Thumbs.db
+
+# Editor folders
+.vscode/*
+!.vscode/extensions.json
+.idea/
+
+# Internal dev docs — not for the published repo (contain personal/health data)
+CLAUDE.md
+AUDIT.md
+PABLO_REVIEW.md
+roadmap/09-ux-onboarding.md
