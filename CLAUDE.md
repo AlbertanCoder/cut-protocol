@@ -130,6 +130,30 @@ challenged. Never suggest intake below the safety floor.
   hiddenCount. 4-step wizard. Admin floor 2000 preserved as row data.
   Verified via verifyPhase3.mjs (3 fake users) + full browser walk; 94
   tests green. Next: Phase 4 — the meal-plan solver.
+- 2026-07-18 · **Phase 4 complete.** Meal solver: 3+ scored complete-day
+  candidates (honest match % — 0.55 kcal / 0.30 protein-shortfall / 0.075
+  fat+carb range weights), best-of-3 scored week generation, portion scaling
+  clamped to the spec's 0.5–2× with 5 g practical rounding, variety cap 2×/
+  week (4× with batch-cooking opt-in), soft biases (8-cuisine classifier
+  backfilled onto 608 imports, protein preference, CAD budget tiers) over
+  hard filters (diet/allergies/max-prep), 3-alternate swap with
+  server-rebuilt compliance-checked apply, accept-day → week plan → Today
+  dashboard, grocery list with practical purchase units (packs/cans/pieces,
+  grams as ground truth) + persisted checkboxes. Honesty layer:
+  result-driven diagnosis (never silent, never suggests loosening
+  allergies) whenever a week lands <6/7 days or candidates are rough.
+  **Safety find:** live verification caught fish/meat reaching a vegan
+  account — dietaryFilter's style matching was exact-word (plural species
+  names like "Prawns"/"Sardines"/"Pilchards" passed) and the species list
+  was thin. Fixed: plural-aware matching + exhaustive 854-name food-table
+  audit closing every gap (cheese varieties, barramundi, dulce de leche,
+  curry pastes, etc.), locked by regression tests. Real-pool verification:
+  1–15 ms week solves, 7/7 days for omnivore/keto/halal, diagnosed
+  closest-fit for the genuinely thin vegan (51 recipes) and vegetarian
+  pools, zero leaks across ~1,000 shipped ingredients. 110 tests green.
+  Known cosmetic quirk: grocery SECTION classifier files "Butter Beans"
+  under Dairy (name-keyword artifact; Phase 7 polish). Next: Phase 5 —
+  recipes, cart, importer.
 
 ## Archive
 

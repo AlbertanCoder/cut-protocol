@@ -43,6 +43,23 @@ test("allergy checkboxes: peanuts and tree nuts are separate allergies", () => {
   assert.equal(matchesExclusionTerm("Walnut Halves", "tree nuts"), true);
 });
 
+test("REGRESSION: plural and regional species names never pass vegan/vegetarian", () => {
+  // Live Phase 4 verification caught "Raw King Prawns", "Sardines", and
+  // "Pilchards" reaching a vegan account: style keywords matched exact
+  // singular words only. Plural-aware matching + the widened species list
+  // must hold this forever.
+  for (const name of ["Raw King Prawns", "Sardines", "Pilchards", "Squid Rings", "Goat Shoulder", "Pepperoni Slices", "Anchovies", "Natural Yoghurt", "Mussels", "Sea Bass Fillets"]) {
+    assert.equal(recipeExcludedByStyle(recipe(name), "vegan"), true, `vegan must exclude "${name}"`);
+  }
+  for (const name of ["Raw King Prawns", "Sardines", "Pilchards", "Goat Shoulder"]) {
+    assert.equal(recipeExcludedByStyle(recipe(name), "vegetarian"), true, `vegetarian must exclude "${name}"`);
+  }
+  // ...and plant foods with tricky names stay in.
+  for (const name of ["Tofu, firm", "Butter Beans", "Coconut Milk", "Almond milk, unsweetened", "Jackfruit"]) {
+    assert.equal(recipeExcludedByStyle(recipe(name), "vegan"), false, `vegan must NOT exclude "${name}"`);
+  }
+});
+
 test("allergy checkboxes: fish, sesame, kiwi, eggs", () => {
   assert.equal(matchesExclusionTerm("Smoked Haddock", "fish"), true);
   assert.equal(matchesExclusionTerm("Worcestershire Sauce", "fish"), true, "hidden anchovy carrier");

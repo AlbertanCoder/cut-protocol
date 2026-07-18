@@ -12,11 +12,37 @@
 // real one once seedRecipesFromRecomp.mjs added 602 generic TheMealDB-sourced
 // recipes (shellfish, gluten, dairy, etc. all present) to the same pool.
 
+// Phase 4 hardening: the original short list (ported from recomp) knew
+// "shrimp" and "cod" but not sardines, sea bass, squid, goat, or pepperoni —
+// live verification caught prawn stew being offered to a vegan account.
+// Vegan/vegetarian exclusion must cover every meat/fish/seafood species and
+// processed-meat form in the real 600-recipe pool, erring on over-exclusion.
 const MEAT_FISH_KEYWORDS = [
-  "chicken", "turkey", "duck", "beef", "pork", "bacon", "ham",
-  "steak", "sirloin", "flank", "jerky", "elk", "venison", "bison", "game",
-  "salmon", "tuna", "fish", "cod", "tilapia", "halibut", "trout",
-  "shrimp", "scallop", "prawn", "gelatin", "lard",
+  // land meats + cuts
+  "chicken", "turkey", "duck", "goose", "quail", "poussin", "beef", "pork",
+  "bacon", "ham", "gammon", "steak", "sirloin", "flank", "brisket", "oxtail",
+  "rib", "jerky", "elk", "venison", "bison", "game", "lamb", "mutton", "goat",
+  "veal", "rabbit", "boar", "liver", "kidney", "tripe", "tongue", "bone marrow",
+  "meat", "mince", "meatball",
+  // processed meats
+  "sausage", "salami", "pepperoni", "chorizo", "prosciutto", "pancetta",
+  "spam", "hot dog", "frankfurter", "bratwurst", "kielbasa", "mortadella",
+  "pastrami", "black pudding", "haggis", "luncheon", "deli",
+  // fish
+  "salmon", "tuna", "fish", "cod", "tilapia", "halibut", "trout", "mackerel",
+  "sardine", "pilchard", "anchovy", "anchovies", "herring", "kipper", "haddock",
+  "sole", "plaice", "bass", "snapper", "bream", "monkfish", "swordfish", "mahi",
+  "pollock", "perch", "pike", "carp", "eel", "hake", "sprat", "whitebait",
+  "barramundi", "grouper", "turbot", "flounder", "mullet", "catfish",
+  "skate", "dogfish", "pomfret", "milkfish", "tilefish", "wahoo", "marlin",
+  "caviar", "roe", "surimi",
+  // shellfish + cephalopods
+  "shrimp", "scallop", "prawn", "crab", "lobster", "mussel", "clam", "oyster",
+  "crayfish", "crawfish", "squid", "calamari", "octopus", "cuttlefish",
+  "seafood", "conch", "whelk", "cockle", "frog",
+  // animal-derived binders
+  "gelatin", "gelatine", "lard", "suet", "tallow", "worcestershire", "fish sauce",
+  "oyster sauce", "shrimp paste", "dashi", "bonito",
 ];
 // Meat-only subset (no fish) — used by kosher's meat+dairy rule, where fish
 // + dairy is permitted but meat + dairy is not.
@@ -38,7 +64,27 @@ const PROCESSED_MEAT_KEYWORDS = [
   "bacon", "sausage", "salami", "pepperoni", "chorizo", "hot dog", "spam",
   "prosciutto", "pancetta", "deli meat", "luncheon meat",
 ];
-const ANIMAL_DERIVED_EXTRA_KEYWORDS = ["egg", "eggs", "cheese", "yogurt", "whey", "casein", "butter", "ghee", "honey"];
+// NOTE: no bare "butter"/"cream" here — those need compound guards (peanut
+// butter, butter beans, coconut cream are all plant foods); see
+// isVeganAnimalProduct() below.
+const ANIMAL_DERIVED_EXTRA_KEYWORDS = [
+  "egg", "eggs", "cheese", "yogurt", "yoghurt", "whey", "casein", "ghee",
+  "honey", "mayonnaise", "skyr", "kefir", "custard", "quark", "milk powder",
+  // Cheese VARIETY names — none contain the word "cheese", all are dairy
+  // (caught by the 854-name food-table audit, Phase 4).
+  "mozzarella", "cheddar", "parmesan", "feta", "ricotta", "brie", "gouda",
+  "halloumi", "mascarpone", "paneer", "stilton", "gorgonzola", "camembert",
+  "gruyere", "gruyère", "edam", "emmental", "manchego", "pecorino",
+  "provolone", "burrata", "queso", "creme fraiche", "crème fraîche", "curd",
+  // Hidden-animal carriers caught by the 854-name audit: milk-based sweets,
+  // egg-based sauces/doughs, gelatin sweets, yogurt/ghee breads, and the
+  // shrimp-paste-based Thai pastes (same safe-side reasoning as gluten's
+  // stock cubes — over-exclusion is the correct failure direction).
+  "dulce de leche", "marshmallow", "meringue", "white chocolate",
+  "milk chocolate", "mars bar", "aioli", "aïoli", "christmas pudding",
+  "perogi", "pierogi", "toffee", "caramel sauce", "naan", "wonton",
+  "curry paste",
+];
 const PLANT_MILK_QUALIFIERS = ["almond", "soy", "oat", "coconut", "cashew", "rice", "hemp", "pea"];
 
 // Paleo exclusions. Deliberately broader than the gluten-only synonym list
@@ -148,8 +194,13 @@ function hasWordOrPlural(name, word) {
   return new RegExp("\\b" + escaped + "(?:es|s)?\\b", "i").test(name);
 }
 
+// Plural-aware: real ingredient names are very often plural ("Prawns",
+// "Sardines") while keyword lists are singular. The exact-match hasWord()
+// let every plural-only species name straight through the vegan/vegetarian
+// style filter — caught live in Phase 4 verification. Style keywords now get
+// the same s/es tolerance the allergy synonym path always had.
 function matchesAny(name, words) {
-  return words.some((w) => hasWord(name, w));
+  return words.some((w) => (w.includes(" ") ? hasPhrase(name, w) : hasWordOrPlural(name, w)));
 }
 
 // hasWord()/hasWordOrPlural() are single-word, word-boundary regexes - they
@@ -222,10 +273,30 @@ function adjusterExcludedByStyle(adjuster, dietaryStyle) {
   return excludedByStyle({ name: adjuster.name, carb: 0 }, dietaryStyle);
 }
 
+// Dairy butter/cream with the compound guards: "peanut butter", "butter
+// beans", "coconut cream", "cream of tartar" are plant foods.
+function isDairyButterOrCream(n) {
+  const butterish = hasWordOrPlural(n, "butter")
+    && !hasPhrase(n, "peanut butter") && !hasPhrase(n, "nut butter")
+    && !hasWordOrPlural(n, "bean")
+    && !matchesAny(n, PLANT_MILK_QUALIFIERS);
+  const creamish = hasWord(n, "cream")
+    && !hasPhrase(n, "cream of tartar")
+    && !matchesAny(n, PLANT_MILK_QUALIFIERS);
+  return butterish || creamish || hasWord(n, "buttermilk");
+}
+
+function isVeganAnimalProduct(n) {
+  return matchesAny(n, MEAT_FISH_KEYWORDS)
+    || matchesAny(n, ANIMAL_DERIVED_EXTRA_KEYWORDS)
+    || isDairyMilk(n)
+    || isDairyButterOrCream(n);
+}
+
 function excludedByStyle(food, dietaryStyle) {
   const n = food.name;
   if (dietaryStyle === "vegan") {
-    return matchesAny(n, MEAT_FISH_KEYWORDS) || matchesAny(n, ANIMAL_DERIVED_EXTRA_KEYWORDS) || isDairyMilk(n);
+    return isVeganAnimalProduct(n);
   }
   if (dietaryStyle === "vegetarian") {
     return matchesAny(n, MEAT_FISH_KEYWORDS);
@@ -248,7 +319,7 @@ function excludedByStyle(food, dietaryStyle) {
     // treated as allowed (common real-world carnivore practice, even though
     // the strictest "lion diet" variant excludes it too - same
     // mainstream-common-case-over-edge-case call paleo's potato question made).
-    return !(matchesAny(n, MEAT_FISH_KEYWORDS) || matchesAny(n, ANIMAL_DERIVED_EXTRA_KEYWORDS) || isDairyMilk(n));
+    return !isVeganAnimalProduct(n);
   }
   if (dietaryStyle === "mediterranean") {
     // Mediterranean is a PATTERN, not a hard exclusion list — implemented as

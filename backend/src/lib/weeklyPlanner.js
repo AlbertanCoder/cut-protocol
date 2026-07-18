@@ -12,11 +12,14 @@
 
 const { generateAndSaveSlotRecipe } = require("./recipeGeneration.js");
 
-const SCALE_BOUNDS = { min: 0.4, max: 2.5 };
-// With only ~24 curated recipes, a low repeat cap exhausts the best-match
-// recipes partway through the week. 3 gives enough headroom while still
-// keeping variety (not the same recipe every day).
-const MAX_REPEATS_PER_WEEK = 3;
+// Phase 4 spec bounds: portions scale 0.5×–2× — beyond that a "serving"
+// stops resembling the dish (half a recipe is a light portion; double is a
+// big plate; 2.5× was soup-pot territory).
+const SCALE_BOUNDS = { min: 0.5, max: 2 };
+// Phase 4 variety rule: never the same recipe 3+ times in a week unless the
+// user explicitly allows batch-cooking repeats.
+const DEFAULT_REPEAT_CAP = 2;
+const BATCH_REPEAT_CAP = 4;
 const DAYS = 7;
 // A slot's scaled result missing the target by more than this is not a fit,
 // full stop - matches the threshold resolveSlot() already warned at before
@@ -25,32 +28,24 @@ const KCAL_TOLERANCE_PCT = 0.15;
 // Protein is the "load-bearing" macro (see this file's own header comment,
 // and EngineTab.jsx's "protein + calories are load-bearing walls") - the
 // accept/reject gate below previously checked kcal only, which shipped
-// calorie-perfect, protein-short recipes (desserts/sides with no separable
-// protein-role ingredient landing exactly on kcal via a single uniform
-// scale). Tighter than KCAL_TOLERANCE_PCT because protein is the metric this
-// module's two-factor solver exists specifically to protect. Deliberately
-// ASYMMETRIC - only a SHORTFALL below target counts against a candidate;
-// delivering more protein than the slot's target is never penalized (the
-// daily target itself is the midpoint of a proteinLo-proteinHi range, so
-// "over" is inside the acceptable band by construction). Per PABLO_REVIEW.md
-// §2.6 - the kcal-only gate shipped calories within 5% on every day of a
-// real-pool re-run while protein landed 10-32% short on 6/7 days.
+// calorie-perfect, protein-short recipes. Deliberately ASYMMETRIC - only a
+// SHORTFALL below target counts against a candidate (the daily target is
+// the midpoint of a range, so "over" is inside the band by construction).
 const PROTEIN_TOLERANCE_PCT = 0.12;
-// Real pool is 628 recipes deep - trying a handful of distinct candidates
-// before giving up costs nothing (pickRecipe/scaleRecipe are cheap, sync)
-// and is exactly what "reject and retry" per the AUDIT.md fix means.
+// Real pool is 600+ recipes deep - trying a handful of distinct candidates
+// before giving up costs nothing (pickRecipe/scaleRecipe are cheap, sync).
 const MAX_SLOT_ATTEMPTS = 5;
-// Each slot solves independently against a fixed share of the day's target
-// (a recipe's fixed macro ratio only gets clamped-scaled, per SCALE_BOUNDS,
-// toward it) - with no correction, several slots landing off in the same
-// direction lets a whole day run away from target with nothing to catch it.
-// Confirmed via Monte Carlo (500 trials, real recipe pool, 2026-07-13):
-// day-level kcal deviation p95 ~79%, worst observed days 2.5-3x over target.
-// Fix: within-day carry-forward (generateWeekPlan below) redistributes the
-// REMAINING day budget across not-yet-solved slots after each slot resolves,
-// capped at CARRY_CAP_PCT of that slot's original target so one bad miss
-// can't force the next slot into an unreasonable ask.
+// Within-day carry-forward (solveDay below) redistributes the REMAINING day
+// budget across not-yet-solved slots after each slot resolves, capped at
+// CARRY_CAP_PCT of that slot's original target so one bad miss can't force
+// the next slot into an unreasonable ask. (Monte Carlo, 500 trials, real
+// pool, 2026-07-13: without it day-level kcal p95 ~79% off, worst 2.5-3×.)
 const CARRY_CAP_PCT = 0.3;
+
+function repeatCapFor(options) {
+  if (Number.isInteger(options?.repeatCap)) return options.repeatCap;
+  return options?.allowBatchRepeats ? BATCH_REPEAT_CAP : DEFAULT_REPEAT_CAP;
+}
 
 function buildSlots(mealConfig) {
   const slots = [];
@@ -79,38 +74,33 @@ function targetsForSlots(dailyTarget, slots) {
 }
 
 // roadmap/03-recipe-curation.md §2: dessert/beverage/bread-side/condiment
-// recipes are excluded from ordinary "meal" slot eligibility - this is how
-// Flan, Postre Chajá, and Yorkshire Puddings ended up scaled to a 400-600
-// kcal lunch/dinner target in the first place (AUDIT.md §3, PABLO_REVIEW.md
-// §2.6). breakfast_only is deliberately NOT excluded here (see the roadmap
-// doc §1.5) - the solver has no time-of-day concept, so excluding it would
-// just shrink the pool with no corresponding "only for breakfast slots"
-// mechanism; those recipes are tagged for future use, not filtered today.
+// recipes are excluded from ordinary "meal" slot eligibility. breakfast_only
+// is deliberately NOT excluded (no time-of-day concept to route it with).
 const NON_MEAL_CATEGORIES = new Set(["dessert", "beverage", "bread_or_pastry_side", "condiment_or_sauce"]);
 
-function eligibleRecipes(recipePool, slotType, usageCount) {
+function eligibleRecipes(recipePool, slotType, usageCount, repeatCap) {
   const matchesType = (r) => r.slotType === slotType || r.slotType === "either";
   const isMealEligible = (r) => slotType !== "meal" || !NON_MEAL_CATEGORIES.has(r.mealCategory);
-  return recipePool.filter((r) => matchesType(r) && isMealEligible(r) && (usageCount.get(r.id) || 0) < MAX_REPEATS_PER_WEEK);
+  return recipePool.filter((r) => matchesType(r) && isMealEligible(r) && (usageCount.get(r.id) || 0) < repeatCap);
 }
 
 // Weighted random, biased toward recipes whose protein-per-kcal ratio is
 // close to the slot's target — good matches need less extreme scaling.
 // usedToday gets a much heavier discount than usedYesterday: repeating the
-// identical dish within the SAME day (AUDIT.md §3's "feijoada served for
-// both meal 1 and meal 2 Saturday" finding) is a more noticeable, more
-// avoidable repeat than a day-to-day one, and should only ever be picked
-// when genuinely nothing else in the eligible pool is usable. Soft discount
-// rather than a hard exclude on purpose - a thin post-filter pool (heavy
-// dietary exclusions, small slotType-specific pool) should still be able to
-// fall back to a repeat rather than produce an unsolved slot.
-function pickRecipe(candidates, targetRatio, usedYesterday, usedToday, rng) {
+// identical dish within the SAME day should only happen when nothing else
+// is usable. Soft discount rather than a hard exclude on purpose - a thin
+// post-filter pool should fall back to a repeat rather than an unsolved
+// slot. `bias` (Phase 4) is an optional per-recipe multiplier carrying the
+// user's soft preferences (cuisine / protein choice / budget) — it shapes
+// probability, never eligibility (hard rules live in the pool filter).
+function pickRecipe(candidates, targetRatio, usedYesterday, usedToday, rng, bias) {
   if (candidates.length === 0) return null;
   const weighted = candidates.map((r) => {
     const ratio = r.kcal > 0 ? r.protein / r.kcal : 0;
     const diff = Math.abs(ratio - targetRatio);
     const discount = usedToday.has(r.id) ? 0.02 : usedYesterday.has(r.id) ? 0.15 : 1;
-    return { r, weight: (1 / (diff + 0.015)) * discount };
+    const pref = bias ? bias(r) : 1;
+    return { r, weight: (1 / (diff + 0.015)) * discount * pref };
   });
   const total = weighted.reduce((s, x) => s + x.weight, 0);
   let roll = rng() * total;
@@ -123,6 +113,11 @@ function pickRecipe(candidates, targetRatio, usedYesterday, usedToday, rng) {
 
 const clamp = (v, { min, max }) => (Number.isFinite(v) ? Math.min(max, Math.max(min, v)) : min);
 const round2 = (n) => Math.round(n * 100) / 100;
+
+// Practical kitchen amounts: nobody weighs 217 g of potato — 5 g steps once
+// past spice territory. Totals are recomputed from the rounded grams, so
+// the shipped macros always match what's actually on the scale.
+const practicalGrams = (raw) => (raw >= 20 ? Math.round(raw / 5) * 5 : Math.round(raw));
 
 function bundleMacros(ingredients) {
   return ingredients.reduce(
@@ -166,7 +161,7 @@ function scaleRecipe(recipe, kcalTarget, proteinTarget) {
     const scale = !ing.scalable ? 1 : ing.role === "protein" ? proteinScale : sidesScale;
     return {
       foodId: ing.foodId, name: ing.food.name, role: ing.role,
-      grams: Math.round(ing.baseGrams * scale),
+      grams: practicalGrams(ing.baseGrams * scale),
     };
   });
 
@@ -201,11 +196,9 @@ function unsolvedResult(warning) {
 }
 
 // aiFallback: { enabled, callsRemaining: {n}, profile, existingRecipeNames } | null.
-// callsRemaining is a boxed number (not a plain int) so decrements are
-// visible across every resolveSlot() call sharing the same object within
-// one generateWeekPlan()/regenerateOneSlot() run - a real cap on live Claude
-// calls per request, not per-slot (a week can have ~28 slots; each call is
-// a real claude-opus-4-8 request, not free or instant).
+// callsRemaining is a boxed number so decrements are visible across every
+// resolveSlot() call sharing the same object within one run - a real cap on
+// live Claude calls per request, not per-slot.
 async function tryAiFallback(target, recipePool, usageCount, aiFallback) {
   aiFallback.callsRemaining.n--;
   try {
@@ -225,36 +218,31 @@ async function tryAiFallback(target, recipePool, usageCount, aiFallback) {
   } catch (e) {
     // Live generation failed (network, refusal, allergy-filtered all 3
     // drafts) - fall through to an honest unsolved state rather than
-    // crashing the whole week's generation over one slot.
+    // crashing the whole run over one slot.
     return null;
   }
 }
 
 // Tries up to MAX_SLOT_ATTEMPTS distinct pool candidates, shipping the first
-// one whose scale lands within KCAL_TOLERANCE_PCT of the slot's target. Per
-// AUDIT.md §3/§10: shipping the very first (weighted-random) candidate with
-// only a warning label is how a slot ends up 150-234% of its target with the
-// real recipe pool. Rejecting a bad fit and trying the next-best candidate
-// (falling back to AI generation, then an honest unsolved slot, only once
-// every tried candidate misses) is the actual fix.
-async function resolveSlot(target, recipePool, usageCount, usedYesterday, usedToday, rng, aiFallback = null) {
+// one whose scale lands within tolerance on BOTH kcal and protein. Shipping
+// the closest miss (labeled plainly, on both axes) only once every tried
+// candidate failed; an honest unsolved slot only when nothing was eligible.
+async function resolveSlot(target, recipePool, usageCount, usedYesterday, usedToday, rng, aiFallback = null, bias = null, repeatCap = DEFAULT_REPEAT_CAP) {
   const targetRatio = target.kcalTarget > 0 ? target.proteinTarget / target.kcalTarget : 0;
   const tried = new Set();
   let best = null;
 
   for (let attempt = 0; attempt < MAX_SLOT_ATTEMPTS; attempt++) {
-    const candidates = eligibleRecipes(recipePool, target.slotType, usageCount).filter((r) => !tried.has(r.id));
+    const candidates = eligibleRecipes(recipePool, target.slotType, usageCount, repeatCap).filter((r) => !tried.has(r.id));
     if (candidates.length === 0) break;
-    const recipe = pickRecipe(candidates, targetRatio, usedYesterday, usedToday, rng);
+    const recipe = pickRecipe(candidates, targetRatio, usedYesterday, usedToday, rng, bias);
     tried.add(recipe.id);
     const scaled = scaleRecipe(recipe, target.kcalTarget, target.proteinTarget);
     const kcalOff = kcalOffPct(target.kcalTarget, scaled.kcal);
     const proteinShort = proteinShortfallPct(target.proteinTarget, scaled.protein);
     // Worse-of-the-two-tolerances score, expressed as a multiple of each
     // metric's own tolerance so the two different-scale percentages are
-    // comparable. Reduces to kcal-only comparison when protein already
-    // fits (proteinShort/PROTEIN_TOLERANCE_PCT <= 1 <= the kcal ratio in
-    // any case where kcal itself is still missing).
+    // comparable.
     const worstRatio = Math.max(kcalOff / KCAL_TOLERANCE_PCT, proteinShort / PROTEIN_TOLERANCE_PCT);
     if (!best || worstRatio < best.worstRatio) best = { recipe, scaled, kcalOff, proteinShort, worstRatio };
     if (kcalOff <= KCAL_TOLERANCE_PCT && proteinShort <= PROTEIN_TOLERANCE_PCT) {
@@ -269,13 +257,6 @@ async function resolveSlot(target, recipePool, usageCount, usedYesterday, usedTo
   }
 
   if (best) {
-    // Every pool candidate we tried missed tolerance (on kcal and/or
-    // protein) and AI wasn't available (or failed). Ship the closest one we
-    // found rather than declaring the slot unsolved outright - it's a real
-    // recipe someone could eat, just imperfectly scaled - but say so
-    // plainly, on BOTH axes (C7). Previously this warning only ever
-    // mentioned kcal, so a protein-short "best effort" slot shipped with no
-    // indication protein was the actual problem (PABLO_REVIEW.md §2.6).
     usageCount.set(best.recipe.id, (usageCount.get(best.recipe.id) || 0) + 1);
     const misses = [];
     if (best.kcalOff > KCAL_TOLERANCE_PCT) misses.push(`landed ${Math.round(best.scaled.kcal)} kcal vs a ${Math.round(target.kcalTarget)} target`);
@@ -301,8 +282,7 @@ function toSlotRecord(target, result) {
 }
 
 // Builds the shared aiFallback context object resolveSlot() reads, or null
-// when the caller didn't opt in. options.aiFallback: { enabled, maxCalls,
-// profile } - profile carries cuisinePreferences/mealPreferencesNote.
+// when the caller didn't opt in.
 function buildAiFallbackContext(options, recipePool) {
   if (!options?.aiFallback?.enabled) return null;
   return {
@@ -315,56 +295,70 @@ function buildAiFallbackContext(options, recipePool) {
   };
 }
 
+/**
+ * Solve ONE day's slots with within-day carry-forward. Extracted from the
+ * week loop so Phase 4's day-candidate generation can run a single day
+ * repeatedly (different rng) without touching week state. Mutates
+ * usageCount (per-week repeat tracking) — pass a copy if you don't want that.
+ */
+async function solveDay(dayTargets, dailyTarget, recipePool, usageCount, prevDayRecipeIds, rng, aiCtx, bias, repeatCap) {
+  const proteinTargetMid = (dailyTarget.proteinLo + dailyTarget.proteinHi) / 2;
+  const todayIds = new Set();
+  const results = [];
+  let dayAchievedKcal = 0;
+  let dayAchievedProtein = 0;
+  for (let i = 0; i < dayTargets.length; i++) {
+    const target = dayTargets[i];
+    // Redistribute what's left of the day's budget across this slot and
+    // whatever's still unsolved today, weighted the same way the original
+    // fixed shares were - then solve against THAT, not the fixed share.
+    const remainingWeight = dayTargets.slice(i).reduce((s, x) => s + x.weight, 0);
+    const share = remainingWeight > 0 ? target.weight / remainingWeight : 1;
+    const proposedKcal = (dailyTarget.kcal - dayAchievedKcal) * share;
+    const proposedProtein = (proteinTargetMid - dayAchievedProtein) * share;
+    const effectiveTarget = {
+      ...target,
+      kcalTarget: clamp(proposedKcal, { min: target.kcalTarget * (1 - CARRY_CAP_PCT), max: target.kcalTarget * (1 + CARRY_CAP_PCT) }),
+      proteinTarget: clamp(proposedProtein, { min: target.proteinTarget * (1 - CARRY_CAP_PCT), max: target.proteinTarget * (1 + CARRY_CAP_PCT) }),
+    };
+
+    const result = await resolveSlot(effectiveTarget, recipePool, usageCount, prevDayRecipeIds, todayIds, rng, aiCtx, bias, repeatCap);
+    if (result.recipeId) todayIds.add(result.recipeId);
+    results.push(toSlotRecord(target, result));
+    // Carry forward the TRUE achieved amount, not the (possibly clamped)
+    // target that was solved for - an unresolved slot (kcal:0) correctly
+    // pushes its whole share onto the rest of the day.
+    dayAchievedKcal += result.kcal;
+    dayAchievedProtein += result.protein;
+  }
+  return { slots: results, todayIds };
+}
+
 // recipePool: recipes with `ingredients` (each including `food`) loaded.
-async function generateWeekPlan(dailyTarget, mealConfig, recipePool, { rng = Math.random, aiFallback } = {}) {
+async function generateWeekPlan(dailyTarget, mealConfig, recipePool, options = {}) {
+  const { rng = Math.random, aiFallback, bias = null } = options;
+  const repeatCap = repeatCapFor(options);
   const slots = targetsForSlots(dailyTarget, buildSlots(mealConfig));
   const usageCount = new Map();
   const byDay = new Map();
   slots.forEach((s) => byDay.set(s.dayOfWeek, [...(byDay.get(s.dayOfWeek) || []), s]));
   const aiCtx = buildAiFallbackContext({ aiFallback }, recipePool);
-  const proteinTargetMid = (dailyTarget.proteinLo + dailyTarget.proteinHi) / 2;
 
   const resolved = [];
   let prevDayRecipeIds = new Set();
   for (let day = 0; day < DAYS; day++) {
-    const todayIds = new Set();
-    const todaySlots = byDay.get(day) || [];
-    let dayAchievedKcal = 0;
-    let dayAchievedProtein = 0;
-    for (let i = 0; i < todaySlots.length; i++) {
-      const target = todaySlots[i];
-      // Redistribute what's left of the day's budget across this slot and
-      // whatever's still unsolved today, weighted the same way the original
-      // fixed shares were - then solve against THAT, not the fixed share.
-      const remainingWeight = todaySlots.slice(i).reduce((s, x) => s + x.weight, 0);
-      const share = remainingWeight > 0 ? target.weight / remainingWeight : 1;
-      const proposedKcal = (dailyTarget.kcal - dayAchievedKcal) * share;
-      const proposedProtein = (proteinTargetMid - dayAchievedProtein) * share;
-      const effectiveTarget = {
-        ...target,
-        kcalTarget: clamp(proposedKcal, { min: target.kcalTarget * (1 - CARRY_CAP_PCT), max: target.kcalTarget * (1 + CARRY_CAP_PCT) }),
-        proteinTarget: clamp(proposedProtein, { min: target.proteinTarget * (1 - CARRY_CAP_PCT), max: target.proteinTarget * (1 + CARRY_CAP_PCT) }),
-      };
-
-      // todayIds reflects every slot resolved so far THIS day (built up as
-      // the loop progresses, below) - passing it into resolveSlot() lets
-      // pickRecipe() heavily discount a recipe already served earlier today
-      // (AUDIT.md §3's same-day-repeat finding), not just yesterday's picks.
-      const result = await resolveSlot(effectiveTarget, recipePool, usageCount, prevDayRecipeIds, todayIds, rng, aiCtx);
-      if (result.recipeId) todayIds.add(result.recipeId);
-      resolved.push(toSlotRecord(target, result));
-      // Carry forward the TRUE achieved amount, not the (possibly clamped)
-      // target that was solved for - an unresolved slot (kcal:0) correctly
-      // pushes its whole share onto the rest of the day.
-      dayAchievedKcal += result.kcal;
-      dayAchievedProtein += result.protein;
-    }
+    const { slots: daySlots, todayIds } = await solveDay(
+      byDay.get(day) || [], dailyTarget, recipePool, usageCount, prevDayRecipeIds, rng, aiCtx, bias, repeatCap
+    );
+    resolved.push(...daySlots);
     prevDayRecipeIds = todayIds;
   }
   return resolved;
 }
 
-async function regenerateOneSlot(existingSlots, target, recipePool, dailyTarget, mealConfig, { rng = Math.random, aiFallback } = {}) {
+async function regenerateOneSlot(existingSlots, target, recipePool, dailyTarget, mealConfig, options = {}) {
+  const { rng = Math.random, aiFallback, bias = null } = options;
+  const repeatCap = repeatCapFor(options);
   const targeted = targetsForSlots(dailyTarget, buildSlots(mealConfig))
     .find((s) => s.dayOfWeek === target.dayOfWeek && s.slotType === target.slotType && s.slotIndex === target.slotIndex);
   if (!targeted) throw new Error("slot not found in current meal config");
@@ -386,13 +380,13 @@ async function regenerateOneSlot(existingSlots, target, recipePool, dailyTarget,
   );
   const aiCtx = buildAiFallbackContext({ aiFallback }, recipePool);
 
-  const result = await resolveSlot(targeted, recipePool, usageCount, usedYesterday, usedToday, rng, aiCtx);
+  const result = await resolveSlot(targeted, recipePool, usageCount, usedYesterday, usedToday, rng, aiCtx, bias, repeatCap);
   return toSlotRecord(targeted, result);
 }
 
 // A representative single-slot target for a given slot type — used by
-// recipe generation (Phase C), which needs a ballpark macro target before
-// any specific day/slot exists yet. Reuses the same weighting as buildSlots.
+// recipe generation, which needs a ballpark macro target before any
+// specific day/slot exists yet. Reuses the same weighting as buildSlots.
 function estimateSlotTarget(dailyTarget, mealConfig, slotType) {
   const oneDay = buildSlots({ meals: mealConfig.meals, snacks: mealConfig.snacks }).filter((s) => s.dayOfWeek === 0);
   const totalWeight = oneDay.reduce((s, x) => s + x.weight, 0);
@@ -405,4 +399,12 @@ function estimateSlotTarget(dailyTarget, mealConfig, slotType) {
   };
 }
 
-module.exports = { generateWeekPlan, regenerateOneSlot, buildSlots, estimateSlotTarget, MAX_REPEATS_PER_WEEK };
+module.exports = {
+  generateWeekPlan, regenerateOneSlot, buildSlots, targetsForSlots, solveDay,
+  resolveSlot, scaleRecipe, buildAiFallbackContext, estimateSlotTarget,
+  eligibleRecipes,
+  SCALE_BOUNDS, DEFAULT_REPEAT_CAP, BATCH_REPEAT_CAP,
+  KCAL_TOLERANCE_PCT, PROTEIN_TOLERANCE_PCT,
+  // Back-compat alias for older call sites/tests: the default weekly repeat cap.
+  MAX_REPEATS_PER_WEEK: DEFAULT_REPEAT_CAP,
+};

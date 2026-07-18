@@ -42,10 +42,15 @@ export const api = {
   deleteRecipe: (id) => request(`/recipes/${id}`, { method: "DELETE" }),
 
   getCurrentPlan: () => request("/plans/current"),
-  generatePlan: () => request("/plans/generate", { method: "POST" }),
+  generatePlan: (filters) => request("/plans/generate", { method: "POST", body: JSON.stringify({ filters }) }),
+  getDayOptions: (dayOfWeek, filters) => request("/plans/day-options", { method: "POST", body: JSON.stringify({ dayOfWeek, filters }) }),
+  acceptDay: (dayOfWeek, slots) => request("/plans/accept-day", { method: "POST", body: JSON.stringify({ dayOfWeek, slots }) }),
   setSlotLock: (planId, slotId, locked) => request(`/plans/${planId}/slots/${slotId}`, { method: "PUT", body: JSON.stringify({ locked }) }),
+  getSlotAlternates: (planId, slotId, filters) => request(`/plans/${planId}/slots/${slotId}/alternates`, { method: "POST", body: JSON.stringify({ filters }) }),
+  applySlotAlternate: (planId, slotId, slot) => request(`/plans/${planId}/slots/${slotId}/apply`, { method: "PUT", body: JSON.stringify(slot) }),
   swapSlot: (planId, slotId) => request(`/plans/${planId}/slots/${slotId}/swap`, { method: "POST" }),
   generateGroceryList: (planId) => request(`/plans/${planId}/grocery-list`, { method: "POST" }),
+  checkGroceryItem: (planId, name, checked) => request(`/plans/${planId}/grocery-list/check`, { method: "PUT", body: JSON.stringify({ name, checked }) }),
 
   getCart: () => request("/cart"),
   addToCart: (recipeId) => request("/cart", { method: "POST", body: JSON.stringify({ recipeId }) }),
