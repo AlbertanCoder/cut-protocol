@@ -3,6 +3,7 @@ const assert = require("node:assert/strict");
 const { rebuildSlotFromClient, filterRecipePool } = require("../src/routes/plans.js");
 const { recipeExceedsKetoCeiling } = require("../src/lib/dietaryFilter.js");
 const { diagnose } = require("../src/lib/mealSolver.js");
+const { violatesRules } = require("../src/lib/aiRecipeClient.js");
 
 const DAILY = { kcal: 2000, proteinLo: 140, proteinHi: 160 };
 const MEALCFG = { meals: 3, snacks: 1 };
@@ -71,6 +72,21 @@ test("REGRESSION (Stage C / M10): diagnosis names the prep-time cap, not diet, w
   // But a genuinely diet-emptied pool IS attributed to diet.
   const diet = diagnose({ counts: { raw: 100, afterDiet: 0, afterPrep: 0 }, filters: {}, dailyTarget: DAILY, mealConfig: MEALCFG, pool: [] });
   assert.ok(diet.reasons.some((r) => /allergy rules exclude every recipe/i.test(r)));
+});
+
+test("REGRESSION (Stage C / C2): AI-draft filtering enforces THIS profile, not a hardcoded three-allergy list", () => {
+  const beefDraft = { name: "Beef Bowl", ingredients: [{ name: "Ground beef" }, { name: "Rice" }] };
+  const peanutDraft = { name: "Satay", ingredients: [{ name: "Chicken" }, { name: "Peanut sauce" }] };
+  const dairyDraft = { name: "Cheese Bake", ingredients: [{ name: "Mozzarella" }, { name: "Pasta" }] };
+
+  // A vegan user's beef draft is now caught (the old hardcoded list let it through).
+  assert.equal(violatesRules(beefDraft, { dietaryStyle: "vegan", excludedFoods: [] }), "vegan");
+  // A peanut-allergic user's satay draft is caught (peanuts weren't in the old list).
+  assert.equal(violatesRules(peanutDraft, { dietaryStyle: null, excludedFoods: ["peanuts"] }), "peanuts");
+  // A dairy-allergic user's cheese draft is caught.
+  assert.equal(violatesRules(dairyDraft, { dietaryStyle: null, excludedFoods: ["dairy"] }), "dairy");
+  // A user with no restrictions gets no false positive.
+  assert.equal(violatesRules(beefDraft, { dietaryStyle: null, excludedFoods: [] }), null);
 });
 
 test("REGRESSION (Stage C / #35): capacity diagnosis uses the active repeat cap and doesn't suggest what's already on", () => {

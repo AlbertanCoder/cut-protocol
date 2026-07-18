@@ -1,20 +1,19 @@
 const Anthropic = require("@anthropic-ai/sdk");
+const { recipeExcludedByStyle, matchesExclusionTerm } = require("./dietaryFilter.js");
 
 const client = new Anthropic(); // reads ANTHROPIC_API_KEY from env
 
-// Hard filter, independent of the prompt — a system prompt is not a safety
-// mechanism for a real food allergy. Soybean oil is deliberately NOT
-// matched here (his rule: "soybean oil OK", only soy protein is excluded).
-const ALLERGY_BLOCKLIST = [
-  { pattern: /shrimp|prawn|crab|lobster|shellfish|scallop|clam|mussel|oyster/i, label: "shellfish" },
-  { pattern: /kiwi/i, label: "kiwi" },
-  { pattern: /soy protein|tofu|edamame|tempeh|soy milk|textured vegetable protein|\btvp\b/i, label: "soy protein" },
-];
-
-function violatesAllergyRules(draft) {
-  for (const ing of draft.ingredients || []) {
-    for (const rule of ALLERGY_BLOCKLIST) {
-      if (rule.pattern.test(ing.name)) return rule.label;
+// Stage-C fix (C2): the generator now enforces THIS user's profile, not one
+// hardcoded person's three allergies. The hard filter (a system prompt is not
+// a safety mechanism for a real allergy) reuses the same dietaryFilter the
+// solver and library use, driven by the caller's excludedFoods + dietaryStyle.
+// draft: { ingredients:[{name}] }; returns the violating term/style or null.
+function violatesRules(draft, { excludedFoods = [], dietaryStyle = null } = {}) {
+  const flat = (draft.ingredients || []).map((i) => ({ name: i.name }));
+  if (dietaryStyle && recipeExcludedByStyle({ ingredients: flat }, dietaryStyle)) return dietaryStyle;
+  for (const ing of flat) {
+    for (const term of excludedFoods) {
+      if (matchesExclusionTerm(ing.name, term)) return term;
     }
   }
   return null;
@@ -59,7 +58,7 @@ const RECIPES_SCHEMA = {
   additionalProperties: false,
 };
 
-function buildPrompt({ slotType, protein, cuisine, prepTimeMin, freeText, batchStyle, allowAllergens, targetKcal, targetProtein, existingRecipeNames }) {
+function buildPrompt({ slotType, protein, cuisine, prepTimeMin, freeText, batchStyle, allowAllergens, targetKcal, targetProtein, existingRecipeNames, excludedFoods = [], dietaryStyle = null }) {
   const lines = [
     `Generate exactly 3 distinct ${slotType} recipe options for a cut-phase meal plan.`,
     `Target per serving: ~${Math.round(targetKcal)} kcal, ~${Math.round(targetProtein)}g protein. Protein is the load-bearing constraint — hit it closely; calories should land close too.`,
@@ -71,10 +70,16 @@ function buildPrompt({ slotType, protein, cuisine, prepTimeMin, freeText, batchS
   if (batchStyle === "batch") lines.push(`This should be a batch-cook recipe meant to be made once and eaten across multiple servings (like a chili or a tray bake) — set "servings" accordingly (e.g. 4-6) and size ingredient grams for the whole batch.`);
   else lines.push(`Single serving — set "servings" to 1.`);
   if (freeText) lines.push(`Additional request from the user: ${freeText}`);
+  // Stage-C fix (C2): exclusions come from THIS user's profile, not a fixed
+  // list. The post-generation hard filter re-checks these regardless.
   if (!allowAllergens) {
-    lines.push(`Hard exclusions — do not use any of: shellfish (shrimp, crab, lobster, etc.), kiwi, soy protein / tofu / edamame / tempeh (soybean oil is fine). These are real allergies.`);
+    if (dietaryStyle && dietaryStyle !== "none") {
+      lines.push(`The user follows a ${dietaryStyle} diet — every recipe must comply with it.`);
+    }
+    if (excludedFoods.length) {
+      lines.push(`Hard exclusions — the user is allergic to / must avoid: ${excludedFoods.join(", ")}. Do not use any of these or dishes containing them. These are real restrictions.`);
+    }
   }
-  lines.push(`Avoid pork as the primary protein — occasional garnish (e.g. a little bacon) is fine, but don't make it the main protein source.`);
   if (existingRecipeNames?.length) {
     lines.push(`Avoid near-duplicates of recipes already in the library: ${existingRecipeNames.join(", ")}.`);
   }
@@ -105,10 +110,11 @@ async function generateRecipeDrafts(params) {
 
   const allDrafts = parsed.recipes || [];
   const violations = [];
+  const rules = { excludedFoods: params.excludedFoods || [], dietaryStyle: params.dietaryStyle || null };
   const drafts = params.allowAllergens
     ? allDrafts
     : allDrafts.filter((d) => {
-        const violation = violatesAllergyRules(d);
+        const violation = violatesRules(d, rules);
         if (violation) { violations.push({ name: d.name, reason: violation }); return false; }
         return true;
       });
@@ -116,4 +122,4 @@ async function generateRecipeDrafts(params) {
   return { drafts, droppedForAllergies: violations };
 }
 
-module.exports = { generateRecipeDrafts };
+module.exports = { generateRecipeDrafts, violatesRules };

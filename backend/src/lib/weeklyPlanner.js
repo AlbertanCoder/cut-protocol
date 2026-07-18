@@ -11,6 +11,21 @@
 // under the protein floor by the back half of the week.
 
 const { generateAndSaveSlotRecipe } = require("./recipeGeneration.js");
+const { recipeExcludedByStyle, matchesExclusionTerm, recipeExceedsKetoCeiling } = require("./dietaryFilter.js");
+
+// Does a just-generated recipe comply with the profile's diet/allergy rules?
+// Stage-C fix (C3): the /swap AI fallback used to write its output straight
+// into the plan with no dietary check — the one generation path that skipped
+// the "pool membership = compliance" invariant. Re-check here before accepting.
+function aiRecipeCompliant(recipe, profile) {
+  const style = profile?.dietaryStyle || null;
+  const excl = Array.isArray(profile?.excludedFoods) ? profile.excludedFoods : [];
+  const flat = (recipe.ingredients || []).map((i) => ({ name: i.food?.name || i.name }));
+  if (recipeExceedsKetoCeiling(recipe, style)) return false;
+  if (recipeExcludedByStyle({ ingredients: flat }, style)) return false;
+  if (excl.length && flat.some((ing) => excl.some((t) => matchesExclusionTerm(ing.name, t)))) return false;
+  return true;
+}
 
 // Phase 4 spec bounds: portions scale 0.5×–2× — beyond that a "serving"
 // stops resembling the dish (half a recipe is a light portion; double is a
@@ -204,6 +219,9 @@ async function tryAiFallback(target, recipePool, usageCount, aiFallback) {
   try {
     const generateImpl = aiFallback.generateAndSaveSlotRecipeImpl || generateAndSaveSlotRecipe;
     const generated = await generateImpl(target, aiFallback.profile, aiFallback.existingRecipeNames);
+    // Never write a diet/allergy-violating AI recipe into the plan (C3). A
+    // failed check yields an honest unsolved slot, same as any other miss.
+    if (!aiRecipeCompliant(generated, aiFallback.profile)) return null;
     recipePool.push(generated); // available to later slots in this same run too
     aiFallback.existingRecipeNames.push(generated.name);
     const scaled = scaleRecipe(generated, target.kcalTarget, target.proteinTarget);

@@ -56,6 +56,9 @@ router.post("/generate-drafts", async (req, res) => {
       allowAllergens: !!allowAllergens,
       targetKcal: target.kcalTarget, targetProtein: target.proteinTarget,
       existingRecipeNames,
+      // Stage-C fix (C2): the generator enforces THIS user's profile.
+      excludedFoods: Array.isArray(profile.excludedFoods) ? profile.excludedFoods : [],
+      dietaryStyle: profile.dietaryStyle || null,
     });
 
     const resolved = [];
