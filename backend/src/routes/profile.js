@@ -65,6 +65,33 @@ function validateProfilePatch(body) {
       errors.push(`excludedFormulas must be an array of ${FORMULA_KEYS.join("|")}`);
     }
   }
+  // Stage-C fix (C5/L2): the vitals every derived number depends on used to
+  // accept anything — age −5, height 0, goal 0 all saved and silently
+  // corrupted the target. Bound them (age matches the wizard's own 14-100).
+  const numBetween = (v, lo, hi) => typeof v === "number" && Number.isFinite(v) && v >= lo && v <= hi;
+  if (body.age !== undefined && !numBetween(body.age, 14, 100)) {
+    errors.push("age must be a number between 14 and 100");
+  }
+  if (body.heightCm !== undefined && !numBetween(body.heightCm, 100, 250)) {
+    errors.push("heightCm must be a number between 100 and 250");
+  }
+  if (body.bodyFatPct !== undefined && body.bodyFatPct !== null && !numBetween(body.bodyFatPct, 0, 70)) {
+    errors.push("bodyFatPct must be a number between 0 and 70 (0 = unknown)");
+  }
+  if (body.startWeightKg !== undefined && !numBetween(body.startWeightKg, 30, 400)) {
+    errors.push("startWeightKg must be a number between 30 and 400 kg");
+  }
+  if (body.goalWeightKg !== undefined && !numBetween(body.goalWeightKg, 30, 400)) {
+    errors.push("goalWeightKg must be a number between 30 and 400 kg");
+  }
+  // Stage-C fix (M11/L3): a non-string excludedFoods member (e.g. [5]) was
+  // accepted and then 500-bricked every recipe screen. Require clean text.
+  if (body.excludedFoods !== undefined) {
+    if (!Array.isArray(body.excludedFoods) || body.excludedFoods.length > 40 ||
+        body.excludedFoods.some((t) => typeof t !== "string" || !t.trim() || t.length > 60)) {
+      errors.push("excludedFoods must be an array of non-empty text terms (max 40, each ≤ 60 chars)");
+    }
+  }
   return errors;
 }
 
@@ -162,3 +189,6 @@ function defaultProfile() {
 }
 
 module.exports = router;
+// Exposed for unit testing (the router itself is a function, so attaching a
+// property leaves `app.use("/api/profile", router)` working unchanged).
+module.exports.validateProfilePatch = validateProfilePatch;
