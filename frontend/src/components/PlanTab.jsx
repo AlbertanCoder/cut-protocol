@@ -182,7 +182,7 @@ function SlotCard({ plan, slot, expanded, onToggleExpand, onLockToggle, busy, fi
                 <button onClick={(e) => { e.stopPropagation(); onCart(recipe.id); }}
                   className="w-7 h-7 rounded-lg flex items-center justify-center"
                   style={{ color: inCart ? C.good : C.faint, background: C.card2, border: `1px solid ${C.rule}` }}
-                  aria-label="Add to cart" title="Add to cart">
+                  aria-label={inCart ? "Remove from cart" : "Add to cart"} title={inCart ? "Remove from cart" : "Add to cart"}>
                   {inCart ? <Check size={14} /> : <ShoppingCart size={14} />}
                 </button>
               )}

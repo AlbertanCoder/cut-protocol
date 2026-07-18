@@ -86,20 +86,31 @@ export default function ProfileTab({ profile, summary, refresh }) {
     }
   };
 
-  const excluded = Array.isArray(profile.excludedFoods) ? profile.excludedFoods : [];
+  // Stage-C fix (M14): allergy exclusions are held in an OPTIMISTIC local
+  // copy so rapid toggles compose correctly. Before, each toggle computed its
+  // payload from the profile prop, so toggling A then B before the first
+  // PUT/refresh round-trip dropped A (last write wins) — a silent loss of a
+  // safety-critical exclusion. The local copy re-syncs whenever the server
+  // truth changes.
+  const [excludedLocal, setExcludedLocal] = useState(() => (Array.isArray(profile.excludedFoods) ? profile.excludedFoods : []));
+  useEffect(() => { setExcludedLocal(Array.isArray(profile.excludedFoods) ? profile.excludedFoods : []); }, [profile.excludedFoods]);
+  const excluded = excludedLocal;
   const allergyKeys = useMemo(() => (meta?.allergyOptions || []).map((a) => a.key), [meta]);
   const customExclusions = excluded.filter((t) => !allergyKeys.includes(t));
   const [customDraft, setCustomDraft] = useState(customExclusions.join(", "));
   useEffect(() => { setCustomDraft(customExclusions.join(", ")); }, [profile.excludedFoods, meta]); // eslint-disable-line
 
   const toggleAllergy = (key) => {
-    const next = excluded.includes(key) ? excluded.filter((t) => t !== key) : [...excluded, key];
+    const next = excludedLocal.includes(key) ? excludedLocal.filter((t) => t !== key) : [...excludedLocal, key];
+    setExcludedLocal(next); // optimistic — the next toggle sees this
     commit({ excludedFoods: next });
   };
   const commitCustom = () => {
     const customs = customDraft.split(",").map((x) => x.trim()).filter(Boolean);
-    const checked = excluded.filter((t) => allergyKeys.includes(t));
-    commit({ excludedFoods: [...checked, ...customs] });
+    const checked = excludedLocal.filter((t) => allergyKeys.includes(t));
+    const next = [...checked, ...customs];
+    setExcludedLocal(next);
+    commit({ excludedFoods: next });
   };
 
   const filteredOccupations = useMemo(() => {
@@ -217,6 +228,10 @@ export default function ProfileTab({ profile, summary, refresh }) {
               placeholder={currentOcc ? `${currentOcc.label} (×${currentOcc.multiplier})` : "Search occupations…"}
               value={occQuery}
               onFocus={() => setOccOpen(true)}
+              // Stage-C fix (#37): close on blur so clicking elsewhere dismisses
+              // the list (a small delay lets an option's onClick fire first).
+              onBlur={() => setTimeout(() => setOccOpen(false), 150)}
+              onKeyDown={(e) => e.key === "Escape" && setOccOpen(false)}
               onChange={(e) => { setOccQuery(e.target.value); setOccOpen(true); }}
               className="text-sm pl-9 pr-3 py-2 rounded-xl w-full" style={inpStyle}
             />

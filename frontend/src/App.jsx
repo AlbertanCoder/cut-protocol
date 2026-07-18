@@ -27,6 +27,7 @@ export default function App() {
     if (tab === "training" && TRAINING !== "on") setTab("today");
   }, [tab]);
   const [error, setError] = useState(null);
+  const [loadError, setLoadError] = useState(null); // startup data-load failure (session is still valid)
   const [isAdmin, setIsAdmin] = useState(false);
 
   const loadData = useCallback(async () => {
@@ -42,18 +43,28 @@ export default function App() {
     setSummary(await api.getSummary());
   }, []);
 
-  useEffect(() => {
-    (async () => {
-      try {
-        const me = await api.me();
-        setIsAdmin(me.role === "admin");
-        setAuthStatus("in");
-        await loadData();
-      } catch {
-        setAuthStatus("out");
-      }
-    })();
+  const boot = useCallback(async () => {
+    // Stage-C fix (#44): a failed data load must NOT read as logged-out. Only
+    // an auth failure sends the user to the login screen; a data-load error
+    // keeps the valid session and shows a retryable error screen.
+    let me;
+    try {
+      me = await api.me();
+    } catch {
+      setAuthStatus("out");
+      return;
+    }
+    setIsAdmin(me.role === "admin");
+    setAuthStatus("in");
+    try {
+      setLoadError(null);
+      await loadData();
+    } catch (e) {
+      setLoadError(e.message || "Couldn't load your data.");
+    }
   }, [loadData]);
+
+  useEffect(() => { boot(); }, [boot]);
 
   const refresh = useCallback(async () => {
     try {
@@ -86,6 +97,18 @@ export default function App() {
 
   if (needsSetup) {
     return <SetupWizard onDone={loadData} />;
+  }
+
+  // A valid session whose data couldn't load: a retryable error, NOT the login
+  // screen and NOT an infinite "Loading…" (#44).
+  if (loadError && (!profile || !summary)) {
+    return (
+      <div className="min-h-svh flex flex-col items-center justify-center gap-3 px-6 text-center" style={{ background: C.paper }}>
+        <div className="text-sm font-bold" style={{ color: C.red }}>Couldn't load your data</div>
+        <div className="text-xs font-semibold max-w-sm" style={{ color: C.faint }}>{loadError}</div>
+        <button onClick={boot} className="text-sm font-bold px-4 py-2 rounded-xl" style={{ background: C.accent, color: C.accentInk }}>Retry</button>
+      </div>
+    );
   }
 
   if (!profile || !summary) return loading;

@@ -25,10 +25,14 @@ export default function TodayTab({ profile, summary, refresh, openTrend }) {
   const inpStyle = { background: C.card2, border: `1.5px solid ${C.rule}`, color: C.ink };
   const [wIn, setWIn] = useState("");
   const [dIn, setDIn] = useState(todayStr());
-  const [plan, setPlan] = useState(undefined); // undefined = loading, null = none
+  const [plan, setPlan] = useState(undefined); // undefined = loading, null = none, "error" = fetch failed
+  const [logBusy, setLogBusy] = useState(false);
+  const [logMsg, setLogMsg] = useState(null);
 
   useEffect(() => {
-    api.getCurrentPlan().then(setPlan).catch(() => setPlan(null));
+    // Stage-C fix: distinguish a fetch error from "no plan yet" so a 500
+    // doesn't render the misleading "no plan generated" empty state.
+    api.getCurrentPlan().then(setPlan).catch(() => setPlan("error"));
   }, []);
 
   const { weighins, avg7Kg, rate, daysIn, verdict: v, macros, target } = summary;
@@ -37,21 +41,37 @@ export default function TodayTab({ profile, summary, refresh, openTrend }) {
   const add = async () => {
     const w = parseFloat(wIn);
     const bounds = weightInputBounds(pref);
-    if (!w || w < bounds.min || w > bounds.max) return;
-    await api.postWeighin(dIn, parseWeight(w, pref));
-    setWIn("");
-    await refresh();
+    // Stage-C fix: invalid input now says WHY instead of doing nothing silently.
+    if (!w || w < bounds.min || w > bounds.max) {
+      setLogMsg(`Enter a weight between ${bounds.min} and ${bounds.max} ${wUnit}.`);
+      return;
+    }
+    setLogBusy(true); // Stage-C fix (M15): busy guard prevents a double-submit
+    setLogMsg(null);
+    try {
+      await api.postWeighin(dIn, parseWeight(w, pref));
+      setWIn("");
+      await refresh();
+    } catch (e) {
+      setLogMsg(e.message || "Couldn't save that weigh-in — try again.");
+    } finally {
+      setLogBusy(false);
+    }
   };
   const del = async (date) => {
-    await api.deleteWeighin(date);
-    await refresh();
+    try {
+      await api.deleteWeighin(date);
+      await refresh();
+    } catch (e) {
+      setLogMsg(e.message || "Couldn't delete that entry — try again.");
+    }
   };
 
   const daysSince = dayNum(todayStr()) - dayNum(profile.startDate);
   const photoDue = daysSince >= 28 && daysSince % 28 <= 2;
   const nextPhoto = addDays(profile.startDate, 28 * Math.ceil((daysSince + 0.1) / 28));
 
-  const todaySlots = plan ? plan.slots.filter((s) => s.dayOfWeek === isoWeekday()) : [];
+  const todaySlots = (plan && typeof plan === "object") ? plan.slots.filter((s) => s.dayOfWeek === isoWeekday()) : [];
   const planned = todaySlots.reduce((t, s) => ({ kcal: t.kcal + s.kcal, protein: t.protein + s.protein, fat: t.fat + s.fat, carb: t.carb + s.carb }), { kcal: 0, protein: 0, fat: 0, carb: 0 });
   const kcalPct = macros?.kcal ? planned.kcal / macros.kcal : 0;
 
@@ -76,6 +96,13 @@ export default function TodayTab({ profile, summary, refresh, openTrend }) {
         <Card section="TODAY" title="Planned vs. target" className="xl:col-span-5">
           {plan === undefined ? (
             <div className="text-sm font-semibold" style={{ color: C.faint }}>Loading…</div>
+          ) : plan === "error" ? (
+            <div className="flex items-start gap-2">
+              <CalendarDays size={18} style={{ color: C.red }} className="mt-0.5 shrink-0" />
+              <div className="text-sm font-semibold" style={{ color: C.faint }}>
+                Couldn't load this week's plan. Switch tabs and back to retry; if it keeps failing, restart the app.
+              </div>
+            </div>
           ) : todaySlots.length === 0 ? (
             <div className="flex items-start gap-2">
               <CalendarDays size={18} style={{ color: C.faintLight }} className="mt-0.5 shrink-0" />
@@ -131,13 +158,14 @@ export default function TodayTab({ profile, summary, refresh, openTrend }) {
             <div className="flex gap-2">
               <input
                 type="number" inputMode="decimal" step="0.1" placeholder={wUnit}
-                value={wIn} onChange={(e) => setWIn(e.target.value)}
-                onKeyDown={(e) => e.key === "Enter" && add()}
+                value={wIn} onChange={(e) => { setWIn(e.target.value); if (logMsg) setLogMsg(null); }}
+                onKeyDown={(e) => e.key === "Enter" && !logBusy && add()}
                 className="text-sm px-3 py-2.5 rounded-xl flex-1 min-w-0"
                 style={inpStyle}
               />
-              <Btn onClick={add}>Log</Btn>
+              <Btn onClick={add} disabled={logBusy}>{logBusy ? "…" : "Log"}</Btn>
             </div>
+            {logMsg && <div className="text-xs font-semibold" style={{ color: C.warn }}>{logMsg}</div>}
           </div>
         </Card>
 

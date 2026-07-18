@@ -384,14 +384,21 @@ export default function RecipesTab({ openFoods, profile }) {
   const cartGroceryText = () =>
     cartGroceryList.items.map((i) => `${cartItemGrams(i)}g ${i.name}`).join("\n");
 
+  // Stage-C fix: every draft carries a stable client key so its validator
+  // error attaches to the RIGHT card. Before, errors were keyed by array
+  // index, so saving one draft (which removes it and shifts the rest) or
+  // importing (which prepends) rendered an error on the wrong recipe.
+  const withKey = (d, source) => ({ ...d, source, _key: (crypto.randomUUID?.() || `k${Date.now()}${Math.random()}`) });
+
   const handleGenerate = async () => {
     setGenerating(true);
     setError(null);
     setDrafts(null);
     setDraftErrors({});
+    setDroppedForAllergies([]); // Stage-C: don't leave a stale drop note under a new run
     try {
       const res = await api.generateRecipeDrafts({ ...form, prepTimeMin: form.prepTimeMin ? +form.prepTimeMin : undefined });
-      setDrafts(res.drafts.map((d) => ({ ...d, source: "ai-generated" })));
+      setDrafts(res.drafts.map((d) => withKey(d, "ai-generated")));
       setDroppedForAllergies(res.droppedForAllergies);
       // The allergen override is per-generation and never sticky.
       setForm((f) => ({ ...f, allowAllergens: false }));
@@ -403,12 +410,12 @@ export default function RecipesTab({ openFoods, profile }) {
   };
 
   const handleImport = async () => {
-    if (!importUrl.trim()) return;
+    if (importing || !importUrl.trim()) return; // Stage-C: Enter can't double-fire past the busy guard
     setImporting(true);
     setError(null);
     try {
       const { draft } = await api.importRecipe(importUrl.trim());
-      setDrafts((ds) => [{ ...draft, source: "imported" }, ...(ds || [])]);
+      setDrafts((ds) => [withKey(draft, "imported"), ...(ds || [])]);
       setImportUrl("");
     } catch (e) {
       setError(`Import failed: ${e.message}`);
@@ -417,15 +424,15 @@ export default function RecipesTab({ openFoods, profile }) {
     }
   };
 
-  const editDraftGrams = (draftIdx, ingIdx, grams) => {
-    setDrafts((ds) => ds.map((d, i) => (i !== draftIdx ? d : { ...d, ingredients: d.ingredients.map((ing, x) => (x === ingIdx ? { ...ing, grams: +grams } : ing)) })));
+  const editDraftGrams = (key, ingIdx, grams) => {
+    setDrafts((ds) => ds.map((d) => (d._key !== key ? d : { ...d, ingredients: d.ingredients.map((ing, x) => (x === ingIdx ? { ...ing, grams: +grams } : ing)) })));
   };
 
-  const handleSaveDraft = async (idx) => {
-    setSavingIdx(idx);
-    setDraftErrors((e) => ({ ...e, [idx]: null }));
+  const handleSaveDraft = async (key) => {
+    setSavingIdx(key);
+    setDraftErrors((e) => ({ ...e, [key]: null }));
     try {
-      const draft = drafts[idx];
+      const draft = drafts.find((d) => d._key === key);
       const saved = await api.saveRecipeDraft({
         name: draft.name, description: draft.description, cuisine: draft.cuisine,
         slotType: draft.slotType, prepTimeMin: draft.prepTimeMin, steps: draft.steps,
@@ -433,12 +440,13 @@ export default function RecipesTab({ openFoods, profile }) {
         ingredients: draft.ingredients.map((i) => ({ foodId: i.foodId, grams: i.grams, role: i.role, scalable: i.scalable })),
       });
       setRecipes((r) => [...r, saved].sort((a, b) => a.name.localeCompare(b.name)));
-      setDrafts((ds) => ds.filter((_, i) => i !== idx));
+      setDrafts((ds) => ds.filter((d) => d._key !== key));
+      setDraftErrors((errs) => { const { [key]: _drop, ...rest } = errs; return rest; });
     } catch (e) {
       const detail = e.body?.invalidIngredients
         ? `${e.message}: ${e.body.invalidIngredients.map((p) => `${p.name} — ${p.reason}`).join("; ")}`
         : e.message;
-      setDraftErrors((errs) => ({ ...errs, [idx]: detail }));
+      setDraftErrors((errs) => ({ ...errs, [key]: detail }));
     } finally {
       setSavingIdx(null);
     }
@@ -567,10 +575,10 @@ export default function RecipesTab({ openFoods, profile }) {
           {drafts && drafts.length > 0 && (
             <Card section="PREVIEW" title={`${drafts.length} draft(s) — review grams, then save`}>
               <div className="flex flex-col gap-3">
-                {drafts.map((d, idx) => (
-                  <DraftCard key={idx} draft={d} saving={savingIdx === idx} saveError={draftErrors[idx]}
-                    onEditGrams={(ingIdx, grams) => editDraftGrams(idx, ingIdx, grams)}
-                    onSave={() => handleSaveDraft(idx)} />
+                {drafts.map((d) => (
+                  <DraftCard key={d._key} draft={d} saving={savingIdx === d._key} saveError={draftErrors[d._key]}
+                    onEditGrams={(ingIdx, grams) => editDraftGrams(d._key, ingIdx, grams)}
+                    onSave={() => handleSaveDraft(d._key)} />
                 ))}
               </div>
             </Card>

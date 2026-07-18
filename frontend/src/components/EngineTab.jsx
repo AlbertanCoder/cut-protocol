@@ -1,6 +1,7 @@
+import { useState, useEffect } from "react";
 import { Database, ArrowRight } from "lucide-react";
 import { C } from "../lib/theme.js";
-import { Card, Stat, Btn, PageHead } from "./ui/Parts.jsx";
+import { Card, Stat, Btn, PageHead, ErrorNote } from "./ui/Parts.jsx";
 import { api } from "../lib/api.js";
 
 const kc = (n) => Math.round(n).toLocaleString("en-CA");
@@ -10,12 +11,25 @@ const kc = (n) => Math.round(n).toLocaleString("en-CA");
 // toggles. All inputs live on the Profile tab.
 export default function EngineTab({ profile, summary, refresh, openFoods, openProfile }) {
   const { energy, target, macros } = summary;
+  const [error, setError] = useState(null);
+  // Optimistic local copy so rapid formula toggles compose (same race as the
+  // allergy toggles — M14). Re-syncs when the server truth changes.
+  const [excludedLocal, setExcludedLocal] = useState(() => (Array.isArray(profile.excludedFormulas) ? profile.excludedFormulas : []));
+  useEffect(() => { setExcludedLocal(Array.isArray(profile.excludedFormulas) ? profile.excludedFormulas : []); }, [profile.excludedFormulas]);
 
   const toggleFormula = async (key) => {
-    const current = Array.isArray(profile.excludedFormulas) ? profile.excludedFormulas : [];
-    const next = current.includes(key) ? current.filter((k) => k !== key) : [...current, key];
-    await api.putProfile({ excludedFormulas: next });
-    await refresh();
+    const next = excludedLocal.includes(key) ? excludedLocal.filter((k) => k !== key) : [...excludedLocal, key];
+    setExcludedLocal(next);
+    setError(null);
+    try {
+      await api.putProfile({ excludedFormulas: next });
+      await refresh();
+    } catch (e) {
+      // Stage-C fix (M15): a failed toggle used to be a silent unhandled
+      // rejection. Surface it and roll the optimistic state back.
+      setExcludedLocal(Array.isArray(profile.excludedFormulas) ? profile.excludedFormulas : []);
+      setError(e.message);
+    }
   };
 
   return (
@@ -26,20 +40,25 @@ export default function EngineTab({ profile, summary, refresh, openFoods, openPr
         </Btn>
       </PageHead>
 
+      {error && <div className="mb-3"><ErrorNote msg={error} hint="Your formula change didn't save — toggle it again." /></div>}
+
       <div className="grid grid-cols-1 xl:grid-cols-12 gap-4 items-start">
         <Card section="§1" title="BMR — the formula panel" className="xl:col-span-4">
           <div className="text-xs font-semibold mb-2" style={{ color: C.faint }}>
             Averaging {energy.includedCount} of {energy.rows.length} applicable formulas — untick any you distrust.
           </div>
-          {energy.rows.map((r) => (
-            <label key={r.key} className="flex items-center justify-between py-1.5 cursor-pointer" style={{ borderBottom: `1px solid ${C.rule}`, opacity: r.excluded ? 0.45 : 1 }}>
+          {energy.rows.map((r) => {
+            const off = excludedLocal.includes(r.key); // optimistic; reflects the click immediately
+            return (
+            <label key={r.key} className="flex items-center justify-between py-1.5 cursor-pointer" style={{ borderBottom: `1px solid ${C.rule}`, opacity: off ? 0.45 : 1 }}>
               <span className="flex items-center gap-2.5 text-sm font-semibold" style={{ color: C.ink }}>
-                <input type="checkbox" checked={!r.excluded} onChange={() => toggleFormula(r.key)} style={{ accentColor: C.accent }} />
+                <input type="checkbox" checked={!off} onChange={() => toggleFormula(r.key)} style={{ accentColor: C.accent }} />
                 {r.label}
               </span>
-              <span className="mono text-sm font-bold" style={{ color: C.ink, textDecoration: r.excluded ? "line-through" : "none" }}>{kc(r.v)}</span>
+              <span className="mono text-sm font-bold" style={{ color: C.ink, textDecoration: off ? "line-through" : "none" }}>{kc(r.v)}</span>
             </label>
-          ))}
+            );
+          })}
           {energy.allExcludedFallback && (
             <div className="text-xs font-bold mt-2" style={{ color: C.warn }}>
               Everything was excluded — falling back to all applicable formulas (an average needs members).
