@@ -1,15 +1,14 @@
-// Ported from frontend v1's lib/bmrEngine.js — same formulas, same thresholds.
-// DB stores weight/height in SI (kg/cm) per the v2 plan, but the tuned
-// heuristics here (1.14-1.25 g protein/lb LBM, 1.4-1.9 lb/wk verdict bands)
-// are pound-denominated by design (standard bodybuilding-nutrition
-// convention), so we convert kg -> lb at the boundary rather than
-// re-deriving new constants in kg, which would risk silently drifting from
-// the numbers this protocol was actually tuned against.
-const FLOOR = 2000;
-const JOB = { desk: 1.2, light: 1.28, mixed: 1.35, heavy: 1.5 };
+// Phase 3 energy engine. Everything derives from the user's Profile — no
+// hardcoded personal floors, bands, or prescriptions (the pre-Phase-3 file
+// carried FLOOR=2000 and a 1.4–1.9 lb/wk verdict band tuned to one person).
+//
+// Model, all shown transparently in the Engine tab:
+//   BMR   = mean of the applicable formulas the user hasn't excluded
+//   TDEE  = BMR × occupation multiplier  +  training kcal/day
+//   target = TDEE − rate×500, clamped to max(sex floor, user floor)
+const { OCCUPATION_BY_KEY, TRAINING_BY_KEY } = require("./activityData.js");
 
 const kg2lb = (kg) => kg * 2.20462;
-
 const mean = (a) => a.reduce((s, x) => s + x, 0) / a.length;
 const median = (a) => {
   const s = [...a].sort((x, y) => x - y);
@@ -17,72 +16,151 @@ const median = (a) => {
   return s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2;
 };
 
-function bmrTable(profile, weightKg) {
-  const kg = weightKg, cm = profile.heightCm, a = profile.age;
-  const male = profile.sex === "M";
-  const rows = [];
-  rows.push({ f: "Mifflin–St Jeor", v: 10 * kg + 6.25 * cm - 5 * a + (male ? 5 : -161) });
-  rows.push({
-    f: "Oxford (Henry)",
-    v: male
+// ── BMR formulas ─────────────────────────────────────────────────────────
+// Katch–McArdle/Cunningham are LBM-based — the best available when body-fat%
+// is known, hidden when it isn't (0 = unknown). Schofield ships only the two
+// published 18–60 bands (omit rather than guess coefficients).
+const FORMULAS = [
+  {
+    key: "mifflin", label: "Mifflin–St Jeor",
+    applicable: () => true,
+    fn: ({ kg, cm, a, male }) => 10 * kg + 6.25 * cm - 5 * a + (male ? 5 : -161),
+  },
+  {
+    key: "oxford", label: "Oxford (Henry)",
+    applicable: () => true,
+    fn: ({ kg, a, male }) => male
       ? (a < 30 ? 16 * kg + 545 : a < 60 ? 14.2 * kg + 593 : 13.5 * kg + 514)
       : (a < 30 ? 13.1 * kg + 558 : a < 60 ? 9.74 * kg + 694 : 10.1 * kg + 569),
-  });
-  rows.push({
-    f: "Harris–Benedict",
-    v: male
+  },
+  {
+    key: "harris", label: "Harris–Benedict",
+    applicable: () => true,
+    fn: ({ kg, cm, a, male }) => male
       ? 88.362 + 13.397 * kg + 4.799 * cm - 5.677 * a
       : 447.593 + 9.247 * kg + 3.098 * cm - 4.33 * a,
-  });
-  if (profile.bodyFatPct > 0) {
-    const lbmKg = kg * (1 - profile.bodyFatPct / 100);
-    rows.push({ f: "Katch–McArdle", v: 370 + 21.6 * lbmKg });
-    rows.push({ f: "Cunningham", v: 500 + 22 * lbmKg });
-  }
-  // Schofield (WHO) — recomp-v2's CLAUDE.md spec's this as a 6th formula, but
-  // its own source only publishes verified coefficients for the 18-30 and
-  // 30-60 age bands ("Implement remaining age bands from the published
-  // table — verify coefficients before coding, never guess them" — its own
-  // words) and was never actually implemented in recomp-v2's real code
-  // either (grepped calculator.js: no Schofield function exists there, spec
-  // vs. build gap same as several UI features that doc flagged elsewhere).
-  // Scoped honestly to the two verified bands rather than guessing
-  // coefficients for <18 or >=60 — omitted outside that range, same
-  // "omit rather than fabricate" pattern already used above for
-  // Katch–McArdle/Cunningham when body-fat % is unknown.
-  if (a >= 18 && a < 60) {
-    rows.push({
-      f: "Schofield (WHO)",
-      v: male
-        ? (a < 30 ? 15.057 * kg + 692.2 : 11.472 * kg + 873.1)
-        : (a < 30 ? 14.818 * kg + 486.6 : 8.126 * kg + 845.6),
-    });
-  }
-  return rows;
+  },
+  {
+    key: "schofield", label: "Schofield (WHO)",
+    applicable: ({ a }) => a >= 18 && a < 60,
+    fn: ({ kg, a, male }) => male
+      ? (a < 30 ? 15.057 * kg + 692.2 : 11.472 * kg + 873.1)
+      : (a < 30 ? 14.818 * kg + 486.6 : 8.126 * kg + 845.6),
+  },
+  {
+    key: "katch", label: "Katch–McArdle", needsBodyFat: true,
+    applicable: ({ bf }) => bf > 0,
+    fn: ({ kg, bf }) => 370 + 21.6 * (kg * (1 - bf / 100)),
+  },
+  {
+    key: "cunningham", label: "Cunningham", needsBodyFat: true,
+    applicable: ({ bf }) => bf > 0,
+    fn: ({ kg, bf }) => 500 + 22 * (kg * (1 - bf / 100)),
+  },
+];
+const FORMULA_KEYS = FORMULAS.map((f) => f.key);
+
+function bmrRows(profile, weightKg) {
+  const ctx = { kg: weightKg, cm: profile.heightCm, a: profile.age, male: profile.sex === "M", bf: profile.bodyFatPct };
+  const excluded = Array.isArray(profile.excludedFormulas) ? profile.excludedFormulas : [];
+  return FORMULAS
+    .filter((f) => f.applicable(ctx))
+    .map((f) => ({ key: f.key, label: f.label, v: f.fn(ctx), excluded: excluded.includes(f.key) }));
 }
 
-function computeTDEE(profile, weightKg) {
-  const rows = bmrTable(profile, weightKg);
-  const rmr = median(rows.map((r) => r.v));
-  const tdee = rmr * (JOB[profile.job] + 0.01 * profile.sessionsPerWeek);
-  return { rows, rmr, tdee };
+// ── activity ─────────────────────────────────────────────────────────────
+
+function jobMultiplier(profile) {
+  if (typeof profile.activityOverride === "number" && profile.activityOverride >= 1 && profile.activityOverride <= 2.2) {
+    return { multiplier: profile.activityOverride, source: "override", label: "Manual override" };
+  }
+  const occ = OCCUPATION_BY_KEY[profile.occupationKey] || OCCUPATION_BY_KEY["desk-office"];
+  return { multiplier: occ.multiplier, source: "occupation", label: occ.label };
 }
 
-// Protein/fat targets are g-per-lb-of-LBM heuristics — convert weight to lb
-// here specifically, matching v1's EngineTab math exactly.
+// ACSM: kcal/min = MET × 3.5 × kg / 200 — averaged over the week.
+function trainingKcalPerDay(profile, weightKg) {
+  const style = TRAINING_BY_KEY[profile.trainingStyle] || TRAINING_BY_KEY.mixed;
+  const sessions = profile.sessionsPerWeek || 0;
+  const minutes = profile.minutesPerSession || 0;
+  const perDay = (sessions * minutes * style.met * 3.5 * weightKg) / 200 / 7;
+  return { perDay: Math.round(perDay), style };
+}
 
-// Undisclosed-until-now conservatism margin (PABLO_REVIEW.md §2.2): shaves
-// this many grams off the carb midpoint before deriving carbLo/carbHi below.
-// Effect: the displayed protein+fat+carb midpoints sum to ~100 kcal UNDER
-// the displayed calorie target, with nothing in the UI explaining why -
-// this constant and computeMacros()'s new `macroKcalGap`/`carbBufferG`
-// return fields exist specifically to make that gap visible per this
-// project's own constitution (CLAUDE.md C1: "every displayed number is
-// tappable -> reveals formula, inputs, arithmetic"). Kept at its existing
-// value (25g) rather than changed - nobody could confirm whether this
-// number was a deliberate calibration or a stray leftover (no comment, no
-// test, no pre-dump git history exists to check against per AUDIT.md §9),
-// and this user has already been eating against the range it produces.
+/**
+ * The whole energy picture in one call. `rows` includes every applicable
+ * formula with its excluded flag; rmr averages the included ones (if the
+ * user excluded everything, all applicable formulas count and
+ * allExcludedFallback flags it — an average of nothing is not a number).
+ */
+function computeEnergy(profile, weightKg) {
+  const rows = bmrRows(profile, weightKg);
+  let included = rows.filter((r) => !r.excluded);
+  const allExcludedFallback = included.length === 0;
+  if (allExcludedFallback) included = rows;
+  const values = included.map((r) => r.v);
+  const rmr = mean(values);
+  const job = jobMultiplier(profile);
+  const training = trainingKcalPerDay(profile, weightKg);
+  const tdee = rmr * job.multiplier + training.perDay;
+  return {
+    rows,
+    rmr: Math.round(rmr),
+    spreadLo: Math.round(Math.min(...values)),
+    spreadHi: Math.round(Math.max(...values)),
+    includedCount: included.length,
+    allExcludedFallback,
+    jobMultiplier: job.multiplier,
+    jobSource: job.source,
+    jobLabel: job.label,
+    trainingKcalPerDay: training.perDay,
+    trainingStyle: training.style.key,
+    trainingMet: training.style.met,
+    tdee: Math.round(tdee),
+  };
+}
+
+// ── prescription: rate of loss → target, with safety rails ───────────────
+
+const RATE_OPTIONS = [0.25, 0.5, 0.75, 1.0, 1.25, 1.5, 2.0]; // lb/wk
+const SAFE_FLOOR = { M: 1500, F: 1200 }; // kcal/day
+const KCAL_PER_LB = 3500;
+
+function effectiveFloor(profile) {
+  const sexFloor = SAFE_FLOOR[profile.sex] ?? SAFE_FLOOR.M;
+  return Math.max(sexFloor, profile.floorKcal || 0);
+}
+
+function deriveTarget(profile, tdee) {
+  const rate = profile.rateLbPerWeek ?? 1.0;
+  const deficit = Math.round((rate * KCAL_PER_LB) / 7);
+  const raw = Math.round(tdee - deficit);
+  const floor = effectiveFloor(profile);
+  const target = Math.max(raw, floor);
+  return { rate, deficit, raw, target, floor, floored: raw < floor };
+}
+
+/**
+ * A rate is unsafe when it exceeds ~1% of current body weight per week or
+ * the derived target lands on/below the floor. Unsafe rates require an
+ * explicit acknowledgement (profile.rateAcknowledged) — the route enforces it.
+ */
+function rateSafety(profile, weightKg, tdee) {
+  const rate = profile.rateLbPerWeek ?? 1.0;
+  const pctOfBw = (rate / kg2lb(weightKg)) * 100;
+  const t = deriveTarget(profile, tdee);
+  const reasons = [];
+  if (pctOfBw > 1.0) {
+    reasons.push(`${rate} lb/wk is ${pctOfBw.toFixed(2)}% of your body weight per week — above the ~1% guideline`);
+  }
+  if (t.floored) {
+    reasons.push(`the math wants ${t.raw.toLocaleString("en-CA")} kcal, below your ${t.floor.toLocaleString("en-CA")} floor — target is clamped and the chosen rate won't actually be achieved through diet alone`);
+  }
+  return { unsafe: reasons.length > 0, reasons, pctOfBw: Math.round(pctOfBw * 100) / 100 };
+}
+
+// ── macros (unchanged heuristics, per-lb-LBM convention) ─────────────────
+
 const CARB_MIDPOINT_BUFFER_G = 25;
 
 function computeMacros(profile, weightKg, targetKcal) {
@@ -95,10 +173,6 @@ function computeMacros(profile, weightKg, targetKcal) {
   const proteinMid = (proteinLo + proteinHi) / 2;
   const fatMid = (fatLo + fatHi) / 2;
   const carbMid = Math.round((targetKcal - proteinMid * 4 - fatMid * 9) / 4) - CARB_MIDPOINT_BUFFER_G;
-  // Live-computed, not hardcoded to "100 kcal" - self-updating if the
-  // protein/fat heuristics or the buffer constant ever change, rather than
-  // a second place that can silently drift from the actual arithmetic
-  // above (the exact class of bug this whole fix exists to prevent).
   const macroKcalGap = Math.round(targetKcal - (proteinMid * 4 + fatMid * 9 + carbMid * 4));
   return {
     lbmLb,
@@ -112,6 +186,8 @@ function computeMacros(profile, weightKg, targetKcal) {
     macroKcalGap,
   };
 }
+
+// ── trend + verdict ──────────────────────────────────────────────────────
 
 function trendRate(entries) {
   // entries: [{ date: "yyyy-mm-dd", weightLb }], most recent last
@@ -128,22 +204,45 @@ function trendRate(entries) {
   return -(num / den) * 7; // lb/wk lost (positive = losing)
 }
 
-function verdict(rate, target, daysIn) {
-  if (daysIn < 10)
-    return { tone: "wait", tag: "WEEK 1 — WATER NOISE", sub: "Scale is lying right now. Log daily. Judge nothing until day 10." };
-  if (rate == null)
+/**
+ * Verdict bands derive from the user's CHOSEN rate — nobody's personal
+ * 1.4–1.9 band. In-band = chosen ± max(0.25, 20%). Advisory only: the fix
+ * for a wrong pace is the rate selector on the Profile tab (or adherence),
+ * so there are no one-tap target mutations here anymore.
+ */
+function verdict({ rate, chosenRate, daysIn, atFloor }) {
+  const r1 = (n) => Math.round(n * 10) / 10;
+  if (daysIn < 10) {
+    return { tone: "wait", tag: "WEEK 1 — WATER NOISE", sub: "Early weigh-ins are mostly water shifting. Log daily; judge nothing before day 10." };
+  }
+  if (rate == null) {
     return { tone: "wait", tag: "INSUFFICIENT DATA", sub: "Need 8+ weigh-ins across the last 14 days for a verdict." };
-  if (rate > 2.2)
-    return { tone: "warn", tag: "TOO FAST", sub: `Losing ${Math.round(rate * 10) / 10} lb/wk. Add 100 back.`, apply: target + 100, applyLabel: `Apply ${Math.round(target + 100).toLocaleString("en-CA")}` };
-  if (rate >= 1.9)
-    return { tone: "warn", tag: "FAST — HOLD", sub: `${Math.round(rate * 10) / 10} lb/wk. Acceptable. Watch next week.` };
-  if (rate >= 1.4)
-    return { tone: "good", tag: "PERFECT — TOUCH NOTHING", sub: `${Math.round(rate * 10) / 10} lb/wk. Right in the 1.4–1.9 band.` };
-  if (rate >= 1.3)
-    return { tone: "warn", tag: "BORDERLINE SLOW — HOLD 1 WK", sub: `${Math.round(rate * 10) / 10} lb/wk. If it repeats next week, drop to ${FLOOR.toLocaleString("en-CA")}.` };
-  if (target > FLOOR)
-    return { tone: "bad", tag: "SLOW — DROP TO 2,000", sub: `${Math.round(rate * 10) / 10} lb/wk is under 1.3. Step to the floor.`, apply: FLOOR, applyLabel: "Apply 2,000" };
-  return { tone: "bad", tag: "SLOW — ALREADY AT FLOOR", sub: `${Math.round(rate * 10) / 10} lb/wk. NEVER below 2,000. Add movement: weekend walks, site steps.` };
+  }
+  const bandWidth = Math.max(0.25, chosenRate * 0.2);
+  const lo = Math.round((chosenRate - bandWidth) * 100) / 100;
+  const hi = Math.round((chosenRate + bandWidth) * 100) / 100;
+  const band = { lo, hi };
+  if (rate > hi + 0.4) {
+    return { band, tone: "warn", tag: "TOO FAST", sub: `Losing ${r1(rate)} lb/wk against a ${r1(chosenRate)} lb/wk plan. Sustained, that costs muscle — pick a lower rate on the Profile tab.` };
+  }
+  if (rate > hi) {
+    return { band, tone: "warn", tag: "FAST — HOLD", sub: `${r1(rate)} lb/wk vs the ${r1(chosenRate)} plan. Acceptable short-term; watch next week.` };
+  }
+  if (rate >= lo) {
+    return { band, tone: "good", tag: "ON TARGET", sub: `${r1(rate)} lb/wk — inside your ${r1(lo)}–${r1(hi)} band. Touch nothing.` };
+  }
+  if (rate >= lo - 0.15) {
+    return { band, tone: "warn", tag: "BORDERLINE SLOW — HOLD 1 WK", sub: `${r1(rate)} lb/wk vs the ${r1(chosenRate)} plan. If it repeats next week, tighten adherence or raise the rate.` };
+  }
+  if (atFloor) {
+    return { band, tone: "bad", tag: "SLOW — AT YOUR FLOOR", sub: `${r1(rate)} lb/wk and intake is already at the floor. The lever left is movement, not food.` };
+  }
+  return { band, tone: "bad", tag: "SLOW", sub: `${r1(rate)} lb/wk vs the ${r1(chosenRate)} plan. Check logging accuracy first; then consider a higher rate on the Profile tab.` };
 }
 
-module.exports = { FLOOR, JOB, kg2lb, mean, median, bmrTable, computeTDEE, computeMacros, trendRate, verdict };
+module.exports = {
+  kg2lb, mean, median,
+  FORMULAS, FORMULA_KEYS, bmrRows, computeEnergy,
+  RATE_OPTIONS, SAFE_FLOOR, effectiveFloor, deriveTarget, rateSafety,
+  computeMacros, trendRate, verdict,
+};

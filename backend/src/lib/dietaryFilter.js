@@ -18,6 +18,26 @@ const MEAT_FISH_KEYWORDS = [
   "salmon", "tuna", "fish", "cod", "tilapia", "halibut", "trout",
   "shrimp", "scallop", "prawn", "gelatin", "lard",
 ];
+// Meat-only subset (no fish) — used by kosher's meat+dairy rule, where fish
+// + dairy is permitted but meat + dairy is not.
+const MEAT_KEYWORDS = [
+  "chicken", "turkey", "duck", "beef", "pork", "bacon", "ham", "lamb",
+  "steak", "sirloin", "flank", "jerky", "elk", "venison", "bison", "game",
+  "sausage", "salami", "pepperoni", "chorizo", "prosciutto", "mince", "meatball",
+];
+const PORK_KEYWORDS = [
+  "pork", "bacon", "ham", "prosciutto", "pancetta", "lard", "chorizo",
+  "salami", "pepperoni", "spam", "pork rinds", "black pudding",
+];
+const ALCOHOL_KEYWORDS = [
+  "wine", "beer", "lager", "ale", "cider", "rum", "brandy", "whiskey",
+  "whisky", "vodka", "gin", "sherry", "port", "sake", "liqueur", "tequila",
+  "shaoxing", "prosecco", "champagne", "stout",
+];
+const PROCESSED_MEAT_KEYWORDS = [
+  "bacon", "sausage", "salami", "pepperoni", "chorizo", "hot dog", "spam",
+  "prosciutto", "pancetta", "deli meat", "luncheon meat",
+];
 const ANIMAL_DERIVED_EXTRA_KEYWORDS = ["egg", "eggs", "cheese", "yogurt", "whey", "casein", "butter", "ghee", "honey"];
 const PLANT_MILK_QUALIFIERS = ["almond", "soy", "oat", "coconut", "cashew", "rice", "hemp", "pea"];
 
@@ -90,6 +110,26 @@ const CATEGORY_SYNONYMS = {
     "mixed nuts", "nut mix", "trail mix",
   ],
   egg: ["egg", "eggs", "mayonnaise", "meringue"],
+  // Phase 3 allergy checkboxes — one key per checkbox, matching the UI values.
+  eggs: ["egg", "eggs", "mayonnaise", "meringue"],
+  fish: [
+    "fish", "salmon", "tuna", "cod", "haddock", "tilapia", "halibut", "trout",
+    "mackerel", "sardine", "anchovy", "anchovies", "herring", "sea bass",
+    "snapper", "kipper", "surimi",
+    // Hidden-fish carriers (same plausibility bar as gluten's stock cubes):
+    // Worcestershire and Caesar dressing are anchovy-based by standard recipe.
+    "fish sauce", "worcestershire", "caesar dressing",
+  ],
+  kiwi: ["kiwi", "kiwifruit"],
+  // Peanuts are legumes — a peanut allergy is NOT a tree-nut allergy and
+  // vice-versa, so these are deliberately separate lists.
+  peanuts: ["peanut", "peanuts", "groundnut", "peanut butter", "peanut oil", "satay"],
+  "tree nuts": [
+    "almond", "walnut", "cashew", "pecan", "pistachio", "hazelnut",
+    "macadamia", "brazil nut", "pine nut", "praline", "marzipan", "amaretto",
+    "nut butter", "mixed nuts", "nut mix", "trail mix",
+  ],
+  sesame: ["sesame", "tahini", "halva", "benne", "gomashio"],
 };
 
 // Default keto threshold is on carb-per-100g of the raw ingredient, not a
@@ -152,7 +192,27 @@ function isNonButterDairy(n) {
 // instead, specifically because of this limitation.
 function recipeExcludedByStyle(recipe, dietaryStyle) {
   if (!dietaryStyle || dietaryStyle === "none") return false;
-  return recipe.ingredients.some((ing) => excludedByStyle({ name: ing.name, carb: 0 }, dietaryStyle));
+  if (recipe.ingredients.some((ing) => excludedByStyle({ name: ing.name, carb: 0 }, dietaryStyle))) return true;
+  // Kosher has a COMBINATION rule no single ingredient can trip: meat and
+  // dairy may not share a dish (fish + dairy is fine). Only checkable at
+  // recipe level, so it lives here rather than in excludedByStyle().
+  if (dietaryStyle === "kosher") {
+    const names = recipe.ingredients.map((i) => i.name);
+    const hasMeat = names.some((n) => matchesAny(n, MEAT_KEYWORDS));
+    const hasDairy = names.some(isKosherDairy);
+    if (hasMeat && hasDairy) return true;
+  }
+  return false;
+}
+
+// Dairy as kosher's meat+dairy rule sees it: real milk/cheese/cream/etc.
+// plus butter — but never "peanut butter", "butter beans", "buttermilk
+// squash"-style compounds or plant qualifiers.
+function isKosherDairy(n) {
+  if (isDairyMilk(n) || matchesAny(n, NON_BUTTER_DAIRY_KEYWORDS)) return true;
+  return hasWord(n, "butter")
+    && !hasPhrase(n, "peanut butter") && !hasPhrase(n, "nut butter")
+    && !hasWordOrPlural(n, "bean") && !matchesAny(n, PLANT_MILK_QUALIFIERS);
 }
 
 // Adjuster/single-food equivalent of recipeExcludedByStyle(). Same keto
@@ -190,8 +250,32 @@ function excludedByStyle(food, dietaryStyle) {
     // mainstream-common-case-over-edge-case call paleo's potato question made).
     return !(matchesAny(n, MEAT_FISH_KEYWORDS) || matchesAny(n, ANIMAL_DERIVED_EXTRA_KEYWORDS) || isDairyMilk(n));
   }
+  if (dietaryStyle === "mediterranean") {
+    // Mediterranean is a PATTERN, not a hard exclusion list — implemented as
+    // its widely-agreed hard "avoid" core: processed meats and sugary
+    // drinks/candy. Disclosed simplification (it does not police red-meat
+    // frequency or olive-oil-vs-butter ratios; a filter can't count meals).
+    return matchesAny(n, PROCESSED_MEAT_KEYWORDS) || matchesAny(n, ["candy", "soda", "cola", "energy drink"]);
+  }
+  if (dietaryStyle === "halal") {
+    // Pork in all its cured forms + alcohol (including cooking wine — the
+    // common strict practice) + gelatin (pork-derived unless certified,
+    // which ingredient names can't tell us — excluded on the safe side).
+    // Salami/pepperoni/chorizo are excluded although beef versions exist:
+    // over-exclusion is the correct failure direction for a religious rule.
+    return matchesAny(n, PORK_KEYWORDS) || matchesAny(n, ALCOHOL_KEYWORDS) || hasWord(n, "gelatin");
+  }
+  if (dietaryStyle === "kosher") {
+    // Ingredient-level: pork family + shellfish + gelatin (same
+    // safe-side reasoning as halal) + rabbit. The meat+dairy combination
+    // rule lives in recipeExcludedByStyle() — it needs the whole dish.
+    return matchesAny(n, PORK_KEYWORDS) || matchesAny(n, CATEGORY_SYNONYMS.shellfish.filter((w) => !w.includes(" "))) || hasWord(n, "gelatin") || hasWord(n, "rabbit");
+  }
   return false;
 }
+
+// The styles the Profile UI offers — single source for route validation.
+const DIETARY_STYLES = ["none", "mediterranean", "vegetarian", "vegan", "paleo", "keto", "carnivore", "halal", "kosher"];
 
 // Does a single exclusion term match this food/ingredient name? Exported
 // pure so callers can apply the exact same rule to recipe.ingredients[].name,
@@ -257,6 +341,7 @@ function traceRecipeExclusions(recipes, excludedFoods) {
 }
 
 module.exports = {
+  DIETARY_STYLES,
   recipeExcludedByStyle,
   adjusterExcludedByStyle,
   matchesExclusionTerm,

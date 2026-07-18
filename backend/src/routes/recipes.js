@@ -10,9 +10,28 @@ const { sumMacros, resolveDraftIngredients, persistRecipe, RECIPE_INCLUDE } = re
 const router = express.Router();
 router.use(requireAuth);
 
+const { recipeExcludedByStyle, matchesExclusionTerm } = require("../lib/dietaryFilter.js");
+
+// Phase 3: the library never surfaces a recipe containing an excluded
+// ingredient — the same hard filter the solver pool uses. `hiddenCount`
+// keeps the filtering visible (silent shrinkage is banned); ?all=1 is the
+// explicit escape hatch (used nowhere by default).
 router.get("/", async (req, res) => {
   const recipes = await prisma.recipe.findMany({ include: RECIPE_INCLUDE, orderBy: { name: "asc" } });
-  res.json(recipes);
+  if (req.query.all === "1") return res.json({ recipes, hiddenCount: 0 });
+
+  const profile = await prisma.profile.findUnique({ where: { userId: req.userId } });
+  const dietaryStyle = profile?.dietaryStyle || null;
+  const excludedFoods = Array.isArray(profile?.excludedFoods) ? profile.excludedFoods : [];
+  if (!dietaryStyle && excludedFoods.length === 0) return res.json({ recipes, hiddenCount: 0 });
+
+  const visible = recipes.filter((r) => {
+    const flat = r.ingredients.map((i) => ({ name: i.food.name }));
+    if (recipeExcludedByStyle({ ingredients: flat }, dietaryStyle)) return false;
+    if (excludedFoods.length && flat.some((ing) => excludedFoods.some((term) => matchesExclusionTerm(ing.name, term)))) return false;
+    return true;
+  });
+  res.json({ recipes: visible, hiddenCount: recipes.length - visible.length });
 });
 
 router.post("/generate-drafts", async (req, res) => {

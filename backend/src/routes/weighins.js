@@ -1,7 +1,8 @@
 const express = require("express");
 const { prisma } = require("../lib/prisma.js");
 const { requireAuth } = require("../lib/auth.js");
-const { kg2lb, computeTDEE, computeMacros, trendRate, verdict } = require("../lib/bmrEngine.js");
+const { kg2lb, computeEnergy, computeMacros, trendRate, verdict, deriveTarget, rateSafety } = require("../lib/bmrEngine.js");
+const { recomputeTarget } = require("../lib/profileTarget.js");
 
 const router = express.Router();
 router.use(requireAuth);
@@ -16,19 +17,22 @@ router.get("/", async (req, res) => {
 
 router.post("/", async (req, res) => {
   const { date, weightKg } = req.body || {};
-  if (!date || typeof weightKg !== "number" || weightKg < 45 || weightKg > 220) {
-    return res.status(400).json({ error: "date and a sane weightKg (45-220) are required" });
+  if (!date || typeof weightKg !== "number" || weightKg < 35 || weightKg > 300) {
+    return res.status(400).json({ error: "date and a sane weightKg (35-300) are required" });
   }
   const w = await prisma.weighin.upsert({
     where: { userId_date: { userId: req.userId, date } },
     update: { weightKg },
     create: { userId: req.userId, date, weightKg },
   });
+  // Weight moved → TDEE moved → the derived target may move with it.
+  await recomputeTarget(req.userId);
   res.json({ date: w.date, weightKg: w.weightKg });
 });
 
 router.delete("/:date", async (req, res) => {
   await prisma.weighin.deleteMany({ where: { userId: req.userId, date: req.params.date } });
+  await recomputeTarget(req.userId);
   res.status(204).end();
 });
 
@@ -43,16 +47,20 @@ router.get("/summary", async (req, res) => {
   const avg7Kg = avg7Lb != null ? avg7Lb / 2.20462 : null;
   const rate = trendRate(entries);
   const daysIn = dayNum(todayStr()) - dayNum(profile.startDate) + 1;
-  const v = verdict(rate, profile.targetKcal, daysIn);
 
   const weightNowKg = avg7Kg != null ? avg7Kg : profile.startWeightKg;
-  const { rows, rmr, tdee } = computeTDEE(profile, weightNowKg);
-  const macros = computeMacros(profile, weightNowKg, profile.targetKcal);
+  const energy = computeEnergy(profile, weightNowKg);
+  const target = deriveTarget(profile, energy.tdee);
+  const safety = rateSafety(profile, weightNowKg, energy.tdee);
+  const v = verdict({ rate, chosenRate: profile.rateLbPerWeek, daysIn, atFloor: target.floored });
+  const macros = computeMacros(profile, weightNowKg, target.target);
 
   res.json({
     weighins: weighins.map((w) => ({ date: w.date, weightKg: w.weightKg })),
     avg7Kg, rate, daysIn, verdict: v,
-    bmr: { rows, rmr, tdee },
+    energy, // rows(+excluded flags), rmr, spreadLo/Hi, jobMultiplier/source/label, trainingKcalPerDay, tdee
+    target, // rate, deficit, raw, target, floor, floored
+    rateSafety: safety,
     macros,
   });
 });

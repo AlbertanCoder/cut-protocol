@@ -12,6 +12,7 @@ async function request(path, options = {}) {
   if (!res.ok) {
     const err = new Error(body?.error || `request failed: ${res.status}`);
     err.status = res.status;
+    err.body = body; // 422 rate-ack responses carry {requiresAck, reasons}
     throw err;
   }
   return body;
@@ -23,8 +24,8 @@ export const api = {
   me: () => request("/auth/me"),
 
   getProfile: () => request("/profile"),
+  getProfileMeta: () => request("/profile/meta"),
   putProfile: (patch) => request("/profile", { method: "PUT", body: JSON.stringify(patch) }),
-  putTarget: (targetKcal) => request("/profile/target", { method: "PUT", body: JSON.stringify({ targetKcal }) }),
 
   getWeighins: () => request("/weighins"),
   postWeighin: (date, weightKg) => request("/weighins", { method: "POST", body: JSON.stringify({ date, weightKg }) }),

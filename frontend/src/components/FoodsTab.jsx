@@ -76,7 +76,7 @@ function FoodDetail({ food, isAdmin, onSaved, refreshFoods }) {
 
   const openRecipePicker = async () => {
     setRecipePicker(true);
-    if (!recipes) setRecipes(await api.getRecipes());
+    if (!recipes) setRecipes((await api.getRecipes()).recipes);
   };
 
   const addToRecipe = async (recipe) => {

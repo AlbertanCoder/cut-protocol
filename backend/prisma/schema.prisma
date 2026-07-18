@@ -42,13 +42,27 @@ model Profile {
   sex             String // "M" | "F"
   age             Int
   heightCm        Float
-  bodyFatPct      Float
-  job             String // "desk" | "light" | "mixed" | "heavy"
+  bodyFatPct      Float // 0 = unknown (Katch-McArdle/Cunningham auto-hide)
+  // Phase 3 activity model: occupation picked from activityData.js's table
+  // (many real occupations -> multiplier), with an optional manual override.
+  occupationKey    String  @default("desk-office")
+  activityOverride Float? // manual job-multiplier override; null = use occupation
   sessionsPerWeek Int
+  trainingStyle     String @default("mixed") // "weights" | "cardio" | "mixed" | "sport"
+  minutesPerSession Int    @default(45)
   startWeightKg   Float
   goalWeightKg    Float
   startDate       String // ISO date (yyyy-mm-dd)
   unitPref        String   @default("imperial") // "imperial" | "metric"
+  // Phase 3 prescription model: targetKcal is DERIVED (TDEE - rate*500,
+  // clamped to the floor) and re-materialized server-side whenever profile
+  // or weight changes — never set directly by the client anymore.
+  rateLbPerWeek    Float   @default(1.0) // 0.25|0.5|0.75|1.0|1.25|1.5|2.0
+  rateAcknowledged Boolean @default(false) // explicit "I understand" for unsafe rates
+  floorKcal        Int? // optional user-stricter floor; effective floor = max(sex floor, this)
+  // JSON string array of BMR formula keys the user excluded from the average
+  // (same no-@default Json convention as excludedFoods below).
+  excludedFormulas Json
   targetKcal      Int
   mealsPerDay     Int      @default(3)
   snacksPerDay    Int      @default(1)

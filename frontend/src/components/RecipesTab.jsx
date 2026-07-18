@@ -1,11 +1,9 @@
 import { useState, useEffect, useCallback } from "react";
-import { Sparkles, Pencil, Trash2, Save, X, Search, ShoppingCart, Check, Mail, MessageSquare, Copy, Database } from "lucide-react";
+import { Sparkles, Pencil, Trash2, Save, X, Search, ShoppingCart, Check, Mail, MessageSquare, Copy, Database, EyeOff } from "lucide-react";
 import { C } from "../lib/theme.js";
 import { toHouseholdUnit } from "../lib/householdUnits.js";
 import { Card, Btn, Chip, PageHead } from "./ui/Parts.jsx";
 import { api } from "../lib/api.js";
-import { FRIDGE, EXCLUDED, ROTATION, BATCH, SUPPS, SUPP_RULES, CHILI } from "../data/constants.js";
-import { uiState } from "../lib/storage.js";
 
 const kc = (n) => Math.round(n).toLocaleString("en-CA");
 const g1 = (n) => Math.round(n * 10) / 10;
@@ -206,115 +204,10 @@ function DraftCard({ draft, onSave, onEditGrams, saving }) {
   );
 }
 
-// Renders this account's fridge contents, supplement dosing schedule, and a
-// chili recipe (FRIDGE/EXCLUDED/ROTATION/BATCH/SUPPS/SUPP_RULES/CHILI, all
-// from data/constants.js) - fixed content from the pre-multi-tenancy
-// single-user version of this app, not something any other account should
-// see. Only rendered for isAdmin (see the caller below) until this becomes
-// real per-user data.
-function ReferenceSection() {
-  const [done, setDone] = useState(uiState.get().fridgeDone);
-  const toggle = (id) => setDone(uiState.setFridgeDone(id, !done[id]).fridgeDone);
-  const phase1Done = FRIDGE.every((f) => done[f.id]);
-
-  return (
-    <details className="mt-4">
-      <summary className="text-xs font-semibold uppercase tracking-wide cursor-pointer px-1" style={{ color: C.faintLight }}>
-        Reference — fridge burn-down, rotation, supplements
-      </summary>
-      <div className="mt-3 grid grid-cols-1 xl:grid-cols-3 gap-4 items-start">
-        <Card section="§5" title="Fridge burn-down — fixed slots">
-          <div className="mb-2">
-            <Chip color={phase1Done ? C.good : C.warn} bg={phase1Done ? C.goodBg : C.warnBg}>
-              {phase1Done ? "Phase 2 — steady state" : "Phase 1 — fridge burn-down"}
-            </Chip>
-          </div>
-          <div className="text-xs font-semibold mb-2" style={{ color: C.faint }}>
-            Items rent slots. Nothing rides on top of the plan. Check off when gone.
-          </div>
-          {FRIDGE.map((f) => (
-            <label key={f.id} className="flex items-start gap-3 py-2 cursor-pointer"
-              style={{ borderBottom: `1px solid ${C.rule}`, opacity: done[f.id] ? 0.45 : 1 }}>
-              <input type="checkbox" checked={!!done[f.id]} onChange={() => toggle(f.id)}
-                className="mt-1 w-4 h-4 shrink-0" style={{ accentColor: C.good }} />
-              <div className="min-w-0">
-                <div className="text-sm font-bold flex flex-wrap gap-x-2 items-baseline" style={{ color: C.ink, textDecoration: done[f.id] ? "line-through" : "none" }}>
-                  {f.name}
-                  <span className="text-xs font-semibold" style={{ color: C.accent }}>{f.portion}</span>
-                </div>
-                <div className="text-xs font-semibold" style={{ color: C.faint }}>{f.rule}</div>
-              </div>
-            </label>
-          ))}
-          <div className="mt-3 p-2.5 rounded-xl" style={{ background: C.redBg, border: `1px solid ${C.red}55` }}>
-            <div className="text-xs font-extrabold uppercase tracking-wide mb-1" style={{ color: C.red }}>Excluded</div>
-            {EXCLUDED.map((x) => (
-              <div key={x} className="text-xs font-semibold" style={{ color: C.ink }}>{x}</div>
-            ))}
-          </div>
-        </Card>
-
-        <div className="flex flex-col gap-4">
-          <Card section="§6" title="Dinner rotation — equal swaps">
-            {ROTATION.map((r) => (
-              <div key={r.main} className="flex justify-between items-baseline py-1.5 gap-2"
-                style={{ borderBottom: `1px solid ${C.rule}` }}>
-                <span className="text-sm font-semibold" style={{ color: C.ink }}>
-                  {r.main} <span className="text-xs font-semibold" style={{ color: C.faint }}>{r.amt}</span>
-                </span>
-                <span className="text-xs text-right font-bold" style={{ color: r.butter === "NO butter" ? C.red : C.faint }}>
-                  {r.butter}{r.note && <span style={{ color: C.faint }}> · {r.note}</span>}
-                </span>
-              </div>
-            ))}
-          </Card>
-
-          <Card section="§6" title="Sunday batch — ~1 hr">
-            {BATCH.map((b, i) => (
-              <div key={i} className="flex gap-2 py-1.5 text-sm font-semibold" style={{ borderBottom: `1px solid ${C.rule}`, color: C.ink }}>
-                <span className="text-xs pt-0.5 font-extrabold" style={{ color: C.accent }}>{String(i + 1).padStart(2, "0")}</span>
-                {b}
-              </div>
-            ))}
-            <div className="text-xs font-semibold mt-2" style={{ color: C.faint }}>
-              Groceries ~$110–125/wk · Superstore West Edmonton
-            </div>
-          </Card>
-        </div>
-
-        <div className="flex flex-col gap-4">
-          <Card title="Street chili — saved recipe">
-            <div className="text-xs space-y-2 font-semibold" style={{ color: C.ink }}>
-              <div>{CHILI.ing}</div>
-              <div style={{ color: C.faint }}>{CHILI.steps}</div>
-            </div>
-          </Card>
-
-          <Card section="§7" title="Supplement stack">
-            {SUPPS.map((s) => (
-              <div key={s.t} className="flex gap-3 py-1.5 text-xs font-semibold" style={{ borderBottom: `1px solid ${C.rule}` }}>
-                <span className="font-extrabold w-12 shrink-0" style={{ color: C.accent }}>{s.t}</span>
-                <span style={{ color: C.ink }}>{s.s}</span>
-              </div>
-            ))}
-            <div className="mt-2 space-y-1">
-              {SUPP_RULES.map((r) => (
-                <div key={r} className="text-xs font-semibold" style={{ color: C.faint }}>· {r}</div>
-              ))}
-            </div>
-            <div className="text-xs font-bold mt-3" style={{ color: C.red }}>
-              Allergy-level: shellfish · kiwi · soy protein (soybean oil OK). No pork as weekly staple.
-            </div>
-          </Card>
-        </div>
-      </div>
-    </details>
-  );
-}
-
-export default function RecipesTab({ isAdmin, openFoods }) {
+export default function RecipesTab({ openFoods }) {
   const inpStyle = getInpStyle();
   const [recipes, setRecipes] = useState([]);
+  const [hiddenCount, setHiddenCount] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [query, setQuery] = useState("");
@@ -389,7 +282,9 @@ export default function RecipesTab({ isAdmin, openFoods }) {
 
   const load = useCallback(async () => {
     try {
-      setRecipes(await api.getRecipes());
+      const res = await api.getRecipes();
+      setRecipes(res.recipes);
+      setHiddenCount(res.hiddenCount);
     } catch (e) {
       setError(e.message);
     } finally {
@@ -597,6 +492,11 @@ export default function RecipesTab({ isAdmin, openFoods }) {
             <input placeholder="Search…" className="text-sm pl-9 pr-3 py-2 rounded-xl w-full" style={inpStyle}
               value={query} onChange={(e) => setQuery(e.target.value)} />
           </div>
+          {hiddenCount > 0 && (
+            <div className="text-xs font-semibold mb-2 flex items-center gap-1.5" style={{ color: C.faintLight }}>
+              <EyeOff size={12} /> {hiddenCount} recipe{hiddenCount === 1 ? "" : "s"} hidden by your diet & allergy rules.
+            </div>
+          )}
           {loading ? (
             <div className="text-sm font-semibold" style={{ color: C.faint }}>Loading…</div>
           ) : (
@@ -611,7 +511,6 @@ export default function RecipesTab({ isAdmin, openFoods }) {
         </Card>
       </div>
 
-      {isAdmin && <ReferenceSection />}
     </div>
   );
 }
