@@ -1,118 +1,85 @@
-<img src="assets/icon/png/icon-128.png" width="96" height="96" align="left" alt="Cut Protocol — shield badge icon">
+<img src="assets/icon/png/icon-128.png" width="96" height="96" align="left" alt="Cut Protocol shield icon">
 
 # Cut Protocol
 
 [![CI](https://github.com/AlbertanCoder/cut-protocol/actions/workflows/ci.yml/badge.svg)](https://github.com/AlbertanCoder/cut-protocol/actions/workflows/ci.yml)
 
-A cutting-focused nutrition coach — calibrated calorie targets, AI-assisted weekly meal planning, and honest weigh-in trend tracking.
+A nutrition app I'm building on the side. Work in progress — this is a project page, not a product launch.
 
 <br clear="left">
 
-> **Branding:** the shield-badge mark (a geometric six-pack inside a shield, athletic green `#2FD576` on charcoal) lives in `assets/icon/` — SVG masters (`cutprotocol-outline.svg` for 48px+, inverted `cutprotocol-solid.svg` for small sizes), the rendered PNG set, and the multi-size `CutProtocol.ico` at the repo root that Electron and the Windows build consume. The in-app mark is `frontend/src/components/ui/CutMark.jsx`.
+## The problem
 
-## What it does
+Most people who decide to lose weight don't fail because they're lazy. They fail because dieting asks them to do things nobody taught them: figure out how many calories they actually burn, translate that into a daily target, split it into protein, fat, and carbs, and then somehow turn those numbers into real meals — every day, indefinitely. Every step is either confusing or tedious, so people guess, get inconsistent results, and quit.
 
-Cut Protocol is built for someone running a calorie deficit who wants the math shown, not hidden. Once you're logged in, it:
+## What Cut Protocol does about it
 
-- Computes your BMR from **six independent formulas** (Mifflin–St Jeor, Oxford/Henry, Harris–Benedict, Schofield/WHO, plus Katch–McArdle and Cunningham once you supply a body-fat %) and averages the applicable ones — with per-formula exclude toggles and the spread shown, rather than trusting any single equation.
-- Builds TDEE from components you can see: BMR × a 36-occupation activity multiplier + MET-based training calories. Your calorie target is **derived** — TDEE minus the deficit your chosen rate of loss needs, clamped to a hard safety floor — and re-computes automatically as your weigh-ins move.
-- Generates a full week of meals from a 600+ recipe library using a deterministic solver: three scored candidates per day, portion scaling, honest match percentages, per-slot swap with three alternates, slot locking, and a plain-language diagnosis whenever your targets are genuinely out of reach (it names the binding constraint — it never silently misses).
-- Filters every recipe, plan, and AI generation through your dietary style (9 styles) and allergy checkboxes before anything reaches you. Allergy filtering is zero-tolerance and is never relaxed by a suggestion.
-- Imports recipes from the web: paste a URL, it reads the site's schema.org markup, converts amounts to grams (flagging estimates honestly), matches ingredients to the validated food database, and lets you review before anything saves.
-- Generates new recipes with AI (Anthropic API) that must pass the same nutrition validator as every other food before they can be saved.
-- Builds a real grocery list from your week: raw/dry purchase quantities (not just as-cooked grams), practical retail units, store-section grouping, and rough CAD cost estimates that admit their coverage.
-- Tracks daily weigh-ins, smooths them into a 7-day trend, verdicts the pace against your chosen band, and projects a goal date from your measured rate.
-- Runs as a normal web app, or as a packaged Windows desktop app via Electron.
+You punch in your stats (height, weight, age), what you do for work, and how you train. It calculates your calories and macros — using several published BMR formulas averaged together rather than trusting any single one, with the math shown on screen so you can check it. Then it generates weekly meal plans and recipes that actually fit your numbers, builds the grocery list, and tracks your weigh-ins against the plan so you can see whether it's working.
 
-## Features
+The design bias throughout is honesty over polish: if the meal solver can't hit your targets, it says so and names the constraint instead of quietly missing. If a number is an estimate, it's labeled as one.
 
-- Six-formula BMR engine (averaged, excludable, spread shown) + occupation/training TDEE build
-- Derived calorie target with sex-based + user-set safety floors; unsafe rates require explicit acknowledgment
-- Weekly meal-plan solver: scored day candidates, swaps with alternates, locks, batch-cooking mode, cuisine/protein/budget steering
-- Recipe library grouped by cuisine / meal type / protein with search and protein-density sort
-- Recipe URL importer (schema.org) with honest unit-conversion flags — no paid API
-- AI recipe generation gated by the food-data validator; loud per-generation allergen override that auto-resets
-- Dietary style + allergy hard-filtering applied server-side before recipes ever reach you
-- Cart that totals macros, feeds today's plan, and produces its own grocery list
-- Grocery lists with practical purchase units, store sections, checkboxes, and labeled cost estimates
-- Weigh-in log with 7-day rolling average, rate verdicts, and goal-date projection
-- USDA FoodData Central as the nutrition source of truth, with a validated 850+ food database
-- Windows desktop build via Electron, alongside the standard web app
+## Where it's at
 
-## Tech stack
+**Works today**
 
-- **Backend:** Node.js, Express 5, Prisma 6 (SQLite in dev), JWT auth
-- **Frontend:** React 19, Vite 8, Tailwind CSS 4, Recharts
-- **Desktop:** Electron + electron-builder (Windows installer)
-- **AI:** Anthropic API for recipe generation
-- **Nutrition data:** USDA FoodData Central API
+- Calorie/macro engine: six BMR formulas (averaged, individually excludable, spread shown), TDEE built from a 36-occupation activity table plus training load, and a daily target derived from your chosen rate of loss — clamped to a safety floor, recomputed as your weigh-ins move
+- Weekly meal-plan solver: scored day candidates against your calories and protein, portion scaling, swap-with-alternates, slot locking, and plain-language diagnosis when targets are genuinely out of reach
+- Recipe library (600+): grouped browsing, search, protein-density sort; dietary styles and allergy filters applied server-side before anything reaches you
+- Recipe import from the web (reads standard schema.org markup, converts amounts to grams with estimates flagged) and AI-assisted recipe generation, both gated by the same nutrition validator as every other food
+- Grocery lists with raw-purchase quantities, store sections, and labeled rough cost estimates
+- Daily weigh-in tracking with a 7-day trend, pace verdicts, and a projected goal date
+- Runs as a web app or a packaged Windows desktop app (Electron)
 
-## Setup & running locally
+**Rough / early**
 
-Prereqs: Node.js and npm.
+- Training: a v1 scaffold behind a feature flag — it matches your days, equipment, and experience to one of four sensible workout templates. Deliberately simple; real programming depth is future work
+- Cost estimates cover common staples only; the price table is thin
+- Single-user by design right now — auth exists, but this is built as a personal tool first
 
-**1. Clone and install dependencies:**
+**Ideas for later** (ideas, not promises)
 
-```
-git clone <repo-url>
-cd cut-protocol
-npm install
-cd backend && npm install
-cd ../frontend && npm install
-```
-
-**2. Configure the backend:**
-
-```
-cd backend
-cp .env.example .env
-```
-
-Fill in `backend/.env`:
-- `JWT_SECRET` — generate one with `node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"`
-- `USDA_API_KEY` — free key from [fdc.nal.usda.gov/api-key-signup](https://fdc.nal.usda.gov/api-key-signup)
-- `ANTHROPIC_API_KEY` — from [console.anthropic.com](https://console.anthropic.com)
-- `SEED_EMAIL` / `SEED_PASSWORD` — your own login, used once by the seed step below
-
-**3. Set up the database and seed an account:**
-
-```
-npx prisma generate
-npx prisma migrate deploy
-npm run seed
-npm run seed:recipes
-```
-
-**4. Run it (two terminals):**
-
-```
-cd backend && npm run dev      # :3001
-cd frontend && npm run dev     # :5173, proxies /api to :3001
-```
-
-Open `http://localhost:5173` and log in with the account you just seeded.
-
-### Desktop build (optional)
-
-From the repo root: `npm install`, then `npm run dist` builds a Windows installer via Electron.
+- A proper food diary (logging what you actually ate, not just what was planned)
+- Smarter workout suggestions
+- Barcode scanning for packaged foods
+- Maybe a store release someday, if it ever feels ready
 
 ## Screenshots
 
-**Today** — daily target vs. planned macros, weigh-in log, and a rate-of-loss verdict.
-![Today tab](screenshots/today.jpg)
+**Today** — planned intake vs. target, weigh-in, and the trend at a glance.
+![Today](screenshots/today.jpg)
 
-**Trend** — 7-day weight average, projected goal date, and body-fat estimate.
-![Trend tab](screenshots/trend.jpg)
+**Plan** — the weekly meal plan: steer the solver, swap meals, build the grocery list.
+![Plan](screenshots/plan.jpg)
 
-**Engine** — the formula panel, TDEE component build, and the derived target. Every number shows its work.
-![Engine tab](screenshots/engine.jpg)
+**Engine** — the math, shown: every formula, the TDEE build, and where the daily target comes from.
+![Engine](screenshots/engine.jpg)
 
-**Plan** — the solver-fit weekly meal plan with steering filters, swaps, locks, and the sectioned grocery list.
-![Plan tab](screenshots/plan.jpg)
+**Training** — the v1 template scaffold.
+![Training](screenshots/training.jpg)
 
-**Recipes** — the grouped library, URL importer, AI generation, and cart.
-![Recipes tab](screenshots/recipes.jpg)
+## How the engine works, in plain language
+
+1. **BMR** — what your body burns at rest. There are several published formulas for estimating it and they disagree, so Cut Protocol calculates the ones that apply to you (four by default; two more unlock if you know your body-fat %) and averages them, showing the spread.
+2. **TDEE** — what you burn in a day. BMR gets multiplied by an activity factor picked from a table of real occupations (a framer burns more than an accountant), then training calories are added from how often and how long you work out.
+3. **Target** — TDEE minus the deficit for the loss rate you chose. One pound a week needs about a 500-calorie daily deficit. The result is clamped to a safety floor the app will not go below, and if you pick an aggressive rate it makes you acknowledge that explicitly.
+4. **Macros** — protein is set high to protect muscle in a deficit, fat gets a floor, carbs flex to fill what's left. Shown as ranges, not false-precision single numbers.
+5. **The loop** — you weigh in daily, the app smooths it into a 7-day average, compares your measured rate against the plan, and re-derives the target as your weight changes. Your actual data beats the model's prediction.
+
+## Tech stack
+
+- **Backend:** Node.js, Express 5, Prisma 6 (SQLite), JWT auth
+- **Frontend:** React 19, Vite 8, Tailwind CSS 4, Recharts
+- **Desktop:** Electron + electron-builder (Windows installer)
+- **Nutrition data:** USDA FoodData Central (source of truth), with a validated 850+ food database
+- **AI:** Anthropic API for recipe generation (validator-gated)
+- **Tests/CI:** node:test (130 tests), oxlint, GitHub Actions
+
+## About this project
+
+I work construction. This is what I do at night and on days off — I find it genuinely fascinating what one person can build now with AI development tools, and this repo is me finding out. It's built in the open, phase by phase (the commit history is the honest record), and it will be a work in progress for a while.
+
+Not affiliated with any company. Not medical advice — it's a calculator and a meal planner; talk to a professional about your health.
 
 ---
 
-© 2026 Shad. All rights reserved. This project is shared for demonstration purposes; please don't reuse the code without permission.
+© 2026 Shad. All rights reserved. Shared for demonstration purposes — please don't reuse the code without permission.

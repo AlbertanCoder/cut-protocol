@@ -281,6 +281,29 @@ challenged. Never suggest intake below the safety floor.
   with HMR — both states confirmed in the sidebar. 130 tests green
   (10 new generator tests incl. equipment-floor and trim-never-mains
   guards), oxlint + vite build clean.
+- 2026-07-18 · **Phase 9 complete — repo PUBLIC.** Final pre-public audit
+  (18 commits, full history): JWT/Anthropic/USDA key values, seed
+  email+password, any sk-ant pattern, .env, dev.db, personal docs
+  (AUDIT/PABLO/RECOMP archive), test passwords — all confirmed never
+  committed. Two notes: old constants.js (history-only, deleted Phase 3)
+  is self-labeled demo data naming nobody; roadmap/00-synthesis.md row 21
+  leaked the Windows username + an off-repo personal file path — reworded
+  in tree AND scrubbed from all history via git-filter-repo replace-text
+  (Shad chose rewrite-then-flip; SHAs changed, force-pushed all refs).
+  Showcase: README rewritten as a work-in-progress project page (problem →
+  what it does → status: works today / rough / ideas-not-promises → 4
+  fresh 1568px screenshots incl. Training → plain-language engine
+  explainer → tech stack → about note: construction by day, built with AI
+  dev tools, not medical advice → rights notice). docs/linkedin-kit.md:
+  Projects entry, About line, understated "what I've been working on" post
+  (no launch language, 3 hashtags), Featured caption.
+  assets/social-preview.png (1280×640, shield + wordmark — upload manually
+  at Settings→Social preview; API can't set it). Repo description +
+  11 topics set via gh. Profile README repo AlbertanCoder/AlbertanCoder
+  created + pushed (construction by day / builds at night / Cut Protocol
+  link); profile PIN is manual (Customize your pins — API has no
+  mutation). Visibility flipped to PUBLIC via gh after Shad's confirm.
+  THE 9-PHASE OVERHAUL IS COMPLETE.
 
 ## Archive
 
