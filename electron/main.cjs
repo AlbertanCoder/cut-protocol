@@ -33,19 +33,17 @@ app.setName("Cut Protocol");
 
 // backend/.env is deliberately excluded from electron-builder's `files`
 // whitelist (it holds JWT_SECRET plus the USDA/Anthropic API keys — not
-// something to leave sitting in plain form in the packaging list). But that
-// means a packaged app has literally no .env on disk: backend/server.js's
-// `require("dotenv/config")` resolves relative to process.cwd() and finds
-// nothing, so JWT_SECRET etc. are all undefined and every login attempt
-// throws ("Missing JWT_SECRET env var") — auth is completely broken in a
-// packaged build without this. package.json's `extraResources` ships
-// `backend/.env.example` as "backend.env.template" (placeholders only, safe
-// to commit); this loads whatever's in that template at startup, using the
-// same non-destructive semantics as dotenv itself (never clobber a var the
-// environment already set). To produce a build that actually works, fill in
-// real values in `backend/.env.example` locally before running `npm run
-// dist` (don't commit the filled-in version), or swap this template source
-// for a real `backend/.env` for a personal-use-only build.
+// something to leave sitting in plain form in the general packaging list).
+// But that means a packaged app has literally no .env on disk: backend/
+// server.js's `require("dotenv/config")` resolves relative to process.cwd()
+// and finds nothing, so JWT_SECRET etc. are all undefined and every login
+// attempt throws ("Missing JWT_SECRET env var") — auth is completely broken
+// in a packaged build without this. This is a personal, single-user desktop
+// build that never leaves this machine, so package.json's `extraResources`
+// intentionally ships the real `backend/.env` (not a placeholder) as
+// "backend.env.template"; this loads whatever's in that shipped file at
+// startup, using the same non-destructive semantics as dotenv itself (never
+// clobber a var the environment already set).
 function loadPackagedBackendEnv() {
   if (!app.isPackaged) return;
   const envPath = path.join(process.resourcesPath, "backend.env.template");
