@@ -115,6 +115,21 @@ challenged. Never suggest intake below the safety floor.
   add-to-recipe; "Log today" disabled until a food diary exists — no such
   feature yet, deliberately not faked). Audit exits clean: 0 failures,
   0 dupes, 0 recipe drift. Next: Phase 3 — profile + TDEE engine.
+- 2026-07-18 · **Phase 3 complete** (commit d9bbbf1). Profile + TDEE engine
+  fully generic — last personal hardcodes purged (constants.js deleted;
+  verdict bands/floors derive from profile). New profile model:
+  occupationKey (36-occupation searchable table + manual override),
+  trainingStyle/minutesPerSession (additive MET-based kcal), rateLbPerWeek
+  menu, stricter-only floorKcal over 1500M/1200F, excludedFormulas,
+  unitPref wired app-wide. BMR = mean of applicable formulas (KM/Cunningham
+  unlock with BF%, exclude toggles, spread); TDEE = BMR × occupation +
+  training kcal/day. targetKcal DERIVED server-side (TDEE − rate×500,
+  floor-clamped, re-materialized on profile/weigh-in changes); unsafe rates
+  422 until explicit rateAcknowledged. 9 dietary styles, 10 allergy
+  checkboxes (peanuts ≠ tree nuts), GET /recipes hard-filters with visible
+  hiddenCount. 4-step wizard. Admin floor 2000 preserved as row data.
+  Verified via verifyPhase3.mjs (3 fake users) + full browser walk; 94
+  tests green. Next: Phase 4 — the meal-plan solver.
 
 ## Archive
 
