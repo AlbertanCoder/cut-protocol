@@ -7,7 +7,7 @@ const { todayStr, mondayOf } = require("../lib/dates.js");
 const { generateWeekPlan, regenerateOneSlot, buildSlots, targetsForSlots, scaleRecipe } = require("../lib/weeklyPlanner.js");
 const { generateDayCandidates, generateBestWeekPlan, alternatesForSlot, buildBias, applyPrepFilter } = require("../lib/mealSolver.js");
 const { buildCostCache } = require("../lib/recipeCost.js");
-const { recipeExcludedByStyle, matchesExclusionTerm } = require("../lib/dietaryFilter.js");
+const { recipeExcludedByStyle, matchesExclusionTerm, recipeExceedsKetoCeiling } = require("../lib/dietaryFilter.js");
 const { buildGroceryList } = require("../lib/groceryList.js");
 const { toPurchaseUnits } = require("../lib/purchaseUnits.js");
 
@@ -16,16 +16,14 @@ router.use(requireAuth);
 
 const PLAN_INCLUDE = { slots: { include: { recipe: true }, orderBy: [{ dayOfWeek: "asc" }, { slotType: "asc" }, { slotIndex: "asc" }] }, groceryList: true };
 
-// Keto per-serving carb ceiling for recipe-pool filtering (whole-recipe
-// total, not dietaryFilter.js's per-100g ingredient threshold).
-const KETO_RECIPE_CARB_CEILING_G = 30;
-
 function filterRecipePool(recipePool, profile) {
   const dietaryStyle = profile.dietaryStyle || null;
   const excludedFoods = Array.isArray(profile.excludedFoods) ? profile.excludedFoods : [];
   if (!dietaryStyle && excludedFoods.length === 0) return recipePool;
   return recipePool.filter((recipe) => {
-    if (dietaryStyle === "keto" && recipe.carb > KETO_RECIPE_CARB_CEILING_G) return false;
+    // Shared keto ceiling — single-sourced in dietaryFilter so the library
+    // listing (recipes.js) can never diverge from the solver pool (M8).
+    if (recipeExceedsKetoCeiling(recipe, dietaryStyle)) return false;
     const flatIngredients = recipe.ingredients.map((i) => ({ name: i.food.name }));
     if (recipeExcludedByStyle({ ingredients: flatIngredients }, dietaryStyle)) return false;
     if (excludedFoods.length && flatIngredients.some((ing) => excludedFoods.some((term) => matchesExclusionTerm(ing.name, term)))) return false;
@@ -92,7 +90,17 @@ function rebuildSlotFromClient(incoming, recipePool) {
     const ri = byFoodId.get(ing.foodId);
     if (!ri) throw Object.assign(new Error(`ingredient ${ing.foodId} does not belong to recipe "${recipe.name}"`), { status: 400 });
     const grams = Math.round(Number(ing.grams));
-    if (!Number.isFinite(grams) || grams < 0 || grams > 5000) throw Object.assign(new Error("ingredient grams out of range"), { status: 400 });
+    // Stage-C fix (M9): grams must sit within the spec's 0.5x-2x portion band
+    // relative to the recipe's base grams (a non-scalable ingredient stays at
+    // base), with a small tolerance for 5g practical rounding. Previously any
+    // value up to 5000 g was accepted, so a crafted payload could store a x10
+    // / 44,000-kcal slot the dashboard then presented as the plan.
+    const lo = ri.scalable ? ri.baseGrams * 0.5 : ri.baseGrams;
+    const hi = ri.scalable ? ri.baseGrams * 2 : ri.baseGrams;
+    const TOL = 6;
+    if (!Number.isFinite(grams) || grams < 0 || grams < lo - TOL || grams > hi + TOL) {
+      throw Object.assign(new Error(`grams for "${ri.food.name}" (${grams}) are outside the allowed 0.5x-2x portion range`), { status: 400 });
+    }
     return { foodId: ri.foodId, name: ri.food.name, role: ri.role, grams };
   });
   if (ingredients.length === 0) throw Object.assign(new Error("a slot needs at least one ingredient"), { status: 400 });
@@ -108,10 +116,13 @@ function rebuildSlotFromClient(incoming, recipePool) {
     },
     { kcal: 0, protein: 0, fat: 0, carb: 0 }
   );
+  // Clamp the display scale labels to the same 0.5-2x band so they can't be
+  // decoupled from the actual grams (Stage-C M9).
+  const clampScale = (s) => Math.min(2, Math.max(0.5, Number(s) || 1));
   return {
     recipeId: recipe.id,
-    proteinScale: Number(incoming.proteinScale) || 1,
-    sidesScale: Number(incoming.sidesScale) || 1,
+    proteinScale: clampScale(incoming.proteinScale),
+    sidesScale: clampScale(incoming.sidesScale),
     ingredients,
     kcal: totals.kcal, protein: totals.protein, fat: totals.fat, carb: totals.carb,
     warning: typeof incoming.warning === "string" ? incoming.warning : null,
@@ -129,7 +140,7 @@ router.get("/current", async (req, res) => {
 
 router.post("/generate", async (req, res) => {
   try {
-    const { profile, dailyTarget, mealConfig, recipePool } = await planContext(req.userId);
+    const { profile, dailyTarget, mealConfig, recipePool, rawPoolCount } = await planContext(req.userId);
     const filters = parseFilters(req.body);
     const monday = mondayOf(todayStr());
 
@@ -141,15 +152,26 @@ router.post("/generate", async (req, res) => {
 
     const pool = applyPrepFilter(recipePool, filters.maxPrepMin);
     const costCache = filters.budget ? buildCostCache(pool) : null;
-    // Best-of-3 scored week attempts (AI-free, fast); residual rough slots
+    // Best-of-N scored week attempts (AI-free, fast); residual rough slots
     // are patched interactively via swap/alternates, where AI is available.
+    // Stage-C fix (M10): pass the pool counts so a rough-week diagnosis can
+    // name the TRUE binding constraint (e.g. a maxPrep cap that emptied the
+    // pool) instead of always blaming diet/allergy rules.
     const { slots: freshSlots } = await generateBestWeekPlan(dailyTarget, mealConfig, pool, {
       bias: buildBias(filters, costCache),
       allowBatchRepeats: filters.allowBatchRepeats,
+      filters,
+      counts: { raw: rawPoolCount, afterDiet: recipePool.length, afterPrep: pool.length },
     });
+    // A locked slot is only carried forward if its recipe still complies with
+    // the CURRENT diet/allergy rules (Stage-C L9). Otherwise a slot locked
+    // before a diet change (goat locked, then the user goes vegan) would
+    // persist a now-forbidden meal into the regenerated plan — the fresh
+    // compliant slot replaces it instead, and its lock is dropped.
+    const compliantPoolIds = new Set(recipePool.map((r) => r.id));
     const finalSlots = freshSlots.map((s) => {
       const locked = lockedByKey.get(slotKey(s));
-      return locked
+      return locked && compliantPoolIds.has(locked.recipeId)
         ? { ...s, recipeId: locked.recipeId, proteinScale: locked.proteinScale, sidesScale: locked.sidesScale, ingredients: locked.ingredients, kcal: locked.kcal, protein: locked.protein, fat: locked.fat, carb: locked.carb, warning: locked.warning, locked: true }
         : s;
     });
@@ -390,11 +412,18 @@ router.post("/fill-today-from-cart", async (req, res) => {
       if (existing?.locked) continue;
       const recipe = usable[cartIdx++];
       const scaled = scaleRecipe(recipe, target.kcalTarget, target.proteinTarget);
+      // Stage-C fix (#33): the 0.5-2x scale can't always reach a slot's target
+      // (a 600-kcal dish forced into a 300-kcal snack slot). Label the miss
+      // instead of storing warning:null — the constitution bans silent misses.
+      const kcalOff = target.kcalTarget > 0 ? Math.abs(scaled.kcal - target.kcalTarget) / target.kcalTarget : 0;
+      const warning = kcalOff > 0.15
+        ? `${Math.round(scaled.kcal)} kcal vs a ${Math.round(target.kcalTarget)} kcal slot — the 0.5-2x portion limit couldn't close the gap.`
+        : null;
       await upsertSlot(plan.id, {
         dayOfWeek: today, slotType: target.slotType, slotIndex: target.slotIndex,
         recipeId: recipe.id, proteinScale: scaled.proteinScale, sidesScale: scaled.sidesScale,
         ingredients: scaled.ingredients, kcal: scaled.kcal, protein: scaled.protein, fat: scaled.fat, carb: scaled.carb,
-        warning: null, locked: false,
+        warning, locked: false,
       });
       placed++;
     }
@@ -439,8 +468,12 @@ router.post("/:planId/slots/:slotId/swap", async (req, res) => {
 
 function planToGroceryListInput(plan) {
   return {
+    // Stage-C fix (M7): the slot's ingredients JSON is the schema's declared
+    // ground truth and survives recipe deletion (recipeId → SetNull). Keying
+    // on recipeId dropped a still-planned, still-displayed meal's ingredients
+    // from the shopping list silently. Any slot with real ingredients counts.
     meals: plan.slots
-      .filter((s) => s.recipeId && Array.isArray(s.ingredients) && s.ingredients.length)
+      .filter((s) => Array.isArray(s.ingredients) && s.ingredients.length)
       .map((s) => ({
         status: "solved",
         anchor: { ingredients: s.ingredients.map((i) => ({ name: i.name, grams: i.grams, state: undefined })) },
@@ -462,12 +495,22 @@ router.post("/:planId/grocery-list", async (req, res) => {
     checked: false,
   }));
 
+  // Stage-C fix (M13): buildGroceryList's bySection referenced the PRE-decoration
+  // items, so on the fresh-generate path the UI (which prefers bySection)
+  // rendered items with no `checked`/`purchaseUnits` — dead checkboxes and
+  // invisible purchase units. Rebuild bySection from the decorated items.
+  const decoratedByName = new Map(decorated.map((d) => [d.name, d]));
+  const decoratedBySection = {};
+  for (const [section, secItems] of Object.entries(bySection || {})) {
+    decoratedBySection[section] = secItems.map((i) => decoratedByName.get(i.name) || i);
+  }
+
   const list = await prisma.groceryList.upsert({
     where: { planId: plan.id },
     update: { items: decorated },
     create: { planId: plan.id, items: decorated },
   });
-  res.json({ ...list, bySection, totalEstimatedCostCad, costCoverageNote });
+  res.json({ ...list, bySection: decoratedBySection, totalEstimatedCostCad, costCoverageNote });
 });
 
 router.get("/:planId/grocery-list", async (req, res) => {
@@ -491,3 +534,6 @@ router.put("/:planId/grocery-list/check", async (req, res) => {
 });
 
 module.exports = router;
+// Exposed for unit testing (attached to the router function; app.use unaffected).
+module.exports.rebuildSlotFromClient = rebuildSlotFromClient;
+module.exports.filterRecipePool = filterRecipePool;

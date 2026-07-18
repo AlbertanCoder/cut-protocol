@@ -334,6 +334,16 @@ async function solveDay(dayTargets, dailyTarget, recipePool, usageCount, prevDay
   return { slots: results, todayIds };
 }
 
+// Fisher-Yates using the caller's rng (deterministic when rng is seeded).
+function shuffled(arr, rng) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(rng() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
 // recipePool: recipes with `ingredients` (each including `food`) loaded.
 async function generateWeekPlan(dailyTarget, mealConfig, recipePool, options = {}) {
   const { rng = Math.random, aiFallback, bias = null } = options;
@@ -344,15 +354,24 @@ async function generateWeekPlan(dailyTarget, mealConfig, recipePool, options = {
   slots.forEach((s) => byDay.set(s.dayOfWeek, [...(byDay.get(s.dayOfWeek) || []), s]));
   const aiCtx = buildAiFallbackContext({ aiFallback }, recipePool);
 
-  const resolved = [];
+  // Stage-C fix (L4): solve days in a RANDOMIZED order, not a fixed 0..6.
+  // Days share one variety-usage map, so with a fixed order the last calendar
+  // days always drew from the most-depleted pool and drifted over target
+  // (live: only 4/7 days within 10%, day 6 at +24%). Randomizing which day
+  // gets the freshest pool spreads that pressure evenly, and best-of-N week
+  // selection then has genuinely different distributions to choose from.
+  // Results are stored back at each day's real calendar index.
+  const resolvedByDay = new Map();
   let prevDayRecipeIds = new Set();
-  for (let day = 0; day < DAYS; day++) {
+  for (const day of shuffled([...Array(DAYS).keys()], rng)) {
     const { slots: daySlots, todayIds } = await solveDay(
       byDay.get(day) || [], dailyTarget, recipePool, usageCount, prevDayRecipeIds, rng, aiCtx, bias, repeatCap
     );
-    resolved.push(...daySlots);
+    resolvedByDay.set(day, daySlots);
     prevDayRecipeIds = todayIds;
   }
+  const resolved = [];
+  for (let day = 0; day < DAYS; day++) resolved.push(...(resolvedByDay.get(day) || []));
   return resolved;
 }
 

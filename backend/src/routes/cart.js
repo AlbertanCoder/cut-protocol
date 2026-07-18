@@ -3,9 +3,25 @@ const { prisma } = require("../lib/prisma.js");
 const { requireAuth } = require("../lib/auth.js");
 const { RECIPE_INCLUDE } = require("../lib/recipeGeneration.js");
 const { buildGroceryList } = require("../lib/groceryList.js");
+const { recipeExcludedByStyle, matchesExclusionTerm, recipeExceedsKetoCeiling } = require("../lib/dietaryFilter.js");
 
 const router = express.Router();
 router.use(requireAuth);
+
+// A cart recipe complies with the current profile if it survives the same
+// diet-style + allergy + keto filter the plan pool and library use. Stage-C
+// fix (M12): the cart can hold recipes that were compliant when added but
+// aren't after a diet/allergy change; its grocery list must not silently
+// shop an allergen.
+function recipeCompliant(recipe, profile) {
+  const dietaryStyle = profile?.dietaryStyle || null;
+  const excludedFoods = Array.isArray(profile?.excludedFoods) ? profile.excludedFoods : [];
+  if (recipeExceedsKetoCeiling(recipe, dietaryStyle)) return false;
+  const flat = recipe.ingredients.map((i) => ({ name: i.food.name }));
+  if (recipeExcludedByStyle({ ingredients: flat }, dietaryStyle)) return false;
+  if (excludedFoods.length && flat.some((ing) => excludedFoods.some((t) => matchesExclusionTerm(ing.name, t)))) return false;
+  return true;
+}
 
 router.get("/", async (req, res) => {
   const items = await prisma.cartItem.findMany({
@@ -57,8 +73,17 @@ router.post("/grocery-list", async (req, res) => {
     include: { recipe: { include: RECIPE_INCLUDE } },
   });
   if (!cartItems.length) return res.status(400).json({ error: "cart is empty" });
-  const { items, bySection, totalEstimatedCostCad, costCoverageNote } = buildGroceryList(cartToGroceryListInput(cartItems));
-  res.json({ items, bySection, totalEstimatedCostCad, costCoverageNote });
+
+  // Drop cart items that no longer comply with the current diet/allergy rules,
+  // and report them by name — never silently shop an excluded ingredient (M12).
+  const profile = await prisma.profile.findUnique({ where: { userId: req.userId } });
+  const compliant = cartItems.filter((it) => recipeCompliant(it.recipe, profile));
+  const skippedForDiet = cartItems.filter((it) => !recipeCompliant(it.recipe, profile)).map((it) => it.recipe.name);
+  if (!compliant.length) {
+    return res.status(400).json({ error: "no cart items comply with your current diet & allergy rules", skippedForDiet });
+  }
+  const { items, bySection, totalEstimatedCostCad, costCoverageNote } = buildGroceryList(cartToGroceryListInput(compliant));
+  res.json({ items, bySection, totalEstimatedCostCad, costCoverageNote, skippedForDiet });
 });
 
 module.exports = router;

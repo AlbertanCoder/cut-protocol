@@ -10,7 +10,7 @@ const { sumMacros, resolveDraftIngredients, persistRecipe, RECIPE_INCLUDE } = re
 const router = express.Router();
 router.use(requireAuth);
 
-const { recipeExcludedByStyle, matchesExclusionTerm } = require("../lib/dietaryFilter.js");
+const { recipeExcludedByStyle, matchesExclusionTerm, recipeExceedsKetoCeiling } = require("../lib/dietaryFilter.js");
 
 // Phase 3: the library never surfaces a recipe containing an excluded
 // ingredient — the same hard filter the solver pool uses. `hiddenCount`
@@ -26,6 +26,10 @@ router.get("/", async (req, res) => {
   if (!dietaryStyle && excludedFoods.length === 0) return res.json({ recipes, hiddenCount: 0 });
 
   const visible = recipes.filter((r) => {
+    // Stage-C fix (M8): the keto whole-recipe carb ceiling was enforced only in
+    // the solver pool, so a keto user saw every recipe in the library and got
+    // a misleading error when placing a non-keto one. Same ceiling here now.
+    if (recipeExceedsKetoCeiling(r, dietaryStyle)) return false;
     const flat = r.ingredients.map((i) => ({ name: i.food.name }));
     if (recipeExcludedByStyle({ ingredients: flat }, dietaryStyle)) return false;
     if (excludedFoods.length && flat.some((ing) => excludedFoods.some((term) => matchesExclusionTerm(ing.name, term)))) return false;

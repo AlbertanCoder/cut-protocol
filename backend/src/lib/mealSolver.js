@@ -126,12 +126,18 @@ function diagnose({ counts, filters, dailyTarget, mealConfig, pool }) {
   }
   // Weekly capacity: only MEAL-eligible recipes fill meal slots (desserts,
   // beverages, condiment sides don't count), each capped by the repeat rule.
-  const mealEligible = eligibleRecipes(pool, "meal", new Map(), DEFAULT_REPEAT_CAP).length;
+  // Stage-C fix (#35): use the ACTIVE repeat cap — with batch-cooking on the
+  // cap is BATCH_REPEAT_CAP, so the old math undercounted capacity and could
+  // suggest enabling batch repeats that were already enabled.
+  const repeatCap = filters?.allowBatchRepeats ? BATCH_REPEAT_CAP : DEFAULT_REPEAT_CAP;
+  const mealEligible = eligibleRecipes(pool, "meal", new Map(), repeatCap).length;
   const weeklyMealSlots = (mealConfig.meals || 0) * 7;
-  const capacity = mealEligible * DEFAULT_REPEAT_CAP;
+  const capacity = mealEligible * repeatCap;
   if (weeklyMealSlots > 0 && capacity < weeklyMealSlots * 1.3) {
-    reasons.push(`${mealEligible} meal-eligible recipes × max ${DEFAULT_REPEAT_CAP} servings/week = ${capacity} servings for ${weeklyMealSlots} meal slots — the back half of the week will run on poor fits.`);
-    suggestions.push("Allow batch-cooking repeats, reduce meals per day, or AI-generate more compliant recipes.");
+    reasons.push(`${mealEligible} meal-eligible recipes × max ${repeatCap} servings/week = ${capacity} servings for ${weeklyMealSlots} meal slots — the back half of the week will run on poor fits.`);
+    suggestions.push(filters?.allowBatchRepeats
+      ? "Reduce meals per day, or AI-generate more compliant recipes to deepen the pool."
+      : "Allow batch-cooking repeats, reduce meals per day, or AI-generate more compliant recipes.");
   }
   // Protein density: the solver can only scale what exists. If almost
   // nothing meal-eligible carries the protein-per-kcal ratio the targets
@@ -270,7 +276,10 @@ function scoreWeek(dailyTarget, slots) {
  * via the caller's swap flow. Keeps generation fast and the outcome honest.
  */
 async function generateBestWeekPlan(dailyTarget, mealConfig, recipePool, options = {}) {
-  const attempts = options.attempts ?? 3;
+  // Stage-C (L4): more attempts + randomized day order (in generateWeekPlan)
+  // give best-of-N a genuinely varied set to pick the least-drifted week from.
+  const attempts = options.attempts ?? 5;
+  const filters = options.filters || {};
   let best = null;
   for (let i = 0; i < attempts; i++) {
     const slots = await generateWeekPlan(dailyTarget, mealConfig, recipePool, { ...options, aiFallback: undefined });
@@ -282,8 +291,13 @@ async function generateBestWeekPlan(dailyTarget, mealConfig, recipePool, options
     if (best.score.daysInTolerance === 7 && best.score.avgMatch >= 95) break;
   }
   // A rough week never ships silently: attach the result-driven diagnosis.
+  // Stage-C fix (M10): when pool counts are supplied, the diagnosis derives
+  // from raw/afterDiet/afterPrep so it names the real binding constraint.
+  const preSolve = options.counts
+    ? diagnose({ counts: options.counts, filters, dailyTarget, mealConfig, pool: recipePool })
+    : undefined;
   best.diagnosis = best.score.daysInTolerance < 6
-    ? diagnoseFromResult({ dailyTarget, slots: best.slots, pool: recipePool, mealConfig, filters: options.filters || {} })
+    ? diagnoseFromResult({ dailyTarget, slots: best.slots, pool: recipePool, mealConfig, filters, preSolve })
     : null;
   return best;
 }

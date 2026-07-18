@@ -425,6 +425,17 @@ function excludedByList(food, excludedFoods) {
   return excludedFoods.some((term) => matchesExclusionTerm(food.name, term));
 }
 
+// Whole-recipe keto carb ceiling (grams of carb in the cached recipe total),
+// distinct from DEFAULT_KETO_CARB_THRESHOLD's per-100g ingredient rule.
+// Single-sourced here so the solver pool (plans.js) and the library listing
+// (recipes.js) can never diverge on what "keto" hides (Stage-C fix M8).
+const KETO_RECIPE_CARB_CEILING_G = 30;
+
+// True if this recipe is hidden for a keto profile by the whole-recipe ceiling.
+function recipeExceedsKetoCeiling(recipe, dietaryStyle) {
+  return dietaryStyle === "keto" && typeof recipe.carb === "number" && recipe.carb > KETO_RECIPE_CARB_CEILING_G;
+}
+
 // profile: {dietaryStyle: "none"|"vegan"|"vegetarian"|"keto", excludedFoods: string[]}
 function applyDietaryFilters(pool, profile) {
   const dietaryStyle = profile?.dietaryStyle || "none";
@@ -469,4 +480,6 @@ module.exports = {
   applyDietaryFilters,
   traceExclusions,
   traceRecipeExclusions,
+  KETO_RECIPE_CARB_CEILING_G,
+  recipeExceedsKetoCeiling,
 };
