@@ -32,6 +32,7 @@ model User {
   cartItems    CartItem[]
   recipes      Recipe[]
   trainingPlan TrainingPlan?
+  mealLogs     MealLog[]
 }
 
 // All physical quantities stored in SI (kg, cm) regardless of the user's
@@ -228,6 +229,32 @@ model CartItem {
   addedAt   DateTime @default(now())
 
   @@unique([userId, recipeId])
+}
+
+// Food diary. A logged entry is a SELF-CONTAINED macro snapshot — name +
+// kcal/macros are copied in at log time, so a later recipe edit or delete
+// never rewrites history. `source` is "planned" (copied from that date's
+// PlanSlot rows) or "manual" (hand-entered). `recipeId` is a provenance tag
+// only (no FK relation) — it survives recipe deletion because the entry
+// carries its own numbers. Spec named Int columns, but this schema uses cuid
+// String ids throughout (see User.id), so id/userId are String to keep the
+// userId -> User FK valid; kcal stays Int and the three macros Float per spec.
+model MealLog {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  date      String // ISO date (yyyy-mm-dd)
+  source    String // "planned" | "manual"
+  recipeId  String? // provenance tag only — intentionally not a FK relation
+  name      String
+  kcal      Int
+  proteinG  Float
+  carbG     Float
+  fatG      Float
+  slotType  String? // "meal" | "snack" | null — informational label
+  createdAt DateTime @default(now())
+
+  @@index([userId, date])
 }
 
 // ── Training scaffold (Phase 8) ─────────────────────────────────────────
