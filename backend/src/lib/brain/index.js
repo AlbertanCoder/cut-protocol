@@ -22,6 +22,15 @@ const { verifyPlan } = require("./verifier.js");
 const { proposeDay } = require("./selector.js");
 const { planDay } = require("./planner.js");
 
+// Brain v3 — Stage B: cost / trace / degrade spine (pure; dormant until wired).
+// prismaUsageStore is deliberately NOT re-exported here so index.js stays
+// Prisma-free — require it directly when wiring the live ledger.
+const { MODELS, CAPS } = require("./config.js");
+const { PRICING, costUsd } = require("./pricing.js");
+const { needsLLM, pickModel } = require("./router.js");
+const { makeLedger, memoryStore, withUsageLogging } = require("./ledger.js");
+const { validProv, provenanceLint } = require("./telemetry.js");
+
 module.exports = {
   // shared single gate
   isBrainEnabled,
@@ -31,4 +40,7 @@ module.exports = {
   runToolLoop, __setClient, DEPTH_PROFILES,
   isExcluded, explainExclusion, buildPool, makeTools, solvePortions,
   checkFeasibility, scorePlan, verifyPlan, proposeDay, planDay,
+  // Stage B — cost / trace / degrade spine
+  MODELS, CAPS, PRICING, costUsd, needsLLM, pickModel,
+  makeLedger, memoryStore, withUsageLogging, validProv, provenanceLint,
 };
