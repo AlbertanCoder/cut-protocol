@@ -10,8 +10,17 @@
 // against real seed data: single-factor scaling was landing 15-25g/day
 // under the protein floor by the back half of the week.
 
-const { generateAndSaveSlotRecipe } = require("./recipeGeneration.js");
+// recipeGeneration.js pulls in the Prisma client at load time (it persists
+// AI-generated recipes). It is only ever reached from the AI-fallback path
+// below (tryAiFallback), so require it LAZILY there instead of here - that
+// keeps this module's pure solver logic (pickRecipe/solveDay/scaleRecipe and
+// the same-day/variety rules) loadable and unit-testable without a generated
+// Prisma client. No production behavior change: the require still happens the
+// first time AI fallback actually fires.
 const { recipeExcludedByStyle, matchesExclusionTerm, recipeExceedsKetoCeiling } = require("./dietaryFilter.js");
+// Single source of truth for which mealCategory values are excluded from main
+// "meal" slots. Shared with the classifier so the two can never drift.
+const { NON_MEAL_CATEGORIES } = require("./recipeClassification.js");
 
 // Does a just-generated recipe comply with the profile's diet/allergy rules?
 // Stage-C fix (C3): the /swap AI fallback used to write its output straight
@@ -91,7 +100,8 @@ function targetsForSlots(dailyTarget, slots) {
 // roadmap/03-recipe-curation.md §2: dessert/beverage/bread-side/condiment
 // recipes are excluded from ordinary "meal" slot eligibility. breakfast_only
 // is deliberately NOT excluded (no time-of-day concept to route it with).
-const NON_MEAL_CATEGORIES = new Set(["dessert", "beverage", "bread_or_pastry_side", "condiment_or_sauce"]);
+// NON_MEAL_CATEGORIES now lives in recipeClassification.js (imported above) so
+// the classifier's notion of "not a main meal" and this filter stay in sync.
 
 function eligibleRecipes(recipePool, slotType, usageCount, repeatCap) {
   const matchesType = (r) => r.slotType === slotType || r.slotType === "either";
@@ -217,7 +227,9 @@ function unsolvedResult(warning) {
 async function tryAiFallback(target, recipePool, usageCount, aiFallback) {
   aiFallback.callsRemaining.n--;
   try {
-    const generateImpl = aiFallback.generateAndSaveSlotRecipeImpl || generateAndSaveSlotRecipe;
+    // Lazy require (see the top-of-file note): only load the Prisma-backed
+    // generator when AI fallback actually runs, never at module load.
+    const generateImpl = aiFallback.generateAndSaveSlotRecipeImpl || require("./recipeGeneration.js").generateAndSaveSlotRecipe;
     const generated = await generateImpl(target, aiFallback.profile, aiFallback.existingRecipeNames);
     // Never write a diet/allergy-violating AI recipe into the plan (C3). A
     // failed check yields an honest unsolved slot, same as any other miss.
