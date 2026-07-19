@@ -208,7 +208,7 @@ const dayName = (d) => ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", 
 async function generateDayCandidates({
   dailyTarget, mealConfig, recipePool, dayOfWeek = 0,
   filters = {}, weekUsage = new Map(), prevDayIds = new Set(),
-  count = 3, attempts = 9, rng = Math.random,
+  count = 3, attempts = 9, rng = Math.random, profile = null,
 }) {
   const afterPrep = applyPrepFilter(recipePool, filters.maxPrepMin);
   const costCache = filters.budget ? buildCostCache(afterPrep) : null;
@@ -232,6 +232,44 @@ async function generateDayCandidates({
   const candidates = [...seen.values()]
     .sort((a, b) => b.score.matchPct - a.score.matchPct)
     .slice(0, count);
+
+  // Brain v2 (Phase 10): an OPTIONAL LLM critic pass on the BEST day, strictly
+  // behind the ANTHROPIC_API_KEY + BRAIN gate AND requiring a profile (the
+  // critic's dietary context). When the brain is off — the default, and whenever
+  // no profile is supplied (e.g. every unit test) — this whole block is skipped:
+  // candidate output stays byte-identical to the deterministic solver and ZERO
+  // LLM calls happen. The deterministic solver remains authoritative; the critic
+  // only proposes CONSTRAINTS for one bounded re-solve, and reviseDayWithCritic
+  // keeps whichever day scores higher.
+  if (profile && candidates.length) {
+    // Lazy require so nothing brain-related (or the Anthropic SDK) loads on the
+    // deterministic hot path when the brain is disabled.
+    const { isBrainEnabled, reviseDayWithCritic } = require("./brain/index.js");
+    if (isBrainEnabled()) {
+      const solve = async (constraints) => {
+        if (!constraints) return { slots: candidates[0].slots }; // reuse the already-solved best day
+        const excl = new Set(Array.isArray(constraints.excludeRecipeIds) ? constraints.excludeRecipeIds : []);
+        const resolvePool = excl.size ? afterPrep.filter((r) => !excl.has(r.id)) : afterPrep;
+        // A protein-target NUDGE only — scaleRecipe still computes the real
+        // macros deterministically, so the LLM never sets a number.
+        const boost = 1 + Math.min(0.5, Math.max(0, Number(constraints.minProteinBoost) || 0));
+        const boostedDaily = boost === 1 ? dailyTarget : { ...dailyTarget, proteinLo: dailyTarget.proteinLo * boost, proteinHi: dailyTarget.proteinHi * boost };
+        const boostedTargets = boost === 1 ? dayTargets : dayTargets.map((t) => ({ ...t, proteinTarget: t.proteinTarget * boost }));
+        const { slots } = await solveDay(boostedTargets, boostedDaily, resolvePool, new Map(weekUsage), prevDayIds, rng, null, bias, repeatCap);
+        return { slots };
+      };
+      const revision = await reviseDayWithCritic({
+        solve,
+        scoreDay: (slots) => scoreDay(dailyTarget, slots),
+        targets: { kcal: dailyTarget.kcal, proteinLo: dailyTarget.proteinLo, proteinHi: dailyTarget.proteinHi, fatLo: dailyTarget.fatLo, fatHi: dailyTarget.fatHi, carbLo: dailyTarget.carbLo, carbHi: dailyTarget.carbHi },
+        profile,
+      });
+      if (revision.revised) {
+        candidates[0] = { slots: revision.slots, score: revision.score, hasWarnings: revision.slots.some((s) => s.warning) };
+        candidates.sort((a, b) => b.score.matchPct - a.score.matchPct);
+      }
+    }
+  }
 
   const counts = { raw: recipePool.length, afterDiet: recipePool.length, afterPrep: afterPrep.length };
   const needDiagnosis =
