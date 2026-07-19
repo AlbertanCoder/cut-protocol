@@ -1,24 +1,8 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
-  <!--
-    Cut Protocol app icon — SOLID (inverted) variant, used at <= 32px where
-    an outline stroke would vanish. Solid athletic-green shield with the
-    six-pack carved out in dark (accent-ink #05130B). Gaps are deliberately
-    wider than the outline variant so every separation still lands >= 1px
-    when rasterized at 16px (256/16 = 16 units per pixel).
-  -->
-  <rect x="0" y="0" width="256" height="256" rx="58" fill="#131715"/>
-
-  <!-- solid shield; stroke fattens the silhouette -->
-  <path d="M 62 46 H 194 Q 202 46 202 54 V 120 Q 202 158 176 182 Q 154 202 128 212 Q 102 202 80 182 Q 54 158 54 120 V 54 Q 54 46 62 46 Z"
-        fill="#2FD576" stroke="#2FD576" stroke-width="6" stroke-linejoin="round"/>
-
-  <!-- six-pack carved out of the shield -->
-  <g fill="#05130B">
-    <rect x="75"  y="70"  width="44" height="30" rx="8"/>
-    <rect x="137" y="70"  width="44" height="30" rx="8"/>
-    <rect x="75"  y="116" width="44" height="30" rx="8"/>
-    <rect x="137" y="116" width="44" height="30" rx="8"/>
-    <rect x="85"  y="162" width="34" height="22" rx="9"/>
-    <rect x="137" y="162" width="34" height="22" rx="9"/>
-  </g>
-</svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64">
+    <rect x="0" y="0" width="64" height="64" rx="15" fill="#131715"/>
+    <g transform="scale(0.64)"><defs><linearGradient id="gg" x1="0" y1="0" x2="0" y2="1">
+  <stop offset="0" stop-color="#7EFFB2"/><stop offset="1" stop-color="#2FD576"/></linearGradient></defs>
+    <path d="M50,9 L83,19 L83,47 C83,68 68,85 50,91 C32,85 17,68 17,47 L17,19 Z" fill="url(#gg)"/>
+    <path d="M39,33 C39,29 43,27 47,27 L53,27 C57,27 61,29 61,33 L56,59 C55,67 52,73 50,73 C48,73 45,67 44,59 Z" fill="#131715"/>
+    <g stroke="#2FD576" stroke-width="2.6" stroke-linecap="round" fill="none">
+      <path d="M46,47 H54"/><path d="M46,56 H54"/></g></g></svg>
