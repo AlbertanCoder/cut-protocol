@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from "react";
 import { Search, ArrowLeft, ChevronRight, ChevronDown, Save, BookOpen, NotebookPen } from "lucide-react";
 import { C } from "../lib/theme.js";
-import { FOOD_CATEGORIES, CATEGORY_LABEL, CATEGORY_COLOR, SOURCE_LABEL } from "../data/foodCategories.js";
+import { FOOD_CATEGORIES, CATEGORY_LABEL, CATEGORY_DOT, SOURCE_LABEL } from "../data/foodCategories.js";
 import { Card, Btn, Chip, PageHead, Stat, ErrorNote } from "./ui/Parts.jsx";
 import { SkeletonRows } from "./ui/Skeleton.jsx";
 import { api } from "../lib/api.js";
@@ -105,7 +105,8 @@ function FoodDetail({ food, isAdmin, onSaved, refreshFoods }) {
   return (
     <Card section="DETAIL" title={food.name}>
       <div className="flex flex-wrap gap-1.5 mb-3">
-        <Chip color={CATEGORY_COLOR()[food.category]} bg={`${CATEGORY_COLOR()[food.category]}1F`}>
+        <Chip color={C.faint}>
+          <span className="inline-block w-1.5 h-1.5 rounded-full mr-1.5 align-middle" style={{ background: CATEGORY_DOT(food.category) }}></span>
           {CATEGORY_LABEL[food.category] || food.category}
         </Chip>
         <Chip color={placeholder ? C.red : C.faint} bg={placeholder ? C.redBg : undefined}>
@@ -227,7 +228,6 @@ export default function FoodsTab({ onBack, isAdmin }) {
     refreshFoods().finally(() => setLoading(false));
   }, []);
 
-  const colors = CATEGORY_COLOR();
   const q = query.trim().toLowerCase();
 
   const byCategory = useMemo(() => {
@@ -269,7 +269,7 @@ export default function FoodsTab({ onBack, isAdmin }) {
                 {searchResults.length > SEARCH_RENDER_CAP && ` — showing first ${SEARCH_RENDER_CAP}, refine the search`}
               </div>
               {searchResults.slice(0, SEARCH_RENDER_CAP).map((f) => (
-                <FoodRow key={f.id} food={f} selected={selected?.id === f.id} onSelect={setSelected} dotColor={colors[f.category] || C.faintLight} />
+                <FoodRow key={f.id} food={f} selected={selected?.id === f.id} onSelect={setSelected} dotColor={CATEGORY_DOT(f.category)} />
               ))}
               {searchResults.length === 0 && <div className="text-sm font-semibold py-2" style={{ color: C.faint }}>No foods match.</div>}
             </Card>
@@ -285,14 +285,14 @@ export default function FoodsTab({ onBack, isAdmin }) {
                       className="w-full flex items-center gap-3 px-4 py-3.5"
                     >
                       {open ? <ChevronDown size={16} style={{ color: C.faint }} /> : <ChevronRight size={16} style={{ color: C.faint }} />}
-                      <span className="w-2.5 h-2.5 rounded-full" style={{ background: colors[cat.slug] }}></span>
+                      <span className="w-2.5 h-2.5 rounded-full" style={{ background: CATEGORY_DOT(cat.slug) }}></span>
                       <span className="text-sm font-extrabold flex-1 text-left" style={{ color: C.ink }}>{cat.label}</span>
                       <span className="mono text-xs font-bold px-2 py-0.5 rounded-lg" style={{ color: C.faint, background: C.card2 }}>{items.length}</span>
                     </button>
                     {open && (
                       <div className="px-3 pb-3">
                         {items.map((f) => (
-                          <FoodRow key={f.id} food={f} selected={selected?.id === f.id} onSelect={setSelected} dotColor={colors[cat.slug]} />
+                          <FoodRow key={f.id} food={f} selected={selected?.id === f.id} onSelect={setSelected} dotColor={CATEGORY_DOT(cat.slug)} />
                         ))}
                       </div>
                     )}

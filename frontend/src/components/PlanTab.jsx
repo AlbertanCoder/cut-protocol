@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import {
   Lock, LockOpen, RefreshCw, ChefHat, ShoppingCart, Copy, Utensils, Apple,
-  MessageCircle, Mail, Sparkles, Check, AlertTriangle, X,
+  MessageCircle, Mail, Sparkles, Check, AlertTriangle, X, ArrowRight,
 } from "lucide-react";
 import { toHouseholdUnit } from "../lib/householdUnits.js";
 import { C } from "../lib/theme.js";
@@ -88,6 +88,61 @@ function FiltersBar({ filters, setFilters }) {
       <div className="text-[10.5px] font-semibold mt-2" style={{ color: C.faintLight }}>
         Cuisine / protein / budget bias the solver; diet & allergies from your Profile hard-filter it; max prep is a hard cap.
       </div>
+    </Card>
+  );
+}
+
+// ── solver narration ──────────────────────────────────────────────────────
+// An honest, plain-language readout of what the last generation actually did,
+// from the generate response `meta`. Neutral by law: green is reserved for
+// on-target/success/hero, so the score reads in ink (not accent) and the pool
+// funnel in faint. Degrades to nothing if meta — or any field — is absent.
+function SolverNarration({ meta }) {
+  if (!meta) return null;
+  const pc = meta.poolCounts || {};
+  // score may arrive as a 0–1 fraction or a 0–100 percent — normalize either.
+  const pct = typeof meta.score === "number" ? Math.round(meta.score <= 1 ? meta.score * 100 : meta.score) : null;
+  // "Best of N" only if the response actually carries an attempt count.
+  const bestOf = typeof meta.attempts === "number" ? meta.attempts
+    : typeof meta.bestOf === "number" ? meta.bestOf : null;
+  const funnel = [
+    pc.raw != null && { n: pc.raw, l: "recipes" },
+    pc.afterDiet != null && { n: pc.afterDiet, l: "after your diet" },
+    pc.afterPrep != null && { n: pc.afterPrep, l: "within prep time" },
+  ].filter(Boolean);
+  const diag = meta.diagnosis;
+  const diagText = typeof diag === "string" ? diag
+    : diag && Array.isArray(diag.reasons) ? diag.reasons.join(" · ") : null;
+  const infeasible = diag && typeof diag === "object" && diag.feasible === false;
+
+  if (pct == null && bestOf == null && funnel.length === 0 && !diagText) return null;
+
+  return (
+    <Card section="SOLVER" title="What the solver did">
+      <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
+        {bestOf != null && <Chip>Best of {bestOf}</Chip>}
+        {pct != null && (
+          <div className="flex items-baseline gap-1.5">
+            <span className="mono stat-hero text-2xl" style={{ color: C.ink }}>{pct}%</span>
+            <span className="text-xs font-semibold" style={{ color: C.faint }}>match to your targets</span>
+          </div>
+        )}
+        {funnel.length > 0 && (
+          <div className="flex items-center gap-1.5 text-xs font-semibold flex-wrap" style={{ color: C.faint }}>
+            {funnel.map((f, i) => (
+              <span key={f.l} className="flex items-center gap-1.5">
+                {i > 0 && <ArrowRight size={12} style={{ color: C.faintLight }} />}
+                <b className="mono" style={{ color: C.ink }}>{kc(f.n)}</b> {f.l}
+              </span>
+            ))}
+          </div>
+        )}
+      </div>
+      {diagText && (
+        <div className="text-xs font-semibold mt-2" style={{ color: infeasible ? C.warn : C.faint }}>
+          {infeasible ? "→ " : ""}{diagText}
+        </div>
+      )}
     </Card>
   );
 }
@@ -284,6 +339,7 @@ export default function PlanTab({ profile, summary, refresh }) {
   const [optionsBusy, setOptionsBusy] = useState(false);
   const [accepting, setAccepting] = useState(false);
   const [cartIds, setCartIds] = useState(new Set());
+  const [genMeta, setGenMeta] = useState(null); // solver narration from the last generate
 
   const loadPlan = useCallback(async () => {
     try {
@@ -327,8 +383,12 @@ export default function PlanTab({ profile, summary, refresh }) {
     setGenerating(true);
     setError(null);
     setDayOptions(null);
+    setGenMeta(null);
     try {
-      setPlan(await api.generatePlan(apiFilters()));
+      const res = await api.generatePlan(apiFilters());
+      setPlan(res);
+      // Solver narration rides on the generate response's meta; absent = no card.
+      setGenMeta(res?.meta ?? null);
     } catch (e) {
       setError(e.message);
     } finally {
@@ -364,28 +424,37 @@ export default function PlanTab({ profile, summary, refresh }) {
     }
   };
 
+  // Optimistic lock toggle: flip the slot now, reconcile with the server's
+  // returned slot, roll the whole slots array back if the write fails.
   const onLockToggle = async (slot) => {
     setBusySlotId(slot.id);
+    const prevSlots = plan.slots;
+    setPlan((p) => ({ ...p, slots: p.slots.map((s) => (s.id === slot.id ? { ...s, locked: !s.locked } : s)) }));
     try {
       const updated = await api.setSlotLock(plan.id, slot.id, !slot.locked);
       setPlan((p) => ({ ...p, slots: p.slots.map((s) => (s.id === updated.id ? updated : s)) }));
     } catch (e) {
+      setPlan((p) => ({ ...p, slots: prevSlots })); // rollback
       setError(e.message);
     } finally {
       setBusySlotId(null);
     }
   };
 
+  // Optimistic cart toggle: reflect membership immediately, undo it on error.
   const onCart = async (recipeId) => {
+    const had = cartIds.has(recipeId);
+    const flip = (add) => setCartIds((s) => {
+      const n = new Set(s);
+      if (add) n.add(recipeId); else n.delete(recipeId);
+      return n;
+    });
+    flip(!had);
     try {
-      if (cartIds.has(recipeId)) {
-        await api.removeFromCart(recipeId);
-        setCartIds((s) => new Set([...s].filter((id) => id !== recipeId)));
-      } else {
-        await api.addToCart(recipeId);
-        setCartIds((s) => new Set([...s, recipeId]));
-      }
+      if (had) await api.removeFromCart(recipeId);
+      else await api.addToCart(recipeId);
     } catch (e) {
+      flip(had); // rollback to the pre-toggle membership
       setError(e.message);
     }
   };
@@ -456,6 +525,12 @@ export default function PlanTab({ profile, summary, refresh }) {
       <div className="mb-4">
         <FiltersBar filters={filters} setFilters={setFilters} />
       </div>
+
+      {genMeta && (
+        <div className="mb-4">
+          <SolverNarration meta={genMeta} />
+        </div>
+      )}
 
       {plan === undefined ? (
         <div>

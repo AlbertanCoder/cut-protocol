@@ -75,4 +75,11 @@ export const api = {
   addToCart: (recipeId) => request("/cart", { method: "POST", body: JSON.stringify({ recipeId }) }),
   removeFromCart: (recipeId) => request(`/cart/${recipeId}`, { method: "DELETE" }),
   generateCartGroceryList: () => request("/cart/grocery-list", { method: "POST" }),
+
+  // Food diary ("ate as planned"). Backend is being built in parallel — every
+  // caller degrades gracefully on a 404 / missing field (see TodayTab).
+  getDiary: (date) => request(`/diary/${date}`),
+  logPlannedDiary: (date) => request("/diary/log-planned", { method: "POST", body: JSON.stringify({ date }) }),
+  addDiaryEntry: (entry) => request("/diary/entry", { method: "POST", body: JSON.stringify(entry) }),
+  deleteDiaryEntry: (id) => request(`/diary/entry/${id}`, { method: "DELETE" }),
 };
