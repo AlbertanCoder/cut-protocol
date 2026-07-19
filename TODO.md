@@ -109,11 +109,13 @@ critical findings") — it completes the story the public audit started.
 
 ## Tier 3 — Desktop app lifecycle (matters the moment you rebuild the installer)
 
-- [ ] **M2 — No schema-migration story for installed apps.**
-      The installed copy's DB is already one migration behind the repo; a
-      rebuild+reinstall today gives Training-tab 500s on a healthy-looking boot.
-      **Fix:** stamp a schema version; on mismatch, run the shipped migration SQL
-      in order (with automatic backup) or refuse loudly.
+- [x] **M2 — No schema-migration story for installed apps.** DONE 2026-07-19
+      (`ca56345`): pending shipped Prisma migrations apply in-process on boot
+      (auto-backup, one transaction per migration, `_prisma_migrations`
+      bookkeeping); every /api request gates on the result and failures name
+      the backup. Real installed DB upgraded cleanly. NOTE: schema only — the
+      installed copy still carries the pre-Phase-2 food library (863 rows
+      failing the audit); porting the Phase 2 data repair is a separate item.
 
 - [ ] **M3 — Fixed port 3001, no single-instance lock, unhandled EADDRINUSE.**
       Real risk on this machine: with the dev backend running, the packaged app
