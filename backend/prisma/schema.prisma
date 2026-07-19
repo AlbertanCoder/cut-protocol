@@ -33,6 +33,7 @@ model User {
   recipes      Recipe[]
   trainingPlan TrainingPlan?
   mealLogs     MealLog[]
+  llmUsage     LlmUsage[]
 }
 
 // All physical quantities stored in SI (kg, cm) regardless of the user's
@@ -255,6 +256,27 @@ model MealLog {
   createdAt DateTime @default(now())
 
   @@index([userId, date])
+}
+
+// ==== BRAIN (v3) ==== additive; unused with BRAIN=off. The LLM usage/cost
+// ledger so the pre-call cost caps (src/lib/brain/ledger.js) survive restarts.
+// userId is nullable (guard/classify spend can precede auth) with a cascade
+// relation, matching the standing brain-persistence convention.
+model LlmUsage {
+  id              String   @id @default(cuid())
+  userId          String?
+  user            User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  model           String
+  phase           String? // "classify" | "guard" | "plan" | ...
+  intent          String?
+  inputTokens     Int      @default(0)
+  outputTokens    Int      @default(0)
+  cacheReadTokens Int      @default(0)
+  costUsd         Float    @default(0)
+  createdAt       DateTime @default(now())
+
+  @@index([createdAt])
+  @@index([userId, createdAt])
 }
 
 // ── Training scaffold (Phase 8) ─────────────────────────────────────────

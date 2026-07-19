@@ -5,6 +5,7 @@
 // The store is INJECTED (a Prisma-backed accessor in prod, the in-memory one
 // here in tests) so the cap arithmetic is pure and unit-testable with no DB.
 const { CAPS } = require("./config.js");
+const { costUsd } = require("./pricing.js");
 
 function makeLedger({ store, caps = CAPS, now = () => new Date() } = {}) {
   const s = store || memoryStore();
@@ -58,4 +59,21 @@ function memoryStore() {
 const startOfDay = (d) => { const x = new Date(d); x.setHours(0, 0, 0, 0); return x; };
 const startOfMonth = (d) => new Date(d.getFullYear(), d.getMonth(), 1);
 
-module.exports = { makeLedger, memoryStore };
+// withUsageLogging(ledger, ctx, fn): run an LLM call, compute its ACTUAL cost
+// from the response's usage block, record it to the ledger, and return the
+// response. A response with no usage records nothing (a degraded/no-op call).
+async function withUsageLogging(ledger, ctx = {}, fn) {
+  const res = await fn();
+  const usage = res && res.usage ? res.usage : null;
+  if (usage) {
+    const cost = costUsd(ctx.model, usage);
+    await ledger.record({
+      userId: ctx.userId, model: ctx.model, phase: ctx.phase, intent: ctx.intent,
+      inputTokens: usage.input_tokens, outputTokens: usage.output_tokens,
+      cacheReadTokens: usage.cache_read_input_tokens, costUsd: cost || 0,
+    });
+  }
+  return res;
+}
+
+module.exports = { makeLedger, memoryStore, withUsageLogging };

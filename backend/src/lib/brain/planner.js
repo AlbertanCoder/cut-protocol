@@ -111,7 +111,15 @@ async function planDay({ profile, target, mealConfig = { meals: 3, snacks: 0 }, 
   let iterations = 0;
   for (let i = 0; i < maxIters; i++) {
     iterations++;
-    const proposal = await proposeDayFn({ slotTargets, tools, system: options.system || "", model: options.model, maxTurns: options.maxTurns });
+    let proposal;
+    try {
+      proposal = await proposeDayFn({ slotTargets, tools, system: options.system || "", model: options.model, maxTurns: options.maxTurns });
+    } catch {
+      // Offline / timeout / model error mid-run → degrade (LAW 4). With nothing
+      // verified yet, the caller falls back to the deterministic solver.
+      if (!best) return { status: "unavailable", reason: "offline", explanation: "Brain call failed (offline/timeout); using the deterministic planner.", iterations, prov: P(false) };
+      break; // otherwise keep bestSoFar
+    }
     const { slots: computed, unresolved } = computeSlots(proposal.slots || [], tools);
     const verdict = verifyFn({ slots: computed }, { pool, profile, tools });
     const totals = tools.dayTotals({ slots: computed }).value;
