@@ -171,6 +171,12 @@ const CATEGORY_SYNONYMS = {
     "gorgonzola", "mascarpone", "halloumi", "paneer", "queso", "manchego",
     "emmental", "edam", "havarti", "roquefort", "stilton", "creme fraiche",
     "crème fraîche", "dulce de leche", "clotted cream",
+    // Tier-1 close-out: the one leak a 941-name pool sweep still found —
+    // "White Chocolate Chips" reached a dairy allergy (white chocolate is
+    // cocoa butter + milk solids, no "milk" word to match). Plus the
+    // remaining milk-carrying sweets/breads from the vegan-side list
+    // (butter/cream confections, yogurt/ghee flatbread) and burrata.
+    "burrata", "white chocolate", "toffee", "caramel sauce", "naan",
   ],
   soy: [
     "soy", "soya", "tofu", "edamame", "tempeh", "miso", "soybean",
@@ -202,6 +208,14 @@ const CATEGORY_SYNONYMS = {
     "pilchard", "pilchards", "barramundi", "monkfish", "pollock", "pollack",
     "bream", "pangasius", "catfish", "sole", "plaice", "whiting", "hake",
     "mahi", "swordfish", "pike", "perch", "carp", "eel", "smelt", "whitebait",
+    // Tier-1 close-out: complete the port from MEAT_FISH_KEYWORDS so the two
+    // lists can never drift again (locked by tests/allergySweep.test.js).
+    // None of these currently appear in the 941-name pool — they exist so the
+    // importer/AI paths can't introduce a leak with a new species name.
+    "bass", "sprat", "grouper", "turbot", "flounder", "mullet", "skate",
+    "dogfish", "pomfret", "milkfish", "tilefish", "wahoo", "marlin",
+    // Fish-derived roe and stock bases (dashi is bonito-flake stock).
+    "caviar", "roe", "dashi", "bonito",
     // Hidden-fish carriers (same plausibility bar as gluten's stock cubes):
     // Worcestershire and Caesar dressing are anchovy-based by standard recipe.
     "fish sauce", "worcestershire", "caesar dressing",

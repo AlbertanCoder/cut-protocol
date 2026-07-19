@@ -1,6 +1,6 @@
 const { test } = require("node:test");
 const assert = require("node:assert/strict");
-const { rebuildSlotFromClient, filterRecipePool } = require("../src/routes/plans.js");
+const { rebuildSlotFromClient, filterRecipePool, slotIdsToKeep } = require("../src/routes/plans.js");
 const { recipeExceedsKetoCeiling } = require("../src/lib/dietaryFilter.js");
 const { diagnose } = require("../src/lib/mealSolver.js");
 const { violatesRules } = require("../src/lib/aiRecipeClient.js");
@@ -61,6 +61,30 @@ test("REGRESSION (Stage C / M12-adjacent): filterRecipePool applies allergy excl
   const kept = filterRecipePool([...POOL, ...withSquid], { dietaryStyle: null, excludedFoods: ["shellfish"] });
   assert.ok(!kept.some((r) => /squid/i.test(r.name)), "squid recipe excluded for a shellfish allergy in the plan pool");
   assert.ok(kept.some((r) => r.id === "r1"), "the compliant recipe stays");
+});
+
+test("audit Tier 4: locked slots survive a meal-config shrink on regenerate — unless their recipe no longer complies", () => {
+  const existing = [
+    { id: "a", dayOfWeek: 0, slotType: "meal", slotIndex: 0, locked: false, recipeId: "r1" },
+    { id: "b", dayOfWeek: 0, slotType: "meal", slotIndex: 1, locked: false, recipeId: "r2" },
+    // Locked + compliant, but the config shrank past its index — the old
+    // keep-filter (key-coverage only) silently deleted it.
+    { id: "c", dayOfWeek: 0, slotType: "meal", slotIndex: 2, locked: true, recipeId: "r1" },
+    // Locked but its recipe is no longer in the compliant pool (diet change):
+    // the L9 rule wins over the lock, it must NOT survive the shrink.
+    { id: "d", dayOfWeek: 0, slotType: "snack", slotIndex: 0, locked: true, recipeId: "r9" },
+    { id: "e", dayOfWeek: 1, slotType: "meal", slotIndex: 0, locked: false, recipeId: "r2" },
+  ];
+  // Fresh week after the shrink: 2 meals/day, no snacks.
+  const fresh = [
+    { dayOfWeek: 0, slotType: "meal", slotIndex: 0 },
+    { dayOfWeek: 0, slotType: "meal", slotIndex: 1 },
+    { dayOfWeek: 1, slotType: "meal", slotIndex: 0 },
+  ];
+  const keep = slotIdsToKeep(existing, fresh, new Set(["r1", "r2"]));
+  assert.ok(["a", "b", "e"].every((id) => keep.includes(id)), "key-covered slots are kept (overwritten in place by upsert)");
+  assert.ok(keep.includes("c"), "locked compliant slot survives the shrink — the lock promise accept-day already honours");
+  assert.ok(!keep.includes("d"), "locked slot whose recipe no longer complies is dropped (Stage-C L9 rule)");
 });
 
 test("REGRESSION (Stage C / M10): diagnosis names the prep-time cap, not diet, when prep emptied the pool", () => {
