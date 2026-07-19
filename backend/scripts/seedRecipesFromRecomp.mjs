@@ -21,6 +21,13 @@ import { TIER1_FOODS } from "../src/lib/portedFromRecomp/foodLibrary.mjs";
 import { ADJUSTERS } from "../src/lib/portedFromRecomp/adjusters.mjs";
 import categoriesPkg from "../src/lib/foodCategories.js";
 const { classifyFood } = categoriesPkg;
+// Recipe meal-category classifier (roadmap/03-recipe-curation.md,
+// docs/audit/04-recipe-curation-report.md). Applied at seed time so a FRESH
+// seed lands correct mealCategory values (desserts/breads/condiments flagged
+// non-meal) instead of the old "everything is slotType:meal, mealCategory
+// null" state that let desserts fill lunch/dinner slots.
+import classificationPkg from "../src/lib/recipeClassification.js";
+const { classifyRecipe } = classificationPkg;
 
 // Phase 2: every seeded food gets its category from the shared grocery-store
 // classifier (foodCategories.js), the same rules the app and audit enforce —
@@ -107,11 +114,26 @@ async function main() {
       continue;
     }
 
+    // Classify meal category from name + ingredients + macros + TheMealDB
+    // source tags. `needsReview` items (genuinely ambiguous, e.g. Cumberland
+    // Pie) are left null so a human decides — the classifier never guesses.
+    const classification = classifyRecipe({
+      name: r.name,
+      ingredients: r.ingredients,
+      kcal, protein, fat, carb,
+      sourceTags: r.tags,
+    });
+    const mealCategory = classification.needsReview ? null : classification.mealCategory;
+
     const prepTimeMin = Math.round(r.activeMin ?? r.totalMin ?? 0) || null;
+    // mealCategory is set ONLY on create, never on update: re-running the seed
+    // must not clobber human review decisions (scripts/applyAmbiguousOverrides.js)
+    // or a prior retag (scripts/retagRecipeCategories.mjs). Use the retag
+    // script to (re)tag existing rows.
     const recipe = await prisma.recipe.upsert({
       where: { name: r.name },
       update: { steps: r.steps, slotType: "meal", prepTimeMin, kcal, protein, fat, carb, source: "themealdb-import" },
-      create: { name: r.name, steps: r.steps, slotType: "meal", prepTimeMin, kcal, protein, fat, carb, source: "themealdb-import" },
+      create: { name: r.name, steps: r.steps, slotType: "meal", prepTimeMin, kcal, protein, fat, carb, source: "themealdb-import", mealCategory },
     });
 
     await prisma.recipeIngredient.deleteMany({ where: { recipeId: recipe.id } });
