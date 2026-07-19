@@ -72,7 +72,7 @@ export const Btn = ({ children, onClick, kind = "ink", small, disabled }) => {
 export const Stamp = ({ v, stampStyle }) => {
   const s = stampStyle[v.tone];
   return (
-    <div className="rounded-xl p-3.5 flex items-start gap-3" style={{ background: s.bg || C.paper, border: `1px solid ${s.color}33` }}>
+    <div className="rounded-xl p-3.5 flex items-start gap-3" style={{ background: s.bg || C.paper, border: `1px solid color-mix(in srgb, ${s.color} 20%, transparent)` }}>
       <div className="w-1 self-stretch rounded-full shrink-0" style={{ background: s.color }}></div>
       <div>
         <div className="text-sm font-extrabold uppercase tracking-wide" style={{ color: s.color }}>{v.tag}</div>
