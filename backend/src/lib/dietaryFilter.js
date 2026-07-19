@@ -158,6 +158,18 @@ const CATEGORY_SYNONYMS = {
     // multi-word phrases below are specific enough to reliably mean a
     // blended/mixed product, which in practice is shellfish-inclusive.
     "seafood mix", "seafood medley", "mixed seafood", "seafood stock", "surimi",
+    // "curry paste" (Thai red/green/massaman, etc.) standardly contains shrimp
+    // paste (kapi) - a hidden shellfish source with no species word in the
+    // name, the same structural gap as "seafood mix". This codebase's OWN
+    // vegan filter already flags "curry paste" as animal-derived for exactly
+    // this reason (ANIMAL_DERIVED_EXTRA_KEYWORDS above), so leaving it clear
+    // for a shellfish ALLERGY was an indefensible inconsistency - a vegan was
+    // protected but an allergic user was not. Confirmed live: "Thai Red/Green
+    // Curry Paste" (3 corpus ingredient rows, ~9 recipes) passed a shellfish
+    // exclusion. Curry POWDER - a dried spice blend, no shrimp paste - is
+    // deliberately NOT here and stays clear (guarded by an explicit test),
+    // matching the measured scoping decision documented on CATEGORY_SYNONYMS.
+    "curry paste",
   ],
   dairy: [
     "dairy", "milk", "cheese", "yogurt", "yoghurt", "whey", "casein",
@@ -217,8 +229,12 @@ const CATEGORY_SYNONYMS = {
     // Fish-derived roe and stock bases (dashi is bonito-flake stock).
     "caviar", "roe", "dashi", "bonito",
     // Hidden-fish carriers (same plausibility bar as gluten's stock cubes):
-    // Worcestershire and Caesar dressing are anchovy-based by standard recipe.
-    "fish sauce", "worcestershire", "caesar dressing",
+    // Worcestershire and Caesar dressing are anchovy-based by standard recipe;
+    // "curry paste" (Thai red/green) standardly carries fish sauce and/or
+    // shrimp paste (see the shellfish list's curry-paste note for the full
+    // reasoning). Curry POWDER is a dried spice blend with no such carrier and
+    // stays clear.
+    "fish sauce", "worcestershire", "caesar dressing", "curry paste",
   ],
   kiwi: ["kiwi", "kiwifruit"],
   // Peanuts are legumes — a peanut allergy is NOT a tree-nut allergy and
