@@ -73,8 +73,8 @@ export default function TrendTab({ profile, summary }) {
                     contentStyle={{ background: C.card2, border: `1px solid ${C.rule}`, borderRadius: 12, fontSize: 12, fontWeight: 600, color: C.ink }}
                     formatter={(val, name) => [val + " " + wUnit, name === "w" ? "daily" : "7-day avg"]}
                   />
-                  <ReferenceLine y={goalW} stroke={C.red} strokeDasharray="6 4"
-                    label={{ value: "GOAL " + r1(goalW), fill: C.red, fontSize: 10, fontWeight: 700, position: "insideBottomLeft" }} />
+                  <ReferenceLine y={goalW} stroke={C.faint} strokeDasharray="6 4"
+                    label={{ value: "GOAL " + r1(goalW), fill: C.faint, fontSize: 10, fontWeight: 700, position: "insideBottomLeft" }} />
                   <Line type="monotone" dataKey="w" stroke={C.faintLight} strokeWidth={1.5}
                     dot={{ r: 2, fill: C.faintLight, strokeWidth: 0 }} isAnimationActive={false} />
                   <Line type="monotone" dataKey="a" stroke={C.accent} strokeWidth={2.5}

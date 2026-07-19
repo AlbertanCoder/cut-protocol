@@ -97,14 +97,14 @@ export default function SetupWizard({ onDone }) {
   const label = (t) => <span className="text-xs font-bold" style={{ color: C.faint }}>{t}</span>;
 
   return (
-    <div className="min-h-svh flex items-center justify-center px-6 py-10" style={{ background: C.paper }}>
+    <div className="min-h-svh flex items-center justify-center px-6 py-10">
       <div className="w-full max-w-2xl">
         <div className="flex items-center gap-3 mb-6">
           <div className="flex items-center justify-center">
             <CutMark size={44} />
           </div>
           <div className="leading-none">
-            <div className="font-black text-lg uppercase" style={{ color: C.ink }}>Cut Protocol</div>
+            <div className="disp text-lg uppercase" style={{ color: C.ink }}>Cut Protocol</div>
             <div className="text-[11px] font-bold uppercase mt-1" style={{ color: C.faintLight, letterSpacing: ".08em" }}>First-run setup</div>
           </div>
         </div>
@@ -113,12 +113,12 @@ export default function SetupWizard({ onDone }) {
           {STEPS.map((s, i) => (
             <div key={s} className="flex-1">
               <div className="h-1.5 rounded-full mb-1.5" style={{ background: i <= step ? C.accent : C.card2 }}></div>
-              <div className="text-[10.5px] font-bold uppercase tracking-wide" style={{ color: i === step ? C.accent : C.faintLight }}>{s}</div>
+              <div className="text-[10.5px] font-bold uppercase tracking-wide" style={{ color: i === step ? C.ink : C.faintLight }}>{s}</div>
             </div>
           ))}
         </div>
 
-        <div className="p-6 rounded-2xl" style={{ background: C.card, border: `1px solid ${C.rule}`, boxShadow: "var(--shadow)" }}>
+        <div className="p-6 rounded-2xl glass-card">
           {step === 0 && (
             <>
               <div className="text-lg font-extrabold mb-1" style={{ color: C.ink }}>Units & stats</div>
@@ -129,7 +129,7 @@ export default function SetupWizard({ onDone }) {
                 {["imperial", "metric"].map((u) => (
                   <button key={u} onClick={() => set({ unitPref: u })}
                     className="flex-1 text-xs font-bold py-2 rounded-xl"
-                    style={{ background: pref === u ? C.accent : C.card2, color: pref === u ? C.accentInk : C.faint, border: `1px solid ${pref === u ? C.accent : C.rule}` }}>
+                    style={{ background: pref === u ? C.card2 : "transparent", color: pref === u ? C.ink : C.faint, border: `1px solid ${pref === u ? C.faintLight : C.rule}` }}>
                     {u === "imperial" ? "lb / in" : "kg / cm"}
                   </button>
                 ))}
@@ -175,7 +175,7 @@ export default function SetupWizard({ onDone }) {
                 {filteredOcc.map((o) => (
                   <button key={o.key} onClick={() => set({ occupationKey: o.key })}
                     className="w-full text-left px-3 py-2 text-sm font-semibold flex justify-between gap-2"
-                    style={{ color: d.occupationKey === o.key ? C.accent : C.ink, background: d.occupationKey === o.key ? C.accentBg : "transparent", borderBottom: `1px solid ${C.rule}` }}>
+                    style={{ color: C.ink, fontWeight: d.occupationKey === o.key ? 800 : 600, background: d.occupationKey === o.key ? C.card2 : "transparent", borderBottom: `1px solid ${C.rule}` }}>
                     <span className="truncate">{o.label}</span>
                     <span className="mono text-xs shrink-0" style={{ color: C.faintLight }}>×{o.multiplier}</span>
                   </button>
@@ -218,7 +218,7 @@ export default function SetupWizard({ onDone }) {
               <div className="mb-1">{label("Allergies")}</div>
               <div className="grid grid-cols-2 lg:grid-cols-3 gap-x-3 gap-y-1.5 mb-4">
                 {(meta?.allergyOptions || []).map((a) => (
-                  <label key={a.key} className="flex items-center gap-2 text-sm font-semibold cursor-pointer" style={{ color: C.ink }}>
+                  <label key={a.key} className="flex items-center gap-2 text-sm font-semibold" style={{ color: C.ink }}>
                     <input type="checkbox" checked={d.allergies.includes(a.key)}
                       onChange={() => set({ allergies: d.allergies.includes(a.key) ? d.allergies.filter((k) => k !== a.key) : [...d.allergies, a.key] })}
                       className="w-4 h-4" style={{ accentColor: C.accent }} />
@@ -247,9 +247,9 @@ export default function SetupWizard({ onDone }) {
                 {(meta?.rateOptions || []).map((r) => (
                   <button key={r} onClick={() => { set({ rate: r }); setAcked(false); setAckReasons(null); }}
                     className="px-4 py-2.5 rounded-xl text-center"
-                    style={{ background: d.rate === r ? C.accent : C.card2, border: `1px solid ${d.rate === r ? C.accent : C.rule}` }}>
-                    <div className="mono text-sm font-extrabold" style={{ color: d.rate === r ? C.accentInk : C.ink }}>{r} lb/wk</div>
-                    <div className="text-[10px] font-bold" style={{ color: d.rate === r ? C.accentInk : C.faintLight }}>{Math.round(r * 45.3592) / 100} kg/wk</div>
+                    style={{ background: d.rate === r ? C.card2 : "transparent", border: `1px solid ${d.rate === r ? C.faintLight : C.rule}` }}>
+                    <div className="mono text-sm font-extrabold" style={{ color: d.rate === r ? C.ink : C.faint }}>{r} lb/wk</div>
+                    <div className="text-[10px] font-bold" style={{ color: C.faintLight }}>{Math.round(r * 45.3592) / 100} kg/wk</div>
                   </button>
                 ))}
               </div>
@@ -265,7 +265,7 @@ export default function SetupWizard({ onDone }) {
                           {d.rate} lb/wk is {ratePctOfBw.toFixed(2)}% of your body weight per week — above the ~1% guideline.
                         </div>
                       )}
-                      <label className="flex items-center gap-2 text-xs font-bold mt-2 cursor-pointer" style={{ color: C.warn }}>
+                      <label className="flex items-center gap-2 text-xs font-bold mt-2" style={{ color: C.warn }}>
                         <input type="checkbox" checked={acked} onChange={(e) => setAcked(e.target.checked)} style={{ accentColor: C.warn }} />
                         I understand the risks of this rate
                       </label>

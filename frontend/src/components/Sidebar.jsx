@@ -8,8 +8,6 @@ import { TRAINING } from "../lib/flags.js";
 import { sidebarPref } from "../lib/storage.js";
 import CutMark from "./ui/CutMark.jsx";
 
-const kc = (n) => Math.round(n).toLocaleString("en-CA");
-
 const NAV = [
   { id: "profile", label: "Profile", icon: User },
   { id: "today", label: "Today", icon: Activity },
@@ -22,7 +20,7 @@ const NAV = [
   { id: "engine", label: "Engine", icon: Calculator },
 ];
 
-export default function Sidebar({ tab, setTab, profile, summary, onLogout, onReportBug }) {
+export default function Sidebar({ tab, setTab, onLogout, onReportBug }) {
   const [collapsed, setCollapsed] = useState(() => sidebarPref.get());
   const toggle = () => {
     sidebarPref.set(!collapsed);
@@ -34,7 +32,7 @@ export default function Sidebar({ tab, setTab, profile, summary, onLogout, onRep
   return (
     <aside
       className="sticky top-0 h-svh flex flex-col shrink-0 transition-[width] duration-200"
-      style={{ width: collapsed ? 72 : 236, background: C.card, borderRight: `1px solid ${C.rule}` }}
+      style={{ width: collapsed ? 72 : 240, background: C.cardGlass, borderRight: `1px solid ${C.rule}` }}
     >
       {/* brand */}
       <div className={`flex items-center gap-3 px-4 pt-5 pb-4 ${collapsed ? "justify-center px-0" : ""}`}>
@@ -61,9 +59,9 @@ export default function Sidebar({ tab, setTab, profile, summary, onLogout, onRep
               disabled={t.soon}
               title={t.soon ? "Coming soon" : collapsed ? t.label : undefined}
               className={`relative flex items-center gap-3 rounded-xl font-bold text-[13px] transition-colors duration-100 ${collapsed ? "justify-center py-2.5" : "px-3 py-2.5"}`}
-              style={{ color: active ? C.accent : C.faint, background: active ? C.accentBg : "transparent", opacity: t.soon ? 0.45 : 1, cursor: t.soon ? "default" : "pointer" }}
+              style={{ color: active ? C.ink : C.faint, background: active ? C.card2 : "transparent", opacity: t.soon ? 0.45 : 1 }}
             >
-              {active && <span className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-5 rounded-full" style={{ background: C.accent }}></span>}
+              {active && <span className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-5 rounded-full" style={{ background: C.ink }}></span>}
               <Icon size={18} strokeWidth={active ? 2.5 : 2} />
               {!collapsed && t.label}
               {!collapsed && t.soon && (
@@ -76,26 +74,7 @@ export default function Sidebar({ tab, setTab, profile, summary, onLogout, onRep
 
       <div className="flex-1" />
 
-      {/* pinned day / target summary */}
-      <div className="px-4 py-4" style={{ borderTop: `1px solid ${C.rule}` }}>
-        {collapsed ? (
-          <div className="text-center">
-            <div className="text-[10px] font-bold uppercase" style={{ color: C.faintLight }}>Day</div>
-            <div className="mono stat-hero text-lg" style={{ color: C.ink }}>{summary?.daysIn ?? "—"}</div>
-          </div>
-        ) : (
-          <div className="flex items-end justify-between gap-2">
-            <div>
-              <div className="text-[10px] font-bold uppercase" style={{ color: C.faintLight, letterSpacing: ".08em" }}>Day</div>
-              <div className="mono stat-hero text-3xl" style={{ color: C.ink }}>{summary?.daysIn ?? "—"}</div>
-            </div>
-            <div className="text-right pb-1">
-              <div className="text-[10px] font-bold uppercase" style={{ color: C.faintLight, letterSpacing: ".08em" }}>Target</div>
-              <div className="mono text-sm font-extrabold" style={{ color: C.accent }}>{profile ? `${kc(profile.targetKcal)} kcal` : "—"}</div>
-            </div>
-          </div>
-        )}
-      </div>
+      {/* Day/Target moved to the HeaderBar (inverted-L chassis). */}
 
       {/* report a bug — always available, not only on an error */}
       <div className="px-3 pb-1">

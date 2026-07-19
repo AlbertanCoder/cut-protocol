@@ -172,8 +172,8 @@ export default function ProfileTab({ profile, summary, refresh }) {
                 <button key={u} onClick={() => commit({ unitPref: u })}
                   className="flex-1 text-xs font-bold py-2 rounded-xl"
                   style={{
-                    background: pref === u ? C.accent : C.card2, color: pref === u ? C.accentInk : C.faint,
-                    border: `1px solid ${pref === u ? C.accent : C.rule}`,
+                    background: pref === u ? C.card2 : "transparent", color: pref === u ? C.ink : C.faint,
+                    border: `1px solid ${pref === u ? C.faintLight : C.rule}`,
                   }}>
                   {u === "imperial" ? "lb / in" : "kg / cm"}
                 </button>
@@ -242,7 +242,7 @@ export default function ProfileTab({ profile, summary, refresh }) {
                 <button key={o.key}
                   onClick={() => { commit({ occupationKey: o.key }); setOccQuery(""); setOccOpen(false); }}
                   className="w-full text-left px-3 py-2 text-sm font-semibold flex justify-between gap-2 hover:opacity-80"
-                  style={{ color: o.key === profile.occupationKey ? C.accent : C.ink, borderBottom: `1px solid ${C.rule}` }}>
+                  style={{ color: C.ink, fontWeight: o.key === profile.occupationKey ? 800 : 600, background: o.key === profile.occupationKey ? C.card : "transparent", borderBottom: `1px solid ${C.rule}` }}>
                   <span className="truncate">{o.label}</span>
                   <span className="mono text-xs shrink-0" style={{ color: C.faintLight }}>×{o.multiplier}</span>
                 </button>
@@ -293,7 +293,7 @@ export default function ProfileTab({ profile, summary, refresh }) {
           <div className="mb-1">{label("Allergies & exclusions")}</div>
           <div className="grid grid-cols-2 gap-x-3 gap-y-1.5 mb-3">
             {(meta?.allergyOptions || []).map((a) => (
-              <label key={a.key} className="flex items-center gap-2 text-sm font-semibold cursor-pointer" style={{ color: C.ink }}>
+              <label key={a.key} className="flex items-center gap-2 text-sm font-semibold" style={{ color: C.ink }}>
                 <input type="checkbox" checked={excluded.includes(a.key)} onChange={() => toggleAllergy(a.key)}
                   className="w-4 h-4" style={{ accentColor: C.accent }} />
                 {a.label}
@@ -331,9 +331,9 @@ export default function ProfileTab({ profile, summary, refresh }) {
               return (
                 <button key={r} onClick={() => commit({ rateLbPerWeek: r })}
                   className="px-4 py-2.5 rounded-xl text-center"
-                  style={{ background: active ? C.accent : C.card2, border: `1px solid ${active ? C.accent : C.rule}` }}>
-                  <div className="mono text-sm font-extrabold" style={{ color: active ? C.accentInk : C.ink }}>{r} lb/wk</div>
-                  <div className="text-[10px] font-bold" style={{ color: active ? C.accentInk : C.faintLight }}>{r1(r * 0.453592)} kg/wk</div>
+                  style={{ background: active ? C.card2 : "transparent", border: `1px solid ${active ? C.faintLight : C.rule}` }}>
+                  <div className="mono text-sm font-extrabold" style={{ color: active ? C.ink : C.faint }}>{r} lb/wk</div>
+                  <div className="text-[10px] font-bold" style={{ color: C.faintLight }}>{r1(r * 0.453592)} kg/wk</div>
                 </button>
               );
             })}
@@ -341,7 +341,7 @@ export default function ProfileTab({ profile, summary, refresh }) {
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 items-end">
             <div>
               <div className="text-xs font-semibold" style={{ color: C.faint }}>Daily target</div>
-              <div className="mono stat-hero text-3xl" style={{ color: C.accent }}>{kc(summary.target?.target ?? profile.targetKcal)}<span className="text-xs ml-1" style={{ color: C.faint, fontWeight: 600 }}>kcal</span></div>
+              <div className="mono stat-hero text-3xl" style={{ color: C.ink }}>{kc(summary.target?.target ?? profile.targetKcal)}<span className="text-xs ml-1" style={{ color: C.faint, fontWeight: 600 }}>kcal</span></div>
               <div className="text-[10.5px] font-semibold mt-0.5" style={{ color: C.faintLight }}>
                 TDEE {kc(summary.energy?.tdee ?? 0)} − {kc(summary.target?.deficit ?? 0)} deficit{summary.target?.floored ? " → floored" : ""}
               </div>

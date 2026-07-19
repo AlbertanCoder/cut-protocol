@@ -8,6 +8,7 @@ import { C, getStampStyle } from "../lib/theme.js";
 import { todayStr, dayNum, addDays, fmtD } from "../lib/dates.js";
 import { displayWeight, parseWeight, weightUnit, rateUnit, displayRate, weightInputBounds } from "../lib/units.js";
 import { Card, Stat, Btn, Stamp, Ring, MacroBar, PageHead, EmptyNote } from "./ui/Parts.jsx";
+import { Skeleton } from "./ui/Skeleton.jsx";
 import { api } from "../lib/api.js";
 
 const kc = (n) => Math.round(n).toLocaleString("en-CA");
@@ -95,7 +96,14 @@ export default function TodayTab({ profile, summary, refresh, openTrend }) {
         {/* ── planned vs target ── */}
         <Card section="TODAY" title="Planned vs. target" className="xl:col-span-5">
           {plan === undefined ? (
-            <div className="text-sm font-semibold" style={{ color: C.faint }}>Loading…</div>
+            <div className="flex items-center gap-6">
+              <Skeleton className="rounded-full shrink-0" style={{ width: 156, height: 156 }} />
+              <div className="flex-1 flex flex-col gap-2.5">
+                <Skeleton className="h-3" />
+                <Skeleton className="h-3 w-4/5" />
+                <Skeleton className="h-3 w-3/5" />
+              </div>
+            </div>
           ) : plan === "error" ? (
             <div className="flex items-start gap-2">
               <CalendarDays size={18} style={{ color: C.red }} className="mt-0.5 shrink-0" />
@@ -120,10 +128,15 @@ export default function TodayTab({ profile, summary, refresh, openTrend }) {
                   <div className="flex justify-between"><span style={{ color: C.faint }}>Meals + snacks</span><span className="mono text-sm" style={{ color: C.ink }}>{todaySlots.length}</span></div>
                 </div>
               </div>
+              {kcalPct > 1 && (
+                <div className="text-xs font-semibold mb-3" style={{ color: C.warn }}>
+                  Over by {kc(planned.kcal - macros.kcal)} kcal — swap a slot on the Plan tab, and tomorrow's target already adjusts to your data.
+                </div>
+              )}
               <div className="flex flex-col gap-3">
                 <MacroBar label="Protein" actual={planned.protein} target={macros.proteinHi} color={C.protein} />
-                <MacroBar label="Fat" actual={planned.fat} target={macros.fatHi} color={C.fat} />
                 <MacroBar label="Carb" actual={planned.carb} target={macros.carbHi} color={C.carb} />
+                <MacroBar label="Fat" actual={planned.fat} target={macros.fatHi} color={C.fat} />
               </div>
             </>
           )}
@@ -190,7 +203,7 @@ export default function TodayTab({ profile, summary, refresh, openTrend }) {
                     contentStyle={{ background: C.card2, border: `1px solid ${C.rule}`, borderRadius: 12, fontSize: 12, fontWeight: 600, color: C.ink }}
                     formatter={(val, name) => [val + " " + wUnit, name === "w" ? "daily" : "7-day avg"]}
                   />
-                  <ReferenceLine y={goalDisplay} stroke={C.red} strokeDasharray="6 4" />
+                  <ReferenceLine y={goalDisplay} stroke={C.faint} strokeDasharray="6 4" />
                   <Line type="monotone" dataKey="w" stroke={C.faintLight} strokeWidth={1.5}
                     dot={{ r: 2, fill: C.faintLight, strokeWidth: 0 }} isAnimationActive={false} />
                   <Line type="monotone" dataKey="a" stroke={C.accent} strokeWidth={2.5}
@@ -203,7 +216,7 @@ export default function TodayTab({ profile, summary, refresh, openTrend }) {
             <div className="text-xs font-semibold" style={{ color: C.faint }}>
               thin = daily · heavy = 7-day average · dashed = goal
             </div>
-            <button onClick={openTrend} className="text-xs font-bold flex items-center gap-1 hover:opacity-80" style={{ color: C.accent }}>
+            <button onClick={openTrend} className="text-xs font-bold flex items-center gap-1 hover:opacity-80" style={{ color: C.ink }}>
               Full trend <ArrowRight size={12} />
             </button>
           </div>

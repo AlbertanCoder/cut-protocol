@@ -15,16 +15,11 @@ export const FOOD_CATEGORIES = [
 
 export const CATEGORY_LABEL = Object.fromEntries(FOOD_CATEGORIES.map((c) => [c.slug, c.label]));
 
-// Dot/badge colors — reads the live token palette.
-export const CATEGORY_COLOR = () => ({
-  "protein": C.protein,
-  "dairy-eggs": C.carb,
-  "fruit-veg": C.good,
-  "grains": C.warn,
-  "fats-nuts-oils": C.fat,
-  "pantry": C.faintLight,
-  "drinks": C.carbText,
-});
+// Dot/badge colors. Neutral by law: the macro triad means macros ONLY and
+// green is reserved (CLAUDE.md design constitution) — category wayfinding
+// is carried by the labels, not by borrowed data colors.
+export const CATEGORY_COLOR = () =>
+  Object.fromEntries(FOOD_CATEGORIES.map((c) => [c.slug, C.faintLight]));
 
 export const SOURCE_LABEL = {
   "usda": "USDA-VERIFIED",

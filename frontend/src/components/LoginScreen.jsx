@@ -26,14 +26,14 @@ export default function LoginScreen({ onLoggedIn }) {
   };
 
   return (
-    <div className="min-h-svh flex items-center justify-center px-4" style={{ background: C.paper }}>
+    <div className="min-h-svh flex items-center justify-center px-4">
       <div className="w-full max-w-sm">
         <div className="flex items-center gap-3 mb-6 justify-center">
           <div className="flex items-center justify-center">
             <CutMark size={44} />
           </div>
           <div className="leading-none">
-            <div className="text-xl font-black uppercase" style={{ color: C.ink, letterSpacing: ".01em" }}>Cut Protocol</div>
+            <div className="text-xl disp uppercase" style={{ color: C.ink, letterSpacing: ".01em" }}>Cut Protocol</div>
             <div className="text-[10px] font-bold uppercase mt-1" style={{ color: C.faintLight, letterSpacing: ".08em" }}>Recomp Engine</div>
           </div>
         </div>

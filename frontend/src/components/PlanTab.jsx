@@ -7,6 +7,7 @@ import { toHouseholdUnit } from "../lib/householdUnits.js";
 import { C } from "../lib/theme.js";
 import { addDays, fmtD } from "../lib/dates.js";
 import { Card, Btn, Chip, PageHead, ErrorNote } from "./ui/Parts.jsx";
+import { Skeleton, SkeletonRows } from "./ui/Skeleton.jsx";
 import { api } from "../lib/api.js";
 
 const kc = (n) => Math.round(n).toLocaleString("en-CA");
@@ -55,7 +56,7 @@ function FiltersBar({ filters, setFilters }) {
           return (
             <button key={c.key} onClick={() => toggleCuisine(c.key)}
               className="text-xs font-bold px-3 py-1.5 rounded-full"
-              style={{ background: on ? C.accent : C.card2, color: on ? C.accentInk : C.faint, border: `1px solid ${on ? C.accent : C.rule}` }}>
+              style={{ background: on ? C.card2 : "transparent", color: on ? C.ink : C.faint, border: `1px solid ${on ? C.faintLight : C.rule}` }}>
               {c.label}
             </button>
           );
@@ -97,7 +98,7 @@ function DayCandidates({ data, targetKcal, onAccept, accepting }) {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-3">
       {data.candidates.map((c, idx) => (
-        <div key={idx} className="p-4 rounded-2xl flex flex-col" style={{ background: C.card, border: `1px solid ${idx === 0 ? C.accent : C.rule}`, boxShadow: "var(--shadow)" }}>
+        <div key={idx} className="p-4 rounded-2xl flex flex-col" style={{ background: C.card, border: `1px solid ${idx === 0 ? C.accent : C.rule}` }}>
           <div className="flex items-baseline justify-between mb-1">
             <span className="mono stat-hero text-3xl" style={{ color: idx === 0 ? C.accent : C.ink }}>{c.score.matchPct}%</span>
             <span className="text-[10px] font-bold uppercase" style={{ color: C.faintLight }}>{idx === 0 ? "Best match" : `Option ${idx + 1}`}</span>
@@ -165,7 +166,7 @@ function SlotCard({ plan, slot, expanded, onToggleExpand, onLockToggle, busy, fi
   };
 
   return (
-    <div className="p-3.5 rounded-2xl cursor-pointer" onClick={() => onToggleExpand(slot.id)}
+    <div className="p-3.5 rounded-2xl row-host" onClick={() => onToggleExpand(slot.id)}
       style={{ background: C.card, border: `1px solid ${C.rule}` }}>
       <div className="flex gap-3">
         <div className="w-11 h-11 rounded-xl flex items-center justify-center shrink-0" style={{ background: `${roleColor}22` }}>
@@ -177,25 +178,27 @@ function SlotCard({ plan, slot, expanded, onToggleExpand, onLockToggle, busy, fi
               <div className="text-[10px] font-extrabold uppercase tracking-wide" style={{ color: C.faintLight }}>{slot.slotType}</div>
               <div className="text-sm font-extrabold" style={{ color: C.ink }}>{recipe ? recipe.name : "—"}</div>
             </div>
+            {/* Hover-revealed actions (cart, swap); the lock stays visible
+                because it displays STATE, not just an action. */}
             <div className="flex gap-1.5 shrink-0">
               {recipe && (
                 <button onClick={(e) => { e.stopPropagation(); onCart(recipe.id); }}
-                  className="w-7 h-7 rounded-lg flex items-center justify-center"
+                  className={`w-7 h-7 rounded-lg flex items-center justify-center ${inCart ? "" : "row-reveal"}`}
                   style={{ color: inCart ? C.good : C.faint, background: C.card2, border: `1px solid ${C.rule}` }}
                   aria-label={inCart ? "Remove from cart" : "Add to cart"} title={inCart ? "Remove from cart" : "Add to cart"}>
                   {inCart ? <Check size={14} /> : <ShoppingCart size={14} />}
                 </button>
               )}
               <button onClick={(e) => { e.stopPropagation(); onLockToggle(slot); }} disabled={busy}
-                className="w-7 h-7 rounded-lg flex items-center justify-center"
-                style={{ color: slot.locked ? C.good : C.faint, background: C.card2, border: `1px solid ${C.rule}` }} aria-label="Toggle lock">
+                className={`w-7 h-7 rounded-lg flex items-center justify-center ${slot.locked ? "" : "row-reveal"}`}
+                style={{ color: slot.locked ? C.ink : C.faint, background: C.card2, border: `1px solid ${C.rule}` }} aria-label="Toggle lock">
                 {slot.locked ? <Lock size={14} /> : <LockOpen size={14} />}
               </button>
               {!slot.locked && (
                 <button onClick={loadAlternates} disabled={altBusy}
-                  className="w-7 h-7 rounded-lg flex items-center justify-center"
+                  className="w-7 h-7 rounded-lg flex items-center justify-center row-reveal"
                   style={{ color: C.faint, background: C.card2, border: `1px solid ${C.rule}` }} aria-label="Swap — show alternates" title="Swap — show 3 alternates">
-                  <RefreshCw size={14} className={altBusy ? "animate-spin" : ""} />
+                  <RefreshCw size={14} />
                 </button>
               )}
             </div>
@@ -219,6 +222,8 @@ function SlotCard({ plan, slot, expanded, onToggleExpand, onLockToggle, busy, fi
               <ErrorNote msg={error} hint="Swap and lock still work — retry, or regenerate the week if this slot is stuck." />
             </div>
           )}
+
+          {altBusy && !alts && <SkeletonRows rows={3} className="mt-2.5" />}
 
           {alts && (
             <div className="mt-2.5 pt-2.5" onClick={(e) => e.stopPropagation()} style={{ borderTop: `1px solid ${C.rule}` }}>
@@ -292,6 +297,20 @@ export default function PlanTab({ profile, summary, refresh }) {
     loadPlan();
     api.getCart().then((items) => setCartIds(new Set(items.map((i) => i.recipeId)))).catch(() => {});
   }, [loadPlan]);
+
+  // Desktop chassis: ← / → move between days (ignored while typing).
+  useEffect(() => {
+    const onKey = (e) => {
+      if (e.key !== "ArrowLeft" && e.key !== "ArrowRight") return;
+      const tag = e.target?.tagName;
+      if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT") return;
+      e.preventDefault();
+      setActiveDay((d) => (e.key === "ArrowLeft" ? (d + 6) % 7 : (d + 1) % 7));
+      setDayOptions(null);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
 
   const commitMealConfig = async () => {
     await api.putProfile({ mealsPerDay: mealsDraft.meals, snacksPerDay: mealsDraft.snacks });
@@ -439,18 +458,62 @@ export default function PlanTab({ profile, summary, refresh }) {
       </div>
 
       {plan === undefined ? (
-        <div className="text-sm font-semibold" style={{ color: C.faint }}>Loading…</div>
+        <div>
+          <div className="hidden xl:grid grid-cols-7 gap-1.5 mb-3">
+            {DAY_NAMES.map((d) => <Skeleton key={d} className="h-32" />)}
+          </div>
+          <div className="xl:hidden"><SkeletonRows rows={5} /></div>
+        </div>
       ) : (
         <div className="grid grid-cols-1 xl:grid-cols-12 gap-4 items-start">
           {/* ── left: the week ── */}
           <div className="xl:col-span-7 min-w-0">
-            <div className="grid grid-cols-7 gap-1.5 mb-3">
+            {/* 7-column week board (≥ xl): every day's slots at a glance.
+                Click or ← / → selects a day; the full slot detail renders
+                below. Selection is a lightness step, not the brand green. */}
+            <div className="hidden xl:grid grid-cols-7 gap-1.5 mb-3">
+              {DAY_NAMES.map((d, i) => {
+                const slots = plan ? plan.slots.filter((s) => s.dayOfWeek === i) : [];
+                const tot = sumSlots(slots);
+                const active = activeDay === i;
+                return (
+                  <button key={d} onClick={() => { setActiveDay(i); setDayOptions(null); }}
+                    className="rounded-xl p-2 text-left flex flex-col gap-1 min-h-[112px]"
+                    style={{ background: active ? C.card2 : C.card, border: `1px solid ${active ? C.faintLight : C.rule}` }}>
+                    <div className="flex items-baseline justify-between w-full">
+                      <span className="text-[10px] font-extrabold uppercase" style={{ color: active ? C.ink : C.faintLight }}>{d}</span>
+                      <span className="mono text-[10px] font-bold" style={{ color: C.faintLight }}>
+                        {plan ? fmtD(addDays(plan.startDate, i)).split(" ")[1] : ""}
+                      </span>
+                    </div>
+                    {slots.length > 0 ? (
+                      <>
+                        <div className="flex flex-col gap-0.5 w-full">
+                          {slots.map((s) => (
+                            <div key={s.id} className="text-[10.5px] font-semibold flex items-center gap-1 min-w-0" style={{ color: s.recipe ? C.faint : C.faintLight }}>
+                              {s.warning && <AlertTriangle size={9} className="shrink-0" style={{ color: C.warn }} />}
+                              <span className="truncate">{s.recipe ? s.recipe.name : "— open slot"}</span>
+                            </div>
+                          ))}
+                        </div>
+                        <div className="mono text-[10.5px] font-bold mt-auto" style={{ color: active ? C.ink : C.faintLight }}>{kc(tot.kcal)} kcal</div>
+                      </>
+                    ) : (
+                      <div className="text-[10.5px] font-semibold" style={{ color: C.faintLight }}>{plan ? "no slots" : "—"}</div>
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* compact day picker (small windows) */}
+            <div className="grid grid-cols-7 gap-1.5 mb-3 xl:hidden">
               {DAY_NAMES.map((d, i) => (
                 <button key={d} onClick={() => { setActiveDay(i); setDayOptions(null); }}
                   className="py-2 rounded-xl text-center"
-                  style={{ background: activeDay === i ? C.accent : C.card, border: `1px solid ${activeDay === i ? C.accent : C.rule}` }}>
-                  <div className="text-[10px] font-bold" style={{ color: activeDay === i ? C.accentInk : C.faintLight }}>{d}</div>
-                  <div className="text-sm font-extrabold" style={{ color: activeDay === i ? C.accentInk : C.ink }}>
+                  style={{ background: activeDay === i ? C.card2 : C.card, border: `1px solid ${activeDay === i ? C.faintLight : C.rule}` }}>
+                  <div className="text-[10px] font-bold" style={{ color: C.faintLight }}>{d}</div>
+                  <div className="text-sm font-extrabold" style={{ color: activeDay === i ? C.ink : C.faint }}>
                     {plan ? fmtD(addDays(plan.startDate, i)).split(" ")[1] : ""}
                   </div>
                 </button>
@@ -565,7 +628,7 @@ export default function PlanTab({ profile, summary, refresh }) {
                             const hh = toHouseholdUnit(i.name, grams);
                             const practical = i.purchaseUnits?.display;
                             return (
-                              <label key={i.name} className="flex items-start gap-2.5 py-1.5 cursor-pointer" style={{ borderBottom: `1px solid ${C.rule}`, opacity: i.checked ? 0.45 : 1 }}>
+                              <label key={i.name} className="flex items-start gap-2.5 py-1.5" style={{ borderBottom: `1px solid ${C.rule}`, opacity: i.checked ? 0.45 : 1 }}>
                                 <input type="checkbox" checked={!!i.checked} onChange={(e) => onCheckItem(i.name, e.target.checked)}
                                   className="mt-0.5 w-4 h-4 shrink-0" style={{ accentColor: C.good }} />
                                 <div className="flex-1 min-w-0">

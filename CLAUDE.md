@@ -35,11 +35,13 @@ phase of the staged overhaul (Phases 0–8, driven by an external prompt pack).
 1. **Desktop first.** This is a DESKTOP app. Every screen is designed for a
    full desktop window first. No phone-width centered columns, no bottom
    tab bars.
-2. **One design system.** Dark, athletic, bold: dark charcoal background,
-   ONE strong accent color (athletic green family), oversized confident
-   stat numbers, high contrast, generous spacing. All color/spacing/type
-   tokens live in the single theme file; every screen consumes tokens.
-   No one-off styles.
+2. **One design system — AURORA RINGLIGHT (v2).** Dark, athletic, calm:
+   green-tinted near-black canvas, glass cards with gradient hairlines,
+   subtle layered aurora ambience + film grain, Sora display type over
+   Inter body, oversized tabular stat numbers. All color/spacing/type
+   tokens live in `frontend/src/index.css` (mirrored by
+   `frontend/src/lib/theme.js`); every screen consumes tokens. No one-off
+   styles. The color laws below are CONSTITUTIONAL.
 3. **Nothing user-specific hardcoded.** No hardcoded calories, allergies,
    names, weights, or personal defaults anywhere in app code. Everything
    flows from the user's Profile. The app must work for ANY user from first
@@ -55,6 +57,46 @@ phase of the staged overhaul (Phases 0–8, driven by an external prompt pack).
 6. **Parallel subagents welcome, never colliding.** Independent workstreams
    (e.g. one on UI, one on data) may run as parallel subagents — but never
    two agents editing the same files at once.
+
+## Design constitution — AURORA RINGLIGHT color laws (binding, no session may violate)
+
+From the design research (2026-07-18). These are laws, not preferences:
+
+- **a) GREEN SCARCITY.** `--accent` #2FD576 (gradient tail `--accent-tail`
+  #7EFFB2, gradients only) may ONLY mean: on-target, primary action,
+  success, the hero ring, the trend line. Nowhere else — not selected
+  states, not badges, not category dots, not active nav. Its power is
+  everything around it staying quiet. Selection/active states are a
+  LIGHTNESS step (`--card-2` + `--faint-light` border), never green.
+- **b) NO RED, EVER, ON FOOD OR BODY DATA.** Red on food reads as moral
+  judgment and makes beginners under-log and quit. Over target = calm
+  amber `--warn` #E5A83B + supportive re-planning copy ("Over by 340 —
+  tomorrow already adjusts"). The calorie ring LAPS past 100% Apple-style;
+  it never turns red. `--red` exists solely for system errors and
+  destructive confirms (delete buttons, crash screens, the allergen
+  override warning).
+- **c) FIXED MACRO TRIAD** (Okabe-Ito, colorblind-safe, non-green
+  non-red): protein `--protein` #56B4E9 (blue), carbs `--carb` #E69F00
+  (amber-orange), fat `--fat` #CC79A7 (pink-mauve). Used identically in
+  every ring, bar, chip, chart, and solver card, ALWAYS with P/C/F letter
+  labels. Zero exceptions app-wide — these three hues may never be
+  borrowed for anything that isn't that macro.
+- **Elevation is LIGHTNESS, never drop shadows.** Surface ladder: canvas
+  `--paper` #0B0D0C → card `--card` #161A18 → nested/hover `--card-2`
+  #1D2320, with 1px `--rule` rgba(255,255,255,0.06) hairlines, 16–20px
+  radius. There is no shadow token; do not reintroduce one.
+- **Text is one off-white at three opacity tiers** (87% / 60% / 38% —
+  `--ink` / `--faint` / `--faint-light`). Tabular figures on every number
+  that can change.
+- **Type:** Sora 700/800 for headings + all hero numerals, Inter for
+  body. Fonts are bundled locally (@fontsource) — never a CDN.
+- **Ambience stays SUBTLE:** the layered slow-rotating aurora
+  (transform-only), glass-card gradient hairline, and film grain are
+  ambience, not spectacle. All motion freezes under
+  `prefers-reduced-motion`.
+- Reference docs live in `docs/design/` (research report + final
+  direction HTML when available; `docs/design/inspiration/` is the
+  local-only scouting library).
 
 ## Constitution (retained from the RECOMP master doc — still binding)
 
@@ -304,6 +346,42 @@ challenged. Never suggest intake below the safety floor.
   link); profile PIN is manual (Customize your pins — API has no
   mutation). Visibility flipped to PUBLIC via gh after Shad's confirm.
   THE 9-PHASE OVERHAUL IS COMPLETE.
+
+- 2026-07-18 · **Design v2 (1/3) complete — AURORA RINGLIGHT foundation.**
+  Tokens rewritten in `index.css`/`theme.js`: surface ladder #0B0D0C →
+  #161A18 → #1D2320 with rgba hairlines, one off-white ink at 87/60/38%
+  opacity tiers, accent + #7EFFB2 gradient tail, calm amber #E5A83B,
+  Okabe-Ito macro triad (protein BLUE #56B4E9 / carbs AMBER #E69F00 /
+  fat PINK #CC79A7 — a full swap from v1's green-teal/blue/orange),
+  `--shadow` deleted (elevation = lightness only). Sora 700/800 +
+  Inter bundled locally via @fontsource (JS imports in main.jsx — CSS
+  @import loses woff2 resolution through the Tailwind PostCSS pipe).
+  Ambience: 2-blob transform-only aurora + static SVG grain + glass-card
+  gradient-hairline Card; all frozen under prefers-reduced-motion.
+  Chassis: new slim HeaderBar (Day/Target moved out of Sidebar footer),
+  sidebar 240px de-greened active state, Skeleton/SkeletonCard/
+  SkeletonRows replace every "Loading…" + the one spinner, hover-revealed
+  row actions (lock stays visible — it's state), desktop arrow-cursor
+  convention, PlanTab real 7-column week board at ≥xl (compact picker
+  below) with ←/→ day navigation. Color-law sweep: verdict "bad" → amber,
+  goal ReferenceLines de-redded, Ring laps past 100% (never red, number
+  goes amber) + breathing glow + accent→tail gradient, over-target coach
+  line on Today, MacroBar letter badges, P/F/C legend on Engine strip,
+  AI/IMPORTED badges + category dots + all selected-state pills/toggles
+  de-greened (selection = lightness step). CAVEAT: the two reference
+  files (research report + final-direction HTML) never landed on this
+  machine — foundation built from the prompt spec + the inspiration
+  library, Shad-approved; drop them in `docs/design/` when found.
+  Verified: oxlint + vite build clean, read-only Chrome walk on the live
+  session (arrow keys, hover reveal, board confirmed), scripted
+  puppeteer walk on throwaway design-qa@local (wizard→API setup→all 8
+  tabs, zero console/page errors), 12 screenshots at 1920×1080 + 1100×720
+  in `docs/design/v2/01-foundation/`. Known notes: header shows the
+  section name while PageHead repeats it (reconcile in prompt 2);
+  optimistic-UI pattern only on cheap toggles so far; Sora tabular
+  figures asserted via font-feature-settings "tnum" — verify alignment
+  when real changing numbers run. Next: Design v2 (2/3) — per-screen
+  content redesign.
 
 ## Archive
 

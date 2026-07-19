@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import { Dumbbell, Sparkles, Trash2, ChevronRight } from "lucide-react";
 import { C } from "../lib/theme.js";
 import { Card, Btn, Chip, PageHead, ErrorNote, EmptyNote } from "./ui/Parts.jsx";
+import { SkeletonCard, SkeletonRows } from "./ui/Skeleton.jsx";
 import { api } from "../lib/api.js";
 
 // Phase 8 scaffold. The generator is v1-templates and the UI says so —
@@ -80,7 +81,7 @@ export default function TrainingTab() {
         <div className="xl:col-span-4">
           <Card section="INPUTS" title="What you're working with">
             {!meta ? (
-              <div className="text-sm font-semibold" style={{ color: C.faint }}>Loading…</div>
+              <SkeletonRows rows={4} />
             ) : (
               <>
                 <div className="grid grid-cols-2 gap-2 mb-3">
@@ -120,7 +121,7 @@ export default function TrainingTab() {
                     return (
                       <button key={eq.key} onClick={() => toggleEquipment(eq.key)}
                         className="text-xs font-bold px-3 py-1.5 rounded-full"
-                        style={{ background: on ? C.accent : C.card2, color: on ? C.accentInk : C.faint, border: `1px solid ${on ? C.accent : C.rule}` }}>
+                        style={{ background: on ? C.card2 : "transparent", color: on ? C.ink : C.faint, border: `1px solid ${on ? C.faintLight : C.rule}` }}>
                         {eq.label}
                       </button>
                     );
@@ -140,7 +141,7 @@ export default function TrainingTab() {
         {/* ── the plan ── */}
         <div className="xl:col-span-8 min-w-0">
           {plan === undefined ? (
-            <div className="text-sm font-semibold" style={{ color: C.faint }}>Loading…</div>
+            <SkeletonCard lines={5} />
           ) : !plan ? (
             <Card>
               <EmptyNote icon={Dumbbell} height={220} title="No training plan yet"
@@ -163,7 +164,7 @@ export default function TrainingTab() {
                 {plan.weeks.map((w) => (
                   <button key={w.weekNumber} onClick={() => setActiveWeek(w.weekNumber)}
                     className="text-xs font-bold px-3 py-1.5 rounded-lg"
-                    style={{ background: activeWeek === w.weekNumber ? C.accent : C.card2, color: activeWeek === w.weekNumber ? C.accentInk : C.faint, border: `1px solid ${activeWeek === w.weekNumber ? C.accent : C.rule}` }}>
+                    style={{ background: activeWeek === w.weekNumber ? C.card2 : "transparent", color: activeWeek === w.weekNumber ? C.ink : C.faint, border: `1px solid ${activeWeek === w.weekNumber ? C.faintLight : C.rule}` }}>
                     {w.weekNumber}
                   </button>
                 ))}
@@ -179,7 +180,7 @@ export default function TrainingTab() {
                   <div key={s.id} className="p-3.5 rounded-xl" style={{ background: C.card2, border: `1px solid ${C.rule}` }}>
                     <div className="flex items-baseline justify-between gap-2 mb-2">
                       <div className="text-sm font-extrabold" style={{ color: C.ink }}>
-                        <ChevronRight size={13} className="inline mr-0.5" style={{ color: C.accent }} />{s.name}
+                        <ChevronRight size={13} className="inline mr-0.5" style={{ color: C.faintLight }} />{s.name}
                       </div>
                       {s.focus && <div className="text-[10.5px] font-semibold" style={{ color: C.faintLight }}>{s.focus}</div>}
                     </div>

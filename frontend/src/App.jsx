@@ -14,8 +14,16 @@ import FoodsTab from "./components/FoodsTab.jsx";
 import RecipesTab from "./components/RecipesTab.jsx";
 import TrainingTab from "./components/TrainingTab.jsx";
 import BugReportDialog from "./components/BugReportDialog.jsx";
+import HeaderBar from "./components/ui/HeaderBar.jsx";
+import { SkeletonCard } from "./components/ui/Skeleton.jsx";
 import { onUncaughtError } from "./lib/bugLog.js";
 import { TRAINING } from "./lib/flags.js";
+
+// Header titles for the inverted-L chassis; only the content pane changes.
+const TAB_TITLES = {
+  profile: "Profile", today: "Today", plan: "Meal Plan", recipes: "Recipes",
+  foods: "Foods", trend: "Trend", engine: "Engine", training: "Training",
+};
 
 export default function App() {
   const [authStatus, setAuthStatus] = useState("checking"); // checking | out | in
@@ -94,15 +102,27 @@ export default function App() {
   };
 
   const loading = (
-    <div className="min-h-svh flex items-center justify-center" style={{ background: C.paper }}>
-      <div className="text-sm font-semibold" style={{ color: C.faint }}>Loading…</div>
+    <div className="min-h-svh flex items-center justify-center">
+      <div className="w-[420px] max-w-[80vw] flex flex-col gap-3">
+        <SkeletonCard lines={2} />
+        <SkeletonCard lines={3} />
+      </div>
     </div>
   );
 
   // The bug-report dialog rides on top of every app state (login, wizard,
-  // loading, main) so an uncaught error can always surface a report.
+  // loading, main) so an uncaught error can always surface a report. The
+  // aurora + grain ambience layers wrap every state the same way; content
+  // sits at z-1 so the fixed aurora stays behind it.
   const dialog = <BugReportDialog open={bugReport.open} error={bugReport.error} onClose={() => setBugReport({ open: false, error: null })} />;
-  const withDialog = (content) => (<>{content}{dialog}</>);
+  const withDialog = (content) => (
+    <>
+      <div className="aurora" aria-hidden="true" />
+      <div className="relative z-[1]">{content}</div>
+      <div className="grain" aria-hidden="true" />
+      {dialog}
+    </>
+  );
 
   if (authStatus === "checking") return withDialog(loading);
 
@@ -118,7 +138,7 @@ export default function App() {
   // screen and NOT an infinite "Loading…" (#44).
   if (loadError && (!profile || !summary)) {
     return withDialog(
-      <div className="min-h-svh flex flex-col items-center justify-center gap-3 px-6 text-center" style={{ background: C.paper }}>
+      <div className="min-h-svh flex flex-col items-center justify-center gap-3 px-6 text-center">
         <div className="text-sm font-bold" style={{ color: C.red }}>Couldn't load your data</div>
         <div className="text-xs font-semibold max-w-sm" style={{ color: C.faint }}>{loadError}</div>
         <button onClick={boot} className="text-sm font-bold px-4 py-2 rounded-xl" style={{ background: C.accent, color: C.accentInk }}>Retry</button>
@@ -131,10 +151,11 @@ export default function App() {
   const openFoods = () => setTab("foods");
 
   return withDialog(
-    <div className="min-h-svh flex" style={{ background: C.paper, color: C.ink }}>
-      <Sidebar tab={tab} setTab={setTab} profile={profile} summary={summary} onLogout={logout} onReportBug={openBugReport} />
+    <div className="min-h-svh flex" style={{ color: C.ink }}>
+      <Sidebar tab={tab} setTab={setTab} onLogout={logout} onReportBug={openBugReport} />
 
       <div className="flex-1 min-w-0">
+        <HeaderBar title={TAB_TITLES[tab] || "Cut Protocol"} profile={profile} summary={summary} />
         {error && (
           <div className="text-xs font-semibold px-8 py-2" style={{ color: C.red, background: C.redBg }}>
             {error} — couldn't refresh your data. Repeat your last change to retry; if it keeps failing, restart the app.

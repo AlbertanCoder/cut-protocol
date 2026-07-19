@@ -7,6 +7,7 @@ import {
 import { C } from "../lib/theme.js";
 import { toHouseholdUnit } from "../lib/householdUnits.js";
 import { Card, Btn, Chip, PageHead, ErrorNote } from "./ui/Parts.jsx";
+import { SkeletonRows } from "./ui/Skeleton.jsx";
 import { api } from "../lib/api.js";
 
 const kc = (n) => Math.round(n).toLocaleString("en-CA");
@@ -28,9 +29,11 @@ const CUISINE_LABEL = {
 const DAY_NAMES = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 const SCALES = [0.5, 0.75, 1, 1.25, 1.5, 2];
 
+// Provenance badges are neutral ink — green is reserved (law a) and the
+// macro triad colors mean macros only (law c), so labels do the work here.
 const sourceBadge = (r) =>
-  r.source === "ai-generated" ? { label: "AI", color: C.accent, bg: C.accentBg }
-  : r.source === "imported" ? { label: "IMPORTED", color: C.carbText, bg: `${C.carb}22` }
+  r.source === "ai-generated" ? { label: "AI", color: C.ink, bg: C.card2 }
+  : r.source === "imported" ? { label: "IMPORTED", color: C.faint, bg: C.card2 }
   : null;
 
 const density = (r) => (r.kcal > 0 ? (r.protein / r.kcal) * 100 : 0);
@@ -192,7 +195,7 @@ function RecipeDetail({ recipe, profile, onSave, onDelete, inCart, onToggleCart,
         {SCALES.map((s) => (
           <button key={s} onClick={() => setScale(s)}
             className="text-xs font-bold px-2.5 py-1 rounded-lg"
-            style={{ background: scale === s ? C.accent : C.card, color: scale === s ? C.accentInk : C.faint, border: `1px solid ${scale === s ? C.accent : C.rule}` }}>
+            style={{ background: scale === s ? C.card2 : C.card, color: scale === s ? C.ink : C.faint, border: `1px solid ${scale === s ? C.faintLight : C.rule}` }}>
             ×{s}
           </button>
         ))}
@@ -251,10 +254,10 @@ function RecipeDetail({ recipe, profile, onSave, onDelete, inCart, onToggleCart,
 function DraftCard({ draft, onSave, onEditGrams, saving, saveError }) {
   const inpStyle = getInpStyle();
   return (
-    <div className="p-3 rounded-2xl" style={{ background: C.card, border: `1.5px solid ${draft.source === "imported" ? C.carb : C.good}` }}>
+    <div className="p-3 rounded-2xl" style={{ background: C.card, border: `1.5px solid ${C.rule}` }}>
       <div className="flex items-start justify-between gap-2">
         <div className="text-sm font-extrabold" style={{ color: C.ink }}>{draft.name}</div>
-        {draft.source === "imported" && <Chip color={C.carbText} bg={`${C.carb}22`}>IMPORT PREVIEW</Chip>}
+        {draft.source === "imported" && <Chip color={C.faint} bg={C.card2}>IMPORT PREVIEW</Chip>}
       </div>
       <div className="text-xs italic mb-1.5 font-semibold" style={{ color: C.faint }}>{draft.description}</div>
       <div className="flex flex-wrap gap-1.5 mb-2.5">
@@ -682,13 +685,13 @@ export default function RecipesTab({ openFoods, profile }) {
           )}
 
           {loading ? (
-            <div className="text-sm font-semibold" style={{ color: C.faint }}>Loading…</div>
+            <SkeletonRows rows={7} />
           ) : (
             <div className="flex flex-col gap-2.5">
               {groups.map(([groupName, list]) => {
                 const open = searching || !!openGroups[groupName];
                 return (
-                  <div key={groupName} className="rounded-2xl" style={{ background: C.card, border: `1px solid ${C.rule}`, boxShadow: "var(--shadow)" }}>
+                  <div key={groupName} className="rounded-2xl glass-card">
                     {!searching && (
                       <button onClick={() => setOpenGroups((s) => ({ ...s, [groupName]: !open }))}
                         className="w-full flex items-center gap-3 px-4 py-3.5">
@@ -703,8 +706,8 @@ export default function RecipesTab({ openFoods, profile }) {
                           const badge = sourceBadge(r);
                           const expanded = expandedId === r.id;
                           return (
-                            <div key={r.id} className="p-3 rounded-xl cursor-pointer" onClick={() => setExpandedId(expanded ? null : r.id)}
-                              style={{ background: C.card2, border: `1px solid ${expanded ? C.accent : C.rule}` }}>
+                            <div key={r.id} className="p-3 rounded-xl" onClick={() => setExpandedId(expanded ? null : r.id)}
+                              style={{ background: C.card2, border: `1px solid ${expanded ? C.faintLight : C.rule}` }}>
                               <div className="flex justify-between items-start gap-2">
                                 <div className="min-w-0">
                                   <div className="text-sm font-extrabold" style={{ color: C.ink }}>{r.name}</div>

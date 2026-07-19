@@ -67,7 +67,7 @@ export default function BugReportDialog({ open, error, onClose }) {
   };
 
   const overlay = { position: "fixed", inset: 0, background: "rgba(0,0,0,.6)", zIndex: 100, display: "flex", alignItems: "center", justifyContent: "center", padding: 16 };
-  const panel = { background: C.card, border: `1px solid ${C.rule}`, borderRadius: 20, boxShadow: "var(--shadow)", width: "100%", maxWidth: 640, maxHeight: "88vh", display: "flex", flexDirection: "column" };
+  const panel = { background: C.card2, border: `1px solid ${C.rule}`, borderRadius: 20, width: "100%", maxWidth: 640, maxHeight: "88vh", display: "flex", flexDirection: "column" };
   const inp = { background: C.card2, border: `1.5px solid ${C.rule}`, color: C.ink };
 
   return (
@@ -75,7 +75,7 @@ export default function BugReportDialog({ open, error, onClose }) {
       <div style={panel} onClick={(e) => e.stopPropagation()}>
         <div className="flex items-center justify-between px-5 pt-5 pb-3">
           <div className="flex items-center gap-2">
-            <Bug size={18} style={{ color: C.accent }} />
+            <Bug size={18} style={{ color: C.faint }} />
             <div className="text-[15px] font-extrabold" style={{ color: C.ink }}>{error ? "Something went wrong" : "Report a bug"}</div>
           </div>
           <button onClick={onClose} aria-label="Close" style={{ color: C.faintLight }}><X size={18} /></button>

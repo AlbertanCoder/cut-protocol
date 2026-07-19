@@ -3,6 +3,7 @@ import { Search, ArrowLeft, ChevronRight, ChevronDown, Save, BookOpen, NotebookP
 import { C } from "../lib/theme.js";
 import { FOOD_CATEGORIES, CATEGORY_LABEL, CATEGORY_COLOR, SOURCE_LABEL } from "../data/foodCategories.js";
 import { Card, Btn, Chip, PageHead, Stat, ErrorNote } from "./ui/Parts.jsx";
+import { SkeletonRows } from "./ui/Skeleton.jsx";
 import { api } from "../lib/api.js";
 
 const g1 = (n) => Math.round(n * 10) / 10;
@@ -13,11 +14,11 @@ function FoodRow({ food, selected, onSelect, dotColor }) {
     <button
       onClick={() => onSelect(food)}
       className="w-full flex items-center gap-2.5 py-2 px-2 rounded-lg text-left"
-      style={{ background: selected ? C.accentBg : "transparent", borderBottom: `1px solid ${C.rule}` }}
+      style={{ background: selected ? C.card2 : "transparent", borderBottom: `1px solid ${C.rule}` }}
     >
       <span className="w-2 h-2 rounded-full shrink-0" style={{ background: dotColor }}></span>
       <div className="flex-1 min-w-0">
-        <div className="text-sm font-bold truncate" style={{ color: selected ? C.accent : C.ink }}>{food.name}</div>
+        <div className="text-sm font-bold truncate" style={{ color: C.ink }}>{food.name}</div>
       </div>
       <div className="text-right shrink-0">
         <span className="mono text-sm font-extrabold" style={{ color: C.ink }}>{Math.round(food.kcal)}</span>
@@ -187,7 +188,7 @@ function FoodDetail({ food, isAdmin, onSaved, refreshFoods }) {
             className="text-sm px-3 py-2 rounded-xl w-full mb-2" style={inpStyle} />
           <div className="max-h-56 overflow-y-auto">
             {recipes === null ? (
-              <div className="text-sm font-semibold" style={{ color: C.faint }}>Loading…</div>
+              <SkeletonRows rows={3} />
             ) : (
               filteredRecipes.map((r) => (
                 <button key={r.id} onClick={() => addToRecipe(r)} disabled={addBusyId === r.id}
@@ -260,7 +261,7 @@ export default function FoodsTab({ onBack, isAdmin }) {
           </div>
 
           {loading ? (
-            <div className="text-sm font-semibold" style={{ color: C.faint }}>Loading…</div>
+            <SkeletonRows rows={7} />
           ) : q ? (
             <Card>
               <div className="text-xs font-semibold mb-1" style={{ color: C.faintLight }}>
@@ -278,7 +279,7 @@ export default function FoodsTab({ onBack, isAdmin }) {
                 const items = byCategory[cat.slug] || [];
                 const open = !!openCats[cat.slug];
                 return (
-                  <div key={cat.slug} className="rounded-2xl" style={{ background: C.card, border: `1px solid ${C.rule}`, boxShadow: "var(--shadow)" }}>
+                  <div key={cat.slug} className="rounded-2xl glass-card">
                     <button
                       onClick={() => setOpenCats((s) => ({ ...s, [cat.slug]: !open }))}
                       className="w-full flex items-center gap-3 px-4 py-3.5"

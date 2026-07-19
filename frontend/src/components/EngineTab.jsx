@@ -50,7 +50,7 @@ export default function EngineTab({ profile, summary, refresh, openFoods, openPr
           {energy.rows.map((r) => {
             const off = excludedLocal.includes(r.key); // optimistic; reflects the click immediately
             return (
-            <label key={r.key} className="flex items-center justify-between py-1.5 cursor-pointer" style={{ borderBottom: `1px solid ${C.rule}`, opacity: off ? 0.45 : 1 }}>
+            <label key={r.key} className="flex items-center justify-between py-1.5" style={{ borderBottom: `1px solid ${C.rule}`, opacity: off ? 0.45 : 1 }}>
               <span className="flex items-center gap-2.5 text-sm font-semibold" style={{ color: C.ink }}>
                 <input type="checkbox" checked={!off} onChange={() => toggleFormula(r.key)} style={{ accentColor: C.accent }} />
                 {r.label}
@@ -117,17 +117,23 @@ export default function EngineTab({ profile, summary, refresh, openFoods, openPr
               The raw math wanted {kc(target.raw)} — clamped to your floor. The chosen rate won't be fully reached through diet alone.
             </div>
           )}
-          <button onClick={openProfile} className="text-xs font-bold flex items-center gap-1 mt-3 hover:opacity-80" style={{ color: C.accent }}>
+          <button onClick={openProfile} className="text-xs font-bold flex items-center gap-1 mt-3 hover:opacity-80" style={{ color: C.ink }}>
             Change rate on Profile <ArrowRight size={12} />
           </button>
         </Card>
 
         <Card section="§4" title="Macro engine" className="xl:col-span-12">
-          <div className="flex rounded-full overflow-hidden h-2.5 mb-3 gap-[2px] max-w-3xl">
+          <div className="flex rounded-full overflow-hidden h-2.5 mb-1.5 gap-[2px] max-w-3xl">
             <div style={{ width: `${(macros.proteinHi * 4 / macros.kcal) * 100}%`, background: C.protein }}></div>
             <div style={{ width: `${(macros.fatHi * 9 / macros.kcal) * 100}%`, background: C.fat }}></div>
             <div style={{ width: `${(macros.carbHi * 4 / macros.kcal) * 100}%`, background: C.carb }}></div>
             <div className="flex-1" style={{ background: C.card2 }}></div>
+          </div>
+          <div className="flex items-center gap-4 mb-3 text-[10px] font-extrabold uppercase">
+            <span style={{ color: C.proteinText }}>P · protein</span>
+            <span style={{ color: C.fatText }}>F · fat</span>
+            <span style={{ color: C.carbText }}>C · carbs</span>
+            <span style={{ color: C.faintLight }}>rest · flex</span>
           </div>
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-x-4">
             <Stat label="Protein range" value={`${macros.proteinLo}–${macros.proteinHi}`} unit="g" />
@@ -148,7 +154,7 @@ export default function EngineTab({ profile, summary, refresh, openFoods, openPr
       </div>
 
       <details className="px-1 mt-4">
-        <summary className="text-xs font-semibold uppercase tracking-wide cursor-pointer" style={{ color: C.faintLight }}>
+        <summary className="text-xs font-semibold uppercase tracking-wide" style={{ color: C.faintLight }}>
           Data backup (copy this JSON)
         </summary>
         <pre className="text-xs mt-2 p-3 rounded-xl overflow-x-auto"
