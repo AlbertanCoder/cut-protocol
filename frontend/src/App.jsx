@@ -19,12 +19,6 @@ import { SkeletonCard } from "./components/ui/Skeleton.jsx";
 import { onUncaughtError } from "./lib/bugLog.js";
 import { TRAINING } from "./lib/flags.js";
 
-// Header titles for the inverted-L chassis; only the content pane changes.
-const TAB_TITLES = {
-  profile: "Profile", today: "Today", plan: "Meal Plan", recipes: "Recipes",
-  foods: "Foods", trend: "Trend", engine: "Engine", training: "Training",
-};
-
 export default function App() {
   const [authStatus, setAuthStatus] = useState("checking"); // checking | out | in
   const [profile, setProfile] = useState(null);
@@ -155,7 +149,7 @@ export default function App() {
       <Sidebar tab={tab} setTab={setTab} onLogout={logout} onReportBug={openBugReport} />
 
       <div className="flex-1 min-w-0">
-        <HeaderBar title={TAB_TITLES[tab] || "Cut Protocol"} profile={profile} summary={summary} />
+        <HeaderBar profile={profile} summary={summary} />
         {error && (
           <div className="text-xs font-semibold px-8 py-2" style={{ color: C.red, background: C.redBg }}>
             {error} — couldn't refresh your data. Repeat your last change to retry; if it keeps failing, restart the app.
