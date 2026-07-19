@@ -4,7 +4,7 @@
 // mode, CUT_PROTOCOL_DB_PATH/DATABASE_URL are already set in process.env by
 // electron/main.cjs before this file is ever required, so this is safe to
 // call even ahead of dotenv/config (dotenv never overwrites existing vars).
-const { ensureDatabaseReady } = require("./src/lib/desktopBootstrap.js");
+const { ensureDatabaseReady, ensureSchemaCurrent } = require("./src/lib/desktopBootstrap.js");
 ensureDatabaseReady();
 
 require("dotenv/config");
@@ -24,6 +24,21 @@ const trainingRoutes = require("./src/routes/training.js");
 const app = express();
 app.use(express.json());
 app.use(cookieParser());
+
+// M2: an updated install must bring the user's existing DB up to the shipped
+// schema before any data route touches it. ensureSchemaCurrent() applies the
+// pending shipped migrations in-process (automatic backup first; no-op in dev
+// and on every already-current boot); every /api request waits on it once.
+// On failure the data is untouched and every request says exactly where the
+// backup and the error log are, instead of a generic 500.
+const schemaReady = ensureSchemaCurrent();
+schemaReady.catch((e) => console.error("[desktopBootstrap]", e.message));
+app.use("/api", (req, res, next) => {
+  schemaReady.then(
+    () => next(),
+    (e) => res.status(500).json({ error: `Database schema update failed: ${e.message}. Your data was not modified.` })
+  );
+});
 
 app.use("/api/auth", authRoutes);
 app.use("/api/profile", profileRoutes);
