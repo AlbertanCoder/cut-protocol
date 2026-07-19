@@ -33,6 +33,7 @@ app.use("/api/plans", planRoutes);
 app.use("/api/foods", foodRoutes);
 app.use("/api/cart", cartRoutes);
 app.use("/api/training", trainingRoutes);
+app.use("/api/meta", require("./src/routes/meta.js")); // public: build version/OS for bug reports
 
 // Unmatched /api routes return clean JSON, not the SPA index.html (the
 // catch-all below only handles non-/api paths).

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import {
   User, Activity, CalendarDays, BookOpen, TrendingUp,
-  Calculator, Dumbbell, LogOut, ChevronsLeft, ChevronsRight,
+  Calculator, Dumbbell, LogOut, ChevronsLeft, ChevronsRight, Bug,
 } from "lucide-react";
 import { C } from "../lib/theme.js";
 import { TRAINING } from "../lib/flags.js";
@@ -22,7 +22,7 @@ const NAV = [
   { id: "engine", label: "Engine", icon: Calculator },
 ];
 
-export default function Sidebar({ tab, setTab, profile, summary, onLogout }) {
+export default function Sidebar({ tab, setTab, profile, summary, onLogout, onReportBug }) {
   const [collapsed, setCollapsed] = useState(() => sidebarPref.get());
   const toggle = () => {
     sidebarPref.set(!collapsed);
@@ -95,6 +95,19 @@ export default function Sidebar({ tab, setTab, profile, summary, onLogout }) {
             </div>
           </div>
         )}
+      </div>
+
+      {/* report a bug — always available, not only on an error */}
+      <div className="px-3 pb-1">
+        <button
+          onClick={onReportBug}
+          title="Report a bug"
+          className={`flex items-center gap-2 text-xs font-semibold rounded-lg hover:opacity-80 ${collapsed ? "w-8 h-8 justify-center mx-auto" : "w-full px-2.5 py-2"}`}
+          style={{ color: C.faint, border: `1px solid ${C.rule}` }}
+        >
+          <Bug size={14} />
+          {!collapsed && "Report a bug"}
+        </button>
       </div>
 
       {/* controls */}

@@ -13,6 +13,8 @@ import PlanTab from "./components/PlanTab.jsx";
 import FoodsTab from "./components/FoodsTab.jsx";
 import RecipesTab from "./components/RecipesTab.jsx";
 import TrainingTab from "./components/TrainingTab.jsx";
+import BugReportDialog from "./components/BugReportDialog.jsx";
+import { onUncaughtError } from "./lib/bugLog.js";
 import { TRAINING } from "./lib/flags.js";
 
 export default function App() {
@@ -29,6 +31,14 @@ export default function App() {
   const [error, setError] = useState(null);
   const [loadError, setLoadError] = useState(null); // startup data-load failure (session is still valid)
   const [isAdmin, setIsAdmin] = useState(false);
+  const [bugReport, setBugReport] = useState({ open: false, error: null });
+
+  // Uncaught async errors (unhandled rejections, window.onerror) surface the
+  // friendly report dialog instead of failing silently.
+  useEffect(() => {
+    onUncaughtError((err) => setBugReport({ open: true, error: err }));
+  }, []);
+  const openBugReport = () => setBugReport({ open: true, error: null });
 
   const loadData = useCallback(async () => {
     const p = await api.getProfile();
@@ -89,20 +99,25 @@ export default function App() {
     </div>
   );
 
-  if (authStatus === "checking") return loading;
+  // The bug-report dialog rides on top of every app state (login, wizard,
+  // loading, main) so an uncaught error can always surface a report.
+  const dialog = <BugReportDialog open={bugReport.open} error={bugReport.error} onClose={() => setBugReport({ open: false, error: null })} />;
+  const withDialog = (content) => (<>{content}{dialog}</>);
+
+  if (authStatus === "checking") return withDialog(loading);
 
   if (authStatus === "out") {
-    return <LoginScreen onLoggedIn={async () => { setAuthStatus("in"); await loadData(); }} />;
+    return withDialog(<LoginScreen onLoggedIn={async () => { setAuthStatus("in"); await loadData(); }} />);
   }
 
   if (needsSetup) {
-    return <SetupWizard onDone={loadData} />;
+    return withDialog(<SetupWizard onDone={loadData} />);
   }
 
   // A valid session whose data couldn't load: a retryable error, NOT the login
   // screen and NOT an infinite "Loading…" (#44).
   if (loadError && (!profile || !summary)) {
-    return (
+    return withDialog(
       <div className="min-h-svh flex flex-col items-center justify-center gap-3 px-6 text-center" style={{ background: C.paper }}>
         <div className="text-sm font-bold" style={{ color: C.red }}>Couldn't load your data</div>
         <div className="text-xs font-semibold max-w-sm" style={{ color: C.faint }}>{loadError}</div>
@@ -111,13 +126,13 @@ export default function App() {
     );
   }
 
-  if (!profile || !summary) return loading;
+  if (!profile || !summary) return withDialog(loading);
 
   const openFoods = () => setTab("foods");
 
-  return (
+  return withDialog(
     <div className="min-h-svh flex" style={{ background: C.paper, color: C.ink }}>
-      <Sidebar tab={tab} setTab={setTab} profile={profile} summary={summary} onLogout={logout} />
+      <Sidebar tab={tab} setTab={setTab} profile={profile} summary={summary} onLogout={logout} onReportBug={openBugReport} />
 
       <div className="flex-1 min-w-0">
         {error && (

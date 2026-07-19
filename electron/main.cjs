@@ -17,7 +17,17 @@
 const path = require("path");
 const fs = require("fs");
 const http = require("http");
-const { app, BrowserWindow, Menu } = require("electron");
+const { app, BrowserWindow, Menu, shell, ipcMain } = require("electron");
+
+// Bug reporter: hand a pre-filled GitHub issue URL to the OS browser. Only
+// http/https is ever opened (never a file:// or app-internal scheme).
+ipcMain.handle("open-external", (_e, url) => {
+  if (typeof url === "string" && /^https?:\/\//i.test(url)) {
+    shell.openExternal(url);
+    return true;
+  }
+  return false;
+});
 
 // electron-builder's `build.productName` only brands the installer/.exe —
 // it is never written into the packaged app's package.json (which keeps

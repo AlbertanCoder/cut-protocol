@@ -9,11 +9,10 @@
 // than reaching for nodeIntegration:true just to skip writing a preload
 // file.
 //
-// If a future need comes up for the renderer to call into Electron/Node
-// (native file dialogs, app version info, etc.), expose it here explicitly
-// via contextBridge — never by flipping nodeIntegration on.
-//
-// const { contextBridge } = require("electron");
-// contextBridge.exposeInMainWorld("cutProtocol", {
-//   // e.g. version: () => process.env.npm_package_version,
-// });
+// One explicit, minimal bridge: open an external URL in the user's real
+// browser (used by the bug reporter to hand off the pre-filled GitHub issue
+// URL). Kept behind contextIsolation; main-process validates the URL scheme.
+const { contextBridge, ipcRenderer } = require("electron");
+contextBridge.exposeInMainWorld("cutProtocol", {
+  openExternal: (url) => ipcRenderer.invoke("open-external", url),
+});

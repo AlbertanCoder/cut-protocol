@@ -1,12 +1,23 @@
+import { logApi } from "./bugLog.js";
+
 // Same-origin in production (Express serves the built frontend); in dev,
 // Vite's server.proxy forwards /api/* to the backend (see vite.config.js),
 // so this can always just call relative /api paths — no CORS needed either way.
 async function request(path, options = {}) {
-  const res = await fetch(`/api${path}`, {
-    credentials: "include",
-    headers: options.body ? { "Content-Type": "application/json" } : undefined,
-    ...options,
-  });
+  const method = (options.method || "GET").toUpperCase();
+  let res;
+  try {
+    res = await fetch(`/api${path}`, {
+      credentials: "include",
+      headers: options.body ? { "Content-Type": "application/json" } : undefined,
+      ...options,
+    });
+  } catch (netErr) {
+    // Network failure (offline / backend down) — log method+path only, no body.
+    logApi(method, path, "network-error");
+    throw netErr;
+  }
+  logApi(method, path, res.status); // status only — never the request/response body
   if (res.status === 204) return null;
   const body = await res.json().catch(() => null);
   if (!res.ok) {
