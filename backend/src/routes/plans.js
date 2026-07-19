@@ -174,12 +174,14 @@ router.post("/generate", async (req, res) => {
     // Stage-C fix (M10): pass the pool counts so a rough-week diagnosis can
     // name the TRUE binding constraint (e.g. a maxPrep cap that emptied the
     // pool) instead of always blaming diet/allergy rules.
-    const { slots: freshSlots } = await generateBestWeekPlan(dailyTarget, mealConfig, pool, {
+    const poolCounts = { raw: rawPoolCount, afterDiet: recipePool.length, afterPrep: pool.length };
+    const weekResult = await generateBestWeekPlan(dailyTarget, mealConfig, pool, {
       bias: buildBias(filters, costCache),
       allowBatchRepeats: filters.allowBatchRepeats,
       filters,
-      counts: { raw: rawPoolCount, afterDiet: recipePool.length, afterPrep: pool.length },
+      counts: poolCounts,
     });
+    const freshSlots = weekResult.slots;
     // A locked slot is only carried forward if its recipe still complies with
     // the CURRENT diet/allergy rules (Stage-C L9). Otherwise a slot locked
     // before a diet change (goat locked, then the user goes vegan) would
@@ -206,7 +208,16 @@ router.post("/generate", async (req, res) => {
       for (const s of finalSlots) await upsertSlot(plan.id, s, tx);
       return tx.plan.findUnique({ where: { id: plan.id }, include: PLAN_INCLUDE });
     });
-    res.json(full);
+    // Forward what the solver ALREADY computed (never recompute): the honest
+    // week score + the result-driven diagnosis it used to attach and then
+    // silently drop, plus the pool sizes at each hard-filter stage. Additive:
+    // the plan object is unchanged, `meta` rides alongside it.
+    const meta = {
+      score: weekResult.score, // { daysInTolerance, avgMatch }
+      diagnosis: weekResult.diagnosis, // { feasible, reasons, suggestions } | null (null when the week is clean)
+      poolCounts, // { raw, afterDiet, afterPrep }
+    };
+    res.json({ ...full, meta });
   } catch (e) {
     res.status(e.status || 500).json({ error: e.message });
   }
@@ -216,7 +227,7 @@ router.post("/generate", async (req, res) => {
 // no writes) — accepting one goes through /accept-day.
 router.post("/day-options", async (req, res) => {
   try {
-    const { dailyTarget, mealConfig, recipePool } = await planContext(req.userId);
+    const { profile, dailyTarget, mealConfig, recipePool } = await planContext(req.userId);
     const filters = parseFilters(req.body);
     const dayOfWeek = Number.isInteger(req.body?.dayOfWeek) && req.body.dayOfWeek >= 0 && req.body.dayOfWeek <= 6 ? req.body.dayOfWeek : 0;
 
@@ -231,7 +242,7 @@ router.post("/day-options", async (req, res) => {
     const prevDayIds = new Set((plan?.slots || []).filter((s) => s.dayOfWeek === dayOfWeek - 1 && s.recipeId).map((s) => s.recipeId));
 
     const result = await generateDayCandidates({
-      dailyTarget, mealConfig, recipePool, dayOfWeek, filters, weekUsage, prevDayIds,
+      dailyTarget, mealConfig, recipePool, dayOfWeek, filters, weekUsage, prevDayIds, profile,
     });
     // Attach recipe names for display (candidates carry ids + numbers only).
     const nameById = new Map(recipePool.map((r) => [r.id, r.name]));
