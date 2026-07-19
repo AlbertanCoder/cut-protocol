@@ -15,11 +15,20 @@ export const FOOD_CATEGORIES = [
 
 export const CATEGORY_LABEL = Object.fromEntries(FOOD_CATEGORIES.map((c) => [c.slug, c.label]));
 
-// Dot/badge colors. Neutral by law: the macro triad means macros ONLY and
-// green is reserved (CLAUDE.md design constitution) — category wayfinding
-// is carried by the labels, not by borrowed data colors.
-export const CATEGORY_COLOR = () =>
-  Object.fromEntries(FOOD_CATEGORIES.map((c) => [c.slug, C.faintLight]));
+// Category dots — NEUTRAL by law: the macro triad means macros ONLY and green
+// is reserved (CLAUDE.md design constitution), so a category dot can borrow
+// neither. Wayfinding is carried by a quiet LIGHTNESS ramp of the single
+// off-white ink (the app's "elevation is lightness" language), brightest at
+// the top of the shopping order down to the dimmest — never a hue. The label
+// still carries the exact meaning; the tier is an ordering cue. color-mix on
+// var(--ink) keeps this to one token (no new color literal), matching the
+// color-mix pattern already used in ui/Parts.jsx.
+const CATEGORY_TIER = {
+  protein: 82, "dairy-eggs": 70, "fruit-veg": 60, grains: 50,
+  "fats-nuts-oils": 42, pantry: 34, drinks: 27,
+};
+export const CATEGORY_DOT = (slug) =>
+  `color-mix(in srgb, ${C.ink} ${CATEGORY_TIER[slug] ?? 38}%, transparent)`;
 
 export const SOURCE_LABEL = {
   "usda": "USDA-VERIFIED",

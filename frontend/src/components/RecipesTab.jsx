@@ -6,7 +6,7 @@ import {
 } from "lucide-react";
 import { C } from "../lib/theme.js";
 import { toHouseholdUnit } from "../lib/householdUnits.js";
-import { Card, Btn, Chip, PageHead, ErrorNote } from "./ui/Parts.jsx";
+import { Card, Btn, Chip, PageHead, ErrorNote, EmptyNote } from "./ui/Parts.jsx";
 import { SkeletonRows } from "./ui/Skeleton.jsx";
 import { api } from "../lib/api.js";
 
@@ -337,17 +337,27 @@ export default function RecipesTab({ openFoods, profile }) {
     api.getCart().then(setCartItems).catch(() => {});
   }, []);
 
+  // Optimistic cart toggle: update the list now (a temp row on add, using the
+  // recipe we already have), reconcile with the server row, roll back on error.
   const toggleCart = async (recipeId) => {
     setCartBusyId(recipeId);
+    const had = cartRecipeIds.has(recipeId);
+    const prev = cartItems;
+    if (had) {
+      setCartItems((c) => c.filter((i) => i.recipeId !== recipeId));
+    } else {
+      const recipe = recipes.find((r) => r.id === recipeId);
+      setCartItems((c) => [{ id: `tmp-${recipeId}`, recipeId, recipe }, ...c]);
+    }
     try {
-      if (cartRecipeIds.has(recipeId)) {
+      if (had) {
         await api.removeFromCart(recipeId);
-        setCartItems((c) => c.filter((i) => i.recipeId !== recipeId));
       } else {
         const item = await api.addToCart(recipeId);
-        setCartItems((c) => [item, ...c]);
+        setCartItems((c) => c.map((i) => (i.id === `tmp-${recipeId}` ? item : i)));
       }
     } catch (e) {
+      setCartItems(prev); // rollback to the pre-toggle truth
       setError(e.message);
     } finally {
       setCartBusyId(null);
@@ -686,6 +696,12 @@ export default function RecipesTab({ openFoods, profile }) {
 
           {loading ? (
             <SkeletonRows rows={7} />
+          ) : groups.every(([, list]) => list.length === 0) ? (
+            <Card>
+              <EmptyNote icon={searching ? Search : Utensils}
+                title={searching ? "No recipes match your search" : "No recipes yet"}
+                hint={searching ? "Try a different name, or clear the search." : "Generate one with AI or import from a recipe URL on the left — it lands here."} />
+            </Card>
           ) : (
             <div className="flex flex-col gap-2.5">
               {groups.map(([groupName, list]) => {

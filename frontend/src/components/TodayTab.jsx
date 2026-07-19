@@ -1,23 +1,203 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import {
   ComposedChart, Line, XAxis, YAxis, CartesianGrid, Tooltip,
   ReferenceLine, ResponsiveContainer,
 } from "recharts";
-import { Camera, Trash2, CalendarDays, ArrowRight, LineChart } from "lucide-react";
+import { Camera, Trash2, CalendarDays, ArrowRight, LineChart, NotebookPen, ClipboardCheck, Plus } from "lucide-react";
 import { C, getStampStyle } from "../lib/theme.js";
 import { todayStr, dayNum, addDays, fmtD } from "../lib/dates.js";
 import { displayWeight, parseWeight, weightUnit, rateUnit, displayRate, weightInputBounds } from "../lib/units.js";
-import { Card, Stat, Btn, Stamp, Ring, MacroBar, PageHead, EmptyNote } from "./ui/Parts.jsx";
-import { Skeleton } from "./ui/Skeleton.jsx";
+import { Card, Stat, Btn, Chip, Stamp, Ring, MacroBar, PageHead, EmptyNote, ErrorNote } from "./ui/Parts.jsx";
+import { Skeleton, SkeletonRows } from "./ui/Skeleton.jsx";
 import { api } from "../lib/api.js";
 
 const kc = (n) => Math.round(n).toLocaleString("en-CA");
 const r1 = (n) => Math.round(n * 10) / 10;
 
+// Diary source → a short, neutral label. Provenance is text, not color
+// (green is reserved; the macro triad means macros only).
+const DIARY_SOURCE_LABEL = { planned: "from plan", "log-planned": "from plan", recipe: "recipe", manual: "logged" };
+
 // dayOfWeek in the plan model is 0=Monday..6=Sunday; JS getDay() is 0=Sunday.
 function isoWeekday() {
   const jsDay = new Date().getDay();
   return jsDay === 0 ? 6 : jsDay - 1;
+}
+
+// ── Food diary ("ate as planned") ─────────────────────────────────────────
+// Planned vs. actually-eaten. The backend contract is being built in parallel,
+// so every path degrades gracefully: a 404 (route not shipped) or a missing
+// field yields a calm empty state and inline notes — it never throws. Entries
+// carry proteinG/carbG/fatG; the totals block carries protein/carb/fat.
+function DiaryCard({ date, macros, hasPlan }) {
+  const inpStyle = { background: C.card2, border: `1.5px solid ${C.rule}`, color: C.ink };
+  const [diary, setDiary] = useState(undefined); // undefined=loading | {entries,totals} | "error"
+  const [soon, setSoon] = useState(false);       // GET 404 → route not live yet
+  const [busy, setBusy] = useState(false);
+  const [adding, setAdding] = useState(false);
+  const [form, setForm] = useState({ name: "", kcal: "", proteinG: "", carbG: "", fatG: "" });
+  const [note, setNote] = useState(null);        // calm inline note (never red — law b)
+
+  const load = useCallback(async () => {
+    try {
+      const res = await api.getDiary(date);
+      setDiary({ entries: res?.entries ?? [], totals: res?.totals ?? null });
+      setSoon(false);
+    } catch (e) {
+      if (e.status === 404) { setDiary({ entries: [], totals: null }); setSoon(true); }
+      else setDiary("error");
+    }
+  }, [date]);
+  useEffect(() => { load(); }, [load]);
+
+  const entries = (diary && diary !== "error") ? (diary.entries || []) : [];
+  const totals = useMemo(() => {
+    const d = (diary && diary !== "error") ? diary : null;
+    const t = d ? d.totals : null;
+    if (t) return { kcal: t.kcal ?? 0, protein: t.protein ?? 0, carb: t.carb ?? 0, fat: t.fat ?? 0 };
+    // No server totals (or after an optimistic delete): sum the entries.
+    return (d ? d.entries || [] : []).reduce((a, e) => ({
+      kcal: a.kcal + (e.kcal || 0), protein: a.protein + (e.proteinG || 0),
+      carb: a.carb + (e.carbG || 0), fat: a.fat + (e.fatG || 0),
+    }), { kcal: 0, protein: 0, carb: 0, fat: 0 });
+  }, [diary]);
+
+  // A 404 on any action means the route isn't live yet — say so calmly.
+  const friendly = (e, fallback) =>
+    e.status === 404 ? "Food logging isn't live yet — it activates when the diary update ships." : (e.message || fallback);
+
+  const logPlanned = async () => {
+    setBusy(true); setNote(null);
+    try {
+      const res = await api.logPlannedDiary(date);
+      setDiary({ entries: res?.entries ?? [], totals: res?.totals ?? null });
+      setSoon(false);
+    } catch (e) { setNote(friendly(e, "Couldn't copy your plan — try again.")); if (e.status === 404) setSoon(true); }
+    finally { setBusy(false); }
+  };
+
+  const submitEntry = async () => {
+    const kcal = +form.kcal;
+    if (!form.name.trim() || !kcal) { setNote("Give the item a name and its calories."); return; }
+    setBusy(true); setNote(null);
+    try {
+      await api.addDiaryEntry({
+        date, name: form.name.trim(), kcal,
+        proteinG: +form.proteinG || 0, carbG: +form.carbG || 0, fatG: +form.fatG || 0,
+      });
+      setForm({ name: "", kcal: "", proteinG: "", carbG: "", fatG: "" });
+      setAdding(false);
+      await load(); // re-fetch for authoritative ids + totals
+    } catch (e) { setNote(friendly(e, "Couldn't save that entry — try again.")); if (e.status === 404) setSoon(true); }
+    finally { setBusy(false); }
+  };
+
+  // Optimistic delete: drop the row now, restore it if the server rejects.
+  const removeEntry = async (id) => {
+    const prev = diary;
+    setNote(null);
+    setDiary((d) => ({ entries: (d.entries || []).filter((e) => e.id !== id), totals: null }));
+    try {
+      await api.deleteDiaryEntry(id);
+    } catch (e) {
+      setDiary(prev); // rollback to the pre-delete truth
+      setNote(friendly(e, "Couldn't remove that entry — try again."));
+    }
+  };
+
+  const over = macros?.kcal ? totals.kcal > macros.kcal : false;
+
+  return (
+    <Card section="DIARY" title="Food diary — what you actually ate" className="xl:col-span-12">
+      <div className="flex flex-wrap items-center gap-2 mb-4">
+        <Btn small onClick={logPlanned} disabled={busy || !hasPlan}>
+          <ClipboardCheck size={12} className="inline mr-1" />{busy ? "Working…" : "Ate as planned"}
+        </Btn>
+        <Btn small kind="ghost" onClick={() => { setAdding((a) => !a); setNote(null); }}>
+          <Plus size={12} className="inline mr-1" />Add item
+        </Btn>
+        {!hasPlan && (
+          <span className="text-[10.5px] font-semibold" style={{ color: C.faintLight }}>
+            Generate a plan to enable "Ate as planned".
+          </span>
+        )}
+      </div>
+
+      {adding && (
+        <div className="flex flex-wrap items-end gap-2 mb-4 p-3 rounded-xl" style={{ background: C.card2, border: `1px solid ${C.rule}` }}>
+          <input className="text-sm px-3 py-2 rounded-lg flex-1 min-w-[160px]" style={inpStyle} placeholder="Item name"
+            value={form.name} onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))} />
+          {[["kcal", "kcal"], ["proteinG", "P (g)"], ["carbG", "C (g)"], ["fatG", "F (g)"]].map(([k, ph]) => (
+            <input key={k} type="number" inputMode="decimal" className="text-sm px-2 py-2 rounded-lg w-20" style={inpStyle} placeholder={ph}
+              value={form[k]} onChange={(e) => setForm((f) => ({ ...f, [k]: e.target.value }))}
+              onKeyDown={(e) => e.key === "Enter" && !busy && submitEntry()} />
+          ))}
+          <Btn small onClick={submitEntry} disabled={busy}>{busy ? "…" : "Save"}</Btn>
+        </div>
+      )}
+
+      {note && <div className="text-xs font-semibold mb-3" style={{ color: C.warn }}>{note}</div>}
+
+      {diary === undefined ? (
+        <SkeletonRows rows={3} />
+      ) : diary === "error" ? (
+        <ErrorNote msg="Couldn't load today's diary." hint="Switch tabs and back to retry; if it keeps failing, restart the app." />
+      ) : entries.length === 0 ? (
+        <EmptyNote icon={NotebookPen} title="Nothing logged today yet"
+          hint={soon
+            ? "Logging activates when the diary update ships — your plan and targets work as normal until then."
+            : "Use “Ate as planned” to copy today’s plan, or add items as you eat."} />
+      ) : (
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
+          {/* eaten vs target */}
+          <div className="lg:col-span-5">
+            <div className="text-xs font-semibold" style={{ color: C.faint }}>Eaten today</div>
+            <div className="mono stat-hero text-3xl" style={{ color: over ? C.warn : C.ink }}>
+              {kc(totals.kcal)}
+              <span className="text-xs ml-1" style={{ color: C.faint, fontWeight: 600, letterSpacing: 0 }}>/ {kc(macros?.kcal ?? 0)} kcal</span>
+            </div>
+            {over && (
+              <div className="text-xs font-semibold mt-1 mb-2" style={{ color: C.warn }}>
+                Over by {kc(totals.kcal - macros.kcal)} kcal — tomorrow&apos;s target already adjusts to your data.
+              </div>
+            )}
+            <div className="flex flex-col gap-3 mt-3">
+              <MacroBar label="Protein" actual={totals.protein} target={macros?.proteinHi ?? 0} color={C.protein} />
+              <MacroBar label="Carb" actual={totals.carb} target={macros?.carbHi ?? 0} color={C.carb} />
+              <MacroBar label="Fat" actual={totals.fat} target={macros?.fatHi ?? 0} color={C.fat} />
+            </div>
+          </div>
+          {/* entries */}
+          <div className="lg:col-span-7">
+            <div className="text-[10.5px] font-extrabold uppercase tracking-wide mb-1" style={{ color: C.faintLight }}>
+              {entries.length} item{entries.length === 1 ? "" : "s"} logged
+            </div>
+            {entries.map((e) => (
+              <div key={e.id} className="flex items-center justify-between gap-3 py-2 row-host" style={{ borderBottom: `1px solid ${C.rule}` }}>
+                <div className="min-w-0">
+                  <div className="text-sm font-bold truncate" style={{ color: C.ink }}>{e.name}</div>
+                  <div className="text-[10.5px] font-semibold" style={{ color: C.faintLight }}>
+                    {[e.slotType, DIARY_SOURCE_LABEL[e.source] || e.source].filter(Boolean).join(" · ") || "logged"}
+                  </div>
+                </div>
+                <div className="flex items-center gap-2 shrink-0">
+                  <span className="mono text-sm font-extrabold" style={{ color: C.ink }}>{kc(e.kcal || 0)}</span>
+                  <span className="hidden md:flex gap-1">
+                    <Chip color={C.proteinText} bg={`${C.protein}1F`}>{r1(e.proteinG || 0)}P</Chip>
+                    <Chip color={C.fatText} bg={`${C.fat}1F`}>{r1(e.fatG || 0)}F</Chip>
+                    <Chip color={C.carbText} bg={`${C.carb}1F`}>{r1(e.carbG || 0)}C</Chip>
+                  </span>
+                  <button onClick={() => removeEntry(e.id)} className="row-reveal" aria-label={`Remove ${e.name}`} style={{ color: C.faintLight }}>
+                    <Trash2 size={14} />
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </Card>
+  );
 }
 
 export default function TodayTab({ profile, summary, refresh, openTrend }) {
@@ -182,6 +362,9 @@ export default function TodayTab({ profile, summary, refresh, openTrend }) {
           </div>
         </Card>
 
+        {/* ── food diary (planned vs. actually-eaten) ── */}
+        <DiaryCard date={todayStr()} macros={macros} hasPlan={todaySlots.length > 0} />
+
         {/* ── trend snapshot ── */}
         <Card section="CURVE" title="Trend snapshot" className="xl:col-span-7">
           {sorted.length === 0 ? (
@@ -225,7 +408,7 @@ export default function TodayTab({ profile, summary, refresh, openTrend }) {
         {/* ── recent entries ── */}
         <Card section="LOG" title="Recent entries" className="xl:col-span-5">
           {sorted.length === 0 && (
-            <div className="text-sm font-semibold" style={{ color: C.faint }}>No entries. Log Day 1.</div>
+            <EmptyNote title="No weigh-ins yet" hint="Log Day 1 above to start the log." />
           )}
           {[...sorted].reverse().slice(0, 8).map((e) => (
             <div key={e.date} className="flex items-center justify-between py-2"
