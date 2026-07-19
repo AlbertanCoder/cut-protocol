@@ -8,6 +8,13 @@ every item. Work top to bottom — the tiers are ordered by how much they matter
 Rule of thumb per session: pick ONE item, fix it, add/flip the regression test,
 verify live, commit. Same discipline as the overhaul phases.
 
+> **Reconciled 2026-07-18 (branch `allergy-tier1`):** this list was distilled
+> from the audit DOC, but most of Tiers 1–2 had already been fixed in the
+> Stage-C commits (`39ecc10`, `fa571f6`, `f59149c`, `f5faad6`) before it was
+> written. Boxes below are ticked against the actual code, with refs. The
+> residual C1 gaps (unported species/carrier keywords + the exhaustive
+> per-allergy sweep tests the audit demanded) are closed on this branch.
+
 ---
 
 ## Tier 1 — The allergy promise (fix before everything else)
@@ -15,7 +22,13 @@ verify live, commit. Same discipline as the overhaul phases.
 The app's one zero-tolerance rule ("nothing excluded is ever surfaced") is
 currently broken in six allergy categories. This tier restores it.
 
-- [ ] **C1 — Allergy synonym lists are materially incomplete.**
+- [x] **C1 — Allergy synonym lists are materially incomplete.**
+      **Done:** vocabulary hardened in `39ecc10`; residual gaps closed on
+      `allergy-tier1` (17 fish species/roe/dashi ported from the style list;
+      white chocolate — the last live leak in a 941-name pool sweep — plus
+      burrata/toffee/caramel sauce/naan for dairy) and locked by
+      `tests/allergySweep.test.js`: family-oracle drift test + full-corpus
+      sweep + safe-food guards.
       `backend/src/lib/dietaryFilter.js` `CATEGORY_SYNONYMS` never got the
       exhaustive 854-food-name hardening the diet-style keywords got in Phase 4.
       Verified leaks: gluten (soy sauce, pastas, pastry, beer, hoisin — 16% of
@@ -28,25 +41,25 @@ currently broken in six allergy categories. This tier restores it.
       regression tests that sweep the full food table like the Phase 4 audit did.
       This is the biggest single item on the list — budget a full session.
 
-- [ ] **C4 — "soy protein" as a free-text exclusion doesn't catch tofu/tempeh/edamame.**
+- [x] **C4 — "soy protein" as a free-text exclusion doesn't catch tofu/tempeh/edamame.** *(done in `39ecc10` — `"soy protein"` key exists, oil spared, tested)*
       Falls through to literal substring matching, so `Tofu` passes (verified live).
       **Fix:** add a `"soy protein"` key to `CATEGORY_SYNONYMS` (tofu, tempeh,
       edamame, soy milk, TVP, miso — deliberately NOT soybean oil), matching the
       definition `aiRecipeClient.js` already uses.
 
-- [ ] **C2 — AI recipe generation ignores the user's profile.**
+- [x] **C2 — AI recipe generation ignores the user's profile.** *(done in `fa571f6`)*
       `backend/src/lib/aiRecipeClient.js` hardcodes one person's three allergies
       for every account; a peanut-allergic user's drafts are never screened for
       peanuts. **Fix:** build the blocklist and prompt exclusions from
       `profile.excludedFoods` + `dietaryStyle`, keeping the static three as a floor.
 
-- [ ] **C3 — Legacy `/swap` endpoint writes an unfiltered AI recipe into the plan.**
+- [x] **C3 — Legacy `/swap` endpoint writes an unfiltered AI recipe into the plan.** *(done in `fa571f6`)*
       `weeklyPlanner.js` `tryAiFallback` → enabled in `plans.js`. The UI no longer
       calls it, but the server route is live. **Fix:** simplest is to delete the
       endpoint; otherwise run its output through the dietary filter and return an
       honest unsolved slot on rejection.
 
-- [ ] **C5 + M11 — Profile validation gaps (one fix, two findings).**
+- [x] **C5 + M11 — Profile validation gaps (one fix, two findings).** *(done in Stage C — vitals bounds at `routes/profile.js:68`, `matchesExclusionTerm` hardened with `String(term ?? "")`)*
       ProfileTab commits zeroed age/height/goal on clear-then-blur (silently
       corrupts every derived number), and `excludedFoods` accepts non-strings
       (one bad element 500s plans and library until repaired).
@@ -62,40 +75,40 @@ critical findings") — it completes the story the public audit started.
 
 ## Tier 2 — Math & data integrity majors
 
-- [ ] **M1 — The documented RMR×0.95 safety floor isn't implemented.**
+- [x] **M1 — The documented RMR×0.95 safety floor isn't implemented.** *(done — `bmrEngine.js:140` `rmrFloor = Math.round(rmr * 0.95)`)*
       `bmrEngine.js` `effectiveFloor` only takes max(sex floor, user floor); the
       constitution's RMR term is missing (proven 457 kcal shortfall case).
       **Fix:** thread `rmr` into `deriveTarget`, include `Math.round(rmr*0.95)`.
 
-- [ ] **M9 — accept-day / apply enforce no portion bounds.**
+- [x] **M9 — accept-day / apply enforce no portion bounds.** *(done in `f59149c`)*
       `rebuildSlotFromClient` in `routes/plans.js` accepted a ×10 portion and a
       44,000-kcal slot in testing. **Fix:** validate grams against
       `baseGrams × [0.5, 2]` and derive scale labels server-side.
 
-- [ ] **M5 — Recipe edit is non-transactional.**
+- [x] **M5 — Recipe edit is non-transactional.** *(done — `routes/recipes.js:203` wraps in `$transaction`)*
       `PUT /recipes/:id` deletes ingredients before the fallible name update; a
       409 leaves new ingredients under old cached macros. **Fix:** wrap in
       `$transaction` (`training.js` already shows the pattern).
 
-- [ ] **M7 — Grocery list silently drops slots whose recipe was deleted.**
+- [x] **M7 — Grocery list silently drops slots whose recipe was deleted.** *(done in `f59149c`)*
       Generation filters on `recipeId`, but the slot's ingredients JSON is intact
       and still rendered/cooked. **Fix:** filter on non-empty `ingredients` instead.
 
-- [ ] **M10 — Week-generate diagnosis blames diet/allergies when prep-time was
-      the real constraint.** Pass raw/afterDiet/afterPrep counts into the week
+- [x] **M10 — Week-generate diagnosis blames diet/allergies when prep-time was
+      the real constraint.** *(done in `f59149c`)* Pass raw/afterDiet/afterPrep counts into the week
       path's diagnosis the way day-options already does.
 
-- [ ] **M8 — Keto carb ceiling applies to the solver pool but not the library.**
+- [x] **M8 — Keto carb ceiling applies to the solver pool but not the library.** *(done in `f59149c` — `KETO_RECIPE_CARB_CEILING_G` single-sourced in dietaryFilter.js)*
       Keto users browse and cart 488 recipes the solver will reject with a
       misleading error. **Fix:** apply the ceiling in `GET /recipes`, count it
       in `hiddenCount`.
 
-- [ ] **M12 — Cart accepts and shops non-compliant recipes.**
+- [x] **M12 — Cart accepts and shops non-compliant recipes.** *(done in `f59149c`)*
       No flag when diet/allergies change after adding; grocery-list output can
       contain the allergen with no note. **Fix:** mirror the `skippedForDiet`
       compliance check in cart GET and grocery-list.
 
-- [ ] **M13–M15 — UI reliability cluster.**
+- [x] **M13–M15 — UI reliability cluster.** *(done — M13 in `f59149c`, M14/M15 + minors in `f5faad6`)*
       (a) Fresh-generate grocery list renders undecorated `bySection` — checkboxes
       dead, purchase units missing (return decorated data or group client-side
       from `items`); (b) rapid allergy/formula toggles race — concurrent PUTs from
