@@ -40,11 +40,18 @@ const ORACLES = {
     "mullet", "catfish", "skate", "dogfish", "pomfret", "milkfish",
     "tilefish", "wahoo", "marlin", "caviar", "roe", "surimi",
     "fish sauce", "dashi", "bonito",
+    // Compound/generic carrier: Thai curry paste standardly contains fish
+    // sauce and/or shrimp paste (see dietaryFilter.js's curry-paste note).
+    "curry paste",
   ],
   shellfish: [
     "shrimp", "scallop", "prawn", "crab", "lobster", "mussel", "clam",
     "oyster", "crayfish", "crawfish", "squid", "calamari", "octopus",
     "cuttlefish", "conch", "whelk", "cockle", "oyster sauce", "shrimp paste",
+    // Compound/generic carrier with no species word: Thai curry paste is made
+    // with shrimp paste (kapi). This app's own vegan filter already treats it
+    // as animal-derived; the shellfish allergy must too.
+    "curry paste",
   ],
   dairy: [
     "cheese", "yogurt", "yoghurt", "whey", "casein", "ghee", "skyr", "kefir",
@@ -106,5 +113,59 @@ test("safe foods still survive the expanded lists (over-exclusion has limits)", 
 test("new dairy carriers are excluded as intended (butter/cream confections, yogurt breads)", () => {
   for (const name of ["Toffee Popcorn", "Caramel Sauce", "Naan Bread", "Burrata"]) {
     assert.ok(matchesExclusionTerm(name, "dairy"), `${name} carries dairy by standard recipe and must be excluded`);
+  }
+});
+
+// Compound/generic-ingredient allergy gap (patch 02 / PABLO_REVIEW §2.5):
+// generic blended-product names that carry an allergen with no species/category
+// word in the name defeat literal category matching. This sweep asserts every
+// such term the audit named is now treated as containing its allergen, erring
+// toward over-exclusion (the safe direction for a declared allergy).
+test("compound/generic product names are caught by their allergen category (patch 02 sweep)", () => {
+  // [ingredient name, allergy category] — each MUST be excluded.
+  const mustCatch = [
+    ["Frozen Seafood mix", "shellfish"],   // the confirmed live leak
+    ["Mixed Seafood Medley", "shellfish"],
+    ["Seafood stock", "shellfish"],
+    ["Surimi sticks", "shellfish"],
+    ["Thai Red Curry Paste", "shellfish"], // shrimp paste (kapi) — the newly-closed gap
+    ["Red Curry Paste", "shellfish"],
+    ["Thai Green Curry Paste", "shellfish"],
+    ["Thai Red Curry Paste", "fish"],      // fish sauce / shrimp paste
+    ["Green Curry Paste", "fish"],
+    ["Chicken Stock Cube", "gluten"],      // hidden wheat filler
+    ["Beef Bouillon", "gluten"],
+    ["Instant Gravy Mix", "gluten"],
+    ["Chicken Stock Cube", "soy"],         // hidden hydrolyzed-soy filler
+    ["Beef Bouillon", "soy"],
+    ["Mixed Nuts", "tree nuts"],
+    ["Trail Mix", "tree nuts"],
+    ["Mixed Nuts", "nuts"],
+  ];
+  for (const [name, cat] of mustCatch) {
+    assert.ok(matchesExclusionTerm(name, cat), `"${name}" must be excluded under a ${cat} allergy (compound/generic carrier)`);
+  }
+});
+
+// The over-exclusion must stay SCOPED — the audit measured that treating every
+// blended/compound product as ambiguous for every allergen newly excluded 38
+// recipes (36 via curry POWDER / five-spice, which carry no established
+// allergen). Curry PASTE is caught (shrimp paste); curry POWDER is not.
+test("compound expansion stays scoped: curry POWDER / spice blends are NOT flagged for shellfish or fish", () => {
+  for (const name of ["Curry Powder", "Jamaican Curry Powder", "Five Spice Powder", "Madras Curry Powder"]) {
+    assert.ok(!matchesExclusionTerm(name, "shellfish"), `${name} has no established shellfish link — must stay available`);
+    assert.ok(!matchesExclusionTerm(name, "fish"), `${name} has no established fish link — must stay available`);
+  }
+});
+
+// Real-corpus proof the leak is closed: no ingredient literally containing
+// "curry paste" survives a shellfish or fish exclusion in the shipped pool.
+test("real-corpus sweep: every 'curry paste' ingredient is excluded under shellfish AND fish", async () => {
+  const names = await corpusPromise;
+  const pastes = names.filter((n) => /curry paste/i.test(n));
+  assert.ok(pastes.length >= 3, `fixture guard: expected ≥3 curry-paste ingredient names in the corpus, found ${pastes.length} (${pastes.join(", ")})`);
+  for (const n of pastes) {
+    assert.ok(matchesExclusionTerm(n, "shellfish"), `"${n}" must be excluded under a shellfish allergy (contains shrimp paste)`);
+    assert.ok(matchesExclusionTerm(n, "fish"), `"${n}" must be excluded under a fish allergy (contains fish sauce/shrimp paste)`);
   }
 });

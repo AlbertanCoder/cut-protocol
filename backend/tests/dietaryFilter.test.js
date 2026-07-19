@@ -177,6 +177,22 @@ test("compound-ingredient category expansion is scoped, not universal - curry po
   assert.equal(result.length, 2, "curry powder and five-spice have no established shellfish link and must not be excluded");
 });
 
+test("curry PASTE (hidden shrimp paste / fish sauce) is excluded for shellfish and fish, while curry POWDER is spared (patch 02 gap close)", () => {
+  // Thai curry paste standardly contains shrimp paste (shellfish) and fish
+  // sauce (fish); the codebase's own vegan filter already treats it as
+  // animal-derived. Curry powder is a dried spice blend with neither carrier.
+  const pool = [
+    { name: "Thai Red Curry Paste", category: "other" },
+    { name: "Green Curry Paste", category: "other" },
+    { name: "Curry Powder", category: "other" },
+  ];
+  const shellfish = applyDietaryFilters(pool, { dietaryStyle: "none", excludedFoods: ["shellfish"] }).map((f) => f.name);
+  assert.deepEqual(shellfish, ["Curry Powder"], "only curry powder survives a shellfish exclusion; both curry pastes are removed");
+
+  const fish = applyDietaryFilters(pool, { dietaryStyle: "none", excludedFoods: ["fish"] }).map((f) => f.name);
+  assert.deepEqual(fish, ["Curry Powder"], "only curry powder survives a fish exclusion; both curry pastes are removed");
+});
+
 test("dairy exclusion catches milk/cheese but still spares plant-based 'milk' items", () => {
   const result = applyDietaryFilters(SYNONYM_TEST_POOL, { dietaryStyle: "none", excludedFoods: ["dairy"] });
   const names = result.map((f) => f.name.toLowerCase());
