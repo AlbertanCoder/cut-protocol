@@ -61,8 +61,25 @@ function slotKey(s) {
   return `${s.dayOfWeek}:${s.slotType}:${s.slotIndex}`;
 }
 
-async function upsertSlot(planId, slot) {
-  return prisma.planSlot.upsert({
+// Which existing slot ids survive a week regenerate. Two ways to survive:
+// the fresh week covers the same slot key (the row is overwritten in place
+// by upsert), or the slot is LOCKED and its recipe still complies with the
+// current diet/allergy rules. The second clause is the meal-config-shrink
+// fix (audit Tier 4): shrinking 4 meals to 3 used to silently DELETE a
+// locked 4th meal — the lock promise accept-day already honours (its keep
+// filter retains `s.locked` rows). Compliance-gating the lock keeps the
+// Stage-C L9 rule intact: a slot locked before a diet change never
+// persists a now-forbidden meal.
+function slotIdsToKeep(existingSlots, finalSlots, compliantPoolIds) {
+  return existingSlots
+    .filter((s) =>
+      finalSlots.some((f) => slotKey(f) === slotKey(s))
+      || (s.locked && s.recipeId != null && compliantPoolIds.has(s.recipeId)))
+    .map((s) => s.id);
+}
+
+async function upsertSlot(planId, slot, db = prisma) {
+  return db.planSlot.upsert({
     where: { planId_dayOfWeek_slotType_slotIndex: { planId, dayOfWeek: slot.dayOfWeek, slotType: slot.slotType, slotIndex: slot.slotIndex } },
     update: {
       recipeId: slot.recipeId, proteinScale: slot.proteinScale, sidesScale: slot.sidesScale,
@@ -176,16 +193,19 @@ router.post("/generate", async (req, res) => {
         : s;
     });
 
-    const plan = await prisma.plan.upsert({
-      where: { userId_startDate: { userId: req.userId, startDate: monday } },
-      update: {},
-      create: { userId: req.userId, startDate: monday },
+    // One transaction for the whole rewrite (audit Tier 4): the old shape —
+    // deleteMany, then dozens of sequential upserts — could die midway and
+    // leave a half-written week on disk. Same pattern as recipes.js/training.js.
+    const full = await prisma.$transaction(async (tx) => {
+      const plan = await tx.plan.upsert({
+        where: { userId_startDate: { userId: req.userId, startDate: monday } },
+        update: {},
+        create: { userId: req.userId, startDate: monday },
+      });
+      await tx.planSlot.deleteMany({ where: { planId: plan.id, id: { notIn: slotIdsToKeep(existing?.slots || [], finalSlots, compliantPoolIds) } } });
+      for (const s of finalSlots) await upsertSlot(plan.id, s, tx);
+      return tx.plan.findUnique({ where: { id: plan.id }, include: PLAN_INCLUDE });
     });
-
-    await prisma.planSlot.deleteMany({ where: { planId: plan.id, id: { notIn: (existing?.slots || []).filter((s) => finalSlots.some((f) => slotKey(f) === slotKey(s))).map((s) => s.id) } } });
-    for (const s of finalSlots) await upsertSlot(plan.id, s);
-
-    const full = await prisma.plan.findUnique({ where: { id: plan.id }, include: PLAN_INCLUDE });
     res.json(full);
   } catch (e) {
     res.status(e.status || 500).json({ error: e.message });
@@ -261,10 +281,12 @@ router.post("/accept-day", async (req, res) => {
     const keepIds = (plan.slots || [])
       .filter((s) => s.dayOfWeek !== dayOfWeek || s.locked || rebuilt.some((r) => slotKey(r) === slotKey(s)))
       .map((s) => s.id);
-    await prisma.planSlot.deleteMany({ where: { planId: plan.id, dayOfWeek, id: { notIn: keepIds } } });
-    for (const r of rebuilt) await upsertSlot(plan.id, r);
-
-    const full = await prisma.plan.findUnique({ where: { id: plan.id }, include: PLAN_INCLUDE });
+    // Atomic day rewrite — same reasoning as /generate's transaction above.
+    const full = await prisma.$transaction(async (tx) => {
+      await tx.planSlot.deleteMany({ where: { planId: plan.id, dayOfWeek, id: { notIn: keepIds } } });
+      for (const r of rebuilt) await upsertSlot(plan.id, r, tx);
+      return tx.plan.findUnique({ where: { id: plan.id }, include: PLAN_INCLUDE });
+    });
     res.json(full);
   } catch (e) {
     res.status(e.status || 500).json({ error: e.message });
@@ -537,3 +559,4 @@ module.exports = router;
 // Exposed for unit testing (attached to the router function; app.use unaffected).
 module.exports.rebuildSlotFromClient = rebuildSlotFromClient;
 module.exports.filterRecipePool = filterRecipePool;
+module.exports.slotIdsToKeep = slotIdsToKeep;

@@ -151,19 +151,24 @@ critical findings") — it completes the story the public audit started.
 
 ## Tier 4 — Worthwhile minors (curated from the audit's 34; rest are in the doc)
 
-- [ ] Negative carb targets render for high-LBM + floor-clamped profiles
+- [x] Negative carb targets render for high-LBM + floor-clamped profiles
       ("~0–-131 g" and a broken ratio bar) — clamp and show an honest note
-      (`bmrEngine.js` macros).
-- [ ] Imperial minimum weight (77 lb) is below the backend's 35 kg guard —
+      (`bmrEngine.js` macros). *(done in Stage C — #28 clamp at `bmrEngine.js:189`)*
+- [x] Imperial minimum weight (77 lb) is below the backend's 35 kg guard —
       entering the stated minimum 400s (`units.js` vs `weighins.js`).
+      *(done in Stage C — #29, imperial min raised to 78 lb)*
 - [ ] Add Express error middleware + set `NODE_ENV=production` in the packaged
       app — 26/39 handlers are unwrapped and errors leave as stack-trace HTML.
-- [ ] `usdaClient` fetch has no timeout — the one external call that can hang
+- [x] `usdaClient` fetch has no timeout — the one external call that can hang
       minutes (importer and Anthropic calls are already bounded).
+      *(done — `AbortSignal.timeout(10000)` at `usdaClient.js:57`)*
 - [ ] Window: minimum size + remember size/position; 860 px default clips 768p
       screens; menu removal killed all accelerators including devtools.
-- [ ] Week-plan generate/accept-day are non-transactional multi-step writes;
+- [x] Week-plan generate/accept-day are non-transactional multi-step writes;
       locked slots can be deleted on meal-config shrink (`plans.js`).
+      *(done on `allergy-tier1` — both rewrites wrapped in `$transaction`,
+      `slotIdsToKeep()` preserves locked compliant slots through a shrink
+      (L9 compliance gate kept), unit test + live route verification)*
 - [ ] Add non-unique indexes on hot FK columns (RecipeIngredient.recipeId/foodId,
       PlanSlot.recipeId, CartItem.recipeId).
 - [ ] Silent-failure odds and ends: weigh-in rejects invalid input with no
