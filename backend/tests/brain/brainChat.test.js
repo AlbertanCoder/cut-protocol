@@ -1,6 +1,8 @@
 const { test } = require("node:test");
 const assert = require("node:assert/strict");
 const { brainChat } = require("../../src/lib/brain/chat.js");
+const { reviewDay } = require("../../src/lib/brain/critic.js");
+const { makeLedger, memoryStore } = require("../../src/lib/brain/ledger.js");
 
 function food(id, kcal, p, f, c) { return { id, name: id, category: "other", kcal, protein: p, fat: f, carb: c }; }
 function ing(fd, g, role) { return { foodId: fd.id, baseGrams: g, scalable: true, role, food: fd }; }
@@ -15,7 +17,8 @@ const deps = (over = {}) => ({
   enabled: true,
   loadProfile: async () => PROFILE,
   loadLibrary: async () => LIB,
-  runLoop: async () => ({ content: [{ type: "text", text: "Here's a chicken & rice day." }] }),
+  runLoop: async () => ({ content: [{ type: "text", text: "Here's a chicken & rice day." }], usage: { input_tokens: 100, output_tokens: 50 } }),
+  ledger: makeLedger({ store: memoryStore() }), // memory-backed: tests NEVER touch the real LlmUsage table
   ...over,
 });
 
@@ -51,4 +54,35 @@ test("brainChat DEGRADE: a load/model failure returns an honest canned message, 
   const r = await brainChat({ userId: "u", message: "plan me a day" }, deps({ loadLibrary: async () => { throw new Error("db down"); } }));
   assert.equal(r.degraded, true);
   assert.match(r.reply, /deterministic plan/);
+});
+
+// ── G1: cost cap enforced on the live model paths ──
+const zeroCapLedger = () => makeLedger({ store: memoryStore(), caps: { monthlyUsd: 0, dailyUsd: 0, perRequestUsd: 0 } });
+
+test("brainChat CAP: the cost cap denies the call → degrade, and the model is NEVER run", async () => {
+  let called = false;
+  const r = await brainChat({ userId: "u", message: "plan me a high-protein day" }, deps({ ledger: zeroCapLedger(), runLoop: async () => { called = true; return { content: [] }; } }));
+  assert.equal(r.capped, true);
+  assert.equal(r.degraded, true);
+  assert.equal(called, false, "the model must not run once the cap denies");
+});
+
+test("brainChat COST: an allowed chat turn records its usage toward the cap", async () => {
+  const ledger = makeLedger({ store: memoryStore() });
+  await brainChat({ userId: "u", message: "plan me a high-protein day" }, deps({ ledger, runLoop: async () => ({ content: [{ type: "text", text: "ok" }], usage: { input_tokens: 1_000_000, output_tokens: 0 } }) }));
+  assert.ok((await ledger.spentThisMonth()) > 0, "usage recorded → spend accumulates toward the cap");
+});
+
+test("critic reviewDay CAP: the cost cap denies → no-op {ok:true}, the model is NEVER run", async () => {
+  let called = false;
+  const r = await reviewDay({ slots: [], totals: {}, targets: {} }, { enabled: true, ledger: zeroCapLedger(), ask: async () => { called = true; return { ok: true }; } });
+  assert.deepEqual(r, { ok: true, issues: [] });
+  assert.equal(called, false, "the critic model must not run once the cap denies");
+});
+
+test("critic reviewDay COST: an allowed review records its usage toward the cap", async () => {
+  const ledger = makeLedger({ store: memoryStore() });
+  const ask = async ({ onUsage }) => { onUsage({ input_tokens: 1_000_000, output_tokens: 0 }); return { ok: true, issues: [] }; };
+  await reviewDay({ slots: [], totals: {}, targets: {} }, { enabled: true, ledger, ask });
+  assert.ok((await ledger.spentThisMonth()) > 0, "the critic turn's usage is recorded");
 });

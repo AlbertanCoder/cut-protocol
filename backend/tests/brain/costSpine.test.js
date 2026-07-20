@@ -1,9 +1,9 @@
 const { test } = require("node:test");
 const assert = require("node:assert/strict");
 const { MODELS, CAPS } = require("../../src/lib/brain/config.js");
-const { costUsd } = require("../../src/lib/brain/pricing.js");
+const { costUsd, estimateUsd } = require("../../src/lib/brain/pricing.js");
 const { needsLLM, pickModel } = require("../../src/lib/brain/router.js");
-const { makeLedger } = require("../../src/lib/brain/ledger.js");
+const { makeLedger, guardedCall } = require("../../src/lib/brain/ledger.js");
 const { validProv, provenanceLint } = require("../../src/lib/brain/telemetry.js");
 
 // ── config ──
@@ -27,6 +27,28 @@ test("ledger precheck: an uncomputable (non-finite/negative) projected cost fail
   assert.equal((await led.precheck(NaN)).allowed, false, "NaN projected cost must deny");
   assert.equal((await led.precheck(-1)).allowed, false, "negative projected cost must deny");
   assert.equal((await led.precheck(0.001)).allowed, true, "a normal small cost is still allowed");
+});
+
+// ── G1: guardedCall — the wrapper every live model path uses ──
+test("estimateUsd: positive conservative estimate; unknown model -> Infinity (fail closed)", () => {
+  assert.ok(estimateUsd("claude-sonnet-5", { turns: 3, maxTokens: 1024 }) > 0);
+  assert.equal(estimateUsd("gpt-4"), Infinity); // unknown -> precheck will deny
+});
+
+test("guardedCall: cap breach DENIES and the model fn never runs", async () => {
+  const led = makeLedger();
+  let called = false;
+  const r = await guardedCall(led, { projectedUsd: Infinity, model: "claude-sonnet-5" }, async () => { called = true; return { usage: {} }; });
+  assert.equal(r.allowed, false);
+  assert.equal(called, false, "the model fn must NOT run when the cap denies");
+  assert.ok(r.notice, "a degrade notice is returned");
+});
+
+test("guardedCall: ALLOW runs the fn and records ACTUAL usage toward the cap", async () => {
+  const led = makeLedger();
+  const r = await guardedCall(led, { projectedUsd: 0.05, model: "claude-sonnet-5", phase: "test" }, async () => ({ usage: { input_tokens: 1_000_000, output_tokens: 0 } }));
+  assert.equal(r.allowed, true);
+  assert.ok((await led.spentThisMonth()) > 0, "recorded usage accumulates toward the cap");
 });
 
 // ── router ──

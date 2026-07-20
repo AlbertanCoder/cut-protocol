@@ -6,6 +6,9 @@
 // error/timeout/garbage -> { ok:true, issues:[] }, i.e. a no-op that leaves the
 // deterministic day exactly as it was.
 const { isBrainEnabled, askJSON } = require("./llm.js");
+const { defaultLedger, guardedCall } = require("./ledger.js");
+const { estimateUsd } = require("./pricing.js");
+const { MODELS } = require("./config.js");
 
 const SYSTEM = [
   "You are a meal-plan QUALITY CRITIC for a cut-phase (fat-loss) meal planning app.",
@@ -69,11 +72,20 @@ function normalize(raw) {
   return { ok, issues, constraints };
 }
 
-async function reviewDay(input = {}) {
-  if (!isBrainEnabled()) return { ok: true, issues: [] };
+async function reviewDay(input = {}, deps = {}) {
+  const { enabled = isBrainEnabled(), ask = askJSON, model = MODELS.workhorse } = deps;
+  if (!enabled) return { ok: true, issues: [] };
+  // LAW 4: cap-guard the critic's model call. The ledger is built only AFTER the
+  // gate, so the brain-off path never constructs one. Deny -> no-op (the
+  // deterministic day is left exactly as it was, same as any critic error).
+  const ledger = deps.ledger || defaultLedger();
+  const projectedUsd = estimateUsd(model, { turns: 1, maxTokens: 1024 });
   try {
-    const raw = await askJSON({ system: SYSTEM, user: buildUserPrompt(input) });
-    return normalize(raw);
+    let usage = null;
+    const gate = await guardedCall(ledger, { projectedUsd, userId: input.userId, model, phase: "critic", intent: "critic" },
+      async () => ({ data: await ask({ system: SYSTEM, user: buildUserPrompt(input), model, onUsage: (u) => { usage = u; } }), usage }));
+    if (!gate.allowed) return { ok: true, issues: [] };
+    return normalize(gate.result.data);
   } catch {
     return { ok: true, issues: [] };
   }
