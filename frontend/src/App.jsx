@@ -13,6 +13,7 @@ import PlanTab from "./components/PlanTab.jsx";
 import FoodsTab from "./components/FoodsTab.jsx";
 import RecipesTab from "./components/RecipesTab.jsx";
 import TrainingTab from "./components/TrainingTab.jsx";
+import BrainChat from "./components/BrainChat.jsx";
 import BugReportDialog from "./components/BugReportDialog.jsx";
 import HeaderBar from "./components/ui/HeaderBar.jsx";
 import { SkeletonCard } from "./components/ui/Skeleton.jsx";
@@ -167,6 +168,7 @@ export default function App() {
           {tab === "training" && TRAINING === "on" && <TrainingTab />}
         </main>
       </div>
+      <BrainChat />
     </div>
   );
 }

@@ -82,4 +82,9 @@ export const api = {
   logPlannedDiary: (date) => request("/diary/log-planned", { method: "POST", body: JSON.stringify({ date }) }),
   addDiaryEntry: (entry) => request("/diary/entry", { method: "POST", body: JSON.stringify(entry) }),
   deleteDiaryEntry: (id) => request(`/diary/entry/${id}`, { method: "DELETE" }),
+
+  // Stage D2 — brain chat. getBrainStatus gates whether the chat bar renders at
+  // all; brainChat sends one message. Both no-op cleanly when the brain is off.
+  getBrainStatus: () => request("/brain/status"),
+  brainChat: (message, depth) => request("/brain/chat", { method: "POST", body: JSON.stringify({ message, depth }) }),
 };
