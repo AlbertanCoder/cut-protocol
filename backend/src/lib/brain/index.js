@@ -30,6 +30,7 @@ const { PRICING, costUsd } = require("./pricing.js");
 const { needsLLM, pickModel } = require("./router.js");
 const { makeLedger, memoryStore, withUsageLogging } = require("./ledger.js");
 const { validProv, provenanceLint } = require("./telemetry.js");
+const { buildSystemPrompt } = require("./prompts/system.js");
 
 module.exports = {
   // shared single gate
@@ -43,4 +44,6 @@ module.exports = {
   // Stage B — cost / trace / degrade spine
   MODELS, CAPS, PRICING, costUsd, needsLLM, pickModel,
   makeLedger, memoryStore, withUsageLogging, validProv, provenanceLint,
+  // Stage C — persona / system prompt
+  buildSystemPrompt,
 };
