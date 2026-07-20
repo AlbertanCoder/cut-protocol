@@ -48,16 +48,19 @@ function parseJSON(text) {
 // with zero SDK retries (a judgment layer must fail fast into its fallback, not
 // stall a request). Throws on timeout, refusal, missing text, or invalid JSON —
 // callers convert that throw into their documented no-op fallback.
-async function askJSON({ system, user, maxTokens = 1024 } = {}) {
+async function askJSON({ system, user, maxTokens = 1024, model = BRAIN_MODEL, onUsage } = {}) {
   const response = await client().messages.create(
     {
-      model: BRAIN_MODEL,
+      model,
       max_tokens: maxTokens,
       system,
       messages: [{ role: "user", content: user }],
     },
     { timeout: BRAIN_TIMEOUT_MS, maxRetries: 0 }
   );
+  // Surface token usage to the cost ledger BEFORE any throw — the tokens were
+  // spent regardless of whether the body parses (LAW 4 accounting).
+  if (typeof onUsage === "function") onUsage(response.usage || null);
   if (response.stop_reason === "refusal") throw new Error("brain: model declined the request");
   const textBlock = (response.content || []).find((b) => b.type === "text");
   if (!textBlock) throw new Error("brain: no text content in response");
@@ -74,6 +77,7 @@ async function askJSON({ system, user, maxTokens = 1024 } = {}) {
 async function runToolLoop({ system, messages = [], tools = {}, toolDefs = [], maxTurns = 4, maxTokens = 1024, model = BRAIN_MODEL } = {}) {
   const convo = messages.map((m) => ({ ...m }));
   const calls = [];
+  const usage = { input_tokens: 0, output_tokens: 0, cache_read_input_tokens: 0 }; // summed across turns for the cost ledger
   let turns = 0;
   while (turns < maxTurns) {
     turns++;
@@ -81,11 +85,15 @@ async function runToolLoop({ system, messages = [], tools = {}, toolDefs = [], m
       { model, max_tokens: maxTokens, system, messages: convo, tools: toolDefs },
       { timeout: BRAIN_TIMEOUT_MS, maxRetries: 0 }
     );
+    const u = resp.usage || {};
+    usage.input_tokens += u.input_tokens || 0;
+    usage.output_tokens += u.output_tokens || 0;
+    usage.cache_read_input_tokens += u.cache_read_input_tokens || 0;
     const content = resp.content || [];
     convo.push({ role: "assistant", content });
     const toolUses = content.filter((b) => b && b.type === "tool_use");
     if (toolUses.length === 0) {
-      return { stop: resp.stop_reason || "end_turn", content, calls, turns, convo };
+      return { stop: resp.stop_reason || "end_turn", content, calls, turns, convo, usage };
     }
     const results = [];
     for (const tu of toolUses) {
@@ -101,7 +109,7 @@ async function runToolLoop({ system, messages = [], tools = {}, toolDefs = [], m
     }
     convo.push({ role: "user", content: results });
   }
-  return { stop: "max_turns", content: [], calls, turns, convo };
+  return { stop: "max_turns", content: [], calls, turns, convo, usage };
 }
 
 module.exports = {

@@ -16,6 +16,9 @@ const { buildPool } = require("./pool.js");
 const { makeTools } = require("./tools.js");
 const { buildSystemPrompt } = require("./prompts/system.js");
 const { TOOL_DEFS } = require("./selector.js");
+const { defaultLedger, guardedCall } = require("./ledger.js");
+const { estimateUsd } = require("./pricing.js");
+const { MODELS } = require("./config.js");
 
 async function defaultLoadProfile(userId) {
   const { prisma } = require("../prisma.js");
@@ -37,6 +40,7 @@ async function brainChat({ userId, message, depth = "balanced" } = {}, deps = {}
     loadProfile = defaultLoadProfile,
     loadLibrary = defaultLoadLibrary,
     runLoop = runToolLoop,
+    model = MODELS.workhorse,
   } = deps;
 
   if (!enabled) return { available: false };
@@ -53,7 +57,17 @@ async function brainChat({ userId, message, depth = "balanced" } = {}, deps = {}
     const tools = makeTools(pool, profile);
     const system = buildSystemPrompt({ profile, depth, toolNames: Object.keys(tools) });
     const maxTurns = (DEPTH_PROFILES[depth] || DEPTH_PROFILES.balanced).maxIters + 2;
-    const loop = await runLoop({ system, messages: [{ role: "user", content: message }], tools, toolDefs: TOOL_DEFS, maxTurns });
+
+    // LAW 4: enforce the cost cap AROUND the model call (constructed only here,
+    // on the ALLOWED path, so the gated-off state never builds a ledger). Deny ->
+    // degrade with an honest notice; the model is never called, nothing is spent.
+    const ledger = deps.ledger || defaultLedger();
+    const projectedUsd = estimateUsd(model, { turns: maxTurns, maxTokens: 1024 });
+    const gate = await guardedCall(ledger, { projectedUsd, userId, model, phase: "chat", intent: "chat" },
+      () => runLoop({ system, messages: [{ role: "user", content: message }], tools, toolDefs: TOOL_DEFS, maxTurns, model }));
+    if (!gate.allowed) return { available: true, refused: false, degraded: true, capped: true, reply: gate.notice || "The AI coach is paused (cost cap reached). Your deterministic plan on the Plan tab is unaffected." };
+
+    const loop = gate.result;
     const text = (loop.content || []).filter((b) => b && b.type === "text").map((b) => b.text).join("\n").trim();
     const checked = postCheck(text, { refusalKey: "off_topic" });
     return { available: true, refused: false, reply: checked.response || refusalText("off_topic"), guarded: !checked.ok };

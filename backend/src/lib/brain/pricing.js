@@ -26,4 +26,15 @@ function costUsd(model, usage = {}) {
   return Math.round(cost * 1e6) / 1e6;
 }
 
-module.exports = { PRICING, costUsd, CACHE_READ_MULTIPLIER };
+// Conservative PRE-CALL cost estimate for the ledger precheck. Overestimates on
+// purpose (deny early rather than overspend): assumes each turn fills the input
+// context to EST_INPUT_TOKENS_PER_TURN and emits maxTokens of output. Unknown
+// model -> Infinity so precheck fails CLOSED (never a $0 estimate that sails).
+const EST_INPUT_TOKENS_PER_TURN = 12000;
+function estimateUsd(model, { turns = 1, maxTokens = 1024 } = {}) {
+  const t = Math.max(1, turns);
+  const c = costUsd(model, { input_tokens: t * EST_INPUT_TOKENS_PER_TURN, output_tokens: t * maxTokens });
+  return c == null ? Infinity : c;
+}
+
+module.exports = { PRICING, costUsd, CACHE_READ_MULTIPLIER, estimateUsd, EST_INPUT_TOKENS_PER_TURN };

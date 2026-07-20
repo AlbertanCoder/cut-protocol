@@ -86,4 +86,24 @@ async function withUsageLogging(ledger, ctx = {}, fn) {
   return res;
 }
 
-module.exports = { makeLedger, memoryStore, withUsageLogging };
+// Enforce the cap AROUND a live model call: precheck (deny -> degrade, the call
+// never happens) else run it and record the ACTUAL usage. Returns
+// { allowed:true, result } or { allowed:false, notice, reason }. This is the one
+// wrapper every live model path (chat, critic, and later planner/create) uses so
+// LAW 4 can't be bypassed by a caller that forgets to check the cap.
+async function guardedCall(ledger, { projectedUsd = 0, ...ctx } = {}, fn) {
+  const gate = await ledger.precheck(projectedUsd);
+  if (!gate.allowed) return { allowed: false, notice: gate.notice, reason: gate.reason, spent: gate.spent };
+  const result = await withUsageLogging(ledger, ctx, fn);
+  return { allowed: true, result };
+}
+
+// The production ledger: Prisma-backed so the caps survive restarts. Lazy so
+// merely requiring this module needs no DB. Tests inject a memory/mock ledger
+// instead — the real LlmUsage table is never touched from a test.
+function defaultLedger() {
+  const { prismaUsageStore } = require("./usageStore.js");
+  return makeLedger({ store: prismaUsageStore() });
+}
+
+module.exports = { makeLedger, memoryStore, withUsageLogging, guardedCall, defaultLedger };
