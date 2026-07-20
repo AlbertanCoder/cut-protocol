@@ -17,7 +17,8 @@ function collectIngredients(plan) {
   const recipes = [];
   const push = (r) => { if (r && Array.isArray(r.ingredients)) recipes.push(r); };
   if (plan?.ingredients) push(plan); // a bare recipe
-  for (const s of plan?.slots || []) push(s.recipe || s); // a day
+  for (const s of plan?.slots || []) push(s.recipe || s); // a day of slots
+  for (const s of plan?.day || []) push(s.recipe || s); // a planDay() result ({ day:[...slots] })
   for (const d of plan?.days || []) for (const s of d.slots || []) push(s.recipe || s); // a week
   const rows = [];
   for (const r of recipes) {
