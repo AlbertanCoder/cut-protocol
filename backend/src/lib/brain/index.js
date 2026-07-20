@@ -57,6 +57,11 @@ const { scoreSoftConstraints, clampSoftWeights, totalCost } = require("./softSco
 // never reappear via a combine step. Deterministic + offline (no LLM).
 const { buildBrainGroceryList, aggregateBrainPlan, assertNoExcluded } = require("./grocery.js");
 
+// Brain v3 — Stage I: SOFT-preference persistence. prismaPrefsStore is kept out
+// of the barrel (require directly when wiring) so index.js stays Prisma-free.
+// EXCLUSIONS ARE NEVER STORED — sanitizeSoft fails closed on any exclusion key.
+const { assertSoftOnly, sanitizeSoft, memoryPrefsStore } = require("./prefsStore.js");
+
 module.exports = {
   // shared single gate
   isBrainEnabled,
@@ -81,4 +86,6 @@ module.exports = {
   scoreSoftConstraints, clampSoftWeights, totalCost,
   // Stage H — grocery aggregation (post-aggregation exclusion gate)
   buildBrainGroceryList, aggregateBrainPlan, assertNoExcluded,
+  // Stage I — SOFT-preference persistence (exclusions never stored)
+  assertSoftOnly, sanitizeSoft, memoryPrefsStore,
 };
