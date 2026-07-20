@@ -100,3 +100,9 @@ test("brainChat G2: the classifier REFUSES an ambiguous non-food message", async
   const r = await brainChat({ userId: "u", message: "any recommendations for later" }, deps({ classify }));
   assert.equal(r.refused, true);
 });
+
+test("brainChat G3: a reply stating macros is swapped for the Plan-tab redirect (LAW 1)", async () => {
+  const r = await brainChat({ userId: "u", message: "plan me a high-protein day" }, deps({ runLoop: async () => ({ content: [{ type: "text", text: "Have 200g of protein and 2500 calories." }] }) }));
+  assert.equal(r.guarded, true);
+  assert.match(r.reply, /Plan tab/);
+});
