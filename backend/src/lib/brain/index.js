@@ -41,6 +41,11 @@ const { refusalText, REFUSALS } = require("./policy.js");
 // planning loop converges against — the model never decides "done".
 const { compileConstraints, checkFeasibility: checkConstraintFeasibility, satisfies, relaxNext, SOFT_ORDER } = require("./constraints.js");
 
+// Brain v3 — Stage F: recipe generation (gated/dormant). The model proposes
+// structure only; resolveStructure/assembleRecipe/scaleToTarget/
+// verifyGeneratedRecipe own every number and gate exclusions + provenance.
+const { generateRecipe, resolveStructure, assembleRecipe, scaleToTarget, verifyGeneratedRecipe, acceptRecipe } = require("./create.js");
+
 module.exports = {
   // shared single gate
   isBrainEnabled,
@@ -59,4 +64,6 @@ module.exports = {
   preGate, postCheck, refusalText, REFUSALS,
   // Stage E — constraint model
   compileConstraints, checkConstraintFeasibility, satisfies, relaxNext, SOFT_ORDER,
+  // Stage F — recipe generation (gated/dormant)
+  generateRecipe, resolveStructure, assembleRecipe, scaleToTarget, verifyGeneratedRecipe, acceptRecipe,
 };
