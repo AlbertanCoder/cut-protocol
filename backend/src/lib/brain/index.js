@@ -35,6 +35,12 @@ const { preGate } = require("./guard.js");
 const { postCheck } = require("./outputGuard.js");
 const { refusalText, REFUSALS } = require("./policy.js");
 
+// Brain v3 — Stage E: the constraint model. checkFeasibility here operates on a
+// ConstraintSet (aliased checkConstraintFeasibility to avoid clashing with the
+// pool-level feasibility check above). satisfies is the acceptance predicate the
+// planning loop converges against — the model never decides "done".
+const { compileConstraints, checkFeasibility: checkConstraintFeasibility, satisfies, relaxNext, SOFT_ORDER } = require("./constraints.js");
+
 module.exports = {
   // shared single gate
   isBrainEnabled,
@@ -51,4 +57,6 @@ module.exports = {
   buildSystemPrompt,
   // Stage D1 — domain guard (defense-in-depth)
   preGate, postCheck, refusalText, REFUSALS,
+  // Stage E — constraint model
+  compileConstraints, checkConstraintFeasibility, satisfies, relaxNext, SOFT_ORDER,
 };
