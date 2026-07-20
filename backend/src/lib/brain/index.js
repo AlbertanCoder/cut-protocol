@@ -46,6 +46,12 @@ const { compileConstraints, checkFeasibility: checkConstraintFeasibility, satisf
 // verifyGeneratedRecipe own every number and gate exclusions + provenance.
 const { generateRecipe, resolveStructure, assembleRecipe, scaleToTarget, verifyGeneratedRecipe, acceptRecipe } = require("./create.js");
 
+// Brain v3 — Stage G: multi-constraint scoring. Turns the Stage-E soft
+// ConstraintSet into clamped-weight penalty terms; budget/complexity with no
+// per-recipe column are reported (noSignal), never scored. Soft never overrides
+// hard.
+const { scoreSoftConstraints, clampSoftWeights, totalCost } = require("./softScore.js");
+
 module.exports = {
   // shared single gate
   isBrainEnabled,
@@ -66,4 +72,6 @@ module.exports = {
   compileConstraints, checkConstraintFeasibility, satisfies, relaxNext, SOFT_ORDER,
   // Stage F — recipe generation (gated/dormant)
   generateRecipe, resolveStructure, assembleRecipe, scaleToTarget, verifyGeneratedRecipe, acceptRecipe,
+  // Stage G — multi-constraint scoring
+  scoreSoftConstraints, clampSoftWeights, totalCost,
 };
