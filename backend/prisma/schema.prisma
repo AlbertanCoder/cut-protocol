@@ -34,6 +34,7 @@ model User {
   trainingPlan TrainingPlan?
   mealLogs     MealLog[]
   llmUsage     LlmUsage[]
+  brainPreference BrainPreference?
 }
 
 // All physical quantities stored in SI (kg, cm) regardless of the user's
@@ -286,6 +287,19 @@ model LlmUsage {
 
   @@index([createdAt])
   @@index([userId, createdAt])
+}
+
+// ── Brain v3 (Stage I) ──────────────────────────────────────────────────
+// SOFT preferences ONLY. Exclusions (diet/allergy) are NEVER stored here —
+// they always recompute from Profile, so a stale stored copy can't leak a food
+// (LAW 2). Every write goes through prefsStore.sanitizeSoft first. Additive,
+// cascade-deleted with the user; inert until the brain is wired.
+model BrainPreference {
+  id        String   @id @default(cuid())
+  userId    String   @unique
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  data      Json // soft signals: { likedRecipeIds, dislikedRecipeIds, cuisineNudge, notes }
+  updatedAt DateTime @updatedAt
 }
 
 // ── Training scaffold (Phase 8) ─────────────────────────────────────────
