@@ -129,3 +129,17 @@ test("generateRecipe ignores a smuggled macro; the returned number is from-sourc
   const recomputed = macrosFromItems(r.recipe.ingredients.map((i) => ({ food: i.food, grams: i.grams })));
   assert.ok(Math.abs(r.recipe.kcal - recomputed.kcal) < 0.01);
 });
+
+// Regression (pre-turn-on fleet): the verifier must recompute from the POOL, not
+// the carried food object — a tampered carried food can't rubber-stamp itself.
+test("verifyGeneratedRecipe re-resolves from the pool — a tampered carried food is caught", () => {
+  const fake = { id: "f1", name: "Fake protein", kcal: 9999, protein: 9999, carb: 0, fat: 0 };
+  const recipe = {
+    name: "Tampered", ingredients: [{ foodId: "f1", food: fake, grams: 100, role: "protein" }],
+    kcal: 9999, protein: 9999, carb: 0, fat: 0, // stated macros match the FAKE carried food
+    prov: { formulaId: "macrosFromItems", inputs: {}, value: {} },
+  };
+  const v = verifyGeneratedRecipe(recipe, { pool: POOL, profile: PROFILE });
+  assert.equal(v.ok, false); // recompute from the real pool chicken (165/31) != 9999
+  assert.ok(v.rejections.some((r) => r.code === "macro-mismatch"));
+});

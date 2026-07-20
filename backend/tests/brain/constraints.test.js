@@ -125,15 +125,46 @@ test("relaxNext — relaxes the lowest-priority ACTIVE soft first, logging it", 
   assert.equal(cs.relaxations.length, 0);
 });
 
-test("relaxNext — widens the carb band when it's the only thing left", () => {
+test("relaxNext — drops the carb band (then advances to fat, then terminates)", () => {
   const cs = compileConstraints({}, TARGET); // only carb/fat bands are active
-  const next = relaxNext(cs);
-  assert.equal(next.relaxations[0].constraint, "carbBand");
-  assert.ok(next.soft.carbBand.value.lo < 150);
-  assert.ok(next.soft.carbBand.value.hi > 220);
+  const step1 = relaxNext(cs);
+  assert.equal(step1.relaxations[0].constraint, "carbBand");
+  assert.equal(step1.soft.carbBand.value.lo, null); // dropped, not widened forever
+  assert.equal(step1.soft.carbBand.value.hi, null);
+  const step2 = relaxNext(step1);
+  assert.equal(step2.relaxations[1].constraint, "fatBand");
+  assert.equal(relaxNext(step2), null); // nothing left -> terminates
 });
 
 test("relaxNext — returns null when nothing soft is left to relax", () => {
   const cs = compileConstraints({}, { kcal: 2000, proteinLo: 150 }); // no bands, no soft profile fields
   assert.equal(relaxNext(cs), null);
+});
+
+// --- regression: fixes from the pre-turn-on verification fleet ---------------
+
+test("relaxNext — allowBatch:true is NOT an active constraint (no infinite stick)", () => {
+  const cs = compileConstraints({ allowBatch: true, maxPrepMin: 20 }, TARGET);
+  assert.equal(relaxNext(cs).relaxations[0].constraint, "time"); // batch(true) is skipped
+});
+
+test("relaxNext — always TERMINATES with every soft constraint active", () => {
+  let cs = compileConstraints({ allowBatch: false, maxComplexity: 2, maxPrepMin: 20, budgetTier: "cheap" }, TARGET);
+  let steps = 0;
+  while ((cs = relaxNext(cs)) !== null) { if (++steps > 15) break; }
+  assert.ok(steps <= 15, `relaxNext did not terminate (steps=${steps})`);
+});
+
+test("checkFeasibility — non-positive kcal with a protein floor is a CONFLICT, never a false pass", () => {
+  const cs = compileConstraints({}, { proteinLo: 150 }); // no kcal -> energy.kcal 0
+  const r = checkFeasibility(cs, { compliantCount: 40 });
+  assert.notEqual(r.feasible, true); // must NOT be a false pass
+  assert.ok(r.conflicts.some((c) => c.constraint === "energy"));
+});
+
+test("satisfies — a NaN protein total is treated as UNMET (fail-closed)", () => {
+  const cs = compileConstraints({}, TARGET);
+  const r = satisfies({ kcal: 2000, protein: NaN, carb: 180, fat: 60 }, cs);
+  assert.equal(r.ok, false);
+  assert.ok(r.hardUnmet.some((u) => u.constraint === "proteinFloor"));
 });

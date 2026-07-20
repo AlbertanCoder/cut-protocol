@@ -21,6 +21,14 @@ test("pricing: costUsd computes per-1M rates; unknown model → null (fail loud)
   assert.equal(costUsd("gpt-4", { input_tokens: 100 }), null);
 });
 
+test("ledger precheck: an uncomputable (non-finite/negative) projected cost fails CLOSED", async () => {
+  const led = makeLedger();
+  assert.equal((await led.precheck(null)).allowed, false, "null projected cost must deny");
+  assert.equal((await led.precheck(NaN)).allowed, false, "NaN projected cost must deny");
+  assert.equal((await led.precheck(-1)).allowed, false, "negative projected cost must deny");
+  assert.equal((await led.precheck(0.001)).allowed, true, "a normal small cost is still allowed");
+});
+
 // ── router ──
 test("router: deterministic intents never call the LLM; open-ended intents do", () => {
   for (const intent of ["regen", "scale", "swap", "grocery", "weigh-in", "export", "trend"]) {

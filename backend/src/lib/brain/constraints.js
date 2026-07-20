@@ -75,7 +75,13 @@ function checkFeasibility(cs, catalogStats = {}) {
   // 2. Protein-floor vs energy — is the required protein density reachable?
   const neededDensity = energy.kcal > 0 ? floor / energy.kcal : 0;
   computed.neededProteinPerKcal = round(neededDensity, 4);
-  if (neededDensity > 0) {
+  // A non-positive energy target can't be assessed as feasible: a real protein
+  // floor makes it a conflict, otherwise indeterminate — NEVER a false pass. The
+  // `: 0` density fallback must not skip the whole check into an implicit true.
+  if (!(energy.kcal > 0)) {
+    if (floor > 0) { conflicts.push({ constraint: "energy", reason: `energy target is non-positive (${energy.kcal} kcal) but the protein floor needs ${floor} g` }); fixes.push("Set a positive calorie target."); }
+    else indeterminate = true;
+  } else if (neededDensity > 0) {
     if (stats.bestProteinPerKcal == null) indeterminate = true;
     else {
       computed.bestProteinPerKcal = round(stats.bestProteinPerKcal, 4);
@@ -122,8 +128,10 @@ function satisfies(computedDay = {}, cs) {
   if (kcal < e.lo || kcal > e.hi) hardUnmet.push({ constraint: "energy", value: round(kcal), band: [e.lo, e.hi] });
 
   const floor = cs.hard.proteinFloor.value.g;
-  const protein = totals.protein ?? totals.protein_g ?? 0;
-  if (protein < floor - 1e-9) hardUnmet.push({ constraint: "proteinFloor", value: round(protein), floor });
+  // Fail-closed: `??` only catches null/undefined, so a NaN protein total would
+  // slip past `NaN < floor` (false) and be reported MET. Treat non-finite as UNMET.
+  const proteinRaw = totals.protein ?? totals.protein_g ?? 0;
+  if (!(Number.isFinite(proteinRaw) && proteinRaw >= floor - 1e-9)) hardUnmet.push({ constraint: "proteinFloor", value: Number.isFinite(proteinRaw) ? round(proteinRaw) : null, floor });
 
   const inBand = (v, b) => b.lo == null || b.hi == null || (v >= b.lo && v <= b.hi);
   const carb = totals.carb ?? totals.carb_g ?? 0;
@@ -140,7 +148,7 @@ function relaxNext(cs) {
   for (const key of SOFT_ORDER) {
     const s = cs.soft[key];
     if (!s || !isActive(key, s.value)) continue;
-    const relaxed = relaxLeaf(key, s.value);
+    const relaxed = relaxLeaf(key);
     const next = { ...cs, soft: { ...cs.soft, [key]: { ...s, value: relaxed.value } }, relaxations: [...cs.relaxations, { constraint: key, priority: s.priority, from: s.value, to: relaxed.value, note: relaxed.note }] };
     return next;
   }
@@ -148,7 +156,7 @@ function relaxNext(cs) {
 }
 
 function isActive(key, value) {
-  if (key === "batch") return value.allow != null;
+  if (key === "batch") return value.allow === false; // only a DISALLOW is a constraint to relax
   if (key === "complexity") return value.max != null;
   if (key === "time") return value.maxPrepMin != null;
   if (key === "budget") return value.tier != null;
@@ -157,20 +165,18 @@ function isActive(key, value) {
   return false;
 }
 
-function relaxLeaf(key, value) {
+function relaxLeaf(key) {
   if (key === "batch") return { value: { allow: true }, note: "allow batch-cooking repeats" };
   if (key === "complexity") return { value: { max: null }, note: "drop complexity cap" };
   if (key === "time") return { value: { maxPrepMin: null }, note: "drop max prep time" };
   if (key === "budget") return { value: { tier: null }, note: "drop budget tier" };
-  if (key === "carbBand") return { value: widenBand(value), note: "widen carb band ~15%" };
-  if (key === "fatBand") return { value: widenBand(value), note: "widen fat band ~15%" };
+  // Bands DROP to inactive in one step so the ladder always TERMINATES. The prior
+  // "widen ~15%" never nulled the band, so isActive stayed true and relaxNext
+  // re-widened the same band forever (never reaching fatBand or returning null).
+  if (key === "carbBand") return { value: { lo: null, hi: null }, note: "drop carb band" };
+  if (key === "fatBand") return { value: { lo: null, hi: null }, note: "drop fat band" };
   if (key === "portion") return { value: { min: 0.5, max: 2 }, note: "reset portion bounds" };
-  return { value, note: "no-op" };
-}
-
-function widenBand(b) {
-  const w = b.hi != null && b.lo != null ? (b.hi - b.lo) * 0.15 : 0;
-  return { lo: b.lo != null ? round(b.lo - w) : null, hi: b.hi != null ? round(b.hi + w) : null };
+  return { value: {}, note: "no-op" };
 }
 
 module.exports = { compileConstraints, checkFeasibility, satisfies, relaxNext, SOFT_ORDER };

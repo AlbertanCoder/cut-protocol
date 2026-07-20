@@ -55,7 +55,9 @@ function depthBlock(depth) {
 // block — a raw </user_data> in a free-text note would otherwise break out of
 // the wrapper and become trusted text (LAW 6 hardening).
 function sanitizeUserData(s) {
-  return String(s).replace(/<\/?\s*user_data\s*>/gi, "[user_data]");
+  // \s* on BOTH sides of the optional slash so `< /user_data >`, `< / user_data >`
+  // and newline variants are neutralized too — not just the canonical form.
+  return String(s).replace(/<\s*\/?\s*user_data\s*>/gi, "[user_data]");
 }
 
 function buildSystemPrompt({ profile = {}, depth = "balanced", toolNames = [] } = {}) {

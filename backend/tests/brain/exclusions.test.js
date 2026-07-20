@@ -22,6 +22,15 @@ const RICE = food("White Rice", { category: "carb", protein: 2.7, fat: 0.3, carb
 const SHRIMP = food("Shrimp", { category: "protein", protein: 24, fat: 0.3, carb: 0 });
 const CURRY_PASTE = food("Thai Red Curry Paste"); // shellfish-hidden (kapi) per dietaryFilter
 
+// Regression (pre-turn-on fleet): a recipe with NO ingredients can't be proven
+// safe, so it must fail CLOSED (excluded), not pass as safe (LAW 2).
+test("fail-closed: a recipe with empty ingredients is excluded (unprovable, not safe)", () => {
+  const e = explainExclusion(recipe("Ghost Dish", []), { excludedFoods: ["shellfish"] });
+  assert.equal(e.excluded, true);
+  assert.equal(e.failClosed, true);
+  assert.equal(e.reason, "unresolvable-ingredient");
+});
+
 test("reuses dietaryFilter's maps: shellfish exclusion catches a shrimp ingredient (transitive)", () => {
   const r = recipe("Shrimp Fried Rice", [SHRIMP, RICE]);
   const e = explainExclusion(r, { excludedFoods: ["shellfish"] });
