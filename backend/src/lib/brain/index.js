@@ -31,6 +31,9 @@ const { needsLLM, pickModel } = require("./router.js");
 const { makeLedger, memoryStore, withUsageLogging } = require("./ledger.js");
 const { validProv, provenanceLint } = require("./telemetry.js");
 const { buildSystemPrompt } = require("./prompts/system.js");
+const { preGate } = require("./guard.js");
+const { postCheck } = require("./outputGuard.js");
+const { refusalText, REFUSALS } = require("./policy.js");
 
 module.exports = {
   // shared single gate
@@ -46,4 +49,6 @@ module.exports = {
   makeLedger, memoryStore, withUsageLogging, validProv, provenanceLint,
   // Stage C — persona / system prompt
   buildSystemPrompt,
+  // Stage D1 — domain guard (defense-in-depth)
+  preGate, postCheck, refusalText, REFUSALS,
 };
