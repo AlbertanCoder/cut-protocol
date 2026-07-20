@@ -34,6 +34,7 @@ const { buildSystemPrompt } = require("./prompts/system.js");
 const { preGate } = require("./guard.js");
 const { postCheck } = require("./outputGuard.js");
 const { refusalText, REFUSALS } = require("./policy.js");
+const { makeClassifier } = require("./classifier.js");
 
 // Brain v3 — Stage E: the constraint model. checkFeasibility here operates on a
 // ConstraintSet (aliased checkConstraintFeasibility to avoid clashing with the
@@ -81,8 +82,8 @@ module.exports = {
   makeLedger, memoryStore, withUsageLogging, validProv, provenanceLint,
   // Stage C — persona / system prompt
   buildSystemPrompt,
-  // Stage D1 — domain guard (defense-in-depth)
-  preGate, postCheck, refusalText, REFUSALS,
+  // Stage D1 — domain guard (defense-in-depth) + G2 Tier-1 classifier
+  preGate, postCheck, refusalText, REFUSALS, makeClassifier,
   // Stage E — constraint model
   compileConstraints, checkConstraintFeasibility, satisfies, relaxNext, SOFT_ORDER,
   // Stage F — recipe generation (gated/dormant)
