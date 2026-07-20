@@ -54,19 +54,29 @@ function computeSlots(slots, tools) {
 // Deterministic acceptance predicate — the loop converges against THIS, never
 // the model's say-so. kcal ±3% or ±50; protein ≥target−5 & ≤target+15; carb/fat
 // within their band ±12.
+// dayTotals() emits a MacroVector with a `_g` suffix (protein_g/carb_g/fat_g);
+// normalize to bare keys so the acceptance predicate reads the RIGHT numbers.
+// (The old code read totals.protein on a `_g`-shaped object -> undefined -> the
+// loop could NEVER converge and gaps came out NaN. Cross-module seam.)
+function normTotals(t = {}) {
+  return { kcal: t.kcal || 0, protein: t.protein_g ?? t.protein ?? 0, carb: t.carb_g ?? t.carb ?? 0, fat: t.fat_g ?? t.fat ?? 0 };
+}
+
 function satisfies(totals, target) {
+  const t = normTotals(totals);
   const kcal = target.kcal || 0;
-  const kcalOk = Math.abs(totals.kcal - kcal) <= Math.max(50, kcal * 0.03);
+  const kcalOk = Math.abs(t.kcal - kcal) <= Math.max(50, kcal * 0.03);
   const pMid = proteinMid(target);
-  const proteinOk = totals.protein >= pMid - 5 && totals.protein <= pMid + 15;
+  const proteinOk = Number.isFinite(t.protein) && t.protein >= pMid - 5 && t.protein <= pMid + 15;
   const bandOk = (v, lo, hi) => (lo == null && hi == null) || (v >= (lo ?? -Infinity) - 12 && v <= (hi ?? Infinity) + 12);
-  return kcalOk && proteinOk && bandOk(totals.carb, target.carbLo, target.carbHi) && bandOk(totals.fat, target.fatLo, target.fatHi);
+  return kcalOk && proteinOk && bandOk(t.carb, target.carbLo, target.carbHi) && bandOk(t.fat, target.fatLo, target.fatHi);
 }
 
 function gapsOf(totals, target) {
+  const t = normTotals(totals);
   return {
-    kcal: Math.round((totals.kcal - (target.kcal || 0)) * 10) / 10,
-    protein: Math.round((totals.protein - proteinMid(target)) * 10) / 10,
+    kcal: Math.round((t.kcal - (target.kcal || 0)) * 10) / 10,
+    protein: Math.round((t.protein - proteinMid(target)) * 10) / 10,
   };
 }
 

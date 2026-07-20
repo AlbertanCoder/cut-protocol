@@ -60,7 +60,10 @@ function avgCoherence(slots) {
  */
 function scorePlan(day, target, opts = {}) {
   const w = clampWeights(opts.weights);
-  const totals = day.totals || sumSlots(day.slots);
+  // Accept either a `_g`-suffixed MacroVector (dayTotals) or bare keys (sumSlots)
+  // — reading the wrong shape here NaN'd the score and killed best-of-N selection.
+  const raw = day.totals || sumSlots(day.slots);
+  const totals = { kcal: raw.kcal || 0, protein: raw.protein_g ?? raw.protein ?? 0, carb: raw.carb_g ?? raw.carb ?? 0, fat: raw.fat_g ?? raw.fat ?? 0 };
   const pMid = proteinMid(target);
 
   const proteinShort = pMid > 0 ? Math.max(0, (pMid - totals.protein) / pMid) : 0; // asymmetric: only a shortfall hurts

@@ -1,6 +1,7 @@
 const { test } = require("node:test");
 const assert = require("node:assert/strict");
-const { planDay } = require("../../src/lib/brain/planner.js");
+const { planDay, satisfies } = require("../../src/lib/brain/planner.js");
+const { scorePlan } = require("../../src/lib/brain/scorer.js");
 
 function food(id, kcal, protein, fat, carb) { return { id, name: id, category: "other", kcal, protein, fat, carb }; }
 function ing(f, g, role) { return { foodId: f.id, baseGrams: g, scalable: true, role, food: f }; }
@@ -63,4 +64,25 @@ test("planDay: happy path with an injected selector — macros are computed dete
   assert.ok(res.verification && res.verification.ok, "every slot passes the verifier (macros from the tool layer)");
   assert.ok(res.day.every((s) => s.prov && s.prov.formulaId === "scaleRecipe"), "every slot macro carries scaleRecipe provenance");
   assert.ok(res.day.every((s) => s.macros && typeof s.macros.kcal === "number"), "slots carry computed MacroVectors");
+});
+
+// --- regression: the cross-module `_g` MacroVector seam (integration fleet) ---
+
+test("satisfies() reads a _g-suffixed MacroVector — the convergence seam", () => {
+  // dayTotals() emits protein_g/carb_g/fat_g; the acceptance predicate must read them.
+  const onTarget = { kcal: 1800, protein_g: 160, carb_g: 170, fat_g: 60 };
+  assert.equal(satisfies(onTarget, TARGET), true, "a _g-shaped on-target day must CONVERGE");
+  assert.equal(satisfies({ kcal: 1800, protein_g: 100, carb_g: 170, fat_g: 60 }, TARGET), false, "protein-short does not converge");
+  assert.equal(satisfies({ kcal: 1800, protein_g: NaN, carb_g: 170, fat_g: 60 }, TARGET), false, "NaN protein fails closed");
+});
+
+test("planDay gaps are FINITE, not NaN (macro-shape seam fixed)", async () => {
+  const proposeDayFn = async ({ slotTargets }) => ({ slots: slotTargets.map((st) => ({ ...st, recipeId: "cr" })) });
+  const res = await planDay({ profile: {}, target: TARGET, mealConfig: { meals: 3, snacks: 0 }, library: LIBRARY }, { enabled: true, proposeDayFn });
+  assert.ok(res.gaps && Number.isFinite(res.gaps.kcal) && Number.isFinite(res.gaps.protein), `gaps must be finite, got ${JSON.stringify(res.gaps)}`);
+});
+
+test("scorePlan accepts a _g-suffixed MacroVector (finite score, not NaN)", () => {
+  const s = scorePlan({ totals: { kcal: 1800, protein_g: 160, carb_g: 170, fat_g: 60 } }, TARGET);
+  assert.ok(Number.isFinite(s.score) && s.score > 0, `score must be finite, got ${s.score}`);
 });

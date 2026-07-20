@@ -68,3 +68,12 @@ test("buildBrainGroceryList refuses to emit a list with a leaked exclusion", () 
 test("buildBrainGroceryList is deterministic", () => {
   assert.deepEqual(buildBrainGroceryList(PLAN, PROFILE), buildBrainGroceryList(PLAN, PROFILE));
 });
+
+// Regression (integration fleet): a planDay() result is { day:[...slots] }; that
+// shape must aggregate, not silently produce an empty list.
+test("buildBrainGroceryList handles a planDay result shape ({ day:[...slots] })", () => {
+  const plan = { day: [{ recipeId: "cr", ingredients: [{ food: CHICKEN, grams: 200 }, { food: RICE, grams: 150 }] }] };
+  const g = buildBrainGroceryList(plan, PROFILE);
+  assert.equal(g.ok, true);
+  assert.equal(g.items.length, 2); // NOT a silent empty list
+});
