@@ -19,6 +19,7 @@ const deps = (over = {}) => ({
   loadLibrary: async () => LIB,
   runLoop: async () => ({ content: [{ type: "text", text: "Here's a chicken & rice day." }], usage: { input_tokens: 100, output_tokens: 50 } }),
   ledger: makeLedger({ store: memoryStore() }), // memory-backed: tests NEVER touch the real LlmUsage table
+  classify: null, // Tier-0-only by default; G2 tests pass a mock classifier
   ...over,
 });
 
@@ -85,4 +86,17 @@ test("critic reviewDay COST: an allowed review records its usage toward the cap"
   const ask = async ({ onUsage }) => { onUsage({ input_tokens: 1_000_000, output_tokens: 0 }); return { ok: true, issues: [] }; };
   await reviewDay({ slots: [], totals: {}, targets: {} }, { enabled: true, ledger, ask });
   assert.ok((await ledger.spentThisMonth()) > 0, "the critic turn's usage is recorded");
+});
+
+// ── G2: the Tier-1 classifier decides preGate's ambiguous middle ──
+test("brainChat G2: the Tier-1 classifier ALLOWS an ambiguous message the regex can't judge", async () => {
+  const classify = async () => ({ decision: "allow", category: "food", confidence: 0.9 });
+  const r = await brainChat({ userId: "u", message: "any recommendations for later" }, deps({ classify }));
+  assert.ok(!r.refused, "the classifier's allow lets an ambiguous message through");
+});
+
+test("brainChat G2: the classifier REFUSES an ambiguous non-food message", async () => {
+  const classify = async () => ({ decision: "refuse", category: "off_topic", confidence: 0.9 });
+  const r = await brainChat({ userId: "u", message: "any recommendations for later" }, deps({ classify }));
+  assert.equal(r.refused, true);
 });
