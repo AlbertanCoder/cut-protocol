@@ -60,9 +60,11 @@ function explainExclusion(item, profile) {
 
   if (isRecipe(item)) {
     const names = ingredientNames(item);
-    // FAIL-CLOSED first: if ANY ingredient can't be resolved to a checkable
-    // name, we cannot prove the recipe is safe → exclude it, flagged.
-    if (names.some((n) => !isCheckableName(n))) {
+    // FAIL-CLOSED first: if a recipe has NO ingredients at all, or ANY ingredient
+    // can't be resolved to a checkable name, we cannot prove the recipe is safe →
+    // exclude it, flagged. An empty ingredient list (bad importer draft, partial
+    // delete, missing rows) is "unprovable", not "safe" (LAW 2).
+    if (names.length === 0 || names.some((n) => !isCheckableName(n))) {
       return { excluded: true, failClosed: true, reason: "unresolvable-ingredient" };
     }
     const flat = { ingredients: names.map((name) => ({ name })) };

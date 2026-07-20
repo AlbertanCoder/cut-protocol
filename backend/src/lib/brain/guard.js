@@ -14,8 +14,12 @@
 // Returns GuardVerdict { decision:'allow'|'refuse', category, confidence, refusalKey? }.
 const MAX_LEN = 500;
 
-// Instruction-injection / prompt-extraction / secret-exfiltration.
-const INJECTION_RE = /(ignore|disregard|forget|override|bypass)\b.{0,40}\b(instruction|rule|prompt|previous|above|system|constraint)|(reveal|print|repeat|show|output|echo)\b.{0,30}\b(system|prompt|rule|instruction|above)|your\s+(system\s+)?(prompt|instructions|rules)|<\/?\s*user_data|\bsk-ant|api[\s_-]?key|jailbreak|you are now|act as (an?\s+)?(dan|unrestricted|jailbroken)|developer mode/i;
+// Instruction-injection / prompt-extraction / secret-exfiltration. Broadened
+// after the pre-turn-on fleet found bypasses (skip/summarize/restate verbs,
+// guidance/dietary/policy targets, wider gaps, "word for word"). NOTE: this
+// Tier-0 regex is a FLOOR, not the whole defense — the Tier-1 classifier must be
+// wired before BRAIN=on (a hard turn-on gate) to cover paraphrased/novel attacks.
+const INJECTION_RE = /(ignore|disregard|forget|override|bypass|skip|omit|neglect|circumvent)\b.{0,80}\b(instruction|rule|prompt|previous|above|system|constraint|guideline|guidance|policy|policies|directive|config|persona|dietary)|(reveal|print|repeat|show|output|echo|summari[sz]\w*|restate|recite|rephrase|paraphrase|disclose|dump)\b.{0,80}\b(system|prompt|rule|instruction|above|guideline|guidance|policy|directive|persona|context|earlier|written|verbatim|word for word)|what\s+(was|were|did)\b.{0,50}\b(before|above|written|instructed|told|said)|your\s+(system\s+|earlier\s+|previous\s+)?(prompt|instructions?|rules?|guidelines?|guidance|directives?|persona|config\w*|policy|policies)|<\/?\s*user_data|\bsk-ant|api[\s_-]?key|jailbreak|you are now|act as (an?\s+)?(dan|unrestricted|jailbroken)|developer mode/i;
 
 // Medical / clinical / supplement dosing — distinct doctor redirect.
 const MEDICAL_RE = /\b(dose|dosage|dosing|how much .*(should i take|to take)|mg of|milligram|prescription|prescribe|metformin|insulin|ozempic|wegovy|semaglutide|steroids?|anabolic|medication|medicine|diagnos\w*|symptom|blood pressure|cholesterol (med|drug))\b/i;

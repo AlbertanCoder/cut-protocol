@@ -133,11 +133,17 @@ function verifyGeneratedRecipe(recipe, ctx = {}) {
   const { pool = {}, profile = null } = ctx;
   const foods = pool.foods instanceof Map ? pool.foods : new Map();
   const rejections = [];
+  // Re-resolve every ingredient from the POOL (not the carried i.food) so the
+  // check is INDEPENDENT of the object under test — a mismatched carried food
+  // object can't rubber-stamp itself.
+  const resolved = [];
   for (const i of recipe.ingredients || []) {
-    if (!foods.get(i.foodId)) rejections.push({ foodId: i.foodId, code: "unknown-or-excluded-food" });
-    else if (isExcluded(i.food || foods.get(i.foodId), profile)) rejections.push({ foodId: i.foodId, code: "excluded-item" });
+    const poolFood = foods.get(i.foodId);
+    if (!poolFood) { rejections.push({ foodId: i.foodId, code: "unknown-or-excluded-food" }); continue; }
+    if (isExcluded(poolFood, profile)) { rejections.push({ foodId: i.foodId, code: "excluded-item" }); continue; }
+    resolved.push({ food: poolFood, grams: i.grams });
   }
-  const recomputed = macrosFromItems((recipe.ingredients || []).map((i) => ({ food: i.food, grams: i.grams })));
+  const recomputed = macrosFromItems(resolved);
   const claimed = macroFields(recomputed); // reference
   const stated = { kcal: recipe.kcal, protein_g: recipe.protein, carb_g: recipe.carb, fat_g: recipe.fat };
   const EPS = 0.01;

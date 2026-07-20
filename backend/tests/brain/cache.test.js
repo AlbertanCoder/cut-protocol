@@ -20,6 +20,17 @@ test("makeCacheKey busts on ANY version/input change", () => {
   assert.notEqual(k, makeCacheKey({ ...base, depth: "thorough" })); // depth changed
 });
 
+test("makeCacheKey — fails CLOSED on a missing identity input (never keys on a partial identity)", () => {
+  assert.throws(() => makeCacheKey({ poolVersion: "x1", target: { kcal: 2000 } }), /required|identity/); // no profileVersion
+  assert.throws(() => makeCacheKey({ profileVersion: "p1", target: { kcal: 2000 } }), /required|identity/); // no poolVersion
+  assert.throws(() => makeCacheKey({ profileVersion: "p1", poolVersion: "x1" }), /required|identity/); // no target
+});
+
+test("makeCacheKey — a different model is a different key", () => {
+  const base = { profileVersion: "p1", poolVersion: "x1", target: { kcal: 2000 } };
+  assert.notEqual(makeCacheKey({ ...base, model: "haiku" }), makeCacheKey({ ...base, model: "opus" }));
+});
+
 test("BrainCache — set/get roundtrip and miss", () => {
   const c = new BrainCache();
   assert.equal(c.get("nope"), null);

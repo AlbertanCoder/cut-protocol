@@ -24,8 +24,15 @@ function hashInputs(obj) {
 // A cache key binds every input that could change the answer. If ANY version
 // part differs it's a different key — a stale entry is never served (LAW 1: a
 // cached number is only reused when its exact inputs recur).
-function makeCacheKey({ promptVersion = "v3", profileVersion, poolVersion, target, depth = "balanced" } = {}) {
-  return hashInputs({ promptVersion, profileVersion, poolVersion, target, depth });
+function makeCacheKey({ promptVersion = "v3", profileVersion, poolVersion, target, depth = "balanced", model } = {}) {
+  // Fail CLOSED on missing identity: a key built from an incomplete identity can
+  // collide two different profiles/pools/targets onto one entry and serve a
+  // stale WRONG answer. Better to skip the cache than to serve wrong (LAW 1). The
+  // model id is part of identity too — a different model can propose differently.
+  if (profileVersion == null || poolVersion == null || target == null) {
+    throw new Error("makeCacheKey: profileVersion, poolVersion, and target are required (refusing to key on an incomplete identity)");
+  }
+  return hashInputs({ promptVersion, profileVersion, poolVersion, target, depth, model: model ?? null });
 }
 
 // Small LRU + TTL cache. Deterministic: no wall-clock in the KEY (only in TTL,

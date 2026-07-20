@@ -19,6 +19,10 @@ function makeLedger({ store, caps = CAPS, now = () => new Date() } = {}) {
     async precheck(projectedUsd = 0) {
       const t = now();
       const [month, day] = await Promise.all([s.sumSince(startOfMonth(t)), s.sumSince(startOfDay(t))]);
+      // Fail CLOSED on an uncomputable projected cost (e.g. an unpriced model,
+      // where costUsd() returned null): a non-finite/negative projection must
+      // DENY, never sail past the caps as $0 (LAW 4).
+      if (!Number.isFinite(projectedUsd) || projectedUsd < 0) return deny("uncomputable-cost", caps.perRequestUsd, { month, day });
       if (projectedUsd > caps.perRequestUsd) return deny("per-request-cap", caps.perRequestUsd, { month, day });
       if (month + projectedUsd > caps.monthlyUsd) return deny("monthly-cap", caps.monthlyUsd, { month, day });
       if (day + projectedUsd > caps.dailyUsd) return deny("daily-cap", caps.dailyUsd, { month, day });
@@ -40,7 +44,7 @@ function deny(reason, cap, spent) {
   return {
     allowed: false,
     reason,
-    notice: `Brain paused: the ${reason.replace("-", " ")} ($${cap}) was reached. Using the free deterministic planner.`,
+    notice: `Brain paused: the ${reason.replace(/-/g, " ")} ($${cap}) was reached. Using the free deterministic planner.`,
     spent,
   };
 }
@@ -67,10 +71,16 @@ async function withUsageLogging(ledger, ctx = {}, fn) {
   const usage = res && res.usage ? res.usage : null;
   if (usage) {
     const cost = costUsd(ctx.model, usage);
+    if (cost == null) {
+      // Unpriced model (costUsd returned null) — precheck should have blocked
+      // this. Do NOT fabricate a cost; make it LOUD (not a silent $0) so it's
+      // auditable, and record 0 only because the column is non-nullable (LAW 4).
+      console.warn(`[brain/ledger] unpriced model "${ctx.model}": spend is NOT counted toward caps — wire its price before enabling it`);
+    }
     await ledger.record({
       userId: ctx.userId, model: ctx.model, phase: ctx.phase, intent: ctx.intent,
       inputTokens: usage.input_tokens, outputTokens: usage.output_tokens,
-      cacheReadTokens: usage.cache_read_input_tokens, costUsd: cost || 0,
+      cacheReadTokens: usage.cache_read_input_tokens, costUsd: cost ?? 0,
     });
   }
   return res;
