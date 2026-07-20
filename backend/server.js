@@ -21,6 +21,7 @@ const foodRoutes = require("./src/routes/foods.js");
 const cartRoutes = require("./src/routes/cart.js");
 const trainingRoutes = require("./src/routes/training.js");
 const diaryRoutes = require("./src/routes/diary.js");
+const brainRoutes = require("./src/routes/brain.js");
 
 const app = express();
 app.use(express.json());
@@ -50,6 +51,7 @@ app.use("/api/foods", foodRoutes);
 app.use("/api/cart", cartRoutes);
 app.use("/api/training", trainingRoutes);
 app.use("/api/diary", diaryRoutes);
+app.use("/api/brain", brainRoutes); // Stage D2: guarded chat surface (gated; inert with BRAIN=off)
 app.use("/api/meta", require("./src/routes/meta.js")); // public: build version/OS for bug reports
 
 // Unmatched /api routes return clean JSON, not the SPA index.html (the

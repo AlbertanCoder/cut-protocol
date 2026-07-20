@@ -21,7 +21,7 @@ const INJECTION_RE = /(ignore|disregard|forget|override|bypass)\b.{0,40}\b(instr
 const MEDICAL_RE = /\b(dose|dosage|dosing|how much .*(should i take|to take)|mg of|milligram|prescription|prescribe|metformin|insulin|ozempic|wegovy|semaglutide|steroids?|anabolic|medication|medicine|diagnos\w*|symptom|blood pressure|cholesterol (med|drug))\b/i;
 
 // Clearly food / meal / diet related (Tier-0 allow signal).
-const FOOD_RE = /\b(meal|meals|recipe|recipes|food|foods|eat|eating|ate|diet|dietary|nutrition|protein|carb|carbs|fat|fats|calorie|calories|kcal|macro|macros|breakfast|lunch|dinner|snack|snacks|cook|cooking|grocery|groceries|vegan|vegetarian|keto|paleo|halal|kosher|pescatarian|hungry|weight|cut|cutting|bulk|bulking|swap|serving|portion|ingredient|plan my day|meal plan|high[- ]?protein|low[- ]?carb)\b/i;
+const FOOD_RE = /\b(meal|meals|recipe|recipes|food|foods|eat|eating|ate|diet|dietary|nutrition|protein|carb|carbs|fat|fats|calorie|calories|kcal|macro|macros|breakfast|lunch|dinner|snack|snacks|cook|cooking|grocery|groceries|vegan|vegetarian|keto|paleo|halal|kosher|pescatarian|hungry|weight|cut|cutting|bulk|bulking|swap|serving|portion|ingredient|plan|planning|meal plan|high[- ]?protein|low[- ]?carb)\b/i;
 
 function verdict(decision, category, confidence, refusalKey) {
   return { decision, category, confidence, refusalKey };
