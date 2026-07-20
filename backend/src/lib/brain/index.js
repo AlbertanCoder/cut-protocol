@@ -52,6 +52,11 @@ const { generateRecipe, resolveStructure, assembleRecipe, scaleToTarget, verifyG
 // hard.
 const { scoreSoftConstraints, clampSoftWeights, totalCost } = require("./softScore.js");
 
+// Brain v3 — Stage H: grocery aggregation. Reuses the app's unit/section
+// classifiers; assertNoExcluded runs AFTER aggregation so an excluded item can
+// never reappear via a combine step. Deterministic + offline (no LLM).
+const { buildBrainGroceryList, aggregateBrainPlan, assertNoExcluded } = require("./grocery.js");
+
 module.exports = {
   // shared single gate
   isBrainEnabled,
@@ -74,4 +79,6 @@ module.exports = {
   generateRecipe, resolveStructure, assembleRecipe, scaleToTarget, verifyGeneratedRecipe, acceptRecipe,
   // Stage G — multi-constraint scoring
   scoreSoftConstraints, clampSoftWeights, totalCost,
+  // Stage H — grocery aggregation (post-aggregation exclusion gate)
+  buildBrainGroceryList, aggregateBrainPlan, assertNoExcluded,
 };
