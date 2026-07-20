@@ -86,6 +86,15 @@ model Profile {
   // @default("[]") once already; app code (defaultProfile()) supplies it).
   cuisinePreferences Json // e.g. ["mexican","thai","mediterranean"]
   mealPreferencesNote String? // freeform, e.g. "high protein, minimal dairy, I have an air fryer"
+  // Brain v3 Stage G — SOFT meal-planning preferences (null = no constraint).
+  // Read by the brain's compileConstraints() as relaxable soft limits; they can
+  // never override a HARD constraint (diet/allergy exclusions, energy, protein
+  // floor). Additive + nullable: existing rows and the deterministic solver are
+  // unaffected, and with the brain OFF nothing reads them.
+  maxPrepMin      Int? // max acceptable recipe prep time in minutes
+  budgetTier      String? // "cheap" | "moderate" | "premium"
+  allowBatch      Boolean? // allow batch-cooking repeats past the variety cap
+  maxComplexity   Int? // recipe complexity ceiling (1 = simplest)
   updatedAt       DateTime @updatedAt
 }
 
