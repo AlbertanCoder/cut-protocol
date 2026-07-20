@@ -20,6 +20,7 @@ const { makeTools } = require("./tools.js");
 const selector = require("./selector.js");
 const { scorePlan } = require("./scorer.js");
 const { verifyPlan } = require("./verifier.js");
+const { buildSystemPrompt } = require("./prompts/system.js");
 
 function buildSlotTargets(target, mealConfig) {
   const daySlots = buildSlots(mealConfig).filter((s) => s.dayOfWeek === 0);
@@ -105,6 +106,7 @@ async function planDay({ profile, target, mealConfig = { meals: 3, snacks: 0 }, 
 
   const tools = makeToolsFn(pool, profile);
   const slotTargets = buildSlotTargets(target, mealConfig);
+  const system = options.system || buildSystemPrompt({ profile, depth, toolNames: Object.keys(tools) });
   const maxIters = (DEPTH_PROFILES[depth] || DEPTH_PROFILES.balanced).maxIters;
 
   let best = null;
@@ -113,7 +115,7 @@ async function planDay({ profile, target, mealConfig = { meals: 3, snacks: 0 }, 
     iterations++;
     let proposal;
     try {
-      proposal = await proposeDayFn({ slotTargets, tools, system: options.system || "", model: options.model, maxTurns: options.maxTurns });
+      proposal = await proposeDayFn({ slotTargets, tools, system, model: options.model, maxTurns: options.maxTurns });
     } catch {
       // Offline / timeout / model error mid-run → degrade (LAW 4). With nothing
       // verified yet, the caller falls back to the deterministic solver.
