@@ -5,6 +5,30 @@ what got finished · what's next · anything needed from Shad.*
 
 ---
 
+## 2026-07-21 · Remaining v2 parts DONE — security, persistence, taste
+
+Built the three deferred parts, each committed + verified (tests green, golden
+BRAIN=off byte-identical, brain-purity clean):
+
+1. **Security lane complete** (46282d0) — S3 supply-chain guard (`checkSupplyChain.mjs`:
+   no off-registry/wildcard deps, lockfiles present; clean 26 deps) + `npm audit`
+   in CI. Joins S1 brain-purity + S2 secret scan → `npm run security:all` (3 green)
+   + blocking CI `security` job. (Semgrep SAST omitted — needs an external binary.)
+2. **Persistence models** (8d79818) — the six additive tables (BrainConversation/
+   Message, GeneratedRecipe, GeneratedPlan/Item, BrainSolveRun, UserLibraryEntry;
+   migration = 7 pure CREATE TABLEs) + `store.js` (injectable accessor, Law-2 guard
+   rejects any exclusion-like key). Dormant until a route wires it.
+3. **Full taste-tier system** (4085f01) — 4 additive Recipe columns + `taste.js`
+   (clampProposedTier / Bayesian-shrinkage effectiveTasteScore) + a `w_taste`
+   scorer term (0 when no signal → byte-identical) + `tasteSeed.json`/seeder
+   (24 curated recipes tagged) + the ratings route refreshing the aggregate live.
+
+**393 tests green.** Only spec items still NOT built: the §0b governance/RESUME/
+anti-slop scaffolding (judged ceremony — PROGRESS.md + memory + CI cover the
+substance) and Stage L fitness (spec defers it). The v2 program is otherwise complete.
+
+---
+
 ## 2026-07-21 · Close-out — pushed, installer rebuilt, security lane started
 
 - **Pushed:** all 12 commits are on origin/master (public repo now has the full v2).
