@@ -323,6 +323,86 @@ model BrainPreference {
   updatedAt DateTime @updatedAt
 }
 
+// ==== BRAIN (v2 Stage I persistence) ==== additive; dormant with BRAIN=off.
+// Plain userId (no FK to User) — same pattern as RecipeRating; orphans are
+// harmless and it keeps the migration pure CREATE TABLEs. Internal parent→child
+// relations cascade. SOFT/history data only — NEVER a source of exclusions (Law 2).
+model BrainConversation {
+  id        String         @id @default(cuid())
+  userId    String
+  title     String?
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
+  messages  BrainMessage[]
+
+  @@index([userId])
+}
+
+model BrainMessage {
+  id             String            @id @default(cuid())
+  conversationId String
+  conversation   BrainConversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  role           String // "user" | "assistant"
+  content        String
+  createdAt      DateTime          @default(now())
+
+  @@index([conversationId])
+}
+
+model GeneratedRecipe {
+  id        String   @id @default(cuid())
+  userId    String
+  recipeId  String? // set once accepted into the pool
+  name      String
+  data      Json // verified structure + prov
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+}
+
+model GeneratedPlan {
+  id        String              @id @default(cuid())
+  userId    String
+  label     String?
+  data      Json // plan snapshot
+  createdAt DateTime            @default(now())
+  items     GeneratedPlanItem[]
+
+  @@index([userId])
+}
+
+model GeneratedPlanItem {
+  id       String        @id @default(cuid())
+  planId   String
+  plan     GeneratedPlan @relation(fields: [planId], references: [id], onDelete: Cascade)
+  slotType String // "meal" | "snack"
+  recipeId String?
+  data     Json
+
+  @@index([planId])
+}
+
+model BrainSolveRun {
+  id        String   @id @default(cuid())
+  userId    String
+  intent    String?
+  status    String // "converged" | "partial" | "failed"
+  data      Json // targets, iterations, result summary (audit)
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+}
+
+model UserLibraryEntry {
+  id        String   @id @default(cuid())
+  userId    String
+  recipeId  String
+  createdAt DateTime @default(now())
+
+  @@unique([userId, recipeId])
+  @@index([userId])
+}
+
 // ── Training scaffold (Phase 8) ─────────────────────────────────────────
 // Deliberately separate from the meal engine: nothing here references
 // Recipe/Food/Plan, and the meal code never reads these tables. The tree
