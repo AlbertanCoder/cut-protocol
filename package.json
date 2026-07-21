@@ -10,7 +10,8 @@
     "dist": "npm run build:frontend && electron-builder",
     "scan:secrets": "node scripts/scanSecrets.mjs --tracked",
     "brain:purity": "node scripts/checkBrainPurity.mjs",
-    "security:all": "node scripts/scanSecrets.mjs --tracked && node scripts/checkBrainPurity.mjs",
+    "supply:check": "node scripts/checkSupplyChain.mjs",
+    "security:all": "node scripts/scanSecrets.mjs --tracked && node scripts/checkBrainPurity.mjs && node scripts/checkSupplyChain.mjs",
     "dist:check": "node scripts/checkDistSafe.mjs"
   },
   "devDependencies": {
