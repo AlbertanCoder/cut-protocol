@@ -106,3 +106,12 @@ test("brainChat G3: a reply stating macros is swapped for the Plan-tab redirect 
   assert.equal(r.guarded, true);
   assert.match(r.reply, /Plan tab/);
 });
+
+test("brainChat: prior turns become model history (invalid shapes dropped, new message last)", async () => {
+  let seen = null;
+  const runLoop = async ({ messages }) => { seen = messages; return { content: [{ type: "text", text: "ok" }], usage: {} }; };
+  const history = [{ role: "you", content: "x" }, { role: "user", content: "high-protein ideas" }, { role: "assistant", content: "try chicken" }, { role: "bogus", content: "drop me" }];
+  await brainChat({ userId: "u", message: "why not?", history }, deps({ runLoop, classify: async () => ({ decision: "allow", category: "food" }) }));
+  assert.deepEqual(seen.map((m) => m.role), ["user", "assistant", "user"], "invalid roles dropped; valid history precedes the new message");
+  assert.equal(seen[seen.length - 1].content, "why not?");
+});

@@ -86,5 +86,5 @@ export const api = {
   // Stage D2 — brain chat. getBrainStatus gates whether the chat bar renders at
   // all; brainChat sends one message. Both no-op cleanly when the brain is off.
   getBrainStatus: () => request("/brain/status"),
-  brainChat: (message, depth) => request("/brain/chat", { method: "POST", body: JSON.stringify({ message, depth }) }),
+  brainChat: (message, depth, history) => request("/brain/chat", { method: "POST", body: JSON.stringify({ message, depth, history }) }),
 };
