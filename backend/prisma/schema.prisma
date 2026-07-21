@@ -156,6 +156,14 @@ model Recipe {
   protein     Float
   fat         Float
   carb        Float
+  // T (v2): taste-quality tier + cached user-rating aggregate. Nullable/additive;
+  // null tasteTier ranks as "decent" and is never filtered out by default. SOFT
+  // signal — only the brain scorer reads these; the deterministic solver ignores
+  // them, so BRAIN=off stays byte-identical (Law 2 unaffected).
+  tasteTier       String? // "decent" | "really_good" | "exceptional"
+  tasteTierSource String? // "curated" | "user_derived" | "llm"  (precedence: curated > user_derived > llm)
+  userRatingAvg   Float? // cached mean of RecipeRating scores, normalised 0..1
+  userRatingCount Int? // cached count of ratings
   createdAt   DateTime @default(now())
   // Nullable on purpose: the existing 629-row curated/AI-generated/imported
   // library predates per-user ownership (single-user app originally) and has

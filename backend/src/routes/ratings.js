@@ -1,9 +1,19 @@
 const express = require("express");
 const { prisma } = require("../lib/prisma.js");
 const { requireAuth } = require("../lib/auth.js");
+const { recomputeAgg } = require("../lib/brain/taste.js");
 
 const router = express.Router();
 router.use(requireAuth);
+
+// T (v2): after a rating changes, refresh the recipe's cached aggregate. Additive
+// columns only — the deterministic solver never reads them (byte-identical), the
+// brain scorer does. Fail-soft: an orphan rating (deleted recipe) is a no-op.
+async function refreshRecipeAgg(recipeId) {
+  const rows = await prisma.recipeRating.findMany({ where: { recipeId }, select: { rating: true } });
+  const { userRatingAvg, userRatingCount } = recomputeAgg(rows);
+  await prisma.recipe.updateMany({ where: { id: recipeId }, data: { userRatingAvg, userRatingCount } });
+}
 
 // T (v2) — recipe taste ratings. SOFT palatability only: re-ranks which recipes
 // the solver PREFERS, never a displayed number (LAW 1) and never an override of
@@ -30,11 +40,13 @@ router.put("/", async (req, res) => {
     create: { userId: req.userId, recipeId, rating },
     select: { recipeId: true, rating: true },
   });
+  await refreshRecipeAgg(recipeId);
   res.json(row);
 });
 
 router.delete("/:recipeId", async (req, res) => {
   await prisma.recipeRating.deleteMany({ where: { userId: req.userId, recipeId: req.params.recipeId } });
+  await refreshRecipeAgg(req.params.recipeId);
   res.status(204).end();
 });
 

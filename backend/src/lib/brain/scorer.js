@@ -6,7 +6,11 @@
 // numbers, it never calls the model.
 const { proteinMid } = require("./feasibility.js");
 
-const DEFAULT_WEIGHTS = { protein: 0.35, kcal: 0.35, fat: 0.1, carb: 0.1, variety: 0.05, palatability: 0.05 };
+const { effectiveTasteScore } = require("./taste.js");
+
+// taste (0.03) is deliberately well below protein/kcal (0.35) — it reorders,
+// never dominates. It contributes 0 unless a slot carries a taste signal.
+const DEFAULT_WEIGHTS = { protein: 0.35, kcal: 0.35, fat: 0.1, carb: 0.1, variety: 0.05, palatability: 0.05, taste: 0.03 };
 const WEIGHT_BOUNDS = { min: 0, max: 1 };
 
 const cap = (x) => Math.min(1, Math.max(0, x));
@@ -53,6 +57,15 @@ function avgCoherence(slots) {
   return cap(vals.reduce((a, b) => a + b, 0) / vals.length);
 }
 
+// T (v2): mean effectiveTasteScore across slots that carry a taste signal
+// (tasteTier or ratings). null → NO taste signal at all → the taste term is
+// skipped, so a plan of untagged recipes scores exactly as before.
+function avgEffectiveTaste(slots) {
+  const vals = (slots || []).filter((s) => s && (s.tasteTier != null || s.userRatingCount)).map((s) => effectiveTasteScore(s));
+  if (vals.length === 0) return null;
+  return vals.reduce((a, b) => a + b, 0) / vals.length;
+}
+
 /**
  * scorePlan(day, target, opts) -> { cost, score, breakdown, prov }
  * day: { slots:[{kcal,protein,carb,fat, recipeId?, coherence?}], totals? }.
@@ -72,6 +85,8 @@ function scorePlan(day, target, opts = {}) {
   const carbBand = rangeMiss(totals.carb, target.carbLo, target.carbHi);
   const variety = varietyPenalty(day.slots);
   const palatability = 1 - avgCoherence(day.slots);
+  const eff = avgEffectiveTaste(day.slots); // null → no taste signal → term is 0
+  const tastePenalty = eff == null ? 0 : 1 - eff;
 
   const terms = {
     protein: w.protein * cap(proteinShort),
@@ -80,6 +95,7 @@ function scorePlan(day, target, opts = {}) {
     carb: w.carb * cap(carbBand),
     variety: w.variety * cap(variety),
     palatability: w.palatability * cap(palatability),
+    taste: w.taste * cap(tastePenalty),
   };
   const cost = Object.values(terms).reduce((a, b) => a + b, 0);
   return {

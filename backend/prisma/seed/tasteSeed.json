@@ -1,0 +1,5 @@
+{
+  "__note": "Stage T curated taste-tier prior. Idempotent (only fills a null tasteTier). tasteTierSource is set to 'curated' — the authoritative prior. User ratings blend on top via Bayesian shrinkage and NEVER overwrite these tiers. 'bySource' maps a recipe.source to a tier; 'byName' overrides specific recipes by exact name (editorial). Ratings + the LLM (capped at really_good) supply the other tiers over time.",
+  "bySource": { "curated": "really_good" },
+  "byName": {}
+}
