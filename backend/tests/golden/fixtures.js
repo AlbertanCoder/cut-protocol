@@ -13,7 +13,7 @@
 
 const { generateBestWeekPlan, generateDayCandidates } = require("../../src/lib/mealSolver.js");
 const { buildGroceryList } = require("../../src/lib/groceryList.js");
-const { trendRate, verdict } = require("../../src/lib/bmrEngine.js");
+const { trendRate, verdict, computeEnergy } = require("../../src/lib/bmrEngine.js");
 const { toDiaryShape } = require("../../src/routes/diary.js");
 const { makeRng } = require("../helpers/seededRng.js");
 
@@ -110,6 +110,33 @@ const DIARY_LOGS = [
   { id: "log3", name: "Greek Yogurt", kcal: 150, proteinG: 25, carbG: 9, fatG: 2, slotType: "snack", source: "manual" },
 ];
 
+// ── BMR fixture (A0, Stage 3 v2) ────────────────────────────────────────────
+// Locks the BMR MEAN (the number that materializes Profile.targetKcal) across
+// the age bands + the body-fat gate, at bodyFatPct null / 0 / known. The
+// snapshot captures ONLY the load-bearing numbers — rmr + the INCLUDED formulas'
+// rounded values — so E1's additive fields (sd/spreadPct/prov/defaultOn) and the
+// 4 new DEFAULT-OFF formulas never false-trip the byte diff. Under Option A the
+// included set is unchanged, so every value here must stay identical after E1.
+const BMR_FIXTURES = [
+  { name: "M 33 bf null", weightKg: 80, profile: { heightCm: 180, age: 33, sex: "M", bodyFatPct: null, excludedFormulas: [] } },
+  { name: "M 33 bf 0 (legacy unknown)", weightKg: 80, profile: { heightCm: 180, age: 33, sex: "M", bodyFatPct: 0, excludedFormulas: [] } },
+  { name: "F 45 bf 0", weightKg: 65, profile: { heightCm: 165, age: 45, sex: "F", bodyFatPct: 0, excludedFormulas: [] } },
+  { name: "M 65 bf 0 (schofield drops)", weightKg: 85, profile: { heightCm: 175, age: 65, sex: "M", bodyFatPct: 0, excludedFormulas: [] } },
+  { name: "M 33 bf 20 (LBM formulas apply)", weightKg: 80, profile: { heightCm: 180, age: 33, sex: "M", bodyFatPct: 20, excludedFormulas: [] } },
+  { name: "F 28 bf 22", weightKg: 60, profile: { heightCm: 168, age: 28, sex: "F", bodyFatPct: 22, excludedFormulas: [] } },
+];
+
+function bmrSnapshot(profile, weightKg) {
+  const e = computeEnergy(profile, weightKg);
+  return {
+    rmr: e.rmr,
+    includedCount: e.includedCount,
+    spreadLo: e.spreadLo,
+    spreadHi: e.spreadHi,
+    included: e.rows.filter((r) => !r.excluded).map((r) => ({ key: r.key, v: Math.round(r.v) })),
+  };
+}
+
 // Fresh seeded RNG per scenario so each is independent of call order.
 async function computeBaseline() {
   const week = await generateBestWeekPlan(DAILY_TARGET, { meals: 3, snacks: 0 }, RECIPE_POOL, { rng: makeRng(0xa0), attempts: 3 });
@@ -121,7 +148,8 @@ async function computeBaseline() {
   const rate = trendRate(WEIGHINS);
   const trend = { rate, verdict: verdict({ rate, chosenRate: 1.5, daysIn: 15, atFloor: false }) };
   const diary = toDiaryShape(DIARY_LOGS);
-  return { solver: { week, dayCandidates }, grocery, trend, diary };
+  const bmr = BMR_FIXTURES.map((f) => ({ name: f.name, ...bmrSnapshot(f.profile, f.weightKg) }));
+  return { solver: { week, dayCandidates }, grocery, trend, diary, bmr };
 }
 
-module.exports = { computeBaseline, RECIPE_POOL, DAILY_TARGET };
+module.exports = { computeBaseline, RECIPE_POOL, DAILY_TARGET, BMR_FIXTURES };
