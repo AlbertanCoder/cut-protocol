@@ -20,6 +20,7 @@ const { defaultLedger, guardedCall } = require("./ledger.js");
 const { estimateUsd } = require("./pricing.js");
 const { MODELS } = require("./config.js");
 const { makeClassifier } = require("./classifier.js");
+const { looksLikePlanRequest, generateDayForChat, planIntro } = require("./chatPlan.js");
 
 // The chat coach only SEARCHES for grounding (name real recipes/foods from the
 // compliant pool) — it never gets the compute tools (scaleRecipe/computeMacros/
@@ -77,6 +78,15 @@ async function brainChat({ userId, message, depth = "balanced", history = [] } =
   }
 
   try {
+    // Stage 1 (v2): an explicit "build me a full day" ask short-circuits to the
+    // DETERMINISTIC day-solver — engine numbers (LAW 1), the compliant pool
+    // (LAW 2), no model call. A failure (no profile / empty pool) returns null
+    // and falls through to the conversational coach below (LAW 7).
+    if (looksLikePlanRequest(message)) {
+      const plan = await generateDayForChat({ userId }, deps).catch(() => null);
+      if (plan) return { available: true, refused: false, reply: planIntro(plan), plan };
+    }
+
     const profile = (await loadProfile(userId)) || {};
     const library = await loadLibrary(profile);
     const pool = buildPool(profile, library);

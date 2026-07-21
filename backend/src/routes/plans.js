@@ -1,61 +1,23 @@
 const express = require("express");
 const { prisma } = require("../lib/prisma.js");
 const { requireAuth } = require("../lib/auth.js");
-const { computeMacros } = require("../lib/bmrEngine.js");
-const { getWeightNowKg } = require("../lib/weightNow.js");
 const { todayStr, mondayOf } = require("../lib/dates.js");
 const { generateWeekPlan, regenerateOneSlot, buildSlots, targetsForSlots, scaleRecipe } = require("../lib/weeklyPlanner.js");
 const { generateDayCandidates, generateBestWeekPlan, alternatesForSlot, buildBias, applyPrepFilter } = require("../lib/mealSolver.js");
 const { buildCostCache } = require("../lib/recipeCost.js");
-const { recipeExcludedByStyle, matchesExclusionTerm, recipeExceedsKetoCeiling } = require("../lib/dietaryFilter.js");
 const { buildGroceryList } = require("../lib/groceryList.js");
 const { toPurchaseUnits } = require("../lib/purchaseUnits.js");
+const { planContext, filterRecipePool, parseFilters } = require("../lib/planContext.js");
 
 const router = express.Router();
 router.use(requireAuth);
 
 const PLAN_INCLUDE = { slots: { include: { recipe: true }, orderBy: [{ dayOfWeek: "asc" }, { slotType: "asc" }, { slotIndex: "asc" }] }, groceryList: true };
 
-function filterRecipePool(recipePool, profile) {
-  const dietaryStyle = profile.dietaryStyle || null;
-  const excludedFoods = Array.isArray(profile.excludedFoods) ? profile.excludedFoods : [];
-  if (!dietaryStyle && excludedFoods.length === 0) return recipePool;
-  return recipePool.filter((recipe) => {
-    // Shared keto ceiling — single-sourced in dietaryFilter so the library
-    // listing (recipes.js) can never diverge from the solver pool (M8).
-    if (recipeExceedsKetoCeiling(recipe, dietaryStyle)) return false;
-    const flatIngredients = recipe.ingredients.map((i) => ({ name: i.food.name }));
-    if (recipeExcludedByStyle({ ingredients: flatIngredients }, dietaryStyle)) return false;
-    if (excludedFoods.length && flatIngredients.some((ing) => excludedFoods.some((term) => matchesExclusionTerm(ing.name, term)))) return false;
-    return true;
-  });
-}
-
-async function planContext(userId) {
-  const profile = await prisma.profile.findUnique({ where: { userId } });
-  if (!profile) throw Object.assign(new Error("no profile set up yet"), { status: 404 });
-  const weightNowKg = await getWeightNowKg(userId, profile);
-  const dailyTarget = computeMacros(profile, weightNowKg, profile.targetKcal);
-  const mealConfig = { meals: profile.mealsPerDay, snacks: profile.snacksPerDay };
-  const rawRecipePool = await prisma.recipe.findMany({ include: { ingredients: { include: { food: true } } } });
-  const recipePool = filterRecipePool(rawRecipePool, profile);
-  return { profile, dailyTarget, mealConfig, recipePool, rawPoolCount: rawRecipePool.length };
-}
-
-// The generation filters the Phase 4 UI sends. Cuisine/protein/budget are
-// soft biases; maxPrepMin is a hard cap; allowBatchRepeats relaxes the
-// variety rule. Allergies/diet are NOT here — they come from the profile
-// and are enforced in filterRecipePool, always.
-function parseFilters(body) {
-  const f = body?.filters || {};
-  return {
-    cuisines: Array.isArray(f.cuisines) ? f.cuisines.filter((c) => typeof c === "string").slice(0, 8) : [],
-    protein: typeof f.protein === "string" && f.protein ? f.protein : null,
-    budget: ["cheap", "moderate", "premium"].includes(f.budget) ? f.budget : null,
-    maxPrepMin: Number.isInteger(f.maxPrepMin) && f.maxPrepMin > 0 ? f.maxPrepMin : null,
-    allowBatchRepeats: f.allowBatchRepeats === true,
-  };
-}
+// planContext / filterRecipePool / parseFilters moved to ../lib/planContext.js
+// (Stage 1, v2) so the brain's chat planner reuses the SAME pool-builder — the
+// M8 single-source invariant. filterRecipePool is still re-exported at the
+// bottom of this file so tests/planLogic.test.js keeps importing it from here.
 
 function slotKey(s) {
   return `${s.dayOfWeek}:${s.slotType}:${s.slotIndex}`;

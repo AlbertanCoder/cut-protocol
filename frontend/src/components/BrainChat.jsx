@@ -13,6 +13,46 @@ const CHIPS = [
 ];
 const DEPTHS = ["fast", "balanced", "thorough"];
 
+// Stage 1 (v2): a deterministic day the coach built via the engine. EVERY number
+// here came from the solver (LAW 1) — the card only displays them. Constitution:
+// macro triad only (P blue / C amber / F pink), NO green, NO red, elevation via
+// lightness (card2 → card), P/C/F letter labels always present.
+function PlanCard({ plan }) {
+  return (
+    <div className="mt-1.5 rounded-xl overflow-hidden" style={{ background: C.card2, border: `1px solid ${C.rule}` }}>
+      {plan.slots.map((s, i) => (
+        <div key={i} className="px-3 py-2 flex flex-col gap-0.5" style={{ borderBottom: i < plan.slots.length - 1 ? `1px solid ${C.rule}` : "none" }}>
+          <div className="flex items-baseline justify-between gap-2">
+            <span className="text-[10px] font-bold uppercase tracking-wide" style={{ color: C.faintLight }}>{s.slotType}</span>
+            <span className="text-[12px] font-bold tabular-nums" style={{ color: C.ink }}>{s.kcal} <span className="text-[9px] font-semibold" style={{ color: C.faintLight }}>kcal</span></span>
+          </div>
+          <div className="text-[12px] font-semibold" style={{ color: s.label ? C.ink : C.faintLight }}>{s.label || "— no fit from your recipes"}</div>
+          <div className="flex gap-2.5 text-[10px] font-bold tabular-nums">
+            <span style={{ color: C.proteinText }}>P {s.protein}</span>
+            <span style={{ color: C.carbText }}>C {s.carb}</span>
+            <span style={{ color: C.fatText }}>F {s.fat}</span>
+          </div>
+        </div>
+      ))}
+      <div className="px-3 py-2 flex items-baseline justify-between gap-2" style={{ background: C.card }}>
+        <span className="text-[10px] font-extrabold uppercase tracking-wide" style={{ color: C.faint }}>Day total</span>
+        <div className="flex items-baseline gap-2">
+          <span className="text-[14px] font-extrabold tabular-nums" style={{ color: C.ink }}>{plan.total.kcal}</span>
+          <span className="text-[9px] font-semibold" style={{ color: C.faintLight }}>kcal</span>
+          <span className="text-[10px] font-bold tabular-nums" style={{ color: C.proteinText }}>P {plan.total.protein}</span>
+          <span className="text-[10px] font-bold tabular-nums" style={{ color: C.carbText }}>C {plan.total.carb}</span>
+          <span className="text-[10px] font-bold tabular-nums" style={{ color: C.fatText }}>F {plan.total.fat}</span>
+        </div>
+      </div>
+      {plan.target && (
+        <div className="px-3 py-1.5 text-[10px] font-semibold" style={{ color: C.faintLight, borderTop: `1px solid ${C.rule}` }}>
+          Target {plan.target.kcal} kcal · numbers computed by the engine
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function BrainChat() {
   const [enabled, setEnabled] = useState(null); // null = checking, false = off (hidden), true = on
   const [open, setOpen] = useState(false);
@@ -47,7 +87,7 @@ export default function BrainChat() {
       const res = await api.brainChat(msg, depth, history);
       const text2 = res && res.available === false ? "The assistant is currently off." : (res && res.reply) || "No response.";
       const tone = res && (res.refused || res.degraded) ? "muted" : "normal";
-      setMessages((m) => [...m, { role: "coach", text: text2, tone }]);
+      setMessages((m) => [...m, { role: "coach", text: text2, tone, plan: (res && res.plan) || null }]);
     } catch {
       setMessages((m) => [...m, { role: "coach", text: "Something went wrong — your deterministic plan on the Plan tab is unaffected.", tone: "muted" }]);
     } finally {
@@ -96,7 +136,7 @@ export default function BrainChat() {
           </div>
         ) : (
           messages.map((m, i) => (
-            <div key={i} className={m.role === "you" ? "self-end" : "self-start"} style={{ maxWidth: "85%" }}>
+            <div key={i} className={m.role === "you" ? "self-end" : "self-start"} style={{ maxWidth: m.plan ? "97%" : "85%" }}>
               <div
                 className="text-[13px] font-semibold px-3 py-2 rounded-2xl whitespace-pre-wrap"
                 style={
@@ -107,6 +147,7 @@ export default function BrainChat() {
               >
                 {m.text}
               </div>
+              {m.plan && <PlanCard plan={m.plan} />}
             </div>
           ))
         )}
