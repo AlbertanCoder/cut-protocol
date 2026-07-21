@@ -17,9 +17,14 @@ const median = (a) => {
 };
 
 // ── BMR formulas ─────────────────────────────────────────────────────────
-// Katch–McArdle/Cunningham are LBM-based — the best available when body-fat%
-// is known, hidden when it isn't (0 = unknown). Schofield ships only the two
-// published 18–60 bands (omit rather than guess coefficients).
+// Ten published estimators, averaged. Katch–McArdle / Cunningham / Nelson are
+// LBM-based — best when body-fat% is known, hidden when it isn't (0 OR null =
+// unknown). Schofield ships only the published 18–60 bands (omit rather than
+// guess). FAO/WHO/UNU, Owen, Livingston are always applicable. The lean-mass
+// term is single-sourced so the three LBM formulas can never diverge.
+const { CITATIONS } = require("./bmrCitations.js");
+const leanBodyMass = (kg, bf) => kg * (1 - bf / 100);
+
 const FORMULAS = [
   {
     key: "mifflin", label: "Mifflin–St Jeor",
@@ -54,22 +59,78 @@ const FORMULAS = [
   {
     key: "katch", label: "Katch–McArdle", needsBodyFat: true,
     applicable: ({ bf }) => bf > 0,
-    fn: ({ kg, bf }) => 370 + 21.6 * (kg * (1 - bf / 100)),
+    fn: ({ kg, bf }) => 370 + 21.6 * leanBodyMass(kg, bf),
   },
   {
     key: "cunningham", label: "Cunningham", needsBodyFat: true,
     applicable: ({ bf }) => bf > 0,
-    fn: ({ kg, bf }) => 500 + 22 * (kg * (1 - bf / 100)),
+    fn: ({ kg, bf }) => 500 + 22 * leanBodyMass(kg, bf),
+  },
+  // ── E1 (v2): four more published estimators, DEFAULT-OFF (see DEFAULT_ENABLED)
+  // so today's 6-formula mean — and every materialized target — is unchanged.
+  {
+    key: "whofao", label: "FAO/WHO/UNU",
+    applicable: () => true,
+    fn: ({ kg, a, male }) => male
+      ? (a < 30 ? 15.3 * kg + 679 : a < 60 ? 11.6 * kg + 879 : 13.5 * kg + 487)
+      : (a < 30 ? 14.7 * kg + 496 : a < 60 ? 8.7 * kg + 829 : 10.5 * kg + 596),
+  },
+  {
+    key: "owen", label: "Owen",
+    applicable: () => true,
+    fn: ({ kg, male }) => male ? 879 + 10.2 * kg : 795 + 7.18 * kg,
+  },
+  {
+    key: "livingston", label: "Livingston",
+    applicable: () => true,
+    fn: ({ kg, a, male }) => male
+      ? 293 * Math.pow(kg, 0.4330) - 5.92 * a
+      : 248 * Math.pow(kg, 0.4356) - 5.09 * a,
+  },
+  {
+    key: "nelson", label: "Nelson (FFM/FM)", needsBodyFat: true,
+    applicable: ({ bf }) => bf > 0,
+    fn: ({ kg, bf }) => {
+      const ffm = leanBodyMass(kg, bf);
+      return 25.9 * ffm + 4.04 * (kg - ffm);
+    },
   },
 ];
 const FORMULA_KEYS = FORMULAS.map((f) => f.key);
 
+// The formulas that count toward the mean when a profile expresses no explicit
+// choice. Option A (default): today's 6 → mean unchanged → byte-identical.
+// (Option B — all 10 on by default — is a one-line change to [...FORMULA_KEYS]
+// plus a re-baselined BMR golden; deliberately NOT taken.)
+const DEFAULT_ENABLED = ["mifflin", "oxford", "harris", "schofield", "katch", "cunningham"];
+
+// `excludedFormulas` membership means "FLIP this formula from its default state":
+// a default-ON formula in the list is turned OFF (today's opt-out); a default-OFF
+// formula in the list is turned ON (opt-in via the same Engine toggle). For the
+// 6 legacy formulas this is byte-identical to the old `excluded.includes(key)`.
+function isFormulaOn(key, excludedFormulas) {
+  const flipped = excludedFormulas.includes(key);
+  return DEFAULT_ENABLED.includes(key) ? !flipped : flipped;
+}
+
 function bmrRows(profile, weightKg) {
-  const ctx = { kg: weightKg, cm: profile.heightCm, a: profile.age, male: profile.sex === "M", bf: profile.bodyFatPct };
+  // Dual-accept: bodyFatPct null (unset) OR 0 (legacy "unknown") both hide the
+  // LBM formulas identically (null > 0 === false, 0 > 0 === false).
+  const bf = profile.bodyFatPct == null ? 0 : profile.bodyFatPct;
+  const ctx = { kg: weightKg, cm: profile.heightCm, a: profile.age, male: profile.sex === "M", bf };
   const excluded = Array.isArray(profile.excludedFormulas) ? profile.excludedFormulas : [];
   return FORMULAS
     .filter((f) => f.applicable(ctx))
-    .map((f) => ({ key: f.key, label: f.label, v: f.fn(ctx), excluded: excluded.includes(f.key) }));
+    .map((f) => {
+      const v = f.fn(ctx);
+      return {
+        key: f.key, label: f.label, v,
+        defaultOn: DEFAULT_ENABLED.includes(f.key),
+        // Flip-aware; for the 6 legacy formulas identical to excluded.includes(key).
+        excluded: !isFormulaOn(f.key, excluded),
+        prov: { formulaId: f.key, inputs: { kg: ctx.kg, cm: ctx.cm, age: ctx.a, male: ctx.male, bf: ctx.bf }, value: v, citation: CITATIONS[f.key] || null },
+      };
+    });
 }
 
 // ── activity ─────────────────────────────────────────────────────────────
@@ -104,6 +165,13 @@ function computeEnergy(profile, weightKg) {
   if (allExcludedFallback) included = rows;
   const values = included.map((r) => r.v);
   const rmr = mean(values);
+  // Additive dispersion stats. sd = population standard deviation (kcal);
+  // spreadPct = range as % of the mean (one decimal). Honest caveat (Engine tab):
+  // this is DISPERSION, not a confidence interval — several estimators share a
+  // dataset (whofao≈schofield) or the LBM-linear form (katch≈cunningham≈nelson).
+  const variance = values.reduce((s, v) => s + (v - rmr) ** 2, 0) / values.length;
+  const sd = Math.round(Math.sqrt(variance));
+  const spreadPct = rmr > 0 ? Math.round(((Math.max(...values) - Math.min(...values)) / rmr) * 1000) / 10 : 0;
   const job = jobMultiplier(profile);
   const training = trainingKcalPerDay(profile, weightKg);
   const tdee = rmr * job.multiplier + training.perDay;
@@ -112,6 +180,8 @@ function computeEnergy(profile, weightKg) {
     rmr: Math.round(rmr),
     spreadLo: Math.round(Math.min(...values)),
     spreadHi: Math.round(Math.max(...values)),
+    sd,
+    spreadPct,
     includedCount: included.length,
     allExcludedFallback,
     jobMultiplier: job.multiplier,
@@ -255,8 +325,8 @@ function verdict({ rate, chosenRate, daysIn, atFloor }) {
 }
 
 module.exports = {
-  kg2lb, mean, median,
-  FORMULAS, FORMULA_KEYS, bmrRows, computeEnergy,
+  kg2lb, mean, median, leanBodyMass,
+  FORMULAS, FORMULA_KEYS, DEFAULT_ENABLED, isFormulaOn, bmrRows, computeEnergy,
   RATE_OPTIONS, SAFE_FLOOR, effectiveFloor, deriveTarget, rateSafety,
   computeMacros, trendRate, verdict,
 };

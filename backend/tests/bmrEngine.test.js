@@ -1,7 +1,7 @@
 const { test } = require("node:test");
 const assert = require("node:assert/strict");
 const {
-  bmrRows, computeEnergy, deriveTarget, rateSafety, verdict,
+  bmrRows, computeEnergy, deriveTarget, rateSafety, verdict, isFormulaOn,
   RATE_OPTIONS, SAFE_FLOOR, effectiveFloor,
 } = require("../src/lib/bmrEngine.js");
 
@@ -24,12 +24,14 @@ test("formula table reproduces the reference fixture within tolerance", () => {
   near(byKey.harris, 2201);
   near(byKey.katch, 2097);
   near(byKey.cunningham, 2259);
-  assert.equal(rows.length, 6, "all six formulas applicable for this fixture");
+  assert.equal(rows.length, 10, "all ten formulas applicable for this fixture (age 33, bf 24)");
 });
 
 test("body-fat-dependent and age-banded formulas hide honestly", () => {
   const noBf = bmrRows({ ...REF, bodyFatPct: 0 }, KG);
-  assert.ok(!noBf.some((r) => r.key === "katch" || r.key === "cunningham"));
+  assert.ok(!noBf.some((r) => ["katch", "cunningham", "nelson"].includes(r.key)), "all 3 LBM formulas hide without body-fat");
+  const noBfNull = bmrRows({ ...REF, bodyFatPct: null }, KG);
+  assert.ok(!noBfNull.some((r) => ["katch", "cunningham", "nelson"].includes(r.key)), "null body-fat hides the LBM formulas too (dual-accept)");
   const older = bmrRows({ ...REF, age: 65 }, KG);
   assert.ok(!older.some((r) => r.key === "schofield"));
 });
@@ -155,6 +157,67 @@ test("REGRESSION (Stage C / #27): Oxford (Henry) uses all four canonical age ban
   assert.equal(ox("F", 45), Math.round(9.74 * 80 + 694), "F 30-60");
   assert.equal(ox("F", 65), Math.round(10.2 * 80 + 572), "F 60-70");
   assert.equal(ox("F", 75), Math.round(10.0 * 80 + 577), "F >70");
+});
+
+// ===================================================================
+// E1 (v2): four added estimators + the default-preserving flip
+// ===================================================================
+
+test("REGRESSION (E1): FAO/WHO/UNU, Owen, Livingston, Nelson reproduce published values", () => {
+  const kg = 80, one = (p, k) => Math.round(bmrRows(p, kg).find((r) => r.key === k).v);
+  const M = (age) => ({ sex: "M", heightCm: 178, age, bodyFatPct: 20, excludedFormulas: [] });
+  const F = (age) => ({ sex: "F", heightCm: 178, age, bodyFatPct: 28, excludedFormulas: [] });
+  // FAO/WHO/UNU — age-banded, both sexes
+  assert.equal(one(M(45), "whofao"), Math.round(11.6 * 80 + 879)); // 1807 (M 30-60)
+  assert.equal(one(M(25), "whofao"), Math.round(15.3 * 80 + 679)); // 1903 (M 18-30)
+  assert.equal(one(M(65), "whofao"), Math.round(13.5 * 80 + 487)); // 1567 (M >60)
+  assert.equal(one(F(45), "whofao"), Math.round(8.7 * 80 + 829));  // 1525 (F 30-60)
+  // Owen — weight-only
+  assert.equal(one(M(40), "owen"), Math.round(879 + 10.2 * 80));   // 1695
+  assert.equal(one(F(40), "owen"), Math.round(795 + 7.18 * 80));   // 1369
+  // Livingston — power-law
+  assert.equal(one(M(40), "livingston"), Math.round(293 * Math.pow(80, 0.4330) - 5.92 * 40));
+  assert.equal(one(F(40), "livingston"), Math.round(248 * Math.pow(80, 0.4356) - 5.09 * 40));
+  // Nelson — FFM/FM split (bf 20 → FFM 64, FM 16): 25.9·64 + 4.04·16 = 1722
+  assert.equal(one(M(40), "nelson"), Math.round(25.9 * 64 + 4.04 * 16));
+});
+
+test("E1 flip: the 4 new formulas are DEFAULT-OFF; the 6 legacy stay default-on", () => {
+  const e = computeEnergy({ sex: "M", heightCm: 180, age: 33, bodyFatPct: 20, excludedFormulas: [] }, 80);
+  const on = e.rows.filter((r) => !r.excluded).map((r) => r.key).sort();
+  assert.deepEqual(on, ["cunningham", "harris", "katch", "mifflin", "oxford", "schofield"], "only the 6 legacy formulas count by default");
+  for (const k of ["whofao", "owen", "livingston", "nelson"]) {
+    const row = e.rows.find((r) => r.key === k);
+    assert.ok(row, `${k} is present as a row`);
+    assert.equal(row.excluded, true, `${k} is default-off`);
+    assert.equal(row.defaultOn, false, `${k} reports defaultOn:false`);
+  }
+});
+
+test("E1 flip: opting a default-off formula IN adds it; a legacy formula still opts OUT", () => {
+  const base = computeEnergy({ sex: "M", heightCm: 180, age: 33, bodyFatPct: 0, excludedFormulas: [] }, 80);
+  const withWho = computeEnergy({ sex: "M", heightCm: 180, age: 33, bodyFatPct: 0, excludedFormulas: ["whofao"] }, 80);
+  assert.equal(withWho.includedCount, base.includedCount + 1, "opting whofao in adds exactly one formula");
+  assert.ok(withWho.rows.find((r) => r.key === "whofao" && !r.excluded), "whofao is now included");
+  const noMifflin = computeEnergy({ sex: "M", heightCm: 180, age: 33, bodyFatPct: 0, excludedFormulas: ["mifflin"] }, 80);
+  assert.equal(noMifflin.includedCount, base.includedCount - 1, "excluding a legacy formula removes exactly one (unchanged semantics)");
+});
+
+test("E1: isFormulaOn flip semantics", () => {
+  assert.equal(isFormulaOn("mifflin", []), true, "legacy default-on");
+  assert.equal(isFormulaOn("mifflin", ["mifflin"]), false, "legacy present → off");
+  assert.equal(isFormulaOn("whofao", []), false, "new default-off");
+  assert.equal(isFormulaOn("whofao", ["whofao"]), true, "new present → on");
+});
+
+test("E1: sd and spreadPct are present and sane; prov attaches a formulaId + value", () => {
+  const e = computeEnergy(REF, KG);
+  assert.ok(Number.isFinite(e.sd) && e.sd >= 0, "sd is a non-negative number");
+  assert.ok(e.spreadPct > 0, "spreadPct positive across multiple formulas");
+  assert.ok(e.spreadLo < e.spreadHi);
+  const row = e.rows[0];
+  assert.equal(row.prov.formulaId, row.key);
+  assert.equal(row.prov.value, row.v, "prov.value equals the row value (Law 3)");
 });
 
 // Mandated: the calorie floor. The constitution's RMR×0.95 rail was missing —
