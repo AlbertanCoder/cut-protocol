@@ -21,6 +21,12 @@ const { estimateUsd } = require("./pricing.js");
 const { MODELS } = require("./config.js");
 const { makeClassifier } = require("./classifier.js");
 
+// The chat coach only SEARCHES for grounding (name real recipes/foods from the
+// compliant pool) — it never gets the compute tools (scaleRecipe/computeMacros/
+// dayTotals). Handing it those made it try to ASSEMBLE a numbered plan it can't
+// finish in a chat turn, so it produced nothing. Building plans is the Plan tab.
+const CHAT_TOOL_DEFS = TOOL_DEFS.filter((t) => t.name === "searchRecipes" || t.name === "searchFoods");
+
 async function defaultLoadProfile(userId) {
   const { prisma } = require("../prisma.js");
   return prisma.profile.findUnique({ where: { userId } });
@@ -70,11 +76,17 @@ async function brainChat({ userId, message, depth = "balanced" } = {}, deps = {}
     // called, nothing is spent.
     const projectedUsd = estimateUsd(model, { turns: maxTurns, maxTokens: 1024 });
     const gate = await guardedCall(ledger, { projectedUsd, userId, model, phase: "chat", intent: "chat" },
-      () => runLoop({ system, messages: [{ role: "user", content: message }], tools, toolDefs: TOOL_DEFS, maxTurns, model }));
+      () => runLoop({ system, messages: [{ role: "user", content: message }], tools, toolDefs: CHAT_TOOL_DEFS, maxTurns, model }));
     if (!gate.allowed) return { available: true, refused: false, degraded: true, capped: true, reply: gate.notice || "The AI coach is paused (cost cap reached). Your deterministic plan on the Plan tab is unaffected." };
 
     const loop = gate.result;
     const text = (loop.content || []).filter((b) => b && b.type === "text").map((b) => b.text).join("\n").trim();
+    if (!text) {
+      // The tool-loop ended with no final answer (e.g. hit max turns). That's a
+      // "couldn't complete", NOT off-topic — say so honestly (LAW 7); do not show
+      // the domain refusal, which misrepresents what happened.
+      return { available: true, refused: false, degraded: true, reply: "I couldn't pull that together just now — try rephrasing, or generate a plan on the Plan tab." };
+    }
     const checked = postCheck(text, { refusalKey: "off_topic" });
     return { available: true, refused: false, reply: checked.response || refusalText("off_topic"), guarded: !checked.ok };
   } catch {
