@@ -28,6 +28,12 @@ jobs:
         run: node scripts/scanSecrets.mjs --tracked
       - name: Brain-purity guard (S1, Laws 5/6)
         run: node scripts/checkBrainPurity.mjs
+      - name: Supply-chain guard (S3)
+        run: node scripts/checkSupplyChain.mjs
+      - name: npm audit (S3, advisory)
+        run: |
+          (cd backend && npm audit --audit-level=high) || true
+          (cd frontend && npm audit --audit-level=high) || true
 
   backend:
     runs-on: ubuntu-latest
