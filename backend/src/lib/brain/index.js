@@ -63,6 +63,10 @@ const { buildBrainGroceryList, aggregateBrainPlan, assertNoExcluded } = require(
 // EXCLUSIONS ARE NEVER STORED — sanitizeSoft fails closed on any exclusion key.
 const { assertSoftOnly, sanitizeSoft, memoryPrefsStore } = require("./prefsStore.js");
 
+// Brain v2 — Stage I persistence accessor (makeStore is Prisma-free — it takes a
+// client; defaultStore requires Prisma directly, kept out of this barrel).
+const { makeStore, assertNoExclusions } = require("./store.js");
+
 // Brain v3 — Stage J: cost controls (pure, keyless). Version-hash BrainCache
 // (stale input never serves a wrong answer), deterministic candidate prefilter,
 // prompt-cache breakpoint planning, think-on-first-only.
@@ -94,6 +98,8 @@ module.exports = {
   buildBrainGroceryList, aggregateBrainPlan, assertNoExcluded,
   // Stage I — SOFT-preference persistence (exclusions never stored)
   assertSoftOnly, sanitizeSoft, memoryPrefsStore,
+  // Stage I (v2) — history/creation/audit/library persistence accessor
+  makeStore, assertNoExclusions,
   // Stage J — cost controls / caching
   BrainCache, makeCacheKey, hashInputs, prefilterCandidates, planCacheBreakpoints, thinkOnFirstOnly,
 };
