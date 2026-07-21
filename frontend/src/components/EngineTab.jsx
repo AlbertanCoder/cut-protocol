@@ -48,7 +48,11 @@ export default function EngineTab({ profile, summary, refresh, openFoods, openPr
             Averaging {energy.includedCount} of {energy.rows.length} applicable formulas — untick any you distrust.
           </div>
           {energy.rows.map((r) => {
-            const off = excludedLocal.includes(r.key); // optimistic; reflects the click immediately
+            // Flip-aware (E1): excludedFormulas membership FLIPS a formula from its
+            // default. Legacy 6 are default-on (present → off); the 4 added are
+            // default-off (absent → off, present → on). Optimistic: reflects the click.
+            const inList = excludedLocal.includes(r.key);
+            const off = r.defaultOn ? inList : !inList;
             return (
             <label key={r.key} className="flex items-center justify-between py-1.5" style={{ borderBottom: `1px solid ${C.rule}`, opacity: off ? 0.45 : 1 }}>
               <span className="flex items-center gap-2.5 text-sm font-semibold" style={{ color: C.ink }}>
@@ -68,6 +72,11 @@ export default function EngineTab({ profile, summary, refresh, openFoods, openPr
             <Stat label="BMR (average)" value={kc(energy.rmr)} unit="kcal" />
             <Stat label="Spread" value={`${kc(energy.spreadLo)}–${kc(energy.spreadHi)}`} unit="kcal" />
           </div>
+          {energy.spreadPct > 0 && (
+            <div className="text-[11px] font-semibold mt-1" style={{ color: C.faintLight }}>
+              ±{energy.sd} kcal across formulas ({energy.spreadPct}% range). Dispersion, not a confidence interval — some estimators share a dataset or body-composition form.
+            </div>
+          )}
           {profile.bodyFatPct === 0 && (
             <div className="text-xs font-semibold mt-1" style={{ color: C.faint }}>
               Add body fat % on the Profile tab to unlock Katch–McArdle and Cunningham (the best two when BF is known).

@@ -5,6 +5,36 @@ what got finished · what's next · anything needed from Shad.*
 
 ---
 
+## 2026-07-21 · Stage 3 DONE — E1 10-formula BMR (Option A, byte-identical)
+
+**What you get:** the Engine tab's BMR panel now offers **10 published formulas**
+instead of 6 — FAO/WHO/UNU, Owen, Livingston, Nelson added — each with a citation.
+Crucially **your target does not move**: the 4 new ones are **default-off**, so the
+average still runs on today's 6. Tick any new one on (same toggle) to include it.
+
+**How (Option A = default-preserving):**
+- A0 first (8230772): added a BMR golden capturing today's 6-formula mean, so the
+  change is provably byte-identical. null and 0 body-fat confirmed identical.
+- 4 formulas appended + `leanBodyMass` extracted (single-sources the 3 LBM
+  formulas). `DEFAULT_ENABLED` + `isFormulaOn` flip: `excludedFormulas` membership
+  FLIPS a formula from its default — for the legacy 6 this is byte-identical to the
+  old opt-out; the 4 new are default-off (opt-in via the same toggle).
+- Added `sd` + `spreadPct` (+ an honest "dispersion, not a CI" caveat on the tab)
+  and `prov {formulaId, inputs, value, citation}` on every row (Law 3). Engine now
+  dual-accepts body-fat `null` OR `0` as unknown (readies E2).
+- Frontend: EngineTab toggle made flip-aware (reads server `defaultOn`); "6 of 10"
+  shows automatically; spread caveat added.
+
+**Verified:** 379/379 tests green (+5 E1 regressions incl. published values for all
+4 new formulas + flip semantics). **Golden BRAIN=off byte-identical PASSES** — proof
+no target moved. oxlint + vite build clean. (Not browser-verified — dev servers were
+stopped; logic is tested + data-driven.)
+
+**Next:** Stage 4 — E2 body-fat visual picker (nullable migration — a real DB change;
+data-preserving table rebuild, I'll flag it as a rebuild, not destructive).
+
+---
+
 ## 2026-07-20 (later 4) · Stage 2 DONE — security safety net (secret scan + dist gate)
 
 **What you get:** it's now hard to leak secrets by accident.
