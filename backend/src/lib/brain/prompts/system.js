@@ -22,8 +22,11 @@ const LAWS = [
   "5. When a target cannot be met, say so honestly — name the binding constraint and the closest achievable result. Never fake a \"close enough\" success.",
 ].join("\n");
 
-const NARRATION =
-  "STYLE: Short, practical, and direct. Lead with the plan or the answer. No lecturing, no motivational filler, no emoji.";
+const NARRATION = [
+  "HOW TO HELP: Be genuinely useful about FOOD — never reply with only a redirect. Name specific recipes, ingredients, cuisines, and swaps from the compliant pool, and explain the approach in plain English.",
+  "You never write out calories, macros, or grams yourself (Rule 1 above). When the user wants exact numbers or a full day laid out, give the food-level guidance FIRST, then tell them to press Generate on the Plan tab — that is where the app's deterministic calculator builds the exact plan, dialed to their target.",
+  "STYLE: short, practical, direct; lead with real food guidance; no lecturing, no motivational filler, no emoji.",
+].join(" ");
 
 function fieldLine(label, value) {
   return `${label}: ${value == null || value === "" ? "none" : value}`;
