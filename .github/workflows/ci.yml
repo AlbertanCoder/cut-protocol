@@ -14,17 +14,20 @@ on:
     branches: [master]
 
 jobs:
-  # Fail the build if a real secret was committed. Dependency-free, keyless —
-  # just Node + the tracked file list. The repo is PUBLIC, so this is a gate.
-  secret-scan:
+  # Stage S security lane (keyless, dependency-free, blocking). Repo is PUBLIC.
+  # S2 secret scan + S1 brain-purity guard (the brain must carry no web/shell/
+  # file-write/eval capability — Laws 5/6). A finding = red = STOP.
+  security:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: "20"
-      - name: Scan tracked files for secrets
+      - name: Secret scan (S2)
         run: node scripts/scanSecrets.mjs --tracked
+      - name: Brain-purity guard (S1, Laws 5/6)
+        run: node scripts/checkBrainPurity.mjs
 
   backend:
     runs-on: ubuntu-latest
