@@ -5,6 +5,31 @@ what got finished · what's next · anything needed from Shad.*
 
 ---
 
+## 2026-07-21 · Close-out — pushed, installer rebuilt, security lane started
+
+- **Pushed:** all 12 commits are on origin/master (public repo now has the full v2).
+- **Installer rebuilt:** `release/Cut Protocol Setup 1.0.0.exe` (200 MB) has current
+  code — the desktop app now matches the dev build. (Personal build: bundles keys +
+  DB — do NOT share it; `npm run dist:check` is the guard if you ever do.)
+- **Security lane (Stage S) started:** `scripts/checkBrainPurity.mjs` (S1) — asserts
+  the brain carries NO web/shell/file-write/eval capability (Laws 5/6); CLEAN over 33
+  files. Wired `npm run security:all` (secret scan + purity) + a blocking CI `security`
+  job. Live app confirmed on localhost:5174 (Engine 10-formula verified in browser).
+
+**Honest v2-completeness (Shad asked):** DONE = the user-facing core (coach planner,
+E1/E2/T/K + protein fix) + partial Stage S. NOT done (deferred to a fresh session,
+migration-heavy — cramming them into an exhausted context is the slop the anti-slop
+stage exists to prevent): the **full taste-tier system** (tasteTier enum/shrinkage/
+curated seed/scorer term), the **6 persistence models** (BrainConversation/Message,
+GeneratedRecipe/Plan, BrainSolveRun, UserLibraryEntry + migrations + store), the rest
+of the **security lane** (S3 supply-chain, semgrep, security.yml), the §0b governance/
+RESUME/anti-slop scaffolding (judged ceremony), and Stage L fitness (spec defers it).
+
+**Next session:** "build the remaining v2 parts" → taste → persistence → security lane,
+each committed + verified like today.
+
+---
+
 ## 2026-07-21 · Protein-forward fix — cracked the veg/vegan 0% coverage
 
 **Simulation-driven.** A coverage sim (1,200 sampled users, real engine targets,

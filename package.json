@@ -9,6 +9,8 @@
     "build:frontend": "npm --prefix frontend run build",
     "dist": "npm run build:frontend && electron-builder",
     "scan:secrets": "node scripts/scanSecrets.mjs --tracked",
+    "brain:purity": "node scripts/checkBrainPurity.mjs",
+    "security:all": "node scripts/scanSecrets.mjs --tracked && node scripts/checkBrainPurity.mjs",
     "dist:check": "node scripts/checkDistSafe.mjs"
   },
   "devDependencies": {
