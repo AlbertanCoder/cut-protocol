@@ -28,10 +28,11 @@ async function generateDayForChat({ userId } = {}, deps = {}) {
   const _planContext = deps.planContext || planContext;
   const _generate = deps.generateDayCandidates || generateDayCandidates;
 
-  const { dailyTarget, mealConfig, recipePool } = await _planContext(userId);
+  const { dailyTarget, mealConfig, recipePool, ratings } = await _planContext(userId);
   // No `profile` passed → the LLM critic block inside generateDayCandidates is
   // skipped entirely: pure deterministic solve, zero model calls, zero spend.
-  const result = await _generate({ dailyTarget, mealConfig, recipePool });
+  // T (v2): pass the user's soft taste ratings so chat plans re-rank too.
+  const result = await _generate({ dailyTarget, mealConfig, recipePool, filters: { ratings } });
   const best = result && result.candidates && result.candidates[0];
   if (!best || !Array.isArray(best.slots) || best.slots.length === 0) return null;
 

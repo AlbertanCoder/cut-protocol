@@ -5,6 +5,33 @@ what got finished · what's next · anything needed from Shad.*
 
 ---
 
+## 2026-07-21 · Stage 5 DONE — T taste tier (thumbs → soft plan re-rank)
+
+**What you get:** thumbs 👍/👎 on each recipe (Recipes tab). Liking a recipe makes
+the solver **prefer** it in future plans; disliking pushes it down — a SOFT re-rank
+only. It never overrides your diet/allergy rules and never changes a macro.
+
+**How (all additive, golden byte-identical):**
+- Migration `add_recipe_rating`: a single CREATE TABLE RecipeRating (plain columns,
+  no FK — orphan ratings for a deleted recipe are harmless). Applied + verified.
+- `buildBias` gained a taste term: liked ×1.6, disliked ×0.35 (soft, never excluded).
+  **No ratings → null bias → byte-identical** (proven by the golden + a unit test).
+- planContext loads the user's ratings as a Map; threaded into /generate,
+  /day-options, AND the chat planner (taste-aware chat plans too).
+- New `routes/ratings.js` (GET/PUT/DELETE, validates rating ∈ {1,-1}) + registered.
+- Frontend: thumbs on the recipe detail (optimistic, click-again to clear;
+  selection = lightness, NO red on dislike — constitution-compliant).
+
+**Verified:** 383/383 tests green (+3 taste bias), **golden BRAIN=off byte-identical**,
+oxlint + build clean. **Real-data smoke:** liked a recipe → planContext picked it up
+→ taste-aware chat plan solved (97%) → cleaned up (0 rows left).
+
+**Next (last one): Stage 6 — K (pre-solved library, ~$0 common case).** Its generation
+step is the API-key-vs-subscription question: I can generate the library **myself
+in-session for $0** (verifier-gated), or you pay ~$20-50 for a fast API batch.
+
+---
+
 ## 2026-07-21 · Stage 4 DONE — E2 body-fat visual picker (add-column, your call)
 
 **What you get:** on the Profile tab, a **"Estimate visually"** button opens a

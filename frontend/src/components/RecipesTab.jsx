@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
 import {
-  Sparkles, Pencil, Trash2, Save, X, Search, ShoppingCart, Check, Mail,
+  Sparkles, Pencil, Trash2, Save, X, Search, ShoppingCart, Check, Mail, ThumbsUp, ThumbsDown,
   MessageSquare, Copy, Database, EyeOff, ChevronRight, ChevronDown,
   Link2, AlertTriangle, CalendarPlus, Utensils,
 } from "lucide-react";
@@ -80,7 +80,7 @@ const MacroChips = ({ x }) => (
 
 // ── recipe detail (expanded row) ─────────────────────────────────────────
 
-function RecipeDetail({ recipe, profile, onSave, onDelete, inCart, onToggleCart, cartBusy }) {
+function RecipeDetail({ recipe, profile, onSave, onDelete, inCart, onToggleCart, cartBusy, rating, onRate }) {
   const inpStyle = getInpStyle();
   const [scale, setScale] = useState(1);
   const [editing, setEditing] = useState(false);
@@ -236,6 +236,18 @@ function RecipeDetail({ recipe, profile, onSave, onDelete, inCart, onToggleCart,
           {inCart ? <Check size={12} className="inline mr-1" /> : <ShoppingCart size={12} className="inline mr-1" />}
           {inCart ? "In cart" : "Add to cart"}
         </Btn>
+        {onRate && (
+          <span className="inline-flex items-center gap-1 ml-0.5" title="Taste preference — softly re-ranks future plans, never overrides your diet">
+            <button onClick={() => onRate(recipe.id, 1)} aria-pressed={rating === 1} aria-label="Prefer this recipe"
+              className="p-1.5 rounded-lg" style={{ background: rating === 1 ? C.card2 : "transparent", border: `1px solid ${rating === 1 ? C.faintLight : C.rule}`, color: rating === 1 ? C.ink : C.faintLight }}>
+              <ThumbsUp size={13} />
+            </button>
+            <button onClick={() => onRate(recipe.id, -1)} aria-pressed={rating === -1} aria-label="See this recipe less"
+              className="p-1.5 rounded-lg" style={{ background: rating === -1 ? C.card2 : "transparent", border: `1px solid ${rating === -1 ? C.faintLight : C.rule}`, color: rating === -1 ? C.ink : C.faintLight }}>
+              <ThumbsDown size={13} />
+            </button>
+          </span>
+        )}
         <Btn small kind="ghost" onClick={startEdit}><Pencil size={12} className="inline mr-1" />Edit</Btn>
         {confirmingDelete ? (
           <Btn small kind="red" onClick={() => onDelete(recipe.id)}>Confirm delete</Btn>
@@ -304,6 +316,7 @@ export default function RecipesTab({ openFoods, profile }) {
   const [expandedId, setExpandedId] = useState(null);
 
   const [cartItems, setCartItems] = useState([]);
+  const [ratings, setRatings] = useState({}); // T (v2): recipeId -> 1 (like) | -1 (dislike)
   const [cartBusyId, setCartBusyId] = useState(null);
   const [cartGroceryList, setCartGroceryList] = useState(null);
   const [cartGroceryBusy, setCartGroceryBusy] = useState(false);
@@ -336,6 +349,24 @@ export default function RecipesTab({ openFoods, profile }) {
   useEffect(() => {
     api.getCart().then(setCartItems).catch(() => {});
   }, []);
+  useEffect(() => {
+    api.getRatings().then((rows) => setRatings(Object.fromEntries(rows.map((x) => [x.recipeId, x.rating])))).catch(() => {});
+  }, []);
+
+  // T (v2): optimistic taste rating. Clicking the active thumb again clears it.
+  const rate = async (recipeId, value) => {
+    const prev = ratings;
+    const next = { ...ratings };
+    if (next[recipeId] === value) delete next[recipeId];
+    else next[recipeId] = value;
+    setRatings(next);
+    try {
+      if (next[recipeId] === undefined) await api.unrateRecipe(recipeId);
+      else await api.rateRecipe(recipeId, value);
+    } catch {
+      setRatings(prev); // rollback to the pre-click truth
+    }
+  };
 
   // Optimistic cart toggle: update the list now (a temp row on add, using the
   // recipe we already have), reconcile with the server row, roll back on error.
@@ -739,7 +770,8 @@ export default function RecipesTab({ openFoods, profile }) {
                               {expanded && (
                                 <RecipeDetail recipe={r} profile={profile}
                                   onSave={handleUpdate} onDelete={handleDelete}
-                                  inCart={cartRecipeIds.has(r.id)} onToggleCart={toggleCart} cartBusy={cartBusyId === r.id} />
+                                  inCart={cartRecipeIds.has(r.id)} onToggleCart={toggleCart} cartBusy={cartBusyId === r.id}
+                                  rating={ratings[r.id]} onRate={rate} />
                               )}
                             </div>
                           );

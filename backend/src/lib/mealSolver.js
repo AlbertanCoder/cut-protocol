@@ -42,7 +42,11 @@ function buildBias(filters = {}, costCache = null) {
   const cuisines = (filters.cuisines || []).filter(Boolean);
   const protein = filters.protein || null;
   const budget = filters.budget || null;
-  if (!cuisines.length && !protein && !budget) return null;
+  // T (v2): SOFT taste ratings — a Map<recipeId, 1|-1>. Re-ranks which recipes
+  // the solver prefers; never changes a macro (LAW 1) or overrides a hard diet/
+  // allergy filter. Absent/empty → no term → bias is byte-identical to before.
+  const ratings = filters.ratings instanceof Map && filters.ratings.size > 0 ? filters.ratings : null;
+  if (!cuisines.length && !protein && !budget && !ratings) return null;
 
   return (recipe) => {
     let w = 1;
@@ -58,6 +62,11 @@ function buildBias(filters = {}, costCache = null) {
         const diff = BUDGET_ORDER[c.tier] - BUDGET_ORDER[budget];
         w *= diff <= 0 ? 1.8 : 0.5; // at-or-under budget boosted, over dampened
       }
+    }
+    if (ratings) {
+      const r = ratings.get(recipe.id);
+      if (r === 1) w *= 1.6; // liked → boosted
+      else if (r === -1) w *= 0.35; // disliked → dampened, never fully excluded (soft)
     }
     return w;
   };

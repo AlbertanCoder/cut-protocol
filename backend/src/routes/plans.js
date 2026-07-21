@@ -119,8 +119,9 @@ router.get("/current", async (req, res) => {
 
 router.post("/generate", async (req, res) => {
   try {
-    const { profile, dailyTarget, mealConfig, recipePool, rawPoolCount } = await planContext(req.userId);
+    const { profile, dailyTarget, mealConfig, recipePool, rawPoolCount, ratings } = await planContext(req.userId);
     const filters = parseFilters(req.body);
+    filters.ratings = ratings; // T (v2): soft taste re-rank
     const monday = mondayOf(todayStr());
 
     const existing = await prisma.plan.findUnique({
@@ -189,8 +190,9 @@ router.post("/generate", async (req, res) => {
 // no writes) — accepting one goes through /accept-day.
 router.post("/day-options", async (req, res) => {
   try {
-    const { profile, dailyTarget, mealConfig, recipePool } = await planContext(req.userId);
+    const { profile, dailyTarget, mealConfig, recipePool, ratings } = await planContext(req.userId);
     const filters = parseFilters(req.body);
+    filters.ratings = ratings; // T (v2): soft taste re-rank
     const dayOfWeek = Number.isInteger(req.body?.dayOfWeek) && req.body.dayOfWeek >= 0 && req.body.dayOfWeek <= 6 ? req.body.dayOfWeek : 0;
 
     // Respect what the rest of the week already serves (variety caps span

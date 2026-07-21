@@ -1,11 +1,36 @@
 const { test } = require("node:test");
 const assert = require("node:assert/strict");
 const { generateWeekPlan, DEFAULT_REPEAT_CAP } = require("../src/lib/weeklyPlanner.js");
-const { generateDayCandidates, alternatesForSlot, scoreDay, diagnose, applyPrepFilter } = require("../src/lib/mealSolver.js");
+const { generateDayCandidates, alternatesForSlot, scoreDay, diagnose, applyPrepFilter, buildBias } = require("../src/lib/mealSolver.js");
 const { recipeExcludedByStyle, matchesExclusionTerm } = require("../src/lib/dietaryFilter.js");
 const { toPurchaseUnits } = require("../src/lib/purchaseUnits.js");
 const { classifyCuisine } = require("../src/lib/recipeCuisine.js");
 const { computeRecipeCost } = require("../src/lib/recipeCost.js");
+
+// ── T (v2): taste-rating bias ────────────────────────────────────────────
+
+test("T: buildBias returns null with no filters AND no ratings (byte-identical to before)", () => {
+  assert.equal(buildBias({}), null);
+  assert.equal(buildBias({ ratings: new Map() }), null, "an empty ratings map adds no term");
+  assert.equal(buildBias({ ratings: { liked: 1 } }), null, "a non-Map ratings value is ignored (fail-safe)");
+});
+
+test("T: taste ratings boost liked recipes and dampen disliked, leaving neutral at 1", () => {
+  const ratings = new Map([["liked", 1], ["disliked", -1]]);
+  const bias = buildBias({ ratings });
+  assert.equal(typeof bias, "function");
+  assert.equal(bias({ id: "neutral" }), 1, "an unrated recipe is unweighted");
+  assert.ok(bias({ id: "liked" }) > 1, "liked recipe boosted above 1");
+  assert.ok(bias({ id: "disliked" }) < 1 && bias({ id: "disliked" }) > 0, "disliked dampened but never fully excluded");
+  assert.ok(bias({ id: "liked" }) > bias({ id: "disliked" }));
+});
+
+test("T: taste bias composes with cuisine bias (multiplicative, still soft)", () => {
+  const ratings = new Map([["x", 1]]);
+  const bias = buildBias({ cuisines: ["thai"], ratings });
+  // liked + on-cuisine → boosted twice; disliked cuisine miss handled separately
+  assert.ok(bias({ id: "x", cuisine: "thai" }) > bias({ id: "y", cuisine: "thai" }), "a liked on-cuisine recipe beats an unrated on-cuisine one");
+});
 
 // ── synthetic fixture pool ───────────────────────────────────────────────
 

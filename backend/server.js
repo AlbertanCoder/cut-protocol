@@ -19,6 +19,7 @@ const recipeRoutes = require("./src/routes/recipes.js");
 const planRoutes = require("./src/routes/plans.js");
 const foodRoutes = require("./src/routes/foods.js");
 const cartRoutes = require("./src/routes/cart.js");
+const ratingsRoutes = require("./src/routes/ratings.js");
 const trainingRoutes = require("./src/routes/training.js");
 const diaryRoutes = require("./src/routes/diary.js");
 const brainRoutes = require("./src/routes/brain.js");
@@ -49,6 +50,7 @@ app.use("/api/recipes", recipeRoutes);
 app.use("/api/plans", planRoutes);
 app.use("/api/foods", foodRoutes);
 app.use("/api/cart", cartRoutes);
+app.use("/api/ratings", ratingsRoutes);
 app.use("/api/training", trainingRoutes);
 app.use("/api/diary", diaryRoutes);
 app.use("/api/brain", brainRoutes); // Stage D2: guarded chat surface (gated; inert with BRAIN=off)
