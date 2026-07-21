@@ -5,6 +5,34 @@ what got finished · what's next · anything needed from Shad.*
 
 ---
 
+## 2026-07-21 · Stage 4 DONE — E2 body-fat visual picker (add-column, your call)
+
+**What you get:** on the Profile tab, a **"Estimate visually"** button opens a
+picker — 6 abstract silhouettes (10–35%) you tap to set your body fat, plus an
+"I had it measured" numeric entry and a "Not sure — skip". Setting it unlocks the
+Katch–McArdle/Cunningham formulas and refines your estimate. The raw % input stays
+for power users.
+
+**How (add-column, per your call — safest):**
+- Migration `20260721071636_add_bodyfat_source`: a single `ALTER TABLE ADD COLUMN
+  bodyFatSource TEXT` — NO table rebuild. Applied to dev.db (backed up first);
+  **verified: all 4 profiles intact, every target unchanged, new column = null.**
+  bodyFatPct stays `0 = unknown`, so no `=== 0` touchpoint changed.
+- Backend: bodyFatSource added to PROFILE_FIELDS + defaultProfile + a validator
+  (enum `visual-estimate`|`measured`|null). Writes flow through the existing field loop.
+- Frontend: `BodyFatPicker.jsx` — parametric abstract silhouettes (monochrome
+  currentColor, never a real person), constitution-compliant (selection = lightness
+  not green, NO red/green judgment, % labels only). ProfileTab opens it as a modal;
+  saves route through putProfile → target re-materializes server-side.
+
+**Verified:** 380/380 tests green (+E2 validation), **golden BRAIN=off byte-identical**,
+oxlint + build clean, migration verified against real data. (Picker not browser-tested
+— dev servers stopped; logic tested + save path is the standard field write.)
+
+**Next:** Stage 5 — T (taste tier: soft palatability re-rank + recipe ratings).
+
+---
+
 ## 2026-07-21 · Stage 3 DONE — E1 10-formula BMR (Option A, byte-identical)
 
 **What you get:** the Engine tab's BMR panel now offers **10 published formulas**
