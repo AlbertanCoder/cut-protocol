@@ -5,6 +5,37 @@ what got finished · what's next · anything needed from Shad.*
 
 ---
 
+## 2026-07-21 · Stage 6 (K) — library generation ($0 in-session, verifier-gated)
+
+**Honest finding first:** the pool was already 633 recipes + the solver is already
+$0 + Stage 5 likes = favorites, so K's premise was largely met. You chose the full
+library anyway — so I built it the smart way (no ~$20-50 API spend).
+
+**What I added: +98 VERIFIED recipes (633 → 731), $0.** Every one gated by the same
+verifier the app uses — real foods only (no invented ingredients), sane macros
+(Atwater), deduped. The one real gap closed: **vegan 72 → 107 (+49%)**, vegetarian
+275 → 320. Solver still lands 98% on the enlarged pool.
+
+**Reusable tooling (committed, so you can expand anytime — no session needed):**
+- `backend/scripts/genLibrary.mjs` — the harness: reads a drafts JSON, matches each
+  ingredient to a REAL food (token-subset, reject-on-miss — no USDA, no placeholder),
+  validates macros, dedups, persists as source "ai-generated". `--dry-run` to preview.
+- `backend/scripts/genComboDrafts.mjs` — combinatorial draft generator (cuisine-
+  flavoured protein×carb×veg×fat) → pipe into the harness. Produced 80 of the 98.
+- `backend/scripts/library-seeds/batch01.json` — the 18 hand-written recipes (reproducible).
+
+**Where the recipes live:** your dev.db (gitignored, like all runtime data) — your
+running app has them now. The tooling above regenerates them on any fresh DB.
+
+**Status:** 383/383 tests green, golden byte-identical (DB recipes don't touch
+fixtures), scripts secret-scanned clean. Library is easily expandable (breakfast/
+snacks/more cuisines) by running the scripts again.
+
+**v2: all 6 stages delivered.** Remaining polish: a live UI walkthrough (servers were
+stopped), and pushing (held per your call).
+
+---
+
 ## 2026-07-21 · Stage 5 DONE — T taste tier (thumbs → soft plan re-rank)
 
 **What you get:** thumbs 👍/👎 on each recipe (Recipes tab). Liking a recipe makes
