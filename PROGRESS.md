@@ -5,6 +5,35 @@ what got finished · what's next · anything needed from Shad.*
 
 ---
 
+## 2026-07-21 · Protein-forward fix — cracked the veg/vegan 0% coverage
+
+**Simulation-driven.** A coverage sim (1,200 sampled users, real engine targets,
+actual week solver) showed the library met only **61%** of users on the strict bar
+(kcal AND protein within 15%, 6/7 days), and **vegetarian/vegan = 0%** — not a
+count problem (vegetarian had 320 recipes) but **protein DENSITY**: plant recipes
+can't hit a cutting protein target, and you can't scale a low-protein dish up
+without blowing past calories.
+
+**Fix:** added 6 dense foods (`seedHighProteinFoods.mjs`: seitan, TVP, edamame,
+pea protein, lentil/chickpea pasta) + a `genProteinForward.mjs` generator (big
+protein portions, protein-rich carbs, minimal fat → high g-protein/kcal). +~160
+verified protein-forward recipes.
+
+**Result (pool 633 → 889):**
+| Diet | before | after (adequate / usable) |
+|---|---|---|
+| Overall | 61% | 83.8% / 89% |
+| Omnivore | 75% | 91.8% / 95.4% |
+| Vegetarian | 0% | 55.7% / 66% |
+| Vegan | 0% | 52.5% / 61% |
+
+Omnivore essentially hits the 95% bar (usable). Plant diets went 0 → 52-56%
+adequate — hugely improved, still the laggards (diminishing returns per batch;
+the strict daily-protein bar is inherently hard for plant diets). Reproducible:
+run seedHighProteinFoods.mjs then `node genProteinForward.mjs | genLibrary.mjs`.
+
+---
+
 ## 2026-07-21 · Stage 6 (K) — library generation ($0 in-session, verifier-gated)
 
 **Honest finding first:** the pool was already 633 recipes + the solver is already
