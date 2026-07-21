@@ -29,6 +29,12 @@ phase of the staged overhaul (Phases 0–8, driven by an external prompt pack).
   ships the real `backend/.env` (API keys, JWT secret) and real `dev.db`
   inside the installer — acceptable for a personal single-machine build,
   MUST be reverted before the app is ever distributed to anyone else.
+  **Guard (Stage 2, v2):** `npm run dist:check` scans a built `release/` and
+  FAILS if it carries secrets or personal data; `npm run scan:secrets` scans
+  tracked files (also a CI job). Neither auto-strips — a shareable build still
+  needs a secretless env (fresh JWT, empty keys) + a depersonalized seed DB in
+  `extraResources`. That auto-`dist:share` split is designed but not yet wired
+  (it needs Shad's call on which DB tables are library-vs-personal).
 
 ## Standing rules (every phase, every session)
 

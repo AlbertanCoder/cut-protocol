@@ -5,6 +5,36 @@ what got finished · what's next · anything needed from Shad.*
 
 ---
 
+## 2026-07-20 (later 4) · Stage 2 DONE — security safety net (secret scan + dist gate)
+
+**What you get:** it's now hard to leak secrets by accident.
+- `npm run scan:secrets` — scans every tracked file for real secrets (Anthropic/
+  JWT/USDA/AWS/PEM keys, seed passwords). **Also a CI job** — a committed secret
+  now fails the build. Repo scans CLEAN today (279 files).
+- `npm run dist:check` — before sharing an installer, scans a built `release/`
+  for secrets AND personal data (emails in the shipped DB/env). PROVEN: it FAILS
+  the current-style build (catches all 4 real .env secrets + your email + DB
+  personal data, redacted) and PASSES a secretless build.
+- Placeholder-aware (skips `change-me`/`ci-only`/`example`…) so docs/CI dummies
+  don't false-positive, without weakening the catch on a real key.
+
+**Brain-purity guard:** already covered — `brainMock.test.js` asserts BRAIN=off →
+zero LLM calls, and the golden test asserts byte-identical output. No new test needed.
+
+**Deliberately deferred (needs your call):** the fully-automatic safe `dist:share`
+(secretless env + depersonalized seed DB) needs a decision on which DB tables are
+LIBRARY (ship: Food/Recipe) vs PERSONAL (strip: User/Profile/WeighIn/Plan/Diary/
+Training/Brain*). I won't guess that with your personal data at stake — it's the
+one Stage 2 item flagged for you. The scan+gate above already PREVENT an accidental
+leak in the meantime. Dropped the wip-branch/save-resume ceremony (low value).
+
+**Verified:** 374/374 tests green (+4 scanner self-tests), scanner proven live
+(clean repo / catches real .env), gate proven both ways. CLAUDE.md caveat updated.
+
+**Next:** Stage 3 — E1 10-formula BMR (Option A, byte-identical).
+
+---
+
 ## 2026-07-20 (later 3) · Stage 1 DONE — coach builds a real numbered plan in chat
 
 **What you get:** ask the coach "plan me a high-protein day" (or build/generate/

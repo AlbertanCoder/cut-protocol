@@ -7,7 +7,9 @@
   "scripts": {
     "start": "electron .",
     "build:frontend": "npm --prefix frontend run build",
-    "dist": "npm run build:frontend && electron-builder"
+    "dist": "npm run build:frontend && electron-builder",
+    "scan:secrets": "node scripts/scanSecrets.mjs --tracked",
+    "dist:check": "node scripts/checkDistSafe.mjs"
   },
   "devDependencies": {
     "electron": "^43.1.1",
