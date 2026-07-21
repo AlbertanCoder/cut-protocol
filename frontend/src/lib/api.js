@@ -71,6 +71,11 @@ export const api = {
   generateTrainingPlan: (inputs) => request("/training/generate", { method: "POST", body: JSON.stringify(inputs) }),
   deleteTrainingPlan: () => request("/training", { method: "DELETE" }),
 
+  // T (v2) — recipe taste ratings (soft solver re-rank; 1 = like, -1 = dislike).
+  getRatings: () => request("/ratings"),
+  rateRecipe: (recipeId, rating) => request("/ratings", { method: "PUT", body: JSON.stringify({ recipeId, rating }) }),
+  unrateRecipe: (recipeId) => request(`/ratings/${recipeId}`, { method: "DELETE" }),
+
   getCart: () => request("/cart"),
   addToCart: (recipeId) => request("/cart", { method: "POST", body: JSON.stringify({ recipeId }) }),
   removeFromCart: (recipeId) => request(`/cart/${recipeId}`, { method: "DELETE" }),

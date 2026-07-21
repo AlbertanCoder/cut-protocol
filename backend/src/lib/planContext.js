@@ -33,7 +33,11 @@ async function planContext(userId) {
   const mealConfig = { meals: profile.mealsPerDay, snacks: profile.snacksPerDay };
   const rawRecipePool = await prisma.recipe.findMany({ include: { ingredients: { include: { food: true } } } });
   const recipePool = filterRecipePool(rawRecipePool, profile);
-  return { profile, dailyTarget, mealConfig, recipePool, rawPoolCount: rawRecipePool.length };
+  // T (v2): the user's SOFT taste ratings, as a Map for the solver's bias. A
+  // soft re-rank only — hard diet/allergy filtering already happened above.
+  const ratingRows = await prisma.recipeRating.findMany({ where: { userId }, select: { recipeId: true, rating: true } });
+  const ratings = new Map(ratingRows.map((r) => [r.recipeId, r.rating]));
+  return { profile, dailyTarget, mealConfig, recipePool, rawPoolCount: rawRecipePool.length, ratings };
 }
 
 // The generation filters the Phase 4 UI sends. Cuisine/protein/budget are

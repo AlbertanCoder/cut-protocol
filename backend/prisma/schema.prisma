@@ -247,6 +247,22 @@ model CartItem {
   @@unique([userId, recipeId])
 }
 
+// T (v2) — recipe taste ratings. A SOFT palatability signal only: it re-ranks
+// which recipes the solver PREFERS, never what it may serve (hard diet/allergy
+// filters always win) and never a displayed number. Plain columns, no FK: an
+// orphan rating for a deleted recipe simply never matches the pool (harmless).
+model RecipeRating {
+  id        String   @id @default(cuid())
+  userId    String
+  recipeId  String
+  rating    Int // 1 = like, -1 = dislike (no row = neutral)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, recipeId])
+  @@index([userId])
+}
+
 // Food diary. A logged entry is a SELF-CONTAINED macro snapshot — name +
 // kcal/macros are copied in at log time, so a later recipe edit or delete
 // never rewrites history. `source` is "planned" (copied from that date's
