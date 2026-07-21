@@ -37,6 +37,15 @@ test("REGRESSION (C5): sane vitals still pass", () => {
   ok({}); // an empty patch touches nothing and is valid
 });
 
+test("E2 (v2): bodyFatSource accepts the enum or null, rejects anything else", () => {
+  ok({ bodyFatSource: "visual-estimate" });
+  ok({ bodyFatSource: "measured" });
+  ok({ bodyFatSource: null });
+  bad({ bodyFatSource: "guessed" }, /bodyFatSource/);
+  bad({ bodyFatSource: 5 }, /bodyFatSource/);
+  bad({ bodyFatSource: "MEASURED" }, /bodyFatSource/); // case-sensitive enum
+});
+
 test("REGRESSION (M11/L3): a poisoned excludedFoods array is rejected before it can 500 the app", () => {
   bad({ excludedFoods: [5] }, /excludedFoods/);
   bad({ excludedFoods: [null] }, /excludedFoods/);

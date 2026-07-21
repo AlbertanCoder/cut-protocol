@@ -12,8 +12,9 @@ router.use(requireAuth);
 
 // targetKcal is deliberately absent: it's derived (rate → deficit → floor
 // clamp) and materialized by recomputeTarget(), never set by the client.
+const BODY_FAT_SOURCES = ["visual-estimate", "measured"]; // E2 (v2)
 const PROFILE_FIELDS = [
-  "sex", "age", "heightCm", "bodyFatPct",
+  "sex", "age", "heightCm", "bodyFatPct", "bodyFatSource",
   "occupationKey", "activityOverride", "sessionsPerWeek", "trainingStyle", "minutesPerSession",
   "startWeightKg", "goalWeightKg", "startDate", "unitPref",
   "rateLbPerWeek", "rateAcknowledged", "floorKcal", "excludedFormulas",
@@ -77,6 +78,9 @@ function validateProfilePatch(body) {
   }
   if (body.bodyFatPct !== undefined && body.bodyFatPct !== null && !numBetween(body.bodyFatPct, 0, 70)) {
     errors.push("bodyFatPct must be a number between 0 and 70 (0 = unknown)");
+  }
+  if (body.bodyFatSource !== undefined && body.bodyFatSource !== null && !BODY_FAT_SOURCES.includes(body.bodyFatSource)) {
+    errors.push(`bodyFatSource must be null or one of ${BODY_FAT_SOURCES.join("|")}`);
   }
   if (body.startWeightKg !== undefined && !numBetween(body.startWeightKg, 30, 400)) {
     errors.push("startWeightKg must be a number between 30 and 400 kg");
@@ -173,7 +177,7 @@ router.put("/", async (req, res) => {
 
 function defaultProfile() {
   return {
-    sex: "M", age: 30, heightCm: 178, bodyFatPct: 0,
+    sex: "M", age: 30, heightCm: 178, bodyFatPct: 0, bodyFatSource: null,
     occupationKey: "desk-office", activityOverride: null,
     sessionsPerWeek: 3, trainingStyle: "mixed", minutesPerSession: 45,
     startWeightKg: 90, goalWeightKg: 85,

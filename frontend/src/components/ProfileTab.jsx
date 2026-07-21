@@ -7,6 +7,7 @@ import {
 } from "../lib/units.js";
 import { Card, PageHead, Btn, ErrorNote } from "./ui/Parts.jsx";
 import { api } from "../lib/api.js";
+import BodyFatPicker from "./BodyFatPicker.jsx";
 
 const r1 = (n) => Math.round(n * 10) / 10;
 const kc = (n) => Math.round(n).toLocaleString("en-CA");
@@ -19,6 +20,7 @@ export default function ProfileTab({ profile, summary, refresh }) {
   const pref = profile.unitPref;
   const [meta, setMeta] = useState(null);
   const [error, setError] = useState(null);
+  const [bfPickerOpen, setBfPickerOpen] = useState(false);
 
   useEffect(() => {
     api.getProfileMeta().then(setMeta).catch((e) => setError(e.message));
@@ -137,6 +139,9 @@ export default function ProfileTab({ profile, summary, refresh }) {
 
   return (
     <div>
+      {bfPickerOpen && (
+        <BodyFatPicker current={profile.bodyFatPct} source={profile.bodyFatSource} onDone={refresh} onClose={() => setBfPickerOpen(false)} />
+      )}
       <PageHead title="Profile" sub="Your stats, activity, diet rules, and rate of loss. Everything else in the app derives from this tab." />
 
       {error && (
@@ -203,6 +208,11 @@ export default function ProfileTab({ profile, summary, refresh }) {
                 onChange={(e) => setDraft((d) => ({ ...d, bf: e.target.value }))}
                 onBlur={() => commit({ bodyFatPct: draft.bf === "" ? 0 : +draft.bf })}
                 className={inp} style={inpStyle} />
+              <button type="button" onClick={() => setBfPickerOpen(true)}
+                className="text-[11px] font-bold underline mt-1" style={{ color: C.faint }}>
+                Estimate visually
+                {profile.bodyFatSource === "visual-estimate" ? " · set from silhouette" : profile.bodyFatSource === "measured" ? " · measured" : ""}
+              </button>
             </label>
             <label className="block">{label(`Current weight (${weightUnit(pref)})`)}
               <input type="number" value={displayWeight(avg7Kg, pref)} readOnly className={inp} style={{ ...inpStyle, color: C.faint }} />

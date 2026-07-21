@@ -47,6 +47,11 @@ model Profile {
   age             Int
   heightCm        Float
   bodyFatPct      Float // 0 = unknown (Katch-McArdle/Cunningham auto-hide)
+  // E2 (v2): how bodyFatPct was set. "visual-estimate" (silhouette bucket) |
+  // "measured" (DEXA/calipers/scale) | null (unset). Additive, nullable — a pure
+  // ADD COLUMN, no table rebuild. bodyFatPct stays 0 = unknown (engine dual-
+  // accepts 0 or null), so no existing touchpoint changes.
+  bodyFatSource   String?
   // Phase 3 activity model: occupation picked from activityData.js's table
   // (many real occupations -> multiplier), with an optional manual override.
   occupationKey    String  @default("desk-office")
