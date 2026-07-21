@@ -38,11 +38,13 @@ export default function BrainChat() {
   const send = useCallback(async (text) => {
     const msg = (text ?? input).trim();
     if (!msg || sending) return;
+    // prior turns → history so follow-ups ("why not?") have context (backend caps + re-guards)
+    const history = messages.map((m) => ({ role: m.role === "you" ? "user" : "assistant", content: m.text }));
     setInput("");
     setMessages((m) => [...m, { role: "you", text: msg }]);
     setSending(true);
     try {
-      const res = await api.brainChat(msg, depth);
+      const res = await api.brainChat(msg, depth, history);
       const text2 = res && res.available === false ? "The assistant is currently off." : (res && res.reply) || "No response.";
       const tone = res && (res.refused || res.degraded) ? "muted" : "normal";
       setMessages((m) => [...m, { role: "coach", text: text2, tone }]);
@@ -51,7 +53,7 @@ export default function BrainChat() {
     } finally {
       setSending(false);
     }
-  }, [input, depth, sending]);
+  }, [input, depth, sending, messages]);
 
   if (enabled !== true) return null; // brain off → no chat bar at all
 

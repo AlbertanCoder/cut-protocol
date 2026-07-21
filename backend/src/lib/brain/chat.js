@@ -27,6 +27,19 @@ const { makeClassifier } = require("./classifier.js");
 // finish in a chat turn, so it produced nothing. Building plans is the Plan tab.
 const CHAT_TOOL_DEFS = TOOL_DEFS.filter((t) => t.name === "searchRecipes" || t.name === "searchFoods");
 
+// Client-supplied conversation history so follow-ups ("why not?", "that one")
+// have context. Capped + shape-validated; each turn was already guarded when it
+// was first sent, and the system-prompt laws still govern the whole exchange
+// (LAW 6 — history content is untrusted, never instructions).
+const MAX_HISTORY = 8;
+function sanitizeHistory(history) {
+  if (!Array.isArray(history)) return [];
+  return history
+    .filter((m) => m && (m.role === "user" || m.role === "assistant") && typeof m.content === "string" && m.content.trim())
+    .slice(-MAX_HISTORY)
+    .map((m) => ({ role: m.role, content: String(m.content).slice(0, 2000) }));
+}
+
 async function defaultLoadProfile(userId) {
   const { prisma } = require("../prisma.js");
   return prisma.profile.findUnique({ where: { userId } });
@@ -40,7 +53,7 @@ async function defaultLoadLibrary() {
   return { recipes, foods };
 }
 
-async function brainChat({ userId, message, depth = "balanced" } = {}, deps = {}) {
+async function brainChat({ userId, message, depth = "balanced", history = [] } = {}, deps = {}) {
   const {
     enabled = isBrainEnabled(),
     loadProfile = defaultLoadProfile,
@@ -76,7 +89,7 @@ async function brainChat({ userId, message, depth = "balanced" } = {}, deps = {}
     // called, nothing is spent.
     const projectedUsd = estimateUsd(model, { turns: maxTurns, maxTokens: 1024 });
     const gate = await guardedCall(ledger, { projectedUsd, userId, model, phase: "chat", intent: "chat" },
-      () => runLoop({ system, messages: [{ role: "user", content: message }], tools, toolDefs: CHAT_TOOL_DEFS, maxTurns, model }));
+      () => runLoop({ system, messages: [...sanitizeHistory(history), { role: "user", content: message }], tools, toolDefs: CHAT_TOOL_DEFS, maxTurns, model }));
     if (!gate.allowed) return { available: true, refused: false, degraded: true, capped: true, reply: gate.notice || "The AI coach is paused (cost cap reached). Your deterministic plan on the Plan tab is unaffected." };
 
     const loop = gate.result;
