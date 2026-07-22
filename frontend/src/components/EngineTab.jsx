@@ -73,7 +73,7 @@ export default function EngineTab({ profile, summary, refresh, openFoods, openPr
             <Stat label="Spread" value={`${kc(energy.spreadLo)}–${kc(energy.spreadHi)}`} unit="kcal" />
           </div>
           {energy.spreadPct > 0 && (
-            <div className="text-[11px] font-semibold mt-1" style={{ color: C.faintLight }}>
+            <div className="text-[11px] font-semibold mt-1" style={{ color: C.faint }}>
               ±{energy.sd} kcal across formulas ({energy.spreadPct}% range). Dispersion, not a confidence interval — some estimators share a dataset or body-composition form.
             </div>
           )}
@@ -132,7 +132,11 @@ export default function EngineTab({ profile, summary, refresh, openFoods, openPr
         </Card>
 
         <Card section="§4" title="Macro engine" className="xl:col-span-12">
-          <div className="flex rounded-full overflow-hidden h-2.5 mb-1.5 gap-[2px] max-w-3xl">
+          {/* Decorative — the same three macro values are already stated as
+              text in the Stat grid + legend right below, so the bar itself
+              is hidden from screen readers rather than read as unlabeled
+              colored slices. */}
+          <div className="flex rounded-full overflow-hidden h-2.5 mb-1.5 gap-[2px] max-w-3xl" aria-hidden="true">
             <div style={{ width: `${(macros.proteinHi * 4 / macros.kcal) * 100}%`, background: C.protein }}></div>
             <div style={{ width: `${(macros.fatHi * 9 / macros.kcal) * 100}%`, background: C.fat }}></div>
             <div style={{ width: `${(macros.carbHi * 4 / macros.kcal) * 100}%`, background: C.carb }}></div>
@@ -142,7 +146,7 @@ export default function EngineTab({ profile, summary, refresh, openFoods, openPr
             <span style={{ color: C.proteinText }}>P · protein</span>
             <span style={{ color: C.fatText }}>F · fat</span>
             <span style={{ color: C.carbText }}>C · carbs</span>
-            <span style={{ color: C.faintLight }}>rest · flex</span>
+            <span style={{ color: C.faint }}>rest · flex</span>
           </div>
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-x-4">
             <Stat label="Protein range" value={`${macros.proteinLo}–${macros.proteinHi}`} unit="g" />
@@ -163,7 +167,7 @@ export default function EngineTab({ profile, summary, refresh, openFoods, openPr
       </div>
 
       <details className="px-1 mt-4">
-        <summary className="text-xs font-semibold uppercase tracking-wide" style={{ color: C.faintLight }}>
+        <summary className="text-xs font-semibold uppercase tracking-wide" style={{ color: C.faint }}>
           Data backup (copy this JSON)
         </summary>
         <pre className="text-xs mt-2 p-3 rounded-xl overflow-x-auto"

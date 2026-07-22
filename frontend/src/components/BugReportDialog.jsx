@@ -1,10 +1,11 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useId } from "react";
 import { Bug, X, Send, Copy, Check, ShieldCheck, WifiOff } from "lucide-react";
 import { C } from "../lib/theme.js";
 import {
   fetchMeta, buildReportBody, buildTitle, buildIssueUrl, openExternal,
   savePending, loadPending, clearPending,
 } from "../lib/bugReport.js";
+import { useFocusTrap } from "../lib/useFocusTrap.js";
 
 // The bug-report review + send dialog. The user sees the EXACT text that will
 // be filed (privacy review #1), then GitHub shows it pre-filled again before
@@ -15,6 +16,14 @@ export default function BugReportDialog({ open, error, onClose }) {
   const [status, setStatus] = useState(null); // null | "sent" | "saved" | "copied"
   const [online, setOnline] = useState(typeof navigator !== "undefined" ? navigator.onLine : true);
   const [pendingCount, setPendingCount] = useState(0);
+  const panelRef = useRef(null);
+  const titleId = useId();
+  // a11y: focus trap + Escape-to-close + focus restore on the ONE truly
+  // blocking modal in the app that can appear over anything (crash reports,
+  // manual "Report a bug"). Runs even while `open` is false — the hook no-
+  // ops until `active` flips true — matching this component's pattern of
+  // always rendering (it returns null below rather than being unmounted).
+  useFocusTrap(panelRef, { active: open, onClose });
 
   useEffect(() => {
     if (!open) return;
@@ -72,13 +81,14 @@ export default function BugReportDialog({ open, error, onClose }) {
 
   return (
     <div style={overlay} onClick={onClose}>
-      <div style={panel} onClick={(e) => e.stopPropagation()}>
+      <div ref={panelRef} role="dialog" aria-modal="true" aria-labelledby={titleId} tabIndex={-1}
+        style={panel} onClick={(e) => e.stopPropagation()}>
         <div className="flex items-center justify-between px-5 pt-5 pb-3">
           <div className="flex items-center gap-2">
-            <Bug size={18} style={{ color: C.faint }} />
-            <div className="text-[15px] font-extrabold" style={{ color: C.ink }}>{error ? "Something went wrong" : "Report a bug"}</div>
+            <Bug size={18} style={{ color: C.faint }} aria-hidden="true" />
+            <div id={titleId} className="text-[15px] font-extrabold" style={{ color: C.ink }}>{error ? "Something went wrong" : "Report a bug"}</div>
           </div>
-          <button onClick={onClose} aria-label="Close" style={{ color: C.faintLight }}><X size={18} /></button>
+          <button onClick={onClose} aria-label="Close" style={{ color: C.faintLight }}><X size={18} aria-hidden="true" /></button>
         </div>
 
         <div className="px-5 overflow-y-auto" style={{ flex: 1 }}>

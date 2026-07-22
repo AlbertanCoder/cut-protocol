@@ -28,7 +28,10 @@ export const Card = ({ section, title, children, tint, className = "" }) => (
     {(section || title) && (
       <div className="flex items-baseline justify-between mb-3">
         <div className="text-[15px] font-bold" style={{ color: C.ink, letterSpacing: "-.01em" }}>{title}</div>
-        {section && <div className="text-[10.5px] font-semibold uppercase" style={{ color: C.faintLight, letterSpacing: ".06em" }}>{section}</div>}
+        {/* a11y contrast fix: section eyebrows read on every card app-wide —
+            faint-light (38%, ~3.3:1) fails WCAG AA for text; faint (60%,
+            6.5:1+) passes while staying the app's second-quietest tier. */}
+        {section && <div className="text-[10.5px] font-semibold uppercase" style={{ color: C.faint, letterSpacing: ".06em" }}>{section}</div>}
       </div>
     )}
     {children}
@@ -72,8 +75,10 @@ export const Btn = ({ children, onClick, kind = "ink", small, disabled }) => {
 export const Stamp = ({ v, stampStyle }) => {
   const s = stampStyle[v.tone];
   return (
-    <div className="rounded-xl p-3.5 flex items-start gap-3" style={{ background: s.bg || C.paper, border: `1px solid color-mix(in srgb, ${s.color} 20%, transparent)` }}>
-      <div className="w-1 self-stretch rounded-full shrink-0" style={{ background: s.color }}></div>
+    // role="status": verdict text updates (e.g. after a weigh-in) get
+    // announced to screen readers without needing focus to be on this card.
+    <div role="status" className="rounded-xl p-3.5 flex items-start gap-3" style={{ background: s.bg || C.paper, border: `1px solid color-mix(in srgb, ${s.color} 20%, transparent)` }}>
+      <div className="w-1 self-stretch rounded-full shrink-0" aria-hidden="true" style={{ background: s.color }}></div>
       <div>
         <div className="text-sm font-extrabold uppercase tracking-wide" style={{ color: s.color }}>{v.tag}</div>
         <div className="text-xs mt-0.5" style={{ color: C.ink }}>{v.sub}</div>
@@ -90,18 +95,22 @@ export const MacroBar = ({ label, actual, target, unit = "g", color }) => {
   const over = target > 0 && actual > target;
   const pct = target > 0 ? Math.min(100, (actual / target) * 100) : 0;
   const letter = (label || "?")[0].toUpperCase();
+  const a11yLabel = `${label}: ${Math.round(actual)} of ${Math.round(target)}${unit}${over ? ", over target" : ""}`;
   return (
-    <div className="flex flex-col gap-1.5">
+    // role="group" + aria-label give screen readers ONE clean sentence for
+    // the whole meter; the letter badge and fill bar are then hidden from
+    // AT so the number isn't announced twice (it's already visible text).
+    <div className="flex flex-col gap-1.5" role="group" aria-label={a11yLabel}>
       <div className="flex justify-between items-baseline text-xs">
         <span className="font-bold flex items-center gap-1.5" style={{ color: C.ink }}>
-          <span className="w-4 h-4 rounded-full flex items-center justify-center text-[9px] font-extrabold shrink-0" style={{ background: color, color: C.paper }}>{letter}</span>
+          <span aria-hidden="true" className="w-4 h-4 rounded-full flex items-center justify-center text-[9px] font-extrabold shrink-0" style={{ background: color, color: C.paper }}>{letter}</span>
           {label}
         </span>
         <span className="font-semibold" style={{ color: C.faint }}>
           <b className="mono" style={{ color: over ? C.warn : C.ink }}>{Math.round(actual)}</b> / {Math.round(target)}{unit}
         </span>
       </div>
-      <div className="h-2.5 rounded-full relative overflow-hidden" style={{ background: C.card2 }}>
+      <div aria-hidden="true" className="h-2.5 rounded-full relative overflow-hidden" style={{ background: C.card2 }}>
         <div className="h-full rounded-full transition-all duration-150" style={{ width: `${pct}%`, background: color }}></div>
       </div>
     </div>
@@ -123,8 +132,15 @@ export const Ring = ({ pct, size = 108, stroke = 10, color = C.accent, num, unit
   const gid = useId().replace(/[^a-zA-Z0-9_-]/g, "");
   const grad = color === C.accent;
   const numClass = size >= 150 ? "text-4xl" : size >= 120 ? "text-3xl" : "text-2xl";
+  // Text equivalent for the graphic (a ring alone is invisible to a screen
+  // reader): "82% — 1,850 planned kcal" / "112% — 2,530 planned kcal, over
+  // target, laps past 100%". role="img" + aria-label reads as one sentence;
+  // every visual child below is aria-hidden so the number isn't announced
+  // twice (the same digits are already the visible face of the ring).
+  const pctLabel = `${Math.round(p * 100)}%`;
+  const a11yLabel = `${pctLabel}${num != null ? ` — ${num}${unit ? " " + unit : ""}` : ""}${over ? ", over target, laps past 100%" : ""}`;
   return (
-    <div className="relative shrink-0" style={{ width: size, height: size }}>
+    <div className="relative shrink-0" style={{ width: size, height: size }} role="img" aria-label={a11yLabel}>
       {breathe && (
         <div
           className="absolute -inset-3 rounded-full ring-breathe pointer-events-none"
@@ -132,7 +148,7 @@ export const Ring = ({ pct, size = 108, stroke = 10, color = C.accent, num, unit
           aria-hidden="true"
         />
       )}
-      <svg width={size} height={size} className="relative" style={{ transform: "rotate(-90deg)" }}>
+      <svg width={size} height={size} className="relative" style={{ transform: "rotate(-90deg)" }} aria-hidden="true">
         {grad && (
           <defs>
             <linearGradient id={`rg${gid}`} x1="0%" y1="0%" x2="100%" y2="100%">
@@ -149,7 +165,7 @@ export const Ring = ({ pct, size = 108, stroke = 10, color = C.accent, num, unit
             strokeLinecap="round" strokeDasharray={circ} strokeDashoffset={circ * (1 - lap2)} style={{ transition: "stroke-dashoffset .2s ease" }} />
         )}
       </svg>
-      <div className="absolute inset-0 flex flex-col items-center justify-center">
+      <div className="absolute inset-0 flex flex-col items-center justify-center" aria-hidden="true">
         <div className={`mono stat-hero ${numClass}`} style={{ color: over ? C.warn : C.ink }}>{num}</div>
         {unit && <div className="text-[10px] font-bold" style={{ color: C.faint }}>{unit}</div>}
       </div>
@@ -167,8 +183,11 @@ export const Chip = ({ children, color, bg }) => (
 // `hint` overrides the generic recovery line for context-specific advice.
 // Red is legal here: this is system UI, not food/body data (law b).
 export const ErrorNote = ({ msg, hint }) => (
-  <div className="p-3 rounded-xl flex items-start gap-2.5" style={{ background: C.redBg, border: `1px solid ${C.red}55` }}>
-    <AlertTriangle size={15} className="mt-0.5 shrink-0" style={{ color: C.red }} />
+  // role="alert": announced immediately to screen readers the moment it
+  // mounts, without the user needing to have focus anywhere near it — used
+  // app-wide for failed saves, failed logs, failed generations, etc.
+  <div role="alert" className="p-3 rounded-xl flex items-start gap-2.5" style={{ background: C.redBg, border: `1px solid ${C.red}55` }}>
+    <AlertTriangle size={15} className="mt-0.5 shrink-0" style={{ color: C.red }} aria-hidden="true" />
     <div className="min-w-0">
       <div className="text-xs font-bold" style={{ color: C.red }}>{msg}</div>
       <div className="text-xs font-semibold mt-0.5" style={{ color: C.faint }}>
@@ -182,8 +201,10 @@ export const ErrorNote = ({ msg, hint }) => (
 // "Projections unlock with weigh-in data" voice, everywhere.
 export const EmptyNote = ({ icon: Icon, title, hint, height }) => (
   <div className="flex flex-col items-center justify-center gap-2 text-center" style={height ? { height } : { padding: "18px 0" }}>
-    {Icon && <Icon size={22} style={{ color: C.faintLight }} />}
+    {Icon && <Icon size={22} style={{ color: C.faintLight }} aria-hidden="true" />}
     <div className="text-sm font-semibold" style={{ color: C.faint }}>{title}</div>
-    {hint && <div className="text-xs font-medium max-w-[260px]" style={{ color: C.faintLight }}>{hint}</div>}
+    {/* a11y contrast fix: this hint is the actual "what to do next" guidance
+        (e.g. "Log your first weight above") — must clear AA, not faint-light. */}
+    {hint && <div className="text-xs font-medium max-w-[260px]" style={{ color: C.faint }}>{hint}</div>}
   </div>
 );
