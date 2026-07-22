@@ -5,6 +5,22 @@ what got finished · what's next · anything needed from Shad.*
 
 ---
 
+## 2026-07-21 · Doc 2 Stages 2–4 — PRIVATE share (no public release)
+
+Shad chose PRIVATE distribution (not a GitHub Release). Artifact built + scanned clean.
+- **Artifact:** `release/Cut Protocol Setup 1.0.0.exe` (209,270,871 B / ~200 MB).
+  SHA-256 `996877c639fcc29adced66c18e6b3914e5811f4021e6c53058dac726590a1ef3`.
+- **Stage 3 scan:** all PASS — no secrets, no personal data, 0 npm-audit vulns,
+  brain-purity/supply-chain green. Report: `security/scan-report.md`. Bundle carries
+  ONLY the clean `dev.db.template` + app (no `.env`, no `dev.db`, no backups).
+- **Stage 2:** data-safety block verified (`docs/release/fresh-install-check.md`);
+  interactive install-flow rows PENDING (best run on a clean profile).
+- **NO `gh release` created** (private choice). Hand-off: Shad launches the .exe once
+  to confirm it opens, runs it through virustotal.com, then uploads to Google Drive
+  and shares only to the tester's Gmail. Email draft provided.
+
+---
+
 ## 2026-07-21 · Doc 2 Stage 1 DONE — clean-distribution fix (M4)
 
 The installer no longer ships secrets or personal data — the M4 fix.
