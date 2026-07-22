@@ -2,9 +2,18 @@ const express = require("express");
 const { prisma } = require("../lib/prisma.js");
 const { requireAuth } = require("../lib/auth.js");
 const { mondayOf, dayNum } = require("../lib/dates.js");
+const { recomputeTarget } = require("../lib/profileTarget.js");
 
 const router = express.Router();
 router.use(requireAuth);
+
+// Logged intake is one of the two series the adaptive expenditure estimator
+// reconciles (see lib/expenditureEstimator.js), so a diary write can move the
+// derived target exactly as a weigh-in can. Best-effort: a target recompute
+// must never fail a diary write — the next weigh-in or profile save re-derives.
+async function refreshTargetQuietly(userId) {
+  try { await recomputeTarget(userId); } catch { /* derived state; recomputed on next write */ }
+}
 
 // Sane bounds for a single logged food entry — big enough for a genuine large
 // meal, small enough to reject fat-fingered / junk payloads (a single entry
@@ -94,6 +103,7 @@ router.post("/log-planned", async (req, res) => {
       ...(rows.length ? [prisma.mealLog.createMany({ data: rows })] : []),
     ]);
 
+    await refreshTargetQuietly(req.userId);
     res.json(await diaryForDate(req.userId, date));
   } catch (e) {
     res.status(e.status || 500).json({ error: e.message });
@@ -140,6 +150,7 @@ router.post("/entry", async (req, res) => {
       },
     });
 
+    await refreshTargetQuietly(req.userId);
     res.status(201).json(await diaryForDate(req.userId, b.date));
   } catch (e) {
     res.status(e.status || 500).json({ error: e.message });
@@ -152,6 +163,7 @@ router.delete("/entry/:id", async (req, res) => {
   const existing = await prisma.mealLog.findFirst({ where: { id: req.params.id, userId: req.userId } });
   if (!existing) return res.status(404).json({ error: "diary entry not found" });
   await prisma.mealLog.delete({ where: { id: existing.id } });
+  await refreshTargetQuietly(req.userId);
   res.status(204).end();
 });
 

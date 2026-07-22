@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Database, ArrowRight } from "lucide-react";
 import { C } from "../lib/theme.js";
 import { Card, Stat, Btn, PageHead, ErrorNote } from "./ui/Parts.jsx";
+import AdaptiveTdeeCard from "./AdaptiveTdeeCard.jsx";
 import { api } from "../lib/api.js";
 
 const kc = (n) => Math.round(n).toLocaleString("en-CA");
@@ -11,6 +12,10 @@ const kc = (n) => Math.round(n).toLocaleString("en-CA");
 // toggles. All inputs live on the Profile tab.
 export default function EngineTab({ profile, summary, refresh, openFoods, openProfile }) {
   const { energy, target, macros } = summary;
+  // Which expenditure the target was actually built from — the adaptive
+  // reconciliation when it had enough data, the formula otherwise (§2b).
+  const adaptiveOn = Boolean(summary.adaptive?.inEffect);
+  const effectiveTdee = summary.adaptive?.effectiveTdee ?? energy.tdee;
   const [error, setError] = useState(null);
   // Optimistic local copy so rapid formula toggles compose (same race as the
   // allergy toggles — M14). Re-syncs when the server truth changes.
@@ -104,12 +109,19 @@ export default function EngineTab({ profile, summary, refresh, openFoods, openPr
           <div className="text-xs font-semibold mt-2" style={{ color: C.faint }}>
             Training kcal/day = sessions × minutes × MET × 3.5 × kg ÷ 200 ÷ 7.
           </div>
+          {adaptiveOn && (
+            <div className="text-xs font-semibold mt-1" style={{ color: C.warn }}>
+              This is the population estimate. Your own intake and scale say {kc(effectiveTdee)} — that is
+              what your target uses. The reconciliation is in §2b below.
+            </div>
+          )}
         </Card>
 
         <Card section="§3" title="Target — derived from your rate" className="xl:col-span-4">
           <div className="flex flex-col gap-2 text-sm font-semibold" style={{ color: C.ink }}>
             <div className="flex justify-between py-1.5" style={{ borderBottom: `1px solid ${C.rule}` }}>
-              <span>TDEE</span><span className="mono font-extrabold">{kc(energy.tdee)}</span>
+              <span>{adaptiveOn ? "Burn measured from your data (§2b)" : "TDEE (formula)"}</span>
+              <span className="mono font-extrabold">{kc(effectiveTdee)}</span>
             </div>
             <div className="flex justify-between py-1.5" style={{ borderBottom: `1px solid ${C.rule}` }}>
               <span>− deficit for {target.rate} lb/wk</span><span className="mono font-extrabold">−{kc(target.deficit)}</span>
@@ -126,10 +138,18 @@ export default function EngineTab({ profile, summary, refresh, openFoods, openPr
               The raw math wanted {kc(target.raw)} — clamped to your floor. The chosen rate won't be fully reached through diet alone.
             </div>
           )}
+          {adaptiveOn && (
+            <div className="text-xs font-semibold mt-1" style={{ color: C.faint }}>
+              From the formula alone this would be {kc(summary.adaptive.formulaTarget?.target)} — every
+              adjustment is listed in §2b and reverses if you correct the entries behind it.
+            </div>
+          )}
           <button onClick={openProfile} className="text-xs font-bold flex items-center gap-1 mt-3 hover:opacity-80" style={{ color: C.ink }}>
             Change rate on Profile <ArrowRight size={12} />
           </button>
         </Card>
+
+        <AdaptiveTdeeCard profile={profile} summary={summary} target={target} />
 
         <Card section="§4" title="Macro engine" className="xl:col-span-12">
           <div className="flex rounded-full overflow-hidden h-2.5 mb-1.5 gap-[2px] max-w-3xl">
