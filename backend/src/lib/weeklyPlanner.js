@@ -118,14 +118,28 @@ function eligibleRecipes(recipePool, slotType, usageCount, repeatCap) {
 // slot. `bias` (Phase 4) is an optional per-recipe multiplier carrying the
 // user's soft preferences (cuisine / protein choice / budget) — it shapes
 // probability, never eligibility (hard rules live in the pool filter).
-function pickRecipe(candidates, targetRatio, usedYesterday, usedToday, rng, bias) {
+// `priorUsage` (solver benchmark, 2026-07-21) is the cross-WEEK memory the
+// planner never had: a Map<recipeId, recencyWeight> summarising what the
+// user's previous plans already served. Weeks used to be independent draws, so
+// by week 3 the same dishes reappeared even with a 600-recipe pool untouched —
+// the exact "repetitive by week 3" failure mode that sinks Eat This Much
+// (measured: median week-3 novelty 47.6%, week-4 35.7%). Like every other
+// variety rule here it is a SOFT discount, never a veto: a thin compliant pool
+// must still fill the week rather than leave slots empty.
+function priorDiscount(priorUsage, id) {
+  if (!priorUsage) return 1;
+  const w = priorUsage.get(id) || 0;
+  return w > 0 ? 1 / (1 + 2 * w) : 1;
+}
+
+function pickRecipe(candidates, targetRatio, usedYesterday, usedToday, rng, bias, priorUsage) {
   if (candidates.length === 0) return null;
   const weighted = candidates.map((r) => {
     const ratio = r.kcal > 0 ? r.protein / r.kcal : 0;
     const diff = Math.abs(ratio - targetRatio);
     const discount = usedToday.has(r.id) ? 0.02 : usedYesterday.has(r.id) ? 0.15 : 1;
     const pref = bias ? bias(r) : 1;
-    return { r, weight: (1 / (diff + 0.015)) * discount * pref };
+    return { r, weight: (1 / (diff + 0.015)) * discount * pref * priorDiscount(priorUsage, r.id) };
   });
   const total = weighted.reduce((s, x) => s + x.weight, 0);
   let roll = rng() * total;
@@ -142,7 +156,19 @@ const round2 = (n) => Math.round(n * 100) / 100;
 // Practical kitchen amounts: nobody weighs 217 g of potato — 5 g steps once
 // past spice territory. Totals are recomputed from the rounded grams, so
 // the shipped macros always match what's actually on the scale.
-const practicalGrams = (raw) => (raw >= 20 ? Math.round(raw / 5) * 5 : Math.round(raw));
+//
+// The 1 g floor is a HONESTY rule, not a nicety (solver benchmark, 2026-07-21):
+// plain Math.round() sent any sub-0.5 g amount to 0, and 4.3% of every
+// ingredient the solver shipped came out at 0 g — a real ingredient (garlic
+// clove, saffron, a pinch of yeast) silently vanishing from the plate AND from
+// the grocery list while the recipe card still named it. An ingredient that is
+// genuinely part of the dish is never rounded out of existence; it rounds to
+// 1 g and stays visible. Only a truly zero/absent amount stays zero.
+const practicalGrams = (raw) => {
+  if (!(raw > 0)) return 0;
+  if (raw >= 20) return Math.round(raw / 5) * 5;
+  return Math.max(1, Math.round(raw));
+};
 
 function bundleMacros(ingredients) {
   return ingredients.reduce(
@@ -257,27 +283,55 @@ async function tryAiFallback(target, recipePool, usageCount, aiFallback) {
 // one whose scale lands within tolerance on BOTH kcal and protein. Shipping
 // the closest miss (labeled plainly, on both axes) only once every tried
 // candidate failed; an honest unsolved slot only when nothing was eligible.
-async function resolveSlot(target, recipePool, usageCount, usedYesterday, usedToday, rng, aiFallback = null, bias = null, repeatCap = DEFAULT_REPEAT_CAP) {
+//
+// VARIETY NEVER COSTS ACCURACY. When cross-week memory is in play the slot is
+// resolved in two passes:
+//   pass 1 — search with the freshness discount, evaluate the whole shortlist,
+//            and among the candidates that FIT choose the least-recently-served
+//            one (ties broken by the better fit). Freshness is spent only on
+//            options that already hit the target.
+//   pass 2 — nothing in pass 1 fit, so search again with the discount OFF: a
+//            dish the user had last week comes back rather than shipping a
+//            worse-fitting "fresh" one.
+// Without memory the original behaviour is untouched, first-fit-wins and all.
+// Measured on the benchmark grid: naive freshness-first cost ~150 of 5,040 weeks
+// their clean 7/7 day count; fit-first alone cost thin-pool variety (keto week-3
+// novelty 28.6% → 7.1%). This shape keeps both.
+async function resolveSlot(target, recipePool, usageCount, usedYesterday, usedToday, rng, aiFallback = null, bias = null, repeatCap = DEFAULT_REPEAT_CAP, priorUsage = null) {
   const targetRatio = target.kcalTarget > 0 ? target.proteinTarget / target.kcalTarget : 0;
   const tried = new Set();
   let best = null;
 
-  for (let attempt = 0; attempt < MAX_SLOT_ATTEMPTS; attempt++) {
-    const candidates = eligibleRecipes(recipePool, target.slotType, usageCount, repeatCap).filter((r) => !tried.has(r.id));
-    if (candidates.length === 0) break;
-    const recipe = pickRecipe(candidates, targetRatio, usedYesterday, usedToday, rng, bias);
-    tried.add(recipe.id);
-    const scaled = scaleRecipe(recipe, target.kcalTarget, target.proteinTarget);
-    const kcalOff = kcalOffPct(target.kcalTarget, scaled.kcal);
-    const proteinShort = proteinShortfallPct(target.proteinTarget, scaled.protein);
-    // Worse-of-the-two-tolerances score, expressed as a multiple of each
-    // metric's own tolerance so the two different-scale percentages are
-    // comparable.
-    const worstRatio = Math.max(kcalOff / KCAL_TOLERANCE_PCT, proteinShort / PROTEIN_TOLERANCE_PCT);
-    if (!best || worstRatio < best.worstRatio) best = { recipe, scaled, kcalOff, proteinShort, worstRatio };
-    if (kcalOff <= KCAL_TOLERANCE_PCT && proteinShort <= PROTEIN_TOLERANCE_PCT) {
-      usageCount.set(recipe.id, (usageCount.get(recipe.id) || 0) + 1);
-      return { recipeId: recipe.id, warning: null, ...scaled };
+  const ship = (recipe, scaled) => {
+    usageCount.set(recipe.id, (usageCount.get(recipe.id) || 0) + 1);
+    return { recipeId: recipe.id, warning: null, ...scaled };
+  };
+
+  const passes = priorUsage && priorUsage.size > 0 ? [priorUsage, null] : [null];
+  for (const passUsage of passes) {
+    const fits = [];
+    for (let attempt = 0; attempt < MAX_SLOT_ATTEMPTS; attempt++) {
+      const candidates = eligibleRecipes(recipePool, target.slotType, usageCount, repeatCap).filter((r) => !tried.has(r.id));
+      if (candidates.length === 0) break;
+      const recipe = pickRecipe(candidates, targetRatio, usedYesterday, usedToday, rng, bias, passUsage);
+      tried.add(recipe.id);
+      const scaled = scaleRecipe(recipe, target.kcalTarget, target.proteinTarget);
+      const kcalOff = kcalOffPct(target.kcalTarget, scaled.kcal);
+      const proteinShort = proteinShortfallPct(target.proteinTarget, scaled.protein);
+      // Worse-of-the-two-tolerances score, expressed as a multiple of each
+      // metric's own tolerance so the two different-scale percentages are
+      // comparable.
+      const worstRatio = Math.max(kcalOff / KCAL_TOLERANCE_PCT, proteinShort / PROTEIN_TOLERANCE_PCT);
+      if (!best || worstRatio < best.worstRatio) best = { recipe, scaled, kcalOff, proteinShort, worstRatio };
+      if (kcalOff <= KCAL_TOLERANCE_PCT && proteinShort <= PROTEIN_TOLERANCE_PCT) {
+        // No cross-week memory → the original first-fit-wins path, unchanged.
+        if (!passUsage) return ship(recipe, scaled);
+        fits.push({ recipe, scaled, worstRatio, prior: passUsage.get(recipe.id) || 0 });
+      }
+    }
+    if (fits.length) {
+      fits.sort((a, b) => a.prior - b.prior || a.worstRatio - b.worstRatio);
+      return ship(fits[0].recipe, fits[0].scaled);
     }
   }
 
@@ -331,7 +385,7 @@ function buildAiFallbackContext(options, recipePool) {
  * repeatedly (different rng) without touching week state. Mutates
  * usageCount (per-week repeat tracking) — pass a copy if you don't want that.
  */
-async function solveDay(dayTargets, dailyTarget, recipePool, usageCount, prevDayRecipeIds, rng, aiCtx, bias, repeatCap) {
+async function solveDay(dayTargets, dailyTarget, recipePool, usageCount, prevDayRecipeIds, rng, aiCtx, bias, repeatCap, priorUsage = null) {
   const proteinTargetMid = (dailyTarget.proteinLo + dailyTarget.proteinHi) / 2;
   const todayIds = new Set();
   const results = [];
@@ -352,7 +406,7 @@ async function solveDay(dayTargets, dailyTarget, recipePool, usageCount, prevDay
       proteinTarget: clamp(proposedProtein, { min: target.proteinTarget * (1 - CARRY_CAP_PCT), max: target.proteinTarget * (1 + CARRY_CAP_PCT) }),
     };
 
-    const result = await resolveSlot(effectiveTarget, recipePool, usageCount, prevDayRecipeIds, todayIds, rng, aiCtx, bias, repeatCap);
+    const result = await resolveSlot(effectiveTarget, recipePool, usageCount, prevDayRecipeIds, todayIds, rng, aiCtx, bias, repeatCap, priorUsage);
     if (result.recipeId) todayIds.add(result.recipeId);
     results.push(toSlotRecord(target, result));
     // Carry forward the TRUE achieved amount, not the (possibly clamped)
@@ -376,7 +430,7 @@ function shuffled(arr, rng) {
 
 // recipePool: recipes with `ingredients` (each including `food`) loaded.
 async function generateWeekPlan(dailyTarget, mealConfig, recipePool, options = {}) {
-  const { rng = Math.random, aiFallback, bias = null } = options;
+  const { rng = Math.random, aiFallback, bias = null, priorUsage = null } = options;
   const repeatCap = repeatCapFor(options);
   const slots = targetsForSlots(dailyTarget, buildSlots(mealConfig));
   const usageCount = new Map();
@@ -395,7 +449,7 @@ async function generateWeekPlan(dailyTarget, mealConfig, recipePool, options = {
   let prevDayRecipeIds = new Set();
   for (const day of shuffled([...Array(DAYS).keys()], rng)) {
     const { slots: daySlots, todayIds } = await solveDay(
-      byDay.get(day) || [], dailyTarget, recipePool, usageCount, prevDayRecipeIds, rng, aiCtx, bias, repeatCap
+      byDay.get(day) || [], dailyTarget, recipePool, usageCount, prevDayRecipeIds, rng, aiCtx, bias, repeatCap, priorUsage
     );
     resolvedByDay.set(day, daySlots);
     prevDayRecipeIds = todayIds;
@@ -406,7 +460,7 @@ async function generateWeekPlan(dailyTarget, mealConfig, recipePool, options = {
 }
 
 async function regenerateOneSlot(existingSlots, target, recipePool, dailyTarget, mealConfig, options = {}) {
-  const { rng = Math.random, aiFallback, bias = null } = options;
+  const { rng = Math.random, aiFallback, bias = null, priorUsage = null } = options;
   const repeatCap = repeatCapFor(options);
   const targeted = targetsForSlots(dailyTarget, buildSlots(mealConfig))
     .find((s) => s.dayOfWeek === target.dayOfWeek && s.slotType === target.slotType && s.slotIndex === target.slotIndex);
@@ -429,8 +483,32 @@ async function regenerateOneSlot(existingSlots, target, recipePool, dailyTarget,
   );
   const aiCtx = buildAiFallbackContext({ aiFallback }, recipePool);
 
-  const result = await resolveSlot(targeted, recipePool, usageCount, usedYesterday, usedToday, rng, aiCtx, bias, repeatCap);
+  const result = await resolveSlot(targeted, recipePool, usageCount, usedYesterday, usedToday, rng, aiCtx, bias, repeatCap, priorUsage);
   return toSlotRecord(targeted, result);
+}
+
+/**
+ * Build the cross-week variety memory from the user's PREVIOUS plans.
+ *
+ * `priorPlans` is newest-first: [{ slots: [{recipeId}] }, …]. Each plan's
+ * servings are weighted by how recent it is (last week counts fully, the week
+ * before less, and so on) and summed per recipe. The result feeds
+ * pickRecipe()'s soft discount, so a dish served last week has to be a clearly
+ * better fit than a fresh one to come back. Pure — no DB, no clock.
+ */
+const RECENCY_WEIGHTS = [1, 0.6, 0.35];
+
+function buildPriorUsage(priorPlans, weights = RECENCY_WEIGHTS) {
+  const usage = new Map();
+  (priorPlans || []).forEach((plan, i) => {
+    const w = weights[i] ?? 0;
+    if (w <= 0) return;
+    for (const slot of plan?.slots || []) {
+      if (!slot?.recipeId) continue;
+      usage.set(slot.recipeId, (usage.get(slot.recipeId) || 0) + w);
+    }
+  });
+  return usage;
 }
 
 // A representative single-slot target for a given slot type — used by
@@ -451,7 +529,7 @@ function estimateSlotTarget(dailyTarget, mealConfig, slotType) {
 module.exports = {
   generateWeekPlan, regenerateOneSlot, buildSlots, targetsForSlots, solveDay,
   resolveSlot, scaleRecipe, buildAiFallbackContext, estimateSlotTarget,
-  eligibleRecipes,
+  eligibleRecipes, buildPriorUsage, practicalGrams, RECENCY_WEIGHTS,
   SCALE_BOUNDS, DEFAULT_REPEAT_CAP, BATCH_REPEAT_CAP,
   KCAL_TOLERANCE_PCT, PROTEIN_TOLERANCE_PCT,
   // Back-compat alias for older call sites/tests: the default weekly repeat cap.

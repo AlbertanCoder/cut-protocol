@@ -8,7 +8,8 @@
 //   (never a silent failure, and NEVER a suggestion to loosen an allergy)
 const {
   buildSlots, targetsForSlots, solveDay, resolveSlot, scaleRecipe,
-  generateWeekPlan, eligibleRecipes, DEFAULT_REPEAT_CAP, BATCH_REPEAT_CAP,
+  generateWeekPlan, eligibleRecipes, estimateSlotTarget,
+  DEFAULT_REPEAT_CAP, BATCH_REPEAT_CAP, SCALE_BOUNDS, PROTEIN_TOLERANCE_PCT,
 } = require("./weeklyPlanner.js");
 const { buildCostCache } = require("./recipeCost.js");
 
@@ -107,6 +108,44 @@ function scoreDay(dailyTarget, slots) {
   };
 }
 
+// A day's totals are "in tolerance" on the two load-bearing macros only —
+// calories within ±15%, protein no more than 15% short. Single-sourced here
+// so the week score, the per-day report and every test read the same rule.
+const DAY_KCAL_TOLERANCE_PCT = 0.15;
+const DAY_PROTEIN_TOLERANCE_PCT = 0.15;
+
+function dayTolerance(dailyTarget, totals) {
+  const pMid = (dailyTarget.proteinLo + dailyTarget.proteinHi) / 2;
+  const kcalDeltaPct = dailyTarget.kcal > 0 ? (totals.kcal - dailyTarget.kcal) / dailyTarget.kcal : 1;
+  const proteinShortPct = pMid > 0 ? Math.max(0, (pMid - totals.protein) / pMid) : 0;
+  return {
+    kcalDeltaPct, proteinShortPct,
+    kcalOk: Math.abs(kcalDeltaPct) <= DAY_KCAL_TOLERANCE_PCT,
+    proteinOk: proteinShortPct <= DAY_PROTEIN_TOLERANCE_PCT,
+    proteinMid: pMid,
+  };
+}
+
+/**
+ * Plain-English statement of what a day actually missed by. Plain numbers, no
+ * jargon, no scolding — the calorie line reads "over"/"under" and the protein
+ * line reads "short", exactly as the constitution's honesty rule requires
+ * ("Over by 340 — tomorrow already adjusts", not a red failure badge).
+ * Returns null when the day landed inside tolerance.
+ */
+function dayMissLine(dailyTarget, totals) {
+  const t = dayTolerance(dailyTarget, totals);
+  const parts = [];
+  if (!t.kcalOk) {
+    const diff = Math.round(totals.kcal - dailyTarget.kcal);
+    parts.push(`${Math.round(totals.kcal).toLocaleString("en-CA")} kcal vs a ${Math.round(dailyTarget.kcal).toLocaleString("en-CA")} target — ${Math.abs(diff).toLocaleString("en-CA")} ${diff > 0 ? "over" : "under"}`);
+  }
+  if (!t.proteinOk) {
+    parts.push(`${Math.round(totals.protein)} g protein vs ${Math.round(t.proteinMid)} g — ${Math.round(t.proteinMid - totals.protein)} g short`);
+  }
+  return parts.length ? parts.join("; ") : null;
+}
+
 // ── infeasibility diagnosis ──────────────────────────────────────────────
 
 /**
@@ -147,6 +186,20 @@ function diagnose({ counts, filters, dailyTarget, mealConfig, pool }) {
     suggestions.push(filters?.allowBatchRepeats
       ? "Reduce meals per day, or AI-generate more compliant recipes to deepen the pool."
       : "Allow batch-cooking repeats, reduce meals per day, or AI-generate more compliant recipes.");
+  }
+  // SNACK capacity, same arithmetic (solver benchmark, 2026-07-21). Only 9 of
+  // the 889 shipped recipes are snack-eligible, and after a vegan/vegetarian
+  // filter that is ZERO — so snack slots came back empty while the only reason
+  // offered talked about protein density. A slot the solver cannot fill has to
+  // say so in its own words.
+  const snackEligible = eligibleRecipes(pool, "snack", new Map(), repeatCap).length;
+  const weeklySnackSlots = (mealConfig.snacks || 0) * 7;
+  const snackCapacity = snackEligible * repeatCap;
+  if (weeklySnackSlots > 0 && snackCapacity < weeklySnackSlots) {
+    reasons.push(snackEligible === 0
+      ? `Your library has no snack-sized recipe that fits your rules — all ${weeklySnackSlots} snack slots this week come back empty.`
+      : `${snackEligible} snack recipe(s) fit your rules × max ${repeatCap} servings/week = ${snackCapacity} servings for ${weeklySnackSlots} snack slots — ${weeklySnackSlots - snackCapacity} snack slot(s) come back empty.`);
+    suggestions.push("Set snacks per day to 0 and fold those calories into your meals, or AI-generate a few compliant snacks on the Recipes tab.");
   }
   // Protein density: the solver can only scale what exists. If almost
   // nothing meal-eligible carries the protein-per-kcal ratio the targets
@@ -299,20 +352,51 @@ async function generateDayCandidates({
 
 // ── best-of-K week generation ────────────────────────────────────────────
 
+/**
+ * Score a whole week AND publish one honest line per day.
+ *
+ * `days` is the load-bearing part (solver benchmark, 2026-07-21). Before it
+ * existed the week result carried only an AVERAGE — so a week could ship with
+ * one day 18% under target while the only numbers the user could ever see were
+ * "7 days" and "89% average". Every day now states its own match %, its own
+ * deltas, and, when it misses, its own plain-English miss line. That is what
+ * makes "no silent target miss" a property of the output rather than a promise.
+ */
 function scoreWeek(dailyTarget, slots) {
   const byDay = new Map();
   for (const s of slots) byDay.set(s.dayOfWeek, [...(byDay.get(s.dayOfWeek) || []), s]);
   let daysInTolerance = 0;
   let matchSum = 0;
-  const pMid = (dailyTarget.proteinLo + dailyTarget.proteinHi) / 2;
-  for (const [, daySlots] of byDay) {
+  const days = [];
+  for (const dow of [...byDay.keys()].sort((a, b) => a - b)) {
+    const daySlots = byDay.get(dow);
     const sc = scoreDay(dailyTarget, daySlots);
+    // Tolerance is judged on the EXACT totals, never on scoreDay's display-
+    // rounded ones. Rounding first can only ever hide a miss (a day 15.009%
+    // under target rounded to exactly 15.0% and reported as clean — caught on
+    // the benchmark grid), and a hidden miss is the one thing forbidden here.
+    const exactTotals = daySlots.reduce(
+      (a, s) => ({ kcal: a.kcal + s.kcal, protein: a.protein + s.protein, fat: a.fat + s.fat, carb: a.carb + s.carb }),
+      { kcal: 0, protein: 0, fat: 0, carb: 0 }
+    );
+    const tol = dayTolerance(dailyTarget, exactTotals);
+    const ok = tol.kcalOk && tol.proteinOk;
     matchSum += sc.matchPct;
-    const kcalOk = Math.abs(sc.totals.kcal - dailyTarget.kcal) / dailyTarget.kcal <= 0.15;
-    const proteinOk = (pMid - sc.totals.protein) / pMid <= 0.15;
-    if (kcalOk && proteinOk) daysInTolerance++;
+    if (ok) daysInTolerance++;
+    days.push({
+      dayOfWeek: dow,
+      dayName: dayName(dow),
+      matchPct: sc.matchPct,
+      totals: sc.totals,
+      kcalDeltaPct: Math.round(tol.kcalDeltaPct * 1000) / 10,
+      proteinShortPct: Math.round(tol.proteinShortPct * 1000) / 10,
+      inTolerance: ok,
+      miss: ok ? null : dayMissLine(dailyTarget, exactTotals),
+      unfilledSlots: daySlots.filter((s) => !s.recipeId).length,
+      warnedSlots: daySlots.filter((s) => s.warning).length,
+    });
   }
-  return { daysInTolerance, avgMatch: Math.round(matchSum / Math.max(1, byDay.size)) };
+  return { daysInTolerance, avgMatch: Math.round(matchSum / Math.max(1, byDay.size)), days };
 }
 
 /**
@@ -328,7 +412,9 @@ async function generateBestWeekPlan(dailyTarget, mealConfig, recipePool, options
   const attempts = options.attempts ?? 5;
   const filters = options.filters || {};
   let best = null;
+  let attemptsRun = 0;
   for (let i = 0; i < attempts; i++) {
+    attemptsRun++;
     const slots = await generateWeekPlan(dailyTarget, mealConfig, recipePool, { ...options, aiFallback: undefined });
     const score = scoreWeek(dailyTarget, slots);
     if (!best || score.daysInTolerance > best.score.daysInTolerance ||
@@ -343,10 +429,71 @@ async function generateBestWeekPlan(dailyTarget, mealConfig, recipePool, options
   const preSolve = options.counts
     ? diagnose({ counts: options.counts, filters, dailyTarget, mealConfig, pool: recipePool })
     : undefined;
-  best.diagnosis = best.score.daysInTolerance < 6
+  // Solver benchmark, 2026-07-21: this used to fire only below 6/7 days — a
+  // threshold lottery that let 306 of 5,040 benchmarked weeks ship short of a
+  // clean week with NO reason attached at all. "Unsolvable + why" is owed the
+  // moment ANY day misses its targets or ANY slot comes back unfilled, not
+  // once enough days have missed to cross a bar.
+  const anyDayMissed = best.score.daysInTolerance < best.score.days.length;
+  const anyUnfilledSlot = best.slots.some((s) => !s.recipeId);
+  best.diagnosis = anyDayMissed || anyUnfilledSlot
     ? diagnoseFromResult({ dailyTarget, slots: best.slots, pool: recipePool, mealConfig, filters, preSolve })
     : null;
+  best.attempts = attemptsRun;
   return best;
+}
+
+/**
+ * Can this pool sustain VARIETY over a multi-week horizon, or will it force
+ * repeats? Pure arithmetic on the compliant pool — the honest counterpart to
+ * the cross-week variety memory: where the library genuinely cannot carry N
+ * weeks of distinct dishes, the app says so up front instead of quietly
+ * serving the same eight dinners again.
+ */
+function varietyOutlook({ pool, mealConfig, filters = {}, horizonWeeks = 4, dailyTarget = null }) {
+  const repeatCap = filters.allowBatchRepeats ? BATCH_REPEAT_CAP : DEFAULT_REPEAT_CAP;
+  const mealPool = eligibleRecipes(pool, "meal", new Map(), repeatCap);
+  const mealEligible = mealPool.length;
+  const snackEligible = eligibleRecipes(pool, "snack", new Map(), repeatCap).length;
+  const weeklyMealSlots = (mealConfig.meals || 0) * 7;
+  const weeklySnackSlots = (mealConfig.snacks || 0) * 7;
+  // Raw pool size OVERSTATES variety, and the benchmark caught it doing so:
+  // pools that nominally covered 5 weeks of distinct dinners still went
+  // repetitive by week 3, because a 250 kcal dish cannot be stretched into a
+  // 900 kcal dinner slot inside the 0.5–2× portion band — the solver kept
+  // returning to the same usable subset. Count the dishes that can actually be
+  // PORTIONED into this user's slot size; that is the honest variety number.
+  const slotEstimate = dailyTarget && weeklyMealSlots > 0
+    ? estimateSlotTarget(dailyTarget, mealConfig, "meal") : null;
+  const slotKcal = slotEstimate ? Math.round(slotEstimate.kcalTarget) : null;
+  // Reachable means reachable on BOTH walls: the portion band has to be able to
+  // carry the dish to the slot's calories AND to its protein. Testing calories
+  // alone overstated the usable pool and left genuinely repetitive plans
+  // unwarned (benchmark: 18 of 1,260 scenarios).
+  const minProtein = slotEstimate ? slotEstimate.proteinTarget * (1 - PROTEIN_TOLERANCE_PCT) : 0;
+  const usableForSlot = slotEstimate == null ? mealEligible : mealPool.filter((r) =>
+    r.kcal > 0
+    && r.kcal * SCALE_BOUNDS.max >= slotKcal && r.kcal * SCALE_BOUNDS.min <= slotKcal
+    && r.protein * SCALE_BOUNDS.max >= minProtein).length;
+  // Weeks of DISTINCT meals the pool can carry before a dish has to come back.
+  const distinctWeeks = weeklyMealSlots > 0 ? usableForSlot / weeklyMealSlots : Infinity;
+  const weeksCovered = Math.floor(distinctWeeks * 10) / 10;
+  const note = distinctWeeks >= horizonWeeks ? null
+    : slotKcal == null
+      ? `${mealEligible} compliant recipes cover about ${weeksCovered} week(s) of ${weeklyMealSlots} meals before dishes start repeating — over ${horizonWeeks} weeks you will see favourites come back.`
+      : `${usableForSlot} of your ${mealEligible} compliant recipes can be portioned to a ${slotKcal.toLocaleString("en-CA")} kcal meal — about ${weeksCovered} week(s) of ${weeklyMealSlots} meals before dishes start repeating, so over ${horizonWeeks} weeks you will see favourites come back.`;
+  const snackNote = weeklySnackSlots > 0 && snackEligible * repeatCap < weeklySnackSlots
+    ? (snackEligible === 0
+      ? `Your library has no snack-sized recipe that fits your rules — snack slots stay empty until you add one.`
+      : `Only ${snackEligible} snack recipe(s) fit your rules, so the same snacks come back every week.`)
+    : null;
+  return {
+    mealEligible, usableForSlot, slotKcal, snackEligible, weeklyMealSlots, weeklySnackSlots, repeatCap,
+    distinctWeeks: Number.isFinite(distinctWeeks) ? Math.round(distinctWeeks * 10) / 10 : null,
+    horizonWeeks,
+    sustainsHorizon: distinctWeeks >= horizonWeeks && !snackNote,
+    notes: [note, snackNote].filter(Boolean),
+  };
 }
 
 // ── slot alternates ──────────────────────────────────────────────────────
@@ -393,4 +540,6 @@ async function alternatesForSlot({
 module.exports = {
   applyPrepFilter, buildBias, scoreDay, scoreWeek, diagnose, diagnoseFromResult,
   generateDayCandidates, generateBestWeekPlan, alternatesForSlot, SCORE_WEIGHTS,
+  dayTolerance, dayMissLine, varietyOutlook,
+  DAY_KCAL_TOLERANCE_PCT, DAY_PROTEIN_TOLERANCE_PCT,
 };

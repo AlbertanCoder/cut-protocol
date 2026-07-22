@@ -2,8 +2,8 @@ const express = require("express");
 const { prisma } = require("../lib/prisma.js");
 const { requireAuth } = require("../lib/auth.js");
 const { todayStr, mondayOf } = require("../lib/dates.js");
-const { generateWeekPlan, regenerateOneSlot, buildSlots, targetsForSlots, scaleRecipe } = require("../lib/weeklyPlanner.js");
-const { generateDayCandidates, generateBestWeekPlan, alternatesForSlot, buildBias, applyPrepFilter } = require("../lib/mealSolver.js");
+const { generateWeekPlan, regenerateOneSlot, buildSlots, targetsForSlots, scaleRecipe, buildPriorUsage, RECENCY_WEIGHTS } = require("../lib/weeklyPlanner.js");
+const { generateDayCandidates, generateBestWeekPlan, alternatesForSlot, buildBias, applyPrepFilter, varietyOutlook } = require("../lib/mealSolver.js");
 const { buildCostCache } = require("../lib/recipeCost.js");
 const { buildGroceryList } = require("../lib/groceryList.js");
 const { toPurchaseUnits } = require("../lib/purchaseUnits.js");
@@ -138,11 +138,23 @@ router.post("/generate", async (req, res) => {
     // name the TRUE binding constraint (e.g. a maxPrep cap that emptied the
     // pool) instead of always blaming diet/allergy rules.
     const poolCounts = { raw: rawPoolCount, afterDiet: recipePool.length, afterPrep: pool.length };
+    // Cross-week variety memory: what the user's PREVIOUS plans already served,
+    // newest first, recency-weighted. Weeks used to be independent draws, so by
+    // week 3 the same dishes came back while most of the library went untouched
+    // (the "repetitive by week 3" failure mode). A soft discount only — a thin
+    // compliant pool still fills the week rather than leaving slots empty.
+    const priorPlans = await prisma.plan.findMany({
+      where: { userId: req.userId, startDate: { lt: monday } },
+      orderBy: { startDate: "desc" },
+      take: RECENCY_WEIGHTS.length,
+      include: { slots: { select: { recipeId: true } } },
+    });
     const weekResult = await generateBestWeekPlan(dailyTarget, mealConfig, pool, {
       bias: buildBias(filters, costCache),
       allowBatchRepeats: filters.allowBatchRepeats,
       filters,
       counts: poolCounts,
+      priorUsage: buildPriorUsage(priorPlans),
     });
     const freshSlots = weekResult.slots;
     // A locked slot is only carried forward if its recipe still complies with
@@ -176,9 +188,23 @@ router.post("/generate", async (req, res) => {
     // silently drop, plus the pool sizes at each hard-filter stage. Additive:
     // the plan object is unchanged, `meta` rides alongside it.
     const meta = {
-      score: weekResult.score, // { daysInTolerance, avgMatch }
-      diagnosis: weekResult.diagnosis, // { feasible, reasons, suggestions } | null (null when the week is clean)
+      // Scalar match % FIRST — this is the number the honesty claim rests on and
+      // the shape the UI reads. `score` keeps the full object for anything that
+      // wants daysInTolerance/days.
+      matchPct: weekResult.score.avgMatch,
+      attempts: weekResult.attempts, // "best of N" — the real count, not a claim
+      score: weekResult.score, // { daysInTolerance, avgMatch, days[] }
+      // Per-day honest report: every day states its own match %, its own deltas
+      // and, when it misses, its own plain-English miss line. Without this a day
+      // could land 18% under target behind a healthy weekly average — a silent
+      // target miss, which the constitution forbids.
+      days: weekResult.score.days,
+      diagnosis: weekResult.diagnosis, // { feasible, reasons, suggestions } | null (null ONLY when every day landed in tolerance and every slot filled)
       poolCounts, // { raw, afterDiet, afterPrep }
+      // Up-front variety honesty: says when the compliant pool cannot carry a
+      // 4-week horizon of distinct dinners, instead of quietly repeating them.
+      variety: varietyOutlook({ pool, mealConfig, filters, dailyTarget }),
+      priorWeeksConsidered: priorPlans.length,
     };
     res.json({ ...full, meta });
   } catch (e) {
