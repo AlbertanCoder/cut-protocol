@@ -45,6 +45,10 @@ export const api = {
 
   getFoods: () => request("/foods"),
   putFood: (id, patch) => request(`/foods/${id}`, { method: "PUT", body: JSON.stringify(patch) }),
+  // Barcode-off track: manual UPC entry. lookupUpc previews (never writes);
+  // importUpc re-validates server-side and saves, tagged source:"community".
+  lookupUpc: (upc) => request(`/foods/lookup-upc/${encodeURIComponent(upc)}`),
+  importUpc: (upc) => request("/foods/import-upc", { method: "POST", body: JSON.stringify({ upc }) }),
 
   getRecipes: () => request("/recipes"),
   generateRecipeDrafts: (params) => request("/recipes/generate-drafts", { method: "POST", body: JSON.stringify(params) }),
