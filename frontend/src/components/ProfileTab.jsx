@@ -142,7 +142,7 @@ export default function ProfileTab({ profile, summary, refresh }) {
       {bfPickerOpen && (
         <BodyFatPicker current={profile.bodyFatPct} source={profile.bodyFatSource} onDone={refresh} onClose={() => setBfPickerOpen(false)} />
       )}
-      <PageHead title="Profile" sub="Your stats, activity, diet rules, and rate of loss. Everything else in the app derives from this tab." />
+      <PageHead title="Profile" sub="Your stats, activity, diet rules, and rate of change. Everything else in the app — including the protein floor and lean-mass estimate — derives from this tab." />
 
       {error && (
         <div className="mb-3">
