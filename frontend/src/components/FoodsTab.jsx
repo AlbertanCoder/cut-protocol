@@ -1,15 +1,24 @@
 import { useState, useEffect, useMemo } from "react";
-import { Search, ArrowLeft, ChevronRight, ChevronDown, Save, BookOpen, NotebookPen } from "lucide-react";
+import { Search, ArrowLeft, ChevronRight, ChevronDown, Save, BookOpen, NotebookPen, Barcode, AlertTriangle } from "lucide-react";
 import { C } from "../lib/theme.js";
-import { FOOD_CATEGORIES, CATEGORY_LABEL, CATEGORY_DOT, SOURCE_LABEL } from "../data/foodCategories.js";
+import { FOOD_CATEGORIES, CATEGORY_LABEL, CATEGORY_DOT, SOURCE_LABEL, dataQualityFlag } from "../data/foodCategories.js";
 import { Card, Btn, Chip, PageHead, Stat, ErrorNote } from "./ui/Parts.jsx";
 import { SkeletonRows } from "./ui/Skeleton.jsx";
 import { api } from "../lib/api.js";
+import BarcodeLookup from "./BarcodeLookup.jsx";
 
 const g1 = (n) => Math.round(n * 10) / 10;
 const SEARCH_RENDER_CAP = 200;
 
+// Provenance must surface where a food is PICKED, not just after the fact
+// in the detail panel — the whole crux of the barcode-off track. A small
+// neutral-ink Barcode glyph marks community (Open Food Facts) rows right in
+// the list; an amber triangle rides alongside it only when that row's own
+// declared macros didn't reconcile (dataQuality "warn:…") — never a hue
+// borrowed from the reserved green/macro-triad palette (design law a/c).
 function FoodRow({ food, selected, onSelect, dotColor }) {
+  const community = food.source === "community";
+  const flag = community ? dataQualityFlag(food) : null;
   return (
     <button
       onClick={() => onSelect(food)}
@@ -18,7 +27,11 @@ function FoodRow({ food, selected, onSelect, dotColor }) {
     >
       <span className="w-2 h-2 rounded-full shrink-0" style={{ background: dotColor }}></span>
       <div className="flex-1 min-w-0">
-        <div className="text-sm font-bold truncate" style={{ color: C.ink }}>{food.name}</div>
+        <div className="text-sm font-bold truncate flex items-center gap-1.5" style={{ color: C.ink }}>
+          {community && <Barcode size={12} className="shrink-0" style={{ color: C.faintLight }} title="Community (Open Food Facts)" />}
+          <span className="truncate">{food.name}</span>
+          {flag && <AlertTriangle size={12} className="shrink-0" style={{ color: C.warn }} title={`Unverified macros — ${flag.reason}`} />}
+        </div>
       </div>
       <div className="text-right shrink-0">
         <span className="mono text-sm font-extrabold" style={{ color: C.ink }}>{Math.round(food.kcal)}</span>
@@ -101,6 +114,8 @@ function FoodDetail({ food, isAdmin, onSaved, refreshFoods }) {
 
   const filteredRecipes = (recipes || []).filter((r) => r.name.toLowerCase().includes(recipeQuery.toLowerCase())).slice(0, 30);
   const placeholder = food.source === "manual-placeholder";
+  const community = food.source === "community";
+  const flag = community ? dataQualityFlag(food) : null;
 
   return (
     <Card section="DETAIL" title={food.name}>
@@ -110,13 +125,22 @@ function FoodDetail({ food, isAdmin, onSaved, refreshFoods }) {
           {CATEGORY_LABEL[food.category] || food.category}
         </Chip>
         <Chip color={placeholder ? C.red : C.faint} bg={placeholder ? C.redBg : undefined}>
-          {SOURCE_LABEL[food.source] || food.source}{food.fdcId ? ` · FDC ${food.fdcId}` : ""}
+          {SOURCE_LABEL[food.source] || food.source}{food.fdcId ? ` · FDC ${food.fdcId}` : ""}{food.brand ? ` · ${food.brand}` : ""}{food.upc ? ` · UPC ${food.upc}` : ""}
         </Chip>
+        {flag && (
+          <Chip color={C.warn} bg={C.warnBg}>{flag.label} — {flag.reason}</Chip>
+        )}
       </div>
 
       {placeholder && (
         <div className="text-xs font-bold mb-3" style={{ color: C.red }}>
           Zero-macro placeholder — recipes using this food undercount until real values are entered.
+        </div>
+      )}
+
+      {community && (
+        <div className="text-[10.5px] font-semibold mb-3" style={{ color: C.faintLight }}>
+          Crowd-sourced from Open Food Facts, not USDA-audited — treat as a reasonable estimate, not a lab-verified figure.
         </div>
       )}
 
@@ -222,6 +246,7 @@ export default function FoodsTab({ onBack, isAdmin }) {
   const [query, setQuery] = useState("");
   const [openCats, setOpenCats] = useState({});
   const [selected, setSelected] = useState(null);
+  const [showBarcode, setShowBarcode] = useState(false);
 
   const refreshFoods = async () => setFoods(await api.getFoods());
   useEffect(() => {
@@ -244,10 +269,25 @@ export default function FoodsTab({ onBack, isAdmin }) {
   return (
     <div>
       <PageHead title="Food database" sub={`${foods.length} foods · per 100 g · validated against kcal ≈ 4P + 4C + 9F`}>
+        <Btn small kind="ghost" onClick={() => setShowBarcode((v) => !v)}>
+          <Barcode size={12} className="inline mr-1" />{showBarcode ? "Hide barcode lookup" : "Add by barcode"}
+        </Btn>
         <Btn small kind="ghost" onClick={onBack}>
           <ArrowLeft size={12} className="inline mr-1" />Back to Recipes
         </Btn>
       </PageHead>
+
+      {showBarcode && (
+        <div className="mb-4">
+          <BarcodeLookup
+            onClose={() => setShowBarcode(false)}
+            onImported={async (food) => {
+              await refreshFoods();
+              setSelected(food);
+            }}
+          />
+        </div>
+      )}
 
       <div className="grid grid-cols-1 xl:grid-cols-12 gap-4 items-start">
         <div className="xl:col-span-7 min-w-0">
