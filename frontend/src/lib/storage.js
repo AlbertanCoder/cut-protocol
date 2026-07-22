@@ -14,3 +14,29 @@ export const sidebarPref = {
     window.localStorage.setItem(SIDEBAR_KEY, collapsed ? "collapsed" : "open");
   },
 };
+
+// Protein-priority / recomposition mode — a solver-generation FILTER (like
+// cuisine/budget/prep, sent per-request in `filters`), not a Profile field:
+// there's no schema column for it (see the track's schema-caveat note), so
+// this is display-only local state, exactly like sidebarPref above. It seeds
+// the PlanTab toggle's default so the choice survives a reload without
+// needing a backend change.
+const PROTEIN_PRIORITY_KEY = "shadcut:proteinPriority";
+
+export const proteinPriorityPref = {
+  get() {
+    try {
+      return window.localStorage.getItem(PROTEIN_PRIORITY_KEY) === "on";
+    } catch {
+      return false;
+    }
+  },
+  set(on) {
+    try {
+      window.localStorage.setItem(PROTEIN_PRIORITY_KEY, on ? "on" : "off");
+    } catch {
+      // localStorage unavailable (e.g. private mode) — the toggle still
+      // works for this session, it just won't persist across reloads.
+    }
+  },
+};
