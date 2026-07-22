@@ -100,8 +100,18 @@ function FiltersBar({ filters, setFilters }) {
 function SolverNarration({ meta }) {
   if (!meta) return null;
   const pc = meta.poolCounts || {};
-  // score may arrive as a 0–1 fraction or a 0–100 percent — normalize either.
-  const pct = typeof meta.score === "number" ? Math.round(meta.score <= 1 ? meta.score * 100 : meta.score) : null;
+  // The match % may arrive as the scalar `matchPct`, as a bare `score` number
+  // (0–1 fraction or 0–100 percent), or nested inside the week score object.
+  // Reading only `typeof meta.score === "number"` meant the server's
+  // `score: {daysInTolerance, avgMatch}` never rendered — the app's headline
+  // honesty number was computed on every generate and shown to nobody.
+  const rawPct = typeof meta.matchPct === "number" ? meta.matchPct
+    : typeof meta.score === "number" ? meta.score
+      : typeof meta.score?.avgMatch === "number" ? meta.score.avgMatch : null;
+  const pct = rawPct == null ? null : Math.round(rawPct <= 1 ? rawPct * 100 : rawPct);
+  const days = Array.isArray(meta.days) ? meta.days : [];
+  const missedDays = days.filter((d) => d && d.inTolerance === false);
+  const varietyNotes = Array.isArray(meta.variety?.notes) ? meta.variety.notes : [];
   // "Best of N" only if the response actually carries an attempt count.
   const bestOf = typeof meta.attempts === "number" ? meta.attempts
     : typeof meta.bestOf === "number" ? meta.bestOf : null;
@@ -115,7 +125,7 @@ function SolverNarration({ meta }) {
     : diag && Array.isArray(diag.reasons) ? diag.reasons.join(" · ") : null;
   const infeasible = diag && typeof diag === "object" && diag.feasible === false;
 
-  if (pct == null && bestOf == null && funnel.length === 0 && !diagText) return null;
+  if (pct == null && bestOf == null && funnel.length === 0 && !diagText && days.length === 0) return null;
 
   return (
     <Card section="SOLVER" title="What the solver did">
@@ -138,11 +148,43 @@ function SolverNarration({ meta }) {
           </div>
         )}
       </div>
+      {days.length > 0 && (
+        <div className="mt-3">
+          <div className="text-[10px] font-bold tracking-wider mb-1.5" style={{ color: C.faintLight }}>
+            EVERY DAY, ITS OWN MATCH
+          </div>
+          <div className="flex flex-wrap gap-1.5">
+            {days.map((d) => (
+              <div
+                key={d.dayOfWeek}
+                title={d.miss || `${d.dayName}: on target`}
+                className="px-2 py-1 rounded-lg flex items-baseline gap-1.5"
+                style={{ background: C.card2, border: `1px solid ${d.inTolerance ? C.rule : C.warn}` }}
+              >
+                <span className="text-[10px] font-bold" style={{ color: C.faint }}>{(d.dayName || "").slice(0, 3)}</span>
+                <span className="mono text-xs font-bold" style={{ color: d.inTolerance ? C.ink : C.warn }}>{d.matchPct}%</span>
+              </div>
+            ))}
+          </div>
+          {missedDays.length > 0 && (
+            <div className="mt-2 space-y-0.5">
+              {missedDays.map((d) => (
+                <div key={d.dayOfWeek} className="text-xs font-semibold" style={{ color: C.warn }}>
+                  {d.dayName}: {d.miss}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
       {diagText && (
         <div className="text-xs font-semibold mt-2" style={{ color: infeasible ? C.warn : C.faint }}>
           {infeasible ? "→ " : ""}{diagText}
         </div>
       )}
+      {varietyNotes.map((n, i) => (
+        <div key={i} className="text-xs font-semibold mt-1" style={{ color: C.faint }}>{n}</div>
+      ))}
     </Card>
   );
 }
