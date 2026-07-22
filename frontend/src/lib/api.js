@@ -88,6 +88,11 @@ export const api = {
   addDiaryEntry: (entry) => request("/diary/entry", { method: "POST", body: JSON.stringify(entry) }),
   deleteDiaryEntry: (id) => request(`/diary/entry/${id}`, { method: "DELETE" }),
 
+  // Micronutrients — today's rollup, sourced from the solved plan's real
+  // per-food grams (see routes/micronutrients.js for why the diary can't be
+  // used for this honestly). Defaults to today when date is omitted.
+  getMicronutrientsToday: (date) => request(`/micronutrients/today${date ? `?date=${date}` : ""}`),
+
   // Stage D2 — brain chat. getBrainStatus gates whether the chat bar renders at
   // all; brainChat sends one message. Both no-op cleanly when the brain is off.
   getBrainStatus: () => request("/brain/status"),
