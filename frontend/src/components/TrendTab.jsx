@@ -61,26 +61,34 @@ export default function TrendTab({ profile, summary }) {
             <EmptyNote icon={LineChart} height={380} title="First point logged"
               hint="The curve starts with your second weigh-in — log again tomorrow. Verdicts and projections firm up after ~10 days of data." />
           ) : (
-            <div style={{ width: "100%", height: 380 }}>
-              <ResponsiveContainer>
-                <ComposedChart data={chart} margin={{ top: 8, right: 8, left: -12, bottom: 0 }}>
-                  <CartesianGrid stroke={C.rule} strokeDasharray="2 4" vertical={false} />
-                  <XAxis dataKey="d" tick={{ fontSize: 11, fill: C.faint, fontWeight: 600 }} tickLine={false}
-                    axisLine={{ stroke: C.rule }} minTickGap={24} />
-                  <YAxis domain={[yMin, yMax]} tick={{ fontSize: 11, fill: C.faint, fontWeight: 600 }}
-                    tickLine={false} axisLine={{ stroke: C.rule }} width={52} />
-                  <Tooltip
-                    contentStyle={{ background: C.card2, border: `1px solid ${C.rule}`, borderRadius: 12, fontSize: 12, fontWeight: 600, color: C.ink }}
-                    formatter={(val, name) => [val + " " + wUnit, name === "w" ? "daily" : "7-day avg"]}
-                  />
-                  <ReferenceLine y={goalW} stroke={C.faint} strokeDasharray="6 4"
-                    label={{ value: "GOAL " + r1(goalW), fill: C.faint, fontSize: 10, fontWeight: 700, position: "insideBottomLeft" }} />
-                  <Line type="monotone" dataKey="w" stroke={C.faintLight} strokeWidth={1.5}
-                    dot={{ r: 2, fill: C.faintLight, strokeWidth: 0 }} isAnimationActive={false} />
-                  <Line type="monotone" dataKey="a" stroke={C.accent} strokeWidth={2.5}
-                    dot={false} isAnimationActive={false} />
-                </ComposedChart>
-              </ResponsiveContainer>
+            // a11y: same text-equivalent pattern as the Today-tab snapshot —
+            // role="img" summary sentence, chart hidden from AT underneath.
+            <div
+              role="img"
+              aria-label={`Weight trend, ${chart.length} entries: ${r1(chart[0].w)} ${wUnit} on ${chart[0].d}, most recently ${r1(chart[chart.length - 1].w)} ${wUnit} on ${chart[chart.length - 1].d}. 7-day average ${r1(chart[chart.length - 1].a)} ${wUnit}, goal ${r1(goalW)} ${wUnit}.`}
+              style={{ width: "100%", height: 380 }}
+            >
+              <div aria-hidden="true" style={{ width: "100%", height: "100%" }}>
+                <ResponsiveContainer>
+                  <ComposedChart data={chart} margin={{ top: 8, right: 8, left: -12, bottom: 0 }}>
+                    <CartesianGrid stroke={C.rule} strokeDasharray="2 4" vertical={false} />
+                    <XAxis dataKey="d" tick={{ fontSize: 11, fill: C.faint, fontWeight: 600 }} tickLine={false}
+                      axisLine={{ stroke: C.rule }} minTickGap={24} />
+                    <YAxis domain={[yMin, yMax]} tick={{ fontSize: 11, fill: C.faint, fontWeight: 600 }}
+                      tickLine={false} axisLine={{ stroke: C.rule }} width={52} />
+                    <Tooltip
+                      contentStyle={{ background: C.card2, border: `1px solid ${C.rule}`, borderRadius: 12, fontSize: 12, fontWeight: 600, color: C.ink }}
+                      formatter={(val, name) => [val + " " + wUnit, name === "w" ? "daily" : "7-day avg"]}
+                    />
+                    <ReferenceLine y={goalW} stroke={C.faint} strokeDasharray="6 4"
+                      label={{ value: "GOAL " + r1(goalW), fill: C.faint, fontSize: 10, fontWeight: 700, position: "insideBottomLeft" }} />
+                    <Line type="monotone" dataKey="w" stroke={C.faintLight} strokeWidth={1.5}
+                      dot={{ r: 2, fill: C.faintLight, strokeWidth: 0 }} isAnimationActive={false} />
+                    <Line type="monotone" dataKey="a" stroke={C.accent} strokeWidth={2.5}
+                      dot={false} isAnimationActive={false} />
+                  </ComposedChart>
+                </ResponsiveContainer>
+              </div>
             </div>
           )}
           <div className="text-xs font-semibold mt-1" style={{ color: C.faint }}>

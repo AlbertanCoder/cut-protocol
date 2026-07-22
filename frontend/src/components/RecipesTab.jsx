@@ -147,41 +147,41 @@ function RecipeDetail({ recipe, profile, onSave, onDelete, inCart, onToggleCart,
   if (editing) {
     return (
       <div className="mt-2.5 pt-2.5" style={{ borderTop: `1px solid ${C.rule}` }} onClick={(e) => e.stopPropagation()}>
-        <input className="text-sm px-3 py-2 rounded-xl w-full mb-2" style={inpStyle} value={draft.name}
+        <input aria-label="Recipe name" className="text-sm px-3 py-2 rounded-xl w-full mb-2" style={inpStyle} value={draft.name}
           onChange={(e) => setDraft((d) => ({ ...d, name: e.target.value }))} placeholder="Name" />
-        <textarea className="text-sm px-3 py-2 rounded-xl w-full mb-2" style={inpStyle} rows={2} value={draft.description}
+        <textarea aria-label="Description" className="text-sm px-3 py-2 rounded-xl w-full mb-2" style={inpStyle} rows={2} value={draft.description}
           onChange={(e) => setDraft((d) => ({ ...d, description: e.target.value }))} placeholder="Description" />
         <div className="grid grid-cols-3 gap-2 mb-2">
-          <select className="text-xs px-2 py-2 rounded-xl" style={inpStyle} value={draft.slotType}
+          <select aria-label="Slot type" className="text-xs px-2 py-2 rounded-xl" style={inpStyle} value={draft.slotType}
             onChange={(e) => setDraft((d) => ({ ...d, slotType: e.target.value }))}>
             <option value="meal">meal</option><option value="snack">snack</option><option value="either">either</option>
           </select>
-          <select className="text-xs px-2 py-2 rounded-xl" style={inpStyle} value={draft.cuisine}
+          <select aria-label="Cuisine" className="text-xs px-2 py-2 rounded-xl" style={inpStyle} value={draft.cuisine}
             onChange={(e) => setDraft((d) => ({ ...d, cuisine: e.target.value }))}>
             {CUISINES.map((c) => <option key={c} value={c}>{c ? (CUISINE_LABEL[c] || c) : "auto cuisine"}</option>)}
           </select>
-          <input type="number" className="text-xs px-2 py-2 rounded-xl" style={inpStyle} value={draft.prepTimeMin}
+          <input type="number" aria-label="Prep time in minutes" className="text-xs px-2 py-2 rounded-xl" style={inpStyle} value={draft.prepTimeMin}
             onChange={(e) => setDraft((d) => ({ ...d, prepTimeMin: e.target.value }))} placeholder="prep min" />
         </div>
         <div className="text-xs font-bold mb-1.5" style={{ color: C.faint }}>Ingredients (grams / role / scalable)</div>
         {draft.ingredients.map((ing, idx) => (
           <div key={idx} className="flex gap-1.5 items-center mb-1.5">
             <span className="text-xs font-semibold flex-1 truncate" style={{ color: C.ink }}>{ing.name}</span>
-            <input type="number" className="text-xs px-2 py-1.5 rounded-lg w-16" style={inpStyle} value={ing.grams}
+            <input type="number" aria-label={`${ing.name} — grams`} className="text-xs px-2 py-1.5 rounded-lg w-16" style={inpStyle} value={ing.grams}
               onChange={(e) => setIng(idx, { grams: e.target.value })} />
-            <select className="text-xs px-1.5 py-1.5 rounded-lg" style={inpStyle} value={ing.role}
+            <select aria-label={`${ing.name} — role`} className="text-xs px-1.5 py-1.5 rounded-lg" style={inpStyle} value={ing.role}
               onChange={(e) => setIng(idx, { role: e.target.value })}>
               {["protein", "carb", "veg", "fat", "dairy", "other"].map((r) => <option key={r} value={r}>{r}</option>)}
             </select>
-            <input type="checkbox" checked={ing.scalable} onChange={(e) => setIng(idx, { scalable: e.target.checked })} style={{ accentColor: C.accent }} />
-            <button onClick={() => removeIng(idx)} style={{ color: C.red }}><X size={13} /></button>
+            <input type="checkbox" aria-label={`${ing.name} — scalable`} checked={ing.scalable} onChange={(e) => setIng(idx, { scalable: e.target.checked })} style={{ accentColor: C.accent }} />
+            <button onClick={() => removeIng(idx)} aria-label={`Remove ${ing.name}`} style={{ color: C.red }}><X size={13} aria-hidden="true" /></button>
           </div>
         ))}
-        <textarea className="text-xs px-3 py-2 rounded-xl w-full mt-2 mb-2" style={inpStyle} rows={3} value={draft.steps}
+        <textarea aria-label="Steps, one per line" className="text-xs px-3 py-2 rounded-xl w-full mt-2 mb-2" style={inpStyle} rows={3} value={draft.steps}
           onChange={(e) => setDraft((d) => ({ ...d, steps: e.target.value }))} placeholder="One step per line" />
-        {error && <div className="text-xs font-semibold mb-2" style={{ color: C.red }}>{error}</div>}
+        {error && <div role="alert" className="text-xs font-semibold mb-2" style={{ color: C.red }}>{error}</div>}
         <div className="flex gap-2">
-          <Btn small onClick={save} disabled={busy}><Save size={12} className="inline mr-1" />Save</Btn>
+          <Btn small onClick={save} disabled={busy}><Save size={12} className="inline mr-1" aria-hidden="true" />Save</Btn>
           <Btn small kind="ghost" onClick={() => setEditing(false)}>Cancel</Btn>
         </div>
       </div>
@@ -549,37 +549,37 @@ export default function RecipesTab({ openFoods, profile }) {
           <Card section="IMPORT" title="Import from a recipe site">
             <div className="flex gap-2">
               <div className="relative flex-1 min-w-0">
-                <Link2 size={14} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: C.faintLight }} />
-                <input placeholder="Paste a recipe URL…" value={importUrl}
+                <Link2 size={14} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: C.faintLight }} aria-hidden="true" />
+                <input placeholder="Paste a recipe URL…" aria-label="Recipe URL to import" value={importUrl}
                   onChange={(e) => setImportUrl(e.target.value)}
                   onKeyDown={(e) => e.key === "Enter" && handleImport()}
                   className="text-sm pl-9 pr-3 py-2 rounded-xl w-full" style={inpStyle} />
               </div>
               <Btn small onClick={handleImport} disabled={importing}>{importing ? "Reading…" : "Import"}</Btn>
             </div>
-            <div className="text-[10.5px] font-semibold mt-2" style={{ color: C.faintLight }}>
+            <div className="text-[10.5px] font-semibold mt-2" style={{ color: C.faint }}>
               Reads the site's standard recipe markup (schema.org) — no paid API. Amounts convert to grams with flagged estimates; you review before anything saves. USDA stays the nutrition source of truth.
             </div>
           </Card>
 
           <Card section="GENERATE" title="New recipe from AI">
             <div className="grid grid-cols-2 gap-2 mb-2">
-              <select className="text-xs px-2 py-2 rounded-xl" style={inpStyle} value={form.slotType}
+              <select aria-label="Slot type" className="text-xs px-2 py-2 rounded-xl" style={inpStyle} value={form.slotType}
                 onChange={(e) => setForm((f) => ({ ...f, slotType: e.target.value }))}>
                 <option value="meal">Meal</option><option value="snack">Snack</option>
               </select>
-              <select className="text-xs px-2 py-2 rounded-xl" style={inpStyle} value={form.protein}
+              <select aria-label="Preferred protein" className="text-xs px-2 py-2 rounded-xl" style={inpStyle} value={form.protein}
                 onChange={(e) => setForm((f) => ({ ...f, protein: e.target.value }))}>
                 {PROTEINS.map((p) => <option key={p} value={p}>{p || "Any protein"}</option>)}
               </select>
-              <select className="text-xs px-2 py-2 rounded-xl" style={inpStyle} value={form.cuisine}
+              <select aria-label="Cuisine" className="text-xs px-2 py-2 rounded-xl" style={inpStyle} value={form.cuisine}
                 onChange={(e) => setForm((f) => ({ ...f, cuisine: e.target.value }))}>
                 {CUISINES.map((c) => <option key={c} value={c}>{c ? (CUISINE_LABEL[c] || c) : "Any cuisine"}</option>)}
               </select>
-              <input type="number" placeholder="Max prep (min)" className="text-xs px-2 py-2 rounded-xl" style={inpStyle}
+              <input type="number" placeholder="Max prep (min)" aria-label="Max prep time in minutes" className="text-xs px-2 py-2 rounded-xl" style={inpStyle}
                 value={form.prepTimeMin} onChange={(e) => setForm((f) => ({ ...f, prepTimeMin: e.target.value }))} />
             </div>
-            <textarea placeholder="Anything else? e.g. 'something spicy, uses the crockpot'" rows={2}
+            <textarea placeholder="Anything else? e.g. 'something spicy, uses the crockpot'" aria-label="Anything else for the AI to know" rows={2}
               className="text-sm px-3 py-2 rounded-xl w-full mb-2" style={inpStyle}
               value={form.freeText} onChange={(e) => setForm((f) => ({ ...f, freeText: e.target.value }))} />
             <div className="flex flex-wrap gap-4 items-center mb-2">
@@ -642,9 +642,9 @@ export default function RecipesTab({ openFoods, profile }) {
                     <div key={item.id} className="flex items-center justify-between gap-2 py-1" style={{ borderBottom: `1px solid ${C.rule}` }}>
                       <span className="text-sm font-semibold truncate" style={{ color: C.ink }}>{item.recipe?.name}</span>
                       <span className="flex items-center gap-2 shrink-0">
-                        <span className="mono text-xs font-bold" style={{ color: C.faintLight }}>{kc(item.recipe?.kcal || 0)} kcal</span>
-                        <button onClick={() => toggleCart(item.recipeId)} disabled={cartBusyId === item.recipeId} style={{ color: C.red }} aria-label="Remove">
-                          <Trash2 size={14} />
+                        <span className="mono text-xs font-bold" style={{ color: C.faint }}>{kc(item.recipe?.kcal || 0)} kcal</span>
+                        <button onClick={() => toggleCart(item.recipeId)} disabled={cartBusyId === item.recipeId} style={{ color: C.red }} aria-label={`Remove ${item.recipe?.name || "item"} from cart`}>
+                          <Trash2 size={14} aria-hidden="true" />
                         </button>
                       </span>
                     </div>
@@ -678,14 +678,14 @@ export default function RecipesTab({ openFoods, profile }) {
                       .filter(([, items]) => items.length > 0)
                       .map(([section, items]) => (
                         <div key={section} className="mb-2">
-                          <div className="text-[10.5px] font-extrabold uppercase tracking-wide mb-0.5" style={{ color: C.faintLight }}>{SECTION_LABELS[section] || section}</div>
+                          <div className="text-[10.5px] font-extrabold uppercase tracking-wide mb-0.5" style={{ color: C.faint }}>{SECTION_LABELS[section] || section}</div>
                           {items.map((i) => {
                             const grams = cartItemGrams(i);
                             const hh = toHouseholdUnit(i.name, grams);
                             return (
                               <div key={i.name} className="flex justify-between text-xs py-0.5 font-semibold" style={{ color: C.ink }}>
                                 <span>{i.name}</span>
-                                <span className="mono" style={{ color: C.faintLight }}>{grams}g{hh ? ` (≈${hh})` : ""}</span>
+                                <span className="mono" style={{ color: C.faint }}>{grams}g{hh ? ` (≈${hh})` : ""}</span>
                               </div>
                             );
                           })}
@@ -702,8 +702,8 @@ export default function RecipesTab({ openFoods, profile }) {
         <div className="xl:col-span-7 min-w-0">
           <div className="flex gap-2 mb-3 flex-wrap items-center">
             <div className="relative flex-1 min-w-[200px]">
-              <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: C.faintLight }} />
-              <input placeholder={`Search ${recipes.length} recipes…`} className="text-sm pl-9 pr-3 py-2 rounded-xl w-full" style={inpStyle}
+              <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: C.faintLight }} aria-hidden="true" />
+              <input placeholder={`Search ${recipes.length} recipes…`} aria-label="Search recipes" className="text-sm pl-9 pr-3 py-2 rounded-xl w-full" style={inpStyle}
                 value={query} onChange={(e) => setQuery(e.target.value)} />
             </div>
             <select value={groupBy} onChange={(e) => { setGroupBy(e.target.value); setOpenGroups({}); }}
@@ -720,8 +720,8 @@ export default function RecipesTab({ openFoods, profile }) {
             </select>
           </div>
           {hiddenCount > 0 && (
-            <div className="text-xs font-semibold mb-2 flex items-center gap-1.5" style={{ color: C.faintLight }}>
-              <EyeOff size={12} /> {hiddenCount} recipe{hiddenCount === 1 ? "" : "s"} hidden by your diet & allergy rules.
+            <div className="text-xs font-semibold mb-2 flex items-center gap-1.5" style={{ color: C.faint }}>
+              <EyeOff size={12} aria-hidden="true" /> {hiddenCount} recipe{hiddenCount === 1 ? "" : "s"} hidden by your diet & allergy rules.
             </div>
           )}
 
@@ -741,8 +741,8 @@ export default function RecipesTab({ openFoods, profile }) {
                   <div key={groupName} className="rounded-2xl glass-card">
                     {!searching && (
                       <button onClick={() => setOpenGroups((s) => ({ ...s, [groupName]: !open }))}
-                        className="w-full flex items-center gap-3 px-4 py-3.5">
-                        {open ? <ChevronDown size={16} style={{ color: C.faint }} /> : <ChevronRight size={16} style={{ color: C.faint }} />}
+                        aria-expanded={open} className="w-full flex items-center gap-3 px-4 py-3.5">
+                        {open ? <ChevronDown size={16} style={{ color: C.faint }} aria-hidden="true" /> : <ChevronRight size={16} style={{ color: C.faint }} aria-hidden="true" />}
                         <span className="text-sm font-extrabold flex-1 text-left" style={{ color: C.ink }}>{groupName}</span>
                         <span className="mono text-xs font-bold px-2 py-0.5 rounded-lg" style={{ color: C.faint, background: C.card2 }}>{list.length}</span>
                       </button>
@@ -752,13 +752,27 @@ export default function RecipesTab({ openFoods, profile }) {
                         {list.map((r) => {
                           const badge = sourceBadge(r);
                           const expanded = expandedId === r.id;
+                          // a11y: expandable row — same pattern as PlanTab's
+                          // SlotCard. role="button" + keyboard toggle; the
+                          // currentTarget guard stops Enter/Space on a real
+                          // nested control (edit/delete/thumbs/etc. inside
+                          // RecipeDetail) from bubbling up and re-toggling.
+                          const onRowKeyDown = (e) => {
+                            if (e.target !== e.currentTarget) return;
+                            if (e.key === "Enter" || e.key === " ") {
+                              e.preventDefault();
+                              setExpandedId(expanded ? null : r.id);
+                            }
+                          };
                           return (
                             <div key={r.id} className="p-3 rounded-xl" onClick={() => setExpandedId(expanded ? null : r.id)}
+                              onKeyDown={onRowKeyDown} role="button" tabIndex={0} aria-expanded={expanded}
+                              aria-label={`${r.name}, ${kc(r.kcal)} kcal — toggle details`}
                               style={{ background: C.card2, border: `1px solid ${expanded ? C.faintLight : C.rule}` }}>
                               <div className="flex justify-between items-start gap-2">
                                 <div className="min-w-0">
                                   <div className="text-sm font-extrabold" style={{ color: C.ink }}>{r.name}</div>
-                                  <div className="text-[10.5px] font-semibold mt-0.5" style={{ color: C.faintLight }}>
+                                  <div className="text-[10.5px] font-semibold mt-0.5" style={{ color: C.faint }}>
                                     {r.slotType}{r.cuisine ? ` · ${CUISINE_LABEL[r.cuisine] || r.cuisine}` : ""}{r.prepTimeMin ? ` · ${r.prepTimeMin} min` : ""} · {g1(density(r))}g P/100kcal
                                   </div>
                                 </div>

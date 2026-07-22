@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
-import { Search, AlertTriangle, ShieldCheck } from "lucide-react";
+import { Search, AlertTriangle, ShieldCheck, ExternalLink } from "lucide-react";
 import { C } from "../lib/theme.js";
 import {
   displayWeight, parseWeight, displayHeight, parseHeight, displayRate,
@@ -151,9 +151,12 @@ export default function ProfileTab({ profile, summary, refresh }) {
       )}
 
       {pendingAck && (
-        <div className="mb-4 p-4 rounded-2xl" style={{ background: C.warnBg, border: `1px solid ${C.warn}66` }}>
+        // role="alert": this is the safety-rail gate on an aggressive rate —
+        // it must reach a screen reader immediately, not wait for the user
+        // to stumble onto it.
+        <div role="alert" className="mb-4 p-4 rounded-2xl" style={{ background: C.warnBg, border: `1px solid ${C.warn}66` }}>
           <div className="flex items-start gap-2.5">
-            <AlertTriangle size={18} style={{ color: C.warn }} className="mt-0.5 shrink-0" />
+            <AlertTriangle size={18} style={{ color: C.warn }} className="mt-0.5 shrink-0" aria-hidden="true" />
             <div className="flex-1">
               <div className="text-sm font-extrabold mb-1" style={{ color: C.warn }}>This rate needs an explicit OK</div>
               {pendingAck.reasons.map((r, i) => (
@@ -174,7 +177,7 @@ export default function ProfileTab({ profile, summary, refresh }) {
           <label className="block mb-3">{label("Units")}
             <div className="flex gap-1.5 mt-1">
               {["imperial", "metric"].map((u) => (
-                <button key={u} onClick={() => commit({ unitPref: u })}
+                <button key={u} onClick={() => commit({ unitPref: u })} aria-pressed={pref === u}
                   className="flex-1 text-xs font-bold py-2 rounded-xl"
                   style={{
                     background: pref === u ? C.card2 : "transparent", color: pref === u ? C.ink : C.faint,
@@ -231,11 +234,19 @@ export default function ProfileTab({ profile, summary, refresh }) {
 
         {/* ── job & training ── */}
         <Card section="ACTIVITY" title="Job & training" className="xl:col-span-4">
-          <label className="block mb-1">{label("Occupation")}</label>
+          {/* a11y: the visible "Occupation" text was a bare <label> not
+              wired to the input (no for/id, no wrapping) — its accessible
+              name was riding entirely on a placeholder that changes text.
+              Explicit htmlFor/id + aria-label fixes that; combobox/listbox
+              roles describe the search+picker pattern to screen readers. */}
+          <label className="block mb-1" htmlFor="occupation-search">{label("Occupation")}</label>
           <div className="relative">
-            <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: C.faintLight }} />
+            <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: C.faintLight }} aria-hidden="true" />
             <input
+              id="occupation-search"
               placeholder={currentOcc ? `${currentOcc.label} (×${currentOcc.multiplier})` : "Search occupations…"}
+              aria-label="Occupation — search"
+              role="combobox" aria-expanded={occOpen} aria-haspopup="listbox" aria-controls="occupation-options" aria-autocomplete="list"
               value={occQuery}
               onFocus={() => setOccOpen(true)}
               // Stage-C fix (#37): close on blur so clicking elsewhere dismisses
@@ -247,14 +258,14 @@ export default function ProfileTab({ profile, summary, refresh }) {
             />
           </div>
           {occOpen && meta && (
-            <div className="mt-1.5 max-h-52 overflow-y-auto rounded-xl" style={{ background: C.card2, border: `1px solid ${C.rule}` }}>
+            <div id="occupation-options" role="listbox" aria-label="Occupation results" className="mt-1.5 max-h-52 overflow-y-auto rounded-xl" style={{ background: C.card2, border: `1px solid ${C.rule}` }}>
               {filteredOccupations.map((o) => (
-                <button key={o.key}
+                <button key={o.key} role="option" aria-selected={o.key === profile.occupationKey}
                   onClick={() => { commit({ occupationKey: o.key }); setOccQuery(""); setOccOpen(false); }}
                   className="w-full text-left px-3 py-2 text-sm font-semibold flex justify-between gap-2 hover:opacity-80"
                   style={{ color: C.ink, fontWeight: o.key === profile.occupationKey ? 800 : 600, background: o.key === profile.occupationKey ? C.card : "transparent", borderBottom: `1px solid ${C.rule}` }}>
                   <span className="truncate">{o.label}</span>
-                  <span className="mono text-xs shrink-0" style={{ color: C.faintLight }}>×{o.multiplier}</span>
+                  <span className="mono text-xs shrink-0" style={{ color: C.faint }}>×{o.multiplier}</span>
                 </button>
               ))}
               {filteredOccupations.length === 0 && <div className="px-3 py-2 text-sm font-semibold" style={{ color: C.faint }}>No match — use the manual override below.</div>}
@@ -339,7 +350,7 @@ export default function ProfileTab({ profile, summary, refresh }) {
             {(meta?.rateOptions || []).map((r) => {
               const active = profile.rateLbPerWeek === r;
               return (
-                <button key={r} onClick={() => commit({ rateLbPerWeek: r })}
+                <button key={r} onClick={() => commit({ rateLbPerWeek: r })} aria-pressed={active}
                   className="px-4 py-2.5 rounded-xl text-center"
                   style={{ background: active ? C.card2 : "transparent", border: `1px solid ${active ? C.faintLight : C.rule}` }}>
                   <div className="mono text-sm font-extrabold" style={{ color: active ? C.ink : C.faint }}>{r} lb/wk</div>
@@ -352,14 +363,14 @@ export default function ProfileTab({ profile, summary, refresh }) {
             <div>
               <div className="text-xs font-semibold" style={{ color: C.faint }}>Daily target</div>
               <div className="mono stat-hero text-3xl" style={{ color: C.ink }}>{kc(summary.target?.target ?? profile.targetKcal)}<span className="text-xs ml-1" style={{ color: C.faint, fontWeight: 600 }}>kcal</span></div>
-              <div className="text-[10.5px] font-semibold mt-0.5" style={{ color: C.faintLight }}>
+              <div className="text-[10.5px] font-semibold mt-0.5" style={{ color: C.faint }}>
                 TDEE {kc(summary.energy?.tdee ?? 0)} − {kc(summary.target?.deficit ?? 0)} deficit{summary.target?.floored ? " → floored" : ""}
               </div>
             </div>
             <div>
               <div className="text-xs font-semibold" style={{ color: C.faint }}>Projected goal date</div>
               <div className="text-lg font-extrabold" style={{ color: C.ink }}>{goalDate || "—"}</div>
-              <div className="text-[10.5px] font-semibold mt-0.5" style={{ color: C.faintLight }}>at {displayRate(profile.rateLbPerWeek, pref)} {rateUnit(pref)} from your current average</div>
+              <div className="text-[10.5px] font-semibold mt-0.5" style={{ color: C.faint }}>at {displayRate(profile.rateLbPerWeek, pref)} {rateUnit(pref)} from your current average</div>
             </div>
             <label className="block">{label(`Personal floor (kcal, min ${meta?.safeFloor?.[profile.sex] ?? 1500})`)}
               <input type="number" placeholder={`default ${meta?.safeFloor?.[profile.sex] ?? 1500}`} value={draft.floor}
@@ -369,15 +380,36 @@ export default function ProfileTab({ profile, summary, refresh }) {
             </label>
             <div className="flex items-center gap-2 pb-1.5">
               {summary.rateSafety?.unsafe ? (
-                <><AlertTriangle size={16} style={{ color: C.warn }} /><span className="text-xs font-bold" style={{ color: C.warn }}>Aggressive — acknowledged</span></>
+                <><AlertTriangle size={16} style={{ color: C.warn }} aria-hidden="true" /><span className="text-xs font-bold" style={{ color: C.warn }}>Aggressive — acknowledged</span></>
               ) : (
-                <><ShieldCheck size={16} style={{ color: C.good }} /><span className="text-xs font-bold" style={{ color: C.good }}>Within safety rails</span></>
+                <><ShieldCheck size={16} style={{ color: C.good }} aria-hidden="true" /><span className="text-xs font-bold" style={{ color: C.good }}>Within safety rails</span></>
               )}
             </div>
           </div>
           <div className="text-xs font-semibold mt-3" style={{ color: C.faint }}>
             Rates above ~1% of body weight per week, or targets that hit your floor, need an explicit "I understand" before they apply. Changing the rate updates the target, macro ranges, projections, and meal-plan targets instantly.
           </div>
+        </Card>
+
+        {/* ── resources — genuinely opt-in, never nagged ──
+            No popup, no repeated prompt, no tracking of whether it's ever
+            opened. Sits quietly at the bottom of Profile — the one screen a
+            user visits deliberately, not the one they see every day (Today).
+            Neutral tone: not a warning, not framed around this app, no red/
+            amber judgment color. */}
+        <Card section="RESOURCES" title="Outside help, if you ever want it" className="xl:col-span-12">
+          <div className="text-xs font-semibold" style={{ color: C.faint }}>
+            NEDA (the National Eating Disorders Association) runs a free, anonymous online screening — a few minutes, entirely optional, opens in your browser. This app doesn't know whether you click it or what you answer.
+          </div>
+          <a
+            href="https://www.nationaleatingdisorders.org/screening-tool/"
+            target="_blank" rel="noopener noreferrer"
+            className="text-xs font-bold inline-flex items-center gap-1.5 mt-2.5 hover:opacity-80"
+            style={{ color: C.ink }}
+          >
+            Take NEDA's free screening <ExternalLink size={12} aria-hidden="true" />
+            <span className="sr-only">(opens in a new browser window)</span>
+          </a>
         </Card>
       </div>
     </div>

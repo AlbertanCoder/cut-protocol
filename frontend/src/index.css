@@ -195,9 +195,46 @@ button, label, summary { cursor: default; }
 a { cursor: pointer; }
 
 input:focus-visible, select:focus-visible, textarea:focus-visible,
-button:focus-visible, summary:focus-visible, a:focus-visible {
+button:focus-visible, summary:focus-visible, a:focus-visible,
+[role="button"]:focus-visible, [tabindex]:focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 1px;
+}
+
+/* ── Accessibility utilities ───────────────────────────────────────────── */
+
+/* Visually-hidden but screen-reader-readable text (chart summaries, live
+   regions, the extra context an icon-only control needs). Standard
+   clip-based sr-only pattern — never `display:none`, which AT ignores. */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Skip-to-content link: invisible until keyboard-focused, then pinned
+   top-left above everything (including the aurora/grain ambience layers). */
+.skip-link {
+  position: fixed;
+  top: -100px;
+  left: 12px;
+  z-index: 200;
+  background: var(--accent);
+  color: var(--accent-ink);
+  font-weight: 800;
+  font-size: 13px;
+  padding: 10px 16px;
+  border-radius: 10px;
+  transition: top 0.15s ease;
+}
+.skip-link:focus {
+  top: 12px;
 }
 
 /* reduced motion: ambient layers freeze, shimmer stops, count-ups and
