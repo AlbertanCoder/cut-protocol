@@ -43,6 +43,33 @@ const MEAT_FISH_KEYWORDS = [
   // animal-derived binders
   "gelatin", "gelatine", "lard", "suet", "tallow", "worcestershire", "fish sauce",
   "oyster sauce", "shrimp paste", "dashi", "bonito",
+  // ── USDA FoodData Central import hardening (2026-07-22) ──────────────────
+  // The list above was audited exhaustively against an 854-name table. The FDC
+  // bulk import took that table to 14,144 names carrying whole food classes the
+  // old corpus never contained — ratites, Alaska Native game and marine mammals,
+  // organ meats, and USDA's processed-meat vocabulary. Every term below was a
+  // MEASURED leak from scripts/auditDietaryCoverage.mjs (animal food that reached
+  // a vegan/vegetarian pool unexcluded), not a speculative addition.
+  // Ratites + additional game birds
+  "ostrich", "emu", "rhea", "pheasant", "squab", "pigeon", "grouse", "partridge",
+  "guinea hen", "poultry",
+  // Large game + marine mammals (FDC carries an Alaska Native food set)
+  "caribou", "moose", "antelope", "buffalo", "beaver", "muskrat", "opossum",
+  "raccoon", "woodchuck", "whale", "muktuk", "blubber", "seal meat", "walrus",
+  "horse meat", "alligator", "turtle", "terrapin",
+  // Organ + offal forms not already covered
+  "gizzard", "chitterling", "chitlins", "sweetbread", "giblet", "headcheese",
+  "scrapple", "pate", "foie gras", "trotter", "chine", "hock", "cracklings",
+  "mechanically deboned", "mechanically separated",
+  // Processed-meat forms in USDA's vocabulary
+  "bologna", "liverwurst", "braunschweiger", "knockwurst", "knackwurst",
+  "andouille", "capicola", "soppressata", "cervelat", "thuringer", "souse",
+  // Fish + shellfish the old corpus missed
+  "shark", "shark fin", "brain", "brains",
+  "smelt", "burbot", "cusk", "roughy", "sturgeon", "shad", "croaker", "cisco",
+  "wolffish", "whiting", "sablefish", "lingcod", "sucker", "stingray",
+  "snail", "escargot", "abalone", "periwinkle", "urchin", "mollusk", "mollusc",
+  "crustacean", "langostino", "krill",
 ];
 // Meat-only subset (no fish) — used by kosher's meat+dairy rule, where fish
 // + dairy is permitted but meat + dairy is not.
@@ -290,15 +317,36 @@ function matchesTermList(name, term) {
 // "milk" alone isn't a reliable animal-derived signal - "almond milk", "soy
 // milk", "oat milk" are all plant-based. Only treat a "milk" match as dairy
 // when no plant-milk qualifier is also present in the name.
+// The plant-qualifier guard only holds when the qualifier is ADJACENT to the
+// dairy noun ("coconut milk", "soymilk", "almond butter"). The original guard
+// looked for the qualifier ANYWHERE in the name, which meant any food merely
+// CONTAINING one of those eight words escaped dairy exclusion outright.
+// Measured against the 14,144-name FDC table (scripts/auditDietaryCoverage.mjs,
+// 2026-07-22): "Rice, white, cooked, made with butter" and "Puddings, rice, dry
+// mix, prepared with whole milk" both reached vegan pools unexcluded, because
+// the bare word "rice" vetoed the butter/milk match. Same class of hole as the
+// Phase 4 prawn finding — a guard that was too generous in the unsafe direction.
+// "butter beans" (limas) in either word order — the curated tables write
+// "Butter Beans", FDC writes "Beans, butter, mature seeds, canned". Adjacency is
+// what makes this safe: "Green beans ... cooked with butter" does not match.
+function isButterBean(n) {
+  return /\bbutter\s*,?\s*beans?\b|\bbeans?\s*,\s*butter\b/i.test(String(n || ""));
+}
+
+function plantQualified(n, noun) {
+  const q = PLANT_MILK_QUALIFIERS.map((x) => x.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).join("|");
+  return new RegExp(`\\b(?:${q})[\\s-]*${noun}(?:es|s)?\\b`, "i").test(n);
+}
+
 function isDairyMilk(n) {
-  return hasWord(n, "milk") && !matchesAny(n, PLANT_MILK_QUALIFIERS);
+  return hasWordOrPlural(n, "milk") && !plantQualified(n, "milk");
 }
 
 // Paleo's dairy exclusion, minus butter/ghee (see excludedByStyle's paleo
 // branch). Same plant-qualifier guard as isDairyMilk() so "coconut cream"
 // isn't excluded just because "cream" appears in the name.
 function isNonButterDairy(n) {
-  return isDairyMilk(n) || (hasWord(n, "cream") && !matchesAny(n, PLANT_MILK_QUALIFIERS)) || matchesAny(n, NON_BUTTER_DAIRY_KEYWORDS);
+  return isDairyMilk(n) || (hasWordOrPlural(n, "cream") && !plantQualified(n, "cream")) || matchesAny(n, NON_BUTTER_DAIRY_KEYWORDS);
 }
 
 // A recipe is style-excluded if ANY of its ingredients matches the same
@@ -348,16 +396,41 @@ function adjusterExcludedByStyle(adjuster, dietaryStyle) {
 function isDairyButterOrCream(n) {
   const butterish = hasWordOrPlural(n, "butter")
     && !hasPhrase(n, "peanut butter") && !hasPhrase(n, "nut butter")
-    && !hasWordOrPlural(n, "bean")
-    && !matchesAny(n, PLANT_MILK_QUALIFIERS);
-  const creamish = hasWord(n, "cream")
+    // The butter-bean exemption must be ADJACENT, not "bean" anywhere in the
+    // name — the loose form vetoed real dairy in "Green beans, fresh, cooked
+    // with butter or margarine". Both word orders are required because FDC
+    // inverts it: "Beans, butter, mature seeds, canned".
+    && !isButterBean(n)
+    && !hasPhrase(n, "cocoa butter") && !hasPhrase(n, "shea butter")
+    && !hasPhrase(n, "apple butter")
+    && !plantQualified(n, "butter");
+  // hasWordOrPlural, not hasWord: "Ice creams, vanilla, light" is how FDC writes
+  // it, and the singular-only match let every plural-form dairy dessert through.
+  const creamish = hasWordOrPlural(n, "cream")
     && !hasPhrase(n, "cream of tartar")
-    && !matchesAny(n, PLANT_MILK_QUALIFIERS);
+    && !plantQualified(n, "cream");
   return butterish || creamish || hasWord(n, "buttermilk");
 }
 
+// "meat" is a MEAT_FISH_KEYWORDS entry, but botanists and USDA both use it for
+// plant flesh: FDC writes coconut milk as "liquid expressed from grated meat and
+// water". That excluded coconut milk — a vegan staple — from every vegan pool.
+// Strip only these exact plant-flesh phrases before matching; every other animal
+// keyword still applies to the remaining text, so "Beef, grated meat" stays
+// excluded via "beef". Over-exclusion is the documented preference, but not when
+// it removes a core ingredient on a phrasing artifact.
+const PLANT_FLESH_PHRASES = [
+  "coconut meat", "grated meat", "kernel meat", "nut meat", "nutmeat",
+  "palm meat", "dried meat of the coconut",
+];
+function stripPlantFlesh(n) {
+  let s = String(n || "");
+  for (const p of PLANT_FLESH_PHRASES) s = s.replace(new RegExp(p, "gi"), " ");
+  return s;
+}
+
 function isVeganAnimalProduct(n) {
-  return matchesAny(n, MEAT_FISH_KEYWORDS)
+  return matchesAny(stripPlantFlesh(n), MEAT_FISH_KEYWORDS)
     || matchesAny(n, ANIMAL_DERIVED_EXTRA_KEYWORDS)
     || isDairyMilk(n)
     || isDairyButterOrCream(n);
@@ -369,7 +442,8 @@ function excludedByStyle(food, dietaryStyle) {
     return isVeganAnimalProduct(n);
   }
   if (dietaryStyle === "vegetarian") {
-    return matchesAny(n, MEAT_FISH_KEYWORDS);
+    // Same plant-flesh guard as the vegan path — see stripPlantFlesh().
+    return matchesAny(stripPlantFlesh(n), MEAT_FISH_KEYWORDS);
   }
   if (dietaryStyle === "keto") {
     return food.carb > DEFAULT_KETO_CARB_THRESHOLD;
