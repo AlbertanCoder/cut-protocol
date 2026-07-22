@@ -82,12 +82,14 @@ async function main() {
   const foodIdByName = {};
   let foodsCreated = 0, foodsUpdated = 0;
   for (const f of foodByName.values()) {
-    const existed = await prisma.food.findUnique({ where: { name: f.name } });
-    const row = await prisma.food.upsert({
-      where: { name: f.name },
-      update: { category: f.category, fdcId: f.fdcId, kcal: f.kcal, protein: f.protein, fat: f.fat, carb: f.carb, fiber: f.fiber, source: f.source },
-      create: f,
-    });
+    // Manual upsert-by-name: Food.name is no longer @unique (bulk-import scale
+    // change), so upsert({ where: { name } }) is no longer valid. Same semantics as
+    // before — match the first row with this name, update it, else create.
+    const existed = await prisma.food.findFirst({ where: { name: f.name } });
+    const update = { category: f.category, fdcId: f.fdcId, kcal: f.kcal, protein: f.protein, fat: f.fat, carb: f.carb, fiber: f.fiber, source: f.source };
+    const row = existed
+      ? await prisma.food.update({ where: { id: existed.id }, data: update })
+      : await prisma.food.create({ data: f });
     foodIdByName[f.name] = row.id;
     existed ? foodsUpdated++ : foodsCreated++;
   }

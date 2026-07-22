@@ -376,11 +376,14 @@ const RECIPES = [
 async function main() {
   const foodIdByName = {};
   for (const f of FOODS) {
-    const row = await prisma.food.upsert({
-      where: { name: f.name },
-      update: { ...f, source: f.source || "manual" },
-      create: { ...f, source: f.source || "manual" },
-    });
+    // Manual upsert-by-name: Food.name is no longer @unique (bulk-import scale
+    // change), so prisma.upsert({ where: { name } }) is no longer valid. Match the
+    // first row with this name and update it, else create.
+    const data = { ...f, source: f.source || "manual" };
+    const existing = await prisma.food.findFirst({ where: { name: f.name } });
+    const row = existing
+      ? await prisma.food.update({ where: { id: existing.id }, data })
+      : await prisma.food.create({ data });
     foodIdByName[f.name] = row.id;
   }
   console.log(`Upserted ${FOODS.length} foods.`);
