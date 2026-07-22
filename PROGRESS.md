@@ -5,6 +5,27 @@ what got finished · what's next · anything needed from Shad.*
 
 ---
 
+## 2026-07-21 · Doc 2 Stage 1 DONE — clean-distribution fix (M4)
+
+The installer no longer ships secrets or personal data — the M4 fix.
+- **Clean template DB:** `backend/scripts/buildTemplateDb.mjs` copies dev.db and
+  deletes all 22 personal tables (fails if a new table is unclassified), keeping
+  the library (864 foods, **889 recipes** + taste tiers). 0 users/profiles.
+- **Per-install JWT:** `electron/main.cjs` now generates a session secret on first
+  run into userData (never bundled) instead of reading the owner's real `.env`.
+  API keys simply absent in a shared build → brain off, app works fully offline.
+- **Config:** extraResources ships only the clean `dev.db.template` (no `.env`);
+  build.files strips dev.db/backups/scripts/docs/audit/release/.agent.
+- **Blocking gate:** `scripts/distPrecheck.mjs` wired as `predist` — fails the
+  build if the template has personal rows/emails, if the config would ship the
+  real .env/dev.db, or if a secret sits in shipping code. **PASSES clean.**
+  `checkDistSafe` now takes a file arg + a tightened email regex (no cuid byte-noise FP).
+
+**Next (Doc 2):** Stage 2 fresh-install checklist · Stage 3 artifact scan report ·
+Stage 4 build + SHA-256 + **GATE** (stop for Shad's go) + GitHub Release link.
+
+---
+
 ## 2026-07-21 · Remaining v2 parts DONE — security, persistence, taste
 
 Built the three deferred parts, each committed + verified (tests green, golden

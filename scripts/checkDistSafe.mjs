@@ -20,8 +20,10 @@ if (!fs.existsSync(target)) {
 // 1) Secrets in any shipped TEXT file (reuses the scanner's rules).
 const secretFindings = scanPaths([target]);
 
-// 2) Personal data (emails) in shipped DB / env / template blobs.
-const EMAIL = /[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}/g;
+// 2) Personal data (emails) in shipped DB / env / template blobs. Real emails
+// only: lowercase domain + local <=40, so cuid byte-noise like "...@P.fffff"
+// (uppercase domain, 60-char local) inside a SQLite blob is not a false positive.
+const EMAIL = /\b[A-Za-z0-9._%+-]{1,40}@[a-z0-9-]+(?:\.[a-z0-9-]+)*\.[a-z]{2,10}\b/g;
 const SAFE_EMAIL = /@(?:example|test|localhost|email|sample)\.|noreply@|you@/i;
 const IS_DATA = /\.(?:db|sqlite|sqlite3)(?:\.template)?$|\.template$/i;
 const redact = (e) => { const [u, d] = e.split("@"); return `${u[0]}***@${d}`; };
@@ -38,7 +40,17 @@ function walk(dir) {
     if (emails.size) dbFindings.push({ file: path.relative(ROOT, p), count: emails.size, sample: [...emails].slice(0, 3).map(redact) });
   }
 }
-walk(target);
+// Accept a directory OR a single file (e.g. the template DB) as the target.
+if (fs.statSync(target).isDirectory()) walk(target);
+else {
+  const name = path.basename(target);
+  if (IS_DATA.test(name)) {
+    const buf = fs.readFileSync(target);
+    const emails = new Set();
+    for (const m of buf.toString("latin1").matchAll(EMAIL)) if (!SAFE_EMAIL.test(m[0])) emails.add(m[0]);
+    if (emails.size) dbFindings.push({ file: path.relative(ROOT, target), count: emails.size, sample: [...emails].slice(0, 3).map(redact) });
+  }
+}
 
 let bad = false;
 if (secretFindings.length) {

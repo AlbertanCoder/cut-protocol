@@ -7,6 +7,8 @@
   "scripts": {
     "start": "electron .",
     "build:frontend": "npm --prefix frontend run build",
+    "dist:template": "node backend/scripts/buildTemplateDb.mjs",
+    "predist": "node backend/scripts/buildTemplateDb.mjs && node scripts/distPrecheck.mjs",
     "dist": "npm run build:frontend && electron-builder",
     "scan:secrets": "node scripts/scanSecrets.mjs --tracked",
     "brain:purity": "node scripts/checkBrainPurity.mjs",
@@ -31,11 +33,24 @@
       "CutProtocol.ico",
       "!backend/prisma/dev.db",
       "!backend/prisma/dev.db-journal",
+      "!backend/prisma/dev.db.template",
+      "!backend/prisma/dev.db.backup-*",
+      "!backend/prisma/*.db.backup*",
       "!backend/.env",
       "!backend/.env.local",
       "!backend/tests/**/*",
+      "!backend/scripts/**/*",
+      "!backend/data/*.backup*",
       "!**/*.test.js",
       "!**/*.map",
+      "!**/*.backup-*",
+      "!AUDIT.md",
+      "!PABLO_REVIEW.md",
+      "!CLAUDE*.md",
+      "!PROGRESS.md",
+      "!docs/**/*",
+      "!release/**/*",
+      "!.agent/**/*",
       "!**/node_modules/.cache/**/*",
       "!**/.git/**/*"
     ],
@@ -46,8 +61,7 @@
       "backend/prisma/**/*"
     ],
     "extraResources": [
-      { "from": "backend/prisma/dev.db", "to": "dev.db.template" },
-      { "from": "backend/.env", "to": "backend.env.template" }
+      { "from": "backend/prisma/dev.db.template", "to": "dev.db.template" }
     ],
     "win": {
       "icon": "CutProtocol.ico",

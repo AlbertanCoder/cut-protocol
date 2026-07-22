@@ -54,36 +54,32 @@ app.setName("Cut Protocol");
 // "backend.env.template"; this loads whatever's in that shipped file at
 // startup, using the same non-destructive semantics as dotenv itself (never
 // clobber a var the environment already set).
-function loadPackagedBackendEnv() {
-  if (!app.isPackaged) return;
-  const envPath = path.join(process.resourcesPath, "backend.env.template");
-  let raw;
-  try {
-    raw = fs.readFileSync(envPath, "utf8");
-  } catch {
-    console.warn(`[electron/main] No packaged backend env found at ${envPath}; JWT_SECRET/API keys will be missing.`);
-    return;
-  }
-  for (const line of raw.split(/\r?\n/)) {
-    const trimmed = line.trim();
-    if (!trimmed || trimmed.startsWith("#")) continue;
-    const eq = trimmed.indexOf("=");
-    if (eq === -1) continue;
-    const key = trimmed.slice(0, eq).trim();
-    let value = trimmed.slice(eq + 1).trim();
-    if (
-      (value.startsWith('"') && value.endsWith('"')) ||
-      (value.startsWith("'") && value.endsWith("'"))
-    ) {
-      value = value.slice(1, -1);
-    }
-    if (process.env[key] === undefined) {
-      process.env[key] = value;
+// M4 FIX (Doc 2): a distributed build ships NO secrets. Each install generates
+// its OWN JWT/session secret on first run and persists it in the writable
+// userData dir — never bundled, never in git. API keys (Anthropic/USDA) are
+// simply absent in a shared build: the brain gate stays off and the app degrades
+// gracefully (deterministic solver + everything else works fully offline). In
+// dev (not packaged) nothing changes — backend/.env supplies these as before.
+function ensurePackagedSecrets() {
+  if (!app.isPackaged) return; // dev: backend/.env owns JWT_SECRET/keys
+  if (process.env.JWT_SECRET) return; // respect an explicitly-provided secret
+  const crypto = require("crypto");
+  const secretPath = path.join(app.getPath("userData"), "session-secret");
+  let secret;
+  try { secret = fs.readFileSync(secretPath, "utf8").trim(); } catch { /* first run */ }
+  if (!secret) {
+    secret = crypto.randomBytes(48).toString("hex");
+    try {
+      fs.mkdirSync(path.dirname(secretPath), { recursive: true });
+      fs.writeFileSync(secretPath, secret, { mode: 0o600 });
+    } catch (e) {
+      console.error("[electron/main] could not persist the session secret:", e.message);
     }
   }
+  process.env.JWT_SECRET = secret;
 }
 
-loadPackagedBackendEnv();
+ensurePackagedSecrets();
 
 // Stage-C fix (M3): single-instance lock. Without it, double-launching the
 // installed app started a SECOND in-process backend that raced for port 3001;
