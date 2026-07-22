@@ -101,6 +101,18 @@ model Profile {
   budgetTier      String? // "cheap" | "moderate" | "premium"
   allowBatch      Boolean? // allow batch-cooking repeats past the variety cap
   maxComplexity   Int? // recipe complexity ceiling (1 = simplest)
+  // Adaptive-TDEE opt-out. Default ON because the estimator beats the static
+  // formula on measured error (155 vs 359 kcal median at 28 days), but every
+  // automatic adjustment must be reversible per the constitution, and "turn it
+  // off entirely" is the strongest form of that. Read by adaptiveTarget
+  // .adaptiveEnabled(); `false` means off. An install-wide ADAPTIVE_TDEE=off env
+  // switch already exists — this makes it per-account and visible in the UI.
+  adaptiveTdee    Boolean  @default(true)
+  // Protein-priority (recomposition) solving. Default OFF: it changes what the
+  // solver optimises, so it is opt-in rather than something that silently
+  // reweights plans. Was localStorage-only, which meant the choice did not
+  // survive a reinstall or a second device.
+  proteinPriorityMode Boolean @default(false)
   updatedAt       DateTime @updatedAt
 }
 
@@ -110,6 +122,14 @@ model Weighin {
   user      User     @relation(fields: [userId], references: [id])
   date      String // ISO date (yyyy-mm-dd)
   weightKg  Float
+  // Optional per-weigh-in body fat %, so lean mass can become a MEASURED trend
+  // instead of an estimate projected from one current reading. The recomp mode
+  // charts lean mass, and two people losing identical scale weight can have
+  // opposite outcomes — that distinction is the whole point of the product, so
+  // it should be able to rest on real data when the user has it. Null is the
+  // normal case and stays honestly absent; the chart falls back to the bounded
+  // estimate and says so.
+  bodyFatPct Float?
   createdAt DateTime @default(now())
 
   @@unique([userId, date])
@@ -127,15 +147,22 @@ model Food {
   id       String   @id @default(cuid())
   name     String
   category String // "protein" | "carb" | "veg" | "fat" | "dairy" | "other"
-  // NOT @unique yet — deliberately deferred. As of 2026-07-21 the table holds 140
-  // fdcId groups with >1 row (382 rows; ~242 of them carrying a DIFFERENT food's
-  // macros under source="usda" — e.g. fdcId 170160 "Nuts, almond paste" was fuzzy
-  // name-matched onto Red Curry / Ginger Garlic / Tahini / Galangal paste, copying
-  // 458 kcal & 9g protein onto all of them). The unique constraint is the permanent
-  // fix that makes this class of bug unrepresentable, but it cannot be applied until
-  // those rows are re-derived from real FDC data. Add it in the follow-up migration
-  // that lands the cleanup — see docs/audit/food-provenance-integrity.md.
-  fdcId    Int? // USDA FoodData Central id — null for hand-entered items
+  // @unique — THE structural fix for the provenance corruption. One FDC record's
+  // macros were copied onto six different curry/tahini/garlic pastes (fdcId 170160,
+  // "Nuts, almond paste"); the final count was 472 of 738 id-claiming rows wrong,
+  // touching 874 of 889 recipes. With this constraint that class of bug is
+  // UNREPRESENTABLE: one FDC id can only ever belong to one row, so a fuzzy matcher
+  // cannot spread one record across many foods no matter how confident it is.
+  //
+  // Deferred at first because 140 duplicate groups made it un-appliable. Cleared in
+  // three passes: the provenance repair (472 rows verified/rematched/downgraded),
+  // then scripts/mergeSynonymFoods.mjs (22 genuine synonym pairs merged with 93
+  // ingredient references re-pointed), then one documented mislabel — the row named
+  // "Rye" carried FDC "Bread, rye" macros and was downgraded off the verified tier
+  // rather than merged, because merging would have hidden a wrong number behind a
+  // trusted label. SQLite exempts NULLs, so hand-entered foods are unaffected.
+  // See docs/audit/food-provenance-integrity.md.
+  fdcId    Int?     @unique // USDA FoodData Central id — null for hand-entered items
   upc      String?  @unique // barcode / GTIN for Open Food Facts lookups — null for unbranded
   brand    String? // branded-food manufacturer; null for generic/whole foods
   // per 100g
