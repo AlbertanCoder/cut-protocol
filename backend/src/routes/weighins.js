@@ -1,8 +1,9 @@
 const express = require("express");
 const { prisma } = require("../lib/prisma.js");
 const { requireAuth } = require("../lib/auth.js");
-const { kg2lb, computeEnergy, computeMacros, trendRate, verdict, deriveTarget, rateSafety } = require("../lib/bmrEngine.js");
+const { kg2lb, computeMacros, trendRate, verdict } = require("../lib/bmrEngine.js");
 const { recomputeTarget } = require("../lib/profileTarget.js");
+const { adaptiveContext } = require("../lib/adaptiveTarget.js");
 
 const router = express.Router();
 router.use(requireAuth);
@@ -48,10 +49,13 @@ router.get("/summary", async (req, res) => {
   const rate = trendRate(entries);
   const daysIn = dayNum(todayStr()) - dayNum(profile.startDate) + 1;
 
-  const weightNowKg = avg7Kg != null ? avg7Kg : profile.startWeightKg;
-  const energy = computeEnergy(profile, weightNowKg);
-  const target = deriveTarget(profile, energy.tdee, energy.rmr);
-  const safety = rateSafety(profile, weightNowKg, energy.tdee, energy.rmr);
+  // ONE resolver decides which expenditure the app runs on (adaptive
+  // reconciliation when the data supports it, formula TDEE otherwise) — the
+  // same call recomputeTarget() makes, so the screen and the stored
+  // Profile.targetKcal can never disagree.
+  const ctx = await adaptiveContext(req.userId, profile);
+  const { energy, target, safety } = ctx;
+  const weightNowKg = ctx.weightKg;
   const v = verdict({ rate, chosenRate: profile.rateLbPerWeek, daysIn, atFloor: target.floored });
   const macros = computeMacros(profile, weightNowKg, target.target);
 
@@ -59,9 +63,21 @@ router.get("/summary", async (req, res) => {
     weighins: weighins.map((w) => ({ date: w.date, weightKg: w.weightKg })),
     avg7Kg, rate, daysIn, verdict: v,
     energy, // rows(+excluded flags), rmr, spreadLo/Hi, jobMultiplier/source/label, trainingKcalPerDay, tdee
-    target, // rate, deficit, raw, target, floor, floored
+    target, // rate, deficit, raw, target, floor, floored — derived from effectiveTdee
     rateSafety: safety,
     macros,
+    // Adaptive layer: the intake-vs-weight reconciliation, the expenditure it
+    // produced, whether it is in effect, and the replayable adjustment log.
+    adaptive: {
+      ...ctx.adaptive,
+      inEffect: ctx.applied,
+      effectiveTdee: ctx.effectiveTdee,
+      tdeeSource: ctx.tdeeSource,
+      formulaTarget: ctx.formulaTarget,
+      appliedTarget: target,
+      ledger: ctx.ledger,
+      reversible: ctx.reversible,
+    },
   });
 });
 
