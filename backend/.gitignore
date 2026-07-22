@@ -4,3 +4,9 @@ node_modules
 
 prisma/dev.db
 prisma/dev.db-journal
+
+# USDA FoodData Central bulk archives + the derived index (~18 MB compressed,
+# ~283 MB expanded, ~11 MB index). Reproducible inputs, not source:
+#   node scripts/downloadFdcDatasets.mjs && node scripts/buildFdcIndex.mjs
+# The small committed samples in data/fdc-fixtures/ are what CI runs against.
+data/fdc-cache/
