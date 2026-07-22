@@ -8,6 +8,12 @@ const { proteinMid } = require("./feasibility.js");
 
 const { effectiveTasteScore } = require("./taste.js");
 
+// Protein-priority mode (additive, gated behind opts.mode — see scorePlan):
+// shares its weights + floor-honesty check with the live deterministic
+// solver (mealSolver.js) via proteinFloor.js, so "the floor" means the same
+// number and the same reporting contract in both places.
+const { PROTEIN_PRIORITY_WEIGHTS, checkProteinFloor } = require("./proteinFloor.js");
+
 // taste (0.03) is deliberately well below protein/kcal (0.35) — it reorders,
 // never dominates. It contributes 0 unless a slot carries a taste signal.
 const DEFAULT_WEIGHTS = { protein: 0.35, kcal: 0.35, fat: 0.1, carb: 0.1, variety: 0.05, palatability: 0.05, taste: 0.03 };
@@ -15,10 +21,13 @@ const WEIGHT_BOUNDS = { min: 0, max: 1 };
 
 const cap = (x) => Math.min(1, Math.max(0, x));
 
-function clampWeights(proposed) {
-  const w = { ...DEFAULT_WEIGHTS };
+// base defaults to DEFAULT_WEIGHTS as before (backward compatible); scorePlan
+// passes PROTEIN_PRIORITY_WEIGHTS as the base when opts.mode === "proteinPriority"
+// so an LLM-proposed override still clamps against a sane starting point.
+function clampWeights(proposed, base = DEFAULT_WEIGHTS) {
+  const w = { ...base };
   if (proposed && typeof proposed === "object") {
-    for (const k of Object.keys(DEFAULT_WEIGHTS)) {
+    for (const k of Object.keys(base)) {
       const v = Number(proposed[k]);
       if (Number.isFinite(v)) w[k] = Math.min(WEIGHT_BOUNDS.max, Math.max(WEIGHT_BOUNDS.min, v));
     }
@@ -67,12 +76,20 @@ function avgEffectiveTaste(slots) {
 }
 
 /**
- * scorePlan(day, target, opts) -> { cost, score, breakdown, prov }
+ * scorePlan(day, target, opts) -> { cost, score, breakdown, proteinFloor, prov }
  * day: { slots:[{kcal,protein,carb,fat, recipeId?, coherence?}], totals? }.
  * Lower cost = better; score = 1 - cost for convenience. opts.weights are clamped.
+ * opts.mode === "proteinPriority": protein-priority weights become the base
+ * (protein now dominant over kcal, was the reverse) AND the return carries a
+ * `proteinFloor` honesty check ({met, shortG, reason}) against
+ * target.proteinFloor ?? target.proteinLo — never a silent miss (LAW 7).
+ * Additive: omitting opts.mode reproduces today's behaviour byte-for-byte.
  */
 function scorePlan(day, target, opts = {}) {
-  const w = clampWeights(opts.weights);
+  // variety/palatability/taste have no protein-priority-specific value —
+  // merge onto DEFAULT_WEIGHTS's so clampWeights always has a complete base.
+  const base = opts.mode === "proteinPriority" ? { ...DEFAULT_WEIGHTS, ...PROTEIN_PRIORITY_WEIGHTS } : DEFAULT_WEIGHTS;
+  const w = clampWeights(opts.weights, base);
   // Accept either a `_g`-suffixed MacroVector (dayTotals) or bare keys (sumSlots)
   // — reading the wrong shape here NaN'd the score and killed best-of-N selection.
   const raw = day.totals || sumSlots(day.slots);
@@ -98,12 +115,19 @@ function scorePlan(day, target, opts = {}) {
     taste: w.taste * cap(tastePenalty),
   };
   const cost = Object.values(terms).reduce((a, b) => a + b, 0);
+  // Only computed in protein-priority mode — a plain scorePlan() call stays
+  // byte-identical to before (no proteinFloor key at all, not even null),
+  // matching the "additive, no restructure" contract for this file.
+  const proteinFloor = opts.mode === "proteinPriority"
+    ? checkProteinFloor(totals.protein, target.proteinFloor ?? target.proteinLo ?? pMid)
+    : undefined;
   return {
     cost,
     score: Math.max(0, 1 - cost),
     breakdown: { totals, terms, weights: w },
-    prov: { formulaId: "scorePlan", inputs: { target, weights: w }, value: cost },
+    ...(proteinFloor !== undefined ? { proteinFloor } : {}),
+    prov: { formulaId: "scorePlan", inputs: { target, weights: w, mode: opts.mode || null }, value: cost },
   };
 }
 
-module.exports = { scorePlan, clampWeights, DEFAULT_WEIGHTS, WEIGHT_BOUNDS, sumSlots };
+module.exports = { scorePlan, clampWeights, DEFAULT_WEIGHTS, WEIGHT_BOUNDS, sumSlots, PROTEIN_PRIORITY_WEIGHTS };

@@ -1,19 +1,59 @@
-import { useMemo } from "react";
+import { useState, useEffect, useMemo } from "react";
 import {
   ComposedChart, Line, XAxis, YAxis, CartesianGrid, Tooltip,
   ReferenceLine, ResponsiveContainer,
 } from "recharts";
-import { LineChart } from "lucide-react";
+import { LineChart, Dumbbell, ArrowRight } from "lucide-react";
 import { C } from "../lib/theme.js";
 import { mean } from "../lib/math.js";
 import { todayStr, addDays, fmtDY } from "../lib/dates.js";
 import { fmtD } from "../lib/dates.js";
 import { displayWeight, displayRate, weightUnit, rateUnit } from "../lib/units.js";
+import { TRAINING } from "../lib/flags.js";
+import { api } from "../lib/api.js";
 import { Card, Stat, PageHead, EmptyNote } from "./ui/Parts.jsx";
 
 const r1 = (n) => Math.round(n * 10) / 10;
 
-export default function TrendTab({ profile, summary }) {
+// Recomposition integration: a light, read-only pointer to the training
+// scaffold. Protein-priority mode defends the floor; this is the honest
+// reminder that the floor is one of two levers, not the whole story. Never
+// fetches/renders when the flag hides the feature entirely.
+function TrainingNudge({ openTraining }) {
+  const [plan, setPlan] = useState(undefined); // undefined = loading, null = none, object = active plan
+  useEffect(() => {
+    if (TRAINING === "hidden") return;
+    api.getTrainingPlan().then(setPlan).catch(() => setPlan(null));
+  }, []);
+  if (TRAINING === "hidden" || plan === undefined) return null;
+
+  const clickable = TRAINING === "on";
+  return (
+    <Card section="RECOMP" title="The other lever">
+      <div className="flex items-start gap-2.5">
+        <Dumbbell size={16} style={{ color: C.faint }} className="mt-0.5 shrink-0" />
+        <div className="flex-1">
+          {plan ? (
+            <div className="text-sm font-semibold" style={{ color: C.ink }}>
+              {plan.style} training active, {plan.daysPerWeek}x/week. Protein alone slows lean-mass loss — resistance training is what actually signals the body to keep it.
+            </div>
+          ) : (
+            <div className="text-sm font-semibold" style={{ color: C.ink }}>
+              No training plan yet. Protein-priority mode defends the floor, but without a training stimulus the body has less reason to hold onto the muscle it's fed.
+            </div>
+          )}
+          {clickable && (
+            <button onClick={openTraining} className="text-xs font-bold flex items-center gap-1 mt-2 hover:opacity-80" style={{ color: C.ink }}>
+              {plan ? "View training plan" : "Generate a training plan"} <ArrowRight size={12} />
+            </button>
+          )}
+        </div>
+      </div>
+    </Card>
+  );
+}
+
+export default function TrendTab({ profile, summary, openTraining }) {
   const pref = profile.unitPref;
   const wUnit = weightUnit(pref);
   const { avg7Kg, rate } = summary;
@@ -26,12 +66,32 @@ export default function TrendTab({ profile, summary }) {
   const goalW = displayWeight(profile.goalWeightKg, pref);
   const lbm = profile.bodyFatPct > 0 ? startW * (1 - profile.bodyFatPct / 100) : null;
 
+  // ── lean mass (estimated) ────────────────────────────────────────────────
+  // Honesty constraint: the schema tracks ONE current body-fat% (Profile.
+  // bodyFatPct / bodyFatSource), not a reading per weigh-in — so there is no
+  // real per-date body-composition history to plot. What CAN be shown
+  // honestly from real data: scale weight is a genuine time series; body-fat%
+  // is a genuine (if single) measurement. Combining them gives two bounding
+  // assumptions, not a measured trend:
+  //   - PROPORTIONAL: today's lean fraction held constant back through the
+  //     curve (lean mass moves with the scale).
+  //   - HELD-CONSTANT: today's lean mass in kg held flat back through the
+  //     curve (ALL of the historical change was fat — the most favorable
+  //     read). Where a real reading trended fell between the two lines
+  //     is unknowable without more body-fat data points; the gap between
+  //     them is the very thing this mode + training exist to narrow.
+  const bfFrac = profile.bodyFatPct > 0 ? profile.bodyFatPct / 100 : null;
+  const leanMassNow = bfFrac != null && avg7 != null ? r1(avg7 * (1 - bfFrac)) : null;
+
   const chart = useMemo(() => {
     return sorted.map((e, i) => {
       const win = sorted.slice(Math.max(0, i - 6), i + 1);
-      return { d: fmtD(e.d), w: e.w, a: r1(mean(win.map((x) => x.w))) };
+      return {
+        d: fmtD(e.d), w: e.w, a: r1(mean(win.map((x) => x.w))),
+        l: bfFrac != null ? r1(e.w * (1 - bfFrac)) : null,
+      };
     });
-  }, [sorted]);
+  }, [sorted, bfFrac]);
 
   const estBf = avg7 != null && lbm != null ? ((avg7 - lbm) / avg7) * 100 : null;
   const lost = avg7 != null ? startW - avg7 : null;
@@ -45,12 +105,12 @@ export default function TrendTab({ profile, summary }) {
     ? addDays(todayStr(), ((avg7 - goalW) / projRate) * 7)
     : null;
 
-  const yMin = sorted.length ? Math.floor(Math.min(goalW, ...sorted.map((e) => e.w))) - 4 : goalW - 4;
+  const yMin = sorted.length ? Math.floor(Math.min(goalW, leanMassNow ?? goalW, ...sorted.map((e) => e.w))) - 4 : goalW - 4;
   const yMax = sorted.length ? Math.ceil(Math.max(...sorted.map((e) => e.w))) + 2 : goalW + 2;
 
   return (
     <div>
-      <PageHead title="Trend" sub="Daily weight, 7-day average, and where the current pace lands you." />
+      <PageHead title="Trend" sub="Scale weight and estimated lean mass — recomposition means what's LOST matters as much as how much." />
 
       <div className="grid grid-cols-1 xl:grid-cols-12 gap-4 items-start">
         <Card section="CURVE" title="Weight" className="xl:col-span-8">
@@ -71,21 +131,39 @@ export default function TrendTab({ profile, summary }) {
                     tickLine={false} axisLine={{ stroke: C.rule }} width={52} />
                   <Tooltip
                     contentStyle={{ background: C.card2, border: `1px solid ${C.rule}`, borderRadius: 12, fontSize: 12, fontWeight: 600, color: C.ink }}
-                    formatter={(val, name) => [val + " " + wUnit, name === "w" ? "daily" : "7-day avg"]}
+                    formatter={(val, name) => [val + " " + wUnit, name === "w" ? "daily weight" : name === "a" ? "7-day avg" : "lean mass (est.)"]}
                   />
                   <ReferenceLine y={goalW} stroke={C.faint} strokeDasharray="6 4"
                     label={{ value: "GOAL " + r1(goalW), fill: C.faint, fontSize: 10, fontWeight: 700, position: "insideBottomLeft" }} />
+                  {leanMassNow != null && (
+                    <ReferenceLine y={leanMassNow} stroke={C.faintLight} strokeDasharray="2 3"
+                      label={{ value: "LEAN MASS (held constant) " + leanMassNow, fill: C.faintLight, fontSize: 9, fontWeight: 700, position: "insideTopLeft" }} />
+                  )}
                   <Line type="monotone" dataKey="w" stroke={C.faintLight} strokeWidth={1.5}
                     dot={{ r: 2, fill: C.faintLight, strokeWidth: 0 }} isAnimationActive={false} />
                   <Line type="monotone" dataKey="a" stroke={C.accent} strokeWidth={2.5}
                     dot={false} isAnimationActive={false} />
+                  {bfFrac != null && (
+                    <Line type="monotone" dataKey="l" stroke={C.ink} strokeWidth={1.5} strokeDasharray="4 2"
+                      dot={false} isAnimationActive={false} connectNulls />
+                  )}
                 </ComposedChart>
               </ResponsiveContainer>
             </div>
           )}
           <div className="text-xs font-semibold mt-1" style={{ color: C.faint }}>
-            thin = daily · heavy = 7-day average · dashed = goal
+            thin = daily weight · heavy = 7-day average · dashed grey = goal
+            {bfFrac != null && " · dashed ink = lean mass at today's body-fat% held proportional · dotted = lean mass if it had stayed flat (best case)"}
           </div>
+          {bfFrac != null ? (
+            <div className="text-[11px] font-semibold mt-1.5" style={{ color: C.faintLight }}>
+              Estimated from a single current body-fat reading ({profile.bodyFatSource === "measured" ? "measured" : profile.bodyFatSource === "visual-estimate" ? "visual estimate" : "source unset"}) applied across your weigh-in history — not a measured trend. The two lines bracket the honest range: your real lean-mass path sits somewhere between them, and that gap is exactly what the protein floor + training are meant to narrow.
+            </div>
+          ) : (
+            <div className="text-[11px] font-semibold mt-1.5" style={{ color: C.faintLight }}>
+              Add a body-fat % on the Profile tab to see an estimated lean-mass line alongside scale weight.
+            </div>
+          )}
         </Card>
 
         <div className="xl:col-span-4 flex flex-col gap-4">
@@ -94,12 +172,12 @@ export default function TrendTab({ profile, summary }) {
               <Stat label="7-day avg" value={avg7 != null ? r1(avg7) : "—"} unit={wUnit} />
               <Stat label="Lost (from start)" value={lost != null ? r1(lost) : "—"} unit={wUnit} />
               <Stat label="Rate" value={rate != null ? displayRate(rate, pref) : "—"} unit={rateUnit(pref)} />
-              <Stat label="Est. body fat" value={estBf != null ? r1(estBf) : "—"} unit="%" />
+              <Stat label="Lean mass (est.)" value={leanMassNow != null ? leanMassNow : "—"} unit={wUnit} />
             </div>
             <div className="text-xs font-semibold mt-2" style={{ color: C.faint }}>
               {lbm != null
-                ? <>BF% assumes LBM held at {Math.round(lbm)} {wUnit} — photos + tape are the real audit.</>
-                : "Add a body fat % on the Profile tab to estimate BF here."}
+                ? <>Est. body fat {estBf != null ? r1(estBf) : "—"}% assumes lean mass held at {Math.round(lbm)} {wUnit} since your start weight — photos + tape are the real audit.</>
+                : "Add a body fat % on the Profile tab to estimate lean mass and BF here."}
             </div>
           </Card>
 
@@ -120,6 +198,8 @@ export default function TrendTab({ profile, summary }) {
               <div className="text-sm font-semibold" style={{ color: C.faint }}>Projections unlock with weigh-in data.</div>
             )}
           </Card>
+
+          <TrainingNudge openTraining={openTraining} />
         </div>
       </div>
     </div>

@@ -160,7 +160,7 @@ export default function App() {
         <main className="px-5 py-6 lg:px-9 lg:py-8 max-w-[1600px]">
           {tab === "profile" && <ProfileTab profile={profile} summary={summary} refresh={refresh} />}
           {tab === "today" && <TodayTab profile={profile} summary={summary} refresh={refresh} openTrend={() => setTab("trend")} />}
-          {tab === "trend" && <TrendTab profile={profile} summary={summary} />}
+          {tab === "trend" && <TrendTab profile={profile} summary={summary} openTraining={() => setTab("training")} />}
           {tab === "engine" && <EngineTab profile={profile} summary={summary} refresh={refresh} openFoods={openFoods} openProfile={() => setTab("profile")} />}
           {tab === "plan" && <PlanTab profile={profile} summary={summary} refresh={refresh} />}
           {tab === "foods" && <FoodsTab onBack={() => setTab("recipes")} isAdmin={isAdmin} />}

@@ -11,6 +11,10 @@ const {
   generateWeekPlan, eligibleRecipes, DEFAULT_REPEAT_CAP, BATCH_REPEAT_CAP,
 } = require("./weeklyPlanner.js");
 const { buildCostCache } = require("./recipeCost.js");
+// Protein-priority / recomposition mode — shared weighting + honesty-check
+// primitives (also consumed by brain/scorer.js so the floor means the same
+// number in both places). Pure math, no LLM: safe on this always-on path.
+const { PROTEIN_PRIORITY_WEIGHTS, checkProteinFloor } = require("./brain/proteinFloor.js");
 
 // ── hard filters ─────────────────────────────────────────────────────────
 
@@ -80,7 +84,21 @@ function buildBias(filters = {}, costCache = null) {
 // expected to present this as closest-fit, not a promise of perfection.
 const SCORE_WEIGHTS = { kcal: 0.55, protein: 0.3, fat: 0.075, carb: 0.075 };
 
-function scoreDay(dailyTarget, slots) {
+/**
+ * scoreDay(dailyTarget, slots, opts?) -> honest match% + totals (+ proteinFloor
+ * when protein-priority mode is on).
+ * opts.proteinPriority (default false): swaps SCORE_WEIGHTS for
+ * PROTEIN_PRIORITY_WEIGHTS — protein becomes the dominant term instead of
+ * calories — so a kcal-perfect but protein-short day can no longer outscore
+ * one that defends the floor, AND attaches `proteinFloor` ({met, shortG,
+ * reason}) so a miss is declared, never silently absorbed into the blended
+ * score (LAW 7). Omitting opts reproduces today's output byte-for-byte
+ * (locked by tests/golden/goldenBaseline.test.js) — no proteinFloor key at
+ * all outside this mode, matching scorer.js's identical contract.
+ */
+function scoreDay(dailyTarget, slots, opts = {}) {
+  const priority = Boolean(opts.proteinPriority);
+  const weights = priority ? PROTEIN_PRIORITY_WEIGHTS : SCORE_WEIGHTS;
   const t = slots.reduce(
     (s, x) => ({ kcal: s.kcal + x.kcal, protein: s.protein + x.protein, fat: s.fat + x.fat, carb: s.carb + x.carb }),
     { kcal: 0, protein: 0, fat: 0, carb: 0 }
@@ -93,10 +111,10 @@ function scoreDay(dailyTarget, slots) {
   const carbOut = rangeMiss(t.carb, dailyTarget.carbLo, dailyTarget.carbHi);
   const cap = (x) => Math.min(1, x);
   const err =
-    SCORE_WEIGHTS.kcal * cap(kcalErr) +
-    SCORE_WEIGHTS.protein * cap(proteinShort) +
-    SCORE_WEIGHTS.fat * cap(fatOut) +
-    SCORE_WEIGHTS.carb * cap(carbOut);
+    weights.kcal * cap(kcalErr) +
+    weights.protein * cap(proteinShort) +
+    weights.fat * cap(fatOut) +
+    weights.carb * cap(carbOut);
   return {
     matchPct: Math.round(Math.max(0, 1 - err) * 100),
     totals: { kcal: Math.round(t.kcal), protein: Math.round(t.protein), fat: Math.round(t.fat), carb: Math.round(t.carb) },
@@ -104,6 +122,7 @@ function scoreDay(dailyTarget, slots) {
     proteinShortPct: Math.round(proteinShort * 1000) / 10,
     fatInRange: fatOut === 0,
     carbInRange: carbOut === 0,
+    ...(priority ? { proteinFloor: checkProteinFloor(t.protein, dailyTarget.proteinLo) } : {}),
   };
 }
 
@@ -180,11 +199,23 @@ function diagnoseFromResult({ dailyTarget, slots, pool, mealConfig, filters = {}
   const pMid = (dailyTarget.proteinLo + dailyTarget.proteinHi) / 2;
   const byDay = new Map();
   for (const s of slots) byDay.set(s.dayOfWeek, [...(byDay.get(s.dayOfWeek) || []), s]);
-  let proteinShortDays = 0, kcalOffDays = 0;
+  let proteinShortDays = 0, kcalOffDays = 0, floorMissDays = 0;
   for (const [, daySlots] of byDay) {
     const t = daySlots.reduce((a, s) => ({ kcal: a.kcal + s.kcal, protein: a.protein + s.protein }), { kcal: 0, protein: 0 });
     if ((pMid - t.protein) / pMid > 0.15) proteinShortDays++;
     if (Math.abs(t.kcal - dailyTarget.kcal) / dailyTarget.kcal > 0.15) kcalOffDays++;
+    if (filters.proteinPriority && !checkProteinFloor(t.protein, dailyTarget.proteinLo).met) floorMissDays++;
+  }
+
+  // Protein-priority mode gets its OWN diagnosis, and unlike the generic
+  // checks below it is never gated behind "nothing else already explained
+  // it" — the floor is the entire point of the mode, so a miss is ALWAYS
+  // named up front (LAW 7), even when a pool-shape reason also applies.
+  if (filters.proteinPriority && floorMissDays > 0) {
+    const neededRatio = dailyTarget.kcal > 0 ? dailyTarget.proteinLo / dailyTarget.kcal : 0;
+    const dense = pool.filter((r) => r.kcal > 0 && r.protein / r.kcal >= neededRatio * 0.75).length;
+    reasons.unshift(`Protein-priority mode: the ${Math.round(dailyTarget.proteinLo)}g/day floor wasn't met on ${floorMissDays} day(s) — only ${dense} of ${pool.length} compliant recipes carry enough protein density to close the gap within the 0.5-2x portion limit.`);
+    suggestions.unshift("AI-generate a few high-protein compliant recipes, set the protein-preference filter, or allow batch-cooking repeats of the densest dishes.");
   }
 
   if (reasons.length === 0 && proteinShortDays > 0) {
@@ -234,7 +265,7 @@ async function generateDayCandidates({
     const { slots } = await solveDay(dayTargets, dailyTarget, afterPrep, usage, prevDayIds, rng, null, bias, repeatCap);
     const signature = slots.map((s) => `${s.recipeId}:${s.proteinScale}`).join("|");
     if (seen.has(signature)) continue;
-    const score = scoreDay(dailyTarget, slots);
+    const score = scoreDay(dailyTarget, slots, { proteinPriority: filters.proteinPriority });
     seen.set(signature, { slots, score, hasWarnings: slots.some((s) => s.warning) });
   }
 
@@ -269,7 +300,7 @@ async function generateDayCandidates({
       };
       const revision = await reviseDayWithCritic({
         solve,
-        scoreDay: (slots) => scoreDay(dailyTarget, slots),
+        scoreDay: (slots) => scoreDay(dailyTarget, slots, { proteinPriority: filters.proteinPriority }),
         targets: { kcal: dailyTarget.kcal, proteinLo: dailyTarget.proteinLo, proteinHi: dailyTarget.proteinHi, fatLo: dailyTarget.fatLo, fatHi: dailyTarget.fatHi, carbLo: dailyTarget.carbLo, carbHi: dailyTarget.carbHi },
         profile,
       });
@@ -284,7 +315,11 @@ async function generateDayCandidates({
   const needDiagnosis =
     candidates.length === 0 ||
     candidates[0].score.matchPct < 60 ||
-    candidates.every((c) => c.hasWarnings);
+    candidates.every((c) => c.hasWarnings) ||
+    // Protein-priority mode: a top candidate that misses the floor is always
+    // rough, even when kcal alone makes matchPct look fine (LAW 7 — the mode
+    // exists specifically so this can't be silently absorbed).
+    (filters.proteinPriority && candidates[0] && candidates[0].score.proteinFloor && !candidates[0].score.proteinFloor.met);
   // Result-driven: when the outcome is rough, the explanation derives from
   // what actually bound the solve and is guaranteed non-empty.
   const diagnosis = needDiagnosis
@@ -299,20 +334,32 @@ async function generateDayCandidates({
 
 // ── best-of-K week generation ────────────────────────────────────────────
 
-function scoreWeek(dailyTarget, slots) {
+/**
+ * opts.proteinPriority: threads the priority weighting into every day's
+ * score AND adds floorDaysMet/floorDaysTotal to the return (omitted
+ * entirely outside the mode, keeping the default shape unchanged).
+ */
+function scoreWeek(dailyTarget, slots, opts = {}) {
+  const priority = Boolean(opts.proteinPriority);
   const byDay = new Map();
   for (const s of slots) byDay.set(s.dayOfWeek, [...(byDay.get(s.dayOfWeek) || []), s]);
   let daysInTolerance = 0;
   let matchSum = 0;
+  let floorDaysMet = 0;
   const pMid = (dailyTarget.proteinLo + dailyTarget.proteinHi) / 2;
   for (const [, daySlots] of byDay) {
-    const sc = scoreDay(dailyTarget, daySlots);
+    const sc = scoreDay(dailyTarget, daySlots, { proteinPriority: priority });
     matchSum += sc.matchPct;
     const kcalOk = Math.abs(sc.totals.kcal - dailyTarget.kcal) / dailyTarget.kcal <= 0.15;
     const proteinOk = (pMid - sc.totals.protein) / pMid <= 0.15;
     if (kcalOk && proteinOk) daysInTolerance++;
+    if (priority && sc.proteinFloor.met) floorDaysMet++;
   }
-  return { daysInTolerance, avgMatch: Math.round(matchSum / Math.max(1, byDay.size)) };
+  return {
+    daysInTolerance,
+    avgMatch: Math.round(matchSum / Math.max(1, byDay.size)),
+    ...(priority ? { floorDaysMet, floorDaysTotal: byDay.size } : {}),
+  };
 }
 
 /**
@@ -327,15 +374,24 @@ async function generateBestWeekPlan(dailyTarget, mealConfig, recipePool, options
   // give best-of-N a genuinely varied set to pick the least-drifted week from.
   const attempts = options.attempts ?? 5;
   const filters = options.filters || {};
+  const priority = Boolean(filters.proteinPriority);
   let best = null;
   for (let i = 0; i < attempts; i++) {
     const slots = await generateWeekPlan(dailyTarget, mealConfig, recipePool, { ...options, aiFallback: undefined });
-    const score = scoreWeek(dailyTarget, slots);
-    if (!best || score.daysInTolerance > best.score.daysInTolerance ||
-        (score.daysInTolerance === best.score.daysInTolerance && score.avgMatch > best.score.avgMatch)) {
-      best = { slots, score };
-    }
-    if (best.score.daysInTolerance === 7 && best.score.avgMatch >= 95) break;
+    const score = scoreWeek(dailyTarget, slots, { proteinPriority: priority });
+    // Selection order: days-in-tolerance first, then — ONLY in protein-priority
+    // mode — how many days defended the floor, then average match. Outside the
+    // mode this is byte-identical to before (floorDaysMet is undefined, the
+    // extra clause never fires).
+    const better = !best
+      || score.daysInTolerance > best.score.daysInTolerance
+      || (score.daysInTolerance === best.score.daysInTolerance
+          && priority && (score.floorDaysMet ?? 0) > (best.score.floorDaysMet ?? 0))
+      || (score.daysInTolerance === best.score.daysInTolerance
+          && (!priority || (score.floorDaysMet ?? 0) === (best.score.floorDaysMet ?? 0))
+          && score.avgMatch > best.score.avgMatch);
+    if (better) best = { slots, score };
+    if (best.score.daysInTolerance === 7 && best.score.avgMatch >= 95 && (!priority || best.score.floorDaysMet === best.score.floorDaysTotal)) break;
   }
   // A rough week never ships silently: attach the result-driven diagnosis.
   // Stage-C fix (M10): when pool counts are supplied, the diagnosis derives
@@ -343,7 +399,8 @@ async function generateBestWeekPlan(dailyTarget, mealConfig, recipePool, options
   const preSolve = options.counts
     ? diagnose({ counts: options.counts, filters, dailyTarget, mealConfig, pool: recipePool })
     : undefined;
-  best.diagnosis = best.score.daysInTolerance < 6
+  const floorMissed = priority && best.score.floorDaysMet < best.score.floorDaysTotal;
+  best.diagnosis = (best.score.daysInTolerance < 6 || floorMissed)
     ? diagnoseFromResult({ dailyTarget, slots: best.slots, pool: recipePool, mealConfig, filters, preSolve })
     : null;
   return best;
@@ -384,7 +441,11 @@ async function alternatesForSlot({
     offered.add(result.recipeId);
     const kcalErr = slotTarget.kcalTarget > 0 ? Math.abs(result.kcal - slotTarget.kcalTarget) / slotTarget.kcalTarget : 0;
     const pShort = slotTarget.proteinTarget > 0 ? Math.max(0, (slotTarget.proteinTarget - result.protein) / slotTarget.proteinTarget) : 0;
-    const matchPct = Math.round(Math.max(0, 1 - (0.6 * Math.min(1, kcalErr) + 0.4 * Math.min(1, pShort))) * 100);
+    // Protein-priority mode re-weights an alternate's match% the same
+    // direction as the day/week scorer — a slot-level protein shortfall
+    // costs more than a calorie miss instead of the reverse.
+    const [kw, pw] = filters.proteinPriority ? [0.35, 0.65] : [0.6, 0.4];
+    const matchPct = Math.round(Math.max(0, 1 - (kw * Math.min(1, kcalErr) + pw * Math.min(1, pShort))) * 100);
     alternates.push({ ...result, matchPct });
   }
   return alternates;
@@ -393,4 +454,5 @@ async function alternatesForSlot({
 module.exports = {
   applyPrepFilter, buildBias, scoreDay, scoreWeek, diagnose, diagnoseFromResult,
   generateDayCandidates, generateBestWeekPlan, alternatesForSlot, SCORE_WEIGHTS,
+  PROTEIN_PRIORITY_WEIGHTS,
 };
