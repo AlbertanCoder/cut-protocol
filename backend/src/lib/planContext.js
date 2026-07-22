@@ -42,8 +42,10 @@ async function planContext(userId) {
 
 // The generation filters the Phase 4 UI sends. Cuisine/protein/budget are
 // soft biases; maxPrepMin is a hard cap; allowBatchRepeats relaxes the
-// variety rule. Allergies/diet are NOT here — they come from the profile
-// and are enforced in filterRecipePool, always.
+// variety rule; proteinPriority (recomposition mode) makes the solver defend
+// the protein floor instead of trading it off — see mealSolver.js's scoreDay/
+// scoreWeek/diagnoseFromResult. Allergies/diet are NOT here — they come from
+// the profile and are enforced in filterRecipePool, always.
 function parseFilters(body) {
   const f = body?.filters || {};
   return {
@@ -52,6 +54,7 @@ function parseFilters(body) {
     budget: ["cheap", "moderate", "premium"].includes(f.budget) ? f.budget : null,
     maxPrepMin: Number.isInteger(f.maxPrepMin) && f.maxPrepMin > 0 ? f.maxPrepMin : null,
     allowBatchRepeats: f.allowBatchRepeats === true,
+    proteinPriority: f.proteinPriority === true,
   };
 }
 

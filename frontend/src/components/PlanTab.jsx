@@ -1,11 +1,12 @@
 import { useState, useEffect, useCallback } from "react";
 import {
   Lock, LockOpen, RefreshCw, ChefHat, ShoppingCart, Copy, Utensils, Apple,
-  MessageCircle, Mail, Sparkles, Check, AlertTriangle, X, ArrowRight,
+  MessageCircle, Mail, Sparkles, Check, AlertTriangle, X, ArrowRight, Beef,
 } from "lucide-react";
 import { toHouseholdUnit } from "../lib/householdUnits.js";
 import { C } from "../lib/theme.js";
 import { addDays, fmtD } from "../lib/dates.js";
+import { proteinPriorityPref } from "../lib/storage.js";
 import { Card, Btn, Chip, PageHead, ErrorNote } from "./ui/Parts.jsx";
 import { Skeleton, SkeletonRows } from "./ui/Skeleton.jsx";
 import { api } from "../lib/api.js";
@@ -44,10 +45,14 @@ const toApplyPayload = (s) => ({
 
 // ── filters bar ──────────────────────────────────────────────────────────
 
-function FiltersBar({ filters, setFilters }) {
+function FiltersBar({ filters, setFilters, proteinFloorSource }) {
   const inpStyle = { background: C.card2, border: `1.5px solid ${C.rule}`, color: C.ink };
   const toggleCuisine = (key) =>
     setFilters((f) => ({ ...f, cuisines: f.cuisines.includes(key) ? f.cuisines.filter((c) => c !== key) : [...f.cuisines, key] }));
+  const setProteinPriority = (on) => {
+    proteinPriorityPref.set(on);
+    setFilters((f) => ({ ...f, proteinPriority: on }));
+  };
   return (
     <Card section="FILTERS" title="Steer the solver">
       <div className="flex flex-wrap gap-1.5 mb-3">
@@ -88,6 +93,24 @@ function FiltersBar({ filters, setFilters }) {
       <div className="text-[10.5px] font-semibold mt-2" style={{ color: C.faintLight }}>
         Cuisine / protein / budget bias the solver; diet & allergies from your Profile hard-filter it; max prep is a hard cap.
       </div>
+
+      <div className="mt-3 pt-3" style={{ borderTop: `1px solid ${C.rule}` }}>
+        <label className="flex items-start gap-2.5 text-sm font-bold cursor-pointer" style={{ color: C.ink }}>
+          <input type="checkbox" checked={filters.proteinPriority}
+            onChange={(e) => setProteinPriority(e.target.checked)}
+            className="mt-0.5" style={{ accentColor: C.protein }} />
+          <span className="flex items-center gap-1.5">
+            <Beef size={14} style={{ color: C.proteinText }} />
+            Protein-priority mode
+          </span>
+        </label>
+        <div className="text-[10.5px] font-semibold mt-1 ml-6" style={{ color: C.faintLight }}>
+          Makes the solver defend your protein floor instead of trading it off against calories — a candidate that misses it is ranked lower and the miss is always reported, never absorbed into an otherwise-good match score.
+          {proteinFloorSource && (
+            <> Floor basis: {proteinFloorSource.label} — {proteinFloorSource.detail}</>
+          )}
+        </div>
+      </div>
     </Card>
   );
 }
@@ -114,8 +137,12 @@ function SolverNarration({ meta }) {
   const diagText = typeof diag === "string" ? diag
     : diag && Array.isArray(diag.reasons) ? diag.reasons.join(" · ") : null;
   const infeasible = diag && typeof diag === "object" && diag.feasible === false;
+  // Protein-priority mode's week-level honesty readout — only present when
+  // the mode was on for this generation (see scoreWeek's opts.proteinPriority).
+  const floorMet = typeof meta.score?.floorDaysMet === "number" ? meta.score.floorDaysMet : null;
+  const floorTotal = typeof meta.score?.floorDaysTotal === "number" ? meta.score.floorDaysTotal : null;
 
-  if (pct == null && bestOf == null && funnel.length === 0 && !diagText) return null;
+  if (pct == null && bestOf == null && funnel.length === 0 && !diagText && floorMet == null) return null;
 
   return (
     <Card section="SOLVER" title="What the solver did">
@@ -125,6 +152,14 @@ function SolverNarration({ meta }) {
           <div className="flex items-baseline gap-1.5">
             <span className="mono stat-hero text-2xl" style={{ color: C.ink }}>{pct}%</span>
             <span className="text-xs font-semibold" style={{ color: C.faint }}>match to your targets</span>
+          </div>
+        )}
+        {floorMet != null && (
+          <div className="flex items-center gap-1.5">
+            <Beef size={13} style={{ color: C.proteinText }} />
+            <span className="text-xs font-bold" style={{ color: floorMet === floorTotal ? C.ink : C.warn }}>
+              Protein floor defended {floorMet}/{floorTotal} days
+            </span>
           </div>
         )}
         {funnel.length > 0 && (
@@ -161,6 +196,14 @@ function DayCandidates({ data, targetKcal, onAccept, accepting }) {
           <div className="mono text-xs font-bold mb-2" style={{ color: C.faint }}>
             {kc(c.score.totals.kcal)} / {kc(targetKcal)} kcal · {c.score.totals.protein}P {c.score.totals.fat}F {c.score.totals.carb}C
           </div>
+          {c.score.proteinFloor && (
+            <div className="flex items-center gap-1.5 mb-2 text-[10.5px] font-bold" style={{ color: c.score.proteinFloor.met ? C.faint : C.warn }}>
+              <Beef size={11} style={{ color: c.score.proteinFloor.met ? C.proteinText : C.warn }} />
+              {c.score.proteinFloor.met
+                ? `Protein floor met (${c.score.proteinFloor.achievedG}g / ${c.score.proteinFloor.floorG}g)`
+                : `Protein floor short by ${c.score.proteinFloor.shortG}g`}
+            </div>
+          )}
           <div className="flex flex-col gap-1.5 flex-1 mb-3">
             {c.slots.map((s, i) => (
               <div key={i} className="flex justify-between gap-2 text-xs font-semibold py-1" style={{ borderBottom: `1px solid ${C.rule}` }}>
@@ -334,12 +377,16 @@ export default function PlanTab({ profile, summary, refresh }) {
   const [error, setError] = useState(null);
   const [mealsDraft, setMealsDraft] = useState({ meals: profile.mealsPerDay, snacks: profile.snacksPerDay });
   const [activeDay, setActiveDay] = useState(new Date().getDay() === 0 ? 6 : new Date().getDay() - 1);
-  const [filters, setFilters] = useState({ cuisines: [], protein: "", budget: null, maxPrepMin: null, allowBatchRepeats: false });
+  const [filters, setFilters] = useState({
+    cuisines: [], protein: "", budget: null, maxPrepMin: null, allowBatchRepeats: false,
+    proteinPriority: proteinPriorityPref.get(),
+  });
   const [dayOptions, setDayOptions] = useState(null);
   const [optionsBusy, setOptionsBusy] = useState(false);
   const [accepting, setAccepting] = useState(false);
   const [cartIds, setCartIds] = useState(new Set());
   const [genMeta, setGenMeta] = useState(null); // solver narration from the last generate
+  const [meta, setMeta] = useState(null); // /profile/meta — used here only for proteinFloorSource
 
   const loadPlan = useCallback(async () => {
     try {
@@ -352,6 +399,7 @@ export default function PlanTab({ profile, summary, refresh }) {
   useEffect(() => {
     loadPlan();
     api.getCart().then((items) => setCartIds(new Set(items.map((i) => i.recipeId)))).catch(() => {});
+    api.getProfileMeta().then(setMeta).catch(() => {}); // citation text only — a failed fetch just hides it
   }, [loadPlan]);
 
   // Desktop chassis: ← / → move between days (ignored while typing).
@@ -377,6 +425,7 @@ export default function PlanTab({ profile, summary, refresh }) {
     cuisines: filters.cuisines, protein: filters.protein || undefined,
     budget: filters.budget || undefined, maxPrepMin: filters.maxPrepMin || undefined,
     allowBatchRepeats: filters.allowBatchRepeats,
+    proteinPriority: filters.proteinPriority,
   });
 
   const generate = async () => {
@@ -523,7 +572,7 @@ export default function PlanTab({ profile, summary, refresh }) {
       )}
 
       <div className="mb-4">
-        <FiltersBar filters={filters} setFilters={setFilters} />
+        <FiltersBar filters={filters} setFilters={setFilters} proteinFloorSource={meta?.proteinFloorSource} />
       </div>
 
       {genMeta && (

@@ -12,6 +12,8 @@ const kc = (n) => Math.round(n).toLocaleString("en-CA");
 export default function EngineTab({ profile, summary, refresh, openFoods, openProfile }) {
   const { energy, target, macros } = summary;
   const [error, setError] = useState(null);
+  const [meta, setMeta] = useState(null); // used here only for the protein-floor citation
+  useEffect(() => { api.getProfileMeta().then(setMeta).catch(() => {}); }, []);
   // Optimistic local copy so rapid formula toggles compose (same race as the
   // allergy toggles — M14). Re-syncs when the server truth changes.
   const [excludedLocal, setExcludedLocal] = useState(() => (Array.isArray(profile.excludedFormulas) ? profile.excludedFormulas : []));
@@ -157,6 +159,11 @@ export default function EngineTab({ profile, summary, refresh, openFoods, openPr
           {macros.macroKcalGap > 0 && (
             <div className="text-xs font-semibold mt-1" style={{ color: C.faint }}>
               Ranges sum ~{kc(macros.kcal - macros.macroKcalGap)} kcal at midpoint ({macros.macroKcalGap} under target) — {macros.carbBufferG}g deliberately trimmed off the carb midpoint as a conservatism margin.
+            </div>
+          )}
+          {meta?.proteinFloorSource && (
+            <div className="text-[11px] font-semibold mt-2 pt-2" style={{ color: C.faintLight, borderTop: `1px solid ${C.rule}` }}>
+              Protein range basis: {meta.proteinFloorSource.label} — {meta.proteinFloorSource.detail} This app's {macros.proteinLo}–{macros.proteinHi}g range sits inside that band. Recomposition (not just weight loss) is the reason it's this heavily weighted — see Protein-priority mode on the Plan tab to have the solver defend the low end of it directly.
             </div>
           )}
         </Card>

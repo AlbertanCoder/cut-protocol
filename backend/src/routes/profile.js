@@ -6,6 +6,7 @@ const { computeEnergy, rateSafety, RATE_OPTIONS, SAFE_FLOOR, FORMULA_KEYS } = re
 const { recomputeTarget } = require("../lib/profileTarget.js");
 const { OCCUPATION_BY_KEY, TRAINING_BY_KEY } = require("../lib/activityData.js");
 const { DIETARY_STYLES } = require("../lib/dietaryFilter.js");
+const { PROTEIN_FLOOR_SOURCE } = require("../lib/brain/proteinFloor.js");
 
 const router = express.Router();
 router.use(requireAuth);
@@ -114,6 +115,10 @@ router.get("/meta", (req, res) => {
     rateOptions: RATE_OPTIONS,
     dietaryStyles: DIETARY_STYLES,
     safeFloor: SAFE_FLOOR,
+    // Cited basis for protein-priority / recomposition mode's floor — served
+    // rather than duplicated in the frontend, same pattern as everything else
+    // on this endpoint (the option lists can never drift from the source).
+    proteinFloorSource: PROTEIN_FLOOR_SOURCE,
     allergyOptions: [
       { key: "shellfish", label: "Shellfish" },
       { key: "fish", label: "Fish" },
