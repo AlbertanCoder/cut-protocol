@@ -34,7 +34,7 @@ export default function LoginScreen({ onLoggedIn }) {
           </div>
           <div className="leading-none">
             <div className="text-xl disp uppercase" style={{ color: C.ink, letterSpacing: ".01em" }}>Cut Protocol</div>
-            <div className="text-[10px] font-bold uppercase mt-1" style={{ color: C.faintLight, letterSpacing: ".08em" }}>Recomp Engine</div>
+            <div className="text-[10px] font-bold uppercase mt-1" style={{ color: C.faint, letterSpacing: ".08em" }}>Recomp Engine</div>
           </div>
         </div>
         <Card>
@@ -49,7 +49,7 @@ export default function LoginScreen({ onLoggedIn }) {
               <input type="password" required value={password} onChange={(e) => setPassword(e.target.value)}
                 className="text-sm px-3 py-2.5 rounded-xl w-full mt-1" style={inpStyle} />
             </label>
-            {error && <div className="text-xs font-semibold" style={{ color: C.red }}>{error}</div>}
+            {error && <div role="alert" className="text-xs font-semibold" style={{ color: C.red }}>{error}</div>}
             <Btn disabled={busy}>{busy ? "Logging in…" : "Log in"}</Btn>
           </form>
         </Card>

@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { api } from "./lib/api.js";
 import { C } from "./lib/theme.js";
 
@@ -35,6 +35,23 @@ export default function App() {
   const [loadError, setLoadError] = useState(null); // startup data-load failure (session is still valid)
   const [isAdmin, setIsAdmin] = useState(false);
   const [bugReport, setBugReport] = useState({ open: false, error: null });
+
+  // a11y: this is a single-page app with no real route change (tab content
+  // swaps in place), so nothing tells a screen-reader or keyboard user the
+  // "page" changed. On every tab switch after the first render, move focus
+  // to the new view's own <h1> (every tab renders one via PageHead) — the
+  // standard SPA route-change pattern. Skipped on first mount so load
+  // doesn't yank focus away from wherever the browser naturally put it.
+  const mainRef = useRef(null);
+  const skipFirstFocus = useRef(true);
+  useEffect(() => {
+    if (skipFirstFocus.current) { skipFirstFocus.current = false; return; }
+    const el = mainRef.current;
+    if (!el) return;
+    const target = el.querySelector("h1") || el;
+    if (!target.hasAttribute("tabindex")) target.setAttribute("tabindex", "-1");
+    target.focus({ preventScroll: false });
+  }, [tab]);
 
   // Uncaught async errors (unhandled rejections, window.onerror) surface the
   // friendly report dialog instead of failing silently.
@@ -147,17 +164,18 @@ export default function App() {
 
   return withDialog(
     <div className="min-h-svh flex" style={{ color: C.ink }}>
+      <a href="#main-content" className="skip-link">Skip to main content</a>
       <Sidebar tab={tab} setTab={setTab} onLogout={logout} onReportBug={openBugReport} />
 
       <div className="flex-1 min-w-0">
         <HeaderBar profile={profile} summary={summary} />
         {error && (
-          <div className="text-xs font-semibold px-8 py-2" style={{ color: C.red, background: C.redBg }}>
+          <div role="alert" className="text-xs font-semibold px-8 py-2" style={{ color: C.red, background: C.redBg }}>
             {error} — couldn't refresh your data. Repeat your last change to retry; if it keeps failing, restart the app.
           </div>
         )}
 
-        <main className="px-5 py-6 lg:px-9 lg:py-8 max-w-[1600px]">
+        <main id="main-content" ref={mainRef} tabIndex={-1} className="px-5 py-6 lg:px-9 lg:py-8 max-w-[1600px]">
           {tab === "profile" && <ProfileTab profile={profile} summary={summary} refresh={refresh} />}
           {tab === "today" && <TodayTab profile={profile} summary={summary} refresh={refresh} openTrend={() => setTab("trend")} />}
           {tab === "trend" && <TrendTab profile={profile} summary={summary} />}

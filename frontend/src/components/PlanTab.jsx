@@ -54,7 +54,7 @@ function FiltersBar({ filters, setFilters }) {
         {CUISINE_OPTIONS.map((c) => {
           const on = filters.cuisines.includes(c.key);
           return (
-            <button key={c.key} onClick={() => toggleCuisine(c.key)}
+            <button key={c.key} onClick={() => toggleCuisine(c.key)} aria-pressed={on}
               className="text-xs font-bold px-3 py-1.5 rounded-full"
               style={{ background: on ? C.card2 : "transparent", color: on ? C.ink : C.faint, border: `1px solid ${on ? C.faintLight : C.rule}` }}>
               {c.label}
@@ -85,7 +85,7 @@ function FiltersBar({ filters, setFilters }) {
           Batch-cooking repeats OK
         </label>
       </div>
-      <div className="text-[10.5px] font-semibold mt-2" style={{ color: C.faintLight }}>
+      <div className="text-[10.5px] font-semibold mt-2" style={{ color: C.faint }}>
         Cuisine / protein / budget bias the solver; diet & allergies from your Profile hard-filter it; max prep is a hard cap.
       </div>
     </Card>
@@ -198,7 +198,7 @@ function DayCandidates({ data, targetKcal, onAccept, accepting }) {
         <div key={idx} className="p-4 rounded-2xl flex flex-col" style={{ background: C.card, border: `1px solid ${idx === 0 ? C.accent : C.rule}` }}>
           <div className="flex items-baseline justify-between mb-1">
             <span className="mono stat-hero text-3xl" style={{ color: idx === 0 ? C.accent : C.ink }}>{c.score.matchPct}%</span>
-            <span className="text-[10px] font-bold uppercase" style={{ color: C.faintLight }}>{idx === 0 ? "Best match" : `Option ${idx + 1}`}</span>
+            <span className="text-[10px] font-bold uppercase" style={{ color: C.faint }}>{idx === 0 ? "Best match" : `Option ${idx + 1}`}</span>
           </div>
           <div className="mono text-xs font-bold mb-2" style={{ color: C.faint }}>
             {kc(c.score.totals.kcal)} / {kc(targetKcal)} kcal · {c.score.totals.protein}P {c.score.totals.fat}F {c.score.totals.carb}C
@@ -210,7 +210,7 @@ function DayCandidates({ data, targetKcal, onAccept, accepting }) {
                   {s.slotType === "snack" ? "🥨 " : ""}{s.recipeName || "—"}
                   {s.warning && <AlertTriangle size={10} className="inline ml-1" style={{ color: C.warn }} />}
                 </span>
-                <span className="mono shrink-0" style={{ color: C.faintLight }}>{kc(s.kcal)}</span>
+                <span className="mono shrink-0" style={{ color: C.faint }}>{kc(s.kcal)}</span>
               </div>
             ))}
           </div>
@@ -262,11 +262,27 @@ function SlotCard({ plan, slot, expanded, onToggleExpand, onLockToggle, busy, fi
     }
   };
 
+  // a11y: this whole card toggles expand/collapse on click, but it wraps
+  // several REAL buttons (cart, lock, swap) that must keep working — those
+  // already call e.stopPropagation(). role="button" + tabIndex make the
+  // card itself keyboard-reachable; the currentTarget guard stops Enter/
+  // Space on an inner button from ALSO bubbling up and double-firing the
+  // outer toggle.
+  const onCardKeyDown = (e) => {
+    if (e.target !== e.currentTarget) return;
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      onToggleExpand(slot.id);
+    }
+  };
+
   return (
     <div className="p-3.5 rounded-2xl row-host" onClick={() => onToggleExpand(slot.id)}
+      onKeyDown={onCardKeyDown} role="button" tabIndex={0} aria-expanded={expanded}
+      aria-label={`${slot.slotType}: ${recipe ? recipe.name : "empty slot"}, ${kc(slot.kcal)} kcal — toggle details`}
       style={{ background: C.card, border: `1px solid ${C.rule}` }}>
       <div className="flex gap-3">
-        <div className="w-11 h-11 rounded-xl flex items-center justify-center shrink-0" style={{ background: `${roleColor}22` }}>
+        <div className="w-11 h-11 rounded-xl flex items-center justify-center shrink-0" aria-hidden="true" style={{ background: `${roleColor}22` }}>
           <Icon size={19} style={{ color: roleColor }} />
         </div>
         <div className="min-w-0 flex-1">
@@ -283,19 +299,21 @@ function SlotCard({ plan, slot, expanded, onToggleExpand, onLockToggle, busy, fi
                   className={`w-7 h-7 rounded-lg flex items-center justify-center ${inCart ? "" : "row-reveal"}`}
                   style={{ color: inCart ? C.good : C.faint, background: C.card2, border: `1px solid ${C.rule}` }}
                   aria-label={inCart ? "Remove from cart" : "Add to cart"} title={inCart ? "Remove from cart" : "Add to cart"}>
-                  {inCart ? <Check size={14} /> : <ShoppingCart size={14} />}
+                  {inCart ? <Check size={14} aria-hidden="true" /> : <ShoppingCart size={14} aria-hidden="true" />}
                 </button>
               )}
               <button onClick={(e) => { e.stopPropagation(); onLockToggle(slot); }} disabled={busy}
                 className={`w-7 h-7 rounded-lg flex items-center justify-center ${slot.locked ? "" : "row-reveal"}`}
-                style={{ color: slot.locked ? C.ink : C.faint, background: C.card2, border: `1px solid ${C.rule}` }} aria-label="Toggle lock">
-                {slot.locked ? <Lock size={14} /> : <LockOpen size={14} />}
+                style={{ color: slot.locked ? C.ink : C.faint, background: C.card2, border: `1px solid ${C.rule}` }}
+                aria-label={slot.locked ? "Unlock this slot" : "Lock this slot"} aria-pressed={slot.locked}
+                title={slot.locked ? "Locked — survives regeneration" : "Unlocked"}>
+                {slot.locked ? <Lock size={14} aria-hidden="true" /> : <LockOpen size={14} aria-hidden="true" />}
               </button>
               {!slot.locked && (
                 <button onClick={loadAlternates} disabled={altBusy}
                   className="w-7 h-7 rounded-lg flex items-center justify-center row-reveal"
                   style={{ color: C.faint, background: C.card2, border: `1px solid ${C.rule}` }} aria-label="Swap — show alternates" title="Swap — show 3 alternates">
-                  <RefreshCw size={14} />
+                  <RefreshCw size={14} aria-hidden="true" />
                 </button>
               )}
             </div>
@@ -309,7 +327,7 @@ function SlotCard({ plan, slot, expanded, onToggleExpand, onLockToggle, busy, fi
           {slot.warning && (
             <div className="mt-1.5">
               <div className="text-xs font-semibold" style={{ color: C.warn }}>{slot.warning}</div>
-              <div className="text-[10.5px] font-semibold mt-0.5" style={{ color: C.faintLight }}>
+              <div className="text-[10.5px] font-semibold mt-0.5" style={{ color: C.faint }}>
                 → Fix it with the swap button (3 alternates), or regenerate with looser filters.
               </div>
             </div>
@@ -334,7 +352,7 @@ function SlotCard({ plan, slot, expanded, onToggleExpand, onLockToggle, busy, fi
                   <div key={a.recipeId} className="flex items-center justify-between gap-2 p-2 rounded-lg" style={{ background: C.card2 }}>
                     <div className="min-w-0">
                       <div className="text-xs font-bold truncate" style={{ color: C.ink }}>{a.recipeName}</div>
-                      <div className="mono text-[10.5px] font-semibold" style={{ color: C.faintLight }}>
+                      <div className="mono text-[10.5px] font-semibold" style={{ color: C.faint }}>
                         {kc(a.kcal)} kcal · {g1(a.protein)}P · {a.matchPct}% fit
                       </div>
                     </div>
@@ -594,7 +612,7 @@ export default function PlanTab({ profile, summary, refresh }) {
                 const tot = sumSlots(slots);
                 const active = activeDay === i;
                 return (
-                  <button key={d} onClick={() => { setActiveDay(i); setDayOptions(null); }}
+                  <button key={d} onClick={() => { setActiveDay(i); setDayOptions(null); }} aria-current={active ? "true" : undefined}
                     className="rounded-xl p-2 text-left flex flex-col gap-1 min-h-[112px]"
                     style={{ background: active ? C.card2 : C.card, border: `1px solid ${active ? C.faintLight : C.rule}` }}>
                     <div className="flex items-baseline justify-between w-full">
@@ -626,7 +644,7 @@ export default function PlanTab({ profile, summary, refresh }) {
             {/* compact day picker (small windows) */}
             <div className="grid grid-cols-7 gap-1.5 mb-3 xl:hidden">
               {DAY_NAMES.map((d, i) => (
-                <button key={d} onClick={() => { setActiveDay(i); setDayOptions(null); }}
+                <button key={d} onClick={() => { setActiveDay(i); setDayOptions(null); }} aria-current={activeDay === i ? "true" : undefined}
                   className="py-2 rounded-xl text-center"
                   style={{ background: activeDay === i ? C.card2 : C.card, border: `1px solid ${activeDay === i ? C.faintLight : C.rule}` }}>
                   <div className="text-[10px] font-bold" style={{ color: C.faintLight }}>{d}</div>
@@ -658,7 +676,7 @@ export default function PlanTab({ profile, summary, refresh }) {
                 {dayOptions.candidates.length > 0 && (
                   <>
                     <DayCandidates data={dayOptions} targetKcal={targetKcal} onAccept={acceptCandidate} accepting={accepting} />
-                    <div className="text-[10.5px] font-semibold mt-2" style={{ color: C.faintLight }}>
+                    <div className="text-[10.5px] font-semibold mt-2" style={{ color: C.faint }}>
                       Scores are closeness to your daily targets — closest-fit is the goal, 100% is rare and not required. Accepting writes this day into the meal plan.
                     </div>
                   </>
@@ -739,7 +757,7 @@ export default function PlanTab({ profile, summary, refresh }) {
                       .filter(([, items]) => items.length > 0)
                       .map(([section, items]) => (
                         <div key={section} className="mb-2.5">
-                          <div className="text-[10.5px] font-extrabold uppercase tracking-wide mb-1" style={{ color: C.faintLight }}>{SECTION_LABELS[section] || section}</div>
+                          <div className="text-[10.5px] font-extrabold uppercase tracking-wide mb-1" style={{ color: C.faint }}>{SECTION_LABELS[section] || section}</div>
                           {items.map((i) => {
                             const grams = itemGrams(i);
                             const hh = toHouseholdUnit(i.name, grams);
@@ -752,7 +770,7 @@ export default function PlanTab({ profile, summary, refresh }) {
                                   <div className="text-sm font-bold" style={{ color: C.ink, textDecoration: i.checked ? "line-through" : "none" }}>
                                     {practical ? `${practical} — ${i.name}` : i.name}
                                   </div>
-                                  <div className="mono text-[10.5px] font-semibold" style={{ color: C.faintLight }}>
+                                  <div className="mono text-[10.5px] font-semibold" style={{ color: C.faint }}>
                                     {grams} g{hh ? ` · ≈${hh}` : ""}{i.purchaseUnits?.approx ? ` · ${i.purchaseUnits.approx}` : ""}
                                     {i.cost != null && <> · ${i.cost.amountCad.toFixed(2)}</>}
                                   </div>

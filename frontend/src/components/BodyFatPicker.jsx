@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useState, useRef, useId } from "react";
 import { api } from "../lib/api.js";
 import { C } from "../lib/theme.js";
+import { useFocusTrap } from "../lib/useFocusTrap.js";
 
 // E2 (v2) — a visual body-fat estimator. Deterministic, never LLM-gated, works
 // keyless. Constitution: selection is a LIGHTNESS step (card2 + faintLight),
@@ -39,6 +40,11 @@ export default function BodyFatPicker({ current, source, onDone, onClose }) {
   const [measuredMode, setMeasuredMode] = useState(false);
   const [measured, setMeasured] = useState("");
   const [err, setErr] = useState(null);
+  const panelRef = useRef(null);
+  const titleId = useId();
+  // a11y: this component only exists in the DOM while the picker is open
+  // (the parent conditionally renders it), so `active` is always true here.
+  useFocusTrap(panelRef, { active: true, onClose });
 
   const save = async (patch) => {
     setSaving(true);
@@ -63,9 +69,10 @@ export default function BodyFatPicker({ current, source, onDone, onClose }) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: "rgba(0,0,0,0.55)" }} onClick={onClose}>
-      <div className="w-[560px] max-w-[94vw] max-h-[88vh] overflow-y-auto rounded-2xl p-5" style={{ background: C.card, border: `1px solid ${C.rule}` }} onClick={(e) => e.stopPropagation()}>
+      <div ref={panelRef} role="dialog" aria-modal="true" aria-labelledby={titleId} tabIndex={-1}
+        className="w-[560px] max-w-[94vw] max-h-[88vh] overflow-y-auto rounded-2xl p-5" style={{ background: C.card, border: `1px solid ${C.rule}` }} onClick={(e) => e.stopPropagation()}>
         <div className="flex items-center justify-between mb-1">
-          <div className="text-lg font-extrabold" style={{ color: C.ink }}>Body fat %</div>
+          <div id={titleId} className="text-lg font-extrabold" style={{ color: C.ink }}>Body fat %</div>
           <button onClick={onClose} className="text-sm font-bold px-2 py-1 rounded-lg" style={{ color: C.faint }} aria-label="Close">✕</button>
         </div>
         <div className="text-xs font-semibold mb-4" style={{ color: C.faint }}>
@@ -92,7 +99,7 @@ export default function BodyFatPicker({ current, source, onDone, onClose }) {
                 );
               })}
             </div>
-            {err && <div className="text-xs font-bold mt-3" style={{ color: C.red }}>{err}</div>}
+            {err && <div role="alert" className="text-xs font-bold mt-3" style={{ color: C.red }}>{err}</div>}
             <div className="flex items-center justify-between mt-4 gap-3">
               <button onClick={() => { setMeasuredMode(true); setErr(null); }} className="text-xs font-bold underline" style={{ color: C.faint }}>
                 I had it measured (DEXA / calipers / scale)
@@ -104,14 +111,15 @@ export default function BodyFatPicker({ current, source, onDone, onClose }) {
           </>
         ) : (
           <div className="flex flex-col gap-3">
-            <label className="text-xs font-bold" style={{ color: C.faint }}>Measured body fat %</label>
+            <label className="text-xs font-bold" htmlFor="measured-bf" style={{ color: C.faint }}>Measured body fat %</label>
             <input
+              id="measured-bf"
               type="number" value={measured} onChange={(e) => setMeasured(e.target.value)} min={3} max={70} step={0.1}
               placeholder="e.g. 18.5"
               className="text-sm font-semibold px-3 py-2 rounded-xl outline-none"
               style={{ background: C.card2, color: C.ink, border: `1px solid ${C.rule}` }}
             />
-            {err && <div className="text-xs font-bold" style={{ color: C.red }}>{err}</div>}
+            {err && <div role="alert" className="text-xs font-bold" style={{ color: C.red }}>{err}</div>}
             <div className="flex items-center gap-2">
               <button onClick={saveMeasured} disabled={saving} className="text-sm font-bold px-3 py-2 rounded-xl" style={{ background: C.accent, color: C.accentInk }}>Save</button>
               <button onClick={() => { setMeasuredMode(false); setErr(null); }} className="text-sm font-semibold px-3 py-2 rounded-xl" style={{ color: C.faint }}>Back to picker</button>

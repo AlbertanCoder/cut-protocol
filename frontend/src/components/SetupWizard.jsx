@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import { ArrowRight, ArrowLeft, Check, Search, AlertTriangle } from "lucide-react";
 import CutMark from "./ui/CutMark.jsx";
 import { C } from "../lib/theme.js";
@@ -33,6 +33,16 @@ export default function SetupWizard({ onDone }) {
   useEffect(() => {
     api.getProfileMeta().then(setMeta).catch((e) => setError(e.message));
   }, []);
+
+  // a11y: Next/Back swaps the whole step's content in place with no route
+  // change, so nothing tells a keyboard/screen-reader user to look there.
+  // Move focus to the new step's panel (skipping the very first render).
+  const panelRef = useRef(null);
+  const skipFirstFocus = useRef(true);
+  useEffect(() => {
+    if (skipFirstFocus.current) { skipFirstFocus.current = false; return; }
+    panelRef.current?.focus({ preventScroll: false });
+  }, [step]);
 
   const pref = d.unitPref;
   const statsValid = +d.age >= 14 && +d.age <= 100 && +d.height > 0 && +d.weight > 0 && +d.goal > 0;
@@ -105,20 +115,23 @@ export default function SetupWizard({ onDone }) {
           </div>
           <div className="leading-none">
             <div className="disp text-lg uppercase" style={{ color: C.ink }}>Cut Protocol</div>
-            <div className="text-[11px] font-bold uppercase mt-1" style={{ color: C.faintLight, letterSpacing: ".08em" }}>First-run setup</div>
+            <div className="text-[11px] font-bold uppercase mt-1" style={{ color: C.faint, letterSpacing: ".08em" }}>First-run setup</div>
           </div>
         </div>
 
-        <div className="flex gap-2 mb-5">
+        {/* aria-current marks the active step for screen readers; the bar
+            fill is decorative (the step label + card heading already say
+            which step this is in text). */}
+        <div className="flex gap-2 mb-5" role="list" aria-label="Setup steps">
           {STEPS.map((s, i) => (
-            <div key={s} className="flex-1">
-              <div className="h-1.5 rounded-full mb-1.5" style={{ background: i <= step ? C.accent : C.card2 }}></div>
-              <div className="text-[10.5px] font-bold uppercase tracking-wide" style={{ color: i === step ? C.ink : C.faintLight }}>{s}</div>
+            <div key={s} className="flex-1" role="listitem" aria-current={i === step ? "step" : undefined}>
+              <div className="h-1.5 rounded-full mb-1.5" aria-hidden="true" style={{ background: i <= step ? C.accent : C.card2 }}></div>
+              <div className="text-[10.5px] font-bold uppercase tracking-wide" style={{ color: i === step ? C.ink : C.faint }}>{s}</div>
             </div>
           ))}
         </div>
 
-        <div className="p-6 rounded-2xl glass-card">
+        <div className="p-6 rounded-2xl glass-card" ref={panelRef} tabIndex={-1}>
           {step === 0 && (
             <>
               <div className="text-lg font-extrabold mb-1" style={{ color: C.ink }}>Units & stats</div>
@@ -177,7 +190,7 @@ export default function SetupWizard({ onDone }) {
                     className="w-full text-left px-3 py-2 text-sm font-semibold flex justify-between gap-2"
                     style={{ color: C.ink, fontWeight: d.occupationKey === o.key ? 800 : 600, background: d.occupationKey === o.key ? C.card2 : "transparent", borderBottom: `1px solid ${C.rule}` }}>
                     <span className="truncate">{o.label}</span>
-                    <span className="mono text-xs shrink-0" style={{ color: C.faintLight }}>×{o.multiplier}</span>
+                    <span className="mono text-xs shrink-0" style={{ color: C.faint }}>×{o.multiplier}</span>
                   </button>
                 ))}
               </div>
@@ -276,19 +289,19 @@ export default function SetupWizard({ onDone }) {
             </>
           )}
 
-          {error && <div className="text-xs font-semibold mt-4" style={{ color: C.red }}>{error}</div>}
+          {error && <div role="alert" className="text-xs font-semibold mt-4" style={{ color: C.red }}>{error}</div>}
 
           <div className="flex items-center justify-between mt-6">
             <div>
               {step > 0 && (
                 <Btn kind="ghost" onClick={() => setStep(step - 1)} disabled={busy}>
-                  <ArrowLeft size={13} className="inline mr-1" />Back
+                  <ArrowLeft size={13} className="inline mr-1" aria-hidden="true" />Back
                 </Btn>
               )}
             </div>
             <div className="flex gap-2 items-center">
               <button onClick={() => finish(true)} disabled={busy}
-                className="text-xs font-semibold hover:opacity-80" style={{ color: C.faintLight }}>
+                className="text-xs font-semibold hover:opacity-80" style={{ color: C.faint }}>
                 Skip — use defaults
               </button>
               {step < STEPS.length - 1 ? (
@@ -305,7 +318,7 @@ export default function SetupWizard({ onDone }) {
         </div>
 
         {step === 0 && !statsValid && (d.age || d.height || d.weight) && (
-          <div className="text-[11px] font-semibold mt-3 px-1" style={{ color: C.faintLight }}>
+          <div role="alert" className="text-[11px] font-semibold mt-3 px-1" style={{ color: C.faint }}>
             Age 14–100, and height / current weight / goal weight all filled to continue.
           </div>
         )}

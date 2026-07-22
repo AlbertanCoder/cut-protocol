@@ -35,7 +35,7 @@ function FoodRow({ food, selected, onSelect, dotColor }) {
       </div>
       <div className="text-right shrink-0">
         <span className="mono text-sm font-extrabold" style={{ color: C.ink }}>{Math.round(food.kcal)}</span>
-        <span className="text-[10.5px] font-semibold ml-1.5" style={{ color: C.faintLight }}>{g1(food.protein)}P {g1(food.fat)}F {g1(food.carb)}C</span>
+        <span className="text-[10.5px] font-semibold ml-1.5" style={{ color: C.faint }}>{g1(food.protein)}P {g1(food.fat)}F {g1(food.carb)}C</span>
       </div>
     </button>
   );
@@ -157,7 +157,7 @@ function FoodDetail({ food, isAdmin, onSaved, refreshFoods }) {
             {isAdmin ? (
               <Btn small onClick={startEdit}>Edit</Btn>
             ) : (
-              <span className="text-xs font-semibold self-center" style={{ color: C.faintLight }}>Editing is admin-only.</span>
+              <span className="text-xs font-semibold self-center" style={{ color: C.faint }}>Editing is admin-only.</span>
             )}
             <Btn small kind="ghost" onClick={openRecipePicker}>
               <BookOpen size={12} className="inline mr-1" />Add to a recipe
@@ -168,7 +168,7 @@ function FoodDetail({ food, isAdmin, onSaved, refreshFoods }) {
               </Btn>
             </span>
           </div>
-          <div className="text-[10.5px] font-semibold mt-2" style={{ color: C.faintLight }}>
+          <div className="text-[10.5px] font-semibold mt-2" style={{ color: C.faint }}>
             "Log today" unlocks when the food diary ships — no silent fake logging.
           </div>
         </>
@@ -200,7 +200,7 @@ function FoodDetail({ food, isAdmin, onSaved, refreshFoods }) {
             <Btn small onClick={save} disabled={busy}><Save size={12} className="inline mr-1" />{busy ? "Saving…" : "Save"}</Btn>
             <Btn small kind="ghost" onClick={() => setDraft(null)} disabled={busy}>Cancel</Btn>
           </div>
-          <div className="text-[10.5px] font-semibold mt-2" style={{ color: C.faintLight }}>
+          <div className="text-[10.5px] font-semibold mt-2" style={{ color: C.faint }}>
             The validator rejects values where kcal drifts from 4P + 4C + 9F, so bad data can't come back.
           </div>
         </div>
@@ -220,7 +220,7 @@ function FoodDetail({ food, isAdmin, onSaved, refreshFoods }) {
                   className="w-full text-left text-sm font-semibold py-1.5 px-2 rounded-lg hover:opacity-80 flex justify-between"
                   style={{ color: C.ink, borderBottom: `1px solid ${C.rule}` }}>
                   <span className="truncate">{r.name}</span>
-                  <span className="mono text-xs shrink-0" style={{ color: C.faintLight }}>{Math.round(r.kcal)} kcal</span>
+                  <span className="mono text-xs shrink-0" style={{ color: C.faint }}>{Math.round(r.kcal)} kcal</span>
                 </button>
               ))
             )}
@@ -292,9 +292,9 @@ export default function FoodsTab({ onBack, isAdmin }) {
       <div className="grid grid-cols-1 xl:grid-cols-12 gap-4 items-start">
         <div className="xl:col-span-7 min-w-0">
           <div className="relative mb-3">
-            <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: C.faintLight }} />
+            <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: C.faintLight }} aria-hidden="true" />
             <input
-              type="text" placeholder="Search all foods…" value={query} onChange={(e) => setQuery(e.target.value)}
+              type="text" placeholder="Search all foods…" aria-label="Search all foods" value={query} onChange={(e) => setQuery(e.target.value)}
               className="w-full text-sm pl-9 pr-3 py-2.5 rounded-xl"
               style={{ background: C.card, border: `1px solid ${C.rule}`, color: C.ink }}
             />
@@ -304,7 +304,7 @@ export default function FoodsTab({ onBack, isAdmin }) {
             <SkeletonRows rows={7} />
           ) : q ? (
             <Card>
-              <div className="text-xs font-semibold mb-1" style={{ color: C.faintLight }}>
+              <div className="text-xs font-semibold mb-1" style={{ color: C.faint }}>
                 {searchResults.length} match{searchResults.length === 1 ? "" : "es"}
                 {searchResults.length > SEARCH_RENDER_CAP && ` — showing first ${SEARCH_RENDER_CAP}, refine the search`}
               </div>
@@ -322,10 +322,11 @@ export default function FoodsTab({ onBack, isAdmin }) {
                   <div key={cat.slug} className="rounded-2xl glass-card">
                     <button
                       onClick={() => setOpenCats((s) => ({ ...s, [cat.slug]: !open }))}
+                      aria-expanded={open}
                       className="w-full flex items-center gap-3 px-4 py-3.5"
                     >
-                      {open ? <ChevronDown size={16} style={{ color: C.faint }} /> : <ChevronRight size={16} style={{ color: C.faint }} />}
-                      <span className="w-2.5 h-2.5 rounded-full" style={{ background: CATEGORY_DOT(cat.slug) }}></span>
+                      {open ? <ChevronDown size={16} style={{ color: C.faint }} aria-hidden="true" /> : <ChevronRight size={16} style={{ color: C.faint }} aria-hidden="true" />}
+                      <span className="w-2.5 h-2.5 rounded-full" aria-hidden="true" style={{ background: CATEGORY_DOT(cat.slug) }}></span>
                       <span className="text-sm font-extrabold flex-1 text-left" style={{ color: C.ink }}>{cat.label}</span>
                       <span className="mono text-xs font-bold px-2 py-0.5 rounded-lg" style={{ color: C.faint, background: C.card2 }}>{items.length}</span>
                     </button>
