@@ -34,4 +34,24 @@ export const SOURCE_LABEL = {
   "usda": "USDA-VERIFIED",
   "manual": "LABEL / MANUAL",
   "manual-placeholder": "PLACEHOLDER — NO REAL DATA",
+  // Barcode-off track: Open Food Facts is crowd-sourced, materially lower
+  // trust than the audited USDA core — never presented as the same tier.
+  // "COMMUNITY" always renders with its source in parens so the distinction
+  // reads even out of context (a tooltip, a CSV export, a screenshot).
+  "community": "COMMUNITY (OPEN FOOD FACTS)",
 };
+
+// dataQuality is the fiber-adjusted-Atwater verdict recorded at import time
+// (see backend/src/lib/offImport.js): "pass" | "warn:<codes>" | null. Only
+// "warn" rows get a visible caution badge — "pass" is the silent default,
+// same as every USDA/manual row that's never had a reason to say anything.
+export function dataQualityFlag(food) {
+  if (!food.dataQuality || !food.dataQuality.startsWith("warn:")) return null;
+  const codes = food.dataQuality.slice("warn:".length).split(",");
+  const reason = codes.includes("atwater")
+    ? "calories don't reconcile with the declared macros"
+    : codes.includes("name-shape")
+      ? "the name and the macros don't quite match"
+      : "unverified";
+  return { label: "UNVERIFIED MACROS", reason };
+}
