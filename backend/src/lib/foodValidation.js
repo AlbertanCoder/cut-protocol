@@ -21,12 +21,23 @@ const HIGH_FIBER_G = 12;
 const HIGH_FIBER_TOLERANCE_PCT = 0.30;
 const TOLERANCE_ABS_KCAL = 10; // near-zero foods: water at 3 kcal vs 0 computed is fine
 
-function atwater(food) {
+// The generic 4/4/9 model is an approximation. USDA computes most FoodData
+// Central records with FOOD-SPECIFIC Atwater factors — limes are 3.36/8.37/
+// 2.48, chicken 4.27/9.02/3.87 — and 4,716 of the 5,024 bulk records that
+// declare factors use something other than 4/4/9. Checking those against
+// 4/4/9 reports a discrepancy that lives in the model, not in the data. When
+// the caller knows the factors USDA actually used (the bulk importer reads
+// them straight off the record), pass them and the check uses them.
+const DEFAULT_FACTORS = { protein: 4, fat: 9, carb: 4 };
+
+function atwater(food, factors) {
+  const k = factors || DEFAULT_FACTORS;
   const p = food.protein || 0, f = food.fat || 0, c = food.carb || 0;
   const fiber = Math.min(food.fiber || 0, c); // fiber can't exceed total carb
   return {
-    classic: 4 * p + 4 * c + 9 * f,
-    fiberAdjusted: 4 * p + 9 * f + 4 * (c - fiber) + 2 * fiber,
+    classic: k.protein * p + k.carb * c + k.fat * f,
+    // Fiber is carb-by-difference's least-digestible fraction (~2 kcal/g).
+    fiberAdjusted: k.protein * p + k.fat * f + k.carb * (c - fiber) + 2 * fiber,
   };
 }
 
@@ -35,8 +46,8 @@ function withinTolerance(kcal, computed, tolPct) {
   return diff <= Math.max(TOLERANCE_ABS_KCAL, tolPct * Math.max(kcal, computed));
 }
 
-function checkAtwater(food) {
-  const { classic, fiberAdjusted } = atwater(food);
+function checkAtwater(food, factors) {
+  const { classic, fiberAdjusted } = atwater(food, factors);
   const tolPct = (food.fiber || 0) >= HIGH_FIBER_G ? HIGH_FIBER_TOLERANCE_PCT : TOLERANCE_PCT;
   const ok = withinTolerance(food.kcal, fiberAdjusted, tolPct) || withinTolerance(food.kcal, classic, tolPct);
   return { ok, classic: Math.round(classic), fiberAdjusted: Math.round(fiberAdjusted) };
@@ -114,6 +125,15 @@ function checkNameShape(food) {
  * food: { name, kcal, protein, fat, carb, fiber, category, source }
  * opts.exemptions: { [lowercased name]: { atwaterExempt, reason } }
  * opts.validCategories: array of allowed category slugs (skip check if absent)
+ * opts.atwaterFactors: { protein, fat, carb } — the factors the SOURCE used to
+ *   compute this food's energy, when known. Defaults to the generic 4/4/9.
+ * opts.nameIsSourceDescription: true when `name` is verbatim the source
+ *   record's own description (bulk USDA import). The name-shape rules exist to
+ *   catch a food whose macros came from a DIFFERENT record than its name
+ *   implies; where name and macros are two fields of one record that mismatch
+ *   is unrepresentable, and the heuristics only produce false positives
+ *   ("Anchovies, canned in olive oil" is not an oil; "Snacks, granola bars,
+ *   almond" is not a nut). Skipped in that case, never skipped otherwise.
  * Returns { ok, issues: [{ code, detail }] }
  */
 function validateFood(food, opts = {}) {
@@ -134,18 +154,23 @@ function validateFood(food, opts = {}) {
     if (food.kcal === 0 && food.protein + food.fat + food.carb > 3) {
       issues.push({ code: "zero-kcal", detail: `kcal is 0 but macros are ${food.protein}P/${food.fat}F/${food.carb}C (incomplete source record)` });
     }
-    const aw = checkAtwater(food);
+    const aw = checkAtwater(food, opts.atwaterFactors);
     if (!aw.ok) {
       if (exemption?.atwaterExempt) {
         // documented exception — not a failure
       } else {
+        const basis = opts.atwaterFactors
+          ? ` using source factors ${opts.atwaterFactors.protein}/${opts.atwaterFactors.carb}/${opts.atwaterFactors.fat} (P/C/F)`
+          : "";
         issues.push({
           code: "atwater",
-          detail: `kcal ${Math.round(food.kcal)} vs computed ${aw.fiberAdjusted} (fiber-adj) / ${aw.classic} (classic)`,
+          detail: `kcal ${Math.round(food.kcal)} vs computed ${aw.fiberAdjusted} (fiber-adj) / ${aw.classic} (classic)${basis}`,
         });
       }
     }
-    for (const detail of checkNameShape(food)) issues.push({ code: "name-shape", detail });
+    if (!opts.nameIsSourceDescription) {
+      for (const detail of checkNameShape(food)) issues.push({ code: "name-shape", detail });
+    }
   }
   if (opts.validCategories && !opts.validCategories.includes(food.category)) {
     issues.push({ code: "category", detail: `category "${food.category}" is not one of the grocery categories` });

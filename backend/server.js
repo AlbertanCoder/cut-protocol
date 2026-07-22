@@ -93,6 +93,18 @@ app.listen(PORT, () => {
     .then((s) => {
       const status = s.empty ? "EMPTY — database may not have initialized" : s.clean ? "CLEAN" : "ATTENTION NEEDED";
       console.log(`[data-audit] ${status} â€” foods ${s.foods} (${s.foodFailures.length} failing), recipes ${s.recipes} (${s.recipeFailures.length} failing), duplicate groups ${s.duplicateGroups}`);
+      // Data-quality + provenance breakdown: which trust tier every food sits
+      // in, and how each was validated. `unvalidated` is the honest count of
+      // rows predating the USDA import pipeline — visible, never rounded away.
+      const q = s.quality;
+      console.log(`[data-audit]   quality: ${q.pass} pass, ${q.exception} documented exception, ${q.warn} warn, ${q.unvalidated} not yet validated`);
+      console.log(`[data-audit]   provenance: ${Object.entries(s.bySource).map(([k, v]) => `${k} ${v}`).join(", ")}`);
+      if (s.placeholders.length) {
+        console.log(`[data-audit]   ${s.placeholders.length} placeholder row(s) awaiting real data (no number invented): ${s.placeholders.map((p) => p.name).join(", ")}`);
+      }
+      if (s.duplicateFdcIdGroups) {
+        console.log(`[data-audit]   ${s.duplicateFdcIdGroups} fdcId(s) claimed by more than one row — run: node scripts/auditFoodProvenance.mjs`);
+      }
       if (!s.clean) {
         for (const f of s.foodFailures.slice(0, 10)) console.log(`[data-audit]   food "${f.name}": ${f.issues.join(", ")}`);
         for (const r of s.recipeFailures.slice(0, 10)) console.log(`[data-audit]   recipe "${r.name}": ${r.issues.join(", ")}`);
