@@ -148,9 +148,12 @@ const round = (n, dp = 0) => {
  * SE(slope) uses the standard weighted-least-squares sandwich with the ROBUST
  * residual scale in place of the sample SD:
  *     slope = Σ cᵢyᵢ,  cᵢ = wᵢ(xᵢ − x̄_w)/Sxx  →  Var(slope) = σ²Σcᵢ²
- * Honest caveat: this treats the converged weights as fixed and the residuals
- * as independent. Day-to-day water weight is positively autocorrelated, so the
- * true SE is somewhat WIDER than reported here (documented failure mode).
+ * Day-to-day water weight is positively autocorrelated, which would make that
+ * SE too narrow, so the lag-1 autocorrelation is estimated from the residuals
+ * and the variance inflated by (1+φ)/(1−φ) — see MAX_VARIANCE_INFLATION.
+ * Remaining caveat: the converged Huber weights are treated as fixed, and the
+ * self-benchmark shows the resulting band is still mildly optimistic at short
+ * windows (documented in docs/adaptive-tdee-methodology.md §7).
  */
 function robustWeightedFit(points, { refX, halfLife, minScale = 0 }) {
   const n = points.length;
