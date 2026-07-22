@@ -10,6 +10,7 @@ import { displayWeight, parseWeight, weightUnit, rateUnit, displayRate, weightIn
 import { Card, Stat, Btn, Chip, Stamp, Ring, MacroBar, PageHead, EmptyNote, ErrorNote } from "./ui/Parts.jsx";
 import { Skeleton, SkeletonRows } from "./ui/Skeleton.jsx";
 import { api } from "../lib/api.js";
+import MicronutrientsCard from "./MicronutrientsCard.jsx";
 
 const kc = (n) => Math.round(n).toLocaleString("en-CA");
 const r1 = (n) => Math.round(n * 10) / 10;
@@ -364,6 +365,9 @@ export default function TodayTab({ profile, summary, refresh, openTrend }) {
 
         {/* ── food diary (planned vs. actually-eaten) ── */}
         <DiaryCard date={todayStr()} macros={macros} hasPlan={todaySlots.length > 0} />
+
+        {/* ── micronutrients (from today's planned meals) ── */}
+        <MicronutrientsCard date={todayStr()} />
 
         {/* ── trend snapshot ── */}
         <Card section="CURVE" title="Trend snapshot" className="xl:col-span-7">
