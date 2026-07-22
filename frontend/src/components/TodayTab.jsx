@@ -117,7 +117,7 @@ function DiaryCard({ date, macros, hasPlan }) {
           <Plus size={12} className="inline mr-1" />Add item
         </Btn>
         {!hasPlan && (
-          <span className="text-[10.5px] font-semibold" style={{ color: C.faintLight }}>
+          <span className="text-[10.5px] font-semibold" style={{ color: C.faint }}>
             Generate a plan to enable "Ate as planned".
           </span>
         )}
@@ -125,10 +125,10 @@ function DiaryCard({ date, macros, hasPlan }) {
 
       {adding && (
         <div className="flex flex-wrap items-end gap-2 mb-4 p-3 rounded-xl" style={{ background: C.card2, border: `1px solid ${C.rule}` }}>
-          <input className="text-sm px-3 py-2 rounded-lg flex-1 min-w-[160px]" style={inpStyle} placeholder="Item name"
+          <input className="text-sm px-3 py-2 rounded-lg flex-1 min-w-[160px]" style={inpStyle} placeholder="Item name" aria-label="Item name"
             value={form.name} onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))} />
-          {[["kcal", "kcal"], ["proteinG", "P (g)"], ["carbG", "C (g)"], ["fatG", "F (g)"]].map(([k, ph]) => (
-            <input key={k} type="number" inputMode="decimal" className="text-sm px-2 py-2 rounded-lg w-20" style={inpStyle} placeholder={ph}
+          {[["kcal", "kcal", "Calories"], ["proteinG", "P (g)", "Protein grams"], ["carbG", "C (g)", "Carb grams"], ["fatG", "F (g)", "Fat grams"]].map(([k, ph, name]) => (
+            <input key={k} type="number" inputMode="decimal" className="text-sm px-2 py-2 rounded-lg w-20" style={inpStyle} placeholder={ph} aria-label={name}
               value={form[k]} onChange={(e) => setForm((f) => ({ ...f, [k]: e.target.value }))}
               onKeyDown={(e) => e.key === "Enter" && !busy && submitEntry()} />
           ))}
@@ -136,7 +136,9 @@ function DiaryCard({ date, macros, hasPlan }) {
         </div>
       )}
 
-      {note && <div className="text-xs font-semibold mb-3" style={{ color: C.warn }}>{note}</div>}
+      {/* role="alert": food-logging feedback (save failures, validation) —
+          ED-safety relevant that this reaches screen-reader users reliably. */}
+      {note && <div role="alert" className="text-xs font-semibold mb-3" style={{ color: C.warn }}>{note}</div>}
 
       {diary === undefined ? (
         <SkeletonRows rows={3} />
@@ -169,14 +171,14 @@ function DiaryCard({ date, macros, hasPlan }) {
           </div>
           {/* entries */}
           <div className="lg:col-span-7">
-            <div className="text-[10.5px] font-extrabold uppercase tracking-wide mb-1" style={{ color: C.faintLight }}>
+            <div className="text-[10.5px] font-extrabold uppercase tracking-wide mb-1" style={{ color: C.faint }}>
               {entries.length} item{entries.length === 1 ? "" : "s"} logged
             </div>
             {entries.map((e) => (
               <div key={e.id} className="flex items-center justify-between gap-3 py-2 row-host" style={{ borderBottom: `1px solid ${C.rule}` }}>
                 <div className="min-w-0">
                   <div className="text-sm font-bold truncate" style={{ color: C.ink }}>{e.name}</div>
-                  <div className="text-[10.5px] font-semibold" style={{ color: C.faintLight }}>
+                  <div className="text-[10.5px] font-semibold" style={{ color: C.faint }}>
                     {[e.slotType, DIARY_SOURCE_LABEL[e.source] || e.source].filter(Boolean).join(" · ") || "logged"}
                   </div>
                 </div>
@@ -188,7 +190,7 @@ function DiaryCard({ date, macros, hasPlan }) {
                     <Chip color={C.carbText} bg={`${C.carb}1F`}>{r1(e.carbG || 0)}C</Chip>
                   </span>
                   <button onClick={() => removeEntry(e.id)} className="row-reveal" aria-label={`Remove ${e.name}`} style={{ color: C.faintLight }}>
-                    <Trash2 size={14} />
+                    <Trash2 size={14} aria-hidden="true" />
                   </button>
                 </div>
               </div>
@@ -345,12 +347,14 @@ export default function TodayTab({ profile, summary, refresh, openTrend }) {
           <div className="flex flex-col gap-2">
             <input
               type="date" value={dIn} onChange={(e) => setDIn(e.target.value)}
+              aria-label="Weigh-in date"
               className="text-sm px-3 py-2.5 rounded-xl w-full"
               style={inpStyle}
             />
             <div className="flex gap-2">
               <input
                 type="number" inputMode="decimal" step="0.1" placeholder={wUnit}
+                aria-label={`Weight (${wUnit})`}
                 value={wIn} onChange={(e) => { setWIn(e.target.value); if (logMsg) setLogMsg(null); }}
                 onKeyDown={(e) => e.key === "Enter" && !logBusy && add()}
                 className="text-sm px-3 py-2.5 rounded-xl flex-1 min-w-0"
@@ -358,7 +362,9 @@ export default function TodayTab({ profile, summary, refresh, openTrend }) {
               />
               <Btn onClick={add} disabled={logBusy}>{logBusy ? "…" : "Log"}</Btn>
             </div>
-            {logMsg && <div className="text-xs font-semibold" style={{ color: C.warn }}>{logMsg}</div>}
+            {/* role="alert": invalid-range / save-failure feedback for the
+                weigh-in — must reach screen readers without hunting for it. */}
+            {logMsg && <div role="alert" className="text-xs font-semibold" style={{ color: C.warn }}>{logMsg}</div>}
           </div>
         </Card>
 
@@ -374,25 +380,35 @@ export default function TodayTab({ profile, summary, refresh, openTrend }) {
             <EmptyNote icon={LineChart} height={200} title="First point logged"
               hint="The curve starts with your second weigh-in — log again tomorrow." />
           ) : (
-            <div style={{ width: "100%", height: 200 }}>
-              <ResponsiveContainer>
-                <ComposedChart data={snapshot} margin={{ top: 8, right: 8, left: -18, bottom: 0 }}>
-                  <CartesianGrid stroke={C.rule} strokeDasharray="2 4" vertical={false} />
-                  <XAxis dataKey="d" tick={{ fontSize: 10, fill: C.faint, fontWeight: 600 }} tickLine={false}
-                    axisLine={{ stroke: C.rule }} minTickGap={28} />
-                  <YAxis domain={[yMin, yMax]} tick={{ fontSize: 10, fill: C.faint, fontWeight: 600 }}
-                    tickLine={false} axisLine={{ stroke: C.rule }} width={52} />
-                  <Tooltip
-                    contentStyle={{ background: C.card2, border: `1px solid ${C.rule}`, borderRadius: 12, fontSize: 12, fontWeight: 600, color: C.ink }}
-                    formatter={(val, name) => [val + " " + wUnit, name === "w" ? "daily" : "7-day avg"]}
-                  />
-                  <ReferenceLine y={goalDisplay} stroke={C.faint} strokeDasharray="6 4" />
-                  <Line type="monotone" dataKey="w" stroke={C.faintLight} strokeWidth={1.5}
-                    dot={{ r: 2, fill: C.faintLight, strokeWidth: 0 }} isAnimationActive={false} />
-                  <Line type="monotone" dataKey="a" stroke={C.accent} strokeWidth={2.5}
-                    dot={false} isAnimationActive={false} />
-                </ComposedChart>
-              </ResponsiveContainer>
+            // a11y: Recharts' SVG has no built-in screen-reader semantics.
+            // role="img" + a computed summary sentence on the wrapper give
+            // AT users the same facts a sighted user reads off the curve;
+            // the chart itself is then hidden so nothing is announced twice.
+            <div
+              role="img"
+              aria-label={`Weight trend, last ${snapshot.length} entries: ${r1(snapshot[0].w)} ${wUnit} on ${snapshot[0].d}, most recently ${r1(snapshot[snapshot.length - 1].w)} ${wUnit} on ${snapshot[snapshot.length - 1].d}. 7-day average ${r1(snapshot[snapshot.length - 1].a)} ${wUnit}, goal ${r1(goalDisplay)} ${wUnit}.`}
+              style={{ width: "100%", height: 200 }}
+            >
+              <div aria-hidden="true" style={{ width: "100%", height: "100%" }}>
+                <ResponsiveContainer>
+                  <ComposedChart data={snapshot} margin={{ top: 8, right: 8, left: -18, bottom: 0 }}>
+                    <CartesianGrid stroke={C.rule} strokeDasharray="2 4" vertical={false} />
+                    <XAxis dataKey="d" tick={{ fontSize: 10, fill: C.faint, fontWeight: 600 }} tickLine={false}
+                      axisLine={{ stroke: C.rule }} minTickGap={28} />
+                    <YAxis domain={[yMin, yMax]} tick={{ fontSize: 10, fill: C.faint, fontWeight: 600 }}
+                      tickLine={false} axisLine={{ stroke: C.rule }} width={52} />
+                    <Tooltip
+                      contentStyle={{ background: C.card2, border: `1px solid ${C.rule}`, borderRadius: 12, fontSize: 12, fontWeight: 600, color: C.ink }}
+                      formatter={(val, name) => [val + " " + wUnit, name === "w" ? "daily" : "7-day avg"]}
+                    />
+                    <ReferenceLine y={goalDisplay} stroke={C.faint} strokeDasharray="6 4" />
+                    <Line type="monotone" dataKey="w" stroke={C.faintLight} strokeWidth={1.5}
+                      dot={{ r: 2, fill: C.faintLight, strokeWidth: 0 }} isAnimationActive={false} />
+                    <Line type="monotone" dataKey="a" stroke={C.accent} strokeWidth={2.5}
+                      dot={false} isAnimationActive={false} />
+                  </ComposedChart>
+                </ResponsiveContainer>
+              </div>
             </div>
           )}
           <div className="flex items-center justify-between mt-2">
@@ -415,8 +431,8 @@ export default function TodayTab({ profile, summary, refresh, openTrend }) {
               style={{ borderBottom: `1px solid ${C.rule}` }}>
               <span className="text-sm font-semibold" style={{ color: C.faint }}>{fmtD(e.date)}</span>
               <span className="mono text-sm font-bold" style={{ color: C.ink }}>{displayWeight(e.weightKg, pref)} {wUnit}</span>
-              <button onClick={() => del(e.date)} aria-label={`Delete ${e.date}`} style={{ color: C.faintLight }}>
-                <Trash2 size={15} />
+              <button onClick={() => del(e.date)} aria-label={`Delete weigh-in from ${fmtD(e.date)}`} style={{ color: C.faintLight }}>
+                <Trash2 size={15} aria-hidden="true" />
               </button>
             </div>
           ))}

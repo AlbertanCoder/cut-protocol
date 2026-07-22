@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef, useCallback, useId } from "react";
 import { api } from "../lib/api.js";
 import { C } from "../lib/theme.js";
 
@@ -45,7 +45,7 @@ function PlanCard({ plan }) {
         </div>
       </div>
       {plan.target && (
-        <div className="px-3 py-1.5 text-[10px] font-semibold" style={{ color: C.faintLight, borderTop: `1px solid ${C.rule}` }}>
+        <div className="px-3 py-1.5 text-[10px] font-semibold" style={{ color: C.faint, borderTop: `1px solid ${C.rule}` }}>
           Target {plan.target.kcal} kcal · numbers computed by the engine
         </div>
       )}
@@ -61,6 +61,9 @@ export default function BrainChat() {
   const [messages, setMessages] = useState([]); // { role:'you'|'coach', text, tone? }
   const [sending, setSending] = useState(false);
   const scrollRef = useRef(null);
+  const toggleBtnRef = useRef(null);
+  const inputRef = useRef(null);
+  const titleId = useId();
 
   useEffect(() => {
     let alive = true;
@@ -74,6 +77,19 @@ export default function BrainChat() {
   useEffect(() => {
     if (scrollRef.current) scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
   }, [messages, open]);
+
+  // a11y: this is a floating, non-modal panel (the rest of the app stays
+  // interactive behind it), so it doesn't need a full focus trap — but it
+  // should still behave like every other openable panel: focus moves in
+  // when it opens, Escape closes it, and focus returns to the toggle button
+  // that opened it so a keyboard user isn't left stranded.
+  useEffect(() => {
+    if (open) inputRef.current?.focus();
+  }, [open]);
+  const close = useCallback(() => {
+    setOpen(false);
+    toggleBtnRef.current?.focus();
+  }, []);
 
   const send = useCallback(async (text) => {
     const msg = (text ?? input).trim();
@@ -100,6 +116,7 @@ export default function BrainChat() {
   if (!open) {
     return (
       <button
+        ref={toggleBtnRef}
         onClick={() => setOpen(true)}
         className="fixed bottom-4 right-4 z-40 flex items-center gap-2 px-4 py-2.5 rounded-full text-sm font-bold"
         style={{ background: C.accentBg, color: C.accent, border: `1px solid ${C.rule}` }}
@@ -112,17 +129,21 @@ export default function BrainChat() {
 
   return (
     <div
+      role="dialog" aria-labelledby={titleId}
+      onKeyDown={(e) => { if (e.key === "Escape") close(); }}
       className="fixed bottom-4 right-4 z-40 w-[360px] max-w-[92vw] h-[500px] max-h-[76vh] flex flex-col rounded-2xl overflow-hidden"
       style={{ background: C.cardGlass, border: `1px solid ${C.rule}`, backdropFilter: "blur(8px)" }}
     >
       <div className="flex items-center justify-between px-4 py-3" style={{ borderBottom: `1px solid ${C.rule}` }}>
-        <div className="text-sm font-extrabold" style={{ color: C.ink }}>
-          <span style={{ color: C.accent }}>✦</span> Coach <span className="text-[10px] font-bold uppercase tracking-wide ml-1" style={{ color: C.faintLight }}>beta</span>
+        <div id={titleId} className="text-sm font-extrabold" style={{ color: C.ink }}>
+          <span aria-hidden="true" style={{ color: C.accent }}>✦</span> Coach <span className="text-[10px] font-bold uppercase tracking-wide ml-1" style={{ color: C.faintLight }}>beta</span>
         </div>
-        <button onClick={() => setOpen(false)} className="text-xs font-bold px-2 py-1 rounded-lg" style={{ color: C.faint }} aria-label="Close">✕</button>
+        <button onClick={close} className="text-xs font-bold px-2 py-1 rounded-lg" style={{ color: C.faint }} aria-label="Close assistant">✕</button>
       </div>
 
-      <div ref={scrollRef} className="flex-1 overflow-y-auto px-4 py-3 flex flex-col gap-2">
+      {/* aria-live: new coach replies get announced as they arrive, without
+          re-reading the whole growing transcript every time. */}
+      <div ref={scrollRef} aria-live="polite" className="flex-1 overflow-y-auto px-4 py-3 flex flex-col gap-2">
         {messages.length === 0 ? (
           <div className="flex flex-col gap-2">
             <div className="text-xs font-semibold" style={{ color: C.faint }}>Ask about meals, macros, or swaps. I only help with food and planning.</div>
@@ -160,8 +181,9 @@ export default function BrainChat() {
             <button
               key={d}
               onClick={() => setDepth(d)}
+              aria-pressed={depth === d}
               className="text-[10px] font-bold uppercase tracking-wide px-2 py-1 rounded-full"
-              style={depth === d ? { background: C.card2, color: C.ink, border: `1px solid ${C.faintLight}` } : { background: "transparent", color: C.faintLight, border: `1px solid ${C.rule}` }}
+              style={depth === d ? { background: C.card2, color: C.ink, border: `1px solid ${C.faintLight}` } : { background: "transparent", color: C.faint, border: `1px solid ${C.rule}` }}
             >
               {d}
             </button>
@@ -169,11 +191,13 @@ export default function BrainChat() {
         </div>
         <div className="flex items-end gap-2">
           <textarea
+            ref={inputRef}
             value={input}
             onChange={(e) => setInput(e.target.value.slice(0, 500))}
             onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); send(); } }}
             rows={1}
             placeholder="Ask about your meals…"
+            aria-label="Message the meal-planning assistant"
             className="flex-1 resize-none text-[13px] font-semibold px-3 py-2 rounded-xl outline-none"
             style={{ background: C.card, color: C.ink, border: `1px solid ${C.rule}`, maxHeight: 80 }}
           />

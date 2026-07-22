@@ -119,7 +119,7 @@ export default function TrainingTab() {
                   {meta.equipment.map((eq) => {
                     const on = form.equipment.includes(eq.key);
                     return (
-                      <button key={eq.key} onClick={() => toggleEquipment(eq.key)}
+                      <button key={eq.key} onClick={() => toggleEquipment(eq.key)} aria-pressed={on}
                         className="text-xs font-bold px-3 py-1.5 rounded-full"
                         style={{ background: on ? C.card2 : "transparent", color: on ? C.ink : C.faint, border: `1px solid ${on ? C.faintLight : C.rule}` }}>
                         {eq.label}
@@ -128,9 +128,9 @@ export default function TrainingTab() {
                   })}
                 </div>
                 <Btn onClick={generate} disabled={busy}>
-                  <Sparkles size={13} className="inline mr-1" />{busy ? "Building…" : plan ? "Regenerate plan" : "Generate plan"}
+                  <Sparkles size={13} className="inline mr-1" aria-hidden="true" />{busy ? "Building…" : plan ? "Regenerate plan" : "Generate plan"}
                 </Btn>
-                <div className="text-[10.5px] font-semibold mt-2" style={{ color: C.faintLight }}>
+                <div className="text-[10.5px] font-semibold mt-2" style={{ color: C.faint }}>
                   v1 picks one of four templates (2/3-day full body, 4-day upper/lower, conditioning circuits) and adapts exercises to your equipment. Regenerating replaces the current plan.
                 </div>
               </>
@@ -160,9 +160,9 @@ export default function TrainingTab() {
               ))}
 
               <div className="flex items-center gap-1.5 mb-3 flex-wrap">
-                <span className="text-[10.5px] font-extrabold uppercase tracking-wide mr-1" style={{ color: C.faintLight }}>Week</span>
+                <span className="text-[10.5px] font-extrabold uppercase tracking-wide mr-1" style={{ color: C.faint }}>Week</span>
                 {plan.weeks.map((w) => (
-                  <button key={w.weekNumber} onClick={() => setActiveWeek(w.weekNumber)}
+                  <button key={w.weekNumber} onClick={() => setActiveWeek(w.weekNumber)} aria-current={activeWeek === w.weekNumber ? "true" : undefined}
                     className="text-xs font-bold px-3 py-1.5 rounded-lg"
                     style={{ background: activeWeek === w.weekNumber ? C.card2 : "transparent", color: activeWeek === w.weekNumber ? C.ink : C.faint, border: `1px solid ${activeWeek === w.weekNumber ? C.faintLight : C.rule}` }}>
                     {w.weekNumber}
@@ -180,14 +180,14 @@ export default function TrainingTab() {
                   <div key={s.id} className="p-3.5 rounded-xl" style={{ background: C.card2, border: `1px solid ${C.rule}` }}>
                     <div className="flex items-baseline justify-between gap-2 mb-2">
                       <div className="text-sm font-extrabold" style={{ color: C.ink }}>
-                        <ChevronRight size={13} className="inline mr-0.5" style={{ color: C.faintLight }} />{s.name}
+                        <ChevronRight size={13} className="inline mr-0.5" style={{ color: C.faintLight }} aria-hidden="true" />{s.name}
                       </div>
-                      {s.focus && <div className="text-[10.5px] font-semibold" style={{ color: C.faintLight }}>{s.focus}</div>}
+                      {s.focus && <div className="text-[10.5px] font-semibold" style={{ color: C.faint }}>{s.focus}</div>}
                     </div>
                     <div className="overflow-x-auto">
                       <table className="w-full text-xs" style={{ color: C.ink }}>
                         <thead>
-                          <tr className="text-left" style={{ color: C.faintLight }}>
+                          <tr className="text-left" style={{ color: C.faint }}>
                             <th className="font-bold py-1 pr-2">Exercise</th>
                             <th className="font-bold py-1 pr-2">Sets</th>
                             <th className="font-bold py-1 pr-2">Reps</th>
@@ -198,11 +198,11 @@ export default function TrainingTab() {
                         <tbody>
                           {s.exercises.map((e) => (
                             <tr key={e.id} style={{ borderTop: `1px solid ${C.rule}` }}>
-                              <td className="font-semibold py-1.5 pr-2">{e.name}{e.notes ? <span style={{ color: C.faintLight }}> — {e.notes}</span> : ""}</td>
+                              <td className="font-semibold py-1.5 pr-2">{e.name}{e.notes ? <span style={{ color: C.faint }}> — {e.notes}</span> : ""}</td>
                               <td className="mono font-bold py-1.5 pr-2">{e.sets}</td>
                               <td className="mono font-bold py-1.5 pr-2">{e.reps}</td>
                               <td className="mono font-bold py-1.5 pr-2">{e.rpe ?? "—"}</td>
-                              <td className="mono py-1.5" style={{ color: C.faintLight }}>{e.restSec ? `${e.restSec}s` : "—"}</td>
+                              <td className="mono py-1.5" style={{ color: C.faint }}>{e.restSec ? `${e.restSec}s` : "—"}</td>
                             </tr>
                           ))}
                         </tbody>
