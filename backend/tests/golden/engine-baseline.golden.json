@@ -528,7 +528,128 @@
       ],
       "score": {
         "daysInTolerance": 4,
-        "avgMatch": 67
+        "avgMatch": 67,
+        "days": [
+          {
+            "dayOfWeek": 0,
+            "dayName": "Monday",
+            "matchPct": 95,
+            "totals": {
+              "kcal": 2126,
+              "protein": 182,
+              "fat": 95,
+              "carb": 130
+            },
+            "kcalDeltaPct": -3.4,
+            "proteinShortPct": 4,
+            "inTolerance": true,
+            "miss": null,
+            "unfilledSlots": 0,
+            "warnedSlots": 0
+          },
+          {
+            "dayOfWeek": 1,
+            "dayName": "Tuesday",
+            "matchPct": 19,
+            "totals": {
+              "kcal": 289,
+              "protein": 26,
+              "fat": 13,
+              "carb": 21
+            },
+            "kcalDeltaPct": -86.9,
+            "proteinShortPct": 86.1,
+            "inTolerance": false,
+            "miss": "289 kcal vs a 2,200 target — 1,911 under; 26 g protein vs 190 g — 164 g short",
+            "unfilledSlots": 2,
+            "warnedSlots": 3
+          },
+          {
+            "dayOfWeek": 2,
+            "dayName": "Wednesday",
+            "matchPct": 98,
+            "totals": {
+              "kcal": 2201,
+              "protein": 190,
+              "fat": 99,
+              "carb": 130
+            },
+            "kcalDeltaPct": 0,
+            "proteinShortPct": 0,
+            "inTolerance": true,
+            "miss": null,
+            "unfilledSlots": 0,
+            "warnedSlots": 0
+          },
+          {
+            "dayOfWeek": 3,
+            "dayName": "Thursday",
+            "matchPct": 100,
+            "totals": {
+              "kcal": 2190,
+              "protein": 189,
+              "fat": 65,
+              "carb": 195
+            },
+            "kcalDeltaPct": -0.4,
+            "proteinShortPct": 0.5,
+            "inTolerance": true,
+            "miss": null,
+            "unfilledSlots": 0,
+            "warnedSlots": 0
+          },
+          {
+            "dayOfWeek": 4,
+            "dayName": "Friday",
+            "matchPct": 55,
+            "totals": {
+              "kcal": 1061,
+              "protein": 100,
+              "fat": 46,
+              "carb": 77
+            },
+            "kcalDeltaPct": -51.8,
+            "proteinShortPct": 47.5,
+            "inTolerance": false,
+            "miss": "1,061 kcal vs a 2,200 target — 1,139 under; 100 g protein vs 190 g — 90 g short",
+            "unfilledSlots": 0,
+            "warnedSlots": 3
+          },
+          {
+            "dayOfWeek": 5,
+            "dayName": "Saturday",
+            "matchPct": 97,
+            "totals": {
+              "kcal": 2098,
+              "protein": 188,
+              "fat": 60,
+              "carb": 184
+            },
+            "kcalDeltaPct": -4.6,
+            "proteinShortPct": 1,
+            "inTolerance": true,
+            "miss": null,
+            "unfilledSlots": 0,
+            "warnedSlots": 0
+          },
+          {
+            "dayOfWeek": 6,
+            "dayName": "Sunday",
+            "matchPct": 6,
+            "totals": {
+              "kcal": 0,
+              "protein": 0,
+              "fat": 0,
+              "carb": 0
+            },
+            "kcalDeltaPct": -100,
+            "proteinShortPct": 100,
+            "inTolerance": false,
+            "miss": "0 kcal vs a 2,200 target — 2,200 under; 0 g protein vs 190 g — 190 g short",
+            "unfilledSlots": 3,
+            "warnedSlots": 3
+          }
+        ]
       },
       "diagnosis": {
         "feasible": false,
@@ -540,7 +661,8 @@
           "Allow batch-cooking repeats, reduce meals per day, or AI-generate more compliant recipes.",
           "Set the protein-preference filter, or AI-generate a few high-protein recipes to deepen the pool."
         ]
-      }
+      },
+      "attempts": 3
     },
     "dayCandidates": {
       "dayOfWeek": 0,
@@ -902,10 +1024,12 @@
         "feasible": false,
         "reasons": [
           "8 meal-eligible recipes × max 2 servings/week = 16 servings for 21 meal slots — the back half of the week will run on poor fits.",
+          "Your library has no snack-sized recipe that fits your rules — all 7 snack slots this week come back empty.",
           "Your targets need ~8.6g protein per 100 kcal; only 8 of 8 eligible recipes come close (12+ needed for a full varied week)."
         ],
         "suggestions": [
           "Allow batch-cooking repeats, reduce meals per day, or AI-generate more compliant recipes.",
+          "Set snacks per day to 0 and fold those calories into your meals, or AI-generate a few compliant snacks on the Recipes tab.",
           "Set the protein-preference filter, or AI-generate a few high-protein recipes to deepen the pool."
         ]
       },
