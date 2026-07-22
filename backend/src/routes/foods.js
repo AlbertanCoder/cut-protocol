@@ -4,6 +4,8 @@ const { requireAuth } = require("../lib/auth.js");
 const { validateFood, computeRecipeMacros } = require("../lib/foodValidation.js");
 const { CATEGORY_SLUGS } = require("../lib/foodCategories.js");
 const { loadFoodOverrides } = require("../lib/foodOverrides.js");
+const { lookupUpc, normalizeUpc } = require("../lib/openFoodFactsClient.js");
+const { assessImport, candidateFromOffProduct } = require("../lib/offImport.js");
 
 const router = express.Router();
 router.use(requireAuth);
@@ -11,6 +13,82 @@ router.use(requireAuth);
 router.get("/", async (req, res) => {
   const foods = await prisma.food.findMany({ orderBy: [{ category: "asc" }, { name: "asc" }] });
   res.json(foods);
+});
+
+// ── Open Food Facts barcode lookup (barcode-off track) ──────────────────
+// Manual UPC entry is the primary path (CLAUDE.md track brief). Two steps,
+// mirroring the recipe importer's fetch→review→save shape: GET previews
+// what OFF has and how it scored against the shared validator WITHOUT
+// writing anything, so a shopper can see a flagged/rejected panel before
+// deciding; POST actually saves. Neither step ever touches
+// backend/scripts/** or the validator itself — both are imported read-only.
+
+// GET /foods/lookup-upc/:upc — preview only, never writes to the DB.
+router.get("/lookup-upc/:upc", async (req, res) => {
+  const upc = normalizeUpc(req.params.upc);
+  const existing = await prisma.food.findUnique({ where: { upc } });
+  if (existing) return res.json({ alreadyImported: true, food: existing });
+
+  let product;
+  try {
+    product = await lookupUpc(upc);
+  } catch (e) {
+    return res.status(502).json({ error: `Open Food Facts lookup failed: ${e.message}` });
+  }
+  if (!product.found) return res.status(404).json({ found: false, reason: product.reason });
+
+  const candidate = candidateFromOffProduct(product);
+  const assessment = assessImport(candidate);
+  res.json({
+    found: true,
+    product,
+    candidate,
+    verdict: assessment.verdict, // "pass" | "warn" | "reject"
+    dataQuality: assessment.dataQuality,
+    issues: assessment.issues,
+    importable: assessment.verdict !== "reject",
+  });
+});
+
+// POST /foods/import-upc { upc } — re-fetches and re-validates itself
+// rather than trusting any client-supplied macro number, then saves.
+// source is hard-pinned to "community" here (not merely by convention) —
+// this route structurally cannot create a "usda-verified" row, and it
+// never overwrites an existing food (of ANY provenance) for the same UPC.
+router.post("/import-upc", async (req, res) => {
+  const upc = normalizeUpc(req.body?.upc);
+  if (!upc) return res.status(400).json({ error: "upc is required" });
+
+  const existing = await prisma.food.findUnique({ where: { upc } });
+  if (existing) return res.json({ alreadyImported: true, food: existing });
+
+  let product;
+  try {
+    product = await lookupUpc(upc);
+  } catch (e) {
+    return res.status(502).json({ error: `Open Food Facts lookup failed: ${e.message}` });
+  }
+  if (!product.found) return res.status(404).json({ found: false, reason: product.reason });
+
+  const candidate = candidateFromOffProduct(product);
+  const assessment = assessImport(candidate);
+  if (assessment.verdict === "reject") {
+    return res.status(422).json({
+      error: "this product's Open Food Facts panel doesn't reconcile with itself — not imported",
+      issues: assessment.issues,
+      product,
+    });
+  }
+
+  try {
+    const food = await prisma.food.create({
+      data: { ...candidate, source: "community", dataQuality: assessment.dataQuality },
+    });
+    res.status(201).json({ food, verdict: assessment.verdict, issues: assessment.issues, notes: product.notes });
+  } catch (e) {
+    if (e.code === "P2002") return res.status(409).json({ error: "a food with this UPC already exists" });
+    throw e;
+  }
 });
 
 const EDITABLE = ["name", "category", "kcal", "protein", "fat", "carb", "fiber"];
