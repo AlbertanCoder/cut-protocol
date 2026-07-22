@@ -1,0 +1,20 @@
+<!doctype html>
+<html><head><title>Site With Stub JSON-LD</title>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"Recipe","name":"Site With Stub JSON-LD","recipeIngredient":[]}
+</script>
+</head>
+<body>
+<!-- Some sites emit a stub/incomplete Recipe JSON-LD block (SEO plugin default)
+     alongside real content only expressed in the page markup itself. -->
+<div itemscope itemtype="https://schema.org/Recipe">
+  <span itemprop="name">Real Recipe Name</span>
+  <span itemprop="recipeYield">3 servings</span>
+  <ul>
+    <li itemprop="recipeIngredient">1 cup rice</li>
+    <li itemprop="recipeIngredient">2 cups water</li>
+    <li itemprop="recipeIngredient">1 tsp salt</li>
+  </ul>
+  <div itemprop="recipeInstructions">Combine rice, water, and salt in a pot. Bring to a boil, cover, and simmer 18 minutes.</div>
+</div>
+</body></html>
