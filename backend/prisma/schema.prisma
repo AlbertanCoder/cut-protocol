@@ -117,21 +117,56 @@ model Weighin {
 
 // Foods/recipes are a shared library, not per-user — this is a single-user
 // app for now, and a shared curated library is the simpler model regardless.
+// Bulk-import scale change: `name` was @unique when this table held ~864 curated
+// rows. A USDA FoodData Central import (Foundation + SR Legacy + FNDDS) collides on
+// that constraint immediately — FDC ships duplicate descriptions across its datasets,
+// and Open Food Facts branded rows collide harder still. Uniqueness therefore moves
+// off the display name and onto the two real external identifiers. Nullable @unique
+// permits many NULLs under SQLite, so hand-entered foods are unaffected.
 model Food {
   id       String   @id @default(cuid())
-  name     String   @unique
+  name     String
   category String // "protein" | "carb" | "veg" | "fat" | "dairy" | "other"
+  // NOT @unique yet — deliberately deferred. As of 2026-07-21 the table holds 140
+  // fdcId groups with >1 row (382 rows; ~242 of them carrying a DIFFERENT food's
+  // macros under source="usda" — e.g. fdcId 170160 "Nuts, almond paste" was fuzzy
+  // name-matched onto Red Curry / Ginger Garlic / Tahini / Galangal paste, copying
+  // 458 kcal & 9g protein onto all of them). The unique constraint is the permanent
+  // fix that makes this class of bug unrepresentable, but it cannot be applied until
+  // those rows are re-derived from real FDC data. Add it in the follow-up migration
+  // that lands the cleanup — see docs/audit/food-provenance-integrity.md.
   fdcId    Int? // USDA FoodData Central id — null for hand-entered items
+  upc      String?  @unique // barcode / GTIN for Open Food Facts lookups — null for unbranded
+  brand    String? // branded-food manufacturer; null for generic/whole foods
   // per 100g
   kcal     Float
   protein  Float
   fat      Float
   carb     Float
   fiber    Float    @default(0)
-  source   String   @default("manual") // "manual" | "manual-placeholder" | "usda"
+  // Provenance tier — never silently mixed, always visibly distinct in the UI.
+  // "usda-verified" (FDC Foundation/SR Legacy/FNDDS, Atwater-validated)
+  // "label"         (manufacturer-declared panel)
+  // "community"     (Open Food Facts — crowd-sourced, lower trust, tagged as such)
+  // "ai-estimated"  (model-derived, always carries "verify me")
+  // "manual" | "manual-placeholder" (hand-entered, pre-import legacy rows)
+  source   String   @default("manual")
+  // Fiber-adjusted-Atwater validator verdict recorded at import time:
+  // "pass" | "warn:<reason>" | "exception:<documented-reason>". Null = not yet run
+  // (all pre-import rows). Surfaced by the startup [data-audit] report.
+  dataQuality String?
+  // Micronutrients per 100g as { nutrientKey: amount } in the canonical units
+  // declared by the nutrient registry (see backend/src/lib/nutrients.js). Stored as
+  // one JSON column rather than 40+ scalar columns: adding a nutrient must not cost
+  // a migration, and a normalized FoodNutrient table would put ~2M rows in SQLite for
+  // 50k foods. Null = no micronutrient data for this food (honest absence, not zero).
+  micros   Json?
   createdAt DateTime @default(now())
 
   ingredientOf RecipeIngredient[]
+
+  @@index([name])
+  @@index([source])
 }
 
 model Recipe {

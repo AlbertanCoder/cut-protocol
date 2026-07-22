@@ -19,7 +19,9 @@ let added = 0;
 for (const f of FOODS) {
   const at = 4 * f.protein + 4 * f.carb + 9 * f.fat;
   if (Math.abs(f.kcal - at) > 0.15 * Math.max(f.kcal, at)) { console.log(`SKIP ${f.name} — atwater ${f.kcal} vs ${at}`); continue; }
-  if (await prisma.food.findUnique({ where: { name: f.name } })) { console.log(`exists: ${f.name}`); continue; }
+  // findFirst, not findUnique: Food.name lost its @unique when the table was opened
+  // up for bulk FDC/OFF import (duplicate descriptions are normal at that scale).
+  if (await prisma.food.findFirst({ where: { name: f.name } })) { console.log(`exists: ${f.name}`); continue; }
   await prisma.food.create({ data: { ...f, source: "manual" } });
   console.log(`added: ${f.name} (${f.protein}gP/${f.kcal}kcal)`);
   added++;
