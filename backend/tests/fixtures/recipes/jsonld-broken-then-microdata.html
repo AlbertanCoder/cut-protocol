@@ -1,0 +1,35 @@
+<!doctype html>
+<html><head><title>Simple Tomato Soup</title>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"Recipe","name":"Simple Tomato Soup",
+ "recipeIngredient": ["2 cans crushed tomatoes",] // trailing comma + comment: real sites ship this
+}
+</script>
+</head>
+<body>
+<!-- The JSON-LD above is malformed (trailing comma, stray comment) and unparseable.
+     This site ALSO ships microdata as a fallback, which real-world duplicate-markup
+     pages sometimes do. -->
+<div itemscope itemtype="https://schema.org/Recipe">
+  <h1 itemprop="name">Simple Tomato Soup</h1>
+  <p itemprop="description">A five-ingredient weeknight soup.</p>
+  <span itemprop="recipeYield">4 servings</span>
+  <time itemprop="totalTime" datetime="PT30M"></time>
+  <span itemprop="recipeCuisine">American</span>
+  <h2>Ingredients</h2>
+  <ul>
+    <li itemprop="recipeIngredient">2 cans (14.5 oz) crushed tomatoes</li>
+    <li itemprop="recipeIngredient">1 onion, diced</li>
+    <li itemprop="recipeIngredient">2 cloves garlic, minced</li>
+    <li itemprop="recipeIngredient">2 cups vegetable broth</li>
+    <li itemprop="recipeIngredient">1/2 cup heavy cream</li>
+  </ul>
+  <div itemprop="recipeInstructions">
+    <ol>
+      <li>Saute onion and garlic until soft.</li>
+      <li>Add tomatoes and broth, simmer 15 minutes.</li>
+      <li>Blend smooth, stir in cream.</li>
+    </ol>
+  </div>
+</div>
+</body></html>
