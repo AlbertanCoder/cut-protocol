@@ -5,8 +5,16 @@ const { verifyPassword, signToken, setSessionCookie, clearSessionCookie, require
 const router = express.Router();
 
 router.post("/login", async (req, res) => {
-  const { password } = req.body || {};
-  const email = req.body?.email?.trim().toLowerCase();
+  const body = req.body || {};
+  // Type-check BEFORE any string method: a non-string email (e.g. a Prisma
+  // operator object {"$ne":null}) used to hit .trim() and 500. Rejecting
+  // non-strings up front both fixes that and stops such objects ever reaching
+  // the prisma where-clause. (QC gauntlet v2, 2026-07-23.)
+  if (typeof body.email !== "string" || typeof body.password !== "string") {
+    return res.status(400).json({ error: "email and password required" });
+  }
+  const password = body.password;
+  const email = body.email.trim().toLowerCase();
   if (!email || !password) return res.status(400).json({ error: "email and password required" });
 
   const user = await prisma.user.findUnique({ where: { email } });
