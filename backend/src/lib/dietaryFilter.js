@@ -284,9 +284,17 @@ const CATEGORY_SYNONYMS = {
   // Peanuts are legumes — a peanut allergy is NOT a tree-nut allergy and
   // vice-versa, so these are deliberately separate lists.
   peanuts: ["peanut", "peanuts", "groundnut", "peanut butter", "peanut oil", "satay"],
+  // THIS is the key the UI's "Tree nuts" checkbox actually sends (see
+  // routes/profile.js allergyOptions). It MUST stay in sync with `nuts` above —
+  // a QC persona (2026-07-23) found chestnut/nutella missing HERE while present
+  // in `nuts`, so an anaphylactic tree-nut user was served "Cooked Chestnut".
+  // A drift-guard test (tests/qc/treeNutParity.test.js) now asserts the two keys
+  // agree on the critical terms. chestnut uses the water-chestnut word-guard in
+  // matchesExclusionTerm.
   "tree nuts": [
     "almond", "walnut", "cashew", "pecan", "pistachio", "hazelnut",
-    "macadamia", "brazil nut", "pine nut", "praline", "marzipan", "amaretto",
+    "macadamia", "brazil nut", "pine nut", "praline", "pralines", "marzipan", "amaretto",
+    "chestnut", "nutella", "gianduja",
     "nut butter", "mixed nuts", "nut mix", "trail mix",
   ],
   sesame: ["sesame", "tahini", "halva", "benne", "gomashio", "hummus", "houmous"],

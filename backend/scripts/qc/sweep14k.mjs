@@ -26,7 +26,9 @@ const { matchesExclusionTerm } = require(path.join(HERE, "..", "..", "src", "lib
 const { prisma } = require(path.join(HERE, "..", "..", "src", "lib", "prisma.js"));
 const O = await import("./oracle.mjs");
 
-const CATS = ["gluten", "shellfish", "dairy", "soy", "nuts", "eggs", "fish", "kiwi", "peanuts", "sesame"];
+// The keys the UI checkboxes actually send (see routes/profile.js). "tree nuts",
+// not "nuts" — testing the wrong key hid a real tree-nut leak from the sweep.
+const CATS = ["gluten", "shellfish", "dairy", "soy", "tree nuts", "eggs", "fish", "kiwi", "peanuts", "sesame"];
 
 // Held-out KNOWN-SAFE near-misses: the app must NOT exclude these (false-exclusion
 // bar). Each is a plant/analog look-alike of the category's trigger word.
