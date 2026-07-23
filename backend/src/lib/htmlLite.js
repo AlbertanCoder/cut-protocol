@@ -48,6 +48,8 @@ function parseAttrs(src) {
 }
 
 /** html string -> tree of { tag, attrs, children, parent } / { text } nodes. */
+const MAX_TREE_DEPTH = 500; // guards recursive tree walks against stack overflow
+
 function parseHtmlTree(html) {
   const root = { tag: "#root", attrs: {}, children: [], parent: null };
   const stack = [root];
@@ -106,7 +108,11 @@ function parseHtmlTree(html) {
         i = cm ? j + 1 + cm.index + cm[0].length : n;
         continue;
       }
-      if (!VOID_ELEMENTS.has(tagName) && !selfClosing) {
+      // Depth cap (QC v2): a pathologically nested page ("<div>"×20000) used to
+      // build a tree so deep that any recursive walk of it overflowed the stack.
+      // Beyond MAX_DEPTH we stop descending — deeper tags still parse, they just
+      // attach at the cap level. Real recipe pages nest well under this.
+      if (!VOID_ELEMENTS.has(tagName) && !selfClosing && stack.length < MAX_TREE_DEPTH) {
         stack.push(node);
         current = node;
       }

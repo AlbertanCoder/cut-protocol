@@ -30,6 +30,8 @@ Timestamped, append-only. Format: `[ISO8601] PHASE-N: action — result`.
 [2026-07-23T04:10:00Z] PHASE-3(sec): IDOR/injection/ED-safety harness (2 accounts). FINDING P1 — POST /api/auth/login 500 on a non-string email (.trim before type-check; Prisma-operator object). NOT a bypass (0 P0). FIX: type-check strings up front. Re-run 0/0. Regression tests/qc/authInjection.test.js. Suite 637->639.
 [2026-07-23T04:20:00Z] PHASE-3(sec): SSRF — importer validated protocol but not host; would fetch loopback/link-local/private. FIX: isBlockedHost() guard before fetch. Regression tests/qc/importerSsrf.test.js. Suite 639->641.
 [2026-07-23T04:25:00Z] PHASE-1A: 10k re-run with the independent oracle + all allergen/injection/SSRF fixes IN PROGRESS (background).
+[2026-07-23T04:40:00Z] PHASE-3(importer): hostile HTML + ingredient fuzz. Two real P2s: (a) absurd qty ("1"×10000) -> parseFloat Infinity -> grams=Infinity (would corrupt a stored recipe). (b) deeply-nested HTML ("<div>"×20000) -> recursive tree walk stack overflow. FIX: qty capped at 1e6 (else honest null); htmlLite tree depth capped at 500. Regression tests/qc/importerFuzz.test.js (5, incl. a <500ms ReDoS bound). XSS static audit: 0 raw-HTML sinks in the frontend (React escapes). Suite 641->646.
+[2026-07-23T04:45:00Z] PHASE-1A DONE: 10k re-run with the INDEPENDENT oracle -> **P0 total 0**, network 0. The same oracle flagged 339 P0 on the first 1k (pre-fix); 0 across 10k post-fix. Allergen leaks closed at scale, verified by the trustworthy verifier. Outcomes: off-target-declared 8262, converged 1494, honest-unsolvable 244.
 ```
 
 ## Findings ledger (v2 so far)

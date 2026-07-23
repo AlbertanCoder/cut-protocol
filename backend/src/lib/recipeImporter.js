@@ -434,7 +434,15 @@ function parseSingleQtyToken(s) {
   m = s.match(/^(\d+)\s*\/\s*(\d+)/); // simple fraction "3/4"
   if (m && +m[2] !== 0) return { qty: +m[1] / +m[2], len: m[0].length };
   m = s.match(/^(\d+(?:[.,]\d+)?)/); // decimal/integer; "1,5" (EU decimal comma)
-  if (m) return { qty: parseFloat(m[1].replace(",", ".")), len: m[0].length };
+  if (m) {
+    // Cap absurd quantities: parseFloat of a many-digit string is Infinity,
+    // which propagated to grams=Infinity and would corrupt a stored recipe.
+    // An unrealistically large amount (>1e6 of any unit) is treated as an
+    // unparseable quantity — honest null beats a poisoned number. (QC v2.)
+    const q = parseFloat(m[1].replace(",", "."));
+    if (!Number.isFinite(q) || q > 1e6) return null;
+    return { qty: q, len: m[0].length };
+  }
   return null;
 }
 
