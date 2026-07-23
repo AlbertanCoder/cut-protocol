@@ -11,7 +11,7 @@
 | 1A | Monte Carlo 1k → 10k → 100k | 1k re-run w/ independent oracle done; 10k/100k next |
 | 1B | Longitudinal adaptive-TDEE journeys (≥2,000) | NOT STARTED |
 | 1C | Invariants / determinism / coverage | NOT STARTED |
-| 1D | 14k-library sweeps (allergy / nutrition / micros / provenance) | PARTIAL (allergy sweep exists) |
+| 1D | 14k-library sweeps: allergen **DONE**; nutrition/micros/provenance next | PARTIAL |
 | 2 | UI persona walkthroughs | **BLOCKED — Chrome extension not connected** |
 | 3 | Break-it (fuzz / authz / injection / SSRF / ED-safety) | v1 basic done; v2 expansion pending |
 | 4 | Triage → fix → re-run | pending findings |
@@ -41,7 +41,11 @@ soybean oil deliberately still permitted). **Re-run proof: 1k MC seed 42, P0 339
 | finding | sev | fix | regression | before → after |
 |---|---|---|---|---|
 | `soy` allergen omitted TVP → served to soy-allergic users | **P0** | TVP/TSP/soy-protein forms added to `dietaryFilter.soy` | `tests/qc/soyTvpLeak.test.js` | 329 leak instances → **0** |
-| (oracle self) peanut butter false-flagged as dairy | — | category-scoped plant-dairy stripping in oracle | `oracle-selfcheck.test.js` | 10 false pos → 0 |
+| `nuts` omitted chestnut/nutella/praline → "Cooked Chestnut" shipped in a recipe | **P0** | added terms + a water-chestnut guard | `tests/qc/soyTvpLeak.test.js` | 1 reachable recipe → **0** |
+| gelato→dairy, natto→soy, triticale/matzo/graham→gluten uncaught (non-reachable) | P1 | added to the respective lists | same | corpus gaps closed |
+| (oracle self) peanut butter false-flagged as dairy; bare "bran"/"flour" over-claimed gluten | — | plant-dairy stripping + narrowed gluten list | `oracle-selfcheck.test.js` | verifier false pos → 0 |
+
+**14k allergen sweep:** started at 31 leak candidates → **0 solver-reachable leaks** in every category. 11 residuals remain, all 0-recipe USDA edge foods (infant formula, "X as ingredient in omelet"), deferred with rationale. 3 false-exclusions (rice flour / corn tortilla under gluten) left as deliberate safe-direction over-exclusion — narrowing them would weaken allergen safety.
 
 ## Re-run commands
 _(wired into package.json before being cited)_

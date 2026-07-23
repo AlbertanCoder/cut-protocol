@@ -47,7 +47,11 @@ const MEAL_CATS_BANNED_IN_MEAL = new Set(["dessert", "beverage", "condiment_or_s
 // <-soy, surimi<-fish, ...). Multiword terms match as substrings; single words
 // match on word boundaries.
 export const AUDIT_ALLERGENS = {
-  gluten: ["wheat", "flour", "all-purpose flour", "bread", "breadcrumb", "panko", "semolina", "durum", "farina", "spelt", "kamut", "rye", "barley", "malt", "bulgur", "couscous", "seitan", "bran", "graham", "matzo", "matzah", "orzo", "farro", "triticale", "pasta", "noodle", "macaroni", "spaghetti", "cracker", "beer", "soy sauce"],
+  // NB: bare "flour" and "bran" are DELIBERATELY excluded — rice/almond/corn
+  // flour and oat/rice/corn/sorghum bran are gluten-FREE, so those broad terms
+  // make the verifier over-claim leaks. "wheat" + the specific grains catch the
+  // real cases without the false positives.
+  gluten: ["wheat", "wheat flour", "wheat bran", "all-purpose flour", "breadcrumb", "panko", "semolina", "durum", "farina", "spelt", "kamut", "rye", "barley", "malt", "bulgur", "couscous", "seitan", "graham", "matzo", "matzah", "orzo", "farro", "triticale", "macaroni", "spaghetti", "beer", "soy sauce"],
   dairy: ["milk", "cream", "butter", "buttermilk", "cheese", "yogurt", "yoghurt", "whey", "casein", "caseinate", "ghee", "lactose", "custard", "kefir", "curd", "paneer", "ricotta", "mozzarella", "parmesan", "cheddar", "feta", "gelato", "ice cream", "half-and-half", "condensed milk", "evaporated milk"],
   shellfish: ["shrimp", "prawn", "crab", "lobster", "crayfish", "crawfish", "langoustine", "scampi", "mussel", "clam", "oyster", "scallop", "cockle", "whelk", "abalone", "squid", "calamari", "octopus", "cuttlefish"],
   soy: ["soy", "soya", "soybean", "edamame", "tofu", "tempeh", "miso", "natto", "tamari", "soy sauce", "lecithin", "textured vegetable protein", "tvp", "soy protein"],

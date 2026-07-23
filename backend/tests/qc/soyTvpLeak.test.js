@@ -23,6 +23,22 @@ test("soy exclusion still catches the classic forms", () => {
   }
 });
 
+test("QC v2 1D sweep: nut leaks closed, water-chestnut guard holds", () => {
+  for (const n of ["Cooked Chestnut", "Chestnut flour", "Nutella sandwich on white bread", "Candies, praline", "Marzipan"]) {
+    assert.equal(matchesExclusionTerm(n, "nuts"), true, `${n} should be a nut`);
+  }
+  // WATER chestnut is an aquatic vegetable, NOT a tree nut — must survive.
+  assert.equal(matchesExclusionTerm("Water chestnut, raw", "nuts"), false, "water chestnut is not a nut");
+  assert.equal(matchesExclusionTerm("Water chestnuts, canned", "nuts"), false, "water chestnuts (plural) not a nut");
+});
+
+test("QC v2 1D sweep: gelato->dairy, natto->soy, triticale/matzo->gluten", () => {
+  assert.equal(matchesExclusionTerm("Gelato, vanilla", "dairy"), true);
+  assert.equal(matchesExclusionTerm("Natto", "soy"), true);
+  assert.equal(matchesExclusionTerm("Triticale", "gluten"), true);
+  assert.equal(matchesExclusionTerm("Soup, Matzo ball", "gluten"), true);
+});
+
 test("false-exclusion boundary: soybean OIL stays permitted, non-soy foods unaffected", () => {
   // Oil was deliberately left out of the fix; the primary account permits it.
   assert.equal(matchesExclusionTerm("Soybean oil", "soy"), true); // "soybean" matches — acceptable over-exclusion, documented
