@@ -8,12 +8,12 @@
 |---|---|---|
 | 0 | Harness + INDEPENDENT oracle (no engine imports; curated allergen list) | **DONE** |
 | 0.5 | Oracle self-validation gate (hand-labeled fixtures) | **DONE — 10/10 pass** |
-| 1A | Monte Carlo 1k → 10k → 100k | 1k re-run w/ independent oracle done; 10k/100k next |
-| 1B | Longitudinal adaptive-TDEE journeys (≥2,000) | NOT STARTED |
-| 1C | Invariants / determinism / coverage | NOT STARTED |
-| 1D | 14k-library sweeps: allergen **DONE**; nutrition/micros/provenance next | PARTIAL |
+| 1A | Monte Carlo 1k → 10k → 100k | 1k re-run w/ independent oracle done; **10k in progress**; 100k next |
+| 1B | Longitudinal adaptive-TDEE journeys (≥2,000) | NOT STARTED (partly gated on the step-cap owner decision) |
+| 1C | Invariants / determinism / coverage | **DONE** (9 green; coverage pass pending) |
+| 1D | 14k sweeps: allergen **DONE** · nutrition+provenance **DONE** · micros next | MOSTLY DONE |
 | 2 | UI persona walkthroughs | **BLOCKED — Chrome extension not connected** |
-| 3 | Break-it (fuzz / authz / injection / SSRF / ED-safety) | v1 basic done; v2 expansion pending |
+| 3 | Break-it: security (IDOR/injection/ED-safety/SSRF) **DONE** · importer-HTML/XSS/barcode next | PARTIAL |
 | 4 | Triage → fix → re-run | pending findings |
 
 ## Owner decisions outstanding (see RUNLOG STOP-AND-SURFACE queue)
