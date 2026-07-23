@@ -137,7 +137,9 @@ export default function EngineTab({ profile, summary, refresh, openFoods, openPr
           </div>
           {target.floored && (
             <div className="text-xs font-bold mt-1" style={{ color: C.warn }}>
-              The raw math wanted {kc(target.raw)} — clamped to your floor. The chosen rate won't be fully reached through diet alone.
+              The raw math wanted {kc(target.raw)} — clamped to your floor. At {kc(target.target)} you'll lose
+              about {target.achievableRate} lb/wk through food alone, not the {target.rate} you picked. To go
+              faster, add movement — not less food.
             </div>
           )}
           {adaptiveOn && (

@@ -364,7 +364,10 @@ export default function ProfileTab({ profile, summary, refresh }) {
               <div className="text-xs font-semibold" style={{ color: C.faint }}>Daily target</div>
               <div className="mono stat-hero text-3xl" style={{ color: C.ink }}>{kc(summary.target?.target ?? profile.targetKcal)}<span className="text-xs ml-1" style={{ color: C.faint, fontWeight: 600 }}>kcal</span></div>
               <div className="text-[10.5px] font-semibold mt-0.5" style={{ color: C.faint }}>
-                TDEE {kc(summary.energy?.tdee ?? 0)} − {kc(summary.target?.deficit ?? 0)} deficit{summary.target?.floored ? " → floored" : ""}
+                TDEE {kc(summary.energy?.tdee ?? 0)} − {kc(summary.target?.deficit ?? 0)} deficit
+                {summary.target?.floored && (
+                  <span style={{ color: C.warn }}> → held at floor · ~{summary.target.achievableRate} lb/wk actual</span>
+                )}
               </div>
             </div>
             <div>

@@ -273,7 +273,7 @@ export default function TodayTab({ profile, summary, refresh, openTrend }) {
 
   return (
     <div>
-      <PageHead title="Today" sub={`Day ${daysIn} of protocol · target ${kc(target?.target ?? profile.targetKcal)} kcal · plan: ${profile.rateLbPerWeek} lb/wk`} />
+      <PageHead title="Today" sub={`Day ${daysIn} of protocol · target ${kc(target?.target ?? profile.targetKcal)} kcal · plan: ${target?.floored ? `~${target.achievableRate} lb/wk (held at your floor)` : `${profile.rateLbPerWeek} lb/wk`}`} />
 
       <div className="grid grid-cols-1 xl:grid-cols-12 gap-4 items-start">
         {/* ── planned vs target ── */}
