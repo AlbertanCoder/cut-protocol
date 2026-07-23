@@ -60,14 +60,24 @@ export default function EngineTab({ profile, summary, refresh, openFoods, openPr
             // default-off (absent → off, present → on). Optimistic: reflects the click.
             const inList = excludedLocal.includes(r.key);
             const off = r.defaultOn ? inList : !inList;
+            const cite = r.prov?.citation;
             return (
-            <label key={r.key} className="flex items-center justify-between py-1.5" style={{ borderBottom: `1px solid ${C.rule}`, opacity: off ? 0.45 : 1 }}>
-              <span className="flex items-center gap-2.5 text-sm font-semibold" style={{ color: C.ink }}>
-                <input type="checkbox" checked={!off} onChange={() => toggleFormula(r.key)} style={{ accentColor: C.accent }} />
-                {r.label}
-              </span>
-              <span className="mono text-sm font-bold" style={{ color: C.ink, textDecoration: off ? "line-through" : "none" }}>{kc(r.v)}</span>
-            </label>
+            <div key={r.key} style={{ borderBottom: `1px solid ${C.rule}`, opacity: off ? 0.45 : 1 }}>
+              <label className="flex items-center justify-between pt-1.5">
+                <span className="flex items-center gap-2.5 text-sm font-semibold" style={{ color: C.ink }}>
+                  <input type="checkbox" checked={!off} onChange={() => toggleFormula(r.key)} style={{ accentColor: C.accent }} />
+                  {r.label}
+                </span>
+                <span className="mono text-sm font-bold" style={{ color: C.ink, textDecoration: off ? "line-through" : "none" }}>{kc(r.v)}</span>
+              </label>
+              {cite && (
+                // Provenance (Law 3): journal + year, and the honest independence
+                // note where one exists — the "show the math" trust signal.
+                <div className="text-[10px] font-medium pb-1.5 pl-[26px]" style={{ color: C.faint }}>
+                  {[cite.journal, cite.year].filter(Boolean).join(" · ")}{cite.note ? ` — ${cite.note}` : ""}
+                </div>
+              )}
+            </div>
             );
           })}
           {energy.allExcludedFallback && (
