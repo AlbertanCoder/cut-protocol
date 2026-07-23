@@ -6,9 +6,9 @@
 ## Per-phase status
 | Phase | What | Status |
 |---|---|---|
-| 0 | Harness + INDEPENDENT oracle (no engine imports; curated allergen list) | **IN PROGRESS** |
-| 0.5 | Oracle self-validation gate (hand-labeled fixtures) | NOT STARTED |
-| 1A | Monte Carlo 1k → 10k → 100k | v1 done (10k); v2 re-run pending oracle rebuild |
+| 0 | Harness + INDEPENDENT oracle (no engine imports; curated allergen list) | **DONE** |
+| 0.5 | Oracle self-validation gate (hand-labeled fixtures) | **DONE — 10/10 pass** |
+| 1A | Monte Carlo 1k → 10k → 100k | 1k re-run w/ independent oracle done; 10k/100k next |
 | 1B | Longitudinal adaptive-TDEE journeys (≥2,000) | NOT STARTED |
 | 1C | Invariants / determinism / coverage | NOT STARTED |
 | 1D | 14k-library sweeps (allergy / nutrition / micros / provenance) | PARTIAL (allergy sweep exists) |
@@ -28,11 +28,20 @@ Recorded as prior evidence; v2 re-verifies with the independent oracle.
 - Open finding: only ~39.5% of feasible days within ±5% kcal — a recipe-library coverage gap in thin diets (P3).
 - **v2 caveat on the above:** the v1 oracle IMPORTED the app's own `dietaryFilter` matcher for its allergen check — so it could not have caught a bug in that matcher. v2's oracle uses a separately-curated allergen list; the leak result is only fully trustworthy after that rebuild + Phase 0.5.
 
-## What was tested & how many times
-_(filled per phase)_
+## Headline finding (P0 — fixed)
+The independent oracle immediately found what v1's could not: the **`soy` allergen
+checkbox did not exclude textured vegetable protein (TVP)** — defatted soy flour,
+~50% soy protein — so a soy-allergic user was being served it. TVP forms lived only
+in a *separate* `"soy protein"` key. v1's oracle used the app's own matcher, so
+asking "is TVP soy?" returned the same wrong `false`. Fixed in `dietaryFilter.js`
+(TVP/textured vegetable protein/soy protein isolate/concentrate added to `soy`;
+soybean oil deliberately still permitted). **Re-run proof: 1k MC seed 42, P0 339 → 0.**
 
 ## Fixes made
-_(filled in Phase 4; each: finding → attempts → regression test → before/after metric)_
+| finding | sev | fix | regression | before → after |
+|---|---|---|---|---|
+| `soy` allergen omitted TVP → served to soy-allergic users | **P0** | TVP/TSP/soy-protein forms added to `dietaryFilter.soy` | `tests/qc/soyTvpLeak.test.js` | 329 leak instances → **0** |
+| (oracle self) peanut butter false-flagged as dairy | — | category-scoped plant-dairy stripping in oracle | `oracle-selfcheck.test.js` | 10 false pos → 0 |
 
 ## Re-run commands
 _(wired into package.json before being cited)_
