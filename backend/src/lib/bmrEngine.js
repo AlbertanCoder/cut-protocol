@@ -250,15 +250,42 @@ function rateSafety(profile, weightKg, tdee, rmr) {
 // ── macros (unchanged heuristics, per-lb-LBM convention) ─────────────────
 
 const CARB_MIDPOINT_BUFFER_G = 25;
+// Keto: a real ketogenic target holds carbs to a hard low cap and lets FAT fill
+// the remaining calories — the opposite of the default (fat fixed by LBM, carbs
+// as leftover). Without this a "keto" plan targeted ~150 g carbs (a QC customer
+// found 32-117 g/day against a 30 g ceiling). ~25 g/day, ceiling 30, is standard
+// nutritional-keto. Protein stays LBM-based (moderate protein is correct on keto).
+const KETO_CARB_TARGET_G = 25;
+const KETO_CARB_LO_G = 10;
+const KETO_CARB_CEILING_G = 30;
 
 function computeMacros(profile, weightKg, targetKcal) {
   const weightLb = kg2lb(weightKg);
   const lbmLb = weightLb * (1 - profile.bodyFatPct / 100);
   const proteinLo = Math.round(lbmLb * 1.14);
   const proteinHi = Math.round(lbmLb * 1.25);
+  const proteinMid = (proteinLo + proteinHi) / 2;
+
+  // Keto branch — carbs capped, fat fills the balance. Only for dietaryStyle
+  // "keto", so every other profile (including the diet="none" golden fixture)
+  // takes the byte-identical path below and its goldens are unaffected.
+  if (profile.dietaryStyle === "keto") {
+    const carbMid = KETO_CARB_TARGET_G;
+    const fatFromBalance = Math.round((targetKcal - proteinMid * 4 - carbMid * 4) / 9);
+    const fatMid = Math.max(Math.round(lbmLb * 0.3), fatFromBalance); // never below essential fat
+    return {
+      lbmLb, kcal: targetKcal,
+      proteinLo, proteinHi,
+      fatLo: Math.round(fatMid * 0.9), fatHi: Math.round(fatMid * 1.12),
+      carbLo: KETO_CARB_LO_G, carbMid, carbHi: KETO_CARB_CEILING_G,
+      carbBufferG: 0,
+      macroKcalGap: Math.round(targetKcal - (proteinMid * 4 + fatMid * 9 + carbMid * 4)),
+      keto: true,
+    };
+  }
+
   const fatLo = Math.round(lbmLb * 0.34);
   const fatHi = Math.round(lbmLb * 0.4);
-  const proteinMid = (proteinLo + proteinHi) / 2;
   const fatMid = (fatLo + fatHi) / 2;
   // Stage-C fix (#28): clamp carbs at 0. For a lean, heavy, floor-clamped
   // target, protein+fat alone can exceed the calorie budget, which used to

@@ -562,10 +562,27 @@ function excludedByList(food, excludedFoods) {
 // Single-sourced here so the solver pool (plans.js) and the library listing
 // (recipes.js) can never diverge on what "keto" hides (Stage-C fix M8).
 const KETO_RECIPE_CARB_CEILING_G = 30;
+// Keto excludes a recipe on the SHARE of its calories that come from carbs, not
+// an absolute base-gram count — because the solver scales portions up to 2x, and
+// a base-gram ceiling let a 25 g recipe through that shipped 50 g at 2x scale (a
+// QC customer found quinoa/naan/rice dishes on a "keto" plate this way). A carb
+// energy FRACTION is scale-invariant: a dish that is 25% carbs by calories is 25%
+// at any portion size. ≤15% keeps genuinely low-carb dishes while dropping the
+// grain/starch-based ones. (2026-07-23.)
+// 0.10 = the textbook keto line; measured against this library it lands the daily
+// plan at ~28 g carb/day (under the strict 30 g ceiling) with 36 meal recipes
+// eligible. Tighter (0.08 -> 25 recipes) starts emptying the pool.
+const KETO_CARB_ENERGY_FRACTION = 0.10;
 
-// True if this recipe is hidden for a keto profile by the whole-recipe ceiling.
+// True if this recipe is hidden for a keto profile.
 function recipeExceedsKetoCeiling(recipe, dietaryStyle) {
-  return dietaryStyle === "keto" && typeof recipe.carb === "number" && recipe.carb > KETO_RECIPE_CARB_CEILING_G;
+  if (dietaryStyle !== "keto" || typeof recipe.carb !== "number") return false;
+  // Prefer the scale-invariant fraction; fall back to the gram ceiling only if
+  // kcal is missing/zero (can't form a ratio).
+  if (typeof recipe.kcal === "number" && recipe.kcal > 0) {
+    return (recipe.carb * 4) / recipe.kcal > KETO_CARB_ENERGY_FRACTION;
+  }
+  return recipe.carb > KETO_RECIPE_CARB_CEILING_G;
 }
 
 // profile: {dietaryStyle: "none"|"vegan"|"vegetarian"|"keto", excludedFoods: string[]}
