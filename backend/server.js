@@ -85,8 +85,14 @@ app.use((err, req, res, next) => {
   res.status(status).json({ error: status < 500 ? err.message : "something went wrong on our end" });
 });
 
+// The QC fuzz harness (scripts/qc/fuzz.mjs) imports this file to get `app` and
+// binds its own ephemeral port, so it must be able to load the whole server
+// WITHOUT the module grabbing :3001 or running the boot audit. A require.main
+// guard can't be used here: in packaged mode electron/main.cjs REQUIRES this
+// file (it is never the main module), so require.main===module is false in the
+// real desktop path too. An explicit opt-out flag is the only correct guard.
 const PORT = process.env.PORT || 3001;
-app.listen(PORT, () => {
+if (!process.env.QC_NO_LISTEN) app.listen(PORT, () => {
   console.log(`Cut Protocol backend listening on :${PORT}`);
   // Phase 2 guardrail: bad food/recipe data can never come back silently â€”
   // every boot re-audits the library and says so out loud.
@@ -114,3 +120,7 @@ app.listen(PORT, () => {
     })
     .catch((e) => console.error("[data-audit] failed to run:", e.message));
 });
+
+// Exported so the QC fuzz harness can mount the real app on an ephemeral port.
+// Requiring this file still starts the server normally unless QC_NO_LISTEN is set.
+module.exports = app;
