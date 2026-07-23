@@ -33,6 +33,19 @@ Engine, Today, and Profile. Honest and supportive, no golden impact.
 
 ---
 
+## ✅ Also fixed after the initial triage (all golden-safe, verified)
+- **A. Keto is now ketogenic** — `computeMacros` keto branch (carbs capped ~25g, fat fills the
+  balance) + a scale-invariant recipe carb-FRACTION filter. Verified: a keto week now averages
+  **25g carbs/day** (was 32–117g). Golden byte-identical (keto-only branch).
+- **B. Recipe monoculture** — the generated "High-Protein X & Y with Z" templates are now
+  down-weighted so REAL recipes win when they fit. The 140kg omnivore's week went from ~4 TVP
+  dishes/day to 5 generated all week (real food otherwise), protein still met. Golden byte-identical.
+  *(Remaining: the generated recipes are still generically written — real thin-diet variety needs
+  authored recipes, a data task. Queued below.)*
+- **F. Prose-vs-ingredient allergen leak** — the "Beef Banh Mi … Sriracha Mayo" whose steps declared
+  "Add'l ingredients: mayonnaise" but had no egg row is now excluded for an egg allergy. New
+  `qc:recipe-allergen` audit found 2 such high-confidence drops + 76 incidental prose mentions.
+
 ## 🟠 Queued — real, but touches the plan goldens / laws / product-shape (your call)
 
 These I did NOT change unilaterally overnight: each alters the deterministic plan output (breaking
