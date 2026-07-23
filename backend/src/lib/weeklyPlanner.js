@@ -132,6 +132,19 @@ function priorDiscount(priorUsage, id) {
   return w > 0 ? 1 / (1 + 2 * w) : 1;
 }
 
+// The protein-forward GENERATED templates ("High-Protein {protein} & {veg} with
+// {carb}", source ai-generated) exist to rescue thin-diet protein floors, but
+// they are macro-optimised and structurally identical, so they out-compete REAL
+// recipes even for unrestricted eaters — QC customers saw a week of near-clones
+// and a meat-eater served TVP/seitan. This down-weights them so a real recipe
+// that fits is preferred. It is a SOFT multiplier: in a pool where only these
+// fit (a strict vegan+GF week), every candidate is penalised equally, so they
+// are still used and the protein floor they were built for still holds.
+const GENERATED_TEMPLATE_WEIGHT = 0.35;
+function isGeneratedTemplate(r) {
+  return r.source === "ai-generated" && /^high-protein\b.*\bwith\b/i.test(r.name || "");
+}
+
 function pickRecipe(candidates, targetRatio, usedYesterday, usedToday, rng, bias, priorUsage) {
   if (candidates.length === 0) return null;
   const weighted = candidates.map((r) => {
@@ -139,7 +152,8 @@ function pickRecipe(candidates, targetRatio, usedYesterday, usedToday, rng, bias
     const diff = Math.abs(ratio - targetRatio);
     const discount = usedToday.has(r.id) ? 0.02 : usedYesterday.has(r.id) ? 0.15 : 1;
     const pref = bias ? bias(r) : 1;
-    return { r, weight: (1 / (diff + 0.015)) * discount * pref * priorDiscount(priorUsage, r.id) };
+    const real = isGeneratedTemplate(r) ? GENERATED_TEMPLATE_WEIGHT : 1;
+    return { r, weight: (1 / (diff + 0.015)) * discount * pref * real * priorDiscount(priorUsage, r.id) };
   });
   const total = weighted.reduce((s, x) => s + x.weight, 0);
   let roll = rng() * total;
@@ -532,6 +546,7 @@ module.exports = {
   eligibleRecipes, buildPriorUsage, practicalGrams, RECENCY_WEIGHTS,
   SCALE_BOUNDS, DEFAULT_REPEAT_CAP, BATCH_REPEAT_CAP,
   KCAL_TOLERANCE_PCT, PROTEIN_TOLERANCE_PCT,
+  isGeneratedTemplate, GENERATED_TEMPLATE_WEIGHT,
   // Back-compat alias for older call sites/tests: the default weekly repeat cap.
   MAX_REPEATS_PER_WEEK: DEFAULT_REPEAT_CAP,
 };
