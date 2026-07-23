@@ -21,8 +21,11 @@ const OCCUPATIONS = [
 const TRAINING_STYLES = ["weights", "cardio", "mixed", "sport"];
 // none => no dietary restriction (stored as null); the rest are the real supported styles.
 const DIET_STYLES = ["none", "mediterranean", "vegetarian", "vegan", "paleo", "keto", "carnivore", "halal", "kosher"];
-// The 10 canonical allergen keys the dietary filter recognises (dietaryFilter.js).
-const ALLERGENS = ["gluten", "shellfish", "dairy", "soy", "nuts", "eggs", "fish", "kiwi", "peanuts", "sesame"];
+// The 10 allergen keys the UI checkboxes ACTUALLY send (routes/profile.js
+// allergyOptions) — note "tree nuts", NOT "nuts": the generator used "nuts"
+// before, which no checkbox sends, so the whole simulation was exercising the
+// wrong key and never testing the real tree-nut path. (QC persona finding.)
+const ALLERGENS = ["gluten", "shellfish", "dairy", "soy", "tree nuts", "eggs", "fish", "kiwi", "peanuts", "sesame"];
 const BUDGETS = ["cheap", "moderate", "premium"];
 
 const cm = (inches) => Math.round(inches * 2.54 * 10) / 10;

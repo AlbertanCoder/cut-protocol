@@ -62,6 +62,10 @@ export const AUDIT_ALLERGENS = {
   peanuts: ["peanut", "groundnut", "goober", "arachis", "satay", "peanut butter", "peanut oil"],
   sesame: ["sesame", "tahini", "halva", "halvah", "benne", "gomashio", "za'atar", "zaatar"],
 };
+// The UI's tree-nut checkbox sends the key "tree nuts", not "nuts" — so the
+// oracle must recognise it or it silently rubber-stamps tree-nut plans as clean
+// (a QC persona caught exactly this). Same derived-term list as nuts.
+AUDIT_ALLERGENS["tree nuts"] = AUDIT_ALLERGENS.nuts;
 // False-exclusion guards. Two kinds, applied by STRIPPING the offending token
 // from the name (never by voiding the whole name — a homograph must not mask a
 // real allergen elsewhere in "Chicken with water chestnut"):
