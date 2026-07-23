@@ -8,7 +8,7 @@
 const { prisma } = require("./prisma.js");
 const { computeMacros } = require("./bmrEngine.js");
 const { getWeightNowKg } = require("./weightNow.js");
-const { recipeExcludedByStyle, matchesExclusionTerm, recipeExceedsKetoCeiling } = require("./dietaryFilter.js");
+const { recipeExcludedByStyle, matchesExclusionTerm, recipeExceedsKetoCeiling, additionalIngredientNames } = require("./dietaryFilter.js");
 
 function filterRecipePool(recipePool, profile) {
   const dietaryStyle = profile.dietaryStyle || null;
@@ -19,8 +19,13 @@ function filterRecipePool(recipePool, profile) {
     // listing (recipes.js) can never diverge from the solver pool (M8).
     if (recipeExceedsKetoCeiling(recipe, dietaryStyle)) return false;
     const flatIngredients = recipe.ingredients.map((i) => ({ name: i.food.name }));
-    if (recipeExcludedByStyle({ ingredients: flatIngredients }, dietaryStyle)) return false;
-    if (excludedFoods.length && flatIngredients.some((ing) => excludedFoods.some((term) => matchesExclusionTerm(ing.name, term)))) return false;
+    // Defence-in-depth: fold in any "Add'l ingredients:" the importer left in the
+    // step text but never turned into ingredient rows, so an allergen declared
+    // only in prose (e.g. mayonnaise -> egg) can't slip past the filter.
+    const addl = additionalIngredientNames(recipe.steps);
+    const checkIngredients = addl.length ? flatIngredients.concat(addl.map((name) => ({ name }))) : flatIngredients;
+    if (recipeExcludedByStyle({ ingredients: checkIngredients }, dietaryStyle)) return false;
+    if (excludedFoods.length && checkIngredients.some((ing) => excludedFoods.some((term) => matchesExclusionTerm(ing.name, term)))) return false;
     return true;
   });
 }

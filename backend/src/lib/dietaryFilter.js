@@ -585,6 +585,19 @@ function recipeExceedsKetoCeiling(recipe, dietaryStyle) {
   return recipe.carb > KETO_RECIPE_CARB_CEILING_G;
 }
 
+// Some imported recipes declare extra ingredients in their STEP TEXT that never
+// became structured ingredient rows — the importer's "Add'l ingredients: mayonnaise,
+// siracha" pattern (QC customer #7: mayo/egg reached an egg-allergic user because
+// the filter only reads ingredient rows). Pull those declared names so the allergen
+// and diet-style checks can see them too. Defence-in-depth; the underlying data
+// still wants fixing (see docs/qc/recipe-allergen-audit.md).
+function additionalIngredientNames(steps) {
+  const text = Array.isArray(steps) ? steps.join("  ") : (typeof steps === "string" ? steps : "");
+  const m = text.match(/add'?l ingredients?:\s*([^.\n]+)/i);
+  if (!m) return [];
+  return m[1].split(/,|;|\band\b/i).map((s) => s.trim()).filter((s) => s.length > 1 && s.length < 40);
+}
+
 // profile: {dietaryStyle: "none"|"vegan"|"vegetarian"|"keto", excludedFoods: string[]}
 function applyDietaryFilters(pool, profile) {
   const dietaryStyle = profile?.dietaryStyle || "none";
@@ -631,4 +644,5 @@ module.exports = {
   traceRecipeExclusions,
   KETO_RECIPE_CARB_CEILING_G,
   recipeExceedsKetoCeiling,
+  additionalIngredientNames,
 };

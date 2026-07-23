@@ -22,7 +22,8 @@
     "qc:security": "node scripts/qc/securityFuzz.mjs",
     "qc:importer-fuzz": "node --test tests/qc/importerFuzz.test.js",
     "qc:persona": "node scripts/qc/personaPlan.mjs",
-    "qc:all": "node --test tests/qc/*.test.js && node scripts/qc/mc.mjs --n=1000 --seed=42 --assert && node scripts/qc/fuzz.mjs --assert && node scripts/qc/securityFuzz.mjs --assert && node scripts/qc/sweep14k.mjs --assert && node scripts/qc/integritySweep.mjs --assert"
+    "qc:all": "node --test tests/qc/*.test.js && node scripts/qc/mc.mjs --n=1000 --seed=42 --assert && node scripts/qc/fuzz.mjs --assert && node scripts/qc/securityFuzz.mjs --assert && node scripts/qc/sweep14k.mjs --assert && node scripts/qc/integritySweep.mjs --assert",
+    "qc:recipe-allergen": "node scripts/qc/recipeAllergenAudit.mjs"
   },
   "keywords": [],
   "author": "",
