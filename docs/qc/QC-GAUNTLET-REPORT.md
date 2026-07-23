@@ -28,6 +28,12 @@ Recorded as prior evidence; v2 re-verifies with the independent oracle.
 - Open finding: only ~39.5% of feasible days within ±5% kcal — a recipe-library coverage gap in thin diets (P3).
 - **v2 caveat on the above:** the v1 oracle IMPORTED the app's own `dietaryFilter` matcher for its allergen check — so it could not have caught a bug in that matcher. v2's oracle uses a separately-curated allergen list; the leak result is only fully trustworthy after that rebuild + Phase 0.5.
 
+## 12-customer simulation (2026-07-23) — see CUSTOMER-FINDINGS.md
+Twelve independent persona-customer agents, each grounded in a real generated plan. Shipped 5
+fixes; queued the golden/law/product-shape items with root causes. Biggest catch: a **P0 tree-nut
+allergen leak** the UI checkbox key exposed (below). Customers independently confirmed the hard
+floor, no-shame color law, clean allergens, honest solver, and correct BMR math all hold.
+
 ## Headline finding (P0 — fixed)
 The independent oracle immediately found what v1's could not: the **`soy` allergen
 checkbox did not exclude textured vegetable protein (TVP)** — defatted soy flour,
@@ -43,7 +49,13 @@ soybean oil deliberately still permitted). **Re-run proof: 1k MC seed 42, P0 339
 | `soy` allergen omitted TVP → served to soy-allergic users | **P0** | TVP/TSP/soy-protein forms added to `dietaryFilter.soy` | `tests/qc/soyTvpLeak.test.js` | 329 leak instances → **0** |
 | `nuts` omitted chestnut/nutella/praline → "Cooked Chestnut" shipped in a recipe | **P0** | added terms + a water-chestnut guard | `tests/qc/soyTvpLeak.test.js` | 1 reachable recipe → **0** |
 | gelato→dairy, natto→soy, triticale/matzo/graham→gluten uncaught (non-reachable) | P1 | added to the respective lists | same | corpus gaps closed |
-| (oracle self) peanut butter false-flagged as dairy; bare "bran"/"flour" over-claimed gluten | — | plant-dairy stripping + narrowed gluten list | `oracle-selfcheck.test.js` | verifier false pos → 0 |
+| **`tree nuts` checkbox key omitted chestnut/nutella (+ harness tested wrong key)** | **P0** | synced "tree nuts" to "nuts" + drift guard; fixed harness keys | `treeNutParity.test.js` | reachable leak → **0** |
+| login 500 on non-string email (Prisma-operator object) | P1 | type-check strings up front | `authInjection.test.js` | 500 → 400 |
+| SSRF: importer fetched internal/private hosts | P2 | `isBlockedHost` guard pre-fetch | `importerSsrf.test.js` | fetched → refused |
+| importer: absurd qty → Infinity grams; deep-nest HTML → stack overflow | P2 | qty cap 1e6; tree depth cap 500 | `importerFuzz.test.js` | corrupt/crash → clean |
+| floored target hid the achievable rate (3 customers) | UX | expose `achievableRate` on Engine/Today/Profile | `flooredRate.test.js` | "not achievable" → real rate |
+| BMR citations never rendered; metric rate picker showed lb/wk | UX | render provenance; kg/wk primary in metric | build | trust signal shown |
+| (oracle self) peanut butter false-flagged as dairy; bare "bran"/"flour" over-claimed gluten; wine/vinegar mis-flagged | — | plant-dairy stripping + narrowed gluten list + physical-exemption class | `oracle-selfcheck.test.js` | verifier false pos → 0 |
 
 **14k allergen sweep:** started at 31 leak candidates → **0 solver-reachable leaks** in every category. 11 residuals remain, all 0-recipe USDA edge foods (infant formula, "X as ingredient in omelet"), deferred with rationale. 3 false-exclusions (rice flour / corn tortilla under gluten) left as deliberate safe-direction over-exclusion — narrowing them would weaken allergen safety.
 
