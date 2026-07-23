@@ -75,6 +75,15 @@ jobs:
         working-directory: backend
         run: npm test
 
+      # QC gauntlet regression gate: the Monte-Carlo P0 bar (0 allergy leaks,
+      # 0 floor breaches, 0 macro drift, 0 crashes, 0 network calls). The qc
+      # unit tests (allergen matcher, floor dominance, determinism, SSRF,
+      # importer/auth fuzz) already run in `npm test` above; this adds the
+      # seeded 1k simulation on top. --assert exits non-zero on any P0.
+      - name: QC Monte-Carlo smoke (P0 gate)
+        working-directory: backend
+        run: npm run qc:smoke
+
   frontend:
     runs-on: ubuntu-latest
 
