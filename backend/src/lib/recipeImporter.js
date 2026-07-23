@@ -27,9 +27,32 @@ const { parseHtmlTree, cleanText, queryAll, queryOne, hasClassOrId, decodeEntiti
 const FETCH_TIMEOUT_MS = 12000;
 const MAX_HTML_BYTES = 3_000_000;
 
+// SSRF guard (QC gauntlet v2, 2026-07-23): the importer fetches a user-supplied
+// URL, so it must refuse targets that point back at this machine or a private
+// network — loopback, link-local (incl. the 169.254.169.254 cloud-metadata
+// address), and the RFC-1918 private ranges. A literal-IP / hostname check
+// before any fetch; no DNS-rebinding defence (out of scope for a desktop app),
+// so this blocks the direct cases, not a name that resolves to a private IP.
+function isBlockedHost(hostname) {
+  const h = (hostname || "").toLowerCase().replace(/^\[|\]$/g, "");
+  if (h === "localhost" || h.endsWith(".localhost") || h === "0.0.0.0" || h === "::1" || h === "::") return true;
+  const m = h.match(/^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/);
+  if (m) {
+    const [a, b] = [Number(m[1]), Number(m[2])];
+    if (a === 127 || a === 10 || a === 0) return true;           // loopback / private / this-network
+    if (a === 169 && b === 254) return true;                     // link-local incl. cloud metadata
+    if (a === 172 && b >= 16 && b <= 31) return true;            // private
+    if (a === 192 && b === 168) return true;                     // private
+    if (a === 100 && b >= 64 && b <= 127) return true;           // CGNAT
+  }
+  if (h.startsWith("fc") || h.startsWith("fd") || h.startsWith("fe80")) return true; // IPv6 ULA / link-local
+  return false;
+}
+
 async function fetchHtml(url) {
   const parsed = new URL(url);
   if (!/^https?:$/.test(parsed.protocol)) throw new Error("only http(s) URLs are supported");
+  if (isBlockedHost(parsed.hostname)) throw new Error("refusing to fetch an internal or private-network address");
   const res = await fetch(url, {
     signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
     headers: { "user-agent": "Mozilla/5.0 (CutProtocol desktop importer)", accept: "text/html" },
@@ -785,5 +808,5 @@ module.exports = {
   importRecipeFromUrl, getRecipeFromUrl, parseIngredientLine, extractRecipeFromHtml,
   isoDurationToMinutes, freeformDurationToMinutes, extractJsonLdBlocks, findRecipeNode,
   parseSteps, parseServings, isSectionHeaderLine,
-  CATEGORY_ROLE, PROVIDERS,
+  CATEGORY_ROLE, PROVIDERS, isBlockedHost,
 };
