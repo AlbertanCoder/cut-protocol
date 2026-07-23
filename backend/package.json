@@ -12,7 +12,9 @@
     "test": "node --test tests/**/*.test.js",
     "bench:solver": "node scripts/solverBenchmark.mjs",
     "bench:solver:check": "node scripts/solverBenchmark.mjs --assert",
-    "audit:dietary": "node scripts/auditDietaryCoverage.mjs"
+    "audit:dietary": "node scripts/auditDietaryCoverage.mjs",
+    "qc:mc": "node scripts/qc/mc.mjs",
+    "qc:smoke": "node scripts/qc/mc.mjs --n=1000 --seed=42 --assert"
   },
   "keywords": [],
   "author": "",
