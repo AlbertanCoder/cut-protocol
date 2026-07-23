@@ -217,7 +217,15 @@ function deriveTarget(profile, tdee, rmr) {
   const raw = Math.round(tdee - deficit);
   const floor = effectiveFloor(profile, rmr);
   const target = Math.max(raw, floor);
-  return { rate, deficit, raw, target, floor, floored: raw < floor };
+  const floored = raw < floor;
+  // When the target is clamped to the floor, the chosen rate is NOT what the
+  // user will actually get. Compute and expose the rate the floored target DOES
+  // deliver, so the UI can level with them ("you'll lose about X lb/wk") instead
+  // of only saying "not achievable" and leaving them to guess. Additive fields;
+  // `target` itself is unchanged, so meal-plan output is unaffected.
+  const actualDeficit = Math.max(0, tdee - target);
+  const achievableRate = Math.round((actualDeficit * 7 / KCAL_PER_LB) * 100) / 100;
+  return { rate, deficit, raw, target, floor, floored, actualDeficit, achievableRate };
 }
 
 /**
@@ -234,7 +242,7 @@ function rateSafety(profile, weightKg, tdee, rmr) {
     reasons.push(`${rate} lb/wk is ${pctOfBw.toFixed(2)}% of your body weight per week — above the ~1% guideline`);
   }
   if (t.floored) {
-    reasons.push(`the math wants ${t.raw.toLocaleString("en-CA")} kcal, below your ${t.floor.toLocaleString("en-CA")} floor — target is clamped and the chosen rate won't actually be achieved through diet alone`);
+    reasons.push(`the math wants ${t.raw.toLocaleString("en-CA")} kcal, below your ${t.floor.toLocaleString("en-CA")} floor — so we hold you at ${t.target.toLocaleString("en-CA")}, which loses about ${t.achievableRate} lb/wk through diet alone (not the ${t.rate} you picked). To go faster, add movement, not less food`);
   }
   return { unsafe: reasons.length > 0, reasons, pctOfBw: Math.round(pctOfBw * 100) / 100 };
 }
