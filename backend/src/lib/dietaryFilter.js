@@ -153,6 +153,8 @@ const CATEGORY_SYNONYMS = {
     "malt", "seitan", "spelt", "semolina", "bulgur", "cracker", "crackers",
     "noodle", "noodles", "tortilla", "tortillas", "cereal", "breadcrumb",
     "breadcrumbs", "flour", "orzo", "panko",
+    // QC gauntlet v2 (2026-07-23) — wheat-based grains the celiac sweep missed.
+    "triticale", "matzo", "matzah", "graham",
     "stock cube", "stock powder", "bouillon", "gravy mix", "gravy granules",
     // Stage-C audit: gluten carriers the celiac live-test found on the plate —
     // pasta shapes, pastry, dumpling wrappers, and the hidden-wheat sauces
@@ -216,6 +218,8 @@ const CATEGORY_SYNONYMS = {
     // remaining milk-carrying sweets/breads from the vegan-side list
     // (butter/cream confections, yogurt/ghee flatbread) and burrata.
     "burrata", "white chocolate", "toffee", "caramel sauce", "naan",
+    // QC gauntlet v2 (2026-07-23) — gelato is milk-based; it was uncaught.
+    "gelato",
   ],
   soy: [
     "soy", "soya", "tofu", "edamame", "tempeh", "miso", "soybean",
@@ -225,7 +229,7 @@ const CATEGORY_SYNONYMS = {
     // excluded here too (they were only in the separate "soy protein" key).
     // Oil is deliberately NOT added — soybean oil stays permitted, as before.
     "tvp", "textured vegetable protein", "textured soy protein",
-    "soy protein isolate", "soy protein concentrate", "soy protein",
+    "soy protein isolate", "soy protein concentrate", "soy protein", "natto",
     "stock cube", "stock powder", "bouillon", "gravy mix", "gravy granules",
   ],
   // A free-text "soy protein" exclusion (this app's original primary account
@@ -239,6 +243,12 @@ const CATEGORY_SYNONYMS = {
     "almond", "walnut", "cashew", "pecan", "pistachio", "hazelnut",
     "macadamia", "peanut", "nut",
     "mixed nuts", "nut mix", "trail mix",
+    // QC gauntlet v2 (2026-07-23) — nut leak: "Cooked Chestnut" (an ingredient
+    // in a real recipe) and the hazelnut/almond confections below reached a
+    // nut-allergic user. chestnut is an FDA tree nut; it gets a per-word guard
+    // (below) so WATER chestnut — not a nut — is not swept up.
+    "chestnut", "brazil nut", "pine nut",
+    "nutella", "praline", "pralines", "gianduja", "marzipan",
   ],
   // egg carriers include the emulsions built on raw egg (Stage-C: aioli and
   // custard reached an egg-allergic user).
@@ -522,6 +532,9 @@ function matchesExclusionTerm(name, term) {
       if (word === "milk") return isDairyMilk(name);
       if (word === "cream") return hasWord(name, "cream") && !hasPhrase(name, "cream of tartar") && !matchesAny(name, PLANT_MILK_QUALIFIERS);
       if (word === "butter") return isDairyButterOrCream(name);
+      // chestnut is a tree nut, but WATER chestnut is an aquatic vegetable — a
+      // nut allergy must not remove it. Same guard shape as the dairy words.
+      if (word === "chestnut") return hasWord(name, "chestnut") && !hasPhrase(name, "water chestnut");
       return matchesTermList(name, word);
     });
   }

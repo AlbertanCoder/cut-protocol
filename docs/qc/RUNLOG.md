@@ -18,6 +18,13 @@ Timestamped, append-only. Format: `[ISO8601] PHASE-N: action — result`.
 [2026-07-23T02:55:00Z] PHASE-4: **P0 CONFIRMED REAL** — matchesExclusionTerm("Textured vegetable protein, dry","soy")=false. The "soy" allergen list omitted TVP (defatted soy flour ~50% soy protein); a soy-allergic user was served TVP. v1's oracle could not catch it (asked the same broken matcher).
 [2026-07-23T02:56:00Z] PHASE-4: FIX — added tvp/textured vegetable protein/soy protein forms to dietaryFilter soy list (oil deliberately still permitted). Regression test tests/qc/soyTvpLeak.test.js. Oracle false positives fixed via category-scoped plant-dairy stripping (peanut butter still flags peanuts, not dairy).
 [2026-07-23T02:58:00Z] PHASE-4: RE-RUN PROOF — 1k MC seed 42: P0 339 -> 0. Full suite 626 -> all green (13 new qc tests). Network calls 0.
+[2026-07-23T03:20:00Z] PHASE-1D: allergen sweep built (scripts/qc/sweep14k.mjs) — app matcher vs independent oracle list across all 14,124 foods + recipe ingredients. First run: 31 leak candidates. Triage:
+    - MY oracle over-claimed gluten via bare "bran"/"flour" (oat/rice/corn/sorghum bran are GF). Narrowed the oracle list -> 31->23. Verifier precision restored (0.5 gate still 10/10).
+    - REACHABLE leak (1 recipe): "Braised stuffed cabbage" ships "Cooked Chestnut"; the nuts list missed chestnut/nutella/praline. FIX: added them + a per-word chestnut guard (water chestnut, an aquatic veg, is NOT swept up — same guard shape as milk/cream/butter). Regression tests added.
+    - Non-reachable real gaps closed too: gelato->dairy, natto->soy, triticale/matzo/matzah/graham->gluten.
+    - After fixes: sweep 23->11, ALL 11 remaining are 0-recipe USDA edge foods (infant formula, "X as ingredient in omelet" composites). Not solver-reachable; deferred with rationale.
+    - False-exclusions (3): rice flour / corn tortilla excluded as gluten via "flour"/"tortilla"; over-exclusion in the SAFE direction — NOT narrowed (narrowing gluten matching would reduce allergen safety). Documented, not fixed.
+[2026-07-23T03:25:00Z] PHASE-1D: PROOF — full suite 626 -> 628 green; 1k MC seed 42 P0 still 0; network 0.
 ```
 
 ## STOP-AND-SURFACE queue (owner input needed; independent work continues around them)
