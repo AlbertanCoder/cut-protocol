@@ -55,6 +55,9 @@ soybean oil deliberately still permitted). **Re-run proof: 1k MC seed 42, P0 339
 | importer: absurd qty → Infinity grams; deep-nest HTML → stack overflow | P2 | qty cap 1e6; tree depth cap 500 | `importerFuzz.test.js` | corrupt/crash → clean |
 | floored target hid the achievable rate (3 customers) | UX | expose `achievableRate` on Engine/Today/Profile | `flooredRate.test.js` | "not achievable" → real rate |
 | BMR citations never rendered; metric rate picker showed lb/wk | UX | render provenance; kg/wk primary in metric | build | trust signal shown |
+| **"keto" mode targeted ~150g carbs (not ketogenic)** | correctness | keto macro branch + scale-invariant carb-fraction recipe filter | `ketoMacros.test.js` | 32–117g → **~25g/day** |
+| recipe monoculture — generated templates out-competed real food | quality | 0.35 selection weight on generated templates | `monoculture.test.js` | ~4 TVP/day → 5/week |
+| **prose-declared allergen (mayo) bypassed the filter** | **P0-class** | filter folds in "Add'l ingredients:" | `proseAllergen.test.js` | Banh Mi kept 1 → **0** for egg allergy |
 | (oracle self) peanut butter false-flagged as dairy; bare "bran"/"flour" over-claimed gluten; wine/vinegar mis-flagged | — | plant-dairy stripping + narrowed gluten list + physical-exemption class | `oracle-selfcheck.test.js` | verifier false pos → 0 |
 
 **14k allergen sweep:** started at 31 leak candidates → **0 solver-reachable leaks** in every category. 11 residuals remain, all 0-recipe USDA edge foods (infant formula, "X as ingredient in omelet"), deferred with rationale. 3 false-exclusions (rice flour / corn tortilla under gluten) left as deliberate safe-direction over-exclusion — narrowing them would weaken allergen safety.
