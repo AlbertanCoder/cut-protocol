@@ -592,10 +592,14 @@ function recipeExceedsKetoCeiling(recipe, dietaryStyle) {
 // and diet-style checks can see them too. Defence-in-depth; the underlying data
 // still wants fixing (see docs/qc/recipe-allergen-audit.md).
 function additionalIngredientNames(steps) {
-  const text = Array.isArray(steps) ? steps.join("  ") : (typeof steps === "string" ? steps : "");
-  const m = text.match(/add'?l ingredients?:\s*([^.\n]+)/i);
-  if (!m) return [];
-  return m[1].split(/,|;|\band\b/i).map((s) => s.trim()).filter((s) => s.length > 1 && s.length < 40);
+  // Match WITHIN a single step element — joining steps first let the capture run
+  // past the declaration into the next step ("siracha  Cook the rice").
+  const arr = Array.isArray(steps) ? steps : (typeof steps === "string" ? [steps] : []);
+  for (const step of arr) {
+    const m = String(step).match(/add'?l ingredients?:\s*(.+)/i);
+    if (m) return m[1].split(/,|;|\band\b/i).map((s) => s.trim()).filter((s) => s.length > 1 && s.length < 40);
+  }
+  return [];
 }
 
 // profile: {dietaryStyle: "none"|"vegan"|"vegetarian"|"keto", excludedFoods: string[]}
