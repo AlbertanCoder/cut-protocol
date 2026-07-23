@@ -353,8 +353,10 @@ export default function ProfileTab({ profile, summary, refresh }) {
                 <button key={r} onClick={() => commit({ rateLbPerWeek: r })} aria-pressed={active}
                   className="px-4 py-2.5 rounded-xl text-center"
                   style={{ background: active ? C.card2 : "transparent", border: `1px solid ${active ? C.faintLight : C.rule}` }}>
-                  <div className="mono text-sm font-extrabold" style={{ color: active ? C.ink : C.faint }}>{r} lb/wk</div>
-                  <div className="text-[10px] font-bold" style={{ color: C.faintLight }}>{r1(r * 0.453592)} kg/wk</div>
+                  {/* Metric users get kg/wk as the bold primary — every other
+                      number on this tab converts, so this one should too. */}
+                  <div className="mono text-sm font-extrabold" style={{ color: active ? C.ink : C.faint }}>{pref === "metric" ? `${r1(r * 0.453592)} kg/wk` : `${r} lb/wk`}</div>
+                  <div className="text-[10px] font-bold" style={{ color: C.faintLight }}>{pref === "metric" ? `${r} lb/wk` : `${r1(r * 0.453592)} kg/wk`}</div>
                 </button>
               );
             })}
