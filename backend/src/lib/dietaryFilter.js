@@ -219,6 +219,13 @@ const CATEGORY_SYNONYMS = {
   ],
   soy: [
     "soy", "soya", "tofu", "edamame", "tempeh", "miso", "soybean",
+    // QC gauntlet v2 (2026-07-23) — P0 soy leak: the "soy" checkbox did NOT
+    // catch textured vegetable protein (defatted soy flour, ~50% soy protein),
+    // so a soy-allergic user was being served TVP. These protein forms are now
+    // excluded here too (they were only in the separate "soy protein" key).
+    // Oil is deliberately NOT added — soybean oil stays permitted, as before.
+    "tvp", "textured vegetable protein", "textured soy protein",
+    "soy protein isolate", "soy protein concentrate", "soy protein",
     "stock cube", "stock powder", "bouillon", "gravy mix", "gravy granules",
   ],
   // A free-text "soy protein" exclusion (this app's original primary account
