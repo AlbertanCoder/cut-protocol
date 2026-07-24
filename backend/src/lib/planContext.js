@@ -41,6 +41,22 @@ function filterRecipePool(recipePool, profile) {
     // step text but never turned into ingredient rows, so an allergen declared
     // only in prose (e.g. mayonnaise -> egg) can't slip past the filter.
     const addl = additionalIngredientNames(recipe.steps);
+    // The FULL step text is evidence too. The importer routinely leaves an
+    // ingredient in the instructions without ever creating a row for it —
+    // "stir in 1 TBSP butter", "heat the ghee", "add 1 egg to the soup", a
+    // Sushi step naming raw salmon/tuna/prawn — and the "Add'l ingredients:"
+    // parser above catches only ~1 of 889 of those. A QC sweep confirmed 20
+    // step-only dairy leaks alone reaching a dairy-excluded plate. So the whole
+    // step prose is matched as one more name.
+    //
+    // This over-excludes: a step reading "serve without butter" or "dairy-free
+    // version" will drop a genuinely-safe recipe. That is the deliberate, and
+    // per the constitution the ONLY acceptable, failure direction for an
+    // allergy — a lost safe recipe beats a medical incident. Negation parsing
+    // ("without", "-free") was rejected on purpose: "add butter, or omit for a
+    // dairy-free version" carries a negation word yet DOES cook butter in, so a
+    // negation-aware scan would re-open the exact leak this closes.
+    const stepText = Array.isArray(recipe.steps) ? recipe.steps.join("  ") : String(recipe.steps || "");
     // The recipe's own NAME is evidence and was read by nothing. A dish is
     // routinely named after an ingredient its rows omit — "Egg Drop Soup" has no
     // egg row, "Roasted Eggplant With Tahini, Pine Nuts" has no tahini row, and
@@ -51,6 +67,7 @@ function filterRecipePool(recipePool, profile) {
       ...flatIngredients,
       ...addl.map((name) => ({ name })),
       { name: recipe.name || "" },
+      { name: stepText },
     ];
     if (recipeExcludedByStyle({ ingredients: checkIngredients }, dietaryStyle)) return false;
     // foodMatchesExclusionTerm, not matchesExclusionTerm: the former consults the

@@ -57,7 +57,7 @@ const MIN_TEST_FILES = 84;
 // ~2.5% headroom under the measured total so ordinary churn (merging or deleting
 // a redundant case) doesn't wedge CI, while still catching a mass skip — the
 // bash glob dropped 27 of 62 files, which is hundreds of tests, not single digits.
-const MIN_TESTS = 1006;
+const MIN_TESTS = 1009;
 
 const argv = process.argv.slice(2);
 const listOnly = argv.includes("--list");

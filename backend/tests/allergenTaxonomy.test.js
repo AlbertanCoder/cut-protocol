@@ -569,3 +569,15 @@ test(`corpus source: ${CORPUS_NOTE}`, () => {
   // against the real 14,122 rows.
   assert.ok(typeof CORPUS_NOTE === "string" && CORPUS_NOTE.length > 0);
 });
+
+test("GLUED corn spellings fire, word-boundary guards hold (QC 2026-07-24: 'Sweetcorn' leaked)", () => {
+  // 'Sweetcorn' (British one-word) was NOT excluded under a corn allergy — a real
+  // 7-recipe leak — because the glued form needs its own keyword, exactly like
+  // 'popcorn'. 'Sweet Corn' with a space already matched via 'corn'.
+  for (const n of ["Sweetcorn", "Sweet Corn", "Baby Corn", "Cornmeal", "Popcorn", "Polenta", "Corn tortilla"]) {
+    assert.equal(matchesExclusionTerm(n, "corn"), true, `${n} must be excluded for a corn allergy`);
+  }
+  // and the word-boundary guard still spares non-corn 'corn' substrings
+  assert.equal(matchesExclusionTerm("Corned Beef", "corn"), false, "'corned beef' is not corn");
+  assert.equal(matchesExclusionTerm("Acorn Squash", "corn"), false, "'acorn' is not corn");
+});

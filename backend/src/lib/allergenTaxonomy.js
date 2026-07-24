@@ -334,11 +334,11 @@ const ALLERGEN_TAXONOMY = [
     synonyms: ["maize", "corn free", "corn allergy", "zein"],
     nameKeywords: [
       "corn", "maize", "cornmeal", "cornflour", "cornstarch", "corn starch",
-      "corn syrup", "cornbread", "cornflake", "corn flake", "popcorn", "polenta",
-      "grits", "hominy", "masa", "corn tortilla", "corn chip", "nacho",
+      "corn syrup", "cornbread", "cornflake", "corn flake", "popcorn", "sweetcorn",
+      "polenta", "grits", "hominy", "masa", "corn tortilla", "corn chip", "nacho",
     ],
     offTags: [],
-    note: "'corn' is word-boundary matched, so 'corned beef' does not fire; 'popcorn'/'cornbread' need their own entries for the same reason.",
+    note: "'corn' is word-boundary matched, so 'corned beef' does not fire; GLUED forms ('popcorn', 'sweetcorn', 'cornbread' — the British/compound spellings) need their own entries for the same reason. 'sweetcorn' was a confirmed leak (7 recipes) before it was added; 'Sweet Corn' with a space already matched via 'corn'.",
   },
   {
     key: "nightshades",

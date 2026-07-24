@@ -906,6 +906,7 @@ function varietyPlanFor({ weeks, days, mealConfig = {}, filters = {} }) {
 const BINDING = {
   DIET: "dietary-rules",
   PREP: "max-prep",
+  FILTER_CAP: "filter-cap", // a cost/complexity/taste cap (Stage 3), named by explainPool
   MEAL_POOL: "meal-pool",
   SNACK_POOL: "snack-pool",
   VARIETY_CAP: "variety-cap",
@@ -932,6 +933,16 @@ function classifyBinding({ counts = null, filters = {}, dailyTarget, mealConfig 
   if (filters.maxPrepMin && c.afterPrep === 0) {
     return { key: BINDING.PREP, label: `your ${filters.maxPrepMin}-minute max-prep cap`,
       detail: `it removes all ${c.afterDiet} recipes your diet allows.` };
+  }
+  // Stage 3: a cost/complexity/taste cap emptied the pool AFTER prep. explainPool
+  // already isolated which cap is binding (by lifting one at a time), so name it
+  // rather than letting the flow fall through to a generic "meal-pool" verdict —
+  // the bug this branch fixes was blaming the prep cap for a cut the caps made.
+  if (c.stackExplain && c.stackExplain.ok === false && c.stackExplain.bindingConstraint
+      && c.stackExplain.bindingConstraint !== "pool") {
+    const b = c.stackExplain.bindingConstraint;
+    return { key: BINDING.FILTER_CAP, label: b === "combined" ? "your cost / time / complexity / taste caps together" : `your ${b} cap`,
+      detail: c.stackExplain.message };
   }
   if (mealSlots > 0 && mealEligible === 0) {
     return { key: BINDING.MEAL_POOL, label: "your meal-eligible recipe pool",
