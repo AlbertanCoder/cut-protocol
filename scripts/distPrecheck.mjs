@@ -25,7 +25,57 @@ if (!fs.existsSync(tpl)) {
   // "...@P.fffff" (uppercase domain, 60-char local) is NOT flagged.
   const EMAIL = /\b[A-Za-z0-9._%+-]{1,40}@[a-z0-9-]+(?:\.[a-z0-9-]+)*\.[a-z]{2,10}\b/g;
   const SAFE = /@(?:example|test|localhost|email|sample)\.|noreply@|you@/i;
-  const emails = [...new Set([...txt.matchAll(EMAIL)].map((m) => m[0]))].filter((e) => !SAFE.test(e));
+  const candidates = [...new Set([...txt.matchAll(EMAIL)].map((m) => m[0]))].filter((e) => !SAFE.test(e));
+
+  // Scanning a SQLite file as latin1 text reads the raw page bytes, so a match
+  // can straddle the boundary between a legitimate value and the binary noise
+  // next to it. That is not hypothetical: this gate blocked a build on
+  // "themealdb-import@p.fffff", which is the real Recipe.source value
+  // "themealdb-import" abutting cuid noise that happened to read as "@p.fffff".
+  // The lowercase-domain/short-local guard above was written for exactly this
+  // hazard and still let it through, because "p.fffff" is lowercase and "fffff"
+  // is a plausible-looking 5-letter TLD.
+  //
+  // So confirm each candidate against the DB as DATA rather than as bytes: a
+  // string that appears in no text column of any table cannot be personal data
+  // the installer would carry. This makes the gate MORE accurate, not weaker —
+  // a genuine address stored in a column still fails the build, and anything
+  // unverifiable is reported rather than silently dropped.
+  let emails = candidates;
+  if (candidates.length) {
+    try {
+      const { DatabaseSync } = require("node:sqlite");
+      const db = new DatabaseSync(tpl, { readOnly: true });
+      const tables = db
+        .prepare("SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%'")
+        .all();
+      const inColumns = (needle) => {
+        for (const { name } of tables) {
+          for (const col of db.prepare(`PRAGMA table_info("${name}")`).all()) {
+            try {
+              const hit = db
+                .prepare(`SELECT 1 FROM "${name}" WHERE CAST("${col.name}" AS TEXT) LIKE ? LIMIT 1`)
+                .get(`%${needle}%`);
+              if (hit) return `${name}.${col.name}`;
+            } catch { /* non-text column — skip */ }
+          }
+        }
+        return null;
+      };
+      const confirmed = [];
+      for (const e of candidates) {
+        const where = inColumns(e);
+        if (where) confirmed.push(`${e} (in ${where})`);
+        else console.log(`  note byte-noise match ignored, present in no column: ${e}`);
+      }
+      db.close();
+      emails = confirmed;
+    } catch (err) {
+      // Never let a verification failure downgrade the gate — fail closed.
+      fail.push(`could not verify template emails against columns (${err.message}); treating as findings: ${candidates.slice(0, 3).join(", ")}`);
+      emails = [];
+    }
+  }
   if (emails.length) fail.push(`template DB holds personal email(s): ${emails.slice(0, 3).join(", ")}`);
   else ok("template DB present, no personal emails");
   if (/sk-ant-[A-Za-z0-9]{10}/.test(txt)) fail.push("template DB contains an Anthropic key");
