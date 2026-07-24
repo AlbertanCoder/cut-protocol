@@ -2,11 +2,105 @@ import { useState, useEffect, useMemo, useRef } from "react";
 import { ArrowRight, ArrowLeft, Check, Search, AlertTriangle } from "lucide-react";
 import CutMark from "./ui/CutMark.jsx";
 import { C } from "../lib/theme.js";
-import { parseWeight, parseHeight, weightUnit, heightUnit } from "../lib/units.js";
+import { parseWeight, parseHeight, weightUnit, heightUnit, displayWeight, displayHeight } from "../lib/units.js";
 import { Btn } from "./ui/Parts.jsx";
 import { api } from "../lib/api.js";
 
 const STEPS = ["Units & Stats", "Activity", "Diet", "Rate"];
+
+// ── Provisional-profile ledger (onboarding-flow-3) ─────────────────────────
+//
+// THE BUG THIS CLOSES: the old "Skip — use defaults" button called
+// putProfile({}), which made the SERVER fill in a whole person — 30 years old,
+// 178 cm, 90 kg, goal 85 kg, desk job, 3 sessions a week — and then derive a
+// BMR, a TDEE, a calorie target and a week of meals from it. The app then
+// showed all of that as "your target", indistinguishable from numbers a real
+// user had entered. That is the single most dangerous thing a body-composition
+// app can do: it is a made-up prescription wearing the costume of a personal
+// one, and the constitution in CLAUDE.md is explicit — "wrong math = product
+// death", "nothing user-specific hardcoded".
+//
+// It is now impossible to reach that state silently. The estimate path exists
+// (people genuinely do want to look around before measuring themselves), but
+// it: names every assumption on screen before it is applied, requires an
+// explicit acknowledgement, and leaves a marker that makes the entire app
+// label those numbers as ESTIMATES until real ones replace them.
+//
+// The marker lives in localStorage rather than the DB because the profile
+// schema is shared and a column can't be added from here. It self-heals: the
+// snapshot of what was assumed is stored alongside, so as soon as ANY of those
+// values differs from the live profile, the user has entered real data and the
+// marker clears itself. No stale "finish your profile" nag, no way to be stuck.
+const PROVISIONAL_KEY = "cutprotocol.profile.provisional";
+
+// Mirrors backend/src/routes/profile.js → defaultProfile(). If that ever
+// changes, this display text goes stale — which is precisely why the snapshot
+// is recorded from the profile the SERVER returns, not from this constant.
+export const DEFAULT_ASSUMPTIONS = {
+  sex: "M", age: 30, heightCm: 178, startWeightKg: 90, goalWeightKg: 85,
+  occupationKey: "desk-office", sessionsPerWeek: 3, trainingStyle: "mixed",
+  minutesPerSession: 45, rateLbPerWeek: 1.0,
+};
+
+// The fields that make a profile PERSONAL. If any one of these no longer
+// matches what was assumed, the user has told us something real.
+const IDENTITY_FIELDS = ["sex", "age", "heightCm", "startWeightKg", "goalWeightKg"];
+
+function safeStorage() {
+  try { return window.localStorage; } catch { return null; }
+}
+
+/** Record that this profile was created from defaults, plus what they were. */
+export function markProfileProvisional(profile) {
+  const s = safeStorage();
+  if (!s || !profile) return;
+  const snapshot = {};
+  for (const f of IDENTITY_FIELDS) snapshot[f] = profile[f];
+  try {
+    s.setItem(PROVISIONAL_KEY, JSON.stringify({ at: new Date().toISOString(), snapshot }));
+  } catch { /* private mode / quota — the labelling degrades, nothing breaks */ }
+}
+
+export function clearProfileProvisional() {
+  const s = safeStorage();
+  try { s?.removeItem(PROVISIONAL_KEY); } catch { /* ignore */ }
+}
+
+/**
+ * Is the profile currently on screen still made of assumed numbers?
+ * Returns the record ({at, snapshot}) if so, else null — and clears the marker
+ * the moment real values appear, so this can be called on every render.
+ */
+export function readProfileProvisional(profile) {
+  const s = safeStorage();
+  if (!s || !profile) return null;
+  let rec = null;
+  try { rec = JSON.parse(s.getItem(PROVISIONAL_KEY) || "null"); } catch { return null; }
+  if (!rec || !rec.snapshot) return null;
+  const stillAssumed = IDENTITY_FIELDS.every((f) => {
+    const a = rec.snapshot[f];
+    const b = profile[f];
+    if (typeof a === "number" && typeof b === "number") return Math.abs(a - b) < 1e-6;
+    return a === b;
+  });
+  if (!stillAssumed) { clearProfileProvisional(); return null; }
+  return rec;
+}
+
+/** Human-readable list of what the defaults assume, in the user's units. */
+export function describeAssumptions(pref = "imperial") {
+  const a = DEFAULT_ASSUMPTIONS;
+  return [
+    ["Sex", a.sex === "M" ? "male" : "female"],
+    ["Age", `${a.age}`],
+    ["Height", `${displayHeight(a.heightCm, pref)} ${heightUnit(pref)}`],
+    ["Current weight", `${displayWeight(a.startWeightKg, pref)} ${weightUnit(pref)}`],
+    ["Goal weight", `${displayWeight(a.goalWeightKg, pref)} ${weightUnit(pref)}`],
+    ["Job", "desk / office"],
+    ["Training", `${a.sessionsPerWeek}×/week, ${a.minutesPerSession} min, mixed`],
+    ["Rate of loss", `${a.rateLbPerWeek} lb/wk`],
+  ];
+}
 
 // First-ever-launch setup. Collects the same fields the Profile tab edits,
 // writes them in one putProfile at the end. Unsafe rates surface the same
@@ -19,6 +113,9 @@ export default function SetupWizard({ onDone }) {
   const [ackReasons, setAckReasons] = useState(null);
   const [acked, setAcked] = useState(false);
   const [occQuery, setOccQuery] = useState("");
+  // onboarding-flow-3: the estimate path is now a two-stage, explicit choice.
+  const [showEstimatePanel, setShowEstimatePanel] = useState(false);
+  const [estimateAcked, setEstimateAcked] = useState(false);
 
   const [d, setD] = useState({
     unitPref: "imperial",
@@ -80,9 +177,16 @@ export default function SetupWizard({ onDone }) {
     setError(null);
     try {
       if (skipAll) {
-        await api.putProfile({});
+        // Estimate path. The profile the server returns IS the assumed one —
+        // snapshot it so every screen can label those numbers honestly, and
+        // so the label disappears by itself once real values are entered.
+        const created = await api.putProfile({ unitPref: d.unitPref });
+        markProfileProvisional(created);
       } else {
         await api.putProfile({ ...buildPatch(), ...(acked ? { rateAcknowledged: true } : {}) });
+        // A fully-entered profile is real by definition — drop any marker left
+        // from an earlier estimate run.
+        clearProfileProvisional();
       }
       await onDone();
       return;
@@ -300,9 +404,13 @@ export default function SetupWizard({ onDone }) {
               )}
             </div>
             <div className="flex gap-2 items-center">
-              <button onClick={() => finish(true)} disabled={busy}
-                className="text-xs font-semibold hover:opacity-80" style={{ color: C.faint }}>
-                Skip — use defaults
+              {/* onboarding-flow-3: this used to say "Skip — use defaults" and
+                  silently fabricate a person. It now opens a panel that names
+                  every assumption BEFORE any of it is applied. */}
+              <button onClick={() => { setShowEstimatePanel((v) => !v); setEstimateAcked(false); }} disabled={busy}
+                aria-expanded={showEstimatePanel}
+                className="text-xs font-semibold hover:opacity-80 underline decoration-dotted underline-offset-4" style={{ color: C.faint }}>
+                Don&apos;t know your numbers yet?
               </button>
               {step < STEPS.length - 1 ? (
                 <Btn onClick={() => setStep(step + 1)} disabled={busy || (step === 0 && !statsValid)}>
@@ -316,6 +424,60 @@ export default function SetupWizard({ onDone }) {
             </div>
           </div>
         </div>
+
+        {/* ── ESTIMATE PATH (onboarding-flow-3) ─────────────────────────────
+            Shown only on request. Every assumed value is listed in the user's
+            own units, the consequences are stated plainly, and it cannot be
+            applied without an explicit tick. Nothing here is presented as the
+            user's own data at any point. */}
+        {showEstimatePanel && (
+          <div className="mt-4 p-5 rounded-2xl" style={{ background: C.warnBg, border: `1px solid ${C.warn}66` }}>
+            <div className="flex items-start gap-2.5">
+              <AlertTriangle size={18} style={{ color: C.warn }} className="mt-0.5 shrink-0" />
+              <div className="min-w-0 flex-1">
+                <div className="text-sm font-extrabold" style={{ color: C.ink }}>
+                  This starts you on ESTIMATES FROM DEFAULTS — not your numbers
+                </div>
+                <div className="text-xs font-semibold mt-1.5 leading-relaxed" style={{ color: C.faint }}>
+                  Nothing about you is known yet, so the app has to assume a person. Your calorie
+                  target, macros and meal plan would all be derived from the assumptions below —
+                  they are a demo of the engine, not a prescription for you.
+                </div>
+
+                <div className="grid grid-cols-2 gap-x-5 gap-y-1 mt-3.5 mb-3">
+                  {describeAssumptions(pref).map(([k, v]) => (
+                    <div key={k} className="flex justify-between gap-3 text-xs font-semibold py-0.5"
+                      style={{ borderBottom: `1px solid ${C.rule}` }}>
+                      <span style={{ color: C.faint }}>{k}</span>
+                      <span className="mono" style={{ color: C.ink }}>{v}</span>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="text-xs font-semibold leading-relaxed" style={{ color: C.faint }}>
+                  Every screen will keep these numbers flagged as estimates, and keep asking you to
+                  finish your profile, until you enter your real height and weight. Take two
+                  minutes and fill the four steps instead — it is the whole point of the app.
+                </div>
+
+                <label className="flex items-start gap-2 text-xs font-bold mt-3" style={{ color: C.warn }}>
+                  <input type="checkbox" checked={estimateAcked} onChange={(e) => setEstimateAcked(e.target.checked)}
+                    className="mt-0.5" style={{ accentColor: C.warn }} />
+                  I understand these are assumed numbers, not mine, and any target shown is an estimate.
+                </label>
+
+                <div className="flex flex-wrap gap-2 mt-3.5">
+                  <Btn kind="ghost" onClick={() => finish(true)} disabled={busy || !estimateAcked}>
+                    {busy ? "Saving…" : "Continue with estimates"}
+                  </Btn>
+                  <Btn onClick={() => setShowEstimatePanel(false)} disabled={busy}>
+                    Enter my real numbers
+                  </Btn>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
 
         {step === 0 && !statsValid && (d.age || d.height || d.weight) && (
           <div role="alert" className="text-[11px] font-semibold mt-3 px-1" style={{ color: C.faint }}>

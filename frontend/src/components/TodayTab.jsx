@@ -3,7 +3,7 @@ import {
   ComposedChart, Line, XAxis, YAxis, CartesianGrid, Tooltip,
   ReferenceLine, ResponsiveContainer,
 } from "recharts";
-import { Camera, Trash2, CalendarDays, ArrowRight, LineChart, NotebookPen, ClipboardCheck, Plus } from "lucide-react";
+import { Camera, Trash2, CalendarDays, ArrowRight, LineChart, NotebookPen, ClipboardCheck, Plus, Sparkles, AlertTriangle, UserCog } from "lucide-react";
 import { C, getStampStyle } from "../lib/theme.js";
 import { todayStr, dayNum, addDays, fmtD } from "../lib/dates.js";
 import { displayWeight, parseWeight, weightUnit, rateUnit, displayRate, weightInputBounds } from "../lib/units.js";
@@ -11,6 +11,7 @@ import { Card, Stat, Btn, Chip, Stamp, Ring, MacroBar, PageHead, EmptyNote, Erro
 import { Skeleton, SkeletonRows } from "./ui/Skeleton.jsx";
 import { api } from "../lib/api.js";
 import MicronutrientsCard from "./MicronutrientsCard.jsx";
+import { readProfileProvisional, describeAssumptions } from "./SetupWizard.jsx";
 
 const kc = (n) => Math.round(n).toLocaleString("en-CA");
 const r1 = (n) => Math.round(n * 10) / 10;
@@ -203,6 +204,49 @@ function DiaryCard({ date, macros, hasPlan }) {
   );
 }
 
+// ── Provisional-profile banner (onboarding-flow-3) ──────────────────────────
+// Persistent, unmissable, and self-clearing. It exists so that a profile built
+// from defaults can never be mistaken for the user's own — every derived
+// number on this screen is an estimate until they finish, and the app says so
+// out loud rather than quietly presenting a fabricated prescription.
+function ProvisionalBanner({ pref }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <div className="mb-4 p-4 rounded-2xl" style={{ background: C.warnBg, border: `1px solid ${C.warn}66` }}>
+      <div className="flex items-start gap-2.5">
+        <AlertTriangle size={17} style={{ color: C.warn }} className="mt-0.5 shrink-0" />
+        <div className="min-w-0 flex-1">
+          <div className="text-sm font-extrabold" style={{ color: C.ink }}>
+            Estimates from defaults — these aren&apos;t your numbers yet
+          </div>
+          <div className="text-xs font-semibold mt-1 leading-relaxed" style={{ color: C.faint }}>
+            Your target, macros and plan are all derived from an assumed person, because your real
+            height and weight were never entered. Open the <strong style={{ color: C.ink }}>Profile</strong> tab
+            and fill them in — this notice disappears on its own the moment you do.
+          </div>
+          <button onClick={() => setOpen((v) => !v)} aria-expanded={open}
+            className="text-[11px] font-bold mt-2 underline decoration-dotted underline-offset-4"
+            style={{ color: C.warn }}>
+            {open ? "Hide what was assumed" : "Show what was assumed"}
+          </button>
+          {open && (
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-x-5 gap-y-1 mt-2.5">
+              {describeAssumptions(pref).map(([k, v]) => (
+                <div key={k} className="flex justify-between gap-3 text-[11px] font-semibold py-0.5"
+                  style={{ borderBottom: `1px solid ${C.rule}` }}>
+                  <span style={{ color: C.faint }}>{k}</span>
+                  <span className="mono" style={{ color: C.ink }}>{v}</span>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+        <UserCog size={16} style={{ color: C.faintLight }} className="shrink-0 hidden lg:block" aria-hidden="true" />
+      </div>
+    </div>
+  );
+}
+
 export default function TodayTab({ profile, summary, refresh, openTrend }) {
   const pref = profile.unitPref;
   const wUnit = weightUnit(pref);
@@ -212,12 +256,35 @@ export default function TodayTab({ profile, summary, refresh, openTrend }) {
   const [plan, setPlan] = useState(undefined); // undefined = loading, null = none, "error" = fetch failed
   const [logBusy, setLogBusy] = useState(false);
   const [logMsg, setLogMsg] = useState(null);
+  const [genBusy, setGenBusy] = useState(false);
+  const [genErr, setGenErr] = useState(null);
+
+  // onboarding-flow-3: recomputed on every render against the live profile, so
+  // it clears itself the instant real values land — no stale nag possible.
+  const provisional = readProfileProvisional(profile);
 
   useEffect(() => {
     // Stage-C fix: distinguish a fetch error from "no plan yet" so a 500
     // doesn't render the misleading "no plan generated" empty state.
     api.getCurrentPlan().then(setPlan).catch(() => setPlan("error"));
   }, []);
+
+  // onboarding-flow-5: day 1 used to open on an empty dashboard whose only
+  // hint was a sentence telling the user to go find another tab. The single
+  // most valuable thing this app does — solve a week of meals against your
+  // target in milliseconds — was three clicks away and unnamed. Generating is
+  // now a first-class action on the surface the user actually lands on.
+  const generateWeek = async () => {
+    setGenBusy(true);
+    setGenErr(null);
+    try {
+      setPlan(await api.generatePlan({}));
+    } catch (e) {
+      setGenErr(e.message || "Couldn't build a plan just now.");
+    } finally {
+      setGenBusy(false);
+    }
+  };
 
   const { weighins, avg7Kg, rate, daysIn, verdict: v, macros, target } = summary;
   const sorted = [...weighins].sort((a, b) => a.date.localeCompare(b.date));
@@ -273,7 +340,9 @@ export default function TodayTab({ profile, summary, refresh, openTrend }) {
 
   return (
     <div>
-      <PageHead title="Today" sub={`Day ${daysIn} of protocol · target ${kc(target?.target ?? profile.targetKcal)} kcal · plan: ${target?.floored ? `~${target.achievableRate} lb/wk (held at your floor)` : `${profile.rateLbPerWeek} lb/wk`}`} />
+      <PageHead title="Today" sub={`${provisional ? "ESTIMATE FROM DEFAULTS · " : ""}Day ${daysIn} of protocol · target ${kc(target?.target ?? profile.targetKcal)} kcal · plan: ${target?.floored ? `~${target.achievableRate} lb/wk (held at your floor)` : `${profile.rateLbPerWeek} lb/wk`}`} />
+
+      {provisional && <ProvisionalBanner pref={pref} />}
 
       <div className="grid grid-cols-1 xl:grid-cols-12 gap-4 items-start">
         {/* ── planned vs target ── */}
@@ -295,10 +364,31 @@ export default function TodayTab({ profile, summary, refresh, openTrend }) {
               </div>
             </div>
           ) : todaySlots.length === 0 ? (
-            <div className="flex items-start gap-2">
-              <CalendarDays size={18} style={{ color: C.faintLight }} className="mt-0.5 shrink-0" />
+            // onboarding-flow-5: the day-1 payoff, offered here instead of
+            // described and deferred. One button, ms-level solve, real food.
+            <div className="flex flex-col items-start gap-3 py-2">
+              <div className="flex items-center gap-2">
+                <CalendarDays size={17} style={{ color: C.faintLight }} aria-hidden="true" />
+                <div className="text-sm font-extrabold" style={{ color: C.ink }}>
+                  No meals planned for this week yet
+                </div>
+              </div>
               <div className="text-sm font-semibold" style={{ color: C.faint }}>
-                No plan generated for this week yet — head to the Plan tab. This reflects what's <em>planned</em>, not what you've actually eaten (there's no food diary yet).
+                Build a full week of meals around your {kc(macros?.kcal ?? target?.target ?? profile.targetKcal)} kcal
+                target and {Math.round(macros?.proteinHi ?? 0)} g protein — real recipes, your diet and allergy rules
+                already applied. Takes about a second.
+              </div>
+              <Btn onClick={generateWeek} disabled={genBusy}>
+                <Sparkles size={13} className="inline mr-1.5" aria-hidden="true" />
+                {genBusy ? "Building your week…" : "Generate this week's plan"}
+              </Btn>
+              {genErr && (
+                <ErrorNote msg={genErr}
+                  hint="Try again, or open the Plan tab where you can loosen the filters (diet, allergies and prep-time caps can over-constrain the solver)." />
+              )}
+              <div className="text-[11px] font-semibold" style={{ color: C.faintLight }}>
+                Swaps, locks and the grocery list live on the Plan tab. This card shows what&apos;s
+                <em> planned</em> — the diary below is what you actually ate.
               </div>
             </div>
           ) : (
