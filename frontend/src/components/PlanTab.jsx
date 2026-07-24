@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import {
   Lock, LockOpen, RefreshCw, ChefHat, ShoppingCart, Copy, Utensils, Apple,
   MessageCircle, Mail, Sparkles, Check, AlertTriangle, X, ArrowRight, Beef,
@@ -9,7 +9,9 @@ import { addDays, fmtD } from "../lib/dates.js";
 import { proteinPriorityPref } from "../lib/storage.js";
 import { Card, Btn, Chip, PageHead, ErrorNote } from "./ui/Parts.jsx";
 import { Skeleton, SkeletonRows } from "./ui/Skeleton.jsx";
-import { api } from "../lib/api.js";
+import { RangeCap, ComplexityCap } from "./ui/FilterControls.jsx";
+import GenerationProgress from "./ui/GenerationProgress.jsx";
+import { api, isAbortError } from "../lib/api.js";
 
 const kc = (n) => Math.round(n).toLocaleString("en-CA");
 const g1 = (n) => Math.round(n * 10) / 10;
@@ -250,6 +252,39 @@ function FiltersBar({ filters, setFilters, proteinFloorSource }) {
       </div>
       <div className="text-[10.5px] font-semibold mt-2" style={{ color: C.faint }}>
         Cuisine / protein / budget bias the solver; diet & allergies from your Profile hard-filter it; max prep is a hard cap.
+      </div>
+
+      {/* Stage 3 — the optional caps. Each off by default with an explicit OFF
+          state (off ≠ 0). Cost is not a macro, so it uses --ink/--faint only. */}
+      <div className="mt-3 pt-3" style={{ borderTop: `1px solid ${C.rule}` }}>
+        <div className="text-[10.5px] font-extrabold uppercase tracking-wide mb-2.5" style={{ color: C.faint, letterSpacing: ".06em" }}>
+          Optional caps — each off unless you set it
+        </div>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-x-5 gap-y-4">
+          <div className="min-w-0">
+            <RangeCap
+              label="Max cost / serving" value={filters.maxCostCad}
+              onChange={(v) => setFilters((f) => ({ ...f, maxCostCad: v }))}
+              min={1} max={15} step={0.5} enableAt={4}
+              format={(v) => `$${v.toFixed(2)}`}
+              help="Pool median ≈ $4 / serving." />
+            {/* Required cost disclosure — one line per surface. */}
+            <div className="text-[10px] font-semibold mt-1" style={{ color: C.faint }}>
+              Estimated from a local price table, not live grocery pricing.
+            </div>
+          </div>
+          <ComplexityCap value={filters.maxComplexity}
+            onChange={(v) => setFilters((f) => ({ ...f, maxComplexity: v }))} />
+          <RangeCap
+            label="Min taste" value={filters.minTaste}
+            onChange={(v) => setFilters((f) => ({ ...f, minTaste: v }))}
+            min={0} max={1} step={0.05} enableAt={0.58}
+            format={(v) => `≥ ${v.toFixed(2)}`}
+            help="0–1; pool median ≈ 0.58. Sharpens once you rate dishes." />
+        </div>
+        <div className="text-[10px] font-semibold mt-2.5" style={{ color: C.faint }}>
+          Caps are hard filters — a dish that breaks one is removed, and if that empties the pool the solver names which cap is binding rather than failing silently.
+        </div>
       </div>
 
       <div className="mt-3 pt-3" style={{ borderTop: `1px solid ${C.rule}` }}>
@@ -656,8 +691,12 @@ export default function PlanTab({ profile, summary, refresh }) {
   const [activeDay, setActiveDay] = useState(new Date().getDay() === 0 ? 6 : new Date().getDay() - 1);
   const [filters, setFilters] = useState({
     cuisines: [], protein: "", budget: null, maxPrepMin: null, allowBatchRepeats: false,
+    // Stage 3 optional caps — null = off (off ≠ 0).
+    maxCostCad: null, maxComplexity: null, minTaste: null,
     proteinPriority: proteinPriorityPref.get(),
   });
+  // In-flight generate request, so a Cancel can abort it (api.js AbortController).
+  const genAbortRef = useRef(null);
   // Stage 2: the horizon is the user's choice, defaulting to the week this
   // screen has always generated.
   const [horizonKey, setHorizonKey] = useState("week");
@@ -706,6 +745,11 @@ export default function PlanTab({ profile, summary, refresh }) {
   const apiFilters = () => ({
     cuisines: filters.cuisines, protein: filters.protein || undefined,
     budget: filters.budget || undefined, maxPrepMin: filters.maxPrepMin || undefined,
+    // Stage 3 caps: send only when set. `??` (not `||`) so a legit minTaste of 0
+    // survives; off (null) omits the key and the server treats it as not enforced.
+    maxCostCad: filters.maxCostCad ?? undefined,
+    maxComplexity: filters.maxComplexity ?? undefined,
+    minTaste: filters.minTaste ?? undefined,
     allowBatchRepeats: filters.allowBatchRepeats,
     proteinPriority: filters.proteinPriority,
   });
@@ -713,6 +757,9 @@ export default function PlanTab({ profile, summary, refresh }) {
   // What the horizon control currently means, as the server's own vocabulary:
   // a preset key, or a plain day count for the custom input.
   const horizonValue = horizonKey === "custom" ? clampDays(customDays) : horizonKey;
+  const horizonDays = horizonKey === "custom"
+    ? clampDays(customDays)
+    : (HORIZON_OPTIONS.find((h) => h.key === horizonKey)?.days ?? 7);
   const horizonLabel = horizonKey === "custom"
     ? `${clampDays(customDays)} days`
     : HORIZON_OPTIONS.find((h) => h.key === horizonKey)?.label ?? "1 week";
@@ -723,12 +770,16 @@ export default function PlanTab({ profile, summary, refresh }) {
     setDayOptions(null);
     setGenMeta(null);
     setOneMeal(null);
+    // A fresh AbortController per generate; the Cancel affordance aborts it and
+    // request() throws an ABORTED ApiError, which we treat as a no-op (below).
+    const controller = new AbortController();
+    genAbortRef.current = controller;
     try {
       // The horizon rides in the request body. api.generatePlan spreads its
       // options object AFTER the default body, so passing `body` here replaces
       // it — the one seam available without editing the shared api module.
       const body = JSON.stringify({ filters: apiFilters(), horizon: horizonValue });
-      const res = await api.generatePlan(apiFilters(), { body });
+      const res = await api.generatePlan(apiFilters(), { body, signal: controller.signal });
       const meta = res?.meta ?? null;
       setGenMeta(meta);
       if (meta?.horizon?.kind === "meal") {
@@ -740,11 +791,17 @@ export default function PlanTab({ profile, summary, refresh }) {
         setPlan(res);
       }
     } catch (e) {
+      // Cancel is not a failure: leave the plan exactly as it was, show no error
+      // banner, and let the button go straight back to a retryable state.
+      if (isAbortError(e)) return;
       setError(e.message);
     } finally {
+      if (genAbortRef.current === controller) genAbortRef.current = null;
       setGenerating(false);
     }
   };
+
+  const cancelGenerate = () => genAbortRef.current?.abort();
 
   const loadDayOptions = async () => {
     setOptionsBusy(true);
@@ -884,6 +941,17 @@ export default function PlanTab({ profile, summary, refresh }) {
       <div className="mb-4">
         <FiltersBar filters={filters} setFilters={setFilters} proteinFloorSource={meta?.proteinFloorSource} />
       </div>
+
+      {/* Honest staged progress while a generate is in flight — no fake %, real
+          phases, cancellable. The board below stays mounted and interactive. */}
+      {generating && (
+        <div className="mb-4">
+          <GenerationProgress
+            kind={horizonKey === "meal" ? "meal" : "plan"}
+            days={horizonDays}
+            onCancel={cancelGenerate} />
+        </div>
+      )}
 
       {oneMeal && (
         <div className="mb-4">

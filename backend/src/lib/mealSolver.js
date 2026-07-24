@@ -1227,7 +1227,7 @@ async function solveOneMeal({
 }
 
 module.exports = {
-  applyPrepFilter, buildBias, scoreDay, scoreWeek, diagnose, diagnoseFromResult,
+  applyPrepFilter, applyFilterStack, buildBias, scoreDay, scoreWeek, diagnose, diagnoseFromResult,
   generateDayCandidates, generateBestWeekPlan, alternatesForSlot, SCORE_WEIGHTS,
   dayTolerance, dayMissLine, dayInTolerance, varietyOutlook,
   DAY_KCAL_TOLERANCE_PCT, DAY_PROTEIN_TOLERANCE_PCT,
