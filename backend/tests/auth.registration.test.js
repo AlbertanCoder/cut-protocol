@@ -78,7 +78,7 @@ test.before(async () => {
   // DATABASE_URL) at module load, and dotenv never overwrites an existing var —
   // so this also keeps the developer's real JWT_SECRET out of the test process.
   process.env.DATABASE_URL = `file:${dbFile.replace(/\\/g, "/")}`;
-  process.env.JWT_SECRET = "auth-registration-test-only-secret";
+  process.env.JWT_SECRET = "auth-registration-test-only-secret"; // scan:allow — fixture, never a real secret; it exists precisely so the developer's real JWT_SECRET stays out of this process
   process.env.QC_NO_LISTEN = "1";
   process.env.BRAIN = "off";
 
