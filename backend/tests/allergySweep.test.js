@@ -80,6 +80,41 @@ function oracleHits(name, kw) {
   return new RegExp("\\b" + escaped + "(?:es|s)?\\b", "i").test(name);
 }
 
+// ── documented false friends ─────────────────────────────────────────────────
+// This oracle is deliberately independent of the filter, which is what makes it
+// worth having — so weakening it to match the code is normally forbidden. This
+// is the exception the rule is for: the oracle's own heuristic is WRONG for a
+// small, enumerated set of names where an allergen word appears inside a word
+// that is not that allergen. "Egg Plants" is aubergine, a vegetable; the oracle
+// flags it purely because "Egg" is a word in it.
+//
+// Rather than special-casing here, this defers to dietaryFilter's
+// COMPOUND_FALSE_FRIENDS — the same list the FILTER is held to — so the two can
+// never drift apart, and every exemption carries a written `why`. An entry only
+// exempts the categories it names in mustNotMatch: nothing is blanket-skipped.
+//
+// Verified surgical: "Egg Plants"/"Eggplant" are exempt, while "Egg Drop Soup",
+// "Eggs, whole, raw" and "Eggnog" are still caught, and the eggplant OMELETTE
+// (Tortang Talong) is still excluded at recipe level by its real Egg row.
+const canon = (s) => String(s || "").toLowerCase()
+  .split(",")[0]                    // drop USDA qualifiers: "Eggplant, raw" -> "Eggplant"
+  .replace(/[^a-z0-9]+/g, "")       // "Egg Plants" -> "eggplants"
+  .replace(/s$/, "");               // -> "eggplant"
+
+const FALSE_FRIENDS_BY_CATEGORY = (() => {
+  const map = new Map();
+  for (const entry of COMPOUND_FALSE_FRIENDS || []) {
+    for (const cat of entry.mustNotMatch || []) {
+      if (!map.has(cat)) map.set(cat, new Set());
+      map.get(cat).add(canon(entry.name));
+    }
+  }
+  return map;
+})();
+
+const isDocumentedFalseFriend = (name, cat) =>
+  (FALSE_FRIENDS_BY_CATEGORY.get(cat) || new Set()).has(canon(name));
+
 test("every family-oracle keyword is caught by its allergy category (no two-list drift)", () => {
   for (const [cat, kws] of Object.entries(ORACLES)) {
     const missed = kws.filter((kw) => !matchesExclusionTerm(kw, cat));
@@ -91,7 +126,12 @@ test("real-corpus sweep: no oracle-flagged ingredient name survives its allergy 
   const names = await corpusPromise;
   assert.ok(names.length > 900, `corpus unexpectedly small (${names.length}) — seed data moved?`);
   for (const [cat, kws] of Object.entries(ORACLES)) {
-    const leaks = names.filter((n) => kws.some((kw) => oracleHits(n, kw)) && !matchesExclusionTerm(n, cat));
+    const flagged = names.filter((n) => kws.some((kw) => oracleHits(n, kw)) && !matchesExclusionTerm(n, cat));
+    const exempt = flagged.filter((n) => isDocumentedFalseFriend(n, cat));
+    const leaks = flagged.filter((n) => !isDocumentedFalseFriend(n, cat));
+    // Print every exemption. A silent skip list is how an oracle rots; if this
+    // ever grows, it should be noticed in the run output, not discovered later.
+    if (exempt.length) console.log(`  [sweep] ${cat}: ${exempt.length} documented false friend(s) exempt: ${exempt.join(" · ")}`);
     assert.deepEqual(leaks, [], `${cat}: allergen ingredient(s) would reach the plate: ${leaks.join(" · ")}`);
   }
 });

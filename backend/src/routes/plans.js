@@ -1,9 +1,12 @@
 const express = require("express");
 const { prisma } = require("../lib/prisma.js");
 const { requireAuth } = require("../lib/auth.js");
-const { todayStr, mondayOf } = require("../lib/dates.js");
-const { generateWeekPlan, regenerateOneSlot, buildSlots, targetsForSlots, scaleRecipe, buildPriorUsage, RECENCY_WEIGHTS } = require("../lib/weeklyPlanner.js");
-const { generateDayCandidates, generateBestWeekPlan, alternatesForSlot, buildBias, applyPrepFilter, varietyOutlook } = require("../lib/mealSolver.js");
+const { todayStr, mondayOf, dayNum, addDays } = require("../lib/dates.js");
+const { regenerateOneSlot, buildSlots, targetsForSlots, scaleRecipe, RECENCY_WEIGHTS } = require("../lib/weeklyPlanner.js");
+const {
+  generateDayCandidates, alternatesForSlot, buildBias, applyPrepFilter, varietyOutlook,
+  resolveHorizon, horizonWindows, generateHorizonPlan, solveOneMeal, HORIZON_PRESETS, MAX_HORIZON_DAYS, DAYS_PER_WEEK,
+} = require("../lib/mealSolver.js");
 const { buildCostCache } = require("../lib/recipeCost.js");
 const { buildGroceryList } = require("../lib/groceryList.js");
 const { toPurchaseUnits } = require("../lib/purchaseUnits.js");
@@ -117,97 +120,223 @@ router.get("/current", async (req, res) => {
   res.json(plan);
 });
 
+// GET /plans/horizons — the generate surface's menu, served from the SAME
+// catalogue resolveHorizon() validates against, so a control can never offer an
+// option the solver would reject.
+router.get("/horizons", (req, res) => {
+  res.json({
+    presets: HORIZON_PRESETS.map((p) => ({
+      key: p.key, label: p.label, days: p.days, kind: p.kind,
+      weeks: p.kind === "meal" ? 0 : Math.ceil(p.days / DAYS_PER_WEEK),
+    })),
+    customMaxDays: MAX_HORIZON_DAYS,
+    defaultKey: "week",
+  });
+});
+
+// Sum a set of {kcal, protein-ish} rows into one remainder basis.
+const sumIntake = (rows, p) => rows.reduce(
+  (t, r) => ({ kcal: t.kcal + (r.kcal || 0), protein: t.protein + (r[p] || 0) }),
+  { kcal: 0, protein: 0 }
+);
+
+/**
+ * POST /plans/generate — ANY horizon (Stage 2).
+ *
+ * body.horizon: "meal" | "day" | "3days" | "week" | "2weeks" | "month" | <1-90>
+ * Absent = "week", which is byte-for-byte the pre-Stage-2 behaviour: one
+ * Monday-anchored week, same locks, same memory, same meta shape.
+ *
+ * A horizon longer than a week is COMPOSED of week solves sharing one variety
+ * ledger — one Plan row per calendar week, each rewritten in its own
+ * transaction. A horizon SHORTER than a week starts today and touches only the
+ * days it covers; the rest of the week is left exactly as it was.
+ */
 router.post("/generate", async (req, res) => {
   try {
+    const horizon = resolveHorizon(req.body?.horizon); // throws 400 on junk/out-of-range
     const { profile, dailyTarget, mealConfig, recipePool, rawPoolCount, ratings } = await planContext(req.userId);
     const filters = parseFilters(req.body);
     filters.ratings = ratings; // T (v2): soft taste re-rank
-    const monday = mondayOf(todayStr());
 
-    const existing = await prisma.plan.findUnique({
-      where: { userId_startDate: { userId: req.userId, startDate: monday } },
-      include: { slots: true },
-    });
-    const lockedByKey = new Map((existing?.slots || []).filter((s) => s.locked).map((s) => [slotKey(s), s]));
+    const today = todayStr();
+    const monday = mondayOf(today);
+    const todayIndex = dayNum(today) - dayNum(monday); // 0 = Monday … 6 = Sunday
 
     const pool = applyPrepFilter(recipePool, filters.maxPrepMin);
     const costCache = filters.budget ? buildCostCache(pool) : null;
-    // Best-of-N scored week attempts (AI-free, fast); residual rough slots
-    // are patched interactively via swap/alternates, where AI is available.
-    // Stage-C fix (M10): pass the pool counts so a rough-week diagnosis can
-    // name the TRUE binding constraint (e.g. a maxPrep cap that emptied the
-    // pool) instead of always blaming diet/allergy rules.
+    // Stage-C fix (M10): pass the pool counts so a rough-plan diagnosis can name
+    // the TRUE binding constraint (e.g. a maxPrep cap that emptied the pool)
+    // instead of always blaming diet/allergy rules.
     const poolCounts = { raw: rawPoolCount, afterDiet: recipePool.length, afterPrep: pool.length };
+
+    // ── 1 MEAL ───────────────────────────────────────────────────────────
+    // One dish against what is LEFT of today. No writes, no week solve — this
+    // is the instant path. The basis (diary / planned meals / whole day) is
+    // named in the response, because those are three different promises.
+    if (horizon.kind === "meal") {
+      const [logs, currentPlan] = await Promise.all([
+        prisma.mealLog.findMany({ where: { userId: req.userId, date: today }, select: { kcal: true, proteinG: true } }),
+        prisma.plan.findUnique({ where: { userId_startDate: { userId: req.userId, startDate: monday } }, include: PLAN_INCLUDE }),
+      ]);
+      const pMid = (dailyTarget.proteinLo + dailyTarget.proteinHi) / 2;
+      let basis = "full-day";
+      let consumed = { kcal: 0, protein: 0 };
+      if (logs.length) {
+        basis = "diary";
+        consumed = sumIntake(logs, "proteinG");
+      } else {
+        const todaySlots = (currentPlan?.slots || []).filter((s) => s.dayOfWeek === todayIndex && s.recipeId);
+        if (todaySlots.length) {
+          basis = "plan";
+          consumed = sumIntake(todaySlots, "protein");
+        }
+      }
+      const oneMeal = await solveOneMeal({
+        dailyTarget, mealConfig, recipePool: pool, filters, basis,
+        consumedKcal: consumed.kcal,
+        remaining: { kcal: dailyTarget.kcal - consumed.kcal, protein: Math.max(0, pMid - consumed.protein) },
+      });
+      const nameById = new Map(recipePool.map((r) => [r.id, r.name]));
+      oneMeal.options = (oneMeal.options || []).map((o) => ({ ...o, recipeName: nameById.get(o.recipeId) || "?" }));
+      oneMeal.best = oneMeal.options[0] || null;
+      return res.json({
+        ...(currentPlan || {}),
+        meta: {
+          horizon: { ...horizon, basis, date: today, consumed },
+          oneMeal,
+          poolCounts,
+          dailyTarget: { kcal: dailyTarget.kcal, proteinLo: dailyTarget.proteinLo, proteinHi: dailyTarget.proteinHi },
+        },
+      });
+    }
+
+    // ── 1 DAY → 1 MONTH (and any N days) ─────────────────────────────────
+    // Sub-week horizons start TODAY (asking for "3 days" on a Thursday means
+    // Thu-Sat, not Mon-Wed). Week-or-longer horizons start at this week's
+    // Monday, which is what the Plan row and the week board already mean.
+    const startDayOfWeek = horizon.days >= DAYS_PER_WEEK ? 0 : todayIndex;
+    const windows = horizonWindows(horizon.days, startDayOfWeek);
+    const weekStarts = windows.map((_, i) => addDays(monday, i * 7));
+
+    const existingPlans = await prisma.plan.findMany({
+      where: { userId: req.userId, startDate: { in: weekStarts } },
+      include: { slots: true },
+    });
+    const byStart = new Map(existingPlans.map((p) => [p.startDate, p]));
+
+    // A locked slot is only carried forward if its recipe still complies with
+    // the CURRENT diet/allergy rules (Stage-C L9). Otherwise a slot locked
+    // before a diet change (goat locked, then the user goes vegan) would
+    // persist a now-forbidden meal into the regenerated plan.
+    const compliantPoolIds = new Set(recipePool.map((r) => r.id));
+    // solver-core-1: the locks go INTO the solve as fixed constraints, so the
+    // open slots are sized around them and the score describes EXACTLY the plan
+    // we are about to store — never substituted in afterwards.
+    const lockedSlotsByWindow = windows.map((cover, i) => {
+      const covered = new Set(cover);
+      return (byStart.get(weekStarts[i])?.slots || [])
+        .filter((s) => s.locked && s.recipeId != null && compliantPoolIds.has(s.recipeId) && covered.has(s.dayOfWeek));
+    });
+
     // Cross-week variety memory: what the user's PREVIOUS plans already served,
-    // newest first, recency-weighted. Weeks used to be independent draws, so by
-    // week 3 the same dishes came back while most of the library went untouched
-    // (the "repetitive by week 3" failure mode). A soft discount only — a thin
-    // compliant pool still fills the week rather than leaving slots empty.
+    // newest first, recency-weighted. Inside the horizon, generateHorizonPlan
+    // prepends the weeks it has already solved to this same list.
     const priorPlans = await prisma.plan.findMany({
-      where: { userId: req.userId, startDate: { lt: monday } },
+      where: { userId: req.userId, startDate: { lt: weekStarts[0] } },
       orderBy: { startDate: "desc" },
       take: RECENCY_WEIGHTS.length,
       include: { slots: { select: { recipeId: true } } },
     });
-    // A locked slot is only carried forward if its recipe still complies with
-    // the CURRENT diet/allergy rules (Stage-C L9). Otherwise a slot locked
-    // before a diet change (goat locked, then the user goes vegan) would
-    // persist a now-forbidden meal into the regenerated plan — the fresh
-    // compliant slot replaces it instead, and its lock is dropped.
-    const compliantPoolIds = new Set(recipePool.map((r) => r.id));
-    // solver-core-1: the locks go INTO the solve as fixed constraints, so the
-    // open slots are sized around them and weekResult.score describes EXACTLY
-    // the week we are about to store. Substituting them in afterwards (what
-    // this used to do) published a match % for a week that never existed.
-    const lockedSlots = [...lockedByKey.values()]
-      .filter((s) => s.recipeId != null && compliantPoolIds.has(s.recipeId));
-    const weekResult = await generateBestWeekPlan(dailyTarget, mealConfig, pool, {
-      bias: buildBias(filters, costCache),
-      allowBatchRepeats: filters.allowBatchRepeats,
-      filters,
-      counts: poolCounts,
-      priorUsage: buildPriorUsage(priorPlans),
-      lockedSlots,
-    });
-    const finalSlots = weekResult.slots; // locks already in place — do NOT re-substitute
 
-    // One transaction for the whole rewrite (audit Tier 4): the old shape —
-    // deleteMany, then dozens of sequential upserts — could die midway and
-    // leave a half-written week on disk. Same pattern as recipes.js/training.js.
-    const full = await prisma.$transaction(async (tx) => {
-      const plan = await tx.plan.upsert({
-        where: { userId_startDate: { userId: req.userId, startDate: monday } },
-        update: {},
-        create: { userId: req.userId, startDate: monday },
-      });
-      await tx.planSlot.deleteMany({ where: { planId: plan.id, id: { notIn: slotIdsToKeep(existing?.slots || [], finalSlots, compliantPoolIds) } } });
-      for (const s of finalSlots) await upsertSlot(plan.id, s, tx);
-      return tx.plan.findUnique({ where: { id: plan.id }, include: PLAN_INCLUDE });
+    const result = await generateHorizonPlan({
+      dailyTarget, mealConfig, recipePool: pool, horizon, filters,
+      counts: poolCounts,
+      bias: buildBias(filters, costCache),
+      priorPlans, lockedSlotsByWindow, startDayOfWeek,
     });
-    // Forward what the solver ALREADY computed (never recompute): the honest
-    // week score + the result-driven diagnosis it used to attach and then
-    // silently drop, plus the pool sizes at each hard-filter stage. Additive:
-    // the plan object is unchanged, `meta` rides alongside it.
+
+    // One transaction PER WEEK (audit Tier 4): a week rewrite is atomic, so a
+    // failure can never leave a half-written week on disk. Per-week rather than
+    // one giant transaction because a month is ~84 upserts, and `weeksWritten`
+    // below reports honestly how far it got if one fails.
+    const written = new Map();
+    for (let i = 0; i < windows.length; i++) {
+      const startDate = weekStarts[i];
+      const covered = windows[i];
+      const finalSlots = result.windows[i].slots;
+      const existingSlots = byStart.get(startDate)?.slots || [];
+      const full = await prisma.$transaction(async (tx) => {
+        const plan = await tx.plan.upsert({
+          where: { userId_startDate: { userId: req.userId, startDate } },
+          update: {},
+          create: { userId: req.userId, startDate },
+        });
+        // Scoped to the days this horizon actually covers. A 3-day plan must
+        // not delete the four days it never touched — for a full week
+        // `covered` is 0-6, so this is the pre-Stage-2 delete exactly.
+        await tx.planSlot.deleteMany({
+          where: {
+            planId: plan.id,
+            dayOfWeek: { in: covered },
+            id: { notIn: slotIdsToKeep(existingSlots, finalSlots, compliantPoolIds) },
+          },
+        });
+        for (const s of finalSlots) await upsertSlot(plan.id, s, tx);
+        return tx.plan.findUnique({ where: { id: plan.id }, include: PLAN_INCLUDE });
+      });
+      written.set(startDate, full);
+    }
+
+    const horizonStart = addDays(monday, startDayOfWeek);
+    const horizonEnd = addDays(horizonStart, horizon.days - 1);
+    const v = result.variety;
+    const outlook = varietyOutlook({ pool, mealConfig, filters, dailyTarget, horizonWeeks: windows.length });
+    // What the horizon ACTUALLY produced, stated as a number rather than a
+    // promise — the counterpart to varietyOutlook's up-front prediction.
+    const horizonVarietyNote = v.totalSlots > 0
+      ? `${horizon.label}: ${v.distinctRecipes} distinct dish(es) across ${v.filledSlots} filled slot(s); most-repeated dish appears ${v.maxRepeat}x against a ${v.horizonRepeatCap}x cap for this horizon (${v.perWeekCap}x per week).`
+      : null;
+
+    // Forward what the solver ALREADY computed (never recompute). Additive: the
+    // plan object is unchanged, `meta` rides alongside it, and for the default
+    // week horizon every pre-Stage-2 key keeps its exact meaning.
     const meta = {
       // Scalar match % FIRST — this is the number the honesty claim rests on and
-      // the shape the UI reads. `score` keeps the full object for anything that
-      // wants daysInTolerance/days.
-      matchPct: weekResult.score.avgMatch,
-      attempts: weekResult.attempts, // "best of N" — the real count, not a claim
-      score: weekResult.score, // { daysInTolerance, avgMatch, days[] }
+      // the shape the UI reads. `score` keeps the full object.
+      matchPct: result.score.avgMatch,
+      attempts: result.attempts, // "best of N" — the real count, not a claim
+      score: result.score, // { daysInTolerance, avgMatch, days[], totalDays }
       // Per-day honest report: every day states its own match %, its own deltas
       // and, when it misses, its own plain-English miss line. Without this a day
-      // could land 18% under target behind a healthy weekly average — a silent
-      // target miss, which the constitution forbids.
-      days: weekResult.score.days,
-      diagnosis: weekResult.diagnosis, // { feasible, reasons, suggestions } | null (null ONLY when every day landed in tolerance and every slot filled)
+      // could land 18% under target behind a healthy average — a silent target
+      // miss, which the constitution forbids.
+      days: result.score.days,
+      // { feasible, reasons, suggestions, binding } | null. Null ONLY when every
+      // day landed in tolerance, every slot filled, and the variety contract held.
+      diagnosis: result.diagnosis,
       poolCounts, // { raw, afterDiet, afterPrep }
-      // Up-front variety honesty: says when the compliant pool cannot carry a
-      // 4-week horizon of distinct dinners, instead of quietly repeating them.
-      variety: varietyOutlook({ pool, mealConfig, filters, dailyTarget }),
+      variety: { ...outlook, horizon: v, notes: [...(outlook.notes || []), horizonVarietyNote].filter(Boolean) },
       priorWeeksConsidered: priorPlans.length,
+      horizon: {
+        ...horizon,
+        startDate: horizonStart, endDate: horizonEnd, startDayOfWeek,
+        weeksWritten: written.size, solveMs: result.solveMs,
+        // `weeks` stays the COUNT (from the horizon spec); the per-week report
+        // is its own key so one name never means two things.
+        weekPlans: result.windows.map((w, i) => ({
+          startDate: weekStarts[i], dayIndices: w.dayIndices,
+          days: w.score.days.length,
+          daysInTolerance: w.score.daysInTolerance,
+          avgMatch: w.score.avgMatch,
+          unfilledSlots: w.slots.filter((s) => !s.recipeId).length,
+          poolSize: w.poolSize,
+        })),
+      },
     };
-    res.json({ ...full, meta });
+    // The response plan is always THIS week's row (weekStarts[0] === monday),
+    // so the week board keeps rendering exactly what it always did.
+    res.json({ ...written.get(weekStarts[0]), meta });
   } catch (e) {
     res.status(e.status || 500).json({ error: e.message });
   }

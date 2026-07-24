@@ -165,6 +165,73 @@ test("every category key that can receive an alias declares an allergen family",
   assert.deepEqual(familyless, [], `alias targets with no family (allergen tags can never match them): ${familyless.join(", ")}`);
 });
 
+// ── 4b. TERM NORMALISATION (Stage 1, 2026-07-24) ─────────────────────────
+// The alias MAP was fine; the LOOKUP was not. resolveExclusionTerm() normalised
+// with trim().toLowerCase() and nothing else, so a term only resolved if the
+// user typed the exact dictionary spelling. Measured against the real
+// 889-recipe pool, every phrasing below removed 0 recipes.
+//
+// The tell that this was an accident rather than a policy: `lactose
+// intolerance` and `coeliac` WERE aliases; `lactose-intolerant` and `gluten
+// free` were not. (Full free-text coverage lives in allergenTaxonomy.test.js —
+// this section pins the contract at the resolver boundary this file owns.)
+
+test("NORMALISATION: the exact-match path is tried first, so nothing can regress", () => {
+  // Every term that resolved before must resolve identically, with the same
+  // `kind` — normalisation is an added fallback, never a replacement.
+  assert.equal(resolveExclusionTerm("dairy").kind, "category");
+  assert.equal(resolveExclusionTerm("lactose").kind, "alias");
+  assert.equal(resolveExclusionTerm("lactose").synonymKey, "dairy");
+  assert.equal(resolveExclusionTerm("soy protein").kind, "category");
+  // The literal probe still uses the RAW text, so the resolver is idempotent:
+  // exclusionEvidence() re-resolves from `key` and must land in the same place.
+  const r = resolveExclusionTerm("Cow's Milk");
+  assert.equal(r.key, "cow's milk");
+  assert.equal(resolveExclusionTerm(r.key).synonymKey, r.synonymKey);
+});
+
+test("NORMALISATION: punctuation, possessives and hyphens no longer defeat a lookup", () => {
+  for (const typed of ["cow's milk", "cows milk", "Cow’s milk", "dairy!", "dairy.", "dairy-free", "dairy free", "  DAIRY  "]) {
+    assert.equal(resolveExclusionTerm(typed).synonymKey, "dairy", `"${typed}" must reach the dairy category`);
+    assert.equal(matchesExclusionTerm("Cottage Cheese", typed), true, `"${typed}" must exclude cottage cheese`);
+  }
+});
+
+test("NORMALISATION: intent affixes are peeled — a constraint and a diagnosis mean the allergen", () => {
+  const cases = [
+    ["gluten free", "gluten"], ["gluten-free", "gluten"], ["no gluten", "gluten"],
+    ["wheat allergy", "gluten"], ["celiac disease", "gluten"],
+    ["lactose free", "dairy"], ["lactose-intolerant", "dairy"], ["no dairy", "dairy"],
+    ["milk allergy", "dairy"], ["dairies", "dairy"],
+    ["nut allergy", "tree nuts"], ["shellfish allergy", "shellfish"],
+    ["soy allergy", "soy"], ["peanut allergy", "peanuts"],
+  ];
+  for (const [typed, expected] of cases) {
+    const r = resolveExclusionTerm(typed);
+    assert.equal(r.recognised, true, `"${typed}" must be recognised`);
+    assert.equal(r.synonymKey, expected, `"${typed}" → ${r.synonymKey}, expected ${expected}`);
+  }
+});
+
+test("NORMALISATION: a normalised match reports the category it landed in", () => {
+  const [described] = describeExclusionTerms(["cow's milk"]);
+  assert.equal(described.kind, "alias");
+  assert.equal(described.recognised, true);
+  assert.equal(described.synonymKey, "dairy");
+  assert.equal(described.note, 'matched as the "dairy" allergen category');
+  assert.equal(described.normalisedKey, "cows milk", "the UI can show WHAT we understood it as");
+});
+
+test("NORMALISATION: it cannot fabricate a match out of nothing", () => {
+  // Peeling affixes must not turn an empty or wrapper-only term into an
+  // allergen. "free"/"no" alone are not the dairy category.
+  for (const junk of ["free", "no", "allergy", "-", "!!!", "   "]) {
+    const r = resolveExclusionTerm(junk);
+    assert.ok(r.kind === "literal" || r.kind === "empty", `"${junk}" resolved to ${r.kind}/${r.synonymKey}`);
+  }
+  assert.equal(matchesExclusionTerm("Cottage Cheese", "free"), false);
+});
+
 // ── 5. end-to-end through the real filter entry point ────────────────────
 
 test("a free-text 'lactose' profile actually loses the dairy from its pool", () => {

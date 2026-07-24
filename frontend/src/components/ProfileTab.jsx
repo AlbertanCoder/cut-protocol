@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useCallback } from "react";
+import { useState, useEffect, useMemo, useCallback, useRef } from "react";
 import { Search, AlertTriangle, ShieldCheck, ExternalLink, ChevronRight } from "lucide-react";
 import { C } from "../lib/theme.js";
 import {
@@ -7,6 +7,8 @@ import {
 } from "../lib/units.js";
 import { Card, PageHead, Btn, ErrorNote } from "./ui/Parts.jsx";
 import { SkeletonRows } from "./ui/Skeleton.jsx";
+import AllergySearch from "./ui/AllergySearch.jsx";
+import { fetchAllergenTaxonomy, fetchExclusionDescriptions, normTerm } from "./ui/allergyTaxonomy.js";
 import { api, isAbortError, isNoAnswer, describeError } from "../lib/api.js";
 import { useAbortSignal } from "../lib/useAbortable.js";
 import BodyFatPicker from "./BodyFatPicker.jsx";
@@ -139,10 +141,47 @@ export default function ProfileTab({ profile, summary, refresh }) {
   const [excludedLocal, setExcludedLocal] = useState(serverExcluded);
   useEffect(() => { setExcludedLocal(serverExcluded); }, [serverExcluded]);
   const excluded = excludedLocal;
-  const allergyKeys = useMemo(() => (meta?.allergyOptions || []).map((a) => a.key), [meta]);
-  const customExclusions = excluded.filter((t) => !allergyKeys.includes(t));
-  const [customDraft, setCustomDraft] = useState(customExclusions.join(", "));
-  useEffect(() => { setCustomDraft(customExclusions.join(", ")); }, [profile.excludedFoods, meta]); // eslint-disable-line
+
+  // ── Allergies 2.0: searchable taxonomy + honest match reporting ──────────
+  // The taxonomy is the SEARCH vocabulary only. It is fetched separately from
+  // /api/profile/meta so that a build without the taxonomy module degrades to
+  // the quick-chip list instead of breaking this card — an allergy control
+  // that fails to render is worse than one that offers fewer suggestions.
+  const [taxonomy, setTaxonomy] = useState({ available: false, taxonomy: [], reason: null });
+  const [descriptions, setDescriptions] = useState(null);
+  const [describeAvailable, setDescribeAvailable] = useState(true);
+  const allergyInputRef = useRef(null);
+  const allergyAnchorRef = useRef(null);
+
+  useEffect(() => {
+    let alive = true;
+    fetchAllergenTaxonomy({ signal: abort.signal })
+      .then((t) => { if (alive) setTaxonomy(t); })
+      .catch((e) => {
+        if (!alive || isAbortError(e)) return;
+        setTaxonomy({ available: false, taxonomy: [], reason: describeError(e, "couldn't load the allergen list") });
+      });
+    return () => { alive = false; };
+  }, [abort]);
+
+  // Described against SERVER TRUTH, never the optimistic copy: this panel
+  // reports how the saved exclusions will actually be matched, so it must not
+  // describe a term that isn't saved yet.
+  useEffect(() => {
+    let alive = true;
+    fetchExclusionDescriptions(serverExcluded, { signal: abort.signal })
+      .then((r) => { if (!alive) return; setDescriptions(r.byTerm); setDescribeAvailable(r.available); })
+      .catch((e) => {
+        if (!alive || isAbortError(e)) return;
+        setDescriptions({}); setDescribeAvailable(false);
+      });
+    return () => { alive = false; };
+  }, [serverExcluded, abort]);
+
+  const jumpToAllergies = () => {
+    allergyAnchorRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+    allergyInputRef.current?.focus({ preventScroll: true });
+  };
 
   const [savingKeys, setSavingKeys] = useState([]); // in-flight exclusion saves
   // { keys, want, label, kind: "refused" | "unknown", detail }
@@ -165,7 +204,9 @@ export default function ProfileTab({ profile, summary, refresh }) {
     }
   };
 
-  // One save path for both the chips and the custom-exclusion box.
+  // THE one save path for every exclusion change — quick chip, search result,
+  // free text, or a "did you mean" swap. Nothing writes excludedFoods except
+  // this function, which is what keeps the rollback contract above total.
   // `intent` = { keys, want, label } — what the user was trying to make true.
   const saveExclusions = async (next, intent) => {
     const truth = serverExcluded;
@@ -214,24 +255,31 @@ export default function ProfileTab({ profile, summary, refresh }) {
     saveExclusions(applyIntent(serverExcluded, intent), intent);
   };
 
-  const toggleAllergy = (key, label) => {
-    const intent = { keys: [key], want: !excludedLocal.includes(key), label: label || key };
-    saveExclusions(applyIntent(excludedLocal, intent), intent);
+  // Every add/remove — quick chip, search result, or free text — goes through
+  // saveExclusions(), so ALL of them keep the rollback-to-server-truth
+  // contract above. There is deliberately no second, quieter save path.
+  const addTerm = (term) => {
+    const t = String(term ?? "").trim();
+    if (!t || excludedLocal.some((x) => normTerm(x) === normTerm(t))) return;
+    const intent = { keys: [t], want: true, label: t };
+    saveExclusions([...excludedLocal, t], intent);
   };
 
-  const commitCustom = () => {
-    const customs = customDraft.split(",").map((x) => x.trim()).filter(Boolean);
-    const checked = excludedLocal.filter((t) => allergyKeys.includes(t));
-    const next = [...checked, ...customs];
-    if (next.join(",") === excludedLocal.join(",")) return; // nothing changed
-    const added = customs.filter((c) => !serverExcluded.includes(c));
-    const removed = customExclusions.filter((c) => !customs.includes(c));
-    // Adding an exclusion is the safety-critical direction — whenever
-    // anything was added, describe the intent by what was added.
-    const intent = added.length
-      ? { keys: added, want: true, label: added.join(", ") }
-      : { keys: removed, want: false, label: removed.join(", ") || "your custom exclusions" };
-    saveExclusions(next, intent);
+  const removeTerm = (term) => {
+    const intent = { keys: [term], want: false, label: term };
+    saveExclusions(excludedLocal.filter((x) => x !== term), intent);
+  };
+
+  // "did you mean Dairy?" → swap a literal-only term for the real category.
+  // Described by what was ADDED (the safety-critical direction); a retry after
+  // failure therefore re-adds the category and leaves the old literal term in
+  // place — over-excluding, which is the safe way to be wrong.
+  const replaceTerm = (oldTerm, newTerm, newLabel) => {
+    const next = [
+      ...excludedLocal.filter((x) => normTerm(x) !== normTerm(oldTerm) && normTerm(x) !== normTerm(newTerm)),
+      newTerm,
+    ];
+    saveExclusions(next, { keys: [newTerm], want: true, label: `${newLabel || newTerm} (replacing “${oldTerm}”)` });
   };
 
   // "Check what the server has" — the manual form of the same verification.
@@ -276,7 +324,18 @@ export default function ProfileTab({ profile, summary, refresh }) {
       {bfPickerOpen && (
         <BodyFatPicker current={profile.bodyFatPct} source={profile.bodyFatSource} onDone={refresh} onClose={() => setBfPickerOpen(false)} />
       )}
-      <PageHead title="Profile" sub="Your stats, activity, diet rules, and rate of change. Everything else in the app — including the protein floor and lean-mass estimate — derives from this tab." />
+      <PageHead title="Profile" sub="Your stats, activity, diet rules, and rate of change. Everything else in the app — including the protein floor and lean-mass estimate — derives from this tab.">
+        {/* Reachability cue: on a narrow window the Diet & allergies card
+            stacks third, below the fold. A safety control may not be
+            something you have to go hunting for — this puts it one keystroke
+            from the top of the page and states the count out loud. */}
+        <button type="button" onClick={jumpToAllergies}
+          className="text-xs font-bold px-3 py-2 rounded-xl inline-flex items-center gap-1.5"
+          style={{ background: C.card2, border: `1px solid ${C.faintLight}`, color: C.ink }}>
+          <ShieldCheck size={13} aria-hidden="true" />
+          Allergies &amp; exclusions ({excluded.length})
+        </button>
+      </PageHead>
 
       {error && (
         <div className="mb-3">
@@ -461,6 +520,78 @@ export default function ProfileTab({ profile, summary, refresh }) {
               </button>
             </div>
           )}
+          {/* Allergies FIRST inside this card: it is the safety-critical
+              control on the screen and must not sit under two other fields.
+              Selection is a lightness step, never green (law a) — excluding an
+              allergen is not a "success". */}
+          <div ref={allergyAnchorRef} className="mb-4">
+            {!meta && !metaError ? (
+              <SkeletonRows rows={3} />
+            ) : (
+              <AllergySearch
+                taxonomy={taxonomy.taxonomy}
+                taxonomyReason={taxonomy.reason}
+                quickOptions={meta?.allergyOptions || []}
+                selected={excluded}
+                descriptions={descriptions}
+                describeAvailable={describeAvailable}
+                busyTerms={savingKeys}
+                onAdd={addTerm}
+                onRemove={removeTerm}
+                onReplace={replaceTerm}
+                inputRef={allergyInputRef}
+              />
+            )}
+            {metaError && (
+              // Without this the quick-chip row would just be blank, which
+              // reads as "no allergies set" — the exact confusion
+              // frontend-arch-4 is about.
+              <div className="text-xs font-bold mt-2" style={{ color: C.warn }}>
+                The common-allergen shortcuts are unavailable while the option list is down. Everything already
+                excluded is listed above and is still being applied, and search + free text still work.
+              </div>
+            )}
+
+            {savingKeys.length > 0 && (
+              <div className="text-xs font-bold mt-2" style={{ color: C.warn }}>
+                Saving your exclusions — not confirmed yet.
+              </div>
+            )}
+
+            {/* frontend-arch-1: the failed-save state. Non-dismissable — it clears
+                only when the change is actually saved or the server confirms what
+                it really has. Sits directly under the control it describes, which
+                is why it lives inside this block and not further down the card. */}
+            {exclusionFailure && (
+              <div role="alert" className="mt-2 p-3 rounded-xl" style={{ background: C.redBg, border: `1px solid ${C.red}` }}>
+                <div className="flex items-start gap-2.5">
+                  <AlertTriangle size={15} className="mt-0.5 shrink-0" style={{ color: C.red }} aria-hidden="true" />
+                  <div className="min-w-0">
+                    <div className="text-xs font-extrabold" style={{ color: C.red }}>
+                      NOT SAVED — “{exclusionFailure.label}” {exclusionFailure.want ? "is NOT excluded" : "is STILL excluded"}
+                    </div>
+                    <div className="text-xs font-semibold mt-1" style={{ color: C.ink }}>
+                      {exclusionFailure.kind === "unknown"
+                        ? (exclusionFailure.want
+                          ? "The server never answered, so we can't confirm the exclusion was recorded. The chip has been put back to the last state the server confirmed — treat this allergen as NOT excluded, and do not rely on a meal plan to keep it out until this is resolved."
+                          : "The server never answered, so the exclusion is still in force. That is the safe direction — nothing has been un-excluded.")
+                        : (exclusionFailure.want
+                          ? "The server refused the change, so the allergen is NOT excluded. Nothing about your plans has changed — but nothing is protecting you from it either."
+                          : "The server refused the change, so the exclusion is still in force.")}
+                    </div>
+                    <div className="text-xs font-semibold mt-1" style={{ color: C.faint }}>{exclusionFailure.detail}</div>
+                    <div className="flex gap-2 mt-2">
+                      <Btn small onClick={retryExclusion} disabled={savingKeys.length > 0 || rechecking}>Try again</Btn>
+                      <Btn small kind="ghost" onClick={recheckExclusions} disabled={rechecking || savingKeys.length > 0}>
+                        {rechecking ? "Checking…" : "Check what the server has"}
+                      </Btn>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+
           <label className="block mb-4">{label("Dietary style")}
             <select value={profile.dietaryStyle || "none"} disabled={!meta}
               onChange={(e) => commit({ dietaryStyle: e.target.value === "none" ? null : e.target.value })} className={inp} style={inpStyle}>
@@ -472,94 +603,6 @@ export default function ProfileTab({ profile, summary, refresh }) {
               ))}
             </select>
           </label>
-
-          {/* Allergies as compact wrapping toggles (was a stacked checkbox list —
-              the screen's main source of clutter). Active = lightness step, never
-              green (Law a): excluding an allergen isn't a "success". */}
-          <div className="mb-1.5">{label("Allergies & exclusions")}</div>
-          {!meta && !metaError ? (
-            <SkeletonRows rows={2} />
-          ) : (
-            <div className="flex flex-wrap gap-1.5 mb-2">
-              {(meta?.allergyOptions || []).map((a) => {
-                const on = excluded.includes(a.key);
-                const saving = savingKeys.includes(a.key);
-                return (
-                  <button key={a.key} type="button" onClick={() => toggleAllergy(a.key, a.label)} aria-pressed={on}
-                    disabled={saving} aria-busy={saving}
-                    className="px-3 py-1.5 rounded-full text-sm font-semibold transition-colors inline-flex items-center gap-1.5"
-                    style={{
-                      background: on ? C.card2 : "transparent",
-                      border: `1px solid ${on ? C.faintLight : C.rule}`,
-                      color: on ? C.ink : C.faint,
-                      opacity: saving ? 0.6 : 1,
-                    }}>
-                    {a.label}
-                    {/* Pending state, in the app's no-spinner language: the
-                        control says out loud that this is not confirmed yet. */}
-                    {saving && <span className="text-[10px] font-bold uppercase" style={{ color: C.warn }}>saving…</span>}
-                    {saving && <span className="sr-only"> — saving, not confirmed yet</span>}
-                  </button>
-                );
-              })}
-              {meta && (meta.allergyOptions || []).length === 0 && (
-                <span className="text-xs font-semibold" style={{ color: C.faint }}>
-                  The server returned no allergen options — use the free-text box below.
-                </span>
-              )}
-              {metaError && (
-                // Without this the chip row would just be blank, which reads as
-                // "no allergies set" — the exact confusion this finding is about.
-                <span className="text-xs font-bold" style={{ color: C.warn }}>
-                  Allergen checkboxes unavailable while the option list is down. Your saved exclusions are
-                  listed in the box below and are still being applied.
-                </span>
-              )}
-            </div>
-          )}
-
-          {/* frontend-arch-1: the failed-save state. Non-dismissable — it clears
-              only when the change is actually saved or the server confirms what
-              it really has. Sits directly under the control it describes. */}
-          {exclusionFailure && (
-            <div role="alert" className="mb-2 p-3 rounded-xl" style={{ background: C.redBg, border: `1px solid ${C.red}` }}>
-              <div className="flex items-start gap-2.5">
-                <AlertTriangle size={15} className="mt-0.5 shrink-0" style={{ color: C.red }} aria-hidden="true" />
-                <div className="min-w-0">
-                  <div className="text-xs font-extrabold" style={{ color: C.red }}>
-                    NOT SAVED — “{exclusionFailure.label}” {exclusionFailure.want ? "is NOT excluded" : "is STILL excluded"}
-                  </div>
-                  <div className="text-xs font-semibold mt-1" style={{ color: C.ink }}>
-                    {exclusionFailure.kind === "unknown"
-                      ? (exclusionFailure.want
-                        ? "The server never answered, so we can't confirm the exclusion was recorded. The toggle has been put back to the last state the server confirmed — treat this allergen as NOT excluded, and do not rely on a meal plan to keep it out until this is resolved."
-                        : "The server never answered, so the exclusion is still in force. That is the safe direction — nothing has been un-excluded.")
-                      : (exclusionFailure.want
-                        ? "The server refused the change, so the allergen is NOT excluded. Nothing about your plans has changed — but nothing is protecting you from it either."
-                        : "The server refused the change, so the exclusion is still in force.")}
-                  </div>
-                  <div className="text-[10.5px] font-semibold mt-1" style={{ color: C.faint }}>{exclusionFailure.detail}</div>
-                  <div className="flex gap-2 mt-2">
-                    <Btn small onClick={retryExclusion} disabled={savingKeys.length > 0 || rechecking}>Try again</Btn>
-                    <Btn small kind="ghost" onClick={recheckExclusions} disabled={rechecking || savingKeys.length > 0}>
-                      {rechecking ? "Checking…" : "Check what the server has"}
-                    </Btn>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-
-          <input type="text" placeholder="Add your own — e.g. cilantro, mushrooms" value={customDraft}
-            onChange={(e) => setCustomDraft(e.target.value)} onBlur={commitCustom}
-            aria-label="Custom exclusions, comma-separated"
-            disabled={savingKeys.length > 0}
-            className={inp} style={inpStyle} />
-          {savingKeys.length > 0 && (
-            <div className="text-[10.5px] font-bold mt-1" style={{ color: C.warn }}>
-              Saving your exclusions — not confirmed yet.
-            </div>
-          )}
 
           {/* AI-recipe fields are optional — collapsed by default so they stop
               crowding the safety-critical diet/allergy controls above. */}

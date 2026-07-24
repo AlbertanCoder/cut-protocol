@@ -50,11 +50,14 @@ const TESTS_DIR = path.join(BACKEND, "tests");
 //               + license gate, solver locks/macro tolerance/keto ceiling,
 //               adaptive step cap + intake recency + target reconcile, and the
 //               LLM governance door)
-const MIN_TEST_FILES = 80;
+//   2026-07-24  84 files / 1031 tests  (Living App stages 1-4: allergen taxonomy,
+//               predictive search UI, any-horizon generation, five filters,
+//               Library->Brain router)
+const MIN_TEST_FILES = 84;
 // ~2.5% headroom under the measured total so ordinary churn (merging or deleting
 // a redundant case) doesn't wedge CI, while still catching a mass skip — the
 // bash glob dropped 27 of 62 files, which is hundreds of tests, not single digits.
-const MIN_TESTS = 903;
+const MIN_TESTS = 1005;
 
 const argv = process.argv.slice(2);
 const listOnly = argv.includes("--list");

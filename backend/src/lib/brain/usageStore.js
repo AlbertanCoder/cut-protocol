@@ -21,8 +21,14 @@ function prismaUsageStore(db = prisma) {
         },
       });
     },
-    async sumSince(date) {
-      const r = await db.llmUsage.aggregate({ _sum: { costUsd: true }, where: { createdAt: { gte: date } } });
+    // Second argument is an OPTIONAL scope (Stage 4). Omitted = every row (the
+    // global cap, unchanged). `{ userId }` restricts the sum to one account, so
+    // the per-user budget reuses this store and the [userId, createdAt] index
+    // the schema already declares — no second table, no second code path.
+    async sumSince(date, scope = {}) {
+      const where = { createdAt: { gte: date } };
+      if (scope && "userId" in scope) where.userId = scope.userId;
+      const r = await db.llmUsage.aggregate({ _sum: { costUsd: true }, where });
       return r._sum.costUsd || 0;
     },
   };

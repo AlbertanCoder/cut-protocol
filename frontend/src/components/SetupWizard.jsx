@@ -4,6 +4,8 @@ import CutMark from "./ui/CutMark.jsx";
 import { C } from "../lib/theme.js";
 import { parseWeight, parseHeight, weightUnit, heightUnit, displayWeight, displayHeight } from "../lib/units.js";
 import { Btn } from "./ui/Parts.jsx";
+import AllergySearch from "./ui/AllergySearch.jsx";
+import { fetchAllergenTaxonomy, fetchExclusionDescriptions, normTerm } from "./ui/allergyTaxonomy.js";
 import { api } from "../lib/api.js";
 
 const STEPS = ["Units & Stats", "Activity", "Diet", "Rate"];
@@ -121,7 +123,10 @@ export default function SetupWizard({ onDone }) {
     unitPref: "imperial",
     sex: "M", age: "", height: "", weight: "", bf: "", goal: "",
     occupationKey: "desk-office", sessions: 3, trainingStyle: "mixed", minutes: 45,
-    dietaryStyle: "none", allergies: [], custom: "",
+    // One flat list of exclusion terms — the same shape the profile stores.
+    // The old split (fixed checkbox keys + a comma-separated "custom" string)
+    // made a typed allergen a second-class citizen; it isn't one.
+    dietaryStyle: "none", exclusions: [],
     mealsPerDay: 3, snacksPerDay: 1,
     rate: 1.0,
   });
@@ -130,6 +135,50 @@ export default function SetupWizard({ onDone }) {
   useEffect(() => {
     api.getProfileMeta().then(setMeta).catch((e) => setError(e.message));
   }, []);
+
+  // ── Allergies 2.0 (same picker as the Profile tab) ───────────────────────
+  // A new user gets the searchable taxonomy on day one, not the short fixed
+  // checkbox list. Degrades to the common-allergen quick chips if the
+  // taxonomy module isn't on this build — never blocks setup.
+  const [taxonomy, setTaxonomy] = useState({ available: false, taxonomy: [], reason: null });
+  const [descriptions, setDescriptions] = useState(null);
+  const [describeAvailable, setDescribeAvailable] = useState(true);
+
+  useEffect(() => {
+    let alive = true;
+    fetchAllergenTaxonomy()
+      .then((t) => { if (alive) setTaxonomy(t); })
+      .catch(() => { if (alive) setTaxonomy({ available: false, taxonomy: [], reason: "couldn't reach the server" }); });
+    return () => { alive = false; };
+  }, []);
+
+  // Nothing is saved yet in the wizard, so this describes the pending list —
+  // the user finds out how a term will be matched BEFORE they commit to it.
+  useEffect(() => {
+    let alive = true;
+    fetchExclusionDescriptions(d.exclusions)
+      .then((r) => { if (!alive) return; setDescriptions(r.byTerm); setDescribeAvailable(r.available); })
+      .catch(() => { if (!alive) return; setDescriptions({}); setDescribeAvailable(false); });
+    return () => { alive = false; };
+  }, [d.exclusions]);
+
+  const addExclusion = (term) => {
+    const t = String(term ?? "").trim();
+    if (!t) return;
+    setD((cur) => (cur.exclusions.some((x) => normTerm(x) === normTerm(t))
+      ? cur
+      : { ...cur, exclusions: [...cur.exclusions, t] }));
+  };
+  const removeExclusion = (term) =>
+    setD((cur) => ({ ...cur, exclusions: cur.exclusions.filter((x) => x !== term) }));
+  const replaceExclusion = (oldTerm, newTerm) =>
+    setD((cur) => ({
+      ...cur,
+      exclusions: [
+        ...cur.exclusions.filter((x) => normTerm(x) !== normTerm(oldTerm) && normTerm(x) !== normTerm(newTerm)),
+        newTerm,
+      ],
+    }));
 
   // a11y: Next/Back swaps the whole step's content in place with no route
   // change, so nothing tells a keyboard/screen-reader user to look there.
@@ -166,7 +215,7 @@ export default function SetupWizard({ onDone }) {
     trainingStyle: d.trainingStyle,
     minutesPerSession: +d.minutes || 0,
     dietaryStyle: d.dietaryStyle === "none" ? null : d.dietaryStyle,
-    excludedFoods: [...d.allergies, ...d.custom.split(",").map((x) => x.trim()).filter(Boolean)],
+    excludedFoods: d.exclusions,
     mealsPerDay: +d.mealsPerDay || 3,
     snacksPerDay: +d.snacksPerDay || 0,
     rateLbPerWeek: d.rate,
@@ -320,29 +369,30 @@ export default function SetupWizard({ onDone }) {
               <div className="text-xs font-semibold mb-4" style={{ color: C.faint }}>
                 These hard-filter every meal plan, the recipe library, and AI generation.
               </div>
-              <div className="grid grid-cols-2 gap-3 mb-4">
-                <label className="block">{label("Dietary style")}
-                  <select value={d.dietaryStyle} onChange={(e) => set({ dietaryStyle: e.target.value })} className={inp} style={inpStyle}>
-                    {(meta?.dietaryStyles || ["none"]).map((s) => (
-                      <option key={s} value={s}>{s === "none" ? "None (no restriction)" : s[0].toUpperCase() + s.slice(1)}</option>
-                    ))}
-                  </select>
-                </label>
-                <label className="block">{label("Custom exclusions (comma-separated)")}
-                  <input type="text" value={d.custom} onChange={(e) => set({ custom: e.target.value })} className={inp} style={inpStyle} placeholder="e.g. cilantro" />
-                </label>
+              {/* Allergies first, and searchable — the same control the
+                  Profile tab uses, so nothing has to be re-learned later.
+                  None is a valid answer; this step is skippable by leaving it
+                  empty. */}
+              <div className="mb-4">
+                <AllergySearch
+                  taxonomy={taxonomy.taxonomy}
+                  taxonomyReason={taxonomy.reason}
+                  quickOptions={meta?.allergyOptions || []}
+                  selected={d.exclusions}
+                  descriptions={descriptions}
+                  describeAvailable={describeAvailable}
+                  onAdd={addExclusion}
+                  onRemove={removeExclusion}
+                  onReplace={replaceExclusion}
+                />
               </div>
-              <div className="mb-1">{label("Allergies")}</div>
-              <div className="grid grid-cols-2 lg:grid-cols-3 gap-x-3 gap-y-1.5 mb-4">
-                {(meta?.allergyOptions || []).map((a) => (
-                  <label key={a.key} className="flex items-center gap-2 text-sm font-semibold" style={{ color: C.ink }}>
-                    <input type="checkbox" checked={d.allergies.includes(a.key)}
-                      onChange={() => set({ allergies: d.allergies.includes(a.key) ? d.allergies.filter((k) => k !== a.key) : [...d.allergies, a.key] })}
-                      className="w-4 h-4" style={{ accentColor: C.accent }} />
-                    {a.label}
-                  </label>
-                ))}
-              </div>
+              <label className="block mb-4 max-w-xs">{label("Dietary style")}
+                <select value={d.dietaryStyle} onChange={(e) => set({ dietaryStyle: e.target.value })} className={inp} style={inpStyle}>
+                  {(meta?.dietaryStyles || ["none"]).map((s) => (
+                    <option key={s} value={s}>{s === "none" ? "None (no restriction)" : s[0].toUpperCase() + s.slice(1)}</option>
+                  ))}
+                </select>
+              </label>
               <div className="grid grid-cols-2 gap-3 max-w-xs">
                 <label className="block">{label("Meals / day")}
                   <input type="number" min={1} max={8} value={d.mealsPerDay} onChange={(e) => set({ mealsPerDay: e.target.value })} className={inp} style={inpStyle} />

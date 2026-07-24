@@ -33,7 +33,14 @@ function sumMacros(ingredients) {
 // (existing match, live USDA lookup, or an honestly-flagged placeholder —
 // resolveIngredient() never fabricates macros) and computes real totals from
 // those resolved rows, never from the AI's own say-so.
-async function resolveDraftIngredients(draft, resolveIngredientImpl = resolveIngredient) {
+// The Food re-fetch is INJECTABLE (Stage 4, additive — omit it and nothing
+// changes). Two callers need that: the router's verification step, which must
+// screen the resolved rows against the pool filter and would otherwise re-query
+// the same ids a second time; and any test that wants to run this path without
+// borrowing rows from a real database.
+const defaultLoadFoods = (ids) => prisma.food.findMany({ where: { id: { in: ids } } });
+
+async function resolveDraftIngredients(draft, resolveIngredientImpl = resolveIngredient, loadFoodsImpl = defaultLoadFoods) {
   const resolvedIngredients = [];
   for (const ing of draft.ingredients) {
     const r = await resolveIngredientImpl(ing.name);
@@ -57,8 +64,16 @@ async function resolveDraftIngredients(draft, resolveIngredientImpl = resolveIng
       extras: r.extras ?? [],
     });
   }
-  const foods = await prisma.food.findMany({ where: { id: { in: resolvedIngredients.map((i) => i.foodId) } } });
-  const foodById = new Map(foods.map((f) => [f.id, f]));
+  const foods = await loadFoodsImpl(resolvedIngredients.map((i) => i.foodId));
+  const foodById = new Map((foods || []).map((f) => [f.id, f]));
+  // FAIL LOUD, not with a TypeError three lines down. A row the resolver
+  // returned but the re-fetch could not find means the macro sum would be
+  // computed from an incomplete food set — i.e. a silently under-counted recipe,
+  // which is the one failure this project's constitution puts first.
+  const unloadable = resolvedIngredients.filter((i) => !foodById.has(i.foodId));
+  if (unloadable.length) {
+    throw new Error(`resolveDraftIngredients: ${unloadable.length} resolved food row(s) could not be loaded (${unloadable.map((i) => i.requestedName || i.name).join(", ")}) — refusing to compute macros from an incomplete food set`);
+  }
   const macros = sumMacros(resolvedIngredients.map((i) => ({ food: foodById.get(i.foodId), grams: i.grams })));
 
   return {
@@ -155,14 +170,22 @@ function placeholderRefusalReason(resolvedDraft) {
 //
 // `source` is the row's PROVENANCE marker and is whitelisted here: an
 // AI-authored recipe can never be written to the library labelled "curated".
+// `tasteTier`/`tasteTierSource` are OPTIONAL and additive (Stage 4). They are a
+// SOFT ranking prior read only by the brain scorer — never a displayed number,
+// never a filter — so writing them cannot change a deterministic result. An
+// LLM-authored row may only ever be tagged source "llm", and taste.js caps what
+// that source can claim (it can never mint "exceptional"). Omit both and the
+// columns stay null, which taste.js already treats as the neutral "decent"
+// prior: the default path is unchanged.
 const RECIPE_SOURCES = new Set(["curated", "ai-generated", "imported"]);
-async function persistRecipe(resolvedDraft, { source = "ai-generated" } = {}) {
+async function persistRecipe(resolvedDraft, { source = "ai-generated", tasteTier = null, tasteTierSource = null } = {}) {
   const provenance = RECIPE_SOURCES.has(source) ? source : "ai-generated";
   return prisma.recipe.create({
     data: {
       name: resolvedDraft.name, description: resolvedDraft.description || null, cuisine: resolvedDraft.cuisine || null,
       slotType: resolvedDraft.slotType || "meal", prepTimeMin: resolvedDraft.prepTimeMin || null,
       steps: resolvedDraft.steps || [], source: provenance,
+      ...(tasteTier ? { tasteTier, tasteTierSource: tasteTierSource || "llm" } : {}),
       kcal: resolvedDraft.kcal, protein: resolvedDraft.protein, fat: resolvedDraft.fat, carb: resolvedDraft.carb,
       ingredients: {
         create: resolvedDraft.ingredients.map((i) => ({
@@ -272,5 +295,5 @@ async function generateAndSaveSlotRecipe(target, profile, existingRecipeNames, d
 module.exports = {
   sumMacros, resolveDraftIngredients, persistRecipe, generateAndSaveSlotRecipe,
   resolvedDraftViolation, placeholderAudit, placeholderRefusalReason,
-  MAX_PLACEHOLDER_SHARE, RECIPE_SOURCES, RECIPE_INCLUDE,
+  MAX_PLACEHOLDER_SHARE, RECIPE_SOURCES, RECIPE_INCLUDE, defaultLoadFoods,
 };
