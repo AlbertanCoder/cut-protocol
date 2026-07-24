@@ -145,6 +145,17 @@ function createAttemptThrottle({ max = 10, windowMs = 15 * 60 * 1000 } = {}) {
       if (!fresh(entry, now)) hits.set(key, { first: now, count: 1 });
       else entry.count += 1;
     },
+    /**
+     * Clear ONE caller's budget — used after a successful login so a user who
+     * mistypes then succeeds doesn't carry the failures. Deliberately separate
+     * from reset(): reset() empties the whole map, so calling it on success
+     * would let any one successful login anywhere wipe an attacker's counter
+     * against a different account. That is the throttle defeating itself.
+     */
+    clear(key) {
+      hits.delete(key);
+    },
+    /** Empties every counter. Test/harness seam only — never call it per-request. */
     reset() {
       hits.clear();
     },

@@ -17,10 +17,28 @@ const router = express.Router();
 // Defence in depth for /register (see the route for the real gate). 10 attempts
 // per 15 minutes per client address is far above any honest use of an endpoint
 // you touch once per account, and low enough to make a scripted attempt useless.
-// NOT applied to /login: the QC fuzz harness (scripts/qc/fuzz.mjs) body-fuzzes
-// POST /api/auth/login in bulk and would trip it. Login throttling is a real
-// gap — flagged to the orchestrator in docs/qc/handoff/agent05.md.
 const registerThrottle = createAttemptThrottle({ max: 10, windowMs: 15 * 60 * 1000 });
+
+// Login brute-force brake. This was deliberately left off in the first pass
+// because the QC fuzz harness (scripts/qc/fuzz.mjs) body-fuzzes
+// POST /api/auth/login in bulk and a throttle would 429 it.
+//
+// That was the wrong trade, in both directions. Leaving it off meant password
+// guessing had no brake at all on a build we hand to other people. And turning
+// it on naively would have made the harness WORSE, not just noisier: the fuzz
+// asserts that hostile bodies don't 500, so if every hostile body bounces at
+// the throttle it never reaches the handler and the whole login fuzz becomes
+// vacuous while still reporting green.
+//
+// So the harness resets this counter between batches through the in-process
+// seam below (it already boots the app in-process via app.listen). Production
+// keeps a real throttle; the fuzz keeps real coverage. Note there is no env
+// flag and no HTTP route that clears it — an env-var bypass would just be the
+// brake with a switch an attacker can reach.
+//
+// Only FAILED attempts count, and a success clears the caller's counter, so a
+// legitimate user logging in repeatedly can never lock themselves out.
+const loginThrottle = createAttemptThrottle({ max: 10, windowMs: 15 * 60 * 1000 });
 
 // GET /api/auth/status — unauthenticated, and deliberately says nothing except
 // "does this install have any account yet". The frontend uses it to choose
@@ -108,6 +126,10 @@ router.post("/login", async (req, res) => {
   // operator object {"$ne":null}) used to hit .trim() and 500. Rejecting
   // non-strings up front both fixes that and stops such objects ever reaching
   // the prisma where-clause. (QC gauntlet v2, 2026-07-23.)
+  //
+  // This block runs BEFORE the throttle on purpose: a malformed body is a client
+  // bug or a fuzzer, not a password guess, and letting it consume the budget
+  // would hand anyone a lockout primitive against a real user.
   if (typeof body.email !== "string" || typeof body.password !== "string") {
     return res.status(400).json({ error: "email and password required" });
   }
@@ -115,11 +137,41 @@ router.post("/login", async (req, res) => {
   const email = body.email.trim().toLowerCase();
   if (!email || !password) return res.status(400).json({ error: "email and password required" });
 
+  // Keyed on address AND the email being guessed — NOT address alone.
+  //
+  // This app binds 127.0.0.1 only, so req.ip is 127.0.0.1 for every caller and
+  // an address-keyed throttle is really one global bucket: failed guesses at any
+  // account would lock out every account. Including the email caps guessing per
+  // target instead, which is the thing brute force actually does.
+  //
+  // Note the alternative was trusting X-Forwarded-For to tell callers apart —
+  // which on a loopback server means letting the client pick its own throttle
+  // key, i.e. a one-header bypass. `trust proxy` stays off.
+  const throttleKey = `${req.ip || "unknown"}|${email}`;
+  const gate = loginThrottle.check(throttleKey);
+  if (!gate.allowed) {
+    res.set("Retry-After", String(gate.retryAfterSec));
+    return res.status(429).json({ error: "Too many attempts. Wait a few minutes and try again.", retryAfterSec: gate.retryAfterSec });
+  }
+
+  // Both wrong-email and wrong-password record identically — recording only one
+  // would turn the throttle into an account-existence oracle, which is exactly
+  // the leak the shared "invalid credentials" message exists to avoid.
   const user = await prisma.user.findUnique({ where: { email } });
-  if (!user) return res.status(401).json({ error: "invalid credentials" });
+  if (!user) {
+    loginThrottle.record(throttleKey);
+    return res.status(401).json({ error: "invalid credentials" });
+  }
 
   const ok = await verifyPassword(password, user.passwordHash);
-  if (!ok) return res.status(401).json({ error: "invalid credentials" });
+  if (!ok) {
+    loginThrottle.record(throttleKey);
+    return res.status(401).json({ error: "invalid credentials" });
+  }
+
+  // A success clears the budget, so someone who mistypes twice and then gets it
+  // right starts clean rather than carrying the failures for 15 minutes.
+  loginThrottle.clear(throttleKey);
 
   setSessionCookie(res, signToken(user.id));
   res.json({ id: user.id, email: user.email });
@@ -147,3 +199,4 @@ module.exports = router;
 // module instance to clear the counter between groups). Not reachable over HTTP
 // and not an env flag, so it cannot be used to disarm the throttle at runtime.
 module.exports.__registerThrottle = registerThrottle;
+module.exports.__loginThrottle = loginThrottle;
