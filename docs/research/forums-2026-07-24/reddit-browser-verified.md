@@ -12,8 +12,11 @@ search (app / meal plan / recipe filter); `r/keto` search (app / net carbs /
 electrolytes / meal plan); `r/EatCheapAndHealthy` search (app / meal plan / pantry
 / grocery / leftovers); `r/intermittentfasting` search (app / eating window /
 timer / macros); `r/cronometer` search (wish / missing / adaptive / feature / meal
-plan). **Eight subs / nine pages** — broad. `r/mealprep`, `r/Celiac` and `r/fitness`
-remain for a next pass (the OAuth scrubber can also sweep them structured).
+plan); `r/MealPrepSunday` search (app / macro / generator / grocery / family);
+`r/Celiac` search (app / meal plan / recipe / cross contamination). **Nine subs /
+eleven pages.** (`r/Fitness` was also searched but it auto-removes most discussion
+into daily threads, so it yielded no usable feature-demand posts — noted, not a
+gap.) This is a broad, representative pass, not the entire site.
 
 ## Theme 1 — "just tell me what to eat" / decision fatigue (validates the SOLVER)
 
@@ -137,6 +140,43 @@ thing Cronometer doesn't do: build a plan.
   today's macro and micronutrient targets"** (a will-this-fit-my-day preview) and
   **"Hypothetical Days"** (plan-ahead). All point at planning/solving, not tracking.
 
+## Theme 11 — meal prep is a HOUSEHOLD activity, priced per serving (validates the multi-person gap + cost filter)
+
+r/MealPrepSunday's top-of-all-time is almost entirely people cooking for **more than
+one person**:
+- "$74 per family" across 7–8 families, "family of 8," "Keeping a family of four
+  with busy schedules going," "Meals for my husband while I am out of the country"
+  (629 comments), "Next week's menu for my family while I'm 8 months pregnant."
+- Everything is framed as **cost per serving**: "$2.86 per serving," "$3.57 per
+  serving," "$60 of groceries became 40 meals," "134 meals for $189."
+- No-waste at scale: the top post (14,626 pts) is about freezing "400 portions of
+  food for my family" and trying to go no-waste.
+
+Two validations: the **cost-per-serving filter** is exactly how this audience thinks,
+and the **single-eater limitation is a real gap** — the dominant real-world use of
+meal prep is feeding a household, sometimes with different needs per person.
+
+## Theme 12 — for celiacs, CROSS-CONTAMINATION is everything (your highest-value allergy gap, confirmed)
+
+r/Celiac's top posts are overwhelmingly about contamination and shared kitchens, not
+recipes:
+- **"Most Accurate Gluten Detector Yet"** — 770 pts: a celiac trained a service
+  **dog** to detect gluten because test kits and label-reading weren't enough. The
+  distrust of any single safeguard is total — which validates Cut Protocol's honest
+  "cannot guarantee any plan is allergen-free, read the label" framing as *correct*,
+  not overcautious.
+- Cross-contamination is the dominant concern: "Cross contamination prevention at my
+  parent's house" (423 pts), "Oat Contamination" (439 pts), "batched bacon" (616
+  pts), "I'd rather restaurants not offer GF options if they can't avoid
+  cross-contamination" (418 pts). This is the clearest signal that **"may contain" /
+  cross-contamination flags** (CP has the column, unpopulated) are the
+  highest-value allergy addition.
+- Shared-household pain is huge: "I hate living with my family while having this
+  disease" (638 pts), "my boyfriend's mother put gluten in all my food" (460 pts).
+  Reinforces the **multi-person / shared-kitchen** gap from a safety angle, not just
+  convenience.
+- **Restaurant filtering** recurs (418 pts above) — the gap the allergy agent named.
+
 ---
 
 ### Net
@@ -152,7 +192,21 @@ households, electrolyte/satiety views, pantry/leftovers, and (from the broader
 scrub) fast logging + mobile.
 
 The clearest *new build ideas* this Reddit pass surfaced, by how loudly they came
-up: **(1) pantry-first / use-what-you-have / anti-waste** (top-of-all-time energy
-in r/EatCheapAndHealthy), **(2) an electrolyte view for keto**, and **(3) making
-the 7-day rolling average the headline number** — the last is low-effort, high-value,
-and doubles as an anti-anxiety safety win.
+up across nine subreddits:
+
+1. **Cross-contamination / "may contain" flags** — the #1 celiac concern (people
+   train dogs over it); CP already has the `mayContain` column, unpopulated.
+2. **Multi-person / household plans** — the dominant real use of meal prep, and a
+   safety issue in shared celiac kitchens. CP solves for one eater.
+3. **Pantry-first / use-what-you-have / anti-waste** — top-of-all-time energy in
+   the budget subs.
+4. **7-day rolling average as the headline number** — low-effort, high-value, and
+   an anti-anxiety safety win (the one *verified* r/leangains ask from the agent pass).
+5. **Diet-specific views**: a keto electrolyte + net-carb view; a satiety/volume score.
+6. **Restaurant filtering** — a recurring wish across allergy/celiac subs.
+
+And the strongest *positioning* signal, seen everywhere: the market **tracks**;
+people want something that **plans** — MacroFactor, Cronometer and MyFitnessPal
+users all reach for meal-building their apps don't do — and they distrust AI logging
+enough (r/loseit "doesn't work," r/intermittentfasting outright ban) that a
+**deterministic solver is a selling point, not a limitation.**
