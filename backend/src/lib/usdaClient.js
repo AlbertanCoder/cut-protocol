@@ -36,12 +36,35 @@ function extractPer100g(foodNutrients) {
 
 const { classifyFood } = require("./foodCategories.js");
 
+// USDA's own food-category string, taken verbatim and never guessed.
+// The search API ships it under several shapes depending on data type:
+// `foodCategory` as a plain string (Branded), as an object with a
+// `description` (Foundation / SR Legacy), and FNDDS survey foods carry
+// `wweiaFoodCategory.wweiaFoodCategoryDescription` instead. Same precedence
+// order as scripts/lib/fdcDataset.js's bulk-import normaliser, so the live
+// search path and the bulk path can never disagree about what a row's
+// authoritative category is. Null when USDA declares none.
+//
+// This is finding dietary-safety-2's root cause on the live-lookup side: the
+// category was computed here from the NAME (classifyFood) while USDA's own
+// authoritative answer sat unread in the same response.
+function fdcCategoryOf(item) {
+  if (typeof item.foodCategory === "string") return item.foodCategory.trim() || null;
+  const nested = item.foodCategory?.description || item.wweiaFoodCategory?.wweiaFoodCategoryDescription || null;
+  return typeof nested === "string" ? nested.trim() || null : null;
+}
+
 function normalize(item) {
   return {
     fdcId: item.fdcId,
     name: item.description,
     dataType: item.dataType,
+    // Grocery-store aisle, classified from the name — this is the Food.category
+    // column and is NOT the same thing as USDA's taxonomy below.
     category: classifyFood(item.description).category,
+    // USDA's authoritative category, persisted to Food.fdcCategory so the
+    // dietary filter can use it as independent allergen evidence.
+    fdcCategory: fdcCategoryOf(item),
     per100g: extractPer100g(item.foodNutrients),
   };
 }
@@ -60,4 +83,4 @@ async function searchFoods(query, { includeBranded = false, pageSize = 10 } = {}
   return (json.foods || []).map(normalize);
 }
 
-module.exports = { searchFoods };
+module.exports = { searchFoods, normalize, fdcCategoryOf };

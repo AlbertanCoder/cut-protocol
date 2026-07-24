@@ -15,7 +15,14 @@
 // without extending the allergy lists, the oracle test here goes red.
 const { test } = require("node:test");
 const assert = require("node:assert/strict");
-const { matchesExclusionTerm } = require("../src/lib/dietaryFilter.js");
+const {
+  matchesExclusionTerm,
+  foodMatchesExclusionTerm,
+  adjusterExcludedByStyle,
+  expandCompoundTokens,
+  COMPOUND_TOKENS,
+  COMPOUND_FALSE_FRIENDS,
+} = require("../src/lib/dietaryFilter.js");
 
 // Real corpus: every unique ingredient name in the shipped recipe library +
 // the tier-1 food seed (dynamic import — the data files are ESM).
@@ -168,4 +175,206 @@ test("real-corpus sweep: every 'curry paste' ingredient is excluded under shellf
     assert.ok(matchesExclusionTerm(n, "shellfish"), `"${n}" must be excluded under a shellfish allergy (contains shrimp paste)`);
     assert.ok(matchesExclusionTerm(n, "fish"), `"${n}" must be excluded under a fish allergy (contains fish sauce/shrimp paste)`);
   }
+});
+
+// ═════════════════════════════════════════════════════════════════════════
+// WAVE 2 (2026-07-23) — compound tokens, the add-only invariant, and the
+// metadata union. Findings dietary-safety-2 / -4 / -5.
+// ═════════════════════════════════════════════════════════════════════════
+//
+// Every keyword in this file is word-boundary anchored, which is what keeps
+// "bass" out of "Basil". The price is that a PREPARED-DISH name written as one
+// word hides its allergen from every list. Measured on the live matcher before
+// the fix: "Cheeseburger" passed a dairy exclusion, "Eggnog" passed an egg
+// exclusion, "Fishcake" passed a fish exclusion.
+
+test("COMPOUND TOKENS: the P0 prepared-dish leaks are closed", () => {
+  // [name, allergy] — each was MEASURED passing its exclusion on 2026-07-23.
+  const mustCatch = [
+    ["Cheeseburger", "dairy"],            // the reported P0
+    ["Cheeseburger, fast food", "dairy"],
+    ["Eggnog", "eggs"],                   // the reported P0
+    ["Eggnog", "egg"],
+    ["Eggnog, non-alcoholic", "dairy"],   // eggnog is egg AND milk
+    ["Buttermilk", "dairy"],              // the reported P0 (already covered; pinned)
+    ["Fishcake", "fish"],                 // the reported P0
+    ["Fishcakes, frozen", "fish"],
+    ["Milkshake, chocolate", "dairy"],
+    ["Butterscotch sauce", "dairy"],
+    ["Buttercream frosting", "dairy"],
+    ["Coffee creamer, powdered", "dairy"],
+    ["Cheesecake, plain", "dairy"],
+    ["Philly cheesesteak", "dairy"],
+    ["Chicken alfredo", "dairy"],
+    ["Beef stroganoff", "dairy"],
+    ["Caffe latte", "dairy"],
+    ["Spaghetti carbonara", "eggs"],
+    ["Mushroom omelette", "eggs"],
+    ["Quiche lorraine", "eggs"],
+    ["Frittata, vegetable", "eggs"],
+    ["Mayo, light", "eggs"],
+    ["Fishsticks, breaded", "fish"],
+    ["Fish fingers", "fish"],
+    ["Tunafish salad", "fish"],
+    ["Caesar salad", "fish"],             // anchovy in the dressing
+    ["Caesar salad", "dairy"],            // parmesan
+    ["Crabcakes, Maryland", "shellfish"],
+    ["Crabsticks", "shellfish"],
+    ["Shortbread fingers", "gluten"],
+    ["Gingerbread men", "gluten"],
+    ["Flatbread, plain", "gluten"],
+    ["Cornbread, prepared", "gluten"],
+    ["Breadsticks, crisp", "gluten"],
+    ["Sourdough loaf", "gluten"],
+    ["Doughnuts, glazed", "gluten"],
+    ["Donuts, cake type", "gluten"],
+    ["Wholewheat pasta", "gluten"],
+    ["Biscotti, almond", "gluten"],
+    ["Croutons, seasoned", "gluten"],
+  ];
+  const leaks = mustCatch.filter(([name, cat]) => !matchesExclusionTerm(name, cat));
+  assert.deepEqual(leaks, [], `compound-name allergen(s) would reach the plate: ${leaks.map(([n, c]) => `${n}/${c}`).join(" · ")}`);
+});
+
+// The other half of the fix, and the reason the dictionary is CURATED rather
+// than an unbounded splitter: a splitter finds "ham" inside "graham", "nut"
+// inside "doughnut" and "butternut", "milk" inside "milkfish" (which is a
+// FISH). Each of these would quietly shrink a pool for no medical reason.
+test("COMPOUND TOKENS: graham/hamburger-style false positives do NOT fire", () => {
+  const violations = [];
+  for (const { name, mustNotMatch, mustNotStyle, why } of COMPOUND_FALSE_FRIENDS) {
+    for (const term of mustNotMatch) {
+      if (matchesExclusionTerm(name, term)) violations.push(`"${name}" wrongly excluded for ${term} (${why})`);
+    }
+    for (const style of mustNotStyle || []) {
+      if (adjusterExcludedByStyle({ name }, style)) violations.push(`"${name}" wrongly excluded by ${style} (${why})`);
+    }
+  }
+  assert.deepEqual(violations, [], violations.join(" · "));
+  // Spot-pinned individually so a failure names the case, not just the count.
+  assert.ok(!matchesExclusionTerm("Graham crackers", "peanuts"), "'ham' inside 'graham' is not pork or peanut");
+  assert.ok(!adjusterExcludedByStyle({ name: "Hamburger, plain" }, "halal"), "a hamburger is beef, not ham");
+  assert.ok(!matchesExclusionTerm("Eggplant, raw", "eggs"), "aubergine is a vegetable");
+  assert.ok(!matchesExclusionTerm("Nutmeg, ground", "tree nuts"), "nutmeg is a seed spice");
+  assert.ok(!matchesExclusionTerm("Butternut squash, raw", "dairy"), "butternut is not butter");
+  assert.ok(!matchesExclusionTerm("Doughnuts, glazed", "tree nuts"), "'nut' inside 'doughnut' is not a nut");
+  assert.ok(!matchesExclusionTerm("Milkfish, raw", "dairy"), "milkfish is a fish, not dairy");
+  assert.ok(matchesExclusionTerm("Milkfish, raw", "fish"), "...but it IS a fish");
+  assert.ok(!matchesExclusionTerm("Water chestnut, canned", "tree nuts"), "an aquatic vegetable");
+});
+
+test("COMPOUND TOKENS: expansion is add-only — the raw name is never edited away", () => {
+  // The mechanism, pinned directly: expandCompoundTokens() APPENDS. If it ever
+  // rewrote or replaced, every existing word-boundary match could silently
+  // change meaning.
+  for (const name of ["Cheeseburger", "Plain rice", "Eggnog, non-alcoholic", ""]) {
+    assert.ok(expandCompoundTokens(name).startsWith(name), `"${name}" must survive verbatim at the head of the expansion`);
+  }
+  assert.equal(expandCompoundTokens("Plain rice"), "Plain rice", "a name with no compound is returned untouched");
+  assert.match(expandCompoundTokens("Cheeseburger"), /^Cheeseburger .*cheese/);
+  // Junk in, no throw.
+  for (const junk of [null, undefined, 42, {}]) assert.doesNotThrow(() => expandCompoundTokens(junk));
+});
+
+test("COMPOUND TOKENS: every dictionary entry actually changes an outcome (no dead weight)", () => {
+  // A compound that expands to tokens no category can match is either a typo or
+  // an entry someone added "just in case" — both rot the dictionary.
+  const inert = Object.entries(COMPOUND_TOKENS).filter(([compound]) => expandCompoundTokens(compound) === compound);
+  assert.deepEqual(inert, [], `these compounds expand to nothing: ${inert.map(([c]) => c).join(", ")}`);
+});
+
+// ── the add-only invariant, swept over the REAL corpus ───────────────────
+// tests/allergenMetadata.test.js proves the invariant on hand-picked fixtures.
+// This proves it on every name that actually ships: for every corpus name and
+// every allergy family, a name-based exclusion must survive metadata that is
+// absent, empty, or actively contradictory.
+const CONTRADICTORY_METADATA = [
+  {},
+  { fdcCategory: null, allergenTags: null, mayContain: null },
+  { allergenTags: [], mayContain: [] },
+  { fdcCategory: "Vegetables and Vegetable Products", allergenTags: [] },
+  { fdcCategory: "Fruits and Fruit Juices", allergenTags: ["en:celery"], mayContain: [] },
+];
+
+test("real-corpus sweep: metadata can never CLEAR a name-based exclusion (add-only invariant)", async () => {
+  const names = await corpusPromise;
+  const violations = [];
+  for (const cat of Object.keys(ORACLES)) {
+    for (const name of names) {
+      if (!matchesExclusionTerm(name, cat)) continue;
+      for (const meta of CONTRADICTORY_METADATA) {
+        if (!foodMatchesExclusionTerm({ name, ...meta }, cat)) {
+          violations.push(`${cat}: "${name}" un-excluded by ${JSON.stringify(meta)}`);
+        }
+      }
+    }
+  }
+  assert.deepEqual(violations, [], `ADD-ONLY VIOLATION — metadata cleared an exclusion: ${violations.slice(0, 5).join(" · ")}`);
+});
+
+test("real-corpus sweep: metadata is ADDITIVE — a declared tag excludes names the keywords miss", async () => {
+  const names = await corpusPromise;
+  // Take corpus names that are NOT dairy by name, attach a milk declaration,
+  // and assert every one of them becomes excluded. This is the dietary-safety-4
+  // shape: branded products whose names say nothing.
+  const notDairyByName = names.filter((n) => !matchesExclusionTerm(n, "dairy")).slice(0, 200);
+  assert.ok(notDairyByName.length > 50, `fixture guard: expected plenty of non-dairy names, found ${notDairyByName.length}`);
+  const missed = notDairyByName.filter((n) => !foodMatchesExclusionTerm({ name: n, allergenTags: ["en:milk"] }, "dairy"));
+  assert.deepEqual(missed, [], `a declared milk allergen tag failed to exclude: ${missed.slice(0, 5).join(" · ")}`);
+});
+
+// ── two leaks the 14k sweep found while verifying the above ──────────────
+// Both measured against the REAL Food table with scripts/qc/sweep14k.mjs on
+// 2026-07-23 (18 of the 25 leak candidates it reported). Neither is one of the
+// three assigned findings; both are the same class and live in this file.
+test("REGRESSION (14k sweep): plural 'chestnuts' is a tree nut — the guard was singular-only", () => {
+  // hasWord() is exact; the tree-nut guard used it, so every plural FDC row
+  // leaked. Same plural-blindness as the Phase 4 "Prawns" finding.
+  for (const n of [
+    "Chestnuts",
+    "Nuts, chestnuts, japanese, boiled and steamed",
+    "Nuts, chestnuts, chinese, roasted",
+    "Nuts, chestnuts, european, raw, peeled",
+  ]) {
+    assert.ok(matchesExclusionTerm(n, "tree nuts"), `${n} must be excluded under a tree-nut allergy`);
+    assert.ok(matchesExclusionTerm(n, "nuts"), `${n} must be excluded under a nut allergy`);
+  }
+  // ...and the water-chestnut exemption survives the plural form.
+  assert.ok(!matchesExclusionTerm("Water chestnuts, canned, drained", "tree nuts"), "water chestnut is an aquatic vegetable");
+  assert.ok(!matchesExclusionTerm("Water chestnut", "tree nuts"));
+});
+
+test("REGRESSION (14k sweep): 'lactose free' infant formula is still cow's-milk protein", () => {
+  // Lactose intolerance and milk ALLERGY are different conditions. A
+  // lactose-free product is still milk-derived, which is what an allergy
+  // reacts to. Three real FDC rows reached a dairy allergy this way.
+  for (const n of [
+    "Infant formula, ABBOTT NUTRITION, SIMILAC, SENSITIVE (LACTOSE FREE) ready-to-feed, with ARA and DHA",
+    "Milk, lactose free, whole",
+  ]) {
+    assert.ok(matchesExclusionTerm(n, "dairy"), `${n} must be excluded under a dairy allergy`);
+  }
+});
+
+// ── free-text alias map, swept ───────────────────────────────────────────
+test("real-corpus sweep: a free-text symptom/protein term excludes the same rows as its category", async () => {
+  const names = await corpusPromise;
+  // An alias must be at least as exclusive as the category it resolves to —
+  // that is the whole promise of dietary-safety-5. (It may be MORE exclusive:
+  // the literal term is applied on top.)
+  const ALIAS_PAIRS = [
+    ["lactose", "dairy"], ["casein", "dairy"], ["whey", "dairy"],
+    ["wheat", "gluten"], ["semolina", "gluten"], ["seitan", "gluten"],
+    ["albumen", "eggs"], ["groundnut", "peanuts"], ["arachis", "peanuts"],
+    ["crustacean", "shellfish"], ["prawn", "shellfish"],
+  ];
+  const violations = [];
+  for (const [alias, category] of ALIAS_PAIRS) {
+    for (const name of names) {
+      if (matchesExclusionTerm(name, category) && !matchesExclusionTerm(name, alias)) {
+        violations.push(`"${alias}" missed "${name}" which "${category}" catches`);
+      }
+    }
+  }
+  assert.deepEqual(violations, [], `free-text alias under-excluded: ${violations.slice(0, 5).join(" · ")}`);
 });

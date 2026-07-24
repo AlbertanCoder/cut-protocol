@@ -20,6 +20,7 @@
 //                 anyway — the validator is generic)
 const { validateFood } = require("./foodValidation.js");
 const { classifyFood, CATEGORY_SLUGS } = require("./foodCategories.js");
+const { normaliseAllergenTags } = require("./dietaryFilter.js");
 
 const HARD_REJECT_CODES = new Set(["missing", "negative", "absurd", "zero-kcal", "category", "placeholder"]);
 
@@ -55,6 +56,7 @@ function assessImport(candidate) {
  */
 function candidateFromOffProduct(product) {
   const { category } = classifyFood(product.name);
+  const { allergenTags, mayContain } = allergenFieldsFromOffProduct(product);
   return {
     name: product.name,
     category,
@@ -71,7 +73,46 @@ function candidateFromOffProduct(product) {
     // "unreported". validateFood() never looks at this field (it's outside
     // the Atwater/macro contract), so it rides along unmodified either way.
     micros: product.micros ?? null,
+    // Allergen contract (Food.allergenTags / Food.mayContain): a JSON array of
+    // normalised OFF tag slugs, or null for honest absence. See below — this
+    // is finding dietary-safety-4: the manufacturer's own allergen declaration
+    // was fetched and dropped on the floor, leaving name keywords as the only
+    // evidence for a BRANDED product, which is exactly the case where a name
+    // ("Choco Delight") tells you nothing.
+    allergenTags,
+    mayContain,
   };
 }
 
-module.exports = { assessImport, candidateFromOffProduct, HARD_REJECT_CODES };
+/**
+ * Pull the allergen declaration off an Open Food Facts result.
+ *
+ * Accepts three shapes on purpose, because the raw field names and the
+ * normalised ones both legitimately reach this function:
+ *   - `allergenTags` / `mayContain`     already normalised upstream
+ *   - `allergens_tags` / `traces_tags`  OFF's own raw field names
+ *   - `raw.allergens_tags` / `raw.traces_tags`  a pass-through envelope
+ *
+ * Returns null (never []) when the source carried no declaration at all —
+ * "Open Food Facts doesn't know" and "the manufacturer declares none" are
+ * different facts and the schema keeps them different. An empty array from the
+ * source is preserved as [] for exactly that reason.
+ *
+ * NOTE (open, tracked in docs/qc/handoff/agent04.md): openFoodFactsClient.js
+ * does not currently request `allergens_tags`/`traces_tags` in its FIELDS list
+ * nor pass them through lookupUpc(), and that file is outside this agent's
+ * ownership. Until that one-line change lands, this function is correct but
+ * receives nothing — it is wired, tested, and dormant, not speculative.
+ */
+function allergenFieldsFromOffProduct(product) {
+  const p = product || {};
+  const raw = p.raw || {};
+  const declared = p.allergenTags ?? p.allergens_tags ?? raw.allergens_tags ?? p.allergens ?? raw.allergens ?? null;
+  const traces = p.mayContain ?? p.traces_tags ?? raw.traces_tags ?? p.traces ?? raw.traces ?? null;
+  return {
+    allergenTags: normaliseAllergenTags(declared),
+    mayContain: normaliseAllergenTags(traces),
+  };
+}
+
+module.exports = { assessImport, candidateFromOffProduct, allergenFieldsFromOffProduct, HARD_REJECT_CODES };
