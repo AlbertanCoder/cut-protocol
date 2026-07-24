@@ -89,11 +89,24 @@ value flipped between its runs).
 - **A few recipes carry whole-batch grams in a per-serving column** (e.g. 10,000 g
   peas), which inflates both their cost and their cached macros. Flagged by the
   backfill every run; a data-repair follow-up, deliberately not silently clamped.
-- **UI reachability is unverified visually.** Agent 8 could not get past the login
-  screen — Chrome is a separate browser from the Electron app and has no session,
-  and registration is gated because your DB already has users. It confirmed the
-  earlier boot dead-end is *gone* and the login renders clean. A fresh-install
-  self-driven walk is the way to close this.
+- **UI reachability — NOW CLOSED by a self-driven fresh-install walk.** Agent 8
+  was blocked because Chrome had no Electron session and your DB already has
+  users (no register flow). So the orchestrator stood up a *fresh-install*
+  instance (a copy of the depersonalized template, 0 users, on port 3005) and
+  drove the whole flow in a real browser: register → the "Create your account"
+  screen → 4-step wizard → the **allergy predictive search** (typed "lupin",
+  got the suggestion + synonyms + keyboard-nav helper; added it as a chip;
+  added Dairy as a common chip → "Milk & dairy") → dashboard with a derived
+  2,040 kcal target and the day-1 "Generate this week's plan" CTA → the **Plan
+  tab** with the horizon picker (1 meal … 1 month) and all four optional caps,
+  each with an explicit **Off** default and the cost disclosure → **generated a
+  real week** for the dairy+lupin-allergic account: 889 → 550 pool, 94% match,
+  honest binding-constraint diagnosis, variety cap held. Every new control is
+  reachable and usable; the design laws hold (green only on the primary action,
+  selection is a lightness step). The one thing still not visually walked is the
+  in-flight generation *progress bar* — the solve is sub-second, so it flashes
+  by; its component builds and lints, but a slow-fixture visual capture is left
+  for a future pass.
 
 ## How to re-run this gauntlet
 

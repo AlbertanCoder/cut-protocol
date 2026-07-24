@@ -123,14 +123,28 @@ import, and that write path is verified working end to end.
   applyFilterStack at its single narrowing point. Proven: maxCostCad=3 -> 330.
 - oxlint + vite build clean. NOT browser-verified (see Stage 6 note).
 
-## STAGE 6 — The 10-agent QC gauntlet · RUNNING (per owner)
+## STAGE 6 — The 10-agent QC gauntlet · COMPLETE (per owner)
 Read-only reproduce-and-report fleet, all against the live app + scratch DB
-copies, zero live model calls. Results land in docs/qc/gauntlet-2026-07-24/.
-- qc07 migration/upgrade: **PASS** — 0 row loss across 8 real DBs to migration 25.
-- qc08 UI reachability: **BLOCKED** at auth — Chrome has no Electron session and
-  registration is gated (dev.db already has users). Boot dead-end confirmed GONE;
-  login renders clean. A fresh-install self-driven walk is the way to close this.
+copies, zero live model calls. Full write-up: docs/qc/gauntlet-2026-07-24/GAUNTLET-REPORT.md.
 
-**Suite: 84 files, 1032 tests, 0 failures.**
+**Real allergen leak count after fixes: 0.** 3 genuine defects found, fixed, and
+re-verified by a *different* agent:
+- sweetcorn escaped a corn allergy (P0) — one-line taxonomy fix
+- allergens cooked in via free-form step text reached the plate (20 dairy leaks) —
+  filterRecipePool now scans full step prose, add-only, 20 → 0
+- a binding-constraint headline blamed prep for a cost-cap cut (my bug) — fixed
+
+Verdicts: router/cache PASS · monte-carlo PASS (0 floor/portion/drift/silent-miss
+over 8,694 days) · five-filters PASS · horizons PASS · migration PASS (0 row loss,
+8 DBs) · determinism/governance PASS · verify-the-verifiers PASS (all reproduced,
+no rubber-stamping).
+
+**UI reachability — CLOSED by a self-driven fresh-install walk.** Registered a
+throwaway account on a fresh instance and drove register → wizard → allergy
+predictive search (lupin) + chips → dashboard → Plan tab (horizon picker + four
+filter caps, each Off by default + cost disclosure) → generated a real dairy+lupin
+plan (889→550 pool, honest diagnosis). Every new control reachable and usable.
+
+**Suite: 84 files, 1035 tests, 0 failures.** All Living-App stages 0-6 complete.
 
 _Updated as each stage's DoD is met._
