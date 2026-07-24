@@ -3,7 +3,7 @@ import { Search, AlertTriangle, ShieldCheck, ExternalLink, ChevronRight } from "
 import { C } from "../lib/theme.js";
 import {
   displayWeight, parseWeight, displayHeight, parseHeight, displayRate,
-  weightUnit, heightUnit, rateUnit,
+  weightUnit, rateUnit, cm2ftin, ftin2cm,
 } from "../lib/units.js";
 import { Card, PageHead, Btn, ErrorNote } from "./ui/Parts.jsx";
 import { SkeletonRows } from "./ui/Skeleton.jsx";
@@ -45,6 +45,9 @@ export default function ProfileTab({ profile, summary, refresh }) {
   const avg7Kg = summary.avg7Kg != null ? summary.avg7Kg : profile.startWeightKg;
   const draftFromProfile = useCallback(() => ({
     height: displayHeight(profile.heightCm, pref),
+    // imperial height is edited as ft + in (metric stays a single cm field)
+    heightFt: cm2ftin(profile.heightCm).feet,
+    heightIn: cm2ftin(profile.heightCm).inches,
     bf: profile.bodyFatPct || "",
     goal: displayWeight(profile.goalWeightKg, pref),
     age: profile.age,
@@ -395,12 +398,27 @@ export default function ProfileTab({ profile, summary, refresh }) {
                 onBlur={() => commit({ age: draft.age })}
                 className={inp} style={inpStyle} />
             </label>
-            <label className="block">{label(`Height (${heightUnit(pref)})`)}
-              <input type="number" value={draft.height}
-                onChange={(e) => setDraft((d) => ({ ...d, height: +e.target.value || 0 }))}
-                onBlur={() => commit({ heightCm: parseHeight(draft.height, pref) })}
-                className={inp} style={inpStyle} />
-            </label>
+            {pref === "metric" ? (
+              <label className="block">{label("Height (cm)")}
+                <input type="number" value={draft.height}
+                  onChange={(e) => setDraft((d) => ({ ...d, height: +e.target.value || 0 }))}
+                  onBlur={() => commit({ heightCm: parseHeight(draft.height, pref) })}
+                  className={inp} style={inpStyle} />
+              </label>
+            ) : (
+              <div className="block">{label("Height (ft / in)")}
+                <div className="flex gap-2 mt-1">
+                  <input type="number" aria-label="Height feet" value={draft.heightFt} min="0" max="8"
+                    onChange={(e) => setDraft((d) => ({ ...d, heightFt: e.target.value }))}
+                    onBlur={() => commit({ heightCm: ftin2cm(draft.heightFt, draft.heightIn) })}
+                    className="text-sm px-3 py-2.5 rounded-xl w-full" style={inpStyle} placeholder="ft" />
+                  <input type="number" aria-label="Height inches" value={draft.heightIn} min="0" max="11"
+                    onChange={(e) => setDraft((d) => ({ ...d, heightIn: e.target.value }))}
+                    onBlur={() => commit({ heightCm: ftin2cm(draft.heightFt, draft.heightIn) })}
+                    className="text-sm px-3 py-2.5 rounded-xl w-full" style={inpStyle} placeholder="in" />
+                </div>
+              </div>
+            )}
             <label className="block">{label("Body fat % (optional)")}
               <input type="number" placeholder="unknown" value={draft.bf}
                 onChange={(e) => setDraft((d) => ({ ...d, bf: e.target.value }))}

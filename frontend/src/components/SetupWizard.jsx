@@ -2,7 +2,7 @@ import { useState, useEffect, useMemo, useRef } from "react";
 import { ArrowRight, ArrowLeft, Check, Search, AlertTriangle } from "lucide-react";
 import CutMark from "./ui/CutMark.jsx";
 import { C } from "../lib/theme.js";
-import { parseWeight, parseHeight, weightUnit, heightUnit, displayWeight, displayHeight } from "../lib/units.js";
+import { parseWeight, parseHeight, weightUnit, heightUnit, displayWeight, displayHeight, ftin2cm } from "../lib/units.js";
 import { Btn } from "./ui/Parts.jsx";
 import AllergySearch from "./ui/AllergySearch.jsx";
 import { fetchAllergenTaxonomy, fetchExclusionDescriptions, normTerm } from "./ui/allergyTaxonomy.js";
@@ -121,7 +121,8 @@ export default function SetupWizard({ onDone }) {
 
   const [d, setD] = useState({
     unitPref: "imperial",
-    sex: "M", age: "", height: "", weight: "", bf: "", goal: "",
+    // height is cm when metric; ft+in when imperial (most people know 6'1", not 73")
+    sex: "M", age: "", height: "", heightFt: "", heightIn: "", weight: "", bf: "", goal: "",
     occupationKey: "desk-office", sessions: 3, trainingStyle: "mixed", minutes: 45,
     // One flat list of exclusion terms — the same shape the profile stores.
     // The old split (fixed checkbox keys + a comma-separated "custom" string)
@@ -191,7 +192,8 @@ export default function SetupWizard({ onDone }) {
   }, [step]);
 
   const pref = d.unitPref;
-  const statsValid = +d.age >= 14 && +d.age <= 100 && +d.height > 0 && +d.weight > 0 && +d.goal > 0;
+  const heightValid = pref === "metric" ? +d.height > 0 : (+d.heightFt * 12 + +d.heightIn) > 0;
+  const statsValid = +d.age >= 14 && +d.age <= 100 && heightValid && +d.weight > 0 && +d.goal > 0;
 
   // Client-side taste of the safety rail: rate vs ~1% of entered body weight.
   // The server re-checks properly (including the floor) on submit.
@@ -206,7 +208,7 @@ export default function SetupWizard({ onDone }) {
     unitPref: d.unitPref,
     sex: d.sex,
     age: +d.age,
-    heightCm: parseHeight(+d.height, pref),
+    heightCm: pref === "metric" ? parseHeight(+d.height, pref) : ftin2cm(d.heightFt, d.heightIn),
     ...(d.bf !== "" ? { bodyFatPct: +d.bf } : { bodyFatPct: 0 }),
     startWeightKg: parseWeight(+d.weight, pref),
     goalWeightKg: parseWeight(+d.goal, pref),
@@ -309,9 +311,18 @@ export default function SetupWizard({ onDone }) {
                 <label className="block">{label("Age")}
                   <input type="number" value={d.age} onChange={(e) => set({ age: e.target.value })} className={inp} style={inpStyle} placeholder="30" />
                 </label>
-                <label className="block">{label(`Height (${heightUnit(pref)})`)}
-                  <input type="number" value={d.height} onChange={(e) => set({ height: e.target.value })} className={inp} style={inpStyle} placeholder={pref === "metric" ? "178" : "70"} />
-                </label>
+                {pref === "metric" ? (
+                  <label className="block">{label("Height (cm)")}
+                    <input type="number" value={d.height} onChange={(e) => set({ height: e.target.value })} className={inp} style={inpStyle} placeholder="178" />
+                  </label>
+                ) : (
+                  <div className="block">{label("Height (ft / in)")}
+                    <div className="flex gap-2 mt-1">
+                      <input type="number" aria-label="Height feet" value={d.heightFt} onChange={(e) => set({ heightFt: e.target.value })} className="text-sm px-3 py-2.5 rounded-xl w-full" style={inpStyle} placeholder="ft" min="0" max="8" />
+                      <input type="number" aria-label="Height inches" value={d.heightIn} onChange={(e) => set({ heightIn: e.target.value })} className="text-sm px-3 py-2.5 rounded-xl w-full" style={inpStyle} placeholder="in" min="0" max="11" />
+                    </div>
+                  </div>
+                )}
                 <label className="block">{label(`Current weight (${weightUnit(pref)})`)}
                   <input type="number" value={d.weight} onChange={(e) => set({ weight: e.target.value })} className={inp} style={inpStyle} placeholder={pref === "metric" ? "90" : "200"} />
                 </label>

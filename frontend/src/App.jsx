@@ -16,6 +16,7 @@ import RecipesTab from "./components/RecipesTab.jsx";
 import TrainingTab from "./components/TrainingTab.jsx";
 import BrainChat from "./components/BrainChat.jsx";
 import BugReportDialog from "./components/BugReportDialog.jsx";
+import WellbeingCheck from "./components/WellbeingCheck.jsx";
 import HeaderBar from "./components/ui/HeaderBar.jsx";
 import { SkeletonCard } from "./components/ui/Skeleton.jsx";
 import { onUncaughtError } from "./lib/bugLog.js";
@@ -43,6 +44,7 @@ export default function App() {
   const [sessionNotice, setSessionNotice] = useState(null); // shown on the sign-in screen
   const [isAdmin, setIsAdmin] = useState(false);
   const [bugReport, setBugReport] = useState({ open: false, error: null });
+  const [wellbeingOpen, setWellbeingOpen] = useState(false);
   const abort = useAbortSignal();
 
   // a11y: this is a single-page app with no real route change (tab content
@@ -194,12 +196,14 @@ export default function App() {
   // aurora + grain ambience layers wrap every state the same way; content
   // sits at z-1 so the fixed aurora stays behind it.
   const dialog = <BugReportDialog open={bugReport.open} error={bugReport.error} onClose={() => setBugReport({ open: false, error: null })} />;
+  const wellbeing = <WellbeingCheck open={wellbeingOpen} onClose={() => setWellbeingOpen(false)} />;
   const withDialog = (content) => (
     <>
       <div className="aurora" aria-hidden="true" />
       <div className="relative z-[1]">{content}</div>
       <div className="grain" aria-hidden="true" />
       {dialog}
+      {wellbeing}
     </>
   );
 
@@ -269,7 +273,7 @@ export default function App() {
   return withDialog(
     <div className="min-h-svh flex" style={{ color: C.ink }}>
       <a href="#main-content" className="skip-link">Skip to main content</a>
-      <Sidebar tab={tab} setTab={setTab} onLogout={logout} onReportBug={openBugReport} />
+      <Sidebar tab={tab} setTab={setTab} onLogout={logout} onReportBug={openBugReport} onWellbeing={() => setWellbeingOpen(true)} />
 
       <div className="flex-1 min-w-0">
         <HeaderBar profile={profile} summary={summary} />
