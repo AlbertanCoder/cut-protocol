@@ -9,7 +9,7 @@ const { prisma } = require("./prisma.js");
 const { computeMacros } = require("./bmrEngine.js");
 const { getWeightNowKg } = require("./weightNow.js");
 const { reconcileTarget } = require("./profileTarget.js");
-const { recipeExcludedByStyle, matchesExclusionTerm, recipeExceedsKetoCeiling, additionalIngredientNames } = require("./dietaryFilter.js");
+const { recipeExcludedByStyle, matchesExclusionTerm, foodMatchesExclusionTerm, recipeExceedsKetoCeiling, additionalIngredientNames } = require("./dietaryFilter.js");
 
 // The pool carries the diet style it was admitted under (solver-core-3).
 // "Pool membership = compliance" is this codebase's invariant, but membership is
@@ -31,14 +31,33 @@ function filterRecipePool(recipePool, profile) {
     // Shared keto ceiling — single-sourced in dietaryFilter so the library
     // listing (recipes.js) can never diverge from the solver pool (M8).
     if (recipeExceedsKetoCeiling(recipe, dietaryStyle)) return false;
-    const flatIngredients = recipe.ingredients.map((i) => ({ name: i.food.name }));
+    // Carry the WHOLE Food row, not just its name. Stripping to { name } here is
+    // what made the persisted allergen metadata inert on the only path that
+    // matters: fdcCategory / allergenTags / mayContain were written to the DB and
+    // then thrown away one function before the matcher, so the four-probe union
+    // degraded to a one-probe name check on every generated plan.
+    const flatIngredients = recipe.ingredients.map((i) => i.food);
     // Defence-in-depth: fold in any "Add'l ingredients:" the importer left in the
     // step text but never turned into ingredient rows, so an allergen declared
     // only in prose (e.g. mayonnaise -> egg) can't slip past the filter.
     const addl = additionalIngredientNames(recipe.steps);
-    const checkIngredients = addl.length ? flatIngredients.concat(addl.map((name) => ({ name }))) : flatIngredients;
+    // The recipe's own NAME is evidence and was read by nothing. A dish is
+    // routinely named after an ingredient its rows omit — "Egg Drop Soup" has no
+    // egg row, "Roasted Eggplant With Tahini, Pine Nuts" has no tahini row, and
+    // "Cubano pork belly" carries only its marinade — so those reached egg-,
+    // sesame- and pork-excluded plans respectively. Treating the title as one
+    // more name to match is add-only: it can raise an exclusion, never clear one.
+    const checkIngredients = [
+      ...flatIngredients,
+      ...addl.map((name) => ({ name })),
+      { name: recipe.name || "" },
+    ];
     if (recipeExcludedByStyle({ ingredients: checkIngredients }, dietaryStyle)) return false;
-    if (excludedFoods.length && checkIngredients.some((ing) => excludedFoods.some((term) => matchesExclusionTerm(ing.name, term)))) return false;
+    // foodMatchesExclusionTerm, not matchesExclusionTerm: the former consults the
+    // metadata probes as well as the name, and is the function the add-only union
+    // was actually built for. Rows synthesised from prose/title carry only a name,
+    // which it handles — absent metadata simply contributes no evidence.
+    if (excludedFoods.length && checkIngredients.some((ing) => excludedFoods.some((term) => foodMatchesExclusionTerm(ing, term)))) return false;
     return true;
   }), dietaryStyle);
 }
