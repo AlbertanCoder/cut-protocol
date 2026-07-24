@@ -3,7 +3,8 @@ import { Sprout, CalendarDays } from "lucide-react";
 import { C } from "../lib/theme.js";
 import { Card, EmptyNote, ErrorNote } from "./ui/Parts.jsx";
 import { SkeletonRows } from "./ui/Skeleton.jsx";
-import { api } from "../lib/api.js";
+import { api, isAbortError, describeError } from "../lib/api.js";
+import { useAbortSignal } from "../lib/useAbortable.js";
 
 // ── Micronutrients — Today ──────────────────────────────────────────────
 // Calm, factual, neutral treatment (constitutional — see CLAUDE.md's ETHIC):
@@ -107,16 +108,21 @@ function Section({ label, rows, defaultOpen }) {
 
 export default function MicronutrientsCard({ date }) {
   const [data, setData] = useState(undefined); // undefined=loading | object | "error"
+  const [errorText, setErrorText] = useState(null);
+  const abort = useAbortSignal();
 
   const load = useCallback(async () => {
     setData(undefined);
+    setErrorText(null);
     try {
-      const res = await api.getMicronutrientsToday(date);
+      const res = await api.getMicronutrientsToday(date, { signal: abort.signal });
       setData(res);
-    } catch {
+    } catch (e) {
+      if (isAbortError(e)) return; // component gone / superseded — say nothing
+      setErrorText(describeError(e, "Couldn't load today's micronutrient breakdown."));
       setData("error");
     }
-  }, [date]);
+  }, [date, abort]);
   useEffect(() => { load(); }, [load]);
 
   const grouped = useMemo(() => {
@@ -130,7 +136,17 @@ export default function MicronutrientsCard({ date }) {
       {data === undefined ? (
         <SkeletonRows rows={4} />
       ) : data === "error" ? (
-        <ErrorNote msg="Couldn't load today's micronutrient breakdown." hint="Switch tabs and back to retry; if it keeps failing, restart the app." />
+        // Explicitly a LOAD FAILURE, never the "no plan yet" empty state below
+        // — a blank micronutrient card would read as "you ate nothing".
+        <>
+          <ErrorNote msg={`Couldn't load today's micronutrient breakdown — ${errorText}`}
+            hint="This is a load failure, not an empty day. Retry below; if it keeps failing, restart the app." />
+          <button type="button" onClick={load}
+            className="text-xs font-bold mt-3 px-3 py-1.5 rounded-xl"
+            style={{ background: C.card2, border: `1px solid ${C.rule}`, color: C.ink }}>
+            Retry
+          </button>
+        </>
       ) : !data.hasPlan ? (
         <EmptyNote icon={CalendarDays} title="No plan generated for this day yet"
           hint="Micronutrients are rolled up from today's planned meals (real per-ingredient grams) — head to the Plan tab to generate one." />

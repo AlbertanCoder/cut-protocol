@@ -1,12 +1,14 @@
-import { useState, useEffect, useMemo } from "react";
-import { Search, AlertTriangle, ShieldCheck, ExternalLink } from "lucide-react";
+import { useState, useEffect, useMemo, useCallback } from "react";
+import { Search, AlertTriangle, ShieldCheck, ExternalLink, ChevronRight } from "lucide-react";
 import { C } from "../lib/theme.js";
 import {
   displayWeight, parseWeight, displayHeight, parseHeight, displayRate,
   weightUnit, heightUnit, rateUnit,
 } from "../lib/units.js";
 import { Card, PageHead, Btn, ErrorNote } from "./ui/Parts.jsx";
-import { api } from "../lib/api.js";
+import { SkeletonRows } from "./ui/Skeleton.jsx";
+import { api, isAbortError, isNoAnswer, describeError } from "../lib/api.js";
+import { useAbortSignal } from "../lib/useAbortable.js";
 import BodyFatPicker from "./BodyFatPicker.jsx";
 
 const r1 = (n) => Math.round(n * 10) / 10;
@@ -19,15 +21,27 @@ const kc = (n) => Math.round(n).toLocaleString("en-CA");
 export default function ProfileTab({ profile, summary, refresh }) {
   const pref = profile.unitPref;
   const [meta, setMeta] = useState(null);
+  const [metaError, setMetaError] = useState(null); // distinct from "meta is still loading"
   const [error, setError] = useState(null);
   const [bfPickerOpen, setBfPickerOpen] = useState(false);
+  const abort = useAbortSignal();
 
-  useEffect(() => {
-    api.getProfileMeta().then(setMeta).catch((e) => setError(e.message));
-  }, []);
+  const loadMeta = useCallback(async () => {
+    setMetaError(null);
+    try {
+      setMeta(await api.getProfileMeta({ signal: abort.signal }));
+    } catch (e) {
+      if (isAbortError(e)) return;
+      // An empty option list would render as "you have no allergies / no
+      // dietary style" — a failed load must never look like an empty one
+      // (frontend-arch-4).
+      setMetaError(describeError(e, "Couldn't load the diet & allergy options."));
+    }
+  }, [abort]);
+  useEffect(() => { loadMeta(); }, [loadMeta]);
 
   const avg7Kg = summary.avg7Kg != null ? summary.avg7Kg : profile.startWeightKg;
-  const [draft, setDraft] = useState(() => ({
+  const draftFromProfile = useCallback(() => ({
     height: displayHeight(profile.heightCm, pref),
     bf: profile.bodyFatPct || "",
     goal: displayWeight(profile.goalWeightKg, pref),
@@ -36,21 +50,11 @@ export default function ProfileTab({ profile, summary, refresh }) {
     minutes: profile.minutesPerSession,
     override: profile.activityOverride ?? "",
     floor: profile.floorKcal ?? "",
-  }));
+  }), [profile, pref]);
+  const [draft, setDraft] = useState(draftFromProfile);
   // Re-sync drafts when the unit preference flips (values re-render in the
   // new unit) or the profile is refreshed underneath us.
-  useEffect(() => {
-    setDraft({
-      height: displayHeight(profile.heightCm, pref),
-      bf: profile.bodyFatPct || "",
-      goal: displayWeight(profile.goalWeightKg, pref),
-      age: profile.age,
-      sessions: profile.sessionsPerWeek,
-      minutes: profile.minutesPerSession,
-      override: profile.activityOverride ?? "",
-      floor: profile.floorKcal ?? "",
-    });
-  }, [profile, pref]);
+  useEffect(() => { setDraft(draftFromProfile()); }, [draftFromProfile]);
 
   const [prefsDraft, setPrefsDraft] = useState({
     cuisinePreferences: (profile.cuisinePreferences || []).join(", "),
@@ -58,18 +62,32 @@ export default function ProfileTab({ profile, summary, refresh }) {
   });
   const [occQuery, setOccQuery] = useState("");
   const [occOpen, setOccOpen] = useState(false);
+  const [aiPrefsOpen, setAiPrefsOpen] = useState(false); // AI-recipe fields collapsed by default (de-clutter)
   const [pendingAck, setPendingAck] = useState(null); // { patch, reasons }
+
+  // Every failed commit REVERTS the on-screen drafts to server truth. A typed
+  // value that didn't save must not keep sitting in the box looking saved
+  // (same class of lie as the allergy toggle below, lower stakes).
+  const revertDrafts = useCallback(() => {
+    setDraft(draftFromProfile());
+    setPrefsDraft({
+      cuisinePreferences: (profile.cuisinePreferences || []).join(", "),
+      mealPreferencesNote: profile.mealPreferencesNote || "",
+    });
+  }, [draftFromProfile, profile]);
 
   const commit = async (patch) => {
     setError(null);
     try {
-      await api.putProfile(patch);
+      await api.putProfile(patch, { signal: abort.signal });
       await refresh();
     } catch (e) {
+      if (isAbortError(e)) return;
       if (e.status === 422 && e.body?.requiresAck) {
         setPendingAck({ patch, reasons: e.body.reasons });
       } else {
-        setError(e.message);
+        setError(describeError(e));
+        revertDrafts();
       }
     }
   };
@@ -81,38 +99,154 @@ export default function ProfileTab({ profile, summary, refresh }) {
   const commitWithAck = async (patch) => {
     setError(null);
     try {
-      await api.putProfile({ ...patch, rateAcknowledged: true });
+      await api.putProfile({ ...patch, rateAcknowledged: true }, { signal: abort.signal });
       await refresh();
     } catch (e) {
-      setError(e.message);
+      if (isAbortError(e)) return;
+      setError(describeError(e));
+      revertDrafts();
     }
   };
 
-  // Stage-C fix (M14): allergy exclusions are held in an OPTIMISTIC local
-  // copy so rapid toggles compose correctly. Before, each toggle computed its
-  // payload from the profile prop, so toggling A then B before the first
-  // PUT/refresh round-trip dropped A (last write wins) — a silent loss of a
-  // safety-critical exclusion. The local copy re-syncs whenever the server
-  // truth changes.
-  const [excludedLocal, setExcludedLocal] = useState(() => (Array.isArray(profile.excludedFoods) ? profile.excludedFoods : []));
-  useEffect(() => { setExcludedLocal(Array.isArray(profile.excludedFoods) ? profile.excludedFoods : []); }, [profile.excludedFoods]);
+  // ── ALLERGY EXCLUSIONS — safety-critical, so this control has its own
+  // save machinery (frontend-arch-1) ─────────────────────────────────────
+  //
+  // Stage-C fix (M14) kept: exclusions are held in an optimistic local copy
+  // so rapid toggles compose correctly (computing each payload from the
+  // profile prop dropped the earlier toggle — last write wins).
+  //
+  // frontend-arch-1: that optimism had NO ROLLBACK. The chip flipped, the PUT
+  // failed, and the user was left believing an allergen was excluded when the
+  // server had never recorded it. The rule now:
+  //
+  //   THE SCREEN MAY ONLY SHOW SERVER TRUTH OR AN IN-FLIGHT SAVE. It may
+  //   never show an unsaved exclusion as if it were saved.
+  //
+  // So every failure reverts to the last server truth. Note what that means
+  // in each direction — it is deliberately asymmetric in the safe way:
+  //   · failed ADD    → chip returns to OFF. The allergen genuinely is not
+  //                     excluded server-side; pretending otherwise is the
+  //                     exact failure this finding is about.
+  //   · failed REMOVE → chip stays ON. The allergen is still excluded
+  //                     server-side, so reverting over-excludes — the safe
+  //                     direction, and still the truth.
+  // Either way a loud, non-dismissable error names the allergen and says
+  // plainly which state is actually in force until it's resolved.
+  const serverExcluded = useMemo(
+    () => (Array.isArray(profile.excludedFoods) ? profile.excludedFoods : []),
+    [profile.excludedFoods]
+  );
+  const [excludedLocal, setExcludedLocal] = useState(serverExcluded);
+  useEffect(() => { setExcludedLocal(serverExcluded); }, [serverExcluded]);
   const excluded = excludedLocal;
   const allergyKeys = useMemo(() => (meta?.allergyOptions || []).map((a) => a.key), [meta]);
   const customExclusions = excluded.filter((t) => !allergyKeys.includes(t));
   const [customDraft, setCustomDraft] = useState(customExclusions.join(", "));
   useEffect(() => { setCustomDraft(customExclusions.join(", ")); }, [profile.excludedFoods, meta]); // eslint-disable-line
 
-  const toggleAllergy = (key) => {
-    const next = excludedLocal.includes(key) ? excludedLocal.filter((t) => t !== key) : [...excludedLocal, key];
-    setExcludedLocal(next); // optimistic — the next toggle sees this
-    commit({ excludedFoods: next });
+  const [savingKeys, setSavingKeys] = useState([]); // in-flight exclusion saves
+  // { keys, want, label, kind: "refused" | "unknown", detail }
+  const [exclusionFailure, setExclusionFailure] = useState(null);
+  const [rechecking, setRechecking] = useState(false);
+
+  // Ask the server what it ACTUALLY has and re-sync the chips to it.
+  // "landed" | "not-landed" | "unknown" — the only three honest answers.
+  const verifyIntent = async (intent) => {
+    try {
+      const fresh = await api.getProfile({ signal: abort.signal });
+      const list = Array.isArray(fresh?.excludedFoods) ? fresh.excludedFoods : [];
+      setExcludedLocal(list); // server truth wins over any local guess
+      return (intent.want
+        ? intent.keys.every((k) => list.includes(k))
+        : intent.keys.every((k) => !list.includes(k)))
+        ? "landed" : "not-landed";
+    } catch (e) {
+      return isAbortError(e) ? "aborted" : "unknown";
+    }
   };
+
+  // One save path for both the chips and the custom-exclusion box.
+  // `intent` = { keys, want, label } — what the user was trying to make true.
+  const saveExclusions = async (next, intent) => {
+    const truth = serverExcluded;
+    setExcludedLocal(next); // optimistic — the next toggle composes on it
+    setSavingKeys((k) => [...k, ...intent.keys]);
+    setExclusionFailure(null);
+    try {
+      await api.putProfile({ excludedFoods: next }, { signal: abort.signal });
+      await refresh();
+      setExclusionFailure(null);
+    } catch (e) {
+      if (isAbortError(e)) return;
+      setExcludedLocal(truth); // ROLLBACK to server truth — never show unsaved as saved
+      const failure = {
+        ...intent,
+        // "the server said no" vs "the server never answered" — different
+        // facts, different copy, never collapsed into each other.
+        kind: isNoAnswer(e) ? "unknown" : "refused",
+        detail: describeError(e),
+      };
+      setExclusionFailure(failure);
+      // A no-answer failure is genuinely ambiguous — the PUT may have landed.
+      // Resolve it by asking, rather than by guessing in either direction.
+      if (failure.kind === "unknown") {
+        const verdict = await verifyIntent(intent);
+        if (verdict === "landed") { setExclusionFailure(null); await refresh(); }
+        else if (verdict === "not-landed") {
+          setExclusionFailure({ ...failure, kind: "refused", detail: `${failure.detail} Re-checked with the server: it is NOT saved.` });
+          await refresh();
+        }
+        // "unknown"/"aborted" → the ambiguous banner stays up, as it should
+      }
+    } finally {
+      setSavingKeys((k) => k.filter((x) => !intent.keys.includes(x)));
+    }
+  };
+
+  const applyIntent = (list, intent) =>
+    intent.want
+      ? [...list.filter((t) => !intent.keys.includes(t)), ...intent.keys]
+      : list.filter((t) => !intent.keys.includes(t));
+
+  const retryExclusion = () => {
+    if (!exclusionFailure) return;
+    const intent = { keys: exclusionFailure.keys, want: exclusionFailure.want, label: exclusionFailure.label };
+    saveExclusions(applyIntent(serverExcluded, intent), intent);
+  };
+
+  const toggleAllergy = (key, label) => {
+    const intent = { keys: [key], want: !excludedLocal.includes(key), label: label || key };
+    saveExclusions(applyIntent(excludedLocal, intent), intent);
+  };
+
   const commitCustom = () => {
     const customs = customDraft.split(",").map((x) => x.trim()).filter(Boolean);
     const checked = excludedLocal.filter((t) => allergyKeys.includes(t));
     const next = [...checked, ...customs];
-    setExcludedLocal(next);
-    commit({ excludedFoods: next });
+    if (next.join(",") === excludedLocal.join(",")) return; // nothing changed
+    const added = customs.filter((c) => !serverExcluded.includes(c));
+    const removed = customExclusions.filter((c) => !customs.includes(c));
+    // Adding an exclusion is the safety-critical direction — whenever
+    // anything was added, describe the intent by what was added.
+    const intent = added.length
+      ? { keys: added, want: true, label: added.join(", ") }
+      : { keys: removed, want: false, label: removed.join(", ") || "your custom exclusions" };
+    saveExclusions(next, intent);
+  };
+
+  // "Check what the server has" — the manual form of the same verification.
+  const recheckExclusions = async () => {
+    if (!exclusionFailure) return;
+    setRechecking(true);
+    const verdict = await verifyIntent(exclusionFailure);
+    if (verdict === "landed") { setExclusionFailure(null); await refresh(); }
+    else if (verdict === "not-landed") {
+      setExclusionFailure((f) => f && ({ ...f, kind: "refused", detail: "Re-checked with the server: this change is NOT saved." }));
+      await refresh();
+    } else if (verdict === "unknown") {
+      setExclusionFailure((f) => f && ({ ...f, kind: "unknown", detail: "Still no answer from the server — the setting can't be confirmed yet." }));
+    }
+    setRechecking(false);
   };
 
   const filteredOccupations = useMemo(() => {
@@ -164,7 +298,9 @@ export default function ProfileTab({ profile, summary, refresh }) {
               ))}
               <div className="flex gap-2 mt-2.5">
                 <Btn small onClick={confirmAck}>I understand — apply anyway</Btn>
-                <Btn small kind="ghost" onClick={() => setPendingAck(null)}>Cancel</Btn>
+                {/* Cancel must also put the typed fields back to server truth —
+                    a declined change may not sit in the box looking applied. */}
+                <Btn small kind="ghost" onClick={() => { setPendingAck(null); revertDrafts(); }}>Cancel</Btn>
               </div>
             </div>
           </div>
@@ -271,6 +407,11 @@ export default function ProfileTab({ profile, summary, refresh }) {
               {filteredOccupations.length === 0 && <div className="px-3 py-2 text-sm font-semibold" style={{ color: C.faint }}>No match — use the manual override below.</div>}
             </div>
           )}
+          {metaError && (
+            <div className="text-[10.5px] font-bold mt-1.5" style={{ color: C.warn }}>
+              Occupation list unavailable — your saved occupation ({profile.occupationKey || "unset"}) is unchanged. Use the multiplier override below if you need to adjust now.
+            </div>
+          )}
           <div className="grid grid-cols-2 gap-3 mt-3">
             <label className="block">{label("Multiplier override")}
               <input type="number" step="0.05" placeholder={currentOcc ? `auto ×${currentOcc.multiplier}` : "e.g. 1.4"}
@@ -280,8 +421,10 @@ export default function ProfileTab({ profile, summary, refresh }) {
                 className={inp} style={inpStyle} />
             </label>
             <label className="block">{label("Training style")}
-              <select value={profile.trainingStyle} onChange={(e) => commit({ trainingStyle: e.target.value })} className={inp} style={inpStyle}>
-                {(meta?.trainingStyles || []).map((t) => <option key={t.key} value={t.key}>{t.label}</option>)}
+              {/* Fallback option = the saved value, so a failed meta load shows
+                  the truth instead of an empty (apparently unset) select. */}
+              <select value={profile.trainingStyle} disabled={!meta} onChange={(e) => commit({ trainingStyle: e.target.value })} className={inp} style={inpStyle}>
+                {(meta?.trainingStyles || [{ key: profile.trainingStyle, label: profile.trainingStyle }]).map((t) => <option key={t.key} value={t.key}>{t.label}</option>)}
               </select>
             </label>
             <label className="block">{label("Sessions / week")}
@@ -304,50 +447,163 @@ export default function ProfileTab({ profile, summary, refresh }) {
 
         {/* ── diet & allergies ── */}
         <Card section="DIET" title="Diet & allergies" className="xl:col-span-4">
-          <label className="block mb-3">{label("Dietary style")}
-            <select value={profile.dietaryStyle || "none"} onChange={(e) => commit({ dietaryStyle: e.target.value === "none" ? null : e.target.value })} className={inp} style={inpStyle}>
-              {(meta?.dietaryStyles || ["none"]).map((s) => (
+          {/* A failed meta load must never render as "no options" — an empty
+              dietary-style list would read as "your restriction was cleared"
+              (frontend-arch-4). */}
+          {metaError && (
+            <div className="mb-3">
+              <ErrorNote msg="Couldn't load the diet & allergy option lists."
+                hint={`${metaError} Your saved settings are unchanged — but don't edit this card until the lists load. Retry below.`} />
+              <button type="button" onClick={loadMeta}
+                className="text-xs font-bold mt-2 px-3 py-1.5 rounded-xl"
+                style={{ background: C.card2, border: `1px solid ${C.rule}`, color: C.ink }}>
+                Retry loading options
+              </button>
+            </div>
+          )}
+          <label className="block mb-4">{label("Dietary style")}
+            <select value={profile.dietaryStyle || "none"} disabled={!meta}
+              onChange={(e) => commit({ dietaryStyle: e.target.value === "none" ? null : e.target.value })} className={inp} style={inpStyle}>
+              {/* Fallback keeps the user's ACTUAL saved style visible even when
+                  the option list didn't load — a blank select would misrepresent
+                  it as unset. */}
+              {(meta?.dietaryStyles || [...new Set(["none", profile.dietaryStyle].filter(Boolean))]).map((s) => (
                 <option key={s} value={s}>{s === "none" ? "None (no restriction)" : s[0].toUpperCase() + s.slice(1)}</option>
               ))}
             </select>
           </label>
-          <div className="mb-1">{label("Allergies & exclusions")}</div>
-          <div className="grid grid-cols-2 gap-x-3 gap-y-1.5 mb-3">
-            {(meta?.allergyOptions || []).map((a) => (
-              <label key={a.key} className="flex items-center gap-2 text-sm font-semibold" style={{ color: C.ink }}>
-                <input type="checkbox" checked={excluded.includes(a.key)} onChange={() => toggleAllergy(a.key)}
-                  className="w-4 h-4" style={{ accentColor: C.accent }} />
-                {a.label}
+
+          {/* Allergies as compact wrapping toggles (was a stacked checkbox list —
+              the screen's main source of clutter). Active = lightness step, never
+              green (Law a): excluding an allergen isn't a "success". */}
+          <div className="mb-1.5">{label("Allergies & exclusions")}</div>
+          {!meta && !metaError ? (
+            <SkeletonRows rows={2} />
+          ) : (
+            <div className="flex flex-wrap gap-1.5 mb-2">
+              {(meta?.allergyOptions || []).map((a) => {
+                const on = excluded.includes(a.key);
+                const saving = savingKeys.includes(a.key);
+                return (
+                  <button key={a.key} type="button" onClick={() => toggleAllergy(a.key, a.label)} aria-pressed={on}
+                    disabled={saving} aria-busy={saving}
+                    className="px-3 py-1.5 rounded-full text-sm font-semibold transition-colors inline-flex items-center gap-1.5"
+                    style={{
+                      background: on ? C.card2 : "transparent",
+                      border: `1px solid ${on ? C.faintLight : C.rule}`,
+                      color: on ? C.ink : C.faint,
+                      opacity: saving ? 0.6 : 1,
+                    }}>
+                    {a.label}
+                    {/* Pending state, in the app's no-spinner language: the
+                        control says out loud that this is not confirmed yet. */}
+                    {saving && <span className="text-[10px] font-bold uppercase" style={{ color: C.warn }}>saving…</span>}
+                    {saving && <span className="sr-only"> — saving, not confirmed yet</span>}
+                  </button>
+                );
+              })}
+              {meta && (meta.allergyOptions || []).length === 0 && (
+                <span className="text-xs font-semibold" style={{ color: C.faint }}>
+                  The server returned no allergen options — use the free-text box below.
+                </span>
+              )}
+              {metaError && (
+                // Without this the chip row would just be blank, which reads as
+                // "no allergies set" — the exact confusion this finding is about.
+                <span className="text-xs font-bold" style={{ color: C.warn }}>
+                  Allergen checkboxes unavailable while the option list is down. Your saved exclusions are
+                  listed in the box below and are still being applied.
+                </span>
+              )}
+            </div>
+          )}
+
+          {/* frontend-arch-1: the failed-save state. Non-dismissable — it clears
+              only when the change is actually saved or the server confirms what
+              it really has. Sits directly under the control it describes. */}
+          {exclusionFailure && (
+            <div role="alert" className="mb-2 p-3 rounded-xl" style={{ background: C.redBg, border: `1px solid ${C.red}` }}>
+              <div className="flex items-start gap-2.5">
+                <AlertTriangle size={15} className="mt-0.5 shrink-0" style={{ color: C.red }} aria-hidden="true" />
+                <div className="min-w-0">
+                  <div className="text-xs font-extrabold" style={{ color: C.red }}>
+                    NOT SAVED — “{exclusionFailure.label}” {exclusionFailure.want ? "is NOT excluded" : "is STILL excluded"}
+                  </div>
+                  <div className="text-xs font-semibold mt-1" style={{ color: C.ink }}>
+                    {exclusionFailure.kind === "unknown"
+                      ? (exclusionFailure.want
+                        ? "The server never answered, so we can't confirm the exclusion was recorded. The toggle has been put back to the last state the server confirmed — treat this allergen as NOT excluded, and do not rely on a meal plan to keep it out until this is resolved."
+                        : "The server never answered, so the exclusion is still in force. That is the safe direction — nothing has been un-excluded.")
+                      : (exclusionFailure.want
+                        ? "The server refused the change, so the allergen is NOT excluded. Nothing about your plans has changed — but nothing is protecting you from it either."
+                        : "The server refused the change, so the exclusion is still in force.")}
+                  </div>
+                  <div className="text-[10.5px] font-semibold mt-1" style={{ color: C.faint }}>{exclusionFailure.detail}</div>
+                  <div className="flex gap-2 mt-2">
+                    <Btn small onClick={retryExclusion} disabled={savingKeys.length > 0 || rechecking}>Try again</Btn>
+                    <Btn small kind="ghost" onClick={recheckExclusions} disabled={rechecking || savingKeys.length > 0}>
+                      {rechecking ? "Checking…" : "Check what the server has"}
+                    </Btn>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          <input type="text" placeholder="Add your own — e.g. cilantro, mushrooms" value={customDraft}
+            onChange={(e) => setCustomDraft(e.target.value)} onBlur={commitCustom}
+            aria-label="Custom exclusions, comma-separated"
+            disabled={savingKeys.length > 0}
+            className={inp} style={inpStyle} />
+          {savingKeys.length > 0 && (
+            <div className="text-[10.5px] font-bold mt-1" style={{ color: C.warn }}>
+              Saving your exclusions — not confirmed yet.
+            </div>
+          )}
+
+          {/* AI-recipe fields are optional — collapsed by default so they stop
+              crowding the safety-critical diet/allergy controls above. */}
+          <button type="button" onClick={() => setAiPrefsOpen((o) => !o)} aria-expanded={aiPrefsOpen}
+            className="flex items-center gap-1.5 mt-4 text-xs font-bold" style={{ color: C.faint }}>
+            <ChevronRight size={13} style={{ transform: aiPrefsOpen ? "rotate(90deg)" : "none", transition: "transform .15s" }} />
+            AI recipe preferences (optional)
+          </button>
+          {aiPrefsOpen && (
+            <div className="mt-3">
+              <label className="block mb-3">{label("Cuisine preferences")}
+                <input type="text" placeholder="e.g. mexican, thai" value={prefsDraft.cuisinePreferences}
+                  onChange={(e) => setPrefsDraft((d) => ({ ...d, cuisinePreferences: e.target.value }))}
+                  onBlur={() => commit({ cuisinePreferences: prefsDraft.cuisinePreferences.split(",").map((x) => x.trim()).filter(Boolean) })}
+                  className={inp} style={inpStyle} />
               </label>
-            ))}
-          </div>
-          <label className="block mb-3">{label("Custom exclusions (comma-separated)")}
-            <input type="text" placeholder="e.g. cilantro, mushrooms" value={customDraft}
-              onChange={(e) => setCustomDraft(e.target.value)}
-              onBlur={commitCustom}
-              className={inp} style={inpStyle} />
-          </label>
-          <label className="block mb-3">{label("Cuisine preferences for AI recipes")}
-            <input type="text" placeholder="e.g. mexican, thai" value={prefsDraft.cuisinePreferences}
-              onChange={(e) => setPrefsDraft((d) => ({ ...d, cuisinePreferences: e.target.value }))}
-              onBlur={() => commit({ cuisinePreferences: prefsDraft.cuisinePreferences.split(",").map((x) => x.trim()).filter(Boolean) })}
-              className={inp} style={inpStyle} />
-          </label>
-          <label className="block">{label("Notes for AI recipes")}
-            <textarea rows={2} value={prefsDraft.mealPreferencesNote}
-              onChange={(e) => setPrefsDraft((d) => ({ ...d, mealPreferencesNote: e.target.value }))}
-              onBlur={() => commit({ mealPreferencesNote: prefsDraft.mealPreferencesNote || null })}
-              className={inp} style={{ ...inpStyle, resize: "vertical" }} />
-          </label>
-          <div className="text-xs font-semibold mt-3" style={{ color: C.faint }}>
-            Style + allergies hard-filter the recipe library, the weekly solver, and AI generation. Nothing excluded is ever surfaced.
+              <label className="block">{label("Notes")}
+                <textarea rows={2} value={prefsDraft.mealPreferencesNote}
+                  onChange={(e) => setPrefsDraft((d) => ({ ...d, mealPreferencesNote: e.target.value }))}
+                  onBlur={() => commit({ mealPreferencesNote: prefsDraft.mealPreferencesNote || null })}
+                  className={inp} style={{ ...inpStyle, resize: "vertical" }} />
+              </label>
+            </div>
+          )}
+
+          <div className="text-xs font-semibold mt-4" style={{ color: exclusionFailure ? C.warn : C.faint }}>
+            {exclusionFailure
+              ? "Anything excluded here never appears in a plan or recipe — but the change above is NOT saved, so it is not being applied."
+              : "Anything excluded here never appears in a plan or recipe."}
           </div>
         </Card>
 
         {/* ── rate of loss ── */}
         <Card section="PRESCRIPTION" title="Rate of loss" className="xl:col-span-12">
+          {/* A failed meta load would otherwise render ZERO rate buttons, which
+              reads as "you have no rate set" (frontend-arch-4). Fall back to
+              showing the saved rate, and say why the others are missing. */}
+          {metaError && (
+            <div className="text-xs font-bold mb-2" style={{ color: C.warn }}>
+              Rate options couldn't be loaded — only your saved rate is shown. Your prescription is unchanged.
+            </div>
+          )}
           <div className="flex flex-wrap gap-1.5 mb-4">
-            {(meta?.rateOptions || []).map((r) => {
+            {(meta?.rateOptions || (profile.rateLbPerWeek ? [profile.rateLbPerWeek] : [])).map((r) => {
               const active = profile.rateLbPerWeek === r;
               return (
                 <button key={r} onClick={() => commit({ rateLbPerWeek: r })} aria-pressed={active}
