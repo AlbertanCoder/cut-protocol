@@ -149,10 +149,18 @@ child.on("close", (code) => {
   // "# tests 3" to stdout (fixtures, TAP samples, a captured child run) would
   // otherwise be read as the suite total and could satisfy — or spuriously
   // trip — the floor. The runner's own summary is always last.
+  // Strip ANSI SGR codes before matching. node --test colourises when it thinks
+  // a TTY is attached, and whether it does depends on how the run was invoked
+  // (`npm test --prefix backend` colourised where `cd backend && npm test` did
+  // not). The summary then arrives as "\x1b[34mℹ tests 926\x1b[39m", the anchored
+  // regex misses it, and the tripwire fails a suite that passed 926/926. A gate
+  // that reports failure on a green run trains people to ignore it, which is
+  // the one thing this file exists to prevent.
+  const plain = captured.replace(/\[[0-9;]*m/g, "");
   const lastMatch = (re) => {
     let m, last = null;
     const g = new RegExp(re.source, "gm");
-    while ((m = g.exec(captured)) !== null) last = m;
+    while ((m = g.exec(plain)) !== null) last = m;
     return last;
   };
   const testsMatch = lastMatch(/^(?:ℹ|#)\s*tests\s+(\d+)/);
