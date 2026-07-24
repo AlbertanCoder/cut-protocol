@@ -172,10 +172,13 @@ router.post("/generate", async (req, res) => {
     const { survivors: pool, explain: stackExplain } = applyFilterStack(prepped, filters, filters.ratings);
     const costCache = filters.budget ? buildCostCache(pool) : null;
     // Stage-C fix (M10): pass the pool counts so a rough-plan diagnosis can name
-    // the TRUE binding constraint (e.g. a maxPrep cap that emptied the pool)
-    // instead of always blaming diet/allergy rules. stackExplain lets diagnose()
-    // name a cost/complexity/taste cap as the binding constraint too.
-    const poolCounts = { raw: rawPoolCount, afterDiet: recipePool.length, afterPrep: pool.length, stackExplain };
+    // the TRUE binding constraint instead of always blaming diet/allergy rules.
+    // afterPrep is the PREP-only count and afterStack the count after the
+    // cost/complexity/taste caps — kept distinct so classifyBinding/diagnose
+    // can't blame prep for a cut the stack made (a QC finding: a cost cap that
+    // emptied the pool was reported as "prep removes all 889"). stackExplain
+    // lets both name the real cap.
+    const poolCounts = { raw: rawPoolCount, afterDiet: recipePool.length, afterPrep: prepped.length, afterStack: pool.length, stackExplain };
 
     // ── 1 MEAL ───────────────────────────────────────────────────────────
     // One dish against what is LEFT of today. No writes, no week solve — this
