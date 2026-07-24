@@ -78,11 +78,44 @@ import, and that write path is verified working end to end.
 
 ---
 
-## STAGE 1 — Allergies 2.0 · IN PROGRESS
-## STAGE 2 — Any-horizon generation · IN PROGRESS
-## STAGE 3 — The five filters · IN PROGRESS
-## STAGE 4 — Library→Brain router · IN PROGRESS
-## STAGE 5 — Progress UX · PENDING
-## STAGE 6 — Agent gauntlet · PENDING
+## STAGE 1 — Allergies 2.0 · BUILT + LIVE
+- 48-entry allergen taxonomy served live at `GET /api/meta/allergens` (verified 200).
+- 19 measured dead free-text phrasings now resolve (`cow's milk`, `gluten free`,
+  `no dairy`, `milk allergy`…): 0 of 889 → 578 recipes excluded. `gluten free`
+  now resolves identically to `gluten`.
+- Predictive search UI (AllergySearch.jsx): combobox/listbox, arrow-key nav,
+  free-text chips, the "text-only match" honesty signal finally rendered.
+- Over-exclusion fixed, 23 rows released (all intended); one honest deviation —
+  only 4 of 16 creamers released, the other 12 undeclared with sodium caseinate.
+
+## STAGE 2 — Any-horizon generation · BUILT + LIVE
+- 1 meal / 1 day / 3 days / 1 week / 2 weeks / 1 month + custom N. Month is 4
+  week-solves sharing one variety ledger; the pool is only narrowed.
+- Measured: 28-day p95 689ms, 1-meal p95 2.94ms. `GET /api/plans/horizons` live.
+- Caught a latent divide-by-zero: targetsForSlots read its weight off day 0
+  unconditionally → NaN for any non-Monday window.
+
+## STAGE 3 — The five filters · BUILT + LIVE (backend); UI in Stage 5 pass
+- Migration 20260724120000 applied to the real dev.db (backup taken, proven on a
+  copy first). Backfill: costPerServing 0→889, difficulty 0→889, prepTimeMin
+  633→889 (measured never overwritten).
+- Solver applies the cost/complexity/taste caps on the already allergy/diet-
+  filtered pool at all three solve sites, and names the binding cap on failure.
+- Unknown-cost falls back to the category 75th percentile, never $0.
+
+## STAGE 4 — Library→Brain router · BUILT + LIVE
+- weeklyPlanner.tryAiFallback routes through mealRouter by default: library-first
+  (free), cache, brain-on-gap through the existing governed door, verify-then-
+  gate (re-screens RESOLVED ingredients, not just model-named), cache-forever,
+  per-user cost caps. The injected-generator seam is preserved and bypasses the
+  router, so existing tests are behaviour-identical.
+- No live model call in tests: injected client throws if reached; LlmUsage
+  unchanged 12→12.
+
+## STAGE 5 — Progress UX + Stage 3 filter controls · IN PROGRESS
+
+## STAGE 6 — Agent gauntlet · PENDING (10 QC agents, per owner)
+
+**Suite: 84 files, 1032 tests, 0 failures.**
 
 _Updated as each stage's DoD is met._
