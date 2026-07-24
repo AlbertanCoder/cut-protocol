@@ -48,6 +48,25 @@ CREATE UNIQUE INDEX "Profile_userId_key" ON "Profile"("userId");
 PRAGMA foreign_keys=ON;
 PRAGMA defer_foreign_keys=OFF;
 
+-- Dedupe BEFORE the unique index, or this migration cannot apply to real data.
+--
+-- Generated as index-only, which passed on the dev machine because that database
+-- happened to carry no duplicates. Every other database did: the shipped
+-- template had 140 duplicate fdcId groups and an installed 1.0.0 app had 194
+-- (409 excess rows). There the index threw `UNIQUE constraint failed:
+-- Food.fdcId`, the migration rolled back, the runner stopped, and server.js
+-- answered EVERY /api request with "Database schema update failed" — the app was
+-- bricked by opening it. Four independent audit agents reproduced this.
+--
+-- Nulling is deliberate where deleting is not: duplicate rows are referenced by
+-- RecipeIngredient, so removing them would cascade into real recipes. fdcId is
+-- already nullable (606 rows legitimately carry none), so keeping the lowest
+-- rowid per group and clearing the rest preserves every Food row and every
+-- recipe link, and only drops a redundant USDA id that re-import can restore.
+UPDATE "Food" SET "fdcId" = NULL
+WHERE "fdcId" IS NOT NULL
+  AND rowid NOT IN (SELECT MIN(rowid) FROM "Food" WHERE "fdcId" IS NOT NULL GROUP BY "fdcId");
+
 -- CreateIndex
 CREATE UNIQUE INDEX "Food_fdcId_key" ON "Food"("fdcId");
 

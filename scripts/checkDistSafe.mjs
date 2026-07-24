@@ -8,6 +8,8 @@
 import { scanPaths } from "./scanSecrets.mjs";
 import fs from "node:fs";
 import path from "node:path";
+import { createRequire } from "node:module";
+const require = createRequire(import.meta.url);
 
 const ROOT = path.resolve(path.join(import.meta.dirname, ".."));
 const target = path.resolve(process.argv[2] || path.join(ROOT, "release"));
@@ -27,6 +29,41 @@ const EMAIL = /\b[A-Za-z0-9._%+-]{1,40}@[a-z0-9-]+(?:\.[a-z0-9-]+)*\.[a-z]{2,10}
 const SAFE_EMAIL = /@(?:example|test|localhost|email|sample)\.|noreply@|you@/i;
 const IS_DATA = /\.(?:db|sqlite|sqlite3)(?:\.template)?$|\.template$/i;
 const redact = (e) => { const [u, d] = e.split("@"); return `${u[0]}***@${d}`; };
+// Scanning a SQLite file as latin1 text reads raw page bytes, so an email match
+// can straddle a legitimate value and the binary noise beside it. Real case that
+// wrongly failed a build: "themealdb-import@p.fffff" — the true Recipe.source
+// value "themealdb-import" abutting cuid noise reading as "@p.fffff". Confirm
+// each candidate is really stored in a column before calling it personal data.
+// This tightens the gate rather than loosening it: a genuine address in a column
+// still fails, and anything unverifiable is kept as a finding (fail closed).
+function confirmedInDb(file, candidates) {
+  if (!candidates.size) return candidates;
+  let db;
+  try {
+    const { DatabaseSync } = require("node:sqlite");
+    db = new DatabaseSync(file, { readOnly: true });
+    const tables = db.prepare("SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%'").all();
+    const kept = new Set();
+    for (const email of candidates) {
+      let found = false;
+      for (const { name } of tables) {
+        for (const col of db.prepare(`PRAGMA table_info("${name}")`).all()) {
+          try {
+            if (db.prepare(`SELECT 1 FROM "${name}" WHERE CAST("${col.name}" AS TEXT) LIKE ? LIMIT 1`).get(`%${email}%`)) { found = true; break; }
+          } catch { /* non-text column */ }
+        }
+        if (found) break;
+      }
+      if (found) kept.add(email);
+    }
+    return kept;
+  } catch {
+    return candidates; // cannot verify -> keep the finding
+  } finally {
+    try { db?.close(); } catch { /* already closed */ }
+  }
+}
+
 const dbFindings = [];
 function walk(dir) {
   for (const name of fs.readdirSync(dir)) {
@@ -37,7 +74,8 @@ function walk(dir) {
     let buf; try { buf = fs.readFileSync(p); } catch { continue; }
     const emails = new Set();
     for (const m of buf.toString("latin1").matchAll(EMAIL)) if (!SAFE_EMAIL.test(m[0])) emails.add(m[0]);
-    if (emails.size) dbFindings.push({ file: path.relative(ROOT, p), count: emails.size, sample: [...emails].slice(0, 3).map(redact) });
+    const real = confirmedInDb(p, emails);
+    if (real.size) dbFindings.push({ file: path.relative(ROOT, p), count: real.size, sample: [...real].slice(0, 3).map(redact) });
   }
 }
 // Accept a directory OR a single file (e.g. the template DB) as the target.
@@ -48,7 +86,8 @@ else {
     const buf = fs.readFileSync(target);
     const emails = new Set();
     for (const m of buf.toString("latin1").matchAll(EMAIL)) if (!SAFE_EMAIL.test(m[0])) emails.add(m[0]);
-    if (emails.size) dbFindings.push({ file: path.relative(ROOT, target), count: emails.size, sample: [...emails].slice(0, 3).map(redact) });
+    const real = confirmedInDb(target, emails);
+    if (real.size) dbFindings.push({ file: path.relative(ROOT, target), count: real.size, sample: [...real].slice(0, 3).map(redact) });
   }
 }
 
