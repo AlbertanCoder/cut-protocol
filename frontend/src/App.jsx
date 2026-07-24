@@ -17,6 +17,7 @@ import TrainingTab from "./components/TrainingTab.jsx";
 import BrainChat from "./components/BrainChat.jsx";
 import BugReportDialog from "./components/BugReportDialog.jsx";
 import WellbeingCheck from "./components/WellbeingCheck.jsx";
+import CompareDialog from "./components/CompareDialog.jsx";
 import HeaderBar from "./components/ui/HeaderBar.jsx";
 import { SkeletonCard } from "./components/ui/Skeleton.jsx";
 import { onUncaughtError } from "./lib/bugLog.js";
@@ -45,6 +46,7 @@ export default function App() {
   const [isAdmin, setIsAdmin] = useState(false);
   const [bugReport, setBugReport] = useState({ open: false, error: null });
   const [wellbeingOpen, setWellbeingOpen] = useState(false);
+  const [compareOpen, setCompareOpen] = useState(false);
   const abort = useAbortSignal();
 
   // a11y: this is a single-page app with no real route change (tab content
@@ -197,6 +199,7 @@ export default function App() {
   // sits at z-1 so the fixed aurora stays behind it.
   const dialog = <BugReportDialog open={bugReport.open} error={bugReport.error} onClose={() => setBugReport({ open: false, error: null })} />;
   const wellbeing = <WellbeingCheck open={wellbeingOpen} onClose={() => setWellbeingOpen(false)} />;
+  const compare = <CompareDialog open={compareOpen} onClose={() => setCompareOpen(false)} />;
   const withDialog = (content) => (
     <>
       <div className="aurora" aria-hidden="true" />
@@ -204,6 +207,7 @@ export default function App() {
       <div className="grain" aria-hidden="true" />
       {dialog}
       {wellbeing}
+      {compare}
     </>
   );
 
@@ -273,7 +277,7 @@ export default function App() {
   return withDialog(
     <div className="min-h-svh flex" style={{ color: C.ink }}>
       <a href="#main-content" className="skip-link">Skip to main content</a>
-      <Sidebar tab={tab} setTab={setTab} onLogout={logout} onReportBug={openBugReport} onWellbeing={() => setWellbeingOpen(true)} />
+      <Sidebar tab={tab} setTab={setTab} onLogout={logout} onReportBug={openBugReport} onWellbeing={() => setWellbeingOpen(true)} onCompare={() => setCompareOpen(true)} />
 
       <div className="flex-1 min-w-0">
         <HeaderBar profile={profile} summary={summary} />
