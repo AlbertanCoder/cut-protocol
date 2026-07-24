@@ -1,0 +1,250 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Cut Protocol — how it compares</title>
+<style>
+  :root{
+    --paper:#0B0D0C; --card:#161A18; --card2:#1D2320; --rule:rgba(255,255,255,.08);
+    --ink:rgba(255,255,255,.90); --faint:rgba(255,255,255,.62); --faint2:rgba(255,255,255,.40);
+    --accent:#2FD576; --accent2:#7EFFB2; --warn:#E5A83B;
+    --good:#2FD576; --meh:#E5A83B; --no:rgba(255,255,255,.30);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;background:var(--paper);color:var(--ink);
+    font-family:"Inter",system-ui,-apple-system,Segoe UI,Roboto,sans-serif;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  .wrap{max-width:1080px;margin:0 auto;padding:48px 20px 80px}
+  .brand{display:flex;align-items:center;gap:12px;margin-bottom:28px}
+  .shield{width:38px;height:44px;flex:0 0 auto}
+  .brand h1{font-size:15px;letter-spacing:.14em;text-transform:uppercase;margin:0;font-weight:800}
+  .brand .sub{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--faint2);margin-top:2px}
+  .hero h2{font-size:clamp(28px,5vw,44px);line-height:1.05;margin:8px 0 10px;font-weight:800;letter-spacing:-.02em}
+  .hero .lede{font-size:clamp(15px,2.2vw,18px);color:var(--faint);max-width:64ch;line-height:1.5}
+  .hero .lede b{color:var(--ink)}
+  .tag{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+    color:var(--accent);border:1px solid var(--rule);border-radius:999px;padding:4px 12px;margin-bottom:14px;
+    background:linear-gradient(180deg,rgba(47,213,118,.08),transparent)}
+  .oneliner{margin:26px 0 6px;padding:18px 20px;border-radius:16px;background:var(--card);
+    border:1px solid var(--rule);font-size:clamp(16px,2.4vw,20px);line-height:1.4}
+  .oneliner b{color:var(--accent2)}
+  .scroll{overflow-x:auto;margin:34px -4px 0;padding:0 4px}
+  table{border-collapse:collapse;width:100%;min-width:760px;font-size:14px}
+  thead th{position:sticky;top:0;background:var(--paper)}
+  th,td{text-align:center;padding:12px 10px;border-bottom:1px solid var(--rule);vertical-align:middle}
+  th.feat,td.feat{text-align:left;min-width:230px}
+  thead th{font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--faint);font-weight:700;padding-top:6px;padding-bottom:14px}
+  thead th.us{color:var(--ink)}
+  thead th.us .n{color:var(--accent);font-size:14px;font-weight:800;display:block;letter-spacing:normal;text-transform:none}
+  thead th .n{display:block;font-size:13px;font-weight:700;color:var(--ink);letter-spacing:normal;text-transform:none}
+  tbody tr:hover{background:rgba(255,255,255,.02)}
+  td.feat{color:var(--ink)}
+  td.feat .why{display:block;color:var(--faint2);font-size:12px;margin-top:2px;font-weight:400}
+  col.uscol{background:linear-gradient(180deg,rgba(47,213,118,.07),rgba(47,213,118,.02))}
+  .mark{font-size:16px;font-weight:800;line-height:1}
+  .yes{color:var(--good)} .part{color:var(--meh)} .no{color:var(--no)}
+  .cell small{display:block;font-size:11px;color:var(--faint2);margin-top:3px;font-weight:400;line-height:1.25}
+  .legend{display:flex;gap:18px;flex-wrap:wrap;margin-top:16px;font-size:12px;color:var(--faint)}
+  .legend span{display:inline-flex;align-items:center;gap:6px}
+  h3.section{margin:44px 0 4px;font-size:13px;text-transform:uppercase;letter-spacing:.1em;color:var(--faint)}
+  .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px;margin-top:14px}
+  .c{background:var(--card);border:1px solid var(--rule);border-radius:16px;padding:16px 18px}
+  .c h4{margin:0 0 6px;font-size:15px}
+  .c p{margin:0;color:var(--faint);font-size:13px;line-height:1.5}
+  .c.win h4{color:var(--accent)}
+  .c.gap h4{color:var(--warn)}
+  .disclaimer{margin-top:40px;padding:16px 18px;border-radius:14px;border:1px solid var(--rule);
+    background:var(--card2);color:var(--faint2);font-size:12px;line-height:1.6}
+  .foot{margin-top:26px;color:var(--faint2);font-size:12px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="brand">
+    <svg class="shield" viewBox="0 0 40 46" fill="none" aria-hidden="true">
+      <path d="M20 2 L36 8 V22 C36 33 29 40 20 44 C11 40 4 33 4 22 V8 Z" stroke="#2FD576" stroke-width="2.4"/>
+      <g fill="#2FD576"><rect x="13" y="13" width="5.5" height="5.5" rx="1.4"/><rect x="21.5" y="13" width="5.5" height="5.5" rx="1.4"/>
+      <rect x="13" y="21" width="5.5" height="5.5" rx="1.4"/><rect x="21.5" y="21" width="5.5" height="5.5" rx="1.4"/>
+      <rect x="15.5" y="29" width="9" height="5" rx="1.6"/></g>
+    </svg>
+    <div><h1>Cut Protocol</h1><div class="sub">Recomp engine</div></div>
+  </div>
+
+  <div class="hero">
+    <span class="tag">How it compares</span>
+    <h2>A solver in a market of trackers.</h2>
+    <p class="lede">Every major app — MyFitnessPal, MacroFactor, Cronometer, Lose It, Carbon —
+      <b>logs what you ate</b> or <b>coaches a number</b>. Cut Protocol <b>builds the plan</b>:
+      a full day, week or month that actually hits your macro target and respects your diet and
+      allergies. That is the one thing none of them do — and the thing people keep asking for.</p>
+  </div>
+
+  <div class="oneliner">The market <b>tracks</b>. People want something that <b>plans</b> — and they
+    distrust AI logging enough that a deterministic solver is a selling point, not a limitation.</div>
+
+  <div class="scroll">
+    <table>
+      <colgroup><col/><col class="uscol"/><col/><col/><col/><col/><col/></colgroup>
+      <thead>
+        <tr>
+          <th class="feat">Feature</th>
+          <th class="us">✦<span class="n">Cut Protocol</span></th>
+          <th><span class="n">MyFitnessPal</span></th>
+          <th><span class="n">MacroFactor</span></th>
+          <th><span class="n">Cronometer</span></th>
+          <th><span class="n">Lose It!</span></th>
+          <th><span class="n">Carbon</span></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="feat">Builds a compliant meal plan to your target<span class="why">A solver, not a tracker — the core difference</span></td>
+          <td class="cell"><span class="mark yes">●</span><small>day → month</small></td>
+          <td class="cell"><span class="mark no">—</span></td>
+          <td class="cell"><span class="mark no">—</span></td>
+          <td class="cell"><span class="mark no">—</span></td>
+          <td class="cell"><span class="mark no">—</span></td>
+          <td class="cell"><span class="mark no">—</span></td>
+        </tr>
+        <tr>
+          <td class="feat">Adaptive TDEE (learns from your weigh-ins)<span class="why">Answers the “is my deficit real?” plateau anxiety</span></td>
+          <td class="cell"><span class="mark yes">●</span></td>
+          <td class="cell"><span class="mark no">—</span></td>
+          <td class="cell"><span class="mark yes">●</span></td>
+          <td class="cell"><span class="mark no">—</span></td>
+          <td class="cell"><span class="mark no">—</span></td>
+          <td class="cell"><span class="mark yes">●</span></td>
+        </tr>
+        <tr>
+          <td class="feat">Zero-tolerance allergy exclusion<span class="why">Removes unsafe food — not just “tagged” filtering</span></td>
+          <td class="cell"><span class="mark yes">●</span><small>+ rares, step-text scan</small></td>
+          <td class="cell"><span class="mark no">—</span></td>
+          <td class="cell"><span class="mark no">—</span></td>
+          <td class="cell"><span class="mark no">—</span></td>
+          <td class="cell"><span class="mark no">—</span></td>
+          <td class="cell"><span class="mark no">—</span></td>
+        </tr>
+        <tr>
+          <td class="feat">Micronutrients<span class="why">Vitamins/minerals, not just calories</span></td>
+          <td class="cell"><span class="mark yes">●</span><small>auto from the plan</small></td>
+          <td class="cell"><span class="mark part">◐</span><small>limited</small></td>
+          <td class="cell"><span class="mark part">◐</span><small>limited</small></td>
+          <td class="cell"><span class="mark yes">●</span><small>84 nutrients — the leader</small></td>
+          <td class="cell"><span class="mark part">◐</span></td>
+          <td class="cell"><span class="mark no">—</span></td>
+        </tr>
+        <tr>
+          <td class="feat">Cost / time / complexity / taste filters<span class="why">Steer the plan to your life, not just macros</span></td>
+          <td class="cell"><span class="mark yes">●</span></td>
+          <td class="cell"><span class="mark no">—</span></td>
+          <td class="cell"><span class="mark no">—</span></td>
+          <td class="cell"><span class="mark no">—</span></td>
+          <td class="cell"><span class="mark no">—</span></td>
+          <td class="cell"><span class="mark no">—</span></td>
+        </tr>
+        <tr>
+          <td class="feat">Works fully offline, data stays on your device<span class="why">No account, no cloud, no data sold</span></td>
+          <td class="cell"><span class="mark yes">●</span></td>
+          <td class="cell"><span class="mark no">—</span></td>
+          <td class="cell"><span class="mark no">—</span></td>
+          <td class="cell"><span class="mark part">◐</span><small>cloud, some offline</small></td>
+          <td class="cell"><span class="mark no">—</span></td>
+          <td class="cell"><span class="mark no">—</span></td>
+        </tr>
+        <tr>
+          <td class="feat">Price model<span class="why">The #1 reason people left MyFitnessPal</span></td>
+          <td class="cell"><span class="mark yes">●</span><small>one-time / own it</small></td>
+          <td class="cell"><span class="mark no">$</span><small>subscription + ads</small></td>
+          <td class="cell"><span class="mark part">$</span><small>subscription</small></td>
+          <td class="cell"><span class="mark part">$</span><small>free tier + Gold</small></td>
+          <td class="cell"><span class="mark part">$</span><small>subscription</small></td>
+          <td class="cell"><span class="mark part">$</span><small>subscription</small></td>
+        </tr>
+        <tr>
+          <td class="feat">No ads</td>
+          <td class="cell"><span class="mark yes">●</span></td>
+          <td class="cell"><span class="mark no">—</span><small>ads on free tier</small></td>
+          <td class="cell"><span class="mark yes">●</span></td>
+          <td class="cell"><span class="mark yes">●</span></td>
+          <td class="cell"><span class="mark part">◐</span></td>
+          <td class="cell"><span class="mark yes">●</span></td>
+        </tr>
+        <tr>
+          <td class="feat">Deterministic, not AI-guess<span class="why">Two big communities have banned/rejected AI logging</span></td>
+          <td class="cell"><span class="mark yes">●</span></td>
+          <td class="cell"><span class="mark part">◐</span></td>
+          <td class="cell"><span class="mark part">◐</span></td>
+          <td class="cell"><span class="mark yes">●</span></td>
+          <td class="cell"><span class="mark part">◐</span></td>
+          <td class="cell"><span class="mark part">◐</span></td>
+        </tr>
+        <tr>
+          <td class="feat">Barcode / photo quick-logging<span class="why">Where Cut Protocol is behind</span></td>
+          <td class="cell"><span class="mark no">—</span><small>plans, doesn’t track intake</small></td>
+          <td class="cell"><span class="mark part">◐</span><small>barcode paywalled</small></td>
+          <td class="cell"><span class="mark yes">●</span></td>
+          <td class="cell"><span class="mark yes">●</span></td>
+          <td class="cell"><span class="mark yes">●</span><small>+ AI photo</small></td>
+          <td class="cell"><span class="mark part">◐</span></td>
+        </tr>
+        <tr>
+          <td class="feat">Mobile app<span class="why">Cut Protocol is desktop-first</span></td>
+          <td class="cell"><span class="mark no">—</span><small>desktop</small></td>
+          <td class="cell"><span class="mark yes">●</span></td>
+          <td class="cell"><span class="mark yes">●</span></td>
+          <td class="cell"><span class="mark yes">●</span></td>
+          <td class="cell"><span class="mark yes">●</span></td>
+          <td class="cell"><span class="mark yes">●</span></td>
+        </tr>
+        <tr>
+          <td class="feat">Food database size<span class="why">Curated &amp; validated vs. huge &amp; crowd-sourced</span></td>
+          <td class="cell"><span class="mark part">◐</span><small>small, validated</small></td>
+          <td class="cell"><span class="mark yes">●</span><small>~20M (error-prone)</small></td>
+          <td class="cell"><span class="mark yes">●</span><small>verified</small></td>
+          <td class="cell"><span class="mark yes">●</span><small>~1.1M USDA-verified</small></td>
+          <td class="cell"><span class="mark yes">●</span><small>~63M</small></td>
+          <td class="cell"><span class="mark part">◐</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="legend">
+    <span><b class="yes">●</b> yes / strong</span>
+    <span><b class="part">◐</b> partial / limited</span>
+    <span><b class="no">—</b> no</span>
+    <span><b class="part">$</b> paid / subscription</span>
+  </div>
+
+  <h3 class="section">Where Cut Protocol wins</h3>
+  <div class="cards">
+    <div class="c win"><h4>It plans, it doesn’t nag</h4><p>MacroFactor, Cronometer and MyFitnessPal users
+      hand-build meal plans their apps can’t make. Cut Protocol solves the whole day to your target automatically.</p></div>
+    <div class="c win"><h4>Allergies are a wall, not a tag</h4><p>True zero-tolerance exclusion — majors, species
+      depth, rare allergens, and hidden ones cooked into recipe steps. People in allergy communities try to build this themselves.</p></div>
+    <div class="c win"><h4>Own it, offline, private</h4><p>No subscription, no ads, no account, no cloud —
+      exactly the pains that pushed people off MyFitnessPal.</p></div>
+    <div class="c win"><h4>Honest by design</h4><p>No red on food, a hard calorie floor, no streak-shaming,
+      and an optional eating-disorder wellbeing check. Calm, not a slot machine.</p></div>
+  </div>
+
+  <h3 class="section">Where it’s behind (and honest about it)</h3>
+  <div class="cards">
+    <div class="c gap"><h4>No quick-logging</h4><p>It plans what to eat; it doesn’t yet capture what you
+      actually ate by barcode or photo — the market’s #1 convenience.</p></div>
+    <div class="c gap"><h4>Desktop only</h4><p>Most logging happens on a phone. A companion mobile-log is the realistic bridge.</p></div>
+    <div class="c gap"><h4>Household &amp; cross-contamination</h4><p>Solves for one eater today; “may-contain”
+      cross-contamination flags and multi-person plans are the top requested additions.</p></div>
+  </div>
+
+  <div class="disclaimer">
+    <b>About this comparison.</b> Compiled 2026-07-24 from public reviews, app-store listings and community
+    discussion. Feature sets and pricing of other apps change frequently — check each app for its current
+    details. Cut Protocol is an independent project and is <b>not affiliated with, endorsed by, or partnered
+    with</b> any other app named here; all product names belong to their respective owners. Cut Protocol is a
+    planning tool, not medical advice.
+  </div>
+  <div class="foot">Cut Protocol · own-your-data body-recomposition engine · <a href="https://github.com/AlbertanCoder/cut-protocol">github.com/AlbertanCoder/cut-protocol</a></div>
+</div>
+</body>
+</html>

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import {
   User, Activity, CalendarDays, BookOpen, TrendingUp,
-  Calculator, Dumbbell, LogOut, ChevronsLeft, ChevronsRight, Bug, Heart,
+  Calculator, Dumbbell, LogOut, ChevronsLeft, ChevronsRight, Bug, Heart, Scale,
 } from "lucide-react";
 import { C } from "../lib/theme.js";
 import { TRAINING } from "../lib/flags.js";
@@ -20,7 +20,7 @@ const NAV = [
   { id: "engine", label: "Engine", icon: Calculator },
 ];
 
-export default function Sidebar({ tab, setTab, onLogout, onReportBug, onWellbeing }) {
+export default function Sidebar({ tab, setTab, onLogout, onReportBug, onWellbeing, onCompare }) {
   const [collapsed, setCollapsed] = useState(() => sidebarPref.get());
   const toggle = () => {
     sidebarPref.set(!collapsed);
@@ -82,6 +82,21 @@ export default function Sidebar({ tab, setTab, onLogout, onReportBug, onWellbein
       <div className="flex-1" />
 
       {/* Day/Target moved to the HeaderBar (inverted-L chassis). */}
+
+      {/* how it compares — an in-app view of Cut Protocol vs the other
+          calorie/macro/meal-planning apps, from the forum + review research. */}
+      <div className="px-3 pb-1">
+        <button
+          onClick={onCompare}
+          title="How it compares"
+          aria-label="How it compares"
+          className={`flex items-center gap-2 text-xs font-semibold rounded-lg hover:opacity-80 ${collapsed ? "w-8 h-8 justify-center mx-auto" : "w-full px-2.5 py-2"}`}
+          style={{ color: C.faint, border: `1px solid ${C.rule}` }}
+        >
+          <Scale size={14} aria-hidden="true" />
+          {!collapsed && "How it compares"}
+        </button>
+      </div>
 
       {/* wellbeing check — an optional ED self-check + support resources +
           the health/legal disclaimer. Always reachable, never nagged. */}
