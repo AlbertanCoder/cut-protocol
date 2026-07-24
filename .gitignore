@@ -16,6 +16,15 @@ backend/prisma/dev.db-journal
 backend/prisma/dev.db.backup-*
 *.db
 *.db-journal
+# Snapshot copies taken during agent/QC runs carry the same personal health
+# data as dev.db but don't end in .db, so the rules above miss them. The repo
+# is PUBLIC — an `add -A` on one of these publishes a real person's records.
+backend/prisma/dev.db.snapshot-*
+*.db.snapshot-*
+
+# Git bundles used to shuttle work between machines/sessions. They contain
+# full history and are regenerable; never commit one into the history it holds.
+*.bundle
 
 # Audit/fix run artifacts (regenerate with scripts/auditFoodData.mjs)
 backend/reports/
