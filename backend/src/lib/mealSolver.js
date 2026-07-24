@@ -13,7 +13,7 @@ const {
   DEFAULT_REPEAT_CAP, BATCH_REPEAT_CAP, SCALE_BOUNDS, PROTEIN_TOLERANCE_PCT,
   KCAL_TOLERANCE_PCT,
 } = require("./weeklyPlanner.js");
-const { buildCostCache } = require("./recipeCost.js");
+const { buildCostCache, explainPool } = require("./recipeCost.js");
 // Protein-priority / recomposition mode — shared weighting + honesty-check
 // primitives (also consumed by brain/scorer.js so the floor means the same
 // number in both places). Pure math, no LLM: safe on this always-on path.
@@ -27,6 +27,29 @@ const { PROTEIN_PRIORITY_WEIGHTS, checkProteinFloor } = require("./brain/protein
 function applyPrepFilter(pool, maxPrepMin) {
   if (!maxPrepMin) return pool;
   return pool.filter((r) => r.prepTimeMin == null || r.prepTimeMin <= maxPrepMin);
+}
+
+// Stage 3: the cost / complexity / taste OPTIONAL hard caps. Time is still
+// applyPrepFilter above (unchanged, so its null-passes behaviour is
+// byte-identical, and when no new cap is set this is a pass-through — the whole
+// pre-Stage-3 world). The input MUST already be allergy/diet filtered
+// (filterRecipePool upstream); these caps only ever NARROW further, so they can
+// never weaken an allergy exclusion — that is the composition rule's safety
+// property, satisfied structurally rather than by a check. Returns explainPool's
+// verdict so the CALLER can name the binding constraint; never swallow it — an
+// empty pool with no reason is the silent miss the constitution forbids.
+function applyFilterStack(pool, filters = {}, ratings = null) {
+  const prefs = {
+    maxCostCad: filters.maxCostCad ?? null,
+    maxComplexity: filters.maxComplexity ?? null,
+    minTaste: filters.minTaste ?? null,
+    ratings,
+  };
+  if (prefs.maxCostCad == null && prefs.maxComplexity == null && prefs.minTaste == null) {
+    return { survivors: pool, explain: null };
+  }
+  const explain = explainPool(pool, { ...prefs, minSurvivors: 3 });
+  return { survivors: explain.survivors, explain };
 }
 
 // ── soft biases ──────────────────────────────────────────────────────────
@@ -253,6 +276,18 @@ function diagnose({ counts, filters, dailyTarget, mealConfig, pool, days = 7 }) 
       suggestions.push(`Raise max prep time (each step back adds recipes — without the cap you have ${counts.afterDiet}).`);
     }
   }
+  // Stage 3: the cost/complexity/taste caps get the same treatment the prep cap
+  // has — a named, quantified reason. explainPool already measured WHICH cap is
+  // binding (by lifting one at a time), so this is a passthrough, not a second
+  // guess. It has no allergy input at all, so it can never suggest loosening one.
+  if (counts.stackExplain && counts.stackExplain.ok === false) {
+    reasons.push(counts.stackExplain.message);
+    const b = counts.stackExplain.bindingConstraint;
+    if (b === "cost") suggestions.push("Raise the cost-per-serving cap, or switch it off and use the budget tier as a soft preference instead.");
+    else if (b === "complexity") suggestions.push("Raise the complexity cap — 'simple' is a narrow band in this library.");
+    else if (b === "taste") suggestions.push("Lower the minimum taste score, or rate more recipes so the score has your own data behind it.");
+    else if (b === "combined") suggestions.push("Loosen more than one cap — no single one is responsible.");
+  }
   // Weekly capacity: only MEAL-eligible recipes fill meal slots (desserts,
   // beverages, condiment sides don't count), each capped by the repeat rule.
   // Stage-C fix (#35): use the ACTIVE repeat cap — with batch-cooking on the
@@ -386,7 +421,11 @@ async function generateDayCandidates({
   lockedSlots = [],
   count = 3, attempts = 9, rng = Math.random, profile = null,
 }) {
-  const afterPrep = applyPrepFilter(recipePool, filters.maxPrepMin);
+  const prepped = applyPrepFilter(recipePool, filters.maxPrepMin);
+  // Stage 3: apply the cost/complexity/taste caps on top of prep, then solve over
+  // the survivors. Reassigning `afterPrep` to the stacked pool means every later
+  // use (costCache, bias, solveDay) consumes the narrowed pool with no rename.
+  const { survivors: afterPrep, explain: stackExplain } = applyFilterStack(prepped, filters, filters.ratings);
   const costCache = filters.budget ? buildCostCache(afterPrep) : null;
   const bias = buildBias(filters, costCache);
   const repeatCap = filters.allowBatchRepeats ? BATCH_REPEAT_CAP : DEFAULT_REPEAT_CAP;
@@ -467,7 +506,7 @@ async function generateDayCandidates({
     }
   }
 
-  const counts = { raw: recipePool.length, afterDiet: recipePool.length, afterPrep: afterPrep.length };
+  const counts = { raw: recipePool.length, afterDiet: recipePool.length, afterPrep: afterPrep.length, stackExplain };
   const needDiagnosis =
     candidates.length === 0 ||
     candidates[0].score.matchPct < 60 ||
@@ -695,7 +734,13 @@ async function alternatesForSlot({
   slotTarget, recipePool, existingSlots, filters = {},
   excludeRecipeIds = [], count = 3, rng = Math.random,
 }) {
-  const afterPrep = applyPrepFilter(recipePool, filters.maxPrepMin);
+  const prepped = applyPrepFilter(recipePool, filters.maxPrepMin);
+  // Stage 3: apply the cost/complexity/taste caps on top of prep, then solve over
+  // the survivors. Reassigning `afterPrep` to the stacked pool means every later
+  // use (costCache, bias, solveDay) consumes the narrowed pool with no rename.
+  // Swap path: apply the same caps so an alternate can never violate a cap the
+  // original respected. No diagnosis surface here, so only the survivors are used.
+  const { survivors: afterPrep } = applyFilterStack(prepped, filters, filters.ratings);
   const costCache = filters.budget ? buildCostCache(afterPrep) : null;
   const bias = buildBias(filters, costCache);
   const repeatCap = filters.allowBatchRepeats ? BATCH_REPEAT_CAP : DEFAULT_REPEAT_CAP;
@@ -1090,7 +1135,9 @@ async function solveOneMeal({
   count = 3, rng = Math.random, clock = Date.now,
 }) {
   const t0 = clock();
-  const afterPrep = applyPrepFilter(recipePool, filters.maxPrepMin);
+  const prepped = applyPrepFilter(recipePool, filters.maxPrepMin);
+  // Stage 3: one-meal solves honour the same optional caps as full days.
+  const { survivors: afterPrep, explain: stackExplain } = applyFilterStack(prepped, filters, filters.ratings);
   const kcalTarget = Number(remaining?.kcal);
   const proteinTarget = Math.max(0, Number(remaining?.protein) || 0);
   const note = (BASIS_NOTES[basis] || BASIS_NOTES["full-day"])(consumedKcal, dailyTarget?.kcal || 0);
@@ -1129,10 +1176,17 @@ async function solveOneMeal({
   }
 
   if (!best) {
+    // If the cost/complexity/taste caps emptied the pool, say THAT — not
+    // "couldn't be portioned", which would blame the wrong thing.
+    const capBound = stackExplain && stackExplain.ok === false;
     return {
       ...base, options: [], best: null, fits: false,
-      miss: `No ${slotType} recipe in your compliant pool could be portioned to ${Math.round(kcalTarget)} kcal.`,
-      binding: classifyBinding({ counts: null, filters, dailyTarget, mealConfig, pool: afterPrep, days: 1 }),
+      miss: capBound
+        ? stackExplain.message
+        : `No ${slotType} recipe in your compliant pool could be portioned to ${Math.round(kcalTarget)} kcal.`,
+      binding: capBound
+        ? { key: `filter:${stackExplain.bindingConstraint}`, label: `the ${stackExplain.bindingConstraint} cap`, detail: stackExplain.message }
+        : classifyBinding({ counts: null, filters, dailyTarget, mealConfig, pool: afterPrep, days: 1 }),
       solveMs: clock() - t0,
     };
   }

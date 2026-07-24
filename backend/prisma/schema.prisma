@@ -262,6 +262,22 @@ model Recipe {
   tasteTierSource String? // "curated" | "user_derived" | "llm"  (precedence: curated > user_derived > llm)
   userRatingAvg   Float? // cached mean of RecipeRating scores, normalised 0..1
   userRatingCount Int? // cached count of ratings
+  // Stage 3 five-filter cache. All three are DERIVED by
+  // scripts/backfillRecipeFilters.mjs, never hand-authored. filterProvenance is
+  // a JSON map recording which is an ESTIMATE and which is MEASURED, so an
+  // estimate can never be read as a measurement (constitution: provenance on
+  // every entry). Nullable/additive; the scorers compute from the row if absent.
+  costPerServing   Float? // CAD, from data/ingredientCosts.json
+  difficulty       Int? // 1..10, from recipeComplexity.computeComplexity()
+  filterProvenance String? // JSON: {"costPerServing":"estimated","prepTimeMin":"measured|estimated","difficulty":"estimated"}
+  // Stage 4 — the constraint fingerprint (brain/slotCache.slotFingerprint) that
+  // produced this row. AI rows only; null for curated/imported. Makes the
+  // library->brain cache index durable instead of rebuilt in-process. An AI row
+  // with a null aiVerifiedAt has NOT passed the verification screens and must
+  // never be served.
+  aiFingerprint String?
+  aiVerifiedAt  DateTime?
+  aiVerifiedBy  Json?
   createdAt   DateTime @default(now())
   // Nullable on purpose: the existing 629-row curated/AI-generated/imported
   // library predates per-user ownership (single-user app originally) and has
@@ -275,6 +291,8 @@ model Recipe {
   ingredients RecipeIngredient[]
   planSlots   PlanSlot[]
   cartItems   CartItem[]
+
+  @@index([aiFingerprint])
 }
 
 model RecipeIngredient {

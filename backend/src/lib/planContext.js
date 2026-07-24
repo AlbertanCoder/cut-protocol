@@ -91,11 +91,17 @@ async function planContext(userId) {
 // the profile and are enforced in filterRecipePool, always.
 function parseFilters(body) {
   const f = body?.filters || {};
+  const posNum = (v) => (Number.isFinite(Number(v)) && Number(v) > 0 ? Number(v) : null);
   return {
     cuisines: Array.isArray(f.cuisines) ? f.cuisines.filter((c) => typeof c === "string").slice(0, 8) : [],
     protein: typeof f.protein === "string" && f.protein ? f.protein : null,
     budget: ["cheap", "moderate", "premium"].includes(f.budget) ? f.budget : null,
     maxPrepMin: Number.isInteger(f.maxPrepMin) && f.maxPrepMin > 0 ? f.maxPrepMin : null,
+    // Stage 3: the three new OPTIONAL hard caps. null = not set = not enforced.
+    // `budget` above stays a SOFT tier bias; maxCostCad is the hard cap.
+    maxCostCad: posNum(f.maxCostCad),
+    maxComplexity: Number.isInteger(f.maxComplexity) && f.maxComplexity >= 1 && f.maxComplexity <= 10 ? f.maxComplexity : null,
+    minTaste: Number.isFinite(Number(f.minTaste)) && Number(f.minTaste) >= 0 && Number(f.minTaste) <= 1 ? Number(f.minTaste) : null,
     allowBatchRepeats: f.allowBatchRepeats === true,
     proteinPriority: f.proteinPriority === true,
   };
