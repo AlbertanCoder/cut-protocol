@@ -8,9 +8,12 @@ const {
   clearSessionCookie,
   requireAuth,
   optionalAuth,
+  normalizeEmail,
   validateRegistration,
   createAttemptThrottle,
+  MIN_PASSWORD_LENGTH,
 } = require("../lib/auth.js");
+const { beginReset, verifyResetCode, recoveryFilePath } = require("../lib/passwordReset.js");
 
 const router = express.Router();
 
@@ -39,6 +42,11 @@ const registerThrottle = createAttemptThrottle({ max: 10, windowMs: 15 * 60 * 10
 // Only FAILED attempts count, and a success clears the caller's counter, so a
 // legitimate user logging in repeatedly can never lock themselves out.
 const loginThrottle = createAttemptThrottle({ max: 10, windowMs: 15 * 60 * 1000 });
+
+// Password-reset brake. Same budget as login: begin + complete share it, keyed on
+// address AND email, so guessing the one-time code is capped per target the same
+// way password guessing is. Only failures count; a completed reset clears it.
+const resetThrottle = createAttemptThrottle({ max: 10, windowMs: 15 * 60 * 1000 });
 
 // GET /api/auth/status — unauthenticated, and deliberately says nothing except
 // "does this install have any account yet". The frontend uses it to choose
@@ -182,6 +190,92 @@ router.post("/logout", (req, res) => {
   res.status(204).end();
 });
 
+// POST /api/auth/reset/begin — start a local, email-free password reset.
+//
+// The registration policy above gates account creation on "first-run OR already
+// signed in". A forgot-password caller is, by definition, NEITHER — so it needs a
+// different proof of who's allowed. That proof is LOCAL FILE ACCESS: the one-time
+// code is written to a file next to the database (see lib/passwordReset.js) and
+// never returned here. Reading that file is the same local access that reading
+// the SQLite DB requires, so this endpoint can't hand an account to a remote
+// caller even if the backend were ever bound past loopback.
+router.post("/reset/begin", async (req, res) => {
+  const body = req.body || {};
+  if (typeof body.email !== "string") return res.status(400).json({ error: "email required" });
+  const email = normalizeEmail(body.email);
+  if (!email) return res.status(400).json({ error: "email required" });
+
+  const key = `${req.ip || "unknown"}|${email}`;
+  const gate = resetThrottle.check(key);
+  if (!gate.allowed) {
+    res.set("Retry-After", String(gate.retryAfterSec));
+    return res.status(429).json({ error: "Too many attempts. Wait a few minutes and try again.", retryAfterSec: gate.retryAfterSec });
+  }
+  resetThrottle.record(key);
+
+  // Write a code ONLY for a real account, but answer identically either way so
+  // this can't be used to test which emails have accounts — the same
+  // account-existence-oracle guard /login keeps with its single "invalid
+  // credentials". The file PATH is not secret (it's a fixed local location); the
+  // code inside it is, and that's only written when the account exists.
+  const user = await prisma.user.findUnique({ where: { email }, select: { id: true } });
+  if (user) beginReset(email);
+
+  res.json({
+    ok: true,
+    filePath: recoveryFilePath(),
+    message: "If that account exists, a one-time code was written to the file below. Open it, then enter the code to set a new password. The code expires in 15 minutes.",
+  });
+});
+
+// POST /api/auth/reset/complete — finish the reset with the code from the file.
+router.post("/reset/complete", async (req, res) => {
+  const body = req.body || {};
+  if (typeof body.email !== "string" || typeof body.code !== "string" || typeof body.newPassword !== "string") {
+    return res.status(400).json({ error: "email, code and newPassword are required" });
+  }
+  const email = normalizeEmail(body.email);
+  const { code, newPassword } = body;
+
+  const key = `${req.ip || "unknown"}|${email}`;
+  const gate = resetThrottle.check(key);
+  if (!gate.allowed) {
+    res.set("Retry-After", String(gate.retryAfterSec));
+    return res.status(429).json({ error: "Too many attempts. Wait a few minutes and try again.", retryAfterSec: gate.retryAfterSec });
+  }
+
+  // Length is checked BEFORE the code is verified so a too-short new password
+  // doesn't burn a valid one-time code (verifyResetCode consumes it on success).
+  if (newPassword.length < MIN_PASSWORD_LENGTH) {
+    return res.status(400).json({
+      error: `Password must be at least ${MIN_PASSWORD_LENGTH} characters.`,
+      fields: { newPassword: `Password must be at least ${MIN_PASSWORD_LENGTH} characters.` },
+    });
+  }
+
+  const okCode = verifyResetCode(email, code);
+  if (!okCode) {
+    resetThrottle.record(key);
+    return res.status(400).json({ error: "That code is incorrect or has expired. Start the reset again." });
+  }
+
+  const user = await prisma.user.findUnique({ where: { email }, select: { id: true, email: true } });
+  if (!user) {
+    // Code verified but the account vanished mid-flow (deleted, DB swapped). The
+    // same opaque message — never confirm which half failed.
+    return res.status(400).json({ error: "That code is incorrect or has expired. Start the reset again." });
+  }
+
+  const passwordHash = await hashPassword(newPassword);
+  await prisma.user.update({ where: { id: user.id }, data: { passwordHash } });
+
+  // A successful reset clears the attempt budget and signs the user straight in —
+  // same session issuance as /login, so there's no "now go sign in" dead end.
+  resetThrottle.clear(key);
+  setSessionCookie(res, signToken(user.id));
+  res.json({ id: user.id, email: user.email });
+});
+
 router.get("/me", requireAuth, async (req, res) => {
   // role included so the frontend can gate personal/legacy content
   // (frontend/src/data/constants.js's hardcoded RX/MILESTONES/FORK_DATE and
@@ -219,3 +313,4 @@ module.exports = router;
 // and not an env flag, so it cannot be used to disarm the throttle at runtime.
 module.exports.__registerThrottle = registerThrottle;
 module.exports.__loginThrottle = loginThrottle;
+module.exports.__resetThrottle = resetThrottle;
