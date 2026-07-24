@@ -2,7 +2,8 @@ import { useState, useRef, useEffect, useCallback } from "react";
 import { Barcode, Camera, CameraOff, X, Plus, AlertTriangle, CheckCircle2 } from "lucide-react";
 import { C } from "../lib/theme.js";
 import { Card, Btn, Chip, Stat, ErrorNote } from "./ui/Parts.jsx";
-import { api } from "../lib/api.js";
+import { api, isAbortError, isTimeoutError, describeError } from "../lib/api.js";
+import { useAbortSignal } from "../lib/useAbortable.js";
 
 const g1 = (n) => (n == null ? "—" : Math.round(n * 10) / 10);
 
@@ -141,6 +142,7 @@ export default function BarcodeLookup({ onImported, onClose }) {
   const [result, setResult] = useState(null); // lookup-upc response
   const [imported, setImported] = useState(null); // import-upc response, once saved
   const [cameraOpen, setCameraOpen] = useState(false);
+  const abort = useAbortSignal();
 
   const cameraSupported = typeof window !== "undefined" && "BarcodeDetector" in window && !!navigator.mediaDevices?.getUserMedia;
 
@@ -152,15 +154,19 @@ export default function BarcodeLookup({ onImported, onClose }) {
     setResult(null);
     setImported(null);
     try {
-      const r = await api.lookupUpc(code);
+      const r = await api.lookupUpc(code, { signal: abort.signal });
       setResult(r);
     } catch (e) {
+      if (isAbortError(e)) return;
+      // A 404 means Open Food Facts genuinely has no such product ("not
+      // found"). A timeout means we never got an answer — those are
+      // different results and must not share a message.
       if (e.status === 404) setResult({ found: false, reason: e.body?.reason || "product not found in Open Food Facts" });
-      else setError(e.message);
+      else setError(describeError(e));
     } finally {
       setLoading(false);
     }
-  }, [upc]);
+  }, [upc, abort]);
 
   const handleDetected = (code) => {
     setCameraOpen(false);
@@ -172,15 +178,20 @@ export default function BarcodeLookup({ onImported, onClose }) {
     setImporting(true);
     setError(null);
     try {
-      const r = await api.importUpc(upc.trim());
+      const r = await api.importUpc(upc.trim(), { signal: abort.signal });
       setImported(r);
       onImported?.(r.food);
     } catch (e) {
+      if (isAbortError(e)) return;
       if (e.status === 422) {
         // server re-validated and rejected — surface the same verdict shape
         setResult((prev) => ({ ...prev, verdict: "reject", issues: e.body?.issues || [], importable: false }));
       } else {
-        setError(e.message);
+        // On a timeout the save may or may not have landed — say exactly that
+        // instead of implying it failed.
+        setError(isTimeoutError(e)
+          ? `${describeError(e)} Look the barcode up again before re-adding it, so you don't create a duplicate.`
+          : describeError(e));
       }
     } finally {
       setImporting(false);

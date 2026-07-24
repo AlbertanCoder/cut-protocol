@@ -10,7 +10,8 @@ import { todayStr, addDays, fmtDY } from "../lib/dates.js";
 import { fmtD } from "../lib/dates.js";
 import { displayWeight, displayRate, weightUnit, rateUnit } from "../lib/units.js";
 import { TRAINING } from "../lib/flags.js";
-import { api } from "../lib/api.js";
+import { api, isAbortError, describeError } from "../lib/api.js";
+import { useAbortSignal } from "../lib/useAbortable.js";
 import { Card, Stat, PageHead, EmptyNote } from "./ui/Parts.jsx";
 
 const r1 = (n) => Math.round(n * 10) / 10;
@@ -21,11 +22,22 @@ const r1 = (n) => Math.round(n * 10) / 10;
 // fetches/renders when the flag hides the feature entirely.
 function TrainingNudge({ openTraining }) {
   const [plan, setPlan] = useState(undefined); // undefined = loading, null = none, object = active plan
+  const [loadError, setLoadError] = useState(null); // never collapsed into "no plan"
+  const abort = useAbortSignal();
   useEffect(() => {
     if (TRAINING === "hidden") return;
-    api.getTrainingPlan().then(setPlan).catch(() => setPlan(null));
-  }, []);
-  if (TRAINING === "hidden" || plan === undefined) return null;
+    // frontend-arch-4: this used to `.catch(() => setPlan(null))`, so a failed
+    // fetch rendered the "No training plan yet" copy — telling a user with an
+    // active plan that they have none. A failure now says it failed.
+    api.getTrainingPlan({ signal: abort.signal })
+      .then((p) => { setPlan(p); setLoadError(null); })
+      .catch((e) => {
+        if (isAbortError(e)) return;
+        setLoadError(describeError(e, "Couldn't load your training plan."));
+        setPlan(null);
+      });
+  }, [abort]);
+  if (TRAINING === "hidden" || (plan === undefined && !loadError)) return null;
 
   const clickable = TRAINING === "on";
   return (
@@ -33,7 +45,11 @@ function TrainingNudge({ openTraining }) {
       <div className="flex items-start gap-2.5">
         <Dumbbell size={16} style={{ color: C.faint }} className="mt-0.5 shrink-0" />
         <div className="flex-1">
-          {plan ? (
+          {loadError ? (
+            <div className="text-sm font-semibold" style={{ color: C.warn }}>
+              Couldn't check your training plan — {loadError} This says nothing about whether you have one.
+            </div>
+          ) : plan ? (
             <div className="text-sm font-semibold" style={{ color: C.ink }}>
               {plan.style} training active, {plan.daysPerWeek}x/week. Protein alone slows lean-mass loss — resistance training is what actually signals the body to keep it.
             </div>
@@ -42,9 +58,14 @@ function TrainingNudge({ openTraining }) {
               No training plan yet. Protein-priority mode defends the floor, but without a training stimulus the body has less reason to hold onto the muscle it's fed.
             </div>
           )}
-          {clickable && (
+          {clickable && !loadError && (
             <button onClick={openTraining} className="text-xs font-bold flex items-center gap-1 mt-2 hover:opacity-80" style={{ color: C.ink }}>
               {plan ? "View training plan" : "Generate a training plan"} <ArrowRight size={12} />
+            </button>
+          )}
+          {clickable && loadError && (
+            <button onClick={openTraining} className="text-xs font-bold flex items-center gap-1 mt-2 hover:opacity-80" style={{ color: C.ink }}>
+              Open the Training tab <ArrowRight size={12} />
             </button>
           )}
         </div>

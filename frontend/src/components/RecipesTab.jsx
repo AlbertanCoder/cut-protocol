@@ -8,7 +8,8 @@ import { C } from "../lib/theme.js";
 import { toHouseholdUnit } from "../lib/householdUnits.js";
 import { Card, Btn, Chip, PageHead, ErrorNote, EmptyNote } from "./ui/Parts.jsx";
 import { SkeletonRows } from "./ui/Skeleton.jsx";
-import { api } from "../lib/api.js";
+import { api, isAbortError, describeError } from "../lib/api.js";
+import { useAbortSignal } from "../lib/useAbortable.js";
 
 const kc = (n) => Math.round(n).toLocaleString("en-CA");
 const g1 = (n) => Math.round(n * 10) / 10;
@@ -91,6 +92,8 @@ function RecipeDetail({ recipe, profile, onSave, onDelete, inCart, onToggleCart,
   const [placing, setPlacing] = useState(false);
   const [notice, setNotice] = useState(null);
   const [error, setError] = useState(null);
+  const [deleting, setDeleting] = useState(false);
+  const abort = useAbortSignal();
 
   const scaled = useMemo(() => ({
     kcal: recipe.kcal * scale, protein: recipe.protein * scale,
@@ -119,7 +122,8 @@ function RecipeDetail({ recipe, profile, onSave, onDelete, inCart, onToggleCart,
       });
       setEditing(false);
     } catch (e) {
-      setError(e.body?.invalidIngredients ? `${e.message}: ${e.body.invalidIngredients.map((p) => `${p.name} — ${p.reason}`).join("; ")}` : e.message);
+      if (isAbortError(e)) return;
+      setError(e.body?.invalidIngredients ? `${e.message}: ${e.body.invalidIngredients.map((p) => `${p.name} — ${p.reason}`).join("; ")}` : describeError(e));
     } finally {
       setBusy(false);
     }
@@ -134,13 +138,24 @@ function RecipeDetail({ recipe, profile, onSave, onDelete, inCart, onToggleCart,
     setError(null);
     setNotice(null);
     try {
-      await api.placeRecipe({ ...placePick, recipeId: recipe.id, scale });
+      await api.placeRecipe({ ...placePick, recipeId: recipe.id, scale }, { signal: abort.signal });
       setNotice(`Placed at ×${scale} into ${DAY_NAMES[placePick.dayOfWeek]} ${placePick.slotType} ${placePick.slotIndex + 1} — see the Plan tab.`);
       setPlacePick(null);
     } catch (e) {
-      setError(e.message);
+      if (isAbortError(e)) return;
+      setError(describeError(e));
     } finally {
       setPlacing(false);
+    }
+  };
+
+  // Guarded: onDelete is async and used to be fired bare from onClick.
+  const confirmDelete = async () => {
+    setDeleting(true);
+    try {
+      await onDelete(recipe.id);
+    } finally {
+      setDeleting(false);
     }
   };
 
@@ -250,7 +265,7 @@ function RecipeDetail({ recipe, profile, onSave, onDelete, inCart, onToggleCart,
         )}
         <Btn small kind="ghost" onClick={startEdit}><Pencil size={12} className="inline mr-1" />Edit</Btn>
         {confirmingDelete ? (
-          <Btn small kind="red" onClick={() => onDelete(recipe.id)}>Confirm delete</Btn>
+          <Btn small kind="red" onClick={confirmDelete} disabled={deleting}>{deleting ? "Deleting…" : "Confirm delete"}</Btn>
         ) : (
           <Btn small kind="ghost" onClick={() => setConfirmingDelete(true)}><Trash2 size={12} className="inline mr-1" />Delete</Btn>
         )}
@@ -309,6 +324,9 @@ export default function RecipesTab({ openFoods, profile }) {
   const [hiddenCount, setHiddenCount] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [loadError, setLoadError] = useState(null); // library load failed — NOT "no recipes"
+  const [cartError, setCartError] = useState(null); // cart load failed — NOT "empty cart"
+  const abort = useAbortSignal();
   const [query, setQuery] = useState("");
   const [groupBy, setGroupBy] = useState("cuisine");
   const [sortBy, setSortBy] = useState("name");
@@ -334,24 +352,40 @@ export default function RecipesTab({ openFoods, profile }) {
   const [importUrl, setImportUrl] = useState("");
   const [importing, setImporting] = useState(false);
 
+  // frontend-arch-4: a failed load left `recipes` at [] and the library then
+  // rendered the "No recipes yet" empty state. loadError is tracked
+  // separately and takes priority in the render — an error and an empty
+  // library never look the same.
   const load = useCallback(async () => {
+    setLoadError(null);
     try {
-      const res = await api.getRecipes();
+      const res = await api.getRecipes({ signal: abort.signal });
       setRecipes(res.recipes);
       setHiddenCount(res.hiddenCount);
+      setLoading(false);
     } catch (e) {
-      setError(e.message);
-    } finally {
+      if (isAbortError(e)) return;
+      setLoadError(describeError(e, "Couldn't load your recipes."));
       setLoading(false);
     }
-  }, []);
+  }, [abort]);
   useEffect(() => { load(); }, [load]);
   useEffect(() => {
-    api.getCart().then(setCartItems).catch(() => {});
-  }, []);
+    api.getCart({ signal: abort.signal })
+      .then((items) => { setCartItems(items); setCartError(null); })
+      .catch((e) => {
+        if (isAbortError(e)) return;
+        // An unreadable cart is NOT an empty cart — say which one it is.
+        setCartError(describeError(e, "Couldn't load your cart."));
+      });
+  }, [abort]);
   useEffect(() => {
-    api.getRatings().then((rows) => setRatings(Object.fromEntries(rows.map((x) => [x.recipeId, x.rating])))).catch(() => {});
-  }, []);
+    // Ratings are a soft re-rank only; their absence changes no displayed
+    // fact, so this one degrades silently by design.
+    api.getRatings({ signal: abort.signal })
+      .then((rows) => setRatings(Object.fromEntries(rows.map((x) => [x.recipeId, x.rating]))))
+      .catch(() => {});
+  }, [abort]);
 
   // T (v2): optimistic taste rating. Clicking the active thumb again clears it.
   const rate = async (recipeId, value) => {
@@ -361,9 +395,10 @@ export default function RecipesTab({ openFoods, profile }) {
     else next[recipeId] = value;
     setRatings(next);
     try {
-      if (next[recipeId] === undefined) await api.unrateRecipe(recipeId);
-      else await api.rateRecipe(recipeId, value);
-    } catch {
+      if (next[recipeId] === undefined) await api.unrateRecipe(recipeId, { signal: abort.signal });
+      else await api.rateRecipe(recipeId, value, { signal: abort.signal });
+    } catch (e) {
+      if (isAbortError(e)) return;
       setRatings(prev); // rollback to the pre-click truth
     }
   };
@@ -382,14 +417,15 @@ export default function RecipesTab({ openFoods, profile }) {
     }
     try {
       if (had) {
-        await api.removeFromCart(recipeId);
+        await api.removeFromCart(recipeId, { signal: abort.signal });
       } else {
-        const item = await api.addToCart(recipeId);
+        const item = await api.addToCart(recipeId, { signal: abort.signal });
         setCartItems((c) => c.map((i) => (i.id === `tmp-${recipeId}` ? item : i)));
       }
     } catch (e) {
+      if (isAbortError(e)) return;
       setCartItems(prev); // rollback to the pre-toggle truth
-      setError(e.message);
+      setError(`${describeError(e)} The cart was put back to what the server last confirmed.`);
     } finally {
       setCartBusyId(null);
     }
@@ -405,10 +441,11 @@ export default function RecipesTab({ openFoods, profile }) {
     setCartNote(null);
     setError(null);
     try {
-      const res = await api.fillTodayFromCart();
+      const res = await api.fillTodayFromCart({ signal: abort.signal });
       setCartNote(`Placed ${res.placed} recipe(s) into today's plan${res.note ? ` — ${res.note}` : "."} See the Plan tab.`);
     } catch (e) {
-      setError(e.message);
+      if (isAbortError(e)) return;
+      setError(describeError(e));
     } finally {
       setFillBusy(false);
     }
@@ -416,10 +453,12 @@ export default function RecipesTab({ openFoods, profile }) {
 
   const onGenerateCartGroceryList = async () => {
     setCartGroceryBusy(true);
+    setError(null);
     try {
-      setCartGroceryList(await api.generateCartGroceryList());
+      setCartGroceryList(await api.generateCartGroceryList({ signal: abort.signal }));
     } catch (e) {
-      setError(e.message);
+      if (isAbortError(e)) return;
+      setError(describeError(e));
     } finally {
       setCartGroceryBusy(false);
     }
@@ -441,13 +480,17 @@ export default function RecipesTab({ openFoods, profile }) {
     setDraftErrors({});
     setDroppedForAllergies([]); // Stage-C: don't leave a stale drop note under a new run
     try {
-      const res = await api.generateRecipeDrafts({ ...form, prepTimeMin: form.prepTimeMin ? +form.prepTimeMin : undefined });
+      const res = await api.generateRecipeDrafts(
+        { ...form, prepTimeMin: form.prepTimeMin ? +form.prepTimeMin : undefined },
+        { signal: abort.signal }
+      );
       setDrafts(res.drafts.map((d) => withKey(d, "ai-generated")));
       setDroppedForAllergies(res.droppedForAllergies);
       // The allergen override is per-generation and never sticky.
       setForm((f) => ({ ...f, allowAllergens: false }));
     } catch (e) {
-      setError(e.message);
+      if (isAbortError(e)) return;
+      setError(describeError(e));
     } finally {
       setGenerating(false);
     }
@@ -458,11 +501,12 @@ export default function RecipesTab({ openFoods, profile }) {
     setImporting(true);
     setError(null);
     try {
-      const { draft } = await api.importRecipe(importUrl.trim());
+      const { draft } = await api.importRecipe(importUrl.trim(), { signal: abort.signal });
       setDrafts((ds) => [withKey(draft, "imported"), ...(ds || [])]);
       setImportUrl("");
     } catch (e) {
-      setError(`Import failed: ${e.message}`);
+      if (isAbortError(e)) return;
+      setError(`Import failed: ${describeError(e)}`);
     } finally {
       setImporting(false);
     }
@@ -482,28 +526,41 @@ export default function RecipesTab({ openFoods, profile }) {
         slotType: draft.slotType, prepTimeMin: draft.prepTimeMin, steps: draft.steps,
         source: draft.source === "imported" ? "imported" : undefined,
         ingredients: draft.ingredients.map((i) => ({ foodId: i.foodId, grams: i.grams, role: i.role, scalable: i.scalable })),
-      });
+      }, { signal: abort.signal });
       setRecipes((r) => [...r, saved].sort((a, b) => a.name.localeCompare(b.name)));
       setDrafts((ds) => ds.filter((d) => d._key !== key));
       setDraftErrors((errs) => { const { [key]: _drop, ...rest } = errs; return rest; });
     } catch (e) {
+      if (isAbortError(e)) return;
       const detail = e.body?.invalidIngredients
         ? `${e.message}: ${e.body.invalidIngredients.map((p) => `${p.name} — ${p.reason}`).join("; ")}`
-        : e.message;
+        : describeError(e);
       setDraftErrors((errs) => ({ ...errs, [key]: detail }));
     } finally {
       setSavingIdx(null);
     }
   };
 
+  // Awaited by RecipeDetail's own try/catch — it throws on purpose so the
+  // inline editor can show the validator's message.
   const handleUpdate = async (id, patch) => {
-    const updated = await api.updateRecipe(id, patch);
+    const updated = await api.updateRecipe(id, patch, { signal: abort.signal });
     setRecipes((r) => r.map((x) => (x.id === id ? updated : x)).sort((a, b) => a.name.localeCompare(b.name)));
   };
+  // Guarded (frontend-arch-4): "Confirm delete" called this straight from
+  // onClick, so a failed DELETE was an unhandled rejection into the crash
+  // dialog — AND the row stayed on screen with no explanation. Now the row is
+  // only removed once the server confirms it.
   const handleDelete = async (id) => {
-    await api.deleteRecipe(id);
-    setRecipes((r) => r.filter((x) => x.id !== id));
-    setExpandedId(null);
+    setError(null);
+    try {
+      await api.deleteRecipe(id, { signal: abort.signal });
+      setRecipes((r) => r.filter((x) => x.id !== id));
+      setExpandedId(null);
+    } catch (e) {
+      if (isAbortError(e)) return;
+      setError(`Couldn't delete that recipe — ${describeError(e)} It is still in your library.`);
+    }
   };
 
   // ── grouping + sorting ──
@@ -628,8 +685,12 @@ export default function RecipesTab({ openFoods, profile }) {
             </Card>
           )}
 
-          <Card section="CART" title={`Cart (${cartItems.length})`}>
-            {cartItems.length === 0 ? (
+          <Card section="CART" title={cartError ? "Cart (unknown)" : `Cart (${cartItems.length})`}>
+            {cartError ? (
+              // A cart that couldn't be read is not an empty cart.
+              <ErrorNote msg={`Couldn't load your cart — ${cartError}`}
+                hint="Anything already in it is still there; this view just couldn't read it. Switch tabs and back to retry." />
+            ) : cartItems.length === 0 ? (
               <div className="text-sm font-semibold" style={{ color: C.faint }}>Add recipes from the library — the cart feeds today's plan and the grocery list.</div>
             ) : (
               <>
@@ -727,6 +788,16 @@ export default function RecipesTab({ openFoods, profile }) {
 
           {loading ? (
             <SkeletonRows rows={7} />
+          ) : loadError ? (
+            // Load failure — deliberately NOT the empty state below. "No
+            // recipes yet" here would tell a user their library was wiped.
+            <Card>
+              <ErrorNote msg={`Couldn't load your recipe library — ${loadError}`}
+                hint="Your recipes are still stored; this is a load failure, not a deletion. Retry below." />
+              <div className="mt-3">
+                <Btn small onClick={() => { setLoading(true); load(); }}>Retry</Btn>
+              </div>
+            </Card>
           ) : groups.every(([, list]) => list.length === 0) ? (
             <Card>
               <EmptyNote icon={searching ? Search : Utensils}
