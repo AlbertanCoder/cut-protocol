@@ -8,6 +8,7 @@
 const { prisma } = require("./prisma.js");
 const { computeMacros } = require("./bmrEngine.js");
 const { getWeightNowKg } = require("./weightNow.js");
+const { reconcileTarget } = require("./profileTarget.js");
 const { recipeExcludedByStyle, matchesExclusionTerm, recipeExceedsKetoCeiling, additionalIngredientNames } = require("./dietaryFilter.js");
 
 // The pool carries the diet style it was admitted under (solver-core-3).
@@ -46,7 +47,13 @@ async function planContext(userId) {
   const profile = await prisma.profile.findUnique({ where: { userId } });
   if (!profile) throw Object.assign(new Error("no profile set up yet"), { status: 404 });
   const weightNowKg = await getWeightNowKg(userId, profile);
-  const dailyTarget = computeMacros(profile, weightNowKg, profile.targetKcal);
+  // adaptive-tdee-2: reconcile the cached Profile.targetKcal against the live
+  // resolver before solving. This is the highest-stakes reader of that number —
+  // a stale target here is a whole WEEK of meal plans built to the wrong
+  // calorie goal, and the drift is invisible because the plan looks internally
+  // consistent. The resolver is authoritative; the row is a cache.
+  const reconciled = await reconcileTarget(userId, { profile, reason: "planContext" });
+  const dailyTarget = computeMacros(profile, weightNowKg, reconciled.target);
   const mealConfig = { meals: profile.mealsPerDay, snacks: profile.snacksPerDay };
   const rawRecipePool = await prisma.recipe.findMany({ include: { ingredients: { include: { food: true } } } });
   const recipePool = filterRecipePool(rawRecipePool, profile);

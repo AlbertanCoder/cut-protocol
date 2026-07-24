@@ -44,11 +44,17 @@ const TESTS_DIR = path.join(BACKEND, "tests");
 //   2026-07-23  63 files / 676 tests   (Wave 1 agent 01: +1 file / +9 tests —
 //               tests/golden/goldenBmr.test.js, the BMR golden lock that finding
 //               tests-quality-3 showed had been committed but never compared)
-const MIN_TEST_FILES = 63;
+//   2026-07-23  80 files / 926 tests   (overnight fleet, all 10 agents landed:
+//               migration-runner safety, ingredient-resolver ladder, allergen
+//               metadata + alias map, registration, login throttle, port/identity
+//               + license gate, solver locks/macro tolerance/keto ceiling,
+//               adaptive step cap + intake recency + target reconcile, and the
+//               LLM governance door)
+const MIN_TEST_FILES = 80;
 // ~2.5% headroom under the measured total so ordinary churn (merging or deleting
 // a redundant case) doesn't wedge CI, while still catching a mass skip — the
 // bash glob dropped 27 of 62 files, which is hundreds of tests, not single digits.
-const MIN_TESTS = 659;
+const MIN_TESTS = 903;
 
 const argv = process.argv.slice(2);
 const listOnly = argv.includes("--list");
@@ -102,11 +108,32 @@ if (listOnly) {
   process.exit(0);
 }
 
+// The test suite may never bill the owner's Anthropic account.
+//
+// backend/.env carries BRAIN=on and a real ANTHROPIC_API_KEY, and Prisma loads
+// .env into process.env for anything that imports it. So on the owner's machine
+// a suite that reaches the transport would make a REAL, paid call — and the
+// failure mode is silent: the tests still pass, the money is just gone.
+//
+// Neutralising it here, at the one entrypoint every test run goes through, is
+// what makes it reliable. Doing it per-file means remembering it in each new
+// test forever, which is the same "wiring, not structure" mistake that let the
+// ungated LLM route exist in the first place.
+//
+// Tests that need to exercise a model path inject a fake client through the
+// sanctioned __setClient seam, which does not consult these variables.
+const childEnv = {
+  ...process.env,
+  BRAIN: "off",
+  ANTHROPIC_API_KEY: "",
+  AI_RECIPE_DRAFTS: "",
+};
+
 // Explicit paths — node never sees a glob, so no shell can eat one.
 const child = spawn(
   process.execPath,
   ["--test", "--test-reporter=spec", ...files],
-  { cwd: BACKEND, stdio: ["inherit", "pipe", "inherit"] }
+  { cwd: BACKEND, stdio: ["inherit", "pipe", "inherit"], env: childEnv }
 );
 
 let captured = "";
