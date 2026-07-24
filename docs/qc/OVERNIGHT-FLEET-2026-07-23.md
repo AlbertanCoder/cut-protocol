@@ -158,14 +158,47 @@ days compliant.
 
 ---
 
-## What is NOT verified — read before merging to master
+## MERGED TO MASTER — 2026-07-24, CI GREEN
 
-1. **CI has never run any of this.** `.github/workflows/ci.yml` triggers on `master` push/PR only,
-   so nothing tonight has executed on GitHub. Everything is proven locally. Left the trigger alone
-   deliberately — changing it mid-fleet would have surprised nine other agents.
-2. **No browser or Electron run of the merged tree.** Agents verified their own slices live
-   (registration walk, Electron port-conflict boot, setup-wizard banner), but nobody has driven the
-   *combined* app. Ten agents' frontend changes have only been proven to build and lint together.
+Merged as `aa67c64` (deliberate `--no-ff` merge commit, so the whole batch has a single
+`git revert -m 1` escape hatch). Master tree was verified byte-identical to the branch before
+pushing, so the 926 passing tests carried over exactly.
+
+**Merging ran this work on CI for the first time — and CI went red.** The workflow triggers on
+`master` only, so a branch can never be pre-validated by it. Three Linux-only failures, none of
+them caused by the fleet — all three were *revealed* by tests-quality-1, because the broken `**`
+glob had never run those files on CI at all:
+
+1. **Node 20 has no `node:sqlite`.** `desktopBootstrap.js` and its two test files require it, so on
+   CI they threw at *import* — whole files dead, 25 tests never ran (901 on CI vs 926 locally).
+   The module is flag-free only from Node 22.13/24. Backend CI job bumped 20 → 24, matching local
+   dev and Electron 43's bundled Node; `engines` added so the floor is declared, not folklore.
+2. **`authInjection.test.js` cloned `prisma/dev.db`**, which is gitignored and absent on CI. Now
+   falls back to the migrated DB at `DATABASE_URL`. Verified by reproducing the CI condition
+   locally with `dev.db` genuinely absent, not by reasoning about it.
+3. **`withDeadline()` unref'd its deadline timer** — a real bug, not a test artifact. Unref means
+   the loop need not wait for it, so when the guarded call produces no I/O of its own (a stuck
+   retry loop, a fake client) the loop drains to empty and *the deadline never fires*. A hard
+   deadline that can silently fail to enforce anything is not a hard deadline.
+
+Then the security lane failed on a **false-positive** secret finding (a literal
+`"auth-registration-test-only-secret"` in a test); tagged with the scanner's own `// scan:allow`
+rather than weakening the rule. That also unblocked the two guards S2 had been aborting before —
+brain-purity and supply-chain — both clean, including the new `electron-updater`.
+
+**Final: `frontend ✓ · backend ✓ · security ✓`.**
+
+## What is still NOT verified
+
+1. **No browser or Electron run of the merged tree.** Agents verified their own slices live
+   (registration walk, Electron port-conflict boot, setup-wizard banner), and the merged backend
+   was confirmed to boot clean post-merge (binds `127.0.0.1:3001`, API + `/auth/status` answer).
+   But nobody has driven the *combined UI*. Ten agents' frontend changes are proven to build,
+   lint, and pass CI together — not to work together on screen.
+2. **`node:sqlite` raises the app's Node floor to 22.13+.** CI and local dev are both fine. Worth
+   confirming the packaged Electron build bundles a Node where `node:sqlite` is flag-free, since
+   `desktopBootstrap` runs at boot — a mismatch would fail on a *user's* machine, which is worse
+   than failing on CI. Agent 2 reported probing Electron 43.1.1 (Node 24.18) successfully.
 3. **The QC gauntlet was not re-run** (Wave 4). The 38.8% feasible-day coverage baseline is now
    stale — `daysInTolerance` moved a lot, and the keto guard costs ~1.5% more empty slots.
 4. **Wave 8 was not started.** Food diary, CSV export, Living App stages C–G.
