@@ -273,4 +273,8 @@ async function generateRecipeDrafts(params, deps = {}) {
 module.exports = {
   generateRecipeDrafts, violatesRules, validateDraftShape, buildPrompt,
   AI_PROVENANCE, DRAFT_SYSTEM, RECIPES_SCHEMA,
+  // Exported for the Stage 4 router's tiered-model affordability check: it must
+  // project the SAME cost governance will charge, or its "can I afford to
+  // escalate?" question is answered against a different number than the cap.
+  DRAFT_MAX_TOKENS,
 };

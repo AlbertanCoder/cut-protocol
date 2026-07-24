@@ -127,6 +127,20 @@ const LEGUME_KEYWORDS = [
 ];
 const NON_BUTTER_DAIRY_KEYWORDS = ["cheese", "yogurt", "yoghurt", "whey", "casein", "kefir", "custard"];
 
+// The maintainable allergen DATA TABLE (labels, synonyms, species depth, the
+// rare allergens the owner asked for) plus the term-normalisation helpers. It
+// is merged into the four maps below by mergeAllergenTaxonomy() ADD-ONLY —
+// see that function. allergenTaxonomy.js has zero dependencies and must never
+// require this file back.
+const {
+  ALLERGEN_TAXONOMY,
+  allergenCatalog,
+  searchAllergens,
+  categoryKeyOf,
+  exclusionTermCandidates,
+  normaliseExclusionText,
+} = require("./allergenTaxonomy.js");
+
 // Category synonym maps for hard exclusions (allergies/intolerances), keyed
 // by the term a user is expected to pick from a profile allergy list. Guards
 // against literal substring matching on "gluten" or "shellfish" matching
@@ -411,7 +425,50 @@ const COMPOUND_FALSE_FRIENDS = [
   { name: "Water chestnut, canned", mustNotMatch: ["tree nuts", "nuts"], mustNotStyle: [], why: "an aquatic vegetable" },
   { name: "Doughnuts, glazed", mustNotMatch: ["tree nuts", "nuts"], mustNotStyle: [], why: "'nut' inside 'doughnut' is not a nut" },
   { name: "Milkfish, raw", mustNotMatch: ["dairy"], mustNotStyle: [], why: "milkfish is a fish; it carries no milk" },
+  // ── REAL corpus spellings (audit agent 09 §3.6, 2026-07-24) ──────────────
+  // The eleven entries above were written from memory: only "Graham crackers"
+  // and "Eggplant, raw" are actual rows in the 14,122-name table. An executable
+  // record asserted against strings the app will never see is how the REAL
+  // "Egg Plants" spelling slipped through and hid six aubergine recipes from an
+  // egg-allergic user. Every entry below is a verbatim row name from that table.
+  { name: "Egg Plants", mustNotMatch: ["egg", "eggs"], mustNotStyle: ["vegan", "vegetarian"], why: "the corpus spells aubergine as two words; it is still a vegetable" },
+  { name: "Ground Nutmeg", mustNotMatch: ["peanuts", "tree nuts", "nuts"], mustNotStyle: [], why: "'ground nut' must not fire inside 'Ground Nutmeg' — nutmeg is a seed spice" },
+  { name: "LITTLE CAESARS 14\" Original Round Cheese Pizza, Regular Crust", mustNotMatch: ["fish", "eggs"], mustNotStyle: [], why: "a pizza brand is not Caesar dressing" },
+  { name: "Caesar salad, with romaine, no dressing", mustNotMatch: ["fish"], mustNotStyle: [], why: "the name states the anchovy carrier is absent" },
+  { name: "SILK Original Creamer", mustNotMatch: ["dairy"], mustNotStyle: ["vegan"], why: "a plant-milk brand's creamer is not dairy" },
+  { name: "Beverages, coffee, instant, vanilla, sweetened, decaffeinated, with non dairy creamer", mustNotMatch: ["dairy"], mustNotStyle: ["vegan"], why: "the name literally says non dairy" },
+  { name: "Seeds, sunflower seed butter, without salt", mustNotMatch: ["dairy"], mustNotStyle: ["vegan"], why: "a seed butter is not butter" },
+  { name: "Sweet potato, cooked, baked in skin", mustNotMatch: ["nightshades"], mustNotStyle: [], why: "sweet potato is Convolvulaceae, not a nightshade" },
 ];
+
+// ── COMPOUND VETOES — audit agent 09 §3, over-exclusion the splitter caused ──
+// A compound word normally IMPLIES its tokens. These are the measured cases
+// where the surrounding name says, in plain English, that it does not. A veto
+// suppresses ONE compound's expansion for ONE name; every other list, keyword
+// and probe still runs on the untouched raw name, so this can never clear an
+// exclusion something else raised.
+//
+// Measured against the real 14,122-row table on 2026-07-24:
+//   caesar  → "LITTLE CAESARS 14\" ... Pizza" (6 rows) excluded for FISH + EGGS
+//             on an anchovy/raw-egg inference about a pizza brand, and three
+//             "...caesar ... NO DRESSING" rows excluded although the name states
+//             the anchovy carrier is absent.
+//   creamer → the plant creamers. "Beverages, coffee, instant, ... with NON
+//             DAIRY creamer" and the SILK range (a plant-milk brand) were called
+//             dairy — and were also lost to VEGAN, which is the worst possible
+//             direction for a vegan product.
+// NOT vetoed, deliberately: a generic "Coffee creamer, liquid/powder" with no
+// plant or dairy-free declaration. Those are overwhelmingly sodium CASEINATE,
+// which is a milk protein — the word "non-dairy" on a label is a marketing term,
+// not an allergy statement, so the exclusion there is medically correct.
+const COMPOUND_VETOES = {
+  caesar: [/\blittle\s+caesar/i, /\bno\s+dressing\b/i],
+  creamer: [
+    /\bnon[\s-]?dairy\b/i, /\bdairy[\s-]?free\b/i,
+    /\bsilk\b/i, // plant-milk brand; its whole creamer range is soy/almond based
+    /\b(?:soy|soya|almond|oat|coconut|cashew|rice|hemp|pea|flax)\b/i,
+  ],
+};
 
 const escapeRe = (w) => w.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 // One alternation, longest-first so a longer compound wins over a shorter one
@@ -439,7 +496,10 @@ function expandCompoundTokens(name) {
   COMPOUND_RE.lastIndex = 0;
   let m;
   while ((m = COMPOUND_RE.exec(s)) !== null) {
-    for (const token of COMPOUND_TOKENS[m[1].toLowerCase()]) (extra ||= new Set()).add(token);
+    const compound = m[1].toLowerCase();
+    const vetoes = COMPOUND_VETOES[compound];
+    if (vetoes && vetoes.some((re) => re.test(s))) continue;
+    for (const token of COMPOUND_TOKENS[compound]) (extra ||= new Set()).add(token);
   }
   const out = extra ? `${s} ${[...extra].join(" ")}` : s;
   if (compoundCache.size >= COMPOUND_CACHE_MAX) compoundCache.clear();
@@ -525,19 +585,43 @@ const SYNONYM_KEY_FAMILY = {
  */
 function resolveExclusionTerm(term) {
   const key = String(term ?? "").trim().toLowerCase();
-  if (!key) return { term, key: "", synonymKey: null, family: null, kind: "empty", recognised: false, note: null };
+  if (!key) return { term, key: "", normalisedKey: "", synonymKey: null, family: null, kind: "empty", recognised: false, note: null };
+  // ── 1. EXACT, unchanged. Anything that resolved before this fix resolves
+  //       identically, so normalisation can only ever ADD a match. ───────────
   if (CATEGORY_SYNONYMS[key]) {
-    return { term, key, synonymKey: key, family: SYNONYM_KEY_FAMILY[key] || null, kind: "category", recognised: true, note: null };
+    return { term, key, normalisedKey: key, synonymKey: key, family: SYNONYM_KEY_FAMILY[key] || null, kind: "category", recognised: true, note: null };
   }
   const alias = FREE_TEXT_ALIASES[key];
   if (alias) {
     return {
-      term, key, synonymKey: alias, family: SYNONYM_KEY_FAMILY[alias] || null, kind: "alias", recognised: true,
+      term, key, normalisedKey: key, synonymKey: alias, family: SYNONYM_KEY_FAMILY[alias] || null, kind: "alias", recognised: true,
       note: `matched as the "${alias}" allergen category`,
     };
   }
+  // ── 2. NORMALISED. Punctuation, possessives, plurals and intent affixes —
+  //       see allergenTaxonomy.js for the measured failures this closes
+  //       ("cow's milk", "gluten free", "dairy!", "milk allergy", "dairies",
+  //       "lactose-intolerant", "no dairy" — every one of them excluded 0 of
+  //       889 recipes before). ────────────────────────────────────────────────
+  const candidates = exclusionTermCandidates(key);
+  for (const cand of candidates) {
+    if (!cand || cand === key) continue;
+    const target = CATEGORY_SYNONYMS[cand] ? cand : (FREE_TEXT_ALIASES[cand] || null);
+    if (!target) continue;
+    return {
+      term, key, normalisedKey: cand, synonymKey: target, family: SYNONYM_KEY_FAMILY[target] || null,
+      kind: "alias", recognised: true,
+      note: `matched as the "${target}" allergen category`,
+    };
+  }
+  // ── 3. Unrecognised. Still filters — fail-safe, never dropped — and still
+  //       says so out loud. The normalised form is carried so the literal probe
+  //       can use it too ("no mushrooms" should find mushrooms). ─────────────
+  // The most-normalised candidate (last in the list) is the one worth grepping
+  // for: "no mushrooms" should find "mushroom", not "no mushrooms".
+  const normalised = [...candidates].reverse().find((c) => c && c !== key && c.length > 1) || key;
   return {
-    term, key, synonymKey: null, family: null, kind: "literal", recognised: false,
+    term, key, normalisedKey: normalised, synonymKey: null, family: null, kind: "literal", recognised: false,
     note: "not a recognised allergen — matching on text only",
   };
 }
@@ -552,7 +636,11 @@ function describeExclusionTerms(terms) {
   return (terms || [])
     .map((t) => resolveExclusionTerm(t))
     .filter((r) => r.kind !== "empty")
-    .map(({ term, key, synonymKey, family, kind, recognised, note }) => ({ term, key, synonymKey, family, kind, recognised, note }));
+    // `normalisedKey` is what we UNDERSTOOD the term as ("cow's milk" → "cows
+    // milk"). The screen should show it whenever it differs from what the user
+    // typed — silent reinterpretation is as dishonest as a silent miss.
+    .map(({ term, key, normalisedKey, synonymKey, family, kind, recognised, note }) =>
+      ({ term, key, normalisedKey, synonymKey, family, kind, recognised, note }));
 }
 
 // Default keto threshold is on carb-per-100g of the raw ingredient, not a
@@ -685,6 +773,12 @@ function isDairyButterOrCream(n) {
     && !isButterBean(n)
     && !hasPhrase(n, "cocoa butter") && !hasPhrase(n, "shea butter")
     && !hasPhrase(n, "apple butter")
+    // Audit agent 09 §3.5: "Seeds, sunflower seed butter, with/without salt" —
+    // two real rows — were excluded for DAIRY (and for vegan). A seed butter is
+    // a ground seed; the existing exemptions covered peanut/nut/cocoa/shea/apple
+    // butter but not the seed forms.
+    && !hasPhrase(n, "seed butter") && !hasPhrase(n, "sunflower butter")
+    && !hasPhrase(n, "sesame butter") && !hasPhrase(n, "tahini")
     && !plantQualified(n, "butter");
   // hasWordOrPlural, not hasWord: "Ice creams, vanilla, light" is how FDC writes
   // it, and the singular-only match let every plural-form dairy dessert through.
@@ -711,9 +805,20 @@ function stripPlantFlesh(n) {
   return s;
 }
 
+// "Egg Plants" is how the RecipeIngredient corpus spells aubergine — two words,
+// so the word-bounded "egg" match fires on a vegetable. Measured 2026-07-24
+// (audit agent 09 §3.4): six real recipes (Baba Ghanoush, Eggplant Adobo,
+// Sichuan Eggplant, …) were hidden from an egg-allergic user, and the same shape
+// removed the row from vegan/vegetarian pools. Strip only this exact phrase —
+// every other word in the name is still matched, so "Eggs and eggplant" is
+// still egg.
+function stripEggPlant(n) {
+  return String(n || "").replace(/\begg\s*plants?\b/gi, " ");
+}
+
 function isVeganAnimalProduct(n) {
   return matchesAny(stripPlantFlesh(n), MEAT_FISH_KEYWORDS)
-    || matchesAny(n, ANIMAL_DERIVED_EXTRA_KEYWORDS)
+    || matchesAny(stripEggPlant(n), ANIMAL_DERIVED_EXTRA_KEYWORDS)
     || isDairyMilk(n)
     || isDairyButterOrCream(n);
 }
@@ -780,6 +885,49 @@ function excludedByStyle(food, dietaryStyle) {
   return false;
 }
 
+// ─────────────────────────────────────────────────────────────────────────
+// WORD GUARDS — keywords that need more than a word-boundary match
+// ─────────────────────────────────────────────────────────────────────────
+// A synonym listed here is matched by its guard instead of the default
+// word/plural/phrase rule. Every one exists because a real row in the
+// 14,122-name table is a FALSE FRIEND of the keyword: the word is present and
+// the allergen is not. Keeping them in one table (rather than an if-chain
+// inside the matcher) is what lets the taxonomy add keywords like "ground nut"
+// and "potato" without re-opening the matcher.
+const WORD_GUARDS = {
+  // milk/cream/butter: the plant-qualifier guards the style filter already uses,
+  // so a dairy allergy doesn't wrongly remove coconut cream, almond milk or
+  // peanut butter (plant foods a dairy-allergic person can eat).
+  // The bare word "dairy" must not fire on a name that DECLARES its absence.
+  // Real row: "Beverages, coffee, instant, vanilla, sweetened, decaffeinated,
+  // with NON DAIRY creamer" was excluded for dairy — the name literally says it
+  // is not (audit agent 09 §3.3). A "dairy free" claim is a regulated label
+  // statement, unlike the marketing word "non-dairy" on a generic creamer, which
+  // is why the un-declared creamers below stay excluded.
+  dairy: (name) => hasWordOrPlural(name, "dairy")
+    && !/\bnon[\s-]?dairy\b/i.test(String(name || ""))
+    && !/\bdairy[\s-]?free\b/i.test(String(name || "")),
+  milk: (name) => isDairyMilk(name),
+  cream: (name) => hasWord(name, "cream") && !hasPhrase(name, "cream of tartar") && !matchesAny(name, PLANT_MILK_QUALIFIERS),
+  butter: (name) => isDairyButterOrCream(name),
+  // chestnut is a tree nut, but WATER chestnut is an aquatic vegetable — a nut
+  // allergy must not remove it. hasWordOrPlural, NOT hasWord: the singular-only
+  // match leaked all 18 "Nuts, chestnuts, japanese/chinese/european, …" rows
+  // plus bare "Chestnuts" (scripts/qc/sweep14k.mjs, 2026-07-23) — the same
+  // plural-blindness class as the Phase 4 "Prawns" finding.
+  chestnut: (name) => hasWordOrPlural(name, "chestnut") && !hasPhrase(name, "water chestnut"),
+  // "Egg Plants" is the corpus spelling of aubergine — see stripEggPlant().
+  egg: (name) => hasWordOrPlural(stripEggPlant(name), "egg"),
+  eggs: (name) => hasWordOrPlural(stripEggPlant(name), "egg"),
+  // "Ground Nut Oil" IS peanut oil (audit agent 09 #1 — four recipes reached a
+  // peanut allergy through it). But "ground nut" is a two-word keyword, and
+  // two-word keywords match as plain substrings, which would also fire on the
+  // real row "Ground Nutmeg". Word-boundary the phrase instead.
+  "ground nut": (name) => /\bground\s+nuts?\b/i.test(String(name || "")),
+  // SWEET potato is Convolvulaceae, not a nightshade.
+  potato: (name) => hasWordOrPlural(name, "potato") && !hasPhrase(name, "sweet potato"),
+};
+
 // The styles the Profile UI offers — single source for route validation.
 const DIETARY_STYLES = ["none", "mediterranean", "vegetarian", "vegan", "paleo", "keto", "carnivore", "halal", "kosher"];
 
@@ -809,29 +957,20 @@ function matchesExclusionTerm(rawName, term) {
     // matchesTermList(); single-word entries keep the stricter
     // word-boundary/plural match.
     return synonyms.some((word) => {
-      // milk/cream/butter get the same plant-qualifier guards the style filter
-      // uses, so a dairy allergy doesn't wrongly remove coconut cream, almond
-      // milk, or peanut butter (plant foods a dairy-allergic person can eat).
-      if (word === "milk") return isDairyMilk(name);
-      if (word === "cream") return hasWord(name, "cream") && !hasPhrase(name, "cream of tartar") && !matchesAny(name, PLANT_MILK_QUALIFIERS);
-      if (word === "butter") return isDairyButterOrCream(name);
-      // chestnut is a tree nut, but WATER chestnut is an aquatic vegetable — a
-      // nut allergy must not remove it. Same guard shape as the dairy words.
-      // hasWordOrPlural, NOT hasWord: the singular-only match leaked all 18
-      // "Nuts, chestnuts, japanese/chinese/european, …" rows plus bare
-      // "Chestnuts" to a tree-nut allergy — measured against the real
-      // 14,124-food table by scripts/qc/sweep14k.mjs on 2026-07-23, the same
-      // plural-blindness class as the Phase 4 "Prawns" finding. The water-
-      // chestnut guard still holds: hasPhrase("water chestnuts", "water
-      // chestnut") is true, so the vegetable stays available.
-      if (word === "chestnut") return hasWordOrPlural(name, "chestnut") && !hasPhrase(name, "water chestnut");
-      return matchesTermList(name, word);
+      const guard = WORD_GUARDS[word];
+      return guard ? guard(name) : matchesTermList(name, word);
     });
   }
   // Not a known category - literal substring fallback. Covers free-text
   // entries like "kiwi" and specific multi-word phrases like "soy protein"
   // that should NOT expand to the whole soy category.
-  return name.toLowerCase().includes(key);
+  const lower = name.toLowerCase();
+  if (lower.includes(key)) return true;
+  // ...and the normalised form of it, so an unrecognised phrasing still greps
+  // for the thing the user meant ("no mushrooms" → "mushroom"). Union with the
+  // raw text above: strictly more exclusion than before, never less.
+  const norm = resolved.normalisedKey;
+  return Boolean(norm) && norm !== key && norm.length > 1 && lower.includes(norm);
 }
 
 // ═════════════════════════════════════════════════════════════════════════
@@ -913,6 +1052,89 @@ const FDC_CATEGORY_FAMILIES = {
   "finfish and shellfish products": ["fish", "shellfish"],
   "baked products": ["gluten"],
 };
+
+// USDA/FNDDS categories that are evidence of NOTHING — too heterogeneous to
+// imply any one allergen. Named here so the taxonomy merge can never introduce
+// one by accident (tests/allergenMetadata.test.js asserts the first four stay
+// out, and the reasoning is on FDC_CATEGORY_FAMILIES above).
+const NON_EVIDENCE_FDC_CATEGORIES = new Set([
+  "nut and seed products", "nuts and seeds", "cereal grains and pasta",
+  "legumes and legume products", "fast foods", "restaurant foods",
+  "meals, entrees, and side dishes", "soups, sauces, and gravies", "snacks",
+  "sweets", "cream and cream substitutes", "plant-based milk",
+  "plant-based yogurt", "not included in a food category",
+]);
+
+// ═════════════════════════════════════════════════════════════════════════
+// TAXONOMY MERGE — one data table, four legacy maps, ADD-ONLY
+// ═════════════════════════════════════════════════════════════════════════
+// Every write below either CREATES a key or APPENDS to a list. Nothing is
+// removed, overwritten or reordered, and existing entries always win (`if
+// (!x) x = …`), so this merge cannot change any exclusion that already fired —
+// it can only add ones that were missing. That is the same add-only rule the
+// metadata probes follow, applied to the data layer.
+//
+// Pass order matters: categories must all exist before aliases are registered,
+// or an alias could shadow a category key (an invariant
+// tests/dietaryAliasMap.test.js asserts).
+function mergeAllergenTaxonomy() {
+  // 1 — every top-level row owns a CATEGORY_SYNONYMS key and declares a family.
+  for (const e of ALLERGEN_TAXONOMY) {
+    if (e.parent) continue;
+    if (!CATEGORY_SYNONYMS[e.key]) CATEGORY_SYNONYMS[e.key] = [];
+    if (!SYNONYM_KEY_FAMILY[e.key]) SYNONYM_KEY_FAMILY[e.key] = e.family || e.key;
+    // A category is more specific than an alias; if a legacy alias shadows a
+    // key the taxonomy now owns, the key wins (and the invariant test stays
+    // green forever rather than at the mercy of table edits).
+    if (FREE_TEXT_ALIASES[e.key]) delete FREE_TEXT_ALIASES[e.key];
+  }
+  // 2 — keywords fold into the owning category (a species row folds into its
+  //     parent: a cashew allergy gets the whole tree-nut family, the documented
+  //     safe direction).
+  for (const e of ALLERGEN_TAXONOMY) {
+    const list = CATEGORY_SYNONYMS[categoryKeyOf(e)];
+    if (!list) continue;
+    for (const kw of e.nameKeywords || []) {
+      const w = String(kw).trim().toLowerCase();
+      if (w && !list.includes(w)) list.push(w);
+    }
+  }
+  // 3 — umbrella rows (`includes`) take the UNION of their members' lists, so
+  //     "seafood" can never drift from fish or shellfish.
+  for (const e of ALLERGEN_TAXONOMY) {
+    if (!e.includes || e.parent) continue;
+    const list = CATEGORY_SYNONYMS[e.key];
+    for (const member of e.includes) {
+      for (const w of CATEGORY_SYNONYMS[member] || []) if (!list.includes(w)) list.push(w);
+    }
+  }
+  // 4 — every key/synonym a user might type becomes a free-text alias onto its
+  //     category. Never over a category key, never over an existing alias.
+  for (const e of ALLERGEN_TAXONOMY) {
+    const target = categoryKeyOf(e);
+    for (const term of [e.key, ...(e.synonyms || [])]) {
+      const a = normaliseExclusionText(term);
+      if (!a || CATEGORY_SYNONYMS[a] || FREE_TEXT_ALIASES[a]) continue;
+      FREE_TEXT_ALIASES[a] = target;
+    }
+  }
+  // 5 — metadata evidence: USDA/FNDDS categories and Open Food Facts tags.
+  for (const e of ALLERGEN_TAXONOMY) {
+    const fam = SYNONYM_KEY_FAMILY[categoryKeyOf(e)];
+    if (!fam) continue;
+    for (const cat of e.fdcCategories || []) {
+      const k = String(cat).trim().toLowerCase();
+      if (!k || NON_EVIDENCE_FDC_CATEGORIES.has(k)) continue;
+      const fams = FDC_CATEGORY_FAMILIES[k] || (FDC_CATEGORY_FAMILIES[k] = []);
+      if (!fams.includes(fam)) fams.push(fam);
+    }
+    for (const tag of e.offTags || []) {
+      const t = String(tag).trim().toLowerCase();
+      if (t && !OFF_TAG_FAMILY[t]) OFF_TAG_FAMILY[t] = fam;
+    }
+  }
+}
+mergeAllergenTaxonomy();
 
 // Flesh categories — excluded for BOTH vegan and vegetarian.
 const FDC_FLESH_CATEGORIES = new Set([
@@ -1159,6 +1381,9 @@ module.exports = {
   allergenTagFamilies,
   COMPOUND_TOKENS,
   COMPOUND_FALSE_FRIENDS,
+  COMPOUND_VETOES,
+  WORD_GUARDS,
+  NON_EVIDENCE_FDC_CATEGORIES,
   FREE_TEXT_ALIASES,
   OFF_TAG_FAMILY,
   FDC_CATEGORY_FAMILIES,
@@ -1167,4 +1392,11 @@ module.exports = {
   SYNONYM_KEY_FAMILY,
   CATEGORY_SYNONYMS,
   TRACE_POLICY_DEFAULT,
+  // ── allergen taxonomy (2026-07-24) — re-exported so a caller needs one
+  //    import to both resolve a term and render the picker that produced it.
+  ALLERGEN_TAXONOMY,
+  allergenCatalog,
+  searchAllergens,
+  normaliseExclusionText,
+  exclusionTermCandidates,
 };

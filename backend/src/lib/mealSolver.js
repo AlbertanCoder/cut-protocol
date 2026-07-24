@@ -9,7 +9,9 @@
 const {
   buildSlots, targetsForSlots, solveDay, resolveSlot, scaleRecipe,
   generateWeekPlan, eligibleRecipes, estimateSlotTarget, buildLockedMap,
+  normalizeDayIndices, buildPriorUsage,
   DEFAULT_REPEAT_CAP, BATCH_REPEAT_CAP, SCALE_BOUNDS, PROTEIN_TOLERANCE_PCT,
+  KCAL_TOLERANCE_PCT,
 } = require("./weeklyPlanner.js");
 const { buildCostCache } = require("./recipeCost.js");
 // Protein-priority / recomposition mode — shared weighting + honesty-check
@@ -230,10 +232,14 @@ function dayMissLine(dailyTarget, totals) {
  * ALLERGY is never suggested — that list ends at prep time, batch repeats,
  * meal structure, and AI generation.
  */
-function diagnose({ counts, filters, dailyTarget, mealConfig, pool }) {
+function diagnose({ counts, filters, dailyTarget, mealConfig, pool, days = 7 }) {
   const reasons = [];
   const suggestions = [];
   const slotsPerDay = (mealConfig.meals || 0) + (mealConfig.snacks || 0);
+  // Stage 2: the capacity arithmetic below was written for exactly one week.
+  // `days` lets a 3-day window (or a 28-day horizon's window) be judged on the
+  // slots it actually has. Default 7 = every pre-horizon caller, unchanged.
+  const windowDays = Number.isFinite(days) && days > 0 ? days : 7;
 
   if (counts.afterDiet === 0) {
     reasons.push("Your dietary style + allergy rules exclude every recipe in the library.");
@@ -254,7 +260,7 @@ function diagnose({ counts, filters, dailyTarget, mealConfig, pool }) {
   // suggest enabling batch repeats that were already enabled.
   const repeatCap = filters?.allowBatchRepeats ? BATCH_REPEAT_CAP : DEFAULT_REPEAT_CAP;
   const mealEligible = eligibleRecipes(pool, "meal", new Map(), repeatCap).length;
-  const weeklyMealSlots = (mealConfig.meals || 0) * 7;
+  const weeklyMealSlots = (mealConfig.meals || 0) * windowDays;
   const capacity = mealEligible * repeatCap;
   if (weeklyMealSlots > 0 && capacity < weeklyMealSlots * 1.3) {
     reasons.push(`${mealEligible} meal-eligible recipes × max ${repeatCap} servings/week = ${capacity} servings for ${weeklyMealSlots} meal slots — the back half of the week will run on poor fits.`);
@@ -268,7 +274,7 @@ function diagnose({ counts, filters, dailyTarget, mealConfig, pool }) {
   // offered talked about protein density. A slot the solver cannot fill has to
   // say so in its own words.
   const snackEligible = eligibleRecipes(pool, "snack", new Map(), repeatCap).length;
-  const weeklySnackSlots = (mealConfig.snacks || 0) * 7;
+  const weeklySnackSlots = (mealConfig.snacks || 0) * windowDays;
   const snackCapacity = snackEligible * repeatCap;
   if (weeklySnackSlots > 0 && snackCapacity < weeklySnackSlots) {
     reasons.push(snackEligible === 0
@@ -593,13 +599,18 @@ async function generateBestWeekPlan(dailyTarget, mealConfig, recipePool, options
           && (!priority || (score.floorDaysMet ?? 0) === (best.score.floorDaysMet ?? 0))
           && score.avgMatch > best.score.avgMatch);
     if (better) best = { slots, score };
-    if (best.score.daysInTolerance === 7 && best.score.avgMatch >= 95 && (!priority || best.score.floorDaysMet === best.score.floorDaysTotal)) break;
+    // "every day landed" — expressed as days.length, not a literal 7, so a
+    // partial window (Stage 2's "3 days") can finish early on the same terms a
+    // full week always could. For a full week days.length IS 7.
+    if (best.score.days.length > 0 && best.score.daysInTolerance === best.score.days.length
+        && best.score.avgMatch >= 95 && (!priority || best.score.floorDaysMet === best.score.floorDaysTotal)) break;
   }
   // A rough week never ships silently: attach the result-driven diagnosis.
   // Stage-C fix (M10): when pool counts are supplied, the diagnosis derives
   // from raw/afterDiet/afterPrep so it names the real binding constraint.
+  const windowDays = normalizeDayIndices(options.dayIndices).length;
   const preSolve = options.counts
-    ? diagnose({ counts: options.counts, filters, dailyTarget, mealConfig, pool: recipePool })
+    ? diagnose({ counts: options.counts, filters, dailyTarget, mealConfig, pool: recipePool, days: windowDays })
     : undefined;
   // Solver benchmark, 2026-07-21: this used to fire only below 6/7 days — a
   // threshold lottery that let 306 of 5,040 benchmarked weeks ship short of a
@@ -718,6 +729,449 @@ async function alternatesForSlot({
   return alternates;
 }
 
+// ═════════════════════════════════════════════════════════════════════════
+// STAGE 2 — ANY-HORIZON GENERATION (1 meal → 1 month)
+// ═════════════════════════════════════════════════════════════════════════
+//
+// The horizon is COMPOSED, never forked. A month is four runs of the SAME
+// generateBestWeekPlan over four day-windows, sharing one variety ledger; a
+// 3-day plan is one run over a 3-day window. There is exactly one solver, one
+// pool builder (planContext.filterRecipePool, upstream of everything here) and
+// one honesty layer. Nothing below may widen a pool — the only pool operation
+// here is NARROWING it by the horizon repeat cap, which can never re-admit a
+// dish the diet/allergy filter removed.
+
+const DAYS_PER_WEEK = 7;
+// A ceiling with a reason: past ~3 months the user's own target has moved
+// (weigh-ins re-derive it), so a plan that far out would be solved against a
+// number the app itself no longer believes. Asking for more is refused with
+// that sentence, not silently truncated.
+const MAX_HORIZON_DAYS = 90;
+
+const HORIZON_PRESETS = [
+  { key: "meal", label: "1 meal", days: 0, kind: "meal" },
+  { key: "day", label: "1 day", days: 1, kind: "days" },
+  { key: "3days", label: "3 days", days: 3, kind: "days" },
+  { key: "week", label: "1 week", days: 7, kind: "days" },
+  { key: "2weeks", label: "2 weeks", days: 14, kind: "days" },
+  { key: "month", label: "1 month", days: 28, kind: "days" },
+];
+const PRESET_BY_KEY = new Map(HORIZON_PRESETS.map((p) => [p.key, p]));
+
+const horizonShape = (p) => ({
+  key: p.key, label: p.label, days: p.days, kind: p.kind,
+  weeks: p.kind === "meal" ? 0 : Math.ceil(p.days / DAYS_PER_WEEK),
+  custom: p.custom === true,
+});
+
+/**
+ * Parse whatever the client sent into a horizon spec. Accepts a preset key
+ * ("month"), a plain day count (21), or { key } / { days }. Absent input =
+ * "week", so every pre-Stage-2 caller keeps its exact behaviour.
+ * Throws a 400-tagged Error naming the real limit rather than clamping — a
+ * silently shortened plan is a silent target miss by another name.
+ */
+function resolveHorizon(input) {
+  if (input == null || input === "") return horizonShape(PRESET_BY_KEY.get("week"));
+  if (typeof input === "object" && !Array.isArray(input)) {
+    if (input.key != null) return resolveHorizon(input.key);
+    if (input.days != null) return resolveHorizon(input.days);
+    throw Object.assign(new Error("horizon must name a preset (key) or a day count (days)"), { status: 400 });
+  }
+  if (typeof input === "string") {
+    const k = input.trim().toLowerCase();
+    if (PRESET_BY_KEY.has(k)) return horizonShape(PRESET_BY_KEY.get(k));
+    if (/^\d+$/.test(k)) return resolveHorizon(Number(k));
+    throw Object.assign(
+      new Error(`unknown horizon "${input}" — use one of ${HORIZON_PRESETS.map((p) => p.key).join(", ")}, or a day count 1-${MAX_HORIZON_DAYS}`),
+      { status: 400 }
+    );
+  }
+  if (typeof input === "number" && Number.isInteger(input)) {
+    if (input < 1 || input > MAX_HORIZON_DAYS) {
+      throw Object.assign(
+        new Error(`a custom horizon must be 1-${MAX_HORIZON_DAYS} days — past ${MAX_HORIZON_DAYS} days your calorie target has been re-derived from newer weigh-ins, so the plan would be solved against a number the app no longer believes.`),
+        { status: 400 }
+      );
+    }
+    const preset = HORIZON_PRESETS.find((p) => p.kind === "days" && p.days === input);
+    if (preset) return horizonShape(preset);
+    return horizonShape({ key: "custom", label: `${input} days`, days: input, kind: "days", custom: true });
+  }
+  throw Object.assign(new Error("horizon must be a preset key, a day count, or omitted"), { status: 400 });
+}
+
+/**
+ * Split `days` consecutive calendar days into per-week day-index windows,
+ * starting at `startDayOfWeek` (0 = Monday) of the first week. Pure — no dates,
+ * no clock. The caller maps window i onto the Plan row for (first Monday + 7i).
+ */
+function horizonWindows(days, startDayOfWeek = 0) {
+  const total = Math.max(0, Math.trunc(days) || 0);
+  let cursor = ((Math.trunc(startDayOfWeek) % DAYS_PER_WEEK) + DAYS_PER_WEEK) % DAYS_PER_WEEK;
+  const windows = [];
+  let placed = 0;
+  while (placed < total) {
+    const idx = [];
+    for (let d = cursor; d < DAYS_PER_WEEK && placed < total; d++, placed++) idx.push(d);
+    windows.push(idx);
+    cursor = 0;
+  }
+  return windows;
+}
+
+/**
+ * The variety contract for a horizon, scaled to its length.
+ *
+ * Two caps, both enforced:
+ *   · PER-WEEK cap — the existing rule, untouched: 2 servings of a dish per
+ *     week, 4 with batch-cooking opted in.
+ *   · HORIZON cap — new, and the reason a month is not "the same three meals
+ *     on repeat". It grows SUB-linearly (perWeek + weeks-1) instead of the
+ *     perWeek x weeks the old per-week-only rule implied: a 4-week plan on
+ *     default settings allows 5 servings of one dish, not 8. Breadth is forced
+ *     to grow with the horizon rather than repetition.
+ *
+ * distinctFloor is the arithmetic consequence of the horizon cap — the minimum
+ * number of DISTINCT dishes a fully-solved horizon must contain. It is a check
+ * on the cap being real, not a second knob.
+ */
+function varietyPlanFor({ weeks, days, mealConfig = {}, filters = {} }) {
+  const perWeekCap = filters.allowBatchRepeats ? BATCH_REPEAT_CAP : DEFAULT_REPEAT_CAP;
+  const w = Math.max(1, Math.trunc(weeks) || 1);
+  const d = Math.max(0, Math.trunc(days) || 0);
+  const horizonRepeatCap = perWeekCap + (w - 1);
+  const mealSlots = (mealConfig.meals || 0) * d;
+  const snackSlots = (mealConfig.snacks || 0) * d;
+  const totalSlots = mealSlots + snackSlots;
+  return {
+    weeks: w, days: d, perWeekCap, horizonRepeatCap,
+    mealSlots, snackSlots, totalSlots,
+    distinctFloor: horizonRepeatCap > 0 ? Math.ceil(totalSlots / horizonRepeatCap) : 0,
+  };
+}
+
+// ── the binding constraint, NAMED ────────────────────────────────────────
+//
+// diagnose()/diagnoseFromResult() already say what went wrong in sentences.
+// This says WHICH ONE THING is binding, as a stable key the UI (and a test)
+// can assert on. Deliberately a separate function: the diagnose() return shape
+// is locked by the golden baseline, and a named constraint is a different
+// question from a list of reasons.
+const BINDING = {
+  DIET: "dietary-rules",
+  PREP: "max-prep",
+  MEAL_POOL: "meal-pool",
+  SNACK_POOL: "snack-pool",
+  VARIETY_CAP: "variety-cap",
+  POOL_DEPTH: "pool-depth",
+  PROTEIN_DENSITY: "protein-density",
+  PORTION_BOUNDS: "portion-bounds",
+  NO_BUDGET: "no-remaining-budget",
+};
+
+function classifyBinding({ counts = null, filters = {}, dailyTarget, mealConfig = {}, pool = [], days = 7, variety = null }) {
+  const c = counts || { raw: pool.length, afterDiet: pool.length, afterPrep: pool.length };
+  const perWeekCap = filters.allowBatchRepeats ? BATCH_REPEAT_CAP : DEFAULT_REPEAT_CAP;
+  const weeks = variety?.weeks || Math.max(1, Math.ceil(days / DAYS_PER_WEEK));
+  const horizonCap = variety?.horizonRepeatCap ?? perWeekCap;
+  const mealSlots = (mealConfig.meals || 0) * days;
+  const snackSlots = (mealConfig.snacks || 0) * days;
+  const mealEligible = eligibleRecipes(pool, "meal", new Map(), perWeekCap).length;
+  const snackEligible = eligibleRecipes(pool, "snack", new Map(), perWeekCap).length;
+
+  if (c.afterDiet === 0) {
+    return { key: BINDING.DIET, label: "your dietary style + allergy rules",
+      detail: `every one of the ${c.raw} recipes in the library is excluded before the solver runs.` };
+  }
+  if (filters.maxPrepMin && c.afterPrep === 0) {
+    return { key: BINDING.PREP, label: `your ${filters.maxPrepMin}-minute max-prep cap`,
+      detail: `it removes all ${c.afterDiet} recipes your diet allows.` };
+  }
+  if (mealSlots > 0 && mealEligible === 0) {
+    return { key: BINDING.MEAL_POOL, label: "your meal-eligible recipe pool",
+      detail: `${pool.length} recipe(s) pass your rules but none of them is a main meal, so all ${mealSlots} meal slot(s) come back empty.` };
+  }
+  if (mealSlots > 0 && mealEligible * horizonCap < mealSlots) {
+    // Would loosening the repeat cap alone fix it? Then the CAP is binding.
+    // Otherwise the pool is simply too shallow for a horizon this long, and
+    // saying "allow repeats" would be a lie.
+    const batchHorizonCap = BATCH_REPEAT_CAP + (weeks - 1);
+    if (!filters.allowBatchRepeats && mealEligible * batchHorizonCap >= mealSlots) {
+      return { key: BINDING.VARIETY_CAP, label: "the repeat cap",
+        detail: `${mealEligible} meal-eligible recipe(s) x ${horizonCap} servings per ${days}-day plan = ${mealEligible * horizonCap} servings for ${mealSlots} meal slots. Allowing batch-cooking repeats raises the cap to ${batchHorizonCap} and closes the gap.` };
+    }
+    if (filters.maxPrepMin && c.afterPrep < c.afterDiet) {
+      return { key: BINDING.PREP, label: `your ${filters.maxPrepMin}-minute max-prep cap`,
+        detail: `it cuts the compliant pool from ${c.afterDiet} to ${c.afterPrep} recipes, leaving ${mealEligible} meal-eligible dishes for ${mealSlots} meal slots.` };
+    }
+    return { key: BINDING.POOL_DEPTH, label: "the depth of your compliant recipe pool",
+      detail: `${mealEligible} meal-eligible recipe(s) cannot fill ${mealSlots} meal slots over ${days} days without exceeding ${horizonCap} servings of the same dish.` };
+  }
+  if (snackSlots > 0 && snackEligible * horizonCap < snackSlots) {
+    return { key: BINDING.SNACK_POOL, label: "your snack-eligible recipe pool",
+      detail: snackEligible === 0
+        ? `no snack-sized recipe fits your rules, so all ${snackSlots} snack slot(s) come back empty.`
+        : `${snackEligible} snack recipe(s) x ${horizonCap} servings = ${snackEligible * horizonCap} for ${snackSlots} snack slots.` };
+  }
+  const pMid = ((dailyTarget?.proteinLo || 0) + (dailyTarget?.proteinHi || 0)) / 2;
+  const neededRatio = dailyTarget?.kcal > 0 ? pMid / dailyTarget.kcal : 0;
+  const dense = pool.filter((r) => r.kcal > 0 && r.protein / r.kcal >= neededRatio * 0.75).length;
+  const denseNeeded = Math.max(10, (mealConfig.meals || 3) * 4);
+  if (pool.length > 0 && dense < denseNeeded) {
+    return { key: BINDING.PROTEIN_DENSITY, label: "protein density in your recipe pool",
+      detail: `your targets need ~${Math.round(neededRatio * 1000) / 10} g protein per 100 kcal and only ${dense} of ${pool.length} compliant recipes come close.` };
+  }
+  return { key: BINDING.PORTION_BOUNDS, label: "the 0.5x-2x portion limit",
+    detail: "the compliant dishes exist, but they cannot be scaled far enough to land on every slot's calorie and protein target at once." };
+}
+
+// ── the horizon composer ─────────────────────────────────────────────────
+
+const uniqueStrings = (arr) => [...new Set(arr.filter(Boolean))];
+
+/**
+ * Solve a horizon of any length by composing week solves.
+ *
+ * Returns { horizon, windows[], score, variety, diagnosis, timings } — every
+ * day carries its own match %, its own miss line, and the whole horizon
+ * carries ONE named binding constraint when anything fell short. There is no
+ * path through this function that reports success while a day missed: the
+ * diagnosis is attached whenever a day is out of tolerance, a slot is unfilled
+ * or the variety contract is breached.
+ */
+async function generateHorizonPlan({
+  dailyTarget, mealConfig, recipePool, horizon,
+  filters = {}, counts = null, bias = null,
+  priorPlans = [], lockedSlotsByWindow = [], startDayOfWeek = 0,
+  attempts, rng = Math.random, clock = Date.now,
+}) {
+  if (!horizon || horizon.kind !== "days") {
+    throw Object.assign(new Error("generateHorizonPlan needs a day-kind horizon (use solveOneMeal for a single dish)"), { status: 400 });
+  }
+  const t0 = clock();
+  const windows = horizonWindows(horizon.days, startDayOfWeek);
+  const variety = varietyPlanFor({ weeks: windows.length, days: horizon.days, mealConfig, filters });
+
+  const horizonUsage = new Map(); // recipeId -> servings across the WHOLE horizon
+  const lockedUsage = new Map(); // ... of which the user pinned
+  const solvedSoFar = []; // newest-first, feeds the existing cross-week memory
+  const results = [];
+  let dayCursor = 0;
+
+  // ADMISSION HEADROOM. The cap is checked when a dish ENTERS a week, but the
+  // week that follows can still serve it perWeekCap more times — so admitting
+  // anything merely "under the cap" lets a dish finish the horizon OVER it
+  // (measured: cap 5, actual 6). Admit only dishes with a full week's headroom
+  // left, which makes `used + perWeekCap <= horizonRepeatCap` an identity
+  // rather than a hope. For a single-window horizon the term is inert
+  // (horizonRepeatCap === perWeekCap and usage starts empty), so the plain
+  // 1-week path is untouched.
+  const admissionCeiling = variety.horizonRepeatCap - variety.perWeekCap;
+
+  for (let i = 0; i < windows.length; i++) {
+    // HORIZON REPEAT CAP. Narrowing only — a recipe leaves the pool once it has
+    // spent its horizon allowance. It can never put one BACK, so the diet/
+    // allergy filtering upstream stays the absolute boundary it is.
+    const pool = horizonUsage.size
+      ? recipePool.filter((r) => (horizonUsage.get(r.id) || 0) <= admissionCeiling)
+      : recipePool;
+    const week = await generateBestWeekPlan(dailyTarget, mealConfig, pool, {
+      ...(attempts != null ? { attempts } : {}),
+      rng, bias, filters, counts,
+      allowBatchRepeats: filters.allowBatchRepeats,
+      dayIndices: windows[i],
+      lockedSlots: lockedSlotsByWindow[i] || [],
+      // Cross-window memory: the weeks THIS horizon already solved come first,
+      // then the user's real plan history. Same recency weighting as before.
+      priorUsage: buildPriorUsage([...solvedSoFar, ...(priorPlans || [])]),
+    });
+    for (const s of week.slots) {
+      if (!s.recipeId) continue;
+      horizonUsage.set(s.recipeId, (horizonUsage.get(s.recipeId) || 0) + 1);
+      // A LOCKED slot is the user's own pin, carried through the solve as a
+      // constraint. It counts toward the cap (so the solver spends the rest of
+      // the allowance knowing about it) but it can also be the sole reason the
+      // cap is exceeded — which the verdict below has to say out loud rather
+      // than blame on the solver.
+      if (s.locked) lockedUsage.set(s.recipeId, (lockedUsage.get(s.recipeId) || 0) + 1);
+    }
+    solvedSoFar.unshift({ slots: week.slots.map((s) => ({ recipeId: s.recipeId })) });
+    results.push({
+      windowIndex: i, dayIndices: windows[i], poolSize: pool.length,
+      slots: week.slots, score: week.score, diagnosis: week.diagnosis, attempts: week.attempts,
+      days: week.score.days.map((d) => ({ ...d, windowIndex: i, dayIndex: dayCursor++, key: `${i}:${d.dayOfWeek}` })),
+    });
+  }
+
+  // ── aggregate, honestly ────────────────────────────────────────────────
+  const allSlots = results.flatMap((r) => r.slots);
+  const allDays = results.flatMap((r) => r.days);
+  const filledSlots = allSlots.filter((s) => s.recipeId).length;
+  const unfilledSlots = allSlots.length - filledSlots;
+  const distinctRecipes = horizonUsage.size;
+  let maxRepeat = 0;
+  let maxRepeatRecipeId = null;
+  for (const [id, n] of horizonUsage) if (n > maxRepeat) { maxRepeat = n; maxRepeatRecipeId = id; }
+  const requiredDistinct = variety.horizonRepeatCap > 0 ? Math.ceil(filledSlots / variety.horizonRepeatCap) : 0;
+
+  const varietyReport = {
+    ...variety,
+    distinctRecipes, maxRepeat, maxRepeatRecipeId,
+    lockedRepeatsOfMax: lockedUsage.get(maxRepeatRecipeId) || 0,
+    filledSlots, unfilledSlots, requiredDistinct,
+    capHeld: maxRepeat <= variety.horizonRepeatCap,
+    floorHeld: distinctRecipes >= requiredDistinct,
+  };
+
+  const daysInTolerance = allDays.filter((d) => d.inTolerance).length;
+  const avgMatch = allDays.length ? Math.round(allDays.reduce((s, d) => s + d.matchPct, 0) / allDays.length) : 0;
+  const priority = Boolean(filters.proteinPriority);
+  const floorDaysMet = priority ? allDays.filter((d) => d.proteinFloor?.met).length : undefined;
+
+  const score = {
+    daysInTolerance, avgMatch, days: allDays, totalDays: allDays.length,
+    ...(priority ? { floorDaysMet, floorDaysTotal: allDays.length } : {}),
+  };
+
+  // A horizon is only clean when EVERY day landed, EVERY slot filled and the
+  // variety contract held. Anything else owes a reason and a named constraint.
+  const anyMissed = daysInTolerance < allDays.length;
+  const varietyBreached = !varietyReport.capHeld || !varietyReport.floorHeld;
+  let diagnosis = null;
+  if (anyMissed || unfilledSlots > 0 || varietyBreached) {
+    const reasons = uniqueStrings(results.flatMap((r) => r.diagnosis?.reasons || []));
+    const suggestions = uniqueStrings(results.flatMap((r) => r.diagnosis?.suggestions || []));
+    if (!varietyReport.capHeld) {
+      const pinned = lockedUsage.get(maxRepeatRecipeId) || 0;
+      reasons.unshift(`Variety contract breached: one dish was served ${maxRepeat} times across ${horizon.days} days, over the ${variety.horizonRepeatCap}-serving cap for this horizon${pinned > 0 ? ` (${pinned} of those are slots you locked)` : ""}.`);
+    }
+    if (unfilledSlots > 0) {
+      reasons.unshift(`${unfilledSlots} of ${allSlots.length} slots over ${horizon.days} days came back empty — no compliant recipe was left that could fill them.`);
+    }
+    if (reasons.length === 0) {
+      reasons.push(`${allDays.length - daysInTolerance} of ${allDays.length} days landed outside your macro tolerance.`);
+    }
+    if (suggestions.length === 0) {
+      suggestions.push("Shorten the horizon, allow batch-cooking repeats, or AI-generate more compliant recipes to deepen the pool.");
+    }
+    const binding = classifyBinding({ counts, filters, dailyTarget, mealConfig, pool: recipePool, days: horizon.days, variety });
+    diagnosis = { feasible: false, reasons, suggestions, binding };
+  }
+
+  return {
+    horizon, windows: results, score, variety: varietyReport, diagnosis,
+    attempts: results.reduce((s, r) => s + (r.attempts || 0), 0),
+    solveMs: clock() - t0,
+  };
+}
+
+// ── the 1-meal horizon ───────────────────────────────────────────────────
+
+const BASIS_NOTES = {
+  diary: (c, t) => `Fitted to what is LEFT of today: your diary already logs ${Math.round(c)} of ${Math.round(t)} kcal.`,
+  plan: (c, t) => `Nothing logged in the diary today, so this is fitted to what is left after today's PLANNED meals — ${Math.round(c)} of ${Math.round(t)} kcal already placed.`,
+  "full-day": (c, t) => `Nothing logged and nothing planned for today, so this is fitted to your FULL day target of ${Math.round(t)} kcal. One dish rarely carries a whole day inside the 0.5x-2x portion limit — the numbers below say exactly how close it got.`,
+};
+
+/**
+ * Fit ONE dish to a remaining-macro target. Instant by construction: no week
+ * solve, no writes, no AI — the same resolveSlot the week planner uses, over
+ * the same already-filtered pool.
+ *
+ * `basis` names WHERE the remaining macros came from ("diary" | "plan" |
+ * "full-day") and the returned note says it in words, because "we fitted this
+ * to your remaining macros" is a different promise from "we fitted this to
+ * your whole day".
+ */
+async function solveOneMeal({
+  dailyTarget, remaining, mealConfig = { meals: 3, snacks: 0 }, recipePool,
+  filters = {}, slotType = "meal", basis = "full-day", consumedKcal = 0,
+  count = 3, rng = Math.random, clock = Date.now,
+}) {
+  const t0 = clock();
+  const afterPrep = applyPrepFilter(recipePool, filters.maxPrepMin);
+  const kcalTarget = Number(remaining?.kcal);
+  const proteinTarget = Math.max(0, Number(remaining?.protein) || 0);
+  const note = (BASIS_NOTES[basis] || BASIS_NOTES["full-day"])(consumedKcal, dailyTarget?.kcal || 0);
+  const base = {
+    basis, note, slotType,
+    target: { kcal: Math.round(Math.max(0, kcalTarget || 0)), protein: Math.round(proteinTarget) },
+    poolSize: afterPrep.length, solveMs: 0,
+  };
+
+  // Nothing left to fit. Solving anyway would hand back a dish the user has no
+  // room for and call it a match — the exact silent miss the constitution bans.
+  if (!(kcalTarget > 0)) {
+    return {
+      ...base, options: [], best: null, fits: false,
+      miss: `You have ${Math.round(kcalTarget || 0)} kcal left of today's ${Math.round(dailyTarget?.kcal || 0)} target — there is no room left to fit a meal into.`,
+      binding: { key: BINDING.NO_BUDGET, label: "today's remaining calorie budget", detail: "it is already spent." },
+      solveMs: clock() - t0,
+    };
+  }
+
+  const slotTarget = { dayOfWeek: 0, slotType, slotIndex: 0, weight: 1, kcalTarget, proteinTarget };
+  const options = await alternatesForSlot({
+    slotTarget, recipePool: afterPrep, existingSlots: [], filters, count, rng,
+  });
+  const best = options[0] || null;
+
+  // How far a SINGLE dish in this pool can actually stretch — the honest answer
+  // to "why not?" when the remaining budget is a whole day's worth.
+  const eligible = eligibleRecipes(afterPrep, slotType, new Map(), filters.allowBatchRepeats ? BATCH_REPEAT_CAP : DEFAULT_REPEAT_CAP);
+  let reachMax = 0;
+  let reachMin = Infinity;
+  for (const r of eligible) {
+    if (!(r.kcal > 0)) continue;
+    reachMax = Math.max(reachMax, r.kcal * SCALE_BOUNDS.max);
+    reachMin = Math.min(reachMin, r.kcal * SCALE_BOUNDS.min);
+  }
+
+  if (!best) {
+    return {
+      ...base, options: [], best: null, fits: false,
+      miss: `No ${slotType} recipe in your compliant pool could be portioned to ${Math.round(kcalTarget)} kcal.`,
+      binding: classifyBinding({ counts: null, filters, dailyTarget, mealConfig, pool: afterPrep, days: 1 }),
+      solveMs: clock() - t0,
+    };
+  }
+
+  const kcalOff = Math.abs(best.kcal - kcalTarget) / kcalTarget;
+  const proteinShort = proteinTarget > 0 ? Math.max(0, (proteinTarget - best.protein) / proteinTarget) : 0;
+  const fits = kcalOff <= KCAL_TOLERANCE_PCT && proteinShort <= PROTEIN_TOLERANCE_PCT;
+  const missParts = [];
+  if (kcalOff > KCAL_TOLERANCE_PCT) {
+    const d = Math.round(best.kcal - kcalTarget);
+    missParts.push(`${Math.round(best.kcal)} kcal against ${Math.round(kcalTarget)} remaining — ${Math.abs(d)} ${d > 0 ? "over" : "under"}`);
+  }
+  if (proteinShort > PROTEIN_TOLERANCE_PCT) {
+    missParts.push(`${Math.round(best.protein)} g protein against ${Math.round(proteinTarget)} g — ${Math.round(proteinTarget - best.protein)} g short`);
+  }
+  // The two walls of the portion band, stated as themselves. A remainder can be
+  // too BIG for any one dish (double portion still short) or too SMALL for any
+  // one dish (half portion still over) — different sentences, both true, and
+  // neither of them "here is your meal".
+  const overReach = reachMax > 0 && kcalTarget > reachMax;
+  const underReach = Number.isFinite(reachMin) && kcalTarget < reachMin;
+  const portionBinding =
+    overReach
+      ? { key: BINDING.PORTION_BOUNDS, label: "the 0.5x-2x portion limit",
+          detail: `the biggest dish in your compliant pool reaches ${Math.round(reachMax)} kcal at a double portion, and you have ${Math.round(kcalTarget)} kcal left — one dish cannot cover that. Split it across ${Math.ceil(kcalTarget / Math.max(1, reachMax))} meals, or generate a full day.` }
+      : underReach
+        ? { key: BINDING.PORTION_BOUNDS, label: "the 0.5x-2x portion limit",
+            detail: `the smallest dish in your compliant pool is still ${Math.round(reachMin)} kcal at a half portion, and you have only ${Math.round(kcalTarget)} kcal left — nothing in the library fits a gap that small.` }
+        : null;
+  return {
+    ...base,
+    options, best, fits,
+    miss: fits ? null : missParts.join("; "),
+    binding: fits ? null : portionBinding
+      || classifyBinding({ counts: null, filters, dailyTarget, mealConfig, pool: afterPrep, days: 1 }),
+    solveMs: clock() - t0,
+  };
+}
+
 module.exports = {
   applyPrepFilter, buildBias, scoreDay, scoreWeek, diagnose, diagnoseFromResult,
   generateDayCandidates, generateBestWeekPlan, alternatesForSlot, SCORE_WEIGHTS,
@@ -725,4 +1179,8 @@ module.exports = {
   DAY_KCAL_TOLERANCE_PCT, DAY_PROTEIN_TOLERANCE_PCT,
   DAY_FAT_TOLERANCE_PCT, DAY_CARB_TOLERANCE_PCT,
   PROTEIN_PRIORITY_WEIGHTS,
+  // Stage 2 — any-horizon generation
+  resolveHorizon, horizonWindows, varietyPlanFor, classifyBinding,
+  generateHorizonPlan, solveOneMeal,
+  HORIZON_PRESETS, MAX_HORIZON_DAYS, DAYS_PER_WEEK, BINDING,
 };

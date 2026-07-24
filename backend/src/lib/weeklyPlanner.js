@@ -71,9 +71,36 @@ function repeatCapFor(options) {
   return options?.allowBatchRepeats ? BATCH_REPEAT_CAP : DEFAULT_REPEAT_CAP;
 }
 
-function buildSlots(mealConfig) {
+// ── day windows (Stage 2: any-horizon generation) ────────────────────────
+//
+// A Plan row is Monday-anchored and its slots carry dayOfWeek 0-6, so a
+// horizon of ANY length is expressed as a sequence of DAY-INDEX WINDOWS, one
+// per calendar week. A window is usually the whole week ([0..6]) — that is the
+// default and the ONLY thing that existed before — but "3 days starting
+// Saturday" is [5,6] in this week's Plan row and [0] in next week's.
+//
+// Everything below takes the window as data instead of hard-coding 0..6, so a
+// month is the SAME solver run four times over four windows, never a second
+// solver. `normalizeDayIndices(undefined)` returns [0..6], which is why every
+// pre-existing call site is byte-identical.
+const ALL_DAY_INDICES = [0, 1, 2, 3, 4, 5, 6];
+
+function normalizeDayIndices(days) {
+  if (days == null) return ALL_DAY_INDICES;
+  if (Number.isInteger(days)) {
+    return [...Array(Math.max(0, Math.min(DAYS, days))).keys()];
+  }
+  if (Array.isArray(days)) {
+    const seen = new Set();
+    for (const d of days) if (Number.isInteger(d) && d >= 0 && d < DAYS) seen.add(d);
+    return [...seen].sort((a, b) => a - b);
+  }
+  return ALL_DAY_INDICES;
+}
+
+function buildSlots(mealConfig, days) {
   const slots = [];
-  for (let day = 0; day < DAYS; day++) {
+  for (const day of normalizeDayIndices(days)) {
     for (let i = 0; i < mealConfig.meals; i++) {
       const weight = mealConfig.meals === 1 ? 1 : i === mealConfig.meals - 1 ? 1.15 : i === 0 ? 0.9 : 1;
       slots.push({ dayOfWeek: day, slotType: "meal", slotIndex: i, weight });
@@ -86,7 +113,13 @@ function buildSlots(mealConfig) {
 }
 
 function targetsForSlots(dailyTarget, slots) {
-  const perDayWeight = slots.filter((s) => s.dayOfWeek === 0).reduce((s, x) => s + x.weight, 0);
+  // The per-day weight is read off ONE representative day. That used to be
+  // hard-coded to dayOfWeek 0, which silently produced a 0 divisor (→ NaN
+  // targets) for a window that does not include Monday — e.g. "3 days" started
+  // on a Thursday. Reading the FIRST day actually present is identical whenever
+  // day 0 is in the set, and correct when it is not.
+  const firstDay = slots.length ? slots.reduce((m, x) => Math.min(m, x.dayOfWeek), Infinity) : 0;
+  const perDayWeight = slots.filter((s) => s.dayOfWeek === firstDay).reduce((s, x) => s + x.weight, 0);
   return slots.map((s) => {
     const share = s.weight / perDayWeight;
     return {
@@ -558,7 +591,10 @@ function shuffled(arr, rng) {
 async function generateWeekPlan(dailyTarget, mealConfig, recipePool, options = {}) {
   const { rng = Math.random, aiFallback, bias = null, priorUsage = null } = options;
   const repeatCap = repeatCapFor(options);
-  const slots = targetsForSlots(dailyTarget, buildSlots(mealConfig));
+  // options.dayIndices (Stage 2): which days of THIS week to solve. Absent =
+  // the whole week, which is what every pre-horizon caller means and gets.
+  const dayIndices = normalizeDayIndices(options.dayIndices);
+  const slots = targetsForSlots(dailyTarget, buildSlots(mealConfig, dayIndices));
   const usageCount = new Map();
   const byDay = new Map();
   slots.forEach((s) => byDay.set(s.dayOfWeek, [...(byDay.get(s.dayOfWeek) || []), s]));
@@ -581,7 +617,7 @@ async function generateWeekPlan(dailyTarget, mealConfig, recipePool, options = {
   // Results are stored back at each day's real calendar index.
   const resolvedByDay = new Map();
   let prevDayRecipeIds = new Set();
-  for (const day of shuffled([...Array(DAYS).keys()], rng)) {
+  for (const day of shuffled(dayIndices, rng)) {
     const { slots: daySlots, todayIds } = await solveDay(
       byDay.get(day) || [], dailyTarget, recipePool, usageCount, prevDayRecipeIds, rng, aiCtx, bias, repeatCap, priorUsage, lockedByKey
     );
@@ -589,7 +625,7 @@ async function generateWeekPlan(dailyTarget, mealConfig, recipePool, options = {
     prevDayRecipeIds = todayIds;
   }
   const resolved = [];
-  for (let day = 0; day < DAYS; day++) resolved.push(...(resolvedByDay.get(day) || []));
+  for (const day of dayIndices) resolved.push(...(resolvedByDay.get(day) || []));
   return resolved;
 }
 
@@ -665,6 +701,7 @@ module.exports = {
   resolveSlot, scaleRecipe, buildAiFallbackContext, estimateSlotTarget,
   eligibleRecipes, buildPriorUsage, practicalGrams, RECENCY_WEIGHTS,
   applyScales, enforceScaledCarbCeiling, buildLockedMap, slotKeyOf,
+  normalizeDayIndices, ALL_DAY_INDICES, DAYS,
   SCALE_BOUNDS, DEFAULT_REPEAT_CAP, BATCH_REPEAT_CAP,
   KCAL_TOLERANCE_PCT, PROTEIN_TOLERANCE_PCT,
   isGeneratedTemplate, GENERATED_TEMPLATE_WEIGHT,

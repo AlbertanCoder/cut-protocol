@@ -51,11 +51,19 @@ function deny(reason, cap, spent) {
 
 // In-memory store for tests / no-DB. Prod passes a Prisma-backed store with the
 // same { add, sumSince } shape (Stage B part 2 — LlmUsage table).
+//
+// sumSince's second argument is an OPTIONAL scope (Stage 4, per-user caps).
+// Omitted = every row, i.e. exactly the previous behaviour — the global cap is
+// unchanged. `{ userId }` sums only that user's rows, which is how the same cap
+// arithmetic serves a per-user budget without a second implementation.
 function memoryStore() {
   const rows = [];
   return {
     async add(e) { rows.push(e); return e; },
-    async sumSince(date) { return rows.filter((r) => r.at >= date).reduce((sum, r) => sum + (r.costUsd || 0), 0); },
+    async sumSince(date, scope = {}) {
+      const scoped = scope && "userId" in scope ? rows.filter((r) => r.userId === scope.userId) : rows;
+      return scoped.filter((r) => r.at >= date).reduce((sum, r) => sum + (r.costUsd || 0), 0);
+    },
     _rows: rows,
   };
 }

@@ -2,15 +2,15 @@
 
 - Runs: **100,000** · seed `42` · BRAIN=off
 - Pool: 889 recipes / 14124 foods · macro fingerprint `a928390845e4c437`
-- Runtime: 17376.5s (173.8 ms/run). Extrapolated: 10k ≈ 29.0 min · 100k ≈ 289.6 min.
+- Runtime: 15591.9s (155.9 ms/run). Extrapolated: 10k ≈ 26.0 min · 100k ≈ 259.9 min.
 - **Network calls during simulation: 0** (ground rule #1: must be 0).
 
 ## Outcome mix
 | outcome | count | % |
 |---|--:|--:|
-| off-target-declared | 87198 | 87.2% |
-| converged | 10343 | 10.3% |
-| honest-unsolvable | 2459 | 2.5% |
+| off-target-declared | 83281 | 83.3% |
+| converged | 14482 | 14.5% |
+| honest-unsolvable | 2237 | 2.2% |
 
 ## Safety tallies (target: all ZERO)
 | check | count |
@@ -30,16 +30,16 @@
 | silent-solver-miss | 0 |
 | silent-unfilled-slot | 0 |
 | missing-food-row | 0 |
-| feasible-day OFF-TARGET rate (outside ±5%, but declared — quality, not a bug) | 64.79% |
-| feasible days within ±5% (acceptance bar: ≥90%) | 34.4% of 700000 days |
+| feasible-day OFF-TARGET rate (outside ±5%, but declared — quality, not a bug) | 60.30% |
+| feasible days within ±5% (acceptance bar: ≥90%) | 38.8% of 700000 days |
 | **SILENT** misses (feasible, breaches solver's own ±15%, undeclared — the real bug) | 0 |
 
 ## Distributions (p50 / p95 / p99 / max)
 | metric | p50 | p95 | p99 | max |
 |---|--:|--:|--:|--:|
-| worst-day kcal deviation % | 20.2 | 100 | 100 | 231.1 |
-| worst-day protein shortfall g | 32.6 | 223 | 315 | 377 |
-| full-week solve ms | 13.5 | 67.2 | 101.5 | 230.7 |
+| worst-day kcal deviation % | 19.1 | 100 | 100 | 232.3 |
+| worst-day protein shortfall g | 25.3 | 215 | 312 | 377 |
+| full-week solve ms | 8.5 | 46 | 75.2 | 147.7 |
 
 ## Failure patterns — worst corners by feasible-day off-target rate
 _Off-target = day outside ±5% of the calorie target (declared, not silent). Silent-miss and unsafe runs are the columns that would indicate real defects._
@@ -50,16 +50,16 @@ _Off-target = day outside ±5% of the calorie target (declared, not silent). Sil
 | carnivore|fish+peanuts+soy | 5 | 100.0% | 0 | 0 |
 | carnivore|dairy+peanuts+sesame | 4 | 100.0% | 0 | 0 |
 | vegan|dairy+eggs+gluten+peanuts | 3 | 100.0% | 0 | 0 |
-| vegan|eggs+fish+gluten+tree nuts | 3 | 100.0% | 0 | 0 |
-| vegan|kiwi+sesame+tree nuts | 4 | 100.0% | 0 | 0 |
+| vegan|kiwi+nuts+sesame | 4 | 100.0% | 0 | 0 |
 | carnivore|eggs+fish+kiwi | 4 | 100.0% | 0 | 0 |
 | carnivore|gluten+peanuts+sesame | 6 | 100.0% | 0 | 0 |
-| vegan|gluten+kiwi+shellfish | 3 | 100.0% | 0 | 0 |
 | carnivore|gluten+kiwi+peanuts+shellfish | 3 | 100.0% | 0 | 0 |
-| vegetarian|dairy+eggs+shellfish+tree nuts | 4 | 100.0% | 0 | 0 |
+| vegetarian|dairy+eggs+nuts+shellfish | 4 | 100.0% | 0 | 0 |
 | carnivore|gluten+kiwi | 48 | 100.0% | 0 | 0 |
 | vegan|dairy+eggs+gluten | 3 | 100.0% | 0 | 0 |
 | carnivore|fish+gluten+shellfish | 7 | 100.0% | 0 | 0 |
+| carnivore|gluten+peanuts+sesame+shellfish | 3 | 100.0% | 0 | 0 |
+| vegan|eggs+fish+shellfish | 4 | 100.0% | 0 | 0 |
 
 ## Reproduce
 ```
@@ -67,4 +67,4 @@ node scripts/qc/mc.mjs --n 100000 --seed 42
 # any failing run replays from its seed in failures.jsonl
 ```
 
-_Generated 2026-07-23T12:07:04.193Z · every absolute nutritional number is a property of food-fingerprint `a928390845e4c437`._
+_Generated 2026-07-23T07:16:47.583Z · every absolute nutritional number is a property of food-fingerprint `a928390845e4c437`._

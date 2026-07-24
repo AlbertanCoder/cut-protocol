@@ -30,6 +30,20 @@ const CUISINE_OPTIONS = [
 const PROTEIN_OPTIONS = ["", "chicken", "beef", "turkey", "salmon", "fish", "eggs", "tofu", "lentil"];
 const PREP_OPTIONS = [{ v: null, l: "Any prep time" }, { v: 15, l: "≤ 15 min" }, { v: 30, l: "≤ 30 min" }, { v: 45, l: "≤ 45 min" }, { v: 60, l: "≤ 60 min" }];
 
+// Stage 2 — how much to generate. Mirrors the server's own catalogue
+// (GET /api/plans/horizons, and resolveHorizon() validates against the same
+// list), so the control can never offer something the solver would refuse.
+const HORIZON_OPTIONS = [
+  { key: "meal", label: "1 meal", days: 0 },
+  { key: "day", label: "1 day", days: 1 },
+  { key: "3days", label: "3 days", days: 3 },
+  { key: "week", label: "1 week", days: 7 },
+  { key: "2weeks", label: "2 weeks", days: 14 },
+  { key: "month", label: "1 month", days: 28 },
+];
+const CUSTOM_MAX_DAYS = 90;
+const clampDays = (n) => Math.max(1, Math.min(CUSTOM_MAX_DAYS, Math.round(Number(n) || 1)));
+
 function sumSlots(slots) {
   return slots.reduce((t, s) => ({ kcal: t.kcal + s.kcal, protein: t.protein + s.protein, fat: t.fat + s.fat, carb: t.carb + s.carb }), { kcal: 0, protein: 0, fat: 0, carb: 0 });
 }
@@ -42,6 +56,150 @@ const toApplyPayload = (s) => ({
   ingredients: (s.ingredients || []).map((i) => ({ foodId: i.foodId, grams: i.grams })),
   warning: s.warning || undefined,
 });
+
+// ── horizon control ──────────────────────────────────────────────────────
+// The generate surface's "how much". Selection is a LIGHTNESS step (--card-2 +
+// a brighter hairline), never the accent — design law (a), green scarcity.
+// The line underneath restates the choice in plain words so the control's state
+// is legible without decoding which chip looks lit.
+
+function HorizonBar({ horizonKey, setHorizonKey, customDays, setCustomDays, busy, allowBatchRepeats }) {
+  const inpStyle = { background: C.card2, border: `1.5px solid ${C.rule}`, color: C.ink };
+  const isCustom = horizonKey === "custom";
+  const days = isCustom ? clampDays(customDays) : (HORIZON_OPTIONS.find((h) => h.key === horizonKey)?.days ?? 7);
+  const weeks = Math.ceil(days / 7);
+  const summary = horizonKey === "meal"
+    ? "One dish, fitted to what is left of today. Nothing is written to your plan until you place it."
+    : days < 7
+      ? `${days} day${days === 1 ? "" : "s"}, starting today. The rest of the week is left exactly as it is.`
+      : `${days} days (${weeks} week${weeks === 1 ? "" : "s"}) from this week's Monday${weeks > 1 ? ` — written to ${weeks} weekly plans` : ""}.`;
+  return (
+    <Card section="HORIZON" title="How much to generate">
+      <div className="flex flex-wrap gap-1.5" role="group" aria-label="Plan horizon">
+        {HORIZON_OPTIONS.map((h) => {
+          const on = horizonKey === h.key;
+          return (
+            <button key={h.key} onClick={() => setHorizonKey(h.key)} disabled={busy} aria-pressed={on}
+              className="text-xs font-bold px-3 py-1.5 rounded-full"
+              style={{ background: on ? C.card2 : "transparent", color: on ? C.ink : C.faint, border: `1px solid ${on ? C.faintLight : C.rule}` }}>
+              {h.label}
+            </button>
+          );
+        })}
+        <button onClick={() => setHorizonKey("custom")} disabled={busy} aria-pressed={isCustom}
+          className="text-xs font-bold px-3 py-1.5 rounded-full"
+          style={{ background: isCustom ? C.card2 : "transparent", color: isCustom ? C.ink : C.faint, border: `1px solid ${isCustom ? C.faintLight : C.rule}` }}>
+          Custom
+        </button>
+        {isCustom && (
+          <label className="flex items-center gap-1.5 text-xs font-bold" style={{ color: C.ink }}>
+            <input type="number" min={1} max={CUSTOM_MAX_DAYS} value={customDays}
+              onChange={(e) => setCustomDays(e.target.value)}
+              onBlur={(e) => setCustomDays(clampDays(e.target.value))}
+              aria-label={`Custom horizon in days, 1 to ${CUSTOM_MAX_DAYS}`}
+              className="text-xs px-2 py-1.5 rounded-xl w-20" style={inpStyle} />
+            days
+          </label>
+        )}
+      </div>
+      <div className="text-[10.5px] font-semibold mt-2" style={{ color: C.faint }}>
+        {summary}
+        {horizonKey !== "meal" && (() => {
+          // Must match the server's varietyPlanFor(): perWeekCap + (weeks - 1).
+          const perWeek = allowBatchRepeats ? 4 : 2;
+          return ` Locked slots survive every horizon; the variety cap widens with it — ${perWeek + weeks - 1} servings of any one dish over ${days} days, still ${perWeek} per week.`;
+        })()}
+      </div>
+    </Card>
+  );
+}
+
+// ── one-meal result ──────────────────────────────────────────────────────
+// The instant horizon. Nothing is written — this is an answer, not a plan — so
+// the card says what it was fitted to and what it landed on, and nothing here
+// goes green unless the dish actually hit the remaining target.
+
+function OneMealCard({ oneMeal }) {
+  if (!oneMeal) return null;
+  const best = oneMeal.best;
+  const onTarget = oneMeal.fits === true;
+  return (
+    <Card section="1 MEAL" title={best ? best.recipeName : "No dish fits what is left"}>
+      <div className="text-[10.5px] font-semibold mb-2" style={{ color: C.faint }}>{oneMeal.note}</div>
+      {best ? (
+        <>
+          <div className="flex flex-wrap items-baseline gap-x-4 gap-y-2 mb-2">
+            <span className="mono stat-hero text-3xl" style={{ color: onTarget ? C.accent : C.ink }}>{best.matchPct}%</span>
+            <span className="text-xs font-semibold" style={{ color: C.faint }}>
+              fit against {kc(oneMeal.target.kcal)} kcal / {oneMeal.target.protein} g protein remaining
+            </span>
+          </div>
+          <div className="flex flex-wrap gap-1.5 mb-2">
+            <Chip>{kc(best.kcal)} kcal</Chip>
+            <Chip color={C.proteinText} bg={`${C.protein}1F`}>{g1(best.protein)}P</Chip>
+            <Chip color={C.fatText} bg={`${C.fat}1F`}>{g1(best.fat)}F</Chip>
+            <Chip color={C.carbText} bg={`${C.carb}1F`}>{g1(best.carb)}C</Chip>
+          </div>
+          {best.ingredients?.length > 0 && (
+            <div className="text-xs font-semibold mb-2" style={{ color: C.ink }}>
+              {best.ingredients.map((i) => `${i.grams}g ${i.name}`).join(" · ")}
+            </div>
+          )}
+          {oneMeal.options.length > 1 && (
+            <div className="mt-2 pt-2" style={{ borderTop: `1px solid ${C.rule}` }}>
+              <div className="text-[10px] font-bold tracking-wider mb-1.5" style={{ color: C.faintLight }}>OTHER DISHES THAT FIT</div>
+              {oneMeal.options.slice(1).map((a) => (
+                <div key={a.recipeId} className="flex items-center justify-between gap-2 py-1 text-xs font-semibold">
+                  <span className="truncate" style={{ color: C.ink }}>{a.recipeName}</span>
+                  <span className="mono shrink-0" style={{ color: C.faint }}>{kc(a.kcal)} kcal · {g1(a.protein)}P · {a.matchPct}%</span>
+                </div>
+              ))}
+            </div>
+          )}
+        </>
+      ) : null}
+      {oneMeal.miss && (
+        <div className="text-xs font-semibold mt-1" style={{ color: C.warn }}>{oneMeal.miss}</div>
+      )}
+      {oneMeal.binding && (
+        <div className="text-xs font-semibold mt-1" style={{ color: C.warn }}>
+          → Binding constraint: {oneMeal.binding.label} — {oneMeal.binding.detail}
+        </div>
+      )}
+    </Card>
+  );
+}
+
+// ── multi-week horizon summary ───────────────────────────────────────────
+// A month writes four weekly plans; the board below can only show one of them.
+// Saying so — with each week's own numbers — is the difference between "we
+// generated a month" and a month you can actually check.
+
+function HorizonSummary({ horizon }) {
+  if (!horizon || !Array.isArray(horizon.weekPlans) || horizon.weekPlans.length < 2) return null;
+  return (
+    <Card section="HORIZON" title={`${horizon.label} — ${horizon.startDate} to ${horizon.endDate}`}>
+      <div className="text-[10.5px] font-semibold mb-2" style={{ color: C.faint }}>
+        {horizon.weeksWritten} weekly plans written in {horizon.solveMs} ms. The board below shows this week; the later weeks are stored on their own plan rows.
+      </div>
+      <div className="flex flex-col gap-1">
+        {horizon.weekPlans.map((w) => {
+          const clean = w.daysInTolerance === w.days && w.unfilledSlots === 0;
+          return (
+            <div key={w.startDate} className="flex items-center justify-between gap-2 py-1 text-xs font-semibold"
+              style={{ borderBottom: `1px solid ${C.rule}` }}>
+              <span style={{ color: C.ink }}>Week of {w.startDate}</span>
+              <span className="mono" style={{ color: clean ? C.ink : C.warn }}>
+                {w.daysInTolerance}/{w.days} days on target · {w.avgMatch}% avg
+                {w.unfilledSlots > 0 ? ` · ${w.unfilledSlots} empty slot(s)` : ""}
+              </span>
+            </div>
+          );
+        })}
+      </div>
+    </Card>
+  );
+}
 
 // ── filters bar ──────────────────────────────────────────────────────────
 
@@ -210,8 +368,10 @@ function SolverNarration({ meta }) {
           <div className="flex flex-wrap gap-1.5">
             {days.map((d) => (
               <div
-                key={d.dayOfWeek}
-                title={d.miss || `${d.dayName}: on target`}
+                // A multi-week horizon repeats dayOfWeek, so the key has to be
+                // the day's own identity across the horizon, not its weekday.
+                key={d.key ?? d.dayOfWeek}
+                title={`${d.windowIndex != null ? `Week ${d.windowIndex + 1} · ` : ""}${d.miss || `${d.dayName}: on target`}`}
                 className="px-2 py-1 rounded-lg flex items-baseline gap-1.5"
                 style={{ background: C.card2, border: `1px solid ${d.inTolerance ? C.rule : C.warn}` }}
               >
@@ -223,12 +383,19 @@ function SolverNarration({ meta }) {
           {missedDays.length > 0 && (
             <div className="mt-2 space-y-0.5">
               {missedDays.map((d) => (
-                <div key={d.dayOfWeek} className="text-xs font-semibold" style={{ color: C.warn }}>
-                  {d.dayName}: {d.miss}
+                <div key={d.key ?? d.dayOfWeek} className="text-xs font-semibold" style={{ color: C.warn }}>
+                  {d.windowIndex != null && days.length > 7 ? `Week ${d.windowIndex + 1} ` : ""}{d.dayName}: {d.miss}
                 </div>
               ))}
             </div>
           )}
+        </div>
+      )}
+      {/* The ONE thing that is binding, named — ahead of the sentences, because
+          "what do I change?" is the question the reasons only imply. */}
+      {diag?.binding?.key && (
+        <div className="text-xs font-extrabold mt-2" style={{ color: C.warn }}>
+          Binding constraint: {diag.binding.label} — {diag.binding.detail}
         </div>
       )}
       {diagText && (
@@ -491,6 +658,11 @@ export default function PlanTab({ profile, summary, refresh }) {
     cuisines: [], protein: "", budget: null, maxPrepMin: null, allowBatchRepeats: false,
     proteinPriority: proteinPriorityPref.get(),
   });
+  // Stage 2: the horizon is the user's choice, defaulting to the week this
+  // screen has always generated.
+  const [horizonKey, setHorizonKey] = useState("week");
+  const [customDays, setCustomDays] = useState(21);
+  const [oneMeal, setOneMeal] = useState(null);
   const [dayOptions, setDayOptions] = useState(null);
   const [optionsBusy, setOptionsBusy] = useState(false);
   const [accepting, setAccepting] = useState(false);
@@ -538,16 +710,35 @@ export default function PlanTab({ profile, summary, refresh }) {
     proteinPriority: filters.proteinPriority,
   });
 
+  // What the horizon control currently means, as the server's own vocabulary:
+  // a preset key, or a plain day count for the custom input.
+  const horizonValue = horizonKey === "custom" ? clampDays(customDays) : horizonKey;
+  const horizonLabel = horizonKey === "custom"
+    ? `${clampDays(customDays)} days`
+    : HORIZON_OPTIONS.find((h) => h.key === horizonKey)?.label ?? "1 week";
+
   const generate = async () => {
     setGenerating(true);
     setError(null);
     setDayOptions(null);
     setGenMeta(null);
+    setOneMeal(null);
     try {
-      const res = await api.generatePlan(apiFilters());
-      setPlan(res);
-      // Solver narration rides on the generate response's meta; absent = no card.
-      setGenMeta(res?.meta ?? null);
+      // The horizon rides in the request body. api.generatePlan spreads its
+      // options object AFTER the default body, so passing `body` here replaces
+      // it — the one seam available without editing the shared api module.
+      const body = JSON.stringify({ filters: apiFilters(), horizon: horizonValue });
+      const res = await api.generatePlan(apiFilters(), { body });
+      const meta = res?.meta ?? null;
+      setGenMeta(meta);
+      if (meta?.horizon?.kind === "meal") {
+        // A single dish is an ANSWER, not a plan — nothing was written, so the
+        // board must keep showing whatever the plan already was.
+        setOneMeal(meta.oneMeal ?? null);
+        if (res?.id) setPlan(res);
+      } else {
+        setPlan(res);
+      }
     } catch (e) {
       setError(e.message);
     } finally {
@@ -670,7 +861,10 @@ export default function PlanTab({ profile, summary, refresh }) {
       <PageHead title="Plan" sub={plan ? `Week of ${fmtD(plan.startDate)} · locked slots survive regeneration · closest-fit by design` : "Complete days solved against your targets — closest-fit by design, not perfection."}>
         {plan !== undefined && (
           <Btn onClick={generate} disabled={generating}>
-            {generating ? "Generating…" : plan ? "Regenerate meal plan" : "Generate meal plan"}
+            {generating
+              ? (horizonKey === "meal" ? "Fitting…" : "Generating…")
+              : horizonKey === "meal" ? "Fit one meal"
+                : `${plan ? "Regenerate" : "Generate"} ${horizonLabel}`}
           </Btn>
         )}
       </PageHead>
@@ -682,10 +876,28 @@ export default function PlanTab({ profile, summary, refresh }) {
       )}
 
       <div className="mb-4">
+        <HorizonBar horizonKey={horizonKey} setHorizonKey={setHorizonKey}
+          customDays={customDays} setCustomDays={setCustomDays} busy={generating}
+          allowBatchRepeats={filters.allowBatchRepeats} />
+      </div>
+
+      <div className="mb-4">
         <FiltersBar filters={filters} setFilters={setFilters} proteinFloorSource={meta?.proteinFloorSource} />
       </div>
 
-      {genMeta && (
+      {oneMeal && (
+        <div className="mb-4">
+          <OneMealCard oneMeal={oneMeal} />
+        </div>
+      )}
+
+      {genMeta?.horizon?.weekPlans?.length > 1 && (
+        <div className="mb-4">
+          <HorizonSummary horizon={genMeta.horizon} />
+        </div>
+      )}
+
+      {genMeta && genMeta.horizon?.kind !== "meal" && (
         <div className="mb-4">
           <SolverNarration meta={genMeta} />
         </div>
@@ -792,7 +1004,7 @@ export default function PlanTab({ profile, summary, refresh }) {
                 <div className="flex items-start gap-2">
                   <ChefHat size={18} style={{ color: C.faintLight }} className="mt-0.5 shrink-0" />
                   <div className="text-sm font-semibold" style={{ color: C.ink }}>
-                    No plan yet — hit "Generate meal plan", or solve a single day with "3 options".
+                    No plan yet — pick a horizon above (1 meal through 1 month) and hit "{horizonKey === "meal" ? "Fit one meal" : `Generate ${horizonLabel}`}", or solve a single day with "3 options".
                   </div>
                 </div>
               </Card>
