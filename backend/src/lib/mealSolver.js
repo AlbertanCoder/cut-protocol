@@ -8,7 +8,7 @@
 //   (never a silent failure, and NEVER a suggestion to loosen an allergy)
 const {
   buildSlots, targetsForSlots, solveDay, resolveSlot, scaleRecipe,
-  generateWeekPlan, eligibleRecipes, estimateSlotTarget,
+  generateWeekPlan, eligibleRecipes, estimateSlotTarget, buildLockedMap,
   DEFAULT_REPEAT_CAP, BATCH_REPEAT_CAP, SCALE_BOUNDS, PROTEIN_TOLERANCE_PCT,
 } = require("./weeklyPlanner.js");
 const { buildCostCache } = require("./recipeCost.js");
@@ -127,23 +127,70 @@ function scoreDay(dailyTarget, slots, opts = {}) {
   };
 }
 
-// A day's totals are "in tolerance" on the two load-bearing macros only —
-// calories within ±15%, protein no more than 15% short. Single-sourced here
-// so the week score, the per-day report and every test read the same rule.
+// A day's totals are "in tolerance" on ALL FOUR macros — calories within ±15%,
+// protein no more than 15% short, and fat/carbs no further than 25% of their
+// own band midpoint outside their target range. Single-sourced here so the week
+// score, the per-day report and every test read the same rule.
+//
+// solver-core-2 (2026-07-23): fat and carbs used to be COMPUTED (scoreDay
+// already produced fatInRange/carbInRange) and then dropped on the floor —
+// dayTolerance/dayMissLine/diagnoseFromResult were kcal+protein only, so a
+// fat-starved day shipped green with nothing said about it. A macro the app
+// prescribes is a macro the app has to report on.
+//
+// Why a band-relative slack instead of the raw range: computeMacros() emits a
+// deliberately NARROW fat band (lbm×0.34 … lbm×0.40 — about ±8% around the
+// midpoint) and a ±12 g carb band. Judging a day strictly inside those windows
+// would fail nearly every real plan and make the flag meaningless. 25% of the
+// band midpoint is the "badly off" line: far enough out to matter, not a
+// rounding complaint.
 const DAY_KCAL_TOLERANCE_PCT = 0.15;
 const DAY_PROTEIN_TOLERANCE_PCT = 0.15;
+const DAY_FAT_TOLERANCE_PCT = 0.25;
+const DAY_CARB_TOLERANCE_PCT = 0.25;
+
+// How far `v` sits outside [lo, hi], as a fraction of the band midpoint.
+// Direction is kept separate: a fat SHORTFALL and a keto carb OVERSHOOT are
+// different failures and get judged on different allowances.
+function bandMiss(v, lo, hi) {
+  const mid = (lo + hi) / 2;
+  if (!(mid > 0)) return { shortPct: 0, overPct: 0, mid };
+  const val = Number.isFinite(v) ? v : 0;
+  if (val < lo) return { shortPct: (lo - val) / mid, overPct: 0, mid };
+  if (val > hi) return { shortPct: 0, overPct: (val - hi) / mid, mid };
+  return { shortPct: 0, overPct: 0, mid };
+}
+
+const hasBand = (lo, hi) => Number.isFinite(lo) && Number.isFinite(hi) && hi > 0;
 
 function dayTolerance(dailyTarget, totals) {
   const pMid = (dailyTarget.proteinLo + dailyTarget.proteinHi) / 2;
   const kcalDeltaPct = dailyTarget.kcal > 0 ? (totals.kcal - dailyTarget.kcal) / dailyTarget.kcal : 1;
   const proteinShortPct = pMid > 0 ? Math.max(0, (pMid - totals.protein) / pMid) : 0;
+  // A target that carries no fat/carb band (older fixtures, partial targets)
+  // cannot be judged on it — absent is absent, never a silent pass OR fail.
+  const fatBand = hasBand(dailyTarget.fatLo, dailyTarget.fatHi);
+  const carbBand = hasBand(dailyTarget.carbLo, dailyTarget.carbHi);
+  const fat = fatBand ? bandMiss(totals.fat, dailyTarget.fatLo, dailyTarget.fatHi) : { shortPct: 0, overPct: 0, mid: null };
+  const carb = carbBand ? bandMiss(totals.carb, dailyTarget.carbLo, dailyTarget.carbHi) : { shortPct: 0, overPct: 0, mid: null };
+  // Keto's carb ceiling is a diet LAW, not a preference: there is no upward
+  // allowance on carbs for a ketogenic target (computeMacros stamps `keto`).
+  const carbOverAllowance = dailyTarget.keto ? 0 : DAY_CARB_TOLERANCE_PCT;
   return {
     kcalDeltaPct, proteinShortPct,
     kcalOk: Math.abs(kcalDeltaPct) <= DAY_KCAL_TOLERANCE_PCT,
     proteinOk: proteinShortPct <= DAY_PROTEIN_TOLERANCE_PCT,
     proteinMid: pMid,
+    fatShortPct: fat.shortPct, fatOverPct: fat.overPct,
+    carbShortPct: carb.shortPct, carbOverPct: carb.overPct,
+    fatJudged: fatBand, carbJudged: carbBand,
+    fatOk: !fatBand || (fat.shortPct <= DAY_FAT_TOLERANCE_PCT && fat.overPct <= DAY_FAT_TOLERANCE_PCT),
+    carbOk: !carbBand || (carb.shortPct <= DAY_CARB_TOLERANCE_PCT && carb.overPct <= carbOverAllowance),
   };
 }
+
+// One verdict, so no caller can accidentally judge a day on a subset of it.
+const dayInTolerance = (t) => t.kcalOk && t.proteinOk && t.fatOk && t.carbOk;
 
 /**
  * Plain-English statement of what a day actually missed by. Plain numbers, no
@@ -162,6 +209,15 @@ function dayMissLine(dailyTarget, totals) {
   if (!t.proteinOk) {
     parts.push(`${Math.round(totals.protein)} g protein vs ${Math.round(t.proteinMid)} g — ${Math.round(t.proteinMid - totals.protein)} g short`);
   }
+  // Fat and carbs state the RANGE they missed and by how much — same plain
+  // shape as the two lines above, same no-guilt vocabulary.
+  const rangeLine = (label, value, lo, hi, short) => {
+    const edge = short ? lo : hi;
+    const by = Math.round(Math.abs(value - edge));
+    return `${Math.round(value)} g ${label} vs a ${Math.round(lo)}–${Math.round(hi)} g range — ${by} g ${short ? "short" : "over"}`;
+  };
+  if (!t.fatOk) parts.push(rangeLine("fat", totals.fat || 0, dailyTarget.fatLo, dailyTarget.fatHi, t.fatShortPct > 0));
+  if (!t.carbOk) parts.push(rangeLine("carbs", totals.carb || 0, dailyTarget.carbLo, dailyTarget.carbHi, t.carbShortPct > 0));
   return parts.length ? parts.join("; ") : null;
 }
 
@@ -252,11 +308,20 @@ function diagnoseFromResult({ dailyTarget, slots, pool, mealConfig, filters = {}
   const pMid = (dailyTarget.proteinLo + dailyTarget.proteinHi) / 2;
   const byDay = new Map();
   for (const s of slots) byDay.set(s.dayOfWeek, [...(byDay.get(s.dayOfWeek) || []), s]);
-  let proteinShortDays = 0, kcalOffDays = 0, floorMissDays = 0;
+  let proteinShortDays = 0, kcalOffDays = 0, floorMissDays = 0, fatOffDays = 0, carbOffDays = 0;
   for (const [, daySlots] of byDay) {
-    const t = daySlots.reduce((a, s) => ({ kcal: a.kcal + s.kcal, protein: a.protein + s.protein }), { kcal: 0, protein: 0 });
-    if ((pMid - t.protein) / pMid > 0.15) proteinShortDays++;
-    if (Math.abs(t.kcal - dailyTarget.kcal) / dailyTarget.kcal > 0.15) kcalOffDays++;
+    // Single-sourced through dayTolerance (solver-core-2): the per-macro rules
+    // were hand-rolled here at a literal 0.15, which meant a fat/carb miss was
+    // structurally invisible to the diagnosis no matter how bad it got.
+    const t = daySlots.reduce(
+      (a, s) => ({ kcal: a.kcal + s.kcal, protein: a.protein + s.protein, fat: a.fat + s.fat, carb: a.carb + s.carb }),
+      { kcal: 0, protein: 0, fat: 0, carb: 0 }
+    );
+    const tol = dayTolerance(dailyTarget, t);
+    if (!tol.proteinOk) proteinShortDays++;
+    if (!tol.kcalOk) kcalOffDays++;
+    if (!tol.fatOk) fatOffDays++;
+    if (!tol.carbOk) carbOffDays++;
     if (filters.proteinPriority && !checkProteinFloor(t.protein, dailyTarget.proteinLo).met) floorMissDays++;
   }
 
@@ -281,6 +346,17 @@ function diagnoseFromResult({ dailyTarget, slots, pool, mealConfig, filters = {}
     reasons.push(`${kcalOffDays} day(s) missed the calorie window: within the 0.5–2× portion bounds, the compliant pool's dishes can't stretch/shrink to your slot sizes.`);
     suggestions.push("Adjust meals/snacks per day so slot sizes better match the pool's typical dishes, or allow batch-cooking repeats.");
   }
+  // Fat/carb misses are NEVER gated behind "nothing else explained it"
+  // (solver-core-2). Portion scaling moves calories, not composition — so a
+  // fat- or carb-shaped miss is a statement about the POOL, and it is the one
+  // reason the user cannot deduce from the calorie and protein lines.
+  if (fatOffDays > 0 || carbOffDays > 0) {
+    const bits = [];
+    if (fatOffDays > 0) bits.push(`${fatOffDays} day(s) landed outside your ${Math.round(dailyTarget.fatLo)}–${Math.round(dailyTarget.fatHi)} g fat range`);
+    if (carbOffDays > 0) bits.push(`${carbOffDays} day(s) landed outside your ${Math.round(dailyTarget.carbLo)}–${Math.round(dailyTarget.carbHi)} g carb range`);
+    reasons.push(`${bits.join(", and ")} — portion scaling moves a dish's calories, not its fat/carb ratio, so the pool's composition is what binds here.`);
+    suggestions.push("Add (or AI-generate) a few recipes built around the macro you keep missing, or drop the cuisine/protein preference so the solver can reach dishes that carry it.");
+  }
   if (reasons.length === 0) {
     reasons.push(`The solver shipped its closest fits, but ${pool.length} compliant recipes give it little room under the current variety rules.`);
     suggestions.push("Allow batch-cooking repeats or AI-generate more compliant recipes to deepen the pool.");
@@ -301,6 +377,7 @@ const dayName = (d) => ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", 
 async function generateDayCandidates({
   dailyTarget, mealConfig, recipePool, dayOfWeek = 0,
   filters = {}, weekUsage = new Map(), prevDayIds = new Set(),
+  lockedSlots = [],
   count = 3, attempts = 9, rng = Math.random, profile = null,
 }) {
   const afterPrep = applyPrepFilter(recipePool, filters.maxPrepMin);
@@ -312,14 +389,32 @@ async function generateDayCandidates({
     .filter((s) => s.dayOfWeek === 0)
     .map((s) => ({ ...s, dayOfWeek }));
 
+  // solver-core-1: this day's LOCKED slots are constraints of the solve, not a
+  // substitution made afterwards — /accept-day keeps them regardless, so a
+  // candidate scored without them describes a day that never gets stored.
+  const lockedByKey = buildLockedMap(lockedSlots.filter((s) => s && s.dayOfWeek === dayOfWeek));
+
+  // Honest per-candidate verdict on the EXACT slot set the candidate ships
+  // (locks included), through the same single-sourced rule the week uses.
+  const judge = (slots) => {
+    const totals = slots.reduce(
+      (a, s) => ({ kcal: a.kcal + s.kcal, protein: a.protein + s.protein, fat: a.fat + s.fat, carb: a.carb + s.carb }),
+      { kcal: 0, protein: 0, fat: 0, carb: 0 }
+    );
+    const tol = dayTolerance(dailyTarget, totals);
+    const ok = dayInTolerance(tol);
+    return { inTolerance: ok, miss: ok ? null : dayMissLine(dailyTarget, totals) };
+  };
+
   const seen = new Map(); // signature -> candidate
   for (let i = 0; i < attempts; i++) {
     const usage = new Map(weekUsage);
-    const { slots } = await solveDay(dayTargets, dailyTarget, afterPrep, usage, prevDayIds, rng, null, bias, repeatCap);
+    if (lockedByKey) for (const s of lockedByKey.values()) usage.set(s.recipeId, (usage.get(s.recipeId) || 0) + 1);
+    const { slots } = await solveDay(dayTargets, dailyTarget, afterPrep, usage, prevDayIds, rng, null, bias, repeatCap, null, lockedByKey);
     const signature = slots.map((s) => `${s.recipeId}:${s.proteinScale}`).join("|");
     if (seen.has(signature)) continue;
     const score = scoreDay(dailyTarget, slots, { proteinPriority: filters.proteinPriority });
-    seen.set(signature, { slots, score, hasWarnings: slots.some((s) => s.warning) });
+    seen.set(signature, { slots, score, hasWarnings: slots.some((s) => s.warning), ...judge(slots) });
   }
 
   const candidates = [...seen.values()]
@@ -348,7 +443,9 @@ async function generateDayCandidates({
         const boost = 1 + Math.min(0.5, Math.max(0, Number(constraints.minProteinBoost) || 0));
         const boostedDaily = boost === 1 ? dailyTarget : { ...dailyTarget, proteinLo: dailyTarget.proteinLo * boost, proteinHi: dailyTarget.proteinHi * boost };
         const boostedTargets = boost === 1 ? dayTargets : dayTargets.map((t) => ({ ...t, proteinTarget: t.proteinTarget * boost }));
-        const { slots } = await solveDay(boostedTargets, boostedDaily, resolvePool, new Map(weekUsage), prevDayIds, rng, null, bias, repeatCap);
+        const critUsage = new Map(weekUsage);
+        if (lockedByKey) for (const s of lockedByKey.values()) critUsage.set(s.recipeId, (critUsage.get(s.recipeId) || 0) + 1);
+        const { slots } = await solveDay(boostedTargets, boostedDaily, resolvePool, critUsage, prevDayIds, rng, null, bias, repeatCap, null, lockedByKey);
         return { slots };
       };
       const revision = await reviseDayWithCritic({
@@ -358,7 +455,7 @@ async function generateDayCandidates({
         profile,
       });
       if (revision.revised) {
-        candidates[0] = { slots: revision.slots, score: revision.score, hasWarnings: revision.slots.some((s) => s.warning) };
+        candidates[0] = { slots: revision.slots, score: revision.score, hasWarnings: revision.slots.some((s) => s.warning), ...judge(revision.slots) };
         candidates.sort((a, b) => b.score.matchPct - a.score.matchPct);
       }
     }
@@ -369,6 +466,10 @@ async function generateDayCandidates({
     candidates.length === 0 ||
     candidates[0].score.matchPct < 60 ||
     candidates.every((c) => c.hasWarnings) ||
+    // The same rule generateBestWeekPlan applies to a week (solver-core-2):
+    // if the BEST day we can offer is outside tolerance, the user is owed a
+    // reason, not just a percentage.
+    candidates[0].inTolerance === false ||
     // Protein-priority mode: a top candidate that misses the floor is always
     // rough, even when kcal alone makes matchPct look fine (LAW 7 — the mode
     // exists specifically so this can't be silently absorbed).
@@ -421,7 +522,10 @@ function scoreWeek(dailyTarget, slots, opts = {}) {
       { kcal: 0, protein: 0, fat: 0, carb: 0 }
     );
     const tol = dayTolerance(dailyTarget, exactTotals);
-    const ok = tol.kcalOk && tol.proteinOk;
+    // All four macros (solver-core-2) — a day that hits kcal + protein while
+    // sitting far outside its fat or carb range is not "in tolerance", and
+    // saying it is was the app telling the user something untrue.
+    const ok = dayInTolerance(tol);
     matchSum += sc.matchPct;
     if (ok) daysInTolerance++;
     if (priority && sc.proteinFloor?.met) floorDaysMet++;
@@ -432,6 +536,8 @@ function scoreWeek(dailyTarget, slots, opts = {}) {
       totals: sc.totals,
       kcalDeltaPct: Math.round(tol.kcalDeltaPct * 1000) / 10,
       proteinShortPct: Math.round(tol.proteinShortPct * 1000) / 10,
+      fatOk: tol.fatOk,
+      carbOk: tol.carbOk,
       inTolerance: ok,
       miss: ok ? null : dayMissLine(dailyTarget, exactTotals),
       unfilledSlots: daySlots.filter((s) => !s.recipeId).length,
@@ -455,6 +561,13 @@ function scoreWeek(dailyTarget, slots, opts = {}) {
  * tolerance first, average match second. Only THEN, if the best week still
  * has warning slots, one final pass may use the AI fallback to patch them
  * via the caller's swap flow. Keeps generation fast and the outcome honest.
+ *
+ * options.lockedSlots (solver-core-1): the user's locked PlanSlot rows. They
+ * ride through generateWeekPlan into every attempt as FIXED constraints, so
+ * every returned slot set already contains them and `score` therefore
+ * describes EXACTLY the week the caller is about to store. Callers must NOT
+ * substitute locked slots in afterwards — that publishes a match % for a week
+ * that never existed, which is the bug this parameter exists to close.
  */
 async function generateBestWeekPlan(dailyTarget, mealConfig, recipePool, options = {}) {
   // Stage-C (L4): more attempts + randomized day order (in generateWeekPlan)
@@ -608,7 +721,8 @@ async function alternatesForSlot({
 module.exports = {
   applyPrepFilter, buildBias, scoreDay, scoreWeek, diagnose, diagnoseFromResult,
   generateDayCandidates, generateBestWeekPlan, alternatesForSlot, SCORE_WEIGHTS,
-  dayTolerance, dayMissLine, varietyOutlook,
+  dayTolerance, dayMissLine, dayInTolerance, varietyOutlook,
   DAY_KCAL_TOLERANCE_PCT, DAY_PROTEIN_TOLERANCE_PCT,
+  DAY_FAT_TOLERANCE_PCT, DAY_CARB_TOLERANCE_PCT,
   PROTEIN_PRIORITY_WEIGHTS,
 };

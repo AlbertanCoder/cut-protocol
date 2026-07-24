@@ -10,11 +10,23 @@ const { computeMacros } = require("./bmrEngine.js");
 const { getWeightNowKg } = require("./weightNow.js");
 const { recipeExcludedByStyle, matchesExclusionTerm, recipeExceedsKetoCeiling, additionalIngredientNames } = require("./dietaryFilter.js");
 
+// The pool carries the diet style it was admitted under (solver-core-3).
+// "Pool membership = compliance" is this codebase's invariant, but membership is
+// decided at 1× while the solver ships PORTIONS — and its two-factor scaling can
+// double a side's carbs. Stamping the style onto each recipe lets the post-scale
+// keto ceiling in weeklyPlanner.enforceScaledCarbCeiling() re-check the shipped
+// portion without every call site having to thread a profile down. Pure: the
+// input rows are never mutated, and a null style stamps nothing.
+function stampDietGuard(recipes, dietaryStyle) {
+  if (!dietaryStyle) return recipes;
+  return recipes.map((r) => (r.dietGuardStyle === dietaryStyle ? r : { ...r, dietGuardStyle: dietaryStyle }));
+}
+
 function filterRecipePool(recipePool, profile) {
   const dietaryStyle = profile.dietaryStyle || null;
   const excludedFoods = Array.isArray(profile.excludedFoods) ? profile.excludedFoods : [];
   if (!dietaryStyle && excludedFoods.length === 0) return recipePool;
-  return recipePool.filter((recipe) => {
+  return stampDietGuard(recipePool.filter((recipe) => {
     // Shared keto ceiling — single-sourced in dietaryFilter so the library
     // listing (recipes.js) can never diverge from the solver pool (M8).
     if (recipeExceedsKetoCeiling(recipe, dietaryStyle)) return false;
@@ -27,7 +39,7 @@ function filterRecipePool(recipePool, profile) {
     if (recipeExcludedByStyle({ ingredients: checkIngredients }, dietaryStyle)) return false;
     if (excludedFoods.length && checkIngredients.some((ing) => excludedFoods.some((term) => matchesExclusionTerm(ing.name, term)))) return false;
     return true;
-  });
+  }), dietaryStyle);
 }
 
 async function planContext(userId) {
@@ -63,4 +75,4 @@ function parseFilters(body) {
   };
 }
 
-module.exports = { planContext, filterRecipePool, parseFilters };
+module.exports = { planContext, filterRecipePool, parseFilters, stampDietGuard };
