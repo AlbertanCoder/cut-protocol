@@ -132,6 +132,19 @@ function priorDiscount(priorUsage, id) {
   return w > 0 ? 1 / (1 + 2 * w) : 1;
 }
 
+// The protein-forward GENERATED templates ("High-Protein {protein} & {veg} with
+// {carb}", source ai-generated) exist to rescue thin-diet protein floors, but
+// they are macro-optimised and structurally identical, so they out-compete REAL
+// recipes even for unrestricted eaters — QC customers saw a week of near-clones
+// and a meat-eater served TVP/seitan. This down-weights them so a real recipe
+// that fits is preferred. It is a SOFT multiplier: in a pool where only these
+// fit (a strict vegan+GF week), every candidate is penalised equally, so they
+// are still used and the protein floor they were built for still holds.
+const GENERATED_TEMPLATE_WEIGHT = 0.35;
+function isGeneratedTemplate(r) {
+  return r.source === "ai-generated" && /^high-protein\b.*\bwith\b/i.test(r.name || "");
+}
+
 function pickRecipe(candidates, targetRatio, usedYesterday, usedToday, rng, bias, priorUsage) {
   if (candidates.length === 0) return null;
   const weighted = candidates.map((r) => {
@@ -139,7 +152,8 @@ function pickRecipe(candidates, targetRatio, usedYesterday, usedToday, rng, bias
     const diff = Math.abs(ratio - targetRatio);
     const discount = usedToday.has(r.id) ? 0.02 : usedYesterday.has(r.id) ? 0.15 : 1;
     const pref = bias ? bias(r) : 1;
-    return { r, weight: (1 / (diff + 0.015)) * discount * pref * priorDiscount(priorUsage, r.id) };
+    const real = isGeneratedTemplate(r) ? GENERATED_TEMPLATE_WEIGHT : 1;
+    return { r, weight: (1 / (diff + 0.015)) * discount * pref * real * priorDiscount(priorUsage, r.id) };
   });
   const total = weighted.reduce((s, x) => s + x.weight, 0);
   let roll = rng() * total;
@@ -184,6 +198,71 @@ function bundleMacros(ingredients) {
   );
 }
 
+// Materialise ONE (proteinScale, sidesScale) pair into shipped grams + the
+// totals recomputed FROM those grams. Extracted from scaleRecipe so the
+// post-scale diet-law guard below can try a different pair and read the real
+// numbers back, instead of estimating what a re-scale would do. The arithmetic
+// is verbatim from the original scaleRecipe body — the scale LABELS are
+// round2'd while the grams come from the raw factors, exactly as before.
+function applyScales(recipe, proteinScale, sidesScale) {
+  const resolvedIngredients = recipe.ingredients.map((ing) => {
+    const scale = !ing.scalable ? 1 : ing.role === "protein" ? proteinScale : sidesScale;
+    return {
+      foodId: ing.foodId, name: ing.food.name, role: ing.role,
+      grams: practicalGrams(ing.baseGrams * scale),
+    };
+  });
+
+  const totals = resolvedIngredients.reduce(
+    (sum, r) => {
+      const food = recipe.ingredients.find((i) => i.foodId === r.foodId).food;
+      const factor = r.grams / 100;
+      sum.kcal += food.kcal * factor;
+      sum.protein += food.protein * factor;
+      sum.fat += food.fat * factor;
+      sum.carb += food.carb * factor;
+      return sum;
+    },
+    { kcal: 0, protein: 0, fat: 0, carb: 0 }
+  );
+
+  return { proteinScale: round2(proteinScale), sidesScale: round2(sidesScale), ingredients: resolvedIngredients, ...totals };
+}
+
+// ── post-scale diet law (solver-core-3) ──────────────────────────────────
+//
+// The keto ceiling is checked when a recipe ENTERS the pool, at 1× — but the
+// solver ships PORTIONS, and it scales the protein-role ingredients and
+// everything else by two INDEPENDENT factors (see scaleRecipe). Doubling the
+// sides doubles their carbs while the protein bundle may be shrinking, so the
+// carb-energy fraction that made the dish keto-legal at 1× is NOT preserved by
+// the portion the user actually eats. a0d0d24 made the ceiling scale-invariant
+// under UNIFORM scaling; it is not invariant under this solver's differential
+// scaling. Hence: re-check on the shipped portion, every time.
+//
+// The style comes off the recipe itself (`dietGuardStyle`, stamped by
+// planContext.filterRecipePool when the pool is built). That keeps the
+// invariant this codebase already relies on — "pool membership = compliance" —
+// true after scaling as well as before it, without the guard needing to be
+// threaded through every call site. An untagged pool behaves exactly as before.
+const CARB_CEILING_STEP = 0.05;
+
+function enforceScaledCarbCeiling(recipe, scaled, dietaryStyle) {
+  if (!dietaryStyle) return scaled;
+  if (!recipeExceedsKetoCeiling({ carb: scaled.carb, kcal: scaled.kcal }, dietaryStyle)) return scaled;
+  // Carbs ride mostly on the non-protein ("sides") bundle: walk it down toward
+  // the 0.5× floor and re-check the REAL recomputed totals at each step. A
+  // dish whose carbs sit in fixed or protein-role ingredients can't be
+  // repaired this way — then we return null and the slot rejects it outright.
+  // Shipping a smaller-but-still-over portion would be the dishonest option.
+  for (let s = scaled.sidesScale - CARB_CEILING_STEP; s > SCALE_BOUNDS.min; s -= CARB_CEILING_STEP) {
+    const trimmed = applyScales(recipe, scaled.proteinScale, s);
+    if (!recipeExceedsKetoCeiling({ carb: trimmed.carb, kcal: trimmed.kcal }, dietaryStyle)) return trimmed;
+  }
+  const floorTry = applyScales(recipe, scaled.proteinScale, SCALE_BOUNDS.min);
+  return recipeExceedsKetoCeiling({ carb: floorTry.carb, kcal: floorTry.kcal }, dietaryStyle) ? null : floorTry;
+}
+
 // recipe.ingredients must be loaded with `food` included.
 function scaleRecipe(recipe, kcalTarget, proteinTarget) {
   const fixed = bundleMacros(recipe.ingredients.filter((i) => !i.scalable));
@@ -208,28 +287,7 @@ function scaleRecipe(recipe, kcalTarget, proteinTarget) {
     sidesScale = clamp((proteinBundle.protein * remainingKcal - remainingProtein * proteinBundle.kcal) / det, SCALE_BOUNDS);
   }
 
-  const resolvedIngredients = recipe.ingredients.map((ing) => {
-    const scale = !ing.scalable ? 1 : ing.role === "protein" ? proteinScale : sidesScale;
-    return {
-      foodId: ing.foodId, name: ing.food.name, role: ing.role,
-      grams: practicalGrams(ing.baseGrams * scale),
-    };
-  });
-
-  const totals = resolvedIngredients.reduce(
-    (sum, r) => {
-      const food = recipe.ingredients.find((i) => i.foodId === r.foodId).food;
-      const factor = r.grams / 100;
-      sum.kcal += food.kcal * factor;
-      sum.protein += food.protein * factor;
-      sum.fat += food.fat * factor;
-      sum.carb += food.carb * factor;
-      return sum;
-    },
-    { kcal: 0, protein: 0, fat: 0, carb: 0 }
-  );
-
-  return { proteinScale: round2(proteinScale), sidesScale: round2(sidesScale), ingredients: resolvedIngredients, ...totals };
+  return applyScales(recipe, proteinScale, sidesScale);
 }
 
 function kcalOffPct(target, scaledKcal) {
@@ -260,9 +318,16 @@ async function tryAiFallback(target, recipePool, usageCount, aiFallback) {
     // Never write a diet/allergy-violating AI recipe into the plan (C3). A
     // failed check yields an honest unsolved slot, same as any other miss.
     if (!aiRecipeCompliant(generated, aiFallback.profile)) return null;
+    // Same post-scale ceiling as the pool path (solver-core-3). The generated
+    // recipe is not pool-tagged, so the style comes from the profile here; it
+    // is also stamped onto the recipe so later slots in this same run inherit
+    // the guard when they draw it out of the pool.
+    const aiStyle = aiFallback.profile?.dietaryStyle || null;
+    if (aiStyle) generated.dietGuardStyle = aiStyle;
     recipePool.push(generated); // available to later slots in this same run too
     aiFallback.existingRecipeNames.push(generated.name);
-    const scaled = scaleRecipe(generated, target.kcalTarget, target.proteinTarget);
+    const scaled = enforceScaledCarbCeiling(generated, scaleRecipe(generated, target.kcalTarget, target.proteinTarget), aiStyle);
+    if (!scaled) return null; // portioning it into this slot would break the ceiling
     usageCount.set(generated.id, 1);
     const kcalOff = kcalOffPct(target.kcalTarget, scaled.kcal);
     const proteinShort = proteinShortfallPct(target.proteinTarget, scaled.protein);
@@ -301,6 +366,10 @@ async function resolveSlot(target, recipePool, usageCount, usedYesterday, usedTo
   const targetRatio = target.kcalTarget > 0 ? target.proteinTarget / target.kcalTarget : 0;
   const tried = new Set();
   let best = null;
+  // Candidates rejected because the SHIPPED portion would break a hard diet
+  // ceiling (keto carbs). Tracked so an empty slot can name the real cause
+  // instead of the generic "nothing eligible" line.
+  let ceilingRejects = 0;
 
   const ship = (recipe, scaled) => {
     usageCount.set(recipe.id, (usageCount.get(recipe.id) || 0) + 1);
@@ -315,7 +384,11 @@ async function resolveSlot(target, recipePool, usageCount, usedYesterday, usedTo
       if (candidates.length === 0) break;
       const recipe = pickRecipe(candidates, targetRatio, usedYesterday, usedToday, rng, bias, passUsage);
       tried.add(recipe.id);
-      const scaled = scaleRecipe(recipe, target.kcalTarget, target.proteinTarget);
+      // A hard diet ceiling is re-checked on the PORTION, not the base recipe
+      // (solver-core-3). A candidate that can't be portioned into this slot
+      // without going over is not a "closest fit" — it is ineligible, full stop.
+      const scaled = enforceScaledCarbCeiling(recipe, scaleRecipe(recipe, target.kcalTarget, target.proteinTarget), recipe.dietGuardStyle);
+      if (!scaled) { ceilingRejects++; continue; }
       const kcalOff = kcalOffPct(target.kcalTarget, scaled.kcal);
       const proteinShort = proteinShortfallPct(target.proteinTarget, scaled.protein);
       // Worse-of-the-two-tolerances score, expressed as a multiple of each
@@ -352,7 +425,9 @@ async function resolveSlot(target, recipePool, usageCount, usedYesterday, usedTo
     };
   }
 
-  return unsolvedResult(`No eligible ${target.slotType} recipe left for this slot.`);
+  return unsolvedResult(ceilingRejects > 0
+    ? `No ${target.slotType} recipe could be portioned into this slot without breaking your keto carb ceiling — ${ceilingRejects} candidate(s) went over once scaled to the slot's size.`
+    : `No eligible ${target.slotType} recipe left for this slot.`);
 }
 
 function toSlotRecord(target, result) {
@@ -379,27 +454,78 @@ function buildAiFallbackContext(options, recipePool) {
   };
 }
 
+const slotKeyOf = (s) => `${s.dayOfWeek}:${s.slotType}:${s.slotIndex}`;
+
+/**
+ * Index locked slot records by their slot key. Accepts an array (or null) of
+ * PlanSlot-shaped rows: { dayOfWeek, slotType, slotIndex, recipeId, kcal,
+ * protein, fat, carb, ingredients, proteinScale, sidesScale, warning }.
+ */
+function buildLockedMap(lockedSlots) {
+  if (!Array.isArray(lockedSlots) || lockedSlots.length === 0) return null;
+  const m = new Map();
+  for (const s of lockedSlots) {
+    if (s && s.recipeId != null && Number.isInteger(s.dayOfWeek)) m.set(slotKeyOf(s), s);
+  }
+  return m.size ? m : null;
+}
+
 /**
  * Solve ONE day's slots with within-day carry-forward. Extracted from the
  * week loop so Phase 4's day-candidate generation can run a single day
  * repeatedly (different rng) without touching week state. Mutates
  * usageCount (per-week repeat tracking) — pass a copy if you don't want that.
+ *
+ * `lockedByKey` (solver-core-1) makes the user's LOCKED slots a CONSTRAINT of
+ * the solve instead of something swapped in afterwards. A locked slot keeps its
+ * stored meal verbatim, its calories and protein come off the day's budget
+ * BEFORE the open slots are sized, and its recipe is in play for the same-day
+ * repeat rule — so the solver optimises the rest of the day AROUND it and the
+ * returned slot set IS the week that gets stored. (The caller owns usageCount:
+ * seed the locked recipes into it if the weekly variety cap should count them.)
  */
-async function solveDay(dayTargets, dailyTarget, recipePool, usageCount, prevDayRecipeIds, rng, aiCtx, bias, repeatCap, priorUsage = null) {
+async function solveDay(dayTargets, dailyTarget, recipePool, usageCount, prevDayRecipeIds, rng, aiCtx, bias, repeatCap, priorUsage = null, lockedByKey = null) {
   const proteinTargetMid = (dailyTarget.proteinLo + dailyTarget.proteinHi) / 2;
   const todayIds = new Set();
-  const results = [];
+  const results = new Array(dayTargets.length);
+
+  // Pass 1 — bank the locks. They are given, not solved.
+  const openIdx = [];
+  let lockedKcal = 0;
+  let lockedProtein = 0;
+  dayTargets.forEach((t, i) => {
+    const locked = lockedByKey ? lockedByKey.get(slotKeyOf(t)) : null;
+    if (!locked) { openIdx.push(i); return; }
+    results[i] = { ...toSlotRecord(t, locked), locked: true, warning: locked.warning ?? null };
+    if (locked.recipeId) todayIds.add(locked.recipeId);
+    lockedKcal += locked.kcal || 0;
+    lockedProtein += locked.protein || 0;
+  });
+
+  // Pass 2 — the open slots share what the locks left, split by their own
+  // weights. With no locks this reproduces targetsForSlots() exactly, so the
+  // unlocked path is byte-identical to before.
+  const openTargets = openIdx.map((i) => dayTargets[i]);
+  const openWeight = openTargets.reduce((s, x) => s + x.weight, 0);
+  const budgetKcal = Math.max(0, dailyTarget.kcal - lockedKcal);
+  const budgetProtein = Math.max(0, proteinTargetMid - lockedProtein);
+  const nominal = openTargets.map((t) => ({
+    ...t,
+    kcalTarget: openWeight > 0 ? budgetKcal * (t.weight / openWeight) : 0,
+    proteinTarget: openWeight > 0 ? budgetProtein * (t.weight / openWeight) : 0,
+  }));
+
   let dayAchievedKcal = 0;
   let dayAchievedProtein = 0;
-  for (let i = 0; i < dayTargets.length; i++) {
-    const target = dayTargets[i];
+  for (let i = 0; i < nominal.length; i++) {
+    const target = nominal[i];
     // Redistribute what's left of the day's budget across this slot and
     // whatever's still unsolved today, weighted the same way the original
     // fixed shares were - then solve against THAT, not the fixed share.
-    const remainingWeight = dayTargets.slice(i).reduce((s, x) => s + x.weight, 0);
+    const remainingWeight = nominal.slice(i).reduce((s, x) => s + x.weight, 0);
     const share = remainingWeight > 0 ? target.weight / remainingWeight : 1;
-    const proposedKcal = (dailyTarget.kcal - dayAchievedKcal) * share;
-    const proposedProtein = (proteinTargetMid - dayAchievedProtein) * share;
+    const proposedKcal = (budgetKcal - dayAchievedKcal) * share;
+    const proposedProtein = (budgetProtein - dayAchievedProtein) * share;
     const effectiveTarget = {
       ...target,
       kcalTarget: clamp(proposedKcal, { min: target.kcalTarget * (1 - CARRY_CAP_PCT), max: target.kcalTarget * (1 + CARRY_CAP_PCT) }),
@@ -408,7 +534,7 @@ async function solveDay(dayTargets, dailyTarget, recipePool, usageCount, prevDay
 
     const result = await resolveSlot(effectiveTarget, recipePool, usageCount, prevDayRecipeIds, todayIds, rng, aiCtx, bias, repeatCap, priorUsage);
     if (result.recipeId) todayIds.add(result.recipeId);
-    results.push(toSlotRecord(target, result));
+    results[openIdx[i]] = toSlotRecord(target, result);
     // Carry forward the TRUE achieved amount, not the (possibly clamped)
     // target that was solved for - an unresolved slot (kcal:0) correctly
     // pushes its whole share onto the rest of the day.
@@ -437,6 +563,14 @@ async function generateWeekPlan(dailyTarget, mealConfig, recipePool, options = {
   const byDay = new Map();
   slots.forEach((s) => byDay.set(s.dayOfWeek, [...(byDay.get(s.dayOfWeek) || []), s]));
   const aiCtx = buildAiFallbackContext({ aiFallback }, recipePool);
+  // solver-core-1: locked slots are constraints of THIS solve. Seeding their
+  // recipes into usageCount up front means the weekly variety cap counts a
+  // locked dish from day 0, whatever order the days get solved in — otherwise
+  // a lock on Friday could be silently exceeded by Monday–Thursday picks.
+  const lockedByKey = buildLockedMap(options.lockedSlots);
+  if (lockedByKey) {
+    for (const s of lockedByKey.values()) usageCount.set(s.recipeId, (usageCount.get(s.recipeId) || 0) + 1);
+  }
 
   // Stage-C fix (L4): solve days in a RANDOMIZED order, not a fixed 0..6.
   // Days share one variety-usage map, so with a fixed order the last calendar
@@ -449,7 +583,7 @@ async function generateWeekPlan(dailyTarget, mealConfig, recipePool, options = {
   let prevDayRecipeIds = new Set();
   for (const day of shuffled([...Array(DAYS).keys()], rng)) {
     const { slots: daySlots, todayIds } = await solveDay(
-      byDay.get(day) || [], dailyTarget, recipePool, usageCount, prevDayRecipeIds, rng, aiCtx, bias, repeatCap, priorUsage
+      byDay.get(day) || [], dailyTarget, recipePool, usageCount, prevDayRecipeIds, rng, aiCtx, bias, repeatCap, priorUsage, lockedByKey
     );
     resolvedByDay.set(day, daySlots);
     prevDayRecipeIds = todayIds;
@@ -530,8 +664,10 @@ module.exports = {
   generateWeekPlan, regenerateOneSlot, buildSlots, targetsForSlots, solveDay,
   resolveSlot, scaleRecipe, buildAiFallbackContext, estimateSlotTarget,
   eligibleRecipes, buildPriorUsage, practicalGrams, RECENCY_WEIGHTS,
+  applyScales, enforceScaledCarbCeiling, buildLockedMap, slotKeyOf,
   SCALE_BOUNDS, DEFAULT_REPEAT_CAP, BATCH_REPEAT_CAP,
   KCAL_TOLERANCE_PCT, PROTEIN_TOLERANCE_PCT,
+  isGeneratedTemplate, GENERATED_TEMPLATE_WEIGHT,
   // Back-compat alias for older call sites/tests: the default weekly repeat cap.
   MAX_REPEATS_PER_WEEK: DEFAULT_REPEAT_CAP,
 };

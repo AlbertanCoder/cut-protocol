@@ -1,80 +1,66 @@
-# Cut Protocol — QC Gauntlet Report
+# Cut Protocol — QC Gauntlet v2 Report
 
-*Owner-facing summary. Generated 2026-07-23. Deterministic solver only (BRAIN=off), zero API cost.*
+*Owner-facing. Autonomous overnight run on branch `qc/overnight-2026-07-23`, deterministic engine only, $0.*
+*This is the live skeleton — status updates at every phase transition; see `RUNLOG.md` for the timeline.*
 
-## What this was
+## Per-phase status
+| Phase | What | Status |
+|---|---|---|
+| 0 | Harness + INDEPENDENT oracle (no engine imports; curated allergen list) | **DONE** |
+| 0.5 | Oracle self-validation gate (hand-labeled fixtures) | **DONE — 10/10 pass** |
+| 1A | Monte Carlo 1k → 10k → 100k | 1k re-run w/ independent oracle done; **10k in progress**; 100k next |
+| 1B | Longitudinal adaptive-TDEE journeys (≥2,000) | NOT STARTED (partly gated on the step-cap owner decision) |
+| 1C | Invariants / determinism / coverage | **DONE** (9 green; coverage pass pending) |
+| 1D | 14k sweeps: allergen **DONE** · nutrition+provenance **DONE** · micros next | MOSTLY DONE |
+| 2 | UI persona walkthroughs | **BLOCKED — Chrome extension not connected** |
+| 3 | Break-it: security (IDOR/injection/ED-safety/SSRF) **DONE** · importer-HTML/XSS/barcode next | PARTIAL |
+| 4 | Triage → fix → re-run | pending findings |
 
-A deep quality-control pass: simulate tens of thousands of users through the real meal
-engine, verify every result with an **independent oracle** (never trusting the solver's own
-numbers), then deliberately try to break the API. The goal was numbers, not vibes.
+## Owner decisions outstanding (see RUNLOG STOP-AND-SURFACE queue)
+1. `mayContain` schema field is absent — cross-contact sweeps impossible without it.
+2. Step-cap on `adaptiveTarget.changeKcal` is undefined in code — the "0 step-cap violations" bar tests nothing until defined.
+3. ±7%-by-week-6 reachability precheck — blocked on (2).
 
-## What was tested, and how much
+## Carried forward from the v1 run (master, commits e1efebf → 6bfdc84)
+Recorded as prior evidence; v2 re-verifies with the independent oracle.
+- 10,000-user Monte Carlo: 0 allergy leaks, 0 floor breaches, 0 macro drift, 0 crashes, 0 silent misses.
+- Break-it (244 hostile requests): 0 server-500s, 0 hangs, 0 stack-leaks, 0 garbage persisted.
+- Open finding: only ~39.5% of feasible days within ±5% kcal — a recipe-library coverage gap in thin diets (P3).
+- **v2 caveat on the above:** the v1 oracle IMPORTED the app's own `dietaryFilter` matcher for its allergen check — so it could not have caught a bug in that matcher. v2's oracle uses a separately-curated allergen list; the leak result is only fully trustworthy after that rebuild + Phase 0.5.
 
-| Phase | What | Volume | Result |
-|---|---|---|---|
-| 0 | Harness + independent oracle, 1k smoke | 1,000 users | ✅ DoD met |
-| 1 | Monte Carlo at scale | 10,000 users · 70,000 days | ✅ committed |
-| 2 | UI persona walkthroughs | — | ⛔ **blocked** (Chrome extension not connected) |
-| 3 | Break-it: hostile inputs, races, lifecycle | 244 abusive requests · 16 route groups | ✅ clean |
-| 4 | Triage → fix → re-run | — | No P0/P1 to fix; one P3 proposal (below) |
+## 12-customer simulation (2026-07-23) — see CUSTOMER-FINDINGS.md
+Twelve independent persona-customer agents, each grounded in a real generated plan. Shipped 5
+fixes; queued the golden/law/product-shape items with root causes. Biggest catch: a **P0 tree-nut
+allergen leak** the UI checkbox key exposed (below). Customers independently confirmed the hard
+floor, no-shame color law, clean allergens, honest solver, and correct BMR math all hold.
 
-Everything ran against the real 889-recipe / 14,124-food library (fingerprint `a928390845e4c437`),
-with **zero network calls** — enforced, not assumed (any outbound call aborts the run as a P0).
-
-## The safety & honesty bars — all met
-
-Across **10,000 simulated users**, verified independently by recomputing every macro from raw
-food rows and re-checking every shipped ingredient:
-
-- **0 allergy leaks** · **0 diet-style leaks**
-- **0 calorie-floor breaches**
-- **0 macro-drift** (the oracle's macros matched the solver's to within 1 kcal — the published match % is truthful)
-- **0 dessert/beverage in a meal slot** · **0 portion-bound violations**
-- **0 crashes**
-- **0 silent misses** — no day ever breached the solver's own ±15% tolerance without declaring it
-
-Break-it (244 hostile requests: negative/huge/NaN numbers, 10k-char strings, unicode, wrong
-types, missing fields, path traversal, sql-ish): **0 server errors, 0 hangs, 0 stack-trace leaks,
-0 garbage persisted.** 8 concurrent plan generations all succeeded and the server stayed
-responsive; the AI route degrades to a calm response offline.
-
-## The one bar NOT met — and why it's a proposal, not a bug
-
-**Acceptance target:** ≥90% of *feasible* days should land within ±5% of the calorie goal.
-**Actual: 39.5%.**
-
-This is **not** a solver defect. Every off-target day is honestly declared (per-day match % plus
-a week diagnosis) — that's why silent-misses are zero. The misses concentrate almost entirely in
-**thin-pool diets** — carnivore and vegan, especially crossed with an allergy or two — where the
-recipe library simply doesn't contain enough options to hit the target precisely. The bottleneck
-is **recipe coverage, not solver logic**, which independently confirms the earlier solver-benchmark
-finding at 10,000-user scale.
-
-Under the gauntlet's own severity rules this is **P3 — a proposal for the owner**, not something to
-auto-fix. Fixing it by loosening the oracle or widening the solver's ±15% tolerance would violate
-ground rule #2 (the laws hold); the honest fix is to grow the thin diet pools.
-
-### Open P3 proposal
-> Expand the recipe library for carnivore, vegan, and vegetarian pools (and their allergy-crossed
-> corners). Today these corners can't reach ±5% because the options don't exist — the solver is
-> doing the best the library allows and saying so.
+## Headline finding (P0 — fixed)
+The independent oracle immediately found what v1's could not: the **`soy` allergen
+checkbox did not exclude textured vegetable protein (TVP)** — defatted soy flour,
+~50% soy protein — so a soy-allergic user was being served it. TVP forms lived only
+in a *separate* `"soy protein"` key. v1's oracle used the app's own matcher, so
+asking "is TVP soy?" returned the same wrong `false`. Fixed in `dietaryFilter.js`
+(TVP/textured vegetable protein/soy protein isolate/concentrate added to `soy`;
+soybean oil deliberately still permitted). **Re-run proof: 1k MC seed 42, P0 339 → 0.**
 
 ## Fixes made
-None. No P0 or P1 defect survived verification, so the triage→fix→re-run loop had nothing to run.
-(That is the honest outcome, not a skipped step.)
+| finding | sev | fix | regression | before → after |
+|---|---|---|---|---|
+| `soy` allergen omitted TVP → served to soy-allergic users | **P0** | TVP/TSP/soy-protein forms added to `dietaryFilter.soy` | `tests/qc/soyTvpLeak.test.js` | 329 leak instances → **0** |
+| `nuts` omitted chestnut/nutella/praline → "Cooked Chestnut" shipped in a recipe | **P0** | added terms + a water-chestnut guard | `tests/qc/soyTvpLeak.test.js` | 1 reachable recipe → **0** |
+| gelato→dairy, natto→soy, triticale/matzo/graham→gluten uncaught (non-reachable) | P1 | added to the respective lists | same | corpus gaps closed |
+| **`tree nuts` checkbox key omitted chestnut/nutella (+ harness tested wrong key)** | **P0** | synced "tree nuts" to "nuts" + drift guard; fixed harness keys | `treeNutParity.test.js` | reachable leak → **0** |
+| login 500 on non-string email (Prisma-operator object) | P1 | type-check strings up front | `authInjection.test.js` | 500 → 400 |
+| SSRF: importer fetched internal/private hosts | P2 | `isBlockedHost` guard pre-fetch | `importerSsrf.test.js` | fetched → refused |
+| importer: absurd qty → Infinity grams; deep-nest HTML → stack overflow | P2 | qty cap 1e6; tree depth cap 500 | `importerFuzz.test.js` | corrupt/crash → clean |
+| floored target hid the achievable rate (3 customers) | UX | expose `achievableRate` on Engine/Today/Profile | `flooredRate.test.js` | "not achievable" → real rate |
+| BMR citations never rendered; metric rate picker showed lb/wk | UX | render provenance; kg/wk primary in metric | build | trust signal shown |
+| **"keto" mode targeted ~150g carbs (not ketogenic)** | correctness | keto macro branch + scale-invariant carb-fraction recipe filter | `ketoMacros.test.js` | 32–117g → **~25g/day** |
+| recipe monoculture — generated templates out-competed real food | quality | 0.35 selection weight on generated templates | `monoculture.test.js` | ~4 TVP/day → 5/week |
+| **prose-declared allergen (mayo) bypassed the filter** | **P0-class** | filter folds in "Add'l ingredients:" | `proseAllergen.test.js` | Banh Mi kept 1 → **0** for egg allergy |
+| (oracle self) peanut butter false-flagged as dairy; bare "bran"/"flour" over-claimed gluten; wine/vinegar mis-flagged | — | plant-dairy stripping + narrowed gluten list + physical-exemption class | `oracle-selfcheck.test.js` | verifier false pos → 0 |
 
-## Still open
-- **Phase 2 (UI walkthroughs)** — needs the Claude Chrome extension reconnected, then four persona
-  walks (beginner / keto+dairy-allergy / power user / impatient skimmer) with the UX-rules ledger.
-- **Optional live-brain smoke** (≤10 calls) — only on the owner's explicit go.
+**14k allergen sweep:** started at 31 leak candidates → **0 solver-reachable leaks** in every category. 11 residuals remain, all 0-recipe USDA edge foods (infant formula, "X as ingredient in omelet"), deferred with rationale. 3 false-exclusions (rice flour / corn tortilla under gluten) left as deliberate safe-direction over-exclusion — narrowing them would weaken allergen safety.
 
-## Re-run everything
-```bash
-cd backend
-npm run qc:mc -- --n=10000 --seed=42   # Monte Carlo (any N); report -> docs/qc/monte-carlo-report.md
-npm run qc:smoke                        # 1k smoke, exits 1 on any P0
-npm run qc:fuzz                         # break-it; --assert exits 1 on any 500/hang/leak
-```
-Every simulated user is a pure function of `(seed, run index)`, so any failing run in
-`docs/qc/failures.jsonl` replays byte-identically from its logged seed. This is a permanent,
-repeatable regression harness — not a one-off.
+## Re-run commands
+_(wired into package.json before being cited)_

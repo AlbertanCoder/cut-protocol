@@ -71,9 +71,46 @@ jobs:
           npm run seed
           npm run seed:recipes
 
+      # Guard the guard (fleet finding tests-quality-1). Every tripwire in
+      # backend/scripts/runTests.mjs is only reachable while `npm test` still
+      # routes through it. The bug that started this — `node --test
+      # tests/**/*.test.js`, which bash silently collapsed to a single `*` and
+      # skipped 27 of 62 files including the P0 allergen sweep — cost nothing to
+      # write and was invisible once written. If anyone reintroduces a shell glob
+      # here, fail loudly instead of quietly certifying a fraction of the suite.
+      #
+      # Deliberately inline and deliberately OUTSIDE `npm test`: a guard that
+      # runs via the thing it is guarding cannot catch that thing being bypassed.
+      - name: Test entrypoint guard
+        working-directory: backend
+        run: |
+          node --input-type=module -e '
+            import { readFileSync } from "node:fs";
+            const s = JSON.parse(readFileSync("package.json", "utf8")).scripts.test || "";
+            const problems = [];
+            if (!s.includes("scripts/runTests.mjs")) problems.push("it no longer routes through scripts/runTests.mjs (the file that owns discovery + the MIN_TEST_FILES / MIN_TESTS tripwires)");
+            if (s.includes("*")) problems.push("it contains a shell glob; discovery must happen in JS, never in a shell");
+            if (problems.length) {
+              console.error("CI FAIL - the backend test entrypoint regressed.");
+              console.error("  scripts.test = " + JSON.stringify(s));
+              for (const p of problems) console.error("  - " + p);
+              process.exit(1);
+            }
+            console.log("test entrypoint OK - " + JSON.stringify(s));
+          '
+
       - name: Run backend tests
         working-directory: backend
         run: npm test
+
+      # QC gauntlet regression gate: the Monte-Carlo P0 bar (0 allergy leaks,
+      # 0 floor breaches, 0 macro drift, 0 crashes, 0 network calls). The qc
+      # unit tests (allergen matcher, floor dominance, determinism, SSRF,
+      # importer/auth fuzz) already run in `npm test` above; this adds the
+      # seeded 1k simulation on top. --assert exits non-zero on any P0.
+      - name: QC Monte-Carlo smoke (P0 gate)
+        working-directory: backend
+        run: npm run qc:smoke
 
   frontend:
     runs-on: ubuntu-latest

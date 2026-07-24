@@ -188,6 +188,42 @@ model Food {
   // a migration, and a normalized FoodNutrient table would put ~2M rows in SQLite for
   // 50k foods. Null = no micronutrient data for this food (honest absence, not zero).
   micros   Json?
+  // ── Allergen metadata (2026-07-23, findings dietary-safety-2 / -4 / -5) ──
+  // ONE root cause behind three findings: every import path already COMPUTED
+  // authoritative allergen signals and then threw them away, because the Food
+  // table had nowhere to put them. Name-keyword matching was left as the only
+  // evidence, and prepared-dish names defeat it ("Cheeseburger" contains no
+  // word-bounded "cheese", "Eggnog" no word-bounded "egg").
+  //
+  // All three columns are NULLABLE on purpose: every pre-existing row keeps
+  // working and simply contributes no metadata evidence. They are ADDITIVE
+  // evidence only — dietaryFilter.js unions them with the name/keyword verdict
+  // and can never use them to CLEAR an exclusion another source raised (the
+  // add-only invariant, asserted in tests/allergenMetadata.test.js).
+  //
+  // USDA FoodData Central's own food-category string, verbatim ("Dairy and Egg
+  // Products", "Finfish and Shellfish Products", "Sausages and Luncheon
+  // Meats"…). scripts/lib/fdcDataset.js has always parsed this off the raw
+  // record (normalizeFdcRecord → fdcCategory) and the bulk importer reads it
+  // for the alcohol-energy exception — it was simply never persisted, so the
+  // authoritative-category signal could not survive the import. Null = the row
+  // did not come from FDC, or predates this column.
+  fdcCategory String?
+  // Declared allergens, normalised to lowercase Open Food Facts tag slugs with
+  // the language prefix stripped ("milk", "gluten", "crustaceans"…), stored as
+  // a JSON string array — same one-JSON-column convention as `micros` and
+  // Profile.excludedFoods, for the same reason: a new allergen vocabulary term
+  // must not cost a migration. Written by the barcode import from OFF's
+  // `allergens_tags`. Null = no allergen declaration available (honest
+  // absence); [] = the source explicitly declared none.
+  allergenTags Json?
+  // Trace / "may contain" statements, same normalised shape, from OFF's
+  // `traces_tags`. Kept SEPARATE from allergenTags because they are a weaker
+  // claim ("made on shared equipment") and the caller must be able to tell the
+  // two apart when explaining an exclusion. Default policy is still to EXCLUDE
+  // on a trace for a declared allergy — see TRACE_POLICY_DEFAULT in
+  // src/lib/dietaryFilter.js.
+  mayContain Json?
   createdAt DateTime @default(now())
 
   ingredientOf RecipeIngredient[]

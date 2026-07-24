@@ -49,6 +49,10 @@ const FIELDS = [
   "code", "product_name", "generic_name", "brands", "quantity",
   "nutrition_data_per", "serving_size", "serving_quantity",
   "nutriments", "status", "status_verbose",
+  // Allergen declaration. Requested here so offImport can persist it — without
+  // these two the whole barcode allergen path stores null and dietary-safety-4
+  // stays dormant no matter how well the downstream code handles them.
+  "allergens_tags", "traces_tags",
 ].join(",");
 
 // Accepts UPC-E (6-8), UPC-A (12), EAN-8/13, GTIN-14 — digits only, spaces
@@ -262,6 +266,13 @@ async function lookupUpc(rawUpc) {
     estimated: macros.estimated,
     incomplete: [macros.kcal, macros.protein, macros.fat, macros.carb].some((v) => v == null),
     notes: macros.notes,
+    // Passed through verbatim — offImport.allergenFieldsFromOffProduct() does the
+    // normalising. This file stays an honest fetch-and-shape and deliberately
+    // does not interpret an allergen declaration. null means "OFF told us
+    // nothing" (honest absence); an empty array means "declared none", and those
+    // two must not collapse into each other.
+    allergens_tags: Array.isArray(p.allergens_tags) ? p.allergens_tags : null,
+    traces_tags: Array.isArray(p.traces_tags) ? p.traces_tags : null,
   };
 }
 

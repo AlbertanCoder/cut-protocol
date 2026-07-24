@@ -153,6 +153,8 @@ const CATEGORY_SYNONYMS = {
     "malt", "seitan", "spelt", "semolina", "bulgur", "cracker", "crackers",
     "noodle", "noodles", "tortilla", "tortillas", "cereal", "breadcrumb",
     "breadcrumbs", "flour", "orzo", "panko",
+    // QC gauntlet v2 (2026-07-23) — wheat-based grains the celiac sweep missed.
+    "triticale", "matzo", "matzah", "graham",
     "stock cube", "stock powder", "bouillon", "gravy mix", "gravy granules",
     // Stage-C audit: gluten carriers the celiac live-test found on the plate —
     // pasta shapes, pastry, dumpling wrappers, and the hidden-wheat sauces
@@ -216,9 +218,27 @@ const CATEGORY_SYNONYMS = {
     // remaining milk-carrying sweets/breads from the vegan-side list
     // (butter/cream confections, yogurt/ghee flatbread) and burrata.
     "burrata", "white chocolate", "toffee", "caramel sauce", "naan",
+    // QC gauntlet v2 (2026-07-23) — gelato is milk-based; it was uncaught.
+    "gelato",
+    // Wave 2 (2026-07-23) — a name that says "lactose" is a milk-derived
+    // product by definition, including the LACTOSE-FREE ones: lactose-free
+    // milk and lactose-free infant formula are still cow's-milk protein, which
+    // is the thing a dairy ALLERGY reacts to (lactose intolerance and milk
+    // allergy are different conditions and this filter serves the dangerous
+    // one). Measured leak: three "Infant formula, ABBOTT NUTRITION, SIMILAC,
+    // SENSITIVE (LACTOSE FREE)" rows reached a dairy allergy in the real
+    // 14,124-food table.
+    "lactose",
   ],
   soy: [
     "soy", "soya", "tofu", "edamame", "tempeh", "miso", "soybean",
+    // QC gauntlet v2 (2026-07-23) — P0 soy leak: the "soy" checkbox did NOT
+    // catch textured vegetable protein (defatted soy flour, ~50% soy protein),
+    // so a soy-allergic user was being served TVP. These protein forms are now
+    // excluded here too (they were only in the separate "soy protein" key).
+    // Oil is deliberately NOT added — soybean oil stays permitted, as before.
+    "tvp", "textured vegetable protein", "textured soy protein",
+    "soy protein isolate", "soy protein concentrate", "soy protein", "natto",
     "stock cube", "stock powder", "bouillon", "gravy mix", "gravy granules",
   ],
   // A free-text "soy protein" exclusion (this app's original primary account
@@ -232,6 +252,12 @@ const CATEGORY_SYNONYMS = {
     "almond", "walnut", "cashew", "pecan", "pistachio", "hazelnut",
     "macadamia", "peanut", "nut",
     "mixed nuts", "nut mix", "trail mix",
+    // QC gauntlet v2 (2026-07-23) — nut leak: "Cooked Chestnut" (an ingredient
+    // in a real recipe) and the hazelnut/almond confections below reached a
+    // nut-allergic user. chestnut is an FDA tree nut; it gets a per-word guard
+    // (below) so WATER chestnut — not a nut — is not swept up.
+    "chestnut", "brazil nut", "pine nut",
+    "nutella", "praline", "pralines", "gianduja", "marzipan",
   ],
   // egg carriers include the emulsions built on raw egg (Stage-C: aioli and
   // custard reached an egg-allergic user).
@@ -267,13 +293,267 @@ const CATEGORY_SYNONYMS = {
   // Peanuts are legumes — a peanut allergy is NOT a tree-nut allergy and
   // vice-versa, so these are deliberately separate lists.
   peanuts: ["peanut", "peanuts", "groundnut", "peanut butter", "peanut oil", "satay"],
+  // THIS is the key the UI's "Tree nuts" checkbox actually sends (see
+  // routes/profile.js allergyOptions). It MUST stay in sync with `nuts` above —
+  // a QC persona (2026-07-23) found chestnut/nutella missing HERE while present
+  // in `nuts`, so an anaphylactic tree-nut user was served "Cooked Chestnut".
+  // A drift-guard test (tests/qc/treeNutParity.test.js) now asserts the two keys
+  // agree on the critical terms. chestnut uses the water-chestnut word-guard in
+  // matchesExclusionTerm.
   "tree nuts": [
     "almond", "walnut", "cashew", "pecan", "pistachio", "hazelnut",
-    "macadamia", "brazil nut", "pine nut", "praline", "marzipan", "amaretto",
+    "macadamia", "brazil nut", "pine nut", "praline", "pralines", "marzipan", "amaretto",
+    "chestnut", "nutella", "gianduja",
     "nut butter", "mixed nuts", "nut mix", "trail mix",
   ],
   sesame: ["sesame", "tahini", "halva", "benne", "gomashio", "hummus", "houmous"],
+  // The remaining major declarable allergens. These keys exist so an Open Food
+  // Facts `allergens_tags` value has somewhere to land (see
+  // OFF_TAG_FAMILY below) and so a user who types one gets a category rather
+  // than a substring. Nothing in the UI sends them today, so adding them
+  // cannot change any existing profile's pool.
+  celery: ["celery", "celeriac", "celery salt", "celery seed"],
+  mustard: ["mustard", "dijon", "wholegrain mustard", "mustard seed"],
+  lupin: ["lupin", "lupine", "lupini"],
+  sulphites: ["sulphite", "sulfite", "sulphur dioxide", "sulfur dioxide", "e220"],
 };
+
+// ─────────────────────────────────────────────────────────────────────────
+// COMPOUND TOKENS — finding dietary-safety-2 (P0)
+// ─────────────────────────────────────────────────────────────────────────
+// Every keyword match in this file is word-boundary anchored (hasWordOrPlural),
+// which is what stops "bass" matching "Basil" and "ham" matching "graham". The
+// cost of that anchoring is that a PREPARED-DISH name written as one word hides
+// its allergen from every list: "Cheeseburger" contains no word-bounded
+// "cheese", "Eggnog" no word-bounded "egg", "Fishcake" no word-bounded "fish".
+// Measured 2026-07-23: all three passed their allergy exclusion.
+//
+// The fix is a CURATED dictionary, deliberately not a general splitter. An
+// unbounded splitter finds "ham" inside "graham", "nut" inside "doughnut" and
+// "butternut", "milk" inside "milkfish" (which is a FISH, not dairy) — it
+// trades one class of leak for a class of false positives that would quietly
+// starve a pool. Here nothing fires unless it is listed, so a false friend is
+// safe by construction rather than by a suppression list that can drift.
+// COMPOUND_FALSE_FRIENDS below pins that property in tests anyway.
+//
+// Semantics: a hit ADDS the listed tokens to the text being matched. The
+// original name is always preserved verbatim, so this can only ever widen a
+// match, never narrow one (the add-only rule, top to bottom).
+const COMPOUND_TOKENS = {
+  // ── dairy carriers ──
+  cheeseburger: ["cheese", "beef"],
+  cheesesteak: ["cheese", "beef"],
+  cheesecake: ["cheese"],
+  cheeseball: ["cheese"],
+  cheesy: ["cheese"],
+  milkshake: ["milk"],
+  milky: ["milk"],          // "Milky Way" — milk chocolate + nougat
+  buttermilk: ["milk"],
+  butterscotch: ["butter"],
+  buttercream: ["butter", "cream"],
+  butterfat: ["butter"],
+  creamer: ["cream"],       // non-dairy creamers are overwhelmingly caseinate
+  latte: ["milk"],
+  cappuccino: ["milk"],
+  alfredo: ["cream", "parmesan"],
+  stroganoff: ["cream", "beef"],
+  // ── egg carriers ──
+  eggnog: ["egg", "milk"],
+  eggwhite: ["egg"],
+  eggyolk: ["egg"],
+  eggroll: ["egg"],
+  mayo: ["egg"],            // "Mayo" — the list knows "mayonnaise", not the clipping
+  omelette: ["egg"],
+  omelet: ["egg"],
+  frittata: ["egg"],
+  quiche: ["egg", "cream", "pastry"],
+  carbonara: ["egg", "cheese", "bacon"],
+  // ── fish / shellfish carriers ──
+  fishcake: ["fish"],
+  fishball: ["fish"],
+  fishstick: ["fish"],
+  fishfinger: ["fish"],
+  tunafish: ["tuna"],
+  kedgeree: ["haddock"],
+  caesar: ["anchovy", "parmesan", "egg"], // Caesar dressing: anchovy + parmesan + raw egg
+  crabcake: ["crab"],
+  crabstick: ["surimi"],
+  // ── gluten carriers ──
+  shortbread: ["bread", "butter"],
+  gingerbread: ["bread"],
+  flatbread: ["bread"],
+  cornbread: ["bread"],
+  breadstick: ["bread"],
+  sourdough: ["bread"],
+  doughnut: ["bread"],      // deliberately NOT "nut" — see COMPOUND_FALSE_FRIENDS
+  donut: ["bread"],
+  wholewheat: ["wheat"],
+  biscotti: ["wheat"],
+  crouton: ["bread"],
+  matzoball: ["matzo"],
+  // ── nut carriers ──
+  peanutbutter: ["peanut"],
+};
+
+// Names that CONTAIN an allergen substring but are not that allergen. They are
+// absent from COMPOUND_TOKENS on purpose; this array is the executable record
+// of that decision (tests/allergySweep.test.js asserts every one of them stays
+// clear of the listed terms). Add to this list, not to a suppression rule.
+const COMPOUND_FALSE_FRIENDS = [
+  { name: "Graham crackers", mustNotMatch: ["peanuts"], mustNotStyle: ["halal"], why: "'ham' inside 'graham' is not pork" },
+  { name: "Hamburger, plain", mustNotMatch: [], mustNotStyle: ["halal"], why: "a hamburger is beef; 'ham' inside 'hamburger' is not pork" },
+  { name: "Eggplant, raw", mustNotMatch: ["egg", "eggs"], mustNotStyle: [], why: "aubergine is a vegetable" },
+  { name: "Nutmeg, ground", mustNotMatch: ["tree nuts", "nuts"], mustNotStyle: [], why: "nutmeg is a seed spice, not a tree nut" },
+  { name: "Butternut squash, raw", mustNotMatch: ["dairy", "tree nuts", "nuts"], mustNotStyle: [], why: "neither butter nor a nut" },
+  { name: "Butterhead lettuce", mustNotMatch: ["dairy"], mustNotStyle: [], why: "a lettuce cultivar" },
+  { name: "Butterflied chicken breast", mustNotMatch: ["dairy"], mustNotStyle: [], why: "'butterflied' is a cut, not butter" },
+  { name: "Coconut, raw", mustNotMatch: ["tree nuts", "nuts"], mustNotStyle: [], why: "this codebase's nut lists deliberately exclude coconut" },
+  { name: "Water chestnut, canned", mustNotMatch: ["tree nuts", "nuts"], mustNotStyle: [], why: "an aquatic vegetable" },
+  { name: "Doughnuts, glazed", mustNotMatch: ["tree nuts", "nuts"], mustNotStyle: [], why: "'nut' inside 'doughnut' is not a nut" },
+  { name: "Milkfish, raw", mustNotMatch: ["dairy"], mustNotStyle: [], why: "milkfish is a fish; it carries no milk" },
+];
+
+const escapeRe = (w) => w.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+// One alternation, longest-first so a longer compound wins over a shorter one
+// that prefixes it. Built once — this runs over 14,144 names in the sweep.
+const COMPOUND_RE = new RegExp(
+  "\\b(" + Object.keys(COMPOUND_TOKENS).sort((a, b) => b.length - a.length).map(escapeRe).join("|") + ")(?:es|s)?\\b",
+  "gi",
+);
+const compoundCache = new Map();
+const COMPOUND_CACHE_MAX = 20000;
+
+/**
+ * Return `name` with the tokens implied by any curated compound word appended.
+ * ADD-ONLY BY CONSTRUCTION: the input string is returned unmodified with text
+ * appended, never edited or removed, so every match that fired on the raw name
+ * still fires on the expanded one.
+ */
+function expandCompoundTokens(name) {
+  const s = String(name ?? "");
+  if (!s) return s;
+  const cached = compoundCache.get(s);
+  if (cached !== undefined) return cached;
+
+  let extra = null;
+  COMPOUND_RE.lastIndex = 0;
+  let m;
+  while ((m = COMPOUND_RE.exec(s)) !== null) {
+    for (const token of COMPOUND_TOKENS[m[1].toLowerCase()]) (extra ||= new Set()).add(token);
+  }
+  const out = extra ? `${s} ${[...extra].join(" ")}` : s;
+  if (compoundCache.size >= COMPOUND_CACHE_MAX) compoundCache.clear();
+  compoundCache.set(s, out);
+  return out;
+}
+
+// ─────────────────────────────────────────────────────────────────────────
+// FREE-TEXT ALIASES — finding dietary-safety-5 (P1)
+// ─────────────────────────────────────────────────────────────────────────
+// A term that isn't a CATEGORY_SYNONYMS key used to degrade straight to literal
+// substring matching. That silently under-excludes exactly the people most at
+// risk: someone who types the symptom or the protein they react to rather than
+// the checkbox label. Measured 2026-07-23: "lactose" did not exclude whole
+// milk, "wheat" did not exclude semolina, "prawn" did not exclude shrimp.
+//
+// Each alias resolves to an existing CATEGORY_SYNONYMS key, so the user gets
+// the WHOLE category. The literal term is still applied on top (union, never
+// replacement) — "lactose" therefore matches both the dairy category and any
+// product that literally says lactose.
+const FREE_TEXT_ALIASES = {
+  // dairy
+  milk: "dairy", lactose: "dairy", "lactose intolerance": "dairy", casein: "dairy",
+  caseinate: "dairy", "sodium caseinate": "dairy", whey: "dairy", "whey protein": "dairy",
+  lactalbumin: "dairy", lactoglobulin: "dairy", "milk protein": "dairy",
+  "milk solids": "dairy", milkfat: "dairy", "milk fat": "dairy", butter: "dairy",
+  cheese: "dairy", cream: "dairy", yogurt: "dairy", yoghurt: "dairy", ghee: "dairy",
+  // gluten / wheat
+  wheat: "gluten", "wheat flour": "gluten", semolina: "gluten", durum: "gluten",
+  spelt: "gluten", farro: "gluten", kamut: "gluten", einkorn: "gluten", emmer: "gluten",
+  triticale: "gluten", seitan: "gluten", gliadin: "gluten", barley: "gluten",
+  rye: "gluten", malt: "gluten", bulgur: "gluten", freekeh: "gluten", celiac: "gluten",
+  coeliac: "gluten", "gluten intolerance": "gluten", "wheat protein": "gluten",
+  // egg
+  albumen: "egg", albumin: "egg", ovalbumin: "egg", "egg white": "egg",
+  "egg whites": "egg", "egg yolk": "egg", ovomucoid: "egg", lysozyme: "egg",
+  // peanut (a legume — deliberately NOT the tree-nut category)
+  peanut: "peanuts", groundnut: "peanuts", groundnuts: "peanuts", arachis: "peanuts",
+  "arachis oil": "peanuts", "monkey nut": "peanuts", "goober pea": "peanuts",
+  // tree nuts
+  nut: "tree nuts", "tree nut": "tree nuts", treenut: "tree nuts", "treenuts": "tree nuts",
+  almond: "tree nuts", walnut: "tree nuts", cashew: "tree nuts", pecan: "tree nuts",
+  pistachio: "tree nuts", hazelnut: "tree nuts", macadamia: "tree nuts",
+  // soy
+  soya: "soy", soybean: "soy", soybeans: "soy", soja: "soy", tofu: "soy",
+  edamame: "soy", tempeh: "soy", "soy lecithin": "soy",
+  // fish
+  finfish: "fish", anchovy: "fish", anchovies: "fish", salmon: "fish", tuna: "fish",
+  cod: "fish", "fish sauce": "fish",
+  // shellfish
+  crustacean: "shellfish", crustaceans: "shellfish", prawn: "shellfish",
+  prawns: "shellfish", shrimp: "shellfish", crab: "shellfish", lobster: "shellfish",
+  mollusc: "shellfish", molluscs: "shellfish", mollusk: "shellfish", mollusks: "shellfish",
+  scampi: "shellfish", langoustine: "shellfish",
+  // sesame + the remaining declarables
+  tahini: "sesame", benne: "sesame", gingelly: "sesame", "sesame seed": "sesame",
+  "sesame seeds": "sesame",
+  celeriac: "celery",
+  dijon: "mustard",
+  lupine: "lupin", lupini: "lupin",
+  sulphite: "sulphites", sulfite: "sulphites", sulfites: "sulphites",
+  "sulphur dioxide": "sulphites", "sulfur dioxide": "sulphites",
+};
+
+// The canonical allergen family behind each CATEGORY_SYNONYMS key. Needed so a
+// structured allergen TAG ("en:milk") and a typed term ("lactose") can be
+// compared: both resolve to the family "dairy".
+const SYNONYM_KEY_FAMILY = {
+  dairy: "dairy", gluten: "gluten", egg: "egg", eggs: "egg", fish: "fish",
+  shellfish: "shellfish", soy: "soy", "soy protein": "soy", peanuts: "peanut",
+  nuts: "tree-nut", "tree nuts": "tree-nut", sesame: "sesame", celery: "celery",
+  mustard: "mustard", lupin: "lupin", sulphites: "sulphites", kiwi: "kiwi",
+};
+
+/**
+ * Resolve one user-supplied exclusion term.
+ * Returns { term, key, synonymKey, family, kind, recognised, note }.
+ *   kind "category" — the term IS a known category key
+ *   kind "alias"    — the term maps onto one (lactose → dairy)
+ *   kind "literal"  — unrecognised; applied as a plain substring match, and
+ *                     flagged so the UI can say so out loud. Fail-safe: an
+ *                     unrecognised term still filters, it is never dropped.
+ */
+function resolveExclusionTerm(term) {
+  const key = String(term ?? "").trim().toLowerCase();
+  if (!key) return { term, key: "", synonymKey: null, family: null, kind: "empty", recognised: false, note: null };
+  if (CATEGORY_SYNONYMS[key]) {
+    return { term, key, synonymKey: key, family: SYNONYM_KEY_FAMILY[key] || null, kind: "category", recognised: true, note: null };
+  }
+  const alias = FREE_TEXT_ALIASES[key];
+  if (alias) {
+    return {
+      term, key, synonymKey: alias, family: SYNONYM_KEY_FAMILY[alias] || null, kind: "alias", recognised: true,
+      note: `matched as the "${alias}" allergen category`,
+    };
+  }
+  return {
+    term, key, synonymKey: null, family: null, kind: "literal", recognised: false,
+    note: "not a recognised allergen — matching on text only",
+  };
+}
+
+/**
+ * UI surface for the above: describe every term on a profile so the screen can
+ * distinguish "we understand this allergy" from "we are grepping your text".
+ * Silent failure is banned (CLAUDE.md), and a literal-only match is a partial
+ * failure the user is entitled to see.
+ */
+function describeExclusionTerms(terms) {
+  return (terms || [])
+    .map((t) => resolveExclusionTerm(t))
+    .filter((r) => r.kind !== "empty")
+    .map(({ term, key, synonymKey, family, kind, recognised, note }) => ({ term, key, synonymKey, family, kind, recognised, note }));
+}
 
 // Default keto threshold is on carb-per-100g of the raw ingredient, not a
 // typical realistic serving size - a disclosed simplification.
@@ -366,7 +646,9 @@ function recipeExcludedByStyle(recipe, dietaryStyle) {
   // dairy may not share a dish (fish + dairy is fine). Only checkable at
   // recipe level, so it lives here rather than in excludedByStyle().
   if (dietaryStyle === "kosher") {
-    const names = recipe.ingredients.map((i) => i.name);
+    // Compound-expanded for the same reason every other path is: "Cheeseburger"
+    // is the canonical meat+dairy dish and neither word is word-bounded in it.
+    const names = recipe.ingredients.map((i) => expandCompoundTokens(i.name));
     const hasMeat = names.some((n) => matchesAny(n, MEAT_KEYWORDS));
     const hasDairy = names.some(isKosherDairy);
     if (hasMeat && hasDairy) return true;
@@ -437,7 +719,16 @@ function isVeganAnimalProduct(n) {
 }
 
 function excludedByStyle(food, dietaryStyle) {
-  const n = food.name;
+  // ADD-ONLY: persisted metadata can raise a style exclusion the name never
+  // could ("Cheeseburger, fast food" under USDA's Fast Foods category still
+  // relies on the name, but "Milk, whole" filed under "Dairy and Egg Products"
+  // does not). It is checked FIRST and can only return true — it never
+  // short-circuits to false, so the name logic below always still runs.
+  // Carnivore is excluded from this by design; see styleExcludedByMetadata().
+  if (dietaryStyle !== "carnivore" && styleExcludedByMetadata(food, dietaryStyle)) return true;
+  // Prepared-dish compound names ("Cheeseburger" → cheese + beef) — additive,
+  // the raw name is preserved inside the expanded string.
+  const n = expandCompoundTokens(food.name);
   if (dietaryStyle === "vegan") {
     return isVeganAnimalProduct(n);
   }
@@ -495,13 +786,22 @@ const DIETARY_STYLES = ["none", "mediterranean", "vegetarian", "vegan", "paleo",
 // Does a single exclusion term match this food/ingredient name? Exported
 // pure so callers can apply the exact same rule to recipe.ingredients[].name,
 // not just food.name.
-function matchesExclusionTerm(name, term) {
+function matchesExclusionTerm(rawName, term) {
   // Defense-in-depth: a non-string term (e.g. a number that slipped past
   // validation) must never throw here — it would 500 every recipe screen.
-  const key = String(term ?? "").trim().toLowerCase();
+  const resolved = resolveExclusionTerm(term);
+  const key = resolved.key;
   if (!key) return false;
-  const synonyms = CATEGORY_SYNONYMS[key];
+  // Prepared-dish names are matched against the compound-expanded text (the
+  // raw name plus any tokens a curated compound implies). Purely additive —
+  // see expandCompoundTokens().
+  const name = expandCompoundTokens(rawName);
+  const synonyms = resolved.synonymKey ? CATEGORY_SYNONYMS[resolved.synonymKey] : null;
   if (synonyms) {
+    // An ALIAS also keeps its own literal text as an extra probe: "lactose"
+    // means the dairy category UNION anything literally saying lactose. Union,
+    // never replacement — an alias can only widen what the raw term matched.
+    if (resolved.kind === "alias" && name.toLowerCase().includes(key)) return true;
     // "milk" needs the same plant-milk qualifier check the vegan/vegetarian
     // style filter already uses - a dairy allergy must not remove almond
     // milk just because "milk" is a dairy synonym. Multi-word synonym
@@ -515,6 +815,16 @@ function matchesExclusionTerm(name, term) {
       if (word === "milk") return isDairyMilk(name);
       if (word === "cream") return hasWord(name, "cream") && !hasPhrase(name, "cream of tartar") && !matchesAny(name, PLANT_MILK_QUALIFIERS);
       if (word === "butter") return isDairyButterOrCream(name);
+      // chestnut is a tree nut, but WATER chestnut is an aquatic vegetable — a
+      // nut allergy must not remove it. Same guard shape as the dairy words.
+      // hasWordOrPlural, NOT hasWord: the singular-only match leaked all 18
+      // "Nuts, chestnuts, japanese/chinese/european, …" rows plus bare
+      // "Chestnuts" to a tree-nut allergy — measured against the real
+      // 14,124-food table by scripts/qc/sweep14k.mjs on 2026-07-23, the same
+      // plural-blindness class as the Phase 4 "Prawns" finding. The water-
+      // chestnut guard still holds: hasPhrase("water chestnuts", "water
+      // chestnut") is true, so the vegetable stays available.
+      if (word === "chestnut") return hasWordOrPlural(name, "chestnut") && !hasPhrase(name, "water chestnut");
       return matchesTermList(name, word);
     });
   }
@@ -524,9 +834,220 @@ function matchesExclusionTerm(name, term) {
   return name.toLowerCase().includes(key);
 }
 
-function excludedByList(food, excludedFoods) {
+// ═════════════════════════════════════════════════════════════════════════
+// PERSISTED ALLERGEN METADATA — findings dietary-safety-2 and -4
+// ═════════════════════════════════════════════════════════════════════════
+// Food rows can now carry three signals the import paths always computed and
+// then discarded (see backend/prisma/schema.prisma → model Food):
+//
+//   fdcCategory   USDA's own category string ("Dairy and Egg Products")
+//   allergenTags  declared allergens, normalised Open Food Facts tag slugs
+//   mayContain    trace / "may contain" statements, same shape
+//
+// ── THE ADD-ONLY RULE (the whole point of this section) ───────────────────
+// Metadata may only ADD an exclusion. It may NEVER clear one that the
+// name/keyword logic already raised. This is enforced STRUCTURALLY, not by
+// discipline: every probe below can only PUSH a reason onto an array, the
+// verdict is `reasons.length > 0`, and there is no code path anywhere in
+// exclusionEvidence() that removes a reason or short-circuits a later probe on
+// a negative result. A probe returning "no evidence" contributes nothing; it
+// cannot veto another probe. If ANY source says "contains dairy", the food is
+// dairy. tests/allergenMetadata.test.js asserts this against deliberately
+// contradictory metadata (empty tag arrays, a "Vegetables" category on a
+// cheeseburger) — an invariant that isn't tested will be violated within a
+// month.
+
+// Trace / "may contain" policy. DEFAULT: EXCLUDE.
+// Rationale: `mayContain` only ever appears because a manufacturer chose to
+// declare cross-contamination risk on a product they sell. For a DECLARED
+// allergy that is a medical-severity signal, and the cost of honouring it is a
+// slightly smaller pool while the cost of ignoring it is anaphylaxis. It is
+// also the direction this codebase already chose everywhere else ("over-
+// exclusion is the correct failure direction"). Callers who want the softer
+// behaviour pass { traces: "flag" }: the evidence still comes back in
+// `reasons` marked advisory, so the UI can show it, but it alone will not
+// remove the food.
+const TRACE_POLICY_DEFAULT = "exclude";
+
+// Open Food Facts allergen/traces tag slug → canonical allergen family.
+// OFF ships tags language-prefixed ("en:milk", "fr:lait"); normaliseAllergenTag
+// strips the prefix, so only the slug is keyed here. Sub-species tags are
+// mapped to their family so "en:hazelnuts" behaves like "en:nuts".
+const OFF_TAG_FAMILY = {
+  milk: "dairy", milks: "dairy", "milk-proteins": "dairy", lactose: "dairy",
+  cream: "dairy", butter: "dairy", cheese: "dairy", whey: "dairy", casein: "dairy",
+  gluten: "gluten", wheat: "gluten", barley: "gluten", rye: "gluten", oats: "gluten",
+  spelt: "gluten", kamut: "gluten", "cereals-containing-gluten": "gluten",
+  eggs: "egg", egg: "egg",
+  peanuts: "peanut", peanut: "peanut",
+  nuts: "tree-nut", "tree-nuts": "tree-nut", almonds: "tree-nut", hazelnuts: "tree-nut",
+  walnuts: "tree-nut", "cashew-nuts": "tree-nut", cashews: "tree-nut",
+  pistachios: "tree-nut", "pecan-nuts": "tree-nut", "macadamia-nuts": "tree-nut",
+  "brazil-nuts": "tree-nut", "queensland-nuts": "tree-nut",
+  soybeans: "soy", soy: "soy", soja: "soy",
+  fish: "fish",
+  crustaceans: "shellfish", molluscs: "shellfish", mollusks: "shellfish", shellfish: "shellfish",
+  "sesame-seeds": "sesame", sesame: "sesame",
+  celery: "celery",
+  mustard: "mustard",
+  lupin: "lupin",
+  "sulphur-dioxide-and-sulphites": "sulphites", sulphites: "sulphites", sulfites: "sulphites",
+};
+
+// USDA FoodData Central category → the allergen families a food in it carries.
+// Only categories that are UNAMBIGUOUS about a family appear. USDA combines
+// pairs ("Dairy and Egg Products", "Finfish and Shellfish Products"), and a row
+// in such a category is treated as carrying BOTH — a dairy-allergic user
+// therefore also loses eggs filed under that category. That is over-exclusion,
+// which is this codebase's documented safe direction, and it only ever applies
+// as a BACKSTOP: the name almost always says which one it is, and the name is
+// checked first and independently.
+//
+// Deliberately absent, because they are too heterogeneous to be evidence of any
+// one allergen: "Nut and Seed Products" (sunflower/sesame/peanut/tree nut all
+// share it), "Legumes and Legume Products", "Cereal Grains and Pasta" (rice,
+// corn, quinoa live there), "Fast Foods", "Restaurant Foods", "Meals, Entrees,
+// and Side Dishes", "Soups, Sauces, and Gravies", "Snacks", "Sweets".
+const FDC_CATEGORY_FAMILIES = {
+  "dairy and egg products": ["dairy", "egg"],
+  "finfish and shellfish products": ["fish", "shellfish"],
+  "baked products": ["gluten"],
+};
+
+// Flesh categories — excluded for BOTH vegan and vegetarian.
+const FDC_FLESH_CATEGORIES = new Set([
+  "beef products", "pork products", "poultry products",
+  "lamb, veal, and game products", "sausages and luncheon meats",
+  "finfish and shellfish products",
+]);
+// Animal but not flesh — excluded for vegan only (vegetarians eat these).
+const FDC_ANIMAL_NONFLESH_CATEGORIES = new Set(["dairy and egg products"]);
+
+/** "en:milk" / "  MILK " / "fr:lait" → "milk" / "lait". Never throws. */
+function normaliseAllergenTag(tag) {
+  const s = String(tag ?? "").trim().toLowerCase();
+  if (!s) return "";
+  const colon = s.indexOf(":");
+  return (colon === -1 ? s : s.slice(colon + 1)).trim();
+}
+
+/**
+ * Normalise a raw allergens_tags / traces_tags value into the array shape the
+ * Food columns store. Accepts an array, a comma-separated string (OFF also
+ * ships `allergens` as free text), null, or junk. Returns null for "no
+ * declaration available" — honest absence, distinct from [] which means "the
+ * source explicitly declared none".
+ */
+function normaliseAllergenTags(raw) {
+  if (raw == null) return null;
+  const list = Array.isArray(raw) ? raw : (typeof raw === "string" ? raw.split(",") : null);
+  if (!list) return null;
+  const out = [];
+  for (const t of list) {
+    const slug = normaliseAllergenTag(t);
+    if (slug && !out.includes(slug)) out.push(slug);
+  }
+  return out;
+}
+
+/** The canonical families declared by a stored tag array. */
+function allergenTagFamilies(tags) {
+  const fams = new Set();
+  for (const t of normaliseAllergenTags(tags) || []) {
+    const fam = OFF_TAG_FAMILY[t];
+    if (fam) fams.add(fam);
+  }
+  return fams;
+}
+
+/**
+ * Every reason this food is excluded for this term, from every evidence
+ * source. `excluded` is the UNION — reasons.length > 0.
+ *
+ * food: { name, fdcCategory?, allergenTags?, mayContain? } — a plain
+ * ingredient { name } works too and simply yields name-only evidence.
+ */
+function exclusionEvidence(food, term, options = {}) {
+  const tracePolicy = options.traces || TRACE_POLICY_DEFAULT;
+  const resolved = resolveExclusionTerm(term);
+  const reasons = [];
+  if (!resolved.key) return { excluded: false, reasons, resolved };
+
+  const name = food?.name ?? food;
+
+  // ── probe 1: name / keyword evidence (incl. compound tokens + aliases) ──
+  if (matchesExclusionTerm(name, resolved.key)) {
+    reasons.push({ source: "name", detail: `name matches the "${resolved.synonymKey || resolved.key}" exclusion`, advisory: false });
+  }
+
+  // ── probe 2: authoritative USDA food category ──
+  const fdcCategory = typeof food?.fdcCategory === "string" ? food.fdcCategory.trim().toLowerCase() : null;
+  if (fdcCategory && resolved.family) {
+    const fams = FDC_CATEGORY_FAMILIES[fdcCategory];
+    if (fams && fams.includes(resolved.family)) {
+      reasons.push({ source: "fdc-category", detail: `USDA files this under "${food.fdcCategory}"`, advisory: false });
+    }
+  }
+
+  // ── probe 3: declared allergen tags ──
+  if (resolved.family && allergenTagFamilies(food?.allergenTags).has(resolved.family)) {
+    reasons.push({ source: "allergen-tag", detail: `the product declares ${resolved.family} in its allergen list`, advisory: false });
+  }
+
+  // ── probe 4: trace / "may contain" statements ──
+  if (resolved.family && allergenTagFamilies(food?.mayContain).has(resolved.family)) {
+    reasons.push({
+      source: "may-contain",
+      detail: `the product declares it may contain traces of ${resolved.family}`,
+      advisory: tracePolicy !== "exclude",
+    });
+  }
+
+  // The union. An advisory-only reason (traces under { traces: "flag" }) is
+  // surfaced but does not on its own remove the food.
+  return { excluded: reasons.some((r) => !r.advisory), reasons, resolved };
+}
+
+/**
+ * Boolean form of exclusionEvidence() — the object-aware sibling of
+ * matchesExclusionTerm(). Guaranteed to be at least as exclusive as the
+ * name-only matcher: probe 1 IS the name-only matcher, and no later probe can
+ * unset it.
+ */
+function foodMatchesExclusionTerm(food, term, options) {
+  return exclusionEvidence(food, term, options).excluded;
+}
+
+// ── style-level metadata evidence ────────────────────────────────────────
+// Same add-only rule for the dietary STYLES, with one deliberate exception:
+// carnivore is the inverted style (it excludes everything that ISN'T animal),
+// so "this row is animal" evidence would have to CLEAR an exclusion rather than
+// add one. Rather than introduce a probe with the opposite polarity into an
+// add-only union, carnivore simply does not consult metadata at all and keeps
+// its existing name-based behaviour.
+function styleExcludedByMetadata(food, dietaryStyle) {
+  const cat = typeof food?.fdcCategory === "string" ? food.fdcCategory.trim().toLowerCase() : null;
+  if (cat) {
+    if (FDC_FLESH_CATEGORIES.has(cat) && (dietaryStyle === "vegan" || dietaryStyle === "vegetarian")) return true;
+    if (FDC_ANIMAL_NONFLESH_CATEGORIES.has(cat) && dietaryStyle === "vegan") return true;
+  }
+  if (dietaryStyle === "vegan") {
+    const fams = allergenTagFamilies(food?.allergenTags);
+    if (fams.has("dairy") || fams.has("egg") || fams.has("fish") || fams.has("shellfish")) return true;
+  }
+  if (dietaryStyle === "vegetarian") {
+    const fams = allergenTagFamilies(food?.allergenTags);
+    if (fams.has("fish") || fams.has("shellfish")) return true;
+  }
+  return false;
+}
+
+// Object-aware: unions the name/keyword verdict with the persisted
+// fdcCategory / allergenTags / mayContain evidence (see exclusionEvidence).
+// A plain { name } still works and simply yields name-only evidence.
+function excludedByList(food, excludedFoods, options) {
   if (!excludedFoods || !excludedFoods.length) return false;
-  return excludedFoods.some((term) => matchesExclusionTerm(food.name, term));
+  return excludedFoods.some((term) => foodMatchesExclusionTerm(food, term, options));
 }
 
 // Whole-recipe keto carb ceiling (grams of carb in the cached recipe total),
@@ -534,28 +1055,65 @@ function excludedByList(food, excludedFoods) {
 // Single-sourced here so the solver pool (plans.js) and the library listing
 // (recipes.js) can never diverge on what "keto" hides (Stage-C fix M8).
 const KETO_RECIPE_CARB_CEILING_G = 30;
+// Keto excludes a recipe on the SHARE of its calories that come from carbs, not
+// an absolute base-gram count — because the solver scales portions up to 2x, and
+// a base-gram ceiling let a 25 g recipe through that shipped 50 g at 2x scale (a
+// QC customer found quinoa/naan/rice dishes on a "keto" plate this way). A carb
+// energy FRACTION is scale-invariant: a dish that is 25% carbs by calories is 25%
+// at any portion size. ≤15% keeps genuinely low-carb dishes while dropping the
+// grain/starch-based ones. (2026-07-23.)
+// 0.10 = the textbook keto line; measured against this library it lands the daily
+// plan at ~28 g carb/day (under the strict 30 g ceiling) with 36 meal recipes
+// eligible. Tighter (0.08 -> 25 recipes) starts emptying the pool.
+const KETO_CARB_ENERGY_FRACTION = 0.10;
 
-// True if this recipe is hidden for a keto profile by the whole-recipe ceiling.
+// True if this recipe is hidden for a keto profile.
 function recipeExceedsKetoCeiling(recipe, dietaryStyle) {
-  return dietaryStyle === "keto" && typeof recipe.carb === "number" && recipe.carb > KETO_RECIPE_CARB_CEILING_G;
+  if (dietaryStyle !== "keto" || typeof recipe.carb !== "number") return false;
+  // Prefer the scale-invariant fraction; fall back to the gram ceiling only if
+  // kcal is missing/zero (can't form a ratio).
+  if (typeof recipe.kcal === "number" && recipe.kcal > 0) {
+    return (recipe.carb * 4) / recipe.kcal > KETO_CARB_ENERGY_FRACTION;
+  }
+  return recipe.carb > KETO_RECIPE_CARB_CEILING_G;
+}
+
+// Some imported recipes declare extra ingredients in their STEP TEXT that never
+// became structured ingredient rows — the importer's "Add'l ingredients: mayonnaise,
+// siracha" pattern (QC customer #7: mayo/egg reached an egg-allergic user because
+// the filter only reads ingredient rows). Pull those declared names so the allergen
+// and diet-style checks can see them too. Defence-in-depth; the underlying data
+// still wants fixing (see docs/qc/recipe-allergen-audit.md).
+function additionalIngredientNames(steps) {
+  // Match WITHIN a single step element — joining steps first let the capture run
+  // past the declaration into the next step ("siracha  Cook the rice").
+  const arr = Array.isArray(steps) ? steps : (typeof steps === "string" ? [steps] : []);
+  for (const step of arr) {
+    const m = String(step).match(/add'?l ingredients?:\s*(.+)/i);
+    if (m) return m[1].split(/,|;|\band\b/i).map((s) => s.trim()).filter((s) => s.length > 1 && s.length < 40);
+  }
+  return [];
 }
 
 // profile: {dietaryStyle: "none"|"vegan"|"vegetarian"|"keto", excludedFoods: string[]}
-function applyDietaryFilters(pool, profile) {
+function applyDietaryFilters(pool, profile, options) {
   const dietaryStyle = profile?.dietaryStyle || "none";
   const excludedFoods = profile?.excludedFoods || [];
   if (dietaryStyle === "none" && excludedFoods.length === 0) return pool;
-  return pool.filter((food) => !excludedByStyle(food, dietaryStyle) && !excludedByList(food, excludedFoods));
+  return pool.filter((food) => !excludedByStyle(food, dietaryStyle) && !excludedByList(food, excludedFoods, options));
 }
 
 // Per-term exclusion counts against a flat food pool, so the UI can render
 // "N excluded for: gluten" - silent failure is banned.
-function traceExclusions(pool, excludedFoods) {
+// Counts the SAME way applyDietaryFilters() filters (metadata included), so
+// the number the UI shows can never diverge from the number of foods actually
+// removed.
+function traceExclusions(pool, excludedFoods, options) {
   const counts = {};
   (excludedFoods || []).forEach((term) => {
     const key = String(term ?? "").trim().toLowerCase();
     if (!key) return;
-    counts[key] = (pool || []).filter((food) => matchesExclusionTerm(food.name, key)).length;
+    counts[key] = (pool || []).filter((food) => foodMatchesExclusionTerm(food, key, options)).length;
   });
   return counts;
 }
@@ -564,13 +1122,15 @@ function traceExclusions(pool, excludedFoods) {
 // is its dish title ("Algerian Kefta"), not an ingredient, so matching a term
 // against it would silently undercount. Checks every ingredient name instead.
 // recipes: [{ingredients:[{name}]}]
-function traceRecipeExclusions(recipes, excludedFoods) {
+function traceRecipeExclusions(recipes, excludedFoods, options) {
   const counts = {};
   (excludedFoods || []).forEach((term) => {
     const key = String(term ?? "").trim().toLowerCase();
     if (!key) return;
     counts[key] = (recipes || []).filter((recipe) =>
-      (recipe.ingredients || []).some((ing) => matchesExclusionTerm(ing.name, key))
+      // An ingredient row carrying its joined Food (ing.food) contributes that
+      // row's persisted metadata too; a bare { name } falls back to name-only.
+      (recipe.ingredients || []).some((ing) => foodMatchesExclusionTerm(ing.food ? { ...ing.food, name: ing.name } : ing, key, options))
     ).length;
   });
   return counts;
@@ -586,4 +1146,25 @@ module.exports = {
   traceRecipeExclusions,
   KETO_RECIPE_CARB_CEILING_G,
   recipeExceedsKetoCeiling,
+  additionalIngredientNames,
+  // ── allergen metadata + compound tokens + free-text aliases (2026-07-23) ──
+  foodMatchesExclusionTerm,
+  exclusionEvidence,
+  styleExcludedByMetadata,
+  resolveExclusionTerm,
+  describeExclusionTerms,
+  expandCompoundTokens,
+  normaliseAllergenTag,
+  normaliseAllergenTags,
+  allergenTagFamilies,
+  COMPOUND_TOKENS,
+  COMPOUND_FALSE_FRIENDS,
+  FREE_TEXT_ALIASES,
+  OFF_TAG_FAMILY,
+  FDC_CATEGORY_FAMILIES,
+  FDC_FLESH_CATEGORIES,
+  FDC_ANIMAL_NONFLESH_CATEGORIES,
+  SYNONYM_KEY_FAMILY,
+  CATEGORY_SYNONYMS,
+  TRACE_POLICY_DEFAULT,
 };

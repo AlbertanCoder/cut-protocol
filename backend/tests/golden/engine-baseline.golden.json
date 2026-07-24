@@ -542,6 +542,8 @@
             },
             "kcalDeltaPct": -3.4,
             "proteinShortPct": 4,
+            "fatOk": true,
+            "carbOk": true,
             "inTolerance": true,
             "miss": null,
             "unfilledSlots": 0,
@@ -559,8 +561,10 @@
             },
             "kcalDeltaPct": -86.9,
             "proteinShortPct": 86.1,
+            "fatOk": false,
+            "carbOk": false,
             "inTolerance": false,
-            "miss": "289 kcal vs a 2,200 target — 1,911 under; 26 g protein vs 190 g — 164 g short",
+            "miss": "289 kcal vs a 2,200 target — 1,911 under; 26 g protein vs 190 g — 164 g short; 13 g fat vs a 50–85 g range — 37 g short; 21 g carbs vs a 150–260 g range — 129 g short",
             "unfilledSlots": 2,
             "warnedSlots": 3
           },
@@ -576,6 +580,8 @@
             },
             "kcalDeltaPct": 0,
             "proteinShortPct": 0,
+            "fatOk": true,
+            "carbOk": true,
             "inTolerance": true,
             "miss": null,
             "unfilledSlots": 0,
@@ -593,6 +599,8 @@
             },
             "kcalDeltaPct": -0.4,
             "proteinShortPct": 0.5,
+            "fatOk": true,
+            "carbOk": true,
             "inTolerance": true,
             "miss": null,
             "unfilledSlots": 0,
@@ -610,8 +618,10 @@
             },
             "kcalDeltaPct": -51.8,
             "proteinShortPct": 47.5,
+            "fatOk": true,
+            "carbOk": false,
             "inTolerance": false,
-            "miss": "1,061 kcal vs a 2,200 target — 1,139 under; 100 g protein vs 190 g — 90 g short",
+            "miss": "1,061 kcal vs a 2,200 target — 1,139 under; 100 g protein vs 190 g — 90 g short; 77 g carbs vs a 150–260 g range — 73 g short",
             "unfilledSlots": 0,
             "warnedSlots": 3
           },
@@ -627,6 +637,8 @@
             },
             "kcalDeltaPct": -4.6,
             "proteinShortPct": 1,
+            "fatOk": true,
+            "carbOk": true,
             "inTolerance": true,
             "miss": null,
             "unfilledSlots": 0,
@@ -644,8 +656,10 @@
             },
             "kcalDeltaPct": -100,
             "proteinShortPct": 100,
+            "fatOk": false,
+            "carbOk": false,
             "inTolerance": false,
-            "miss": "0 kcal vs a 2,200 target — 2,200 under; 0 g protein vs 190 g — 190 g short",
+            "miss": "0 kcal vs a 2,200 target — 2,200 under; 0 g protein vs 190 g — 190 g short; 0 g fat vs a 50–85 g range — 50 g short; 0 g carbs vs a 150–260 g range — 150 g short",
             "unfilledSlots": 3,
             "warnedSlots": 3
           }
@@ -655,11 +669,13 @@
         "feasible": false,
         "reasons": [
           "8 meal-eligible recipes × max 2 servings/week = 16 servings for 21 meal slots — the back half of the week will run on poor fits.",
-          "Your targets need ~8.6g protein per 100 kcal; only 8 of 8 eligible recipes come close (12+ needed for a full varied week)."
+          "Your targets need ~8.6g protein per 100 kcal; only 8 of 8 eligible recipes come close (12+ needed for a full varied week).",
+          "2 day(s) landed outside your 50–85 g fat range, and 3 day(s) landed outside your 150–260 g carb range — portion scaling moves a dish's calories, not its fat/carb ratio, so the pool's composition is what binds here."
         ],
         "suggestions": [
           "Allow batch-cooking repeats, reduce meals per day, or AI-generate more compliant recipes.",
-          "Set the protein-preference filter, or AI-generate a few high-protein recipes to deepen the pool."
+          "Set the protein-preference filter, or AI-generate a few high-protein recipes to deepen the pool.",
+          "Add (or AI-generate) a few recipes built around the macro you keep missing, or drop the cuisine/protein preference so the solver can reach dishes that carry it."
         ]
       },
       "attempts": 3
@@ -783,7 +799,9 @@
             "fatInRange": true,
             "carbInRange": true
           },
-          "hasWarnings": true
+          "hasWarnings": true,
+          "inTolerance": true,
+          "miss": null
         },
         {
           "slots": [
@@ -900,7 +918,9 @@
             "fatInRange": true,
             "carbInRange": true
           },
-          "hasWarnings": true
+          "hasWarnings": true,
+          "inTolerance": true,
+          "miss": null
         },
         {
           "slots": [
@@ -1017,7 +1037,9 @@
             "fatInRange": true,
             "carbInRange": false
           },
-          "hasWarnings": true
+          "hasWarnings": true,
+          "inTolerance": true,
+          "miss": null
         }
       ],
       "diagnosis": {

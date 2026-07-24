@@ -14,7 +14,12 @@
     "brain:purity": "node scripts/checkBrainPurity.mjs",
     "supply:check": "node scripts/checkSupplyChain.mjs",
     "security:all": "node scripts/scanSecrets.mjs --tracked && node scripts/checkBrainPurity.mjs && node scripts/checkSupplyChain.mjs",
-    "dist:check": "node scripts/checkDistSafe.mjs"
+    "dist:check": "node scripts/checkDistSafe.mjs",
+    "release": "npm run build:frontend && electron-builder --publish always",
+    "license:keygen": "node electron/licenseTool.cjs keygen"
+  },
+  "dependencies": {
+    "electron-updater": "^6.6.2"
   },
   "devDependencies": {
     "electron": "^43.1.1",
@@ -31,6 +36,7 @@
       "backend/**/*",
       "frontend/dist/**/*",
       "CutProtocol.ico",
+      "!electron/licenseTool.cjs",
       "!backend/prisma/dev.db",
       "!backend/prisma/dev.db-journal",
       "!backend/prisma/dev.db.template",
@@ -62,6 +68,14 @@
     ],
     "extraResources": [
       { "from": "backend/prisma/dev.db.template", "to": "dev.db.template" }
+    ],
+    "publish": [
+      {
+        "provider": "github",
+        "owner": "AlbertanCoder",
+        "repo": "cut-protocol",
+        "releaseType": "release"
+      }
     ],
     "win": {
       "icon": "CutProtocol.ico",
