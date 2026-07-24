@@ -23,4 +23,16 @@ function postCheck(text, { refusalKey = "off_topic" } = {}) {
   return { ok: true, response: t };
 }
 
-module.exports = { postCheck, LEAK_RE, NUMBER_CLAIM_RE };
+// scanForLeak(text) — the LEAK half of postCheck() on its own, for STRUCTURED
+// (non-chat) model output. The NUMBER_CLAIM rule deliberately does NOT apply
+// there: a recipe draft's JSON legitimately contains gram amounts, and those
+// numbers are never trusted anyway (recipeGeneration.js recomputes every macro
+// from resolved Food rows). The leak scan still applies to every surface — the
+// model must never echo the system prompt, the <user_data> delimiters, a key,
+// or env access, whatever the shape of the reply.
+function scanForLeak(text) {
+  const t = String(text ?? "");
+  return LEAK_RE.test(t) ? { ok: false, reason: "leak" } : { ok: true };
+}
+
+module.exports = { postCheck, scanForLeak, LEAK_RE, NUMBER_CLAIM_RE };

@@ -37,6 +37,14 @@ function isBrainEnabled() {
 const BRAIN_TIMEOUT_MS = 15000;
 const BRAIN_MODEL = "claude-opus-4-8";
 
+// A long-form STRUCTURED generation (recipe drafting) legitimately takes longer
+// than a judgment turn — thinking + 8k output tokens. It still gets a HARD
+// bound: an unbounded model call is a hang, and a hang on an Express route is an
+// occupied socket, not an error anyone can see. Env-overridable, never infinite.
+const DRAFT_TIMEOUT_MS = Number(process.env.BRAIN_DRAFT_TIMEOUT_MS) > 0
+  ? Number(process.env.BRAIN_DRAFT_TIMEOUT_MS)
+  : 90000;
+
 // Strip an optional ```json … ``` fence, then JSON.parse. Throws on invalid JSON.
 function parseJSON(text) {
   const trimmed = String(text || "").trim();
@@ -65,6 +73,29 @@ async function askJSON({ system, user, maxTokens = 1024, model = BRAIN_MODEL, on
   const textBlock = (response.content || []).find((b) => b.type === "text");
   if (!textBlock) throw new Error("brain: no text content in response");
   return parseJSON(textBlock.text);
+}
+
+// askSchemaJSON({ system, user, schema }) -> parsed JSON object, constrained by
+// a json_schema output format. Same transport, same lazy keyless client, same
+// zero-retry policy as askJSON — the ONE place a structured generation reaches
+// Anthropic. Exists so aiRecipeClient.js (recipe drafting) stops constructing a
+// second SDK client of its own: one transport = one place to bound, meter and
+// mock. Bounded by `timeoutMs` (default DRAFT_TIMEOUT_MS). Usage is surfaced via
+// onUsage BEFORE any throw so the ledger books tokens that were really spent.
+async function askSchemaJSON({
+  system, user, schema, maxTokens = 4096, model = BRAIN_MODEL,
+  timeoutMs = DRAFT_TIMEOUT_MS, thinking, effort, onUsage,
+} = {}) {
+  const params = { model, max_tokens: maxTokens, system, messages: [{ role: "user", content: user }] };
+  if (thinking) params.thinking = thinking;
+  if (schema) params.output_config = { format: { type: "json_schema", schema }, ...(effort ? { effort } : {}) };
+
+  const response = await client().messages.create(params, { timeout: timeoutMs, maxRetries: 0 });
+  if (typeof onUsage === "function") onUsage(response.usage || null);
+  if (response.stop_reason === "refusal") throw new Error("model declined the request");
+  const textBlock = (response.content || []).find((b) => b.type === "text");
+  if (!textBlock) throw new Error("no text content in response");
+  return { data: parseJSON(textBlock.text), text: textBlock.text, usage: response.usage || null };
 }
 
 // Anthropic tool_use / tool_result transport. Sends the conversation with the
@@ -113,6 +144,6 @@ async function runToolLoop({ system, messages = [], tools = {}, toolDefs = [], m
 }
 
 module.exports = {
-  isBrainEnabled, askJSON, parseJSON, runToolLoop, __setClient,
-  DEPTH_PROFILES, BRAIN_TIMEOUT_MS, BRAIN_MODEL,
+  isBrainEnabled, askJSON, askSchemaJSON, parseJSON, runToolLoop, __setClient,
+  DEPTH_PROFILES, BRAIN_TIMEOUT_MS, DRAFT_TIMEOUT_MS, BRAIN_MODEL,
 };

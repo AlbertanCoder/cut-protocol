@@ -56,4 +56,25 @@ async function preGate(text, { classify = null } = {}) {
   return foodish ? verdict("allow", "food", 0.6) : verdict("refuse", "off_topic", 0.6, "off_topic");
 }
 
-module.exports = { preGate, INJECTION_RE, MEDICAL_RE, FOOD_RE, MAX_LEN };
+// preGateFieldText(text, opts) — the Tier-0 half of preGate() for STRUCTURED
+// fields rather than open chat: a recipe-drafting request's free-text note,
+// cuisine, protein, and the profile strings that ride along with it. Same
+// regexes, same module — the ONLY difference from preGate() is that the
+// fail-closed "must look like food" rule is not applied, because these fields
+// are already scoped by their position in a recipe form ("make it spicy" is a
+// legitimate value and contains no food word). Injection, extraction, secret
+// exfiltration and medical dosing are refused exactly as in chat.
+// Returns the same GuardVerdict shape. Empty/absent is ALLOWED here (an
+// optional field left blank is not an attack); preGate() refuses empty because
+// an empty chat message is a bug.
+const FIELD_MAX_LEN = 1000;
+function preGateFieldText(text, { maxLen = FIELD_MAX_LEN, medical = true } = {}) {
+  const t = String(text ?? "").trim();
+  if (t.length === 0) return verdict("allow", "empty", 1);
+  if (t.length > maxLen) return verdict("refuse", "off_topic", 1, "off_topic");
+  if (INJECTION_RE.test(t)) return verdict("refuse", "injection", 1, "injection");
+  if (medical && MEDICAL_RE.test(t)) return verdict("refuse", "medical", 1, "medical");
+  return verdict("allow", "field", 1);
+}
+
+module.exports = { preGate, preGateFieldText, INJECTION_RE, MEDICAL_RE, FOOD_RE, MAX_LEN, FIELD_MAX_LEN };

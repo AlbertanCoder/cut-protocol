@@ -5,7 +5,8 @@ const { computeMacros } = require("../lib/bmrEngine.js");
 const { getWeightNowKg } = require("../lib/weightNow.js");
 const { estimateSlotTarget } = require("../lib/weeklyPlanner.js");
 const { generateRecipeDrafts } = require("../lib/aiRecipeClient.js");
-const { sumMacros, resolveDraftIngredients, persistRecipe, RECIPE_INCLUDE } = require("../lib/recipeGeneration.js");
+const { llmAvailability } = require("../lib/brain/governance.js");
+const { sumMacros, resolveDraftIngredients, persistRecipe, resolvedDraftViolation, RECIPE_INCLUDE } = require("../lib/recipeGeneration.js");
 
 const router = express.Router();
 router.use(requireAuth);
@@ -38,6 +39,22 @@ router.get("/", async (req, res) => {
   res.json({ recipes: visible, hiddenCount: recipes.length - visible.length });
 });
 
+// GET /api/recipes/ai-status — lets a client ask whether AI drafting is armed
+// in THIS build before offering the button, the same way /api/brain/status
+// gates the chat bar. With the feature off the honest answer is "off", not a
+// broken button that 503s on click.
+router.get("/ai-status", (req, res) => {
+  const availability = llmAvailability("recipeDrafts");
+  res.json({ enabled: availability.enabled, reason: availability.reason || null });
+});
+
+// POST /api/recipes/generate-drafts — the ONE LLM-calling route outside
+// /api/brain. Governed by src/lib/brain/governance.js (fleet finding
+// brain-stack-1): the gate, the keyless 503, the injection guard, the pre-call
+// cost cap, the ledger row, the timeout and the output guard all live in
+// generateRecipeDrafts()'s governed wrapper — this handler adds no LLM policy
+// of its own, it only renders the outcome. NOTHING is written before the model
+// call returns: a refusal at any control leaves zero rows behind.
 router.post("/generate-drafts", async (req, res) => {
   const { slotType, protein, cuisine, prepTimeMin, freeText, batchStyle, allowAllergens } = req.body || {};
   if (!["meal", "snack"].includes(slotType)) return res.status(400).json({ error: "slotType must be 'meal' or 'snack'" });
@@ -51,21 +68,43 @@ router.post("/generate-drafts", async (req, res) => {
     const target = estimateSlotTarget(dailyTarget, mealConfig, slotType);
     const existingRecipeNames = (await prisma.recipe.findMany({ select: { name: true } })).map((r) => r.name);
 
-    const { drafts, droppedForAllergies } = await generateRecipeDrafts({
+    const excludedFoods = Array.isArray(profile.excludedFoods) ? profile.excludedFoods : [];
+    const dietaryStyle = profile.dietaryStyle || null;
+
+    const { drafts, droppedForAllergies, droppedForShape, allergenOverrides } = await generateRecipeDrafts({
       slotType, protein, cuisine, prepTimeMin, freeText, batchStyle,
       allowAllergens: !!allowAllergens,
       targetKcal: target.kcalTarget, targetProtein: target.proteinTarget,
       existingRecipeNames,
       // Stage-C fix (C2): the generator enforces THIS user's profile.
-      excludedFoods: Array.isArray(profile.excludedFoods) ? profile.excludedFoods : [],
-      dietaryStyle: profile.dietaryStyle || null,
+      excludedFoods,
+      dietaryStyle,
+      userId: req.userId, // ledger attribution
     });
 
+    // The allergen filter above screened the names the MODEL wrote. Resolution
+    // can land an ingredient on a differently-named Food row ("chickpea pasta"
+    // -> a wheat pasta row), so the same filter runs again on the RESOLVED
+    // names — otherwise resolution is an allergen-erasure path. The override
+    // still applies (it is the user's explicit, per-generation choice), but a
+    // violation is always reported, never silent.
     const resolved = [];
-    for (const draft of drafts) resolved.push(await resolveDraftIngredients(draft));
+    for (const draft of drafts) {
+      const r = await resolveDraftIngredients(draft);
+      const violation = resolvedDraftViolation(r, { excludedFoods, dietaryStyle });
+      if (violation) {
+        if (!allowAllergens) { droppedForAllergies.push({ name: r.name, reason: `${violation} (found after ingredient resolution)` }); continue; }
+        allergenOverrides.push({ name: r.name, reason: `${violation} (found after ingredient resolution)` });
+      }
+      resolved.push(r);
+    }
 
-    res.json({ drafts: resolved, droppedForAllergies });
+    res.json({ drafts: resolved, droppedForAllergies, droppedForShape, allergenOverrides });
   } catch (e) {
+    // A governance refusal is a DECIDED outcome with an honest status
+    // (503 off/keyless · 400 input refused · 429 cost cap · 504 timeout),
+    // never a stack trace and never a 500.
+    if (e && e.isGovernance) return res.status(e.status || 503).json({ error: e.message, code: e.code });
     res.status(e.status || 500).json({ error: e.message });
   }
 });
