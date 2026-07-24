@@ -56,6 +56,30 @@ app.use("/api/training", trainingRoutes);
 app.use("/api/diary", diaryRoutes);
 app.use("/api/brain", brainRoutes); // Stage D2: guarded chat surface (gated; inert with BRAIN=off)
 app.use("/api/micronutrients", micronutrientRoutes);
+
+// ── Identity handshake (resilience-errors-2) ────────────────────────────────
+// The desktop shell picks a port, then loads a URL. If ANOTHER process holds
+// that port, the old code happily loaded whatever answered — a different app's
+// API, or a hostile one — and the renderer would have treated its responses as
+// our own data. Reading a stranger's API as if it were your own is the real
+// danger of a port conflict; the crash is the mild failure.
+//
+// So: electron/main.cjs generates a random nonce per launch, hands it to this
+// process via CUT_PROTOCOL_NONCE, and refuses to load the window until this
+// endpoint echoes the SAME nonce back. A foreign service cannot know it.
+//
+// Public on purpose (no auth): it carries no user data, and it has to be
+// answerable before anyone has logged in. Mounted ahead of the meta router so
+// it can never be shadowed by it.
+app.get("/api/meta/whoami", (req, res) => {
+  res.json({
+    app: "cut-protocol",
+    nonce: process.env.CUT_PROTOCOL_NONCE || null,
+    pid: process.pid,
+    port: Number(process.env.PORT) || null,
+  });
+});
+
 app.use("/api/meta", require("./src/routes/meta.js")); // public: build version/OS for bug reports
 
 // Unmatched /api routes return clean JSON, not the SPA index.html (the
@@ -92,8 +116,20 @@ app.use((err, req, res, next) => {
 // file (it is never the main module), so require.main===module is false in the
 // real desktop path too. An explicit opt-out flag is the only correct guard.
 const PORT = process.env.PORT || 3001;
-if (!process.env.QC_NO_LISTEN) app.listen(PORT, () => {
-  console.log(`Cut Protocol backend listening on :${PORT}`);
+
+// resilience-errors-2: bind LOOPBACK ONLY.
+// `app.listen(PORT)` with no host binds 0.0.0.0 — every interface — which put
+// this single-user desktop app's whole API (login, profile, food data) on the
+// LAN of every coffee shop and job site the laptop ever joined. Nothing about
+// this app is meant to be reachable from another machine. HOST stays
+// overridable for the container/Railway deploy path (Dockerfile/railway.json),
+// which is the only place a non-loopback bind is legitimate.
+const HOST = process.env.HOST || "127.0.0.1";
+
+let server = null;
+if (!process.env.QC_NO_LISTEN) {
+  server = app.listen(PORT, HOST, () => {
+  console.log(`Cut Protocol backend listening on ${HOST}:${PORT}`);
   // Phase 2 guardrail: bad food/recipe data can never come back silently â€”
   // every boot re-audits the library and says so out loud.
   const { runDataQualityAudit } = require("./src/lib/dataQualityAudit.js");
@@ -119,8 +155,31 @@ if (!process.env.QC_NO_LISTEN) app.listen(PORT, () => {
       }
     })
     .catch((e) => console.error("[data-audit] failed to run:", e.message));
-});
+  });
+
+  // resilience-errors-2: a bind failure used to be an UNCAUGHT 'error' event
+  // on the http server — in the Electron main process that surfaced as a raw
+  // stack-trace dialog, and the shell then went on to load whatever foreign
+  // service owned the port. Handle it here so the failure is a value the shell
+  // can read (`module.exports.listenError`, plus the 'error' event on
+  // `module.exports.server`) instead of a crash, and keep a plain log line for
+  // the standalone `node server.js` path.
+  server.on("error", (err) => {
+    module.exports.listenError = err;
+    if (err && err.code === "EADDRINUSE") {
+      console.error(`[server] port ${PORT} on ${HOST} is already in use — refusing to start a second listener.`);
+    } else {
+      console.error("[server] listen failed:", err && err.message);
+    }
+  });
+}
 
 // Exported so the QC fuzz harness can mount the real app on an ephemeral port.
 // Requiring this file still starts the server normally unless QC_NO_LISTEN is set.
 module.exports = app;
+// `app` is a function, so these ride along without disturbing the existing
+// `module.exports = app` contract the fuzz harness depends on.
+module.exports.server = server;       // null when QC_NO_LISTEN is set
+module.exports.listenError = null;    // set by the 'error' handler above
+module.exports.host = HOST;
+module.exports.port = Number(PORT);
