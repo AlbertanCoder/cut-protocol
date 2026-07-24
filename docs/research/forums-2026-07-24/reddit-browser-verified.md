@@ -6,10 +6,13 @@ API needs OAuth). Post titles + scores + comment counts are factual data points;
 nothing is reproduced at length. This upgrades the sibling `SYNTHESIS.md` from
 "directional proxy sources" to Reddit-cited for the themes below._
 
-Pages read this pass: `r/loseit` top-of-year; `r/loseit` search (app / meal plan /
-what to eat); `r/MacroFactor` search (wish / missing / meal plan); `r/foodallergies`
-search (app / meal plan / recipe filter). More subs remain (the scrubber and the
-browser can both continue) — this is a solid first pass, not the whole of Reddit.
+Pages read: `r/loseit` top-of-year; `r/loseit` search (app / meal plan / what to
+eat); `r/MacroFactor` search (wish / missing / meal plan); `r/foodallergies`
+search (app / meal plan / recipe filter); `r/keto` search (app / net carbs /
+electrolytes / meal plan); `r/EatCheapAndHealthy` search (app / meal plan / pantry
+/ grocery / leftovers). Six subs / seven pages — broad, not exhaustive; `r/mealprep`,
+`r/intermittentfasting`, `r/Celiac`, `r/Cronometer` and `r/fitness` remain for a
+next pass (the OAuth scrubber can also sweep them structured).
 
 ## Theme 1 — "just tell me what to eat" / decision fatigue (validates the SOLVER)
 
@@ -69,6 +72,44 @@ The 348-pt "food revolves around every second" thread and the general "all-consu
 framing are the disordered-eating-adjacent pattern the new SCOFF wellbeing check and
 the no-red / calorie-floor design are meant for. Real, upvoted, and common.
 
+## Theme 7 — keto: electrolytes dominate, and "keto" plans that aren't keto (validates the ceiling)
+
+r/keto's top-of-year is success-story heavy, but the recurring *operational* pain is
+unmistakable and it's electrolytes:
+- Nearly every high-scoring plan post lists an electrolyte routine — magnesium /
+  potassium / sodium, LMNT or a drink mix "for leg cramps," and the keto-flu /
+  constipation / dry-mouth / frequent-urination cluster. This is the strongest
+  case for the **electrolyte-dashboard gap** the diet-specific agent flagged.
+- **"My Keto meal prep subscription plan has more grams than keto allows in just
+  one main meal"** — 90 pts, 81 comments. A paid "keto" meal-prep service shipping
+  28 g+ carbs per dinner. This is a direct, real-world validation of Cut Protocol's
+  **post-scale keto carb-ceiling enforcement** — the exact failure CP is built to
+  prevent.
+- **"Annoyed w dietician"** — 152 pts, 116 comments: a professional handed a keto
+  user a 190 g-carb plan with canned peaches. Generic tools/people don't respect
+  the diet; CP hard-filters it.
+- Recurring: the manual burden of tracking **net carbs** and "avoiding hidden sugars
+  (like in salad dressings) — it takes brain energy," plus references to r/Volumeeating
+  (the **satiety / volume** gap).
+- Notable safety upside: a user in recovery wrote that after "a lifetime of feeling
+  controlled and imprisoned by my disordered eating, I feel freedom and peace with
+  food" — structure can *help*, which is the supportive framing CP aims for.
+
+## Theme 8 — budget & the mental load: pantry-first and "depression meals" (validates cost + wellbeing)
+
+r/EatCheapAndHealthy's **top posts of all time** are dominated by two themes Cut
+Protocol touches:
+- **Use-what-you-have / don't-waste-food** — "dig through the back of your fridge
+  before opening newly-purchased food" (10,047 pts), "soup cubes from scraps"
+  (10,971 pts), "use all this before it expires." This is the single loudest
+  validation of the **pantry-first / leftovers / food-waste gap** — it is what this
+  community *is about*, and CP has no inventory model.
+- **"Depression meals" / low-effort when you can't cook** — 8,779 pts and 5,002 pts
+  posts about needing cheap, no-chop, shortcut meals when executive function is
+  gone. This is the mental-load / "just tell me what to eat" pain from a different
+  angle, and it reinforces the wellbeing framing (be supportive, not shaming, when
+  someone is struggling to feed themselves).
+
 ---
 
 ### Net
@@ -76,6 +117,15 @@ Every load-bearing claim in `SYNTHESIS.md` that we could reach on Reddit held up
 against real, highly-upvoted posts: the solver answers "just tell me what to eat,"
 adaptive TDEE answers the plateau/"my TDEE was wrong" pain, the MFP exodus is real,
 allergen-exclusion is a wished-for feature people try to build themselves, AI photo
-logging is distrusted, and food-preoccupation is common enough to justify the
-wellbeing check. The gaps also held: restaurant filtering, multi-person households,
-and (from the broader scrub) fast logging + mobile.
+logging is distrusted, keto's operational pain is electrolytes + carb-creep (which
+CP's ceiling enforcement targets), budget users beg for pantry-first/anti-waste
+tooling, and food-preoccupation / "depression meals" are common enough to justify
+the wellbeing check. The gaps also held: restaurant filtering, multi-person
+households, electrolyte/satiety views, pantry/leftovers, and (from the broader
+scrub) fast logging + mobile.
+
+The clearest *new build ideas* this Reddit pass surfaced, by how loudly they came
+up: **(1) pantry-first / use-what-you-have / anti-waste** (top-of-all-time energy
+in r/EatCheapAndHealthy), **(2) an electrolyte view for keto**, and **(3) making
+the 7-day rolling average the headline number** — the last is low-effort, high-value,
+and doubles as an anti-anxiety safety win.
