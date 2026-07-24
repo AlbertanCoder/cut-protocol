@@ -7,6 +7,7 @@
 const { prisma } = require("./prisma.js");
 const { resolveIngredient } = require("./ingredientResolver.js");
 const { generateRecipeDrafts } = require("./aiRecipeClient.js");
+const { recipeExcludedByStyle, matchesExclusionTerm, recipeExceedsKetoCeiling, additionalIngredientNames } = require("./dietaryFilter.js");
 
 const RECIPE_INCLUDE = { ingredients: { include: { food: true } } };
 
@@ -35,11 +36,25 @@ function sumMacros(ingredients) {
 async function resolveDraftIngredients(draft, resolveIngredientImpl = resolveIngredient) {
   const resolvedIngredients = [];
   for (const ing of draft.ingredients) {
-    const { food, matched } = await resolveIngredientImpl(ing.name);
+    const r = await resolveIngredientImpl(ing.name);
+    const { food, matched } = r;
     resolvedIngredients.push({
       foodId: food.id, name: food.name, grams: ing.grams,
       role: ing.role, scalable: ing.scalable, matched,
       placeholderMacros: matched === "placeholder",
+      // The name the DRAFT asked for, kept beside the name it resolved TO.
+      // Resolution can legitimately land on a differently-worded row, and the
+      // allergen re-check downstream needs both to explain itself.
+      requestedName: ing.name,
+      // Forwarded from the deterministic resolver ladder (Agent 03,
+      // food-data-1) — additive, so an unresolved ingredient can explain WHY
+      // and offer a shortlist instead of just showing a zero-macro row.
+      status: r.status ?? (matched === "placeholder" ? "needs_review" : "resolved"),
+      needsReview: r.needsReview ?? (matched === "placeholder"),
+      confidence: r.confidence ?? null,
+      candidates: r.candidates ?? [],
+      reason: r.reason ?? null,
+      extras: r.extras ?? [],
     });
   }
   const foods = await prisma.food.findMany({ where: { id: { in: resolvedIngredients.map((i) => i.foodId) } } });
@@ -50,7 +65,86 @@ async function resolveDraftIngredients(draft, resolveIngredientImpl = resolveIng
     name: draft.name, description: draft.description, cuisine: draft.cuisine,
     slotType: draft.slotType, prepTimeMin: draft.prepTimeMin, servings: draft.servings,
     steps: draft.steps, ingredients: resolvedIngredients, ...macros,
+    // AI provenance travels with the draft (set by aiRecipeClient's
+    // AI_PROVENANCE); preserved here so nothing downstream can mistake an
+    // LLM-authored draft for curated content. Absent for non-AI callers.
+    ...(draft.aiAuthored ? { aiAuthored: true, verified: false, provenance: draft.provenance || "ai-generated-unverified" } : {}),
   };
+}
+
+// ── Post-resolution allergen / diet re-check ───────────────────────────────
+// The allergen filter in aiRecipeClient screens the names the MODEL wrote.
+// Resolution can point an ingredient at a differently-named Food row, so the
+// SAME filter has to run again on what the recipe will actually contain —
+// otherwise ingredient resolution is an allergen-erasure path. Returns the
+// violating term/style, or null.
+// resolvedDraft: { ingredients:[{name}], steps, kcal, carb } (the shape
+// resolveDraftIngredients returns, and the shape persistRecipe consumes).
+function resolvedDraftViolation(resolvedDraft, { excludedFoods = [], dietaryStyle = null } = {}) {
+  const flat = (resolvedDraft.ingredients || []).map((i) => ({ name: i.name }));
+  for (const extra of additionalIngredientNames(resolvedDraft.steps)) flat.push({ name: extra });
+  if (dietaryStyle && recipeExcludedByStyle({ ingredients: flat }, dietaryStyle)) return dietaryStyle;
+  if (dietaryStyle && recipeExceedsKetoCeiling(resolvedDraft, dietaryStyle)) return `${dietaryStyle} carb ceiling`;
+  for (const ing of flat) {
+    for (const term of excludedFoods) {
+      if (matchesExclusionTerm(ing.name, term)) return term;
+    }
+  }
+  return null;
+}
+
+// ── Placeholder-share guard (unattended path only) ─────────────────────────
+// Agent 03's food-data-1 fix deleted the fuzzy matcher that used to rename an
+// unknown ingredient into a confidently-wrong real row. The honest replacement
+// returns a ZERO-MACRO placeholder instead. That is right for a human-reviewed
+// flow (the DraftCard shows a red warning), but the weekly solver's AI fallback
+// has no human in it at all: it would persist a recipe assembled mostly from
+// zero-macro rows, sumMacros() would UNDER-count it, and the solver could then
+// prefer that recipe precisely BECAUSE its macros look conveniently small. A
+// silently-wrong number reaching a real meal plan is the failure this project's
+// constitution puts first ("Wrong math = product death"; "silent target misses
+// are forbidden").
+//
+// THRESHOLD — refuse above ONE THIRD of the ingredient list by count, and
+// refuse any draft where a placeholder carries a SCALABLE role (protein/carb),
+// because that is the ingredient the solver will scale to hit the target:
+// zero macros there means the target can never be hit and the miss is
+// invisible. One third is chosen, not tuned: a real recipe carries a handful of
+// spices/aromatics that legitimately resolve thin, so a hard "zero placeholders"
+// rule would refuse nearly everything and effectively disable the fallback; but
+// once a third of the list has no macro data the computed total is fiction, not
+// an estimate. Deliberately NOT applied to the interactive route — a human is
+// looking at that draft and the UI already flags every placeholder row.
+const MAX_PLACEHOLDER_SHARE = 1 / 3;
+const SCALABLE_ROLES = new Set(["protein", "carb"]);
+
+function placeholderAudit(resolvedDraft) {
+  const ings = resolvedDraft.ingredients || [];
+  const placeholders = ings.filter((i) => i.placeholderMacros);
+  const share = ings.length ? placeholders.length / ings.length : 0;
+  const loadBearing = placeholders.filter((i) => SCALABLE_ROLES.has(i.role));
+  return {
+    total: ings.length,
+    placeholders: placeholders.length,
+    share,
+    names: placeholders.map((i) => i.requestedName || i.name),
+    loadBearingNames: loadBearing.map((i) => i.requestedName || i.name),
+    tooMany: share > MAX_PLACEHOLDER_SHARE,
+    loadBearingMissing: loadBearing.length > 0,
+  };
+}
+
+// Honest, quotable reason or null. The solver's diagnosis layer surfaces this
+// verbatim, so it names the ingredients rather than saying "generation failed".
+function placeholderRefusalReason(resolvedDraft) {
+  const a = placeholderAudit(resolvedDraft);
+  if (a.loadBearingMissing) {
+    return `"${resolvedDraft.name}" was refused: its main ${a.loadBearingNames.length > 1 ? "ingredients" : "ingredient"} (${a.loadBearingNames.join(", ")}) could not be matched to a food with real macros, so the recipe's calories and protein would be fiction. Add ${a.loadBearingNames.length > 1 ? "those foods" : "that food"} to the Food database, then regenerate.`;
+  }
+  if (a.tooMany) {
+    return `"${resolvedDraft.name}" was refused: ${a.placeholders} of its ${a.total} ingredients (${a.names.join(", ")}) have no macro data, so its totals would under-count. Add them to the Food database, then regenerate.`;
+  }
+  return null;
 }
 
 // resolvedDraft: the shape resolveDraftIngredients() returns, OR an
@@ -58,12 +152,17 @@ async function resolveDraftIngredients(draft, resolveIngredientImpl = resolveIng
 // known) — the interactive /save-draft route takes ingredients a human
 // already reviewed, which already carry foodId, so it builds this shape
 // itself rather than re-resolving names.
+//
+// `source` is the row's PROVENANCE marker and is whitelisted here: an
+// AI-authored recipe can never be written to the library labelled "curated".
+const RECIPE_SOURCES = new Set(["curated", "ai-generated", "imported"]);
 async function persistRecipe(resolvedDraft, { source = "ai-generated" } = {}) {
+  const provenance = RECIPE_SOURCES.has(source) ? source : "ai-generated";
   return prisma.recipe.create({
     data: {
       name: resolvedDraft.name, description: resolvedDraft.description || null, cuisine: resolvedDraft.cuisine || null,
       slotType: resolvedDraft.slotType || "meal", prepTimeMin: resolvedDraft.prepTimeMin || null,
-      steps: resolvedDraft.steps || [], source,
+      steps: resolvedDraft.steps || [], source: provenance,
       kcal: resolvedDraft.kcal, protein: resolvedDraft.protein, fat: resolvedDraft.fat, carb: resolvedDraft.carb,
       ingredients: {
         create: resolvedDraft.ingredients.map((i) => ({
@@ -85,16 +184,25 @@ function scoreDraftFit(resolvedDraft, targetRatio) {
 
 // target: {slotType, kcalTarget, proteinTarget} (weeklyPlanner.js's slot
 // target shape). profile: needs excludedFoods/dietaryStyle (safety, always
-// enforced via allowAllergens:false + the hard-coded ALLERGY_BLOCKLIST in
-// aiRecipeClient.js) and the new cuisinePreferences/mealPreferencesNote
-// fields. existingRecipeNames: passed straight to generateRecipeDrafts() to
-// reduce near-duplicates, same as the interactive route already does.
+// enforced via allowAllergens:false plus the post-resolution re-check below)
+// and the cuisinePreferences/mealPreferencesNote fields.
+// existingRecipeNames: passed straight to generateRecipeDrafts() to reduce
+// near-duplicates, same as the interactive route already does.
 //
 // Generates 3 drafts (generateRecipeDrafts()'s prompt always asks for
 // exactly 3 — not worth touching that contract just to ask for 1), picks the
 // best-fitting one, resolves + persists it as source:"ai-generated" — from
 // then on it's a normal, reusable pool recipe, same organic-growth property
 // ingredientResolver.js already has for Food rows.
+//
+// UNATTENDED PATH. Nothing here is reviewed by a human before it lands in a
+// real meal plan, so it refuses more than the interactive route does:
+//   • a governance refusal (feature off / no key / cost cap / timeout) throws
+//     an LlmRefusal straight through — weeklyPlanner's catch turns it into an
+//     honest unsolved slot rather than a crash;
+//   • a draft whose resolved ingredients violate the profile is dropped;
+//   • a draft built mostly on zero-macro placeholders is REFUSED with the
+//     reason named (see placeholderRefusalReason).
 // Last param is dependency injection for tests only (real callers never
 // pass it — defaults are the real Claude/USDA/DB-backed implementations).
 // Matches this codebase's existing fdcClient.js-style `fetchImpl` pattern
@@ -106,6 +214,11 @@ async function generateAndSaveSlotRecipe(target, profile, existingRecipeNames, d
     ? profile.cuisinePreferences[Math.floor(Math.random() * profile.cuisinePreferences.length)]
     : undefined;
 
+  const rules = {
+    excludedFoods: Array.isArray(profile.excludedFoods) ? profile.excludedFoods : [],
+    dietaryStyle: profile.dietaryStyle || null,
+  };
+
   const { drafts } = await generateDraftsImpl({
     slotType: target.slotType === "snack" ? "snack" : "meal",
     cuisine,
@@ -114,14 +227,41 @@ async function generateAndSaveSlotRecipe(target, profile, existingRecipeNames, d
     targetKcal: target.kcalTarget,
     targetProtein: target.proteinTarget,
     existingRecipeNames,
+    excludedFoods: rules.excludedFoods,
+    dietaryStyle: rules.dietaryStyle,
+    userId: profile.userId ?? null,
   });
 
   if (!drafts.length) {
     throw new Error("Claude generated no usable drafts (all 3 may have been dropped for allergy-rule violations)");
   }
 
+  // Resolve every draft, then screen each one on what it ACTUALLY contains.
+  // Rejections are collected with their reasons so a total wipe-out can be
+  // reported honestly instead of as a bare "nothing came back".
   const resolvedDrafts = [];
-  for (const draft of drafts) resolvedDrafts.push(await resolveDraftIngredients(draft, resolveIngredientImpl));
+  const rejected = [];
+  for (const draft of drafts) {
+    const resolved = await resolveDraftIngredients(draft, resolveIngredientImpl);
+
+    const violation = resolvedDraftViolation(resolved, rules);
+    if (violation) {
+      rejected.push(`"${resolved.name}" contains ${violation} after ingredient resolution`);
+      continue;
+    }
+    const placeholderReason = placeholderRefusalReason(resolved);
+    if (placeholderReason) {
+      rejected.push(placeholderReason);
+      continue;
+    }
+    resolvedDrafts.push(resolved);
+  }
+
+  if (!resolvedDrafts.length) {
+    // LOUD and specific: the solver's diagnosis layer prints this, so it must
+    // say which ingredients failed and what the user can do about it.
+    throw new Error(`No AI draft was safe to save. ${rejected.join(" ")}`);
+  }
 
   const targetRatio = target.kcalTarget > 0 ? target.proteinTarget / target.kcalTarget : 0;
   const best = resolvedDrafts.reduce((a, b) => (scoreDraftFit(a, targetRatio) <= scoreDraftFit(b, targetRatio) ? a : b));
@@ -129,4 +269,8 @@ async function generateAndSaveSlotRecipe(target, profile, existingRecipeNames, d
   return persistRecipeImpl(best, { source: "ai-generated" });
 }
 
-module.exports = { sumMacros, resolveDraftIngredients, persistRecipe, generateAndSaveSlotRecipe, RECIPE_INCLUDE };
+module.exports = {
+  sumMacros, resolveDraftIngredients, persistRecipe, generateAndSaveSlotRecipe,
+  resolvedDraftViolation, placeholderAudit, placeholderRefusalReason,
+  MAX_PLACEHOLDER_SHARE, RECIPE_SOURCES, RECIPE_INCLUDE,
+};

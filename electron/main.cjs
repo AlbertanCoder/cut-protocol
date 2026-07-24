@@ -16,8 +16,14 @@
 
 const path = require("path");
 const fs = require("fs");
+const net = require("net");
 const http = require("http");
-const { app, BrowserWindow, Menu, shell, ipcMain } = require("electron");
+const crypto = require("crypto");
+const { app, BrowserWindow, Menu, shell, ipcMain, dialog } = require("electron");
+
+const log = require("./logger.cjs");
+const updater = require("./updater.cjs");
+const license = require("./license.cjs");
 
 // Bug reporter: hand a pre-filled GitHub issue URL to the OS browser. Only
 // http/https is ever opened (never a file:// or app-internal scheme).
@@ -40,6 +46,13 @@ ipcMain.handle("open-external", (_e, url) => {
 // dbPath comment below assume. Set the display name explicitly, before any
 // app.getPath() call, so the on-disk folder matches the product branding.
 app.setName("Cut Protocol");
+
+// Diagnostics file, opened as early as possible (right after setName, so
+// userData already resolves to "%AppData%\Cut Protocol"). Everything after
+// this point that can fail on someone else's machine writes a line here, and
+// the boot-failure screen shows the path so the user can send it.
+log.init(app);
+log.write("main", `boot - version ${app.getVersion()}, packaged=${app.isPackaged}, ${process.platform}/${process.arch}`);
 
 // backend/.env is deliberately excluded from electron-builder's `files`
 // whitelist (it holds JWT_SECRET plus the USDA/Anthropic API keys — not
@@ -107,11 +120,80 @@ app.on("second-instance", () => {
 //    backend/.env unchanged.
 // ---------------------------------------------------------------------------
 
-// Same port every time so we know what URL to poll/load below. If PORT is
-// already set in the environment (e.g. by whoever launched Electron), leave
-// it alone; otherwise default to 3001 to match backend/.env's own default.
-process.env.PORT = process.env.PORT || "3001";
-const PORT = process.env.PORT;
+// ── Port selection (resilience-errors-2) ────────────────────────────────────
+//
+// The old code did `process.env.PORT ||= "3001"` and then loaded
+// http://localhost:3001/ unconditionally. Two bad things followed from that
+// when something else already held 3001:
+//   1. the in-process backend's app.listen() threw an uncaught EADDRINUSE and
+//      Electron put a stack trace in the user's face, and
+//   2. — far worse — the shell then loaded whatever WAS on 3001. Another
+//      Node dev server, a random Electron app, or a hostile local process
+//      would have been rendered as if it were Cut Protocol, and the renderer
+//      would have posted this user's email, password and food data into it.
+//
+// Fix: probe for a genuinely free loopback port before the backend is even
+// required, prefer 3001 so the common case is unchanged, and prove identity
+// after the fact with a per-launch nonce (see verifyOwnBackend below). The
+// probe alone is not enough — between probing and binding, someone else can
+// take the port — so the nonce is the actual safety property, not the probe.
+const PREFERRED_PORT = Number(process.env.PORT) || 3001;
+const PORT_PROBE_LIMIT = 20; // 3001..3020, then give up and let :0 assign one
+
+/** Resolve true if nothing is listening on 127.0.0.1:port right now. */
+function isPortFree(port) {
+  return new Promise((resolve) => {
+    const probe = net.createServer();
+    probe.once("error", () => resolve(false));
+    probe.once("listening", () => probe.close(() => resolve(true)));
+    probe.listen(port, "127.0.0.1");
+  });
+}
+
+/** Ask the OS for any free loopback port (bind :0, read it back, release). */
+function ephemeralPort() {
+  return new Promise((resolve, reject) => {
+    const probe = net.createServer();
+    probe.once("error", reject);
+    probe.listen(0, "127.0.0.1", () => {
+      const { port } = probe.address();
+      probe.close(() => resolve(port));
+    });
+  });
+}
+
+async function choosePort() {
+  for (let p = PREFERRED_PORT; p < PREFERRED_PORT + PORT_PROBE_LIMIT; p += 1) {
+    // eslint-disable-next-line no-await-in-loop
+    if (await isPortFree(p)) {
+      if (p !== PREFERRED_PORT) {
+        log.write("main", `port ${PREFERRED_PORT} is taken by another process - using ${p} instead`);
+      }
+      return p;
+    }
+  }
+  const p = await ephemeralPort();
+  log.write("main", `ports ${PREFERRED_PORT}-${PREFERRED_PORT + PORT_PROBE_LIMIT - 1} all taken - OS assigned ${p}`);
+  return p;
+}
+
+// Per-launch shared secret. The backend echoes it from /api/meta/whoami; a
+// foreign service on the same port cannot. Random per launch, never written
+// to disk, never sent anywhere but our own loopback socket.
+const LAUNCH_NONCE = crypto.randomBytes(24).toString("hex");
+process.env.CUT_PROTOCOL_NONCE = LAUNCH_NONCE;
+
+// Loopback only. The backend defaults to this too, but being explicit HERE —
+// before the backend module is required, and therefore before its
+// `require("dotenv/config")` runs — is what makes it unconditional: dotenv
+// never overwrites a var that already exists, so even a shipped backend/.env
+// carrying `HOST=0.0.0.0` cannot put this user's food and auth API on the LAN.
+// (Raised as a residual risk in docs/qc/handoff/agent05.md §1; this closes it
+// for the desktop path. The container deploy path never goes through Electron
+// and still honours its own HOST.)
+process.env.HOST = "127.0.0.1";
+
+let PORT = String(PREFERRED_PORT); // real value assigned in bootBackend()
 
 // Contract with the backend-adaptation agent: when packaged, we point the
 // Prisma SQLite DB at a writable per-user location (the app install
@@ -142,17 +224,75 @@ if (app.isPackaged) {
 // ---------------------------------------------------------------------------
 // 2. Boot the backend in-process. Requiring this module runs it top-to-
 //    bottom exactly like `node server.js` would, which as a side effect
-//    calls app.listen(PORT, ...) near the bottom of the file. We intentionally
-//    keep this in-process (no child_process/spawn) — simplest possible
-//    lifecycle, and it dies naturally when the Electron main process exits.
+//    calls app.listen(PORT, HOST, ...) near the bottom of the file. We
+//    intentionally keep this in-process (no child_process/spawn) — simplest
+//    possible lifecycle, and it dies naturally when the Electron main process
+//    exits.
+//
+//    This is now async and deferred, because the port has to be CHOSEN first
+//    (see choosePort above) and written into process.env.PORT before the
+//    backend module is evaluated.
 // ---------------------------------------------------------------------------
-require("../backend/server.js");
+let backend = null;
+
+async function bootBackend() {
+  const port = await choosePort();
+  PORT = String(port);
+  process.env.PORT = PORT;
+  log.write("main", `backend port ${PORT} (loopback only)`);
+  backend = require("../backend/server.js");
+  return backend;
+}
 
 // ---------------------------------------------------------------------------
 // 3. Window management.
 // ---------------------------------------------------------------------------
 
 let mainWindow = null;
+
+// Boot state the splash page reads (and re-reads on load, so there is no race
+// between "main sends" and "splash is ready"). Never contains user data.
+let bootState = { phase: "starting", message: "Starting up…" };
+
+function setBootState(next) {
+  bootState = { ...bootState, ...next };
+  if (mainWindow && !mainWindow.isDestroyed()) {
+    mainWindow.webContents.send("boot-state", bootState);
+  }
+}
+
+ipcMain.handle("boot-state", () => bootState);
+ipcMain.handle("open-log-folder", () => {
+  const dir = log.getLogDir();
+  if (dir) shell.openPath(dir);
+  return dir;
+});
+ipcMain.handle("check-for-updates", () => updater.checkForUpdates({ app, dialog, BrowserWindow }, { manual: true }));
+ipcMain.handle("updater-state", () => updater.getState());
+// The renderer is served BY the backend, so it talks to its own origin with
+// relative /api paths and never needs a hard-coded port. This is exposed only
+// so the UI can display/diagnose the real port; the nonce is deliberately NOT
+// exposed — identity is proven in the main process, before anything loads.
+ipcMain.handle("backend-info", () => ({ port: Number(PORT), host: "127.0.0.1" }));
+
+/**
+ * Fetch a loopback URL and return { status, body } — small, no dependency.
+ */
+function getJson(url, timeoutMs = 1500) {
+  return new Promise((resolve, reject) => {
+    const req = http.get(url, (res) => {
+      let raw = "";
+      res.setEncoding("utf8");
+      res.on("data", (c) => { raw += c; if (raw.length > 64 * 1024) req.destroy(); });
+      res.on("end", () => {
+        try { resolve({ status: res.statusCode, body: JSON.parse(raw) }); }
+        catch { resolve({ status: res.statusCode, body: null }); }
+      });
+    });
+    req.on("error", reject);
+    req.setTimeout(timeoutMs, () => req.destroy(new Error("timeout")));
+  });
+}
 
 /**
  * Poll a URL with plain HTTP GETs until it responds (any response at all —
@@ -185,6 +325,50 @@ function waitForServer(url, { timeoutMs = 10000, intervalMs = 150 } = {}) {
   });
 }
 
+/**
+ * THE HANDSHAKE (resilience-errors-2).
+ *
+ * Ask the origin we are about to load "who are you?" and require it to echo
+ * this launch's nonce. Only our own backend process — which received the
+ * nonce through its own environment — can. Anything else on that port fails
+ * here and we refuse to load it, rather than handing it a login form.
+ *
+ * Two origins are tried in order because `localhost` and `127.0.0.1` are
+ * different origins to Chromium (cookies included). We prefer `localhost` so
+ * an existing logged-in session survives this change, and fall back to the
+ * literal loopback address if name resolution sends `localhost` somewhere
+ * else (e.g. ::1, where our 127.0.0.1-bound server is not listening).
+ *
+ * @returns {Promise<string|null>} the verified base URL, or null
+ */
+async function verifyOwnBackend(port) {
+  const candidates = [`http://localhost:${port}`, `http://127.0.0.1:${port}`];
+  let sawForeign = false;
+  for (const base of candidates) {
+    try {
+      // eslint-disable-next-line no-await-in-loop
+      const { body } = await getJson(`${base}/api/meta/whoami`);
+      if (body && body.app === "cut-protocol" && body.nonce && body.nonce === LAUNCH_NONCE) {
+        log.write("main", `handshake OK on ${base} (pid ${body.pid})`);
+        return base;
+      }
+      sawForeign = true;
+      log.write("main", `handshake REJECTED on ${base}: something else is answering there`);
+    } catch (e) {
+      log.write("main", `handshake could not reach ${base}: ${e.message}`);
+    }
+  }
+  if (sawForeign) {
+    const err = new Error(
+      `Another program is answering on port ${port}. Cut Protocol refused to talk to it — ` +
+      "your data was not sent anywhere. Close whatever else is using that port, or just restart Cut Protocol."
+    );
+    err.foreign = true;
+    throw err;
+  }
+  return null;
+}
+
 function createWindow() {
   mainWindow = new BrowserWindow({
     width: 1280,
@@ -215,31 +399,122 @@ function createWindow() {
   // come up, instead of a blank/frozen window.
   mainWindow.loadFile(path.join(__dirname, "splash.html"));
 
-  const serverUrl = `http://localhost:${PORT}/`;
-
-  waitForServer(serverUrl)
-    .then(() => {
-      if (mainWindow && !mainWindow.isDestroyed()) {
-        mainWindow.loadURL(serverUrl);
-      }
-    })
-    .catch((err) => {
-      console.error("[electron/main] " + err.message);
-      if (mainWindow && !mainWindow.isDestroyed()) {
-        const message = encodeURIComponent(err.message);
-        mainWindow.loadURL(
-          `data:text/html,<body style="font-family:sans-serif;padding:2rem"><h2>Cut Protocol failed to start</h2><p>${message}</p></body>`
-        );
-      }
-    });
-
   mainWindow.on("closed", () => {
     mainWindow = null;
   });
 }
 
+/**
+ * The whole boot sequence, in one place, with an honest failure at every step.
+ *
+ * resilience-errors-5: the old version's failure path was a `data:text/html`
+ * page with a raw exception string on it. An outside user got a white page
+ * saying "Backend did not respond at http://localhost:3001/ within 10000ms"
+ * and had nothing to do next and nothing to send anyone. Every branch below
+ * ends in splash.html's failure state instead: what happened, what it means,
+ * what to try, and the log path — with a button that opens the log folder.
+ */
+async function boot() {
+  // 1. Entitlement gate (inert until a public key is configured; always
+  //    bypassed in dev). Runs before anything expensive so a blocked build
+  //    never even opens a database.
+  const lic = license.check(app);
+  if (!lic.ok) {
+    setBootState({
+      phase: "blocked",
+      title: "This copy isn't activated yet",
+      message: lic.reason || "No valid license key was found.",
+      detail: `Drop your license.key file here and reopen Cut Protocol:\n${lic.path}`,
+      logPath: log.getLogPath(),
+    });
+    return;
+  }
+
+  // 2. Pick a port and start the backend.
+  setBootState({ phase: "starting", message: "Starting the local engine…" });
+  try {
+    await bootBackend();
+  } catch (e) {
+    log.write("main", `backend failed to load: ${e.message}`);
+    setBootState({
+      phase: "failed",
+      title: "Cut Protocol couldn't start its local engine",
+      message: e.message,
+      detail: "This is a fault in the app, not in your data — nothing was changed. Restarting usually clears it; if it doesn't, send the log below.",
+      logPath: log.getLogPath(),
+    });
+    return;
+  }
+
+  // A bind error arrives asynchronously on the server object. Surface it as a
+  // real screen rather than an uncaught main-process exception.
+  if (backend && backend.server) {
+    backend.server.on("error", (err) => {
+      log.write("main", `backend listen error: ${err.code || ""} ${err.message}`);
+      setBootState({
+        phase: "failed",
+        title: "Cut Protocol couldn't open its local port",
+        message: err.code === "EADDRINUSE"
+          ? `Port ${PORT} was taken between checking it and using it.`
+          : err.message,
+        detail: "Close any other copy of Cut Protocol and reopen it.",
+        logPath: log.getLogPath(),
+      });
+    });
+  }
+
+  // 3. Wait for it to answer, then PROVE it is ours before loading anything.
+  const probeUrl = `http://127.0.0.1:${PORT}/`;
+  try {
+    await waitForServer(probeUrl);
+  } catch (e) {
+    log.write("main", e.message);
+    setBootState({
+      phase: "failed",
+      title: "Couldn't reach the local server",
+      message: `The app's own engine didn't answer on port ${PORT}.`,
+      detail: "Your data is untouched. Close Cut Protocol completely (check the taskbar for a second copy) and open it again. If it keeps happening, the log below has the details.",
+      logPath: log.getLogPath(),
+    });
+    return;
+  }
+
+  let base;
+  try {
+    base = await verifyOwnBackend(PORT);
+  } catch (e) {
+    log.write("main", `REFUSED to load a foreign service on port ${PORT}`);
+    setBootState({
+      phase: "failed",
+      title: "Something else is using Cut Protocol's port",
+      message: e.message,
+      detail: "Cut Protocol will not load a page it can't verify — that is what stops another program from collecting your login.",
+      logPath: log.getLogPath(),
+    });
+    return;
+  }
+  if (!base) {
+    setBootState({
+      phase: "failed",
+      title: "Couldn't reach the local server",
+      message: `Nothing answered the identity check on port ${PORT}.`,
+      detail: "Close Cut Protocol completely and open it again. The log below has the details.",
+      logPath: log.getLogPath(),
+    });
+    return;
+  }
+
+  log.write("main", `loading ${base}/ (license: ${lic.state})`);
+  if (mainWindow && !mainWindow.isDestroyed()) mainWindow.loadURL(`${base}/`);
+
+  // 4. Updates last, and only after the window is already usable. Fully
+  //    fire-and-forget: offline machines log one line and carry on.
+  updater.scheduleLaunchCheck({ app, dialog, BrowserWindow });
+}
+
 app.whenReady().then(() => {
   createWindow();
+  boot();
 
   app.on("activate", () => {
     // macOS convention (re-create a window when the dock icon is clicked
@@ -249,6 +524,22 @@ app.whenReady().then(() => {
       createWindow();
     }
   });
+});
+
+// Last-resort net: an unexpected main-process throw used to be a raw Electron
+// error dialog. Log it and, if we never got as far as loading the app, show
+// the honest failure screen instead.
+process.on("uncaughtException", (err) => {
+  log.write("main", `uncaught: ${err && err.stack ? err.stack : err}`);
+  if (bootState.phase === "starting") {
+    setBootState({
+      phase: "failed",
+      title: "Cut Protocol hit an unexpected error while starting",
+      message: (err && err.message) || String(err),
+      detail: "Your data was not modified. Reopen the app; if it fails again, send the log below.",
+      logPath: log.getLogPath(),
+    });
+  }
 });
 
 app.on("window-all-closed", () => {

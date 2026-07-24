@@ -2,14 +2,29 @@
 <html>
   <head>
     <meta charset="utf-8" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; script-src 'unsafe-inline'" />
     <title>Cut Protocol</title>
     <style>
+      /* Theme tokens mirrored from frontend/src/index.css (AURORA RINGLIGHT).
+         This page loads before the app bundle exists, so it can't import
+         them — the values are kept identical by hand. */
+      :root {
+        --paper: #0b0d0c;
+        --card: #161a18;
+        --card-2: #1d2320;
+        --rule: rgba(255, 255, 255, 0.06);
+        --ink: rgba(236, 242, 238, 0.87);
+        --faint: rgba(236, 242, 238, 0.6);
+        --faint-light: rgba(236, 242, 238, 0.38);
+        --accent: #2fd576;
+        --warn: #e5a83b;
+      }
       html,
       body {
         margin: 0;
         height: 100%;
-        background: #0b1220;
-        color: #e8ecf1;
+        background: var(--paper);
+        color: var(--ink);
         font-family: -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
         display: flex;
         align-items: center;
@@ -17,25 +32,28 @@
       }
       .wrap {
         text-align: center;
+        max-width: 560px;
+        padding: 2rem;
       }
       .brand {
-        font-size: 1.4rem;
-        font-weight: 600;
-        letter-spacing: 0.02em;
-        color: #d4af37;
+        font-size: 1.15rem;
+        font-weight: 800;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--ink);
         margin-bottom: 0.75rem;
       }
       .status {
         font-size: 0.9rem;
-        color: #8b93a3;
+        color: var(--faint);
       }
       .spinner {
         margin: 0 auto 1.25rem;
         width: 28px;
         height: 28px;
         border-radius: 50%;
-        border: 3px solid rgba(212, 175, 55, 0.25);
-        border-top-color: #d4af37;
+        border: 3px solid rgba(47, 213, 118, 0.2);
+        border-top-color: var(--accent);
         animation: spin 0.8s linear infinite;
       }
       @keyframes spin {
@@ -43,13 +61,133 @@
           transform: rotate(360deg);
         }
       }
+      @media (prefers-reduced-motion: reduce) {
+        .spinner {
+          animation: none;
+          border-top-color: rgba(47, 213, 118, 0.5);
+        }
+      }
+
+      /* ── failure state ─────────────────────────────────────────────────── */
+      .fail {
+        display: none;
+        text-align: left;
+        background: var(--card);
+        border: 1px solid var(--rule);
+        border-radius: 18px;
+        padding: 1.5rem 1.6rem;
+      }
+      body.state-failed .fail,
+      body.state-blocked .fail {
+        display: block;
+      }
+      body.state-failed .booting,
+      body.state-blocked .booting {
+        display: none;
+      }
+      .fail h1 {
+        font-size: 1.05rem;
+        font-weight: 800;
+        margin: 0 0 0.6rem;
+        color: var(--ink);
+        line-height: 1.35;
+      }
+      .fail .why {
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: var(--warn);
+        margin-bottom: 0.75rem;
+        line-height: 1.5;
+        word-break: break-word;
+      }
+      .fail .detail {
+        font-size: 0.82rem;
+        color: var(--faint);
+        line-height: 1.6;
+        white-space: pre-wrap;
+        margin-bottom: 1rem;
+      }
+      .logrow {
+        border-top: 1px solid var(--rule);
+        padding-top: 0.9rem;
+        font-size: 0.75rem;
+        color: var(--faint-light);
+      }
+      .logpath {
+        font-family: ui-monospace, Consolas, "Courier New", monospace;
+        font-size: 0.72rem;
+        color: var(--faint);
+        display: block;
+        margin: 0.35rem 0 0.75rem;
+        word-break: break-all;
+        user-select: text;
+      }
+      button {
+        font: inherit;
+        font-size: 0.78rem;
+        font-weight: 700;
+        color: var(--ink);
+        background: var(--card-2);
+        border: 1px solid var(--rule);
+        border-radius: 10px;
+        padding: 0.5rem 0.9rem;
+        cursor: default;
+      }
+      button:hover {
+        border-color: var(--faint-light);
+      }
     </style>
   </head>
   <body>
     <div class="wrap">
-      <div class="spinner"></div>
-      <div class="brand">Cut Protocol</div>
-      <div class="status">Starting up&hellip;</div>
+      <div class="booting">
+        <div class="spinner"></div>
+        <div class="brand">Cut Protocol</div>
+        <div class="status" id="status">Starting up&hellip;</div>
+      </div>
+
+      <!-- resilience-errors-5: an honest boot-failure screen. Says what
+           happened, what it means for the user's data, what to do next, and
+           where the log is — instead of a raw exception string on a blank
+           page (or worse, a login form served by someone else's process). -->
+      <div class="fail" role="alert">
+        <div class="brand">Cut Protocol</div>
+        <h1 id="fail-title">Cut Protocol couldn&rsquo;t start</h1>
+        <div class="why" id="fail-message"></div>
+        <div class="detail" id="fail-detail"></div>
+        <div class="logrow">
+          <span>Diagnostic log</span>
+          <span class="logpath" id="fail-log">(not available)</span>
+          <button id="open-log" type="button">Open log folder</button>
+        </div>
+      </div>
     </div>
+
+    <script>
+      (function () {
+        var api = window.cutProtocol;
+        var body = document.body;
+
+        function render(s) {
+          if (!s) return;
+          body.className = "state-" + (s.phase || "starting");
+          if (s.phase === "failed" || s.phase === "blocked") {
+            document.getElementById("fail-title").textContent = s.title || "Cut Protocol couldn't start";
+            document.getElementById("fail-message").textContent = s.message || "";
+            document.getElementById("fail-detail").textContent = s.detail || "";
+            document.getElementById("fail-log").textContent = s.logPath || "(not available)";
+          } else if (s.message) {
+            document.getElementById("status").textContent = s.message;
+          }
+        }
+
+        if (!api) return; // opened outside Electron — stays on the plain splash
+        api.getBootState().then(render).catch(function () {});
+        api.onBootState(render);
+        document.getElementById("open-log").addEventListener("click", function () {
+          api.openLogFolder();
+        });
+      })();
+    </script>
   </body>
 </html>

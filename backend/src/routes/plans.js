@@ -149,26 +149,27 @@ router.post("/generate", async (req, res) => {
       take: RECENCY_WEIGHTS.length,
       include: { slots: { select: { recipeId: true } } },
     });
-    const weekResult = await generateBestWeekPlan(dailyTarget, mealConfig, pool, {
-      bias: buildBias(filters, costCache),
-      allowBatchRepeats: filters.allowBatchRepeats,
-      filters,
-      counts: poolCounts,
-      priorUsage: buildPriorUsage(priorPlans),
-    });
-    const freshSlots = weekResult.slots;
     // A locked slot is only carried forward if its recipe still complies with
     // the CURRENT diet/allergy rules (Stage-C L9). Otherwise a slot locked
     // before a diet change (goat locked, then the user goes vegan) would
     // persist a now-forbidden meal into the regenerated plan — the fresh
     // compliant slot replaces it instead, and its lock is dropped.
     const compliantPoolIds = new Set(recipePool.map((r) => r.id));
-    const finalSlots = freshSlots.map((s) => {
-      const locked = lockedByKey.get(slotKey(s));
-      return locked && compliantPoolIds.has(locked.recipeId)
-        ? { ...s, recipeId: locked.recipeId, proteinScale: locked.proteinScale, sidesScale: locked.sidesScale, ingredients: locked.ingredients, kcal: locked.kcal, protein: locked.protein, fat: locked.fat, carb: locked.carb, warning: locked.warning, locked: true }
-        : s;
+    // solver-core-1: the locks go INTO the solve as fixed constraints, so the
+    // open slots are sized around them and weekResult.score describes EXACTLY
+    // the week we are about to store. Substituting them in afterwards (what
+    // this used to do) published a match % for a week that never existed.
+    const lockedSlots = [...lockedByKey.values()]
+      .filter((s) => s.recipeId != null && compliantPoolIds.has(s.recipeId));
+    const weekResult = await generateBestWeekPlan(dailyTarget, mealConfig, pool, {
+      bias: buildBias(filters, costCache),
+      allowBatchRepeats: filters.allowBatchRepeats,
+      filters,
+      counts: poolCounts,
+      priorUsage: buildPriorUsage(priorPlans),
+      lockedSlots,
     });
+    const finalSlots = weekResult.slots; // locks already in place — do NOT re-substitute
 
     // One transaction for the whole rewrite (audit Tier 4): the old shape —
     // deleteMany, then dozens of sequential upserts — could die midway and
@@ -231,8 +232,12 @@ router.post("/day-options", async (req, res) => {
     }
     const prevDayIds = new Set((plan?.slots || []).filter((s) => s.dayOfWeek === dayOfWeek - 1 && s.recipeId).map((s) => s.recipeId));
 
+    // solver-core-1 (day level): /accept-day keeps this day's locked slots
+    // regardless of the candidate chosen, so the candidates must be solved and
+    // scored WITH them.
+    const lockedSlots = (plan?.slots || []).filter((s) => s.locked && s.dayOfWeek === dayOfWeek && s.recipeId);
     const result = await generateDayCandidates({
-      dailyTarget, mealConfig, recipePool, dayOfWeek, filters, weekUsage, prevDayIds, profile,
+      dailyTarget, mealConfig, recipePool, dayOfWeek, filters, weekUsage, prevDayIds, lockedSlots, profile,
     });
     // Attach recipe names for display (candidates carry ids + numbers only).
     const nameById = new Map(recipePool.map((r) => [r.id, r.name]));

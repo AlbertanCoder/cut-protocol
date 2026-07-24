@@ -1,10 +1,11 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import { Search, ArrowLeft, ChevronRight, ChevronDown, Save, BookOpen, NotebookPen, Barcode, AlertTriangle } from "lucide-react";
 import { C } from "../lib/theme.js";
 import { FOOD_CATEGORIES, CATEGORY_LABEL, CATEGORY_DOT, SOURCE_LABEL, dataQualityFlag } from "../data/foodCategories.js";
 import { Card, Btn, Chip, PageHead, Stat, ErrorNote } from "./ui/Parts.jsx";
 import { SkeletonRows } from "./ui/Skeleton.jsx";
-import { api } from "../lib/api.js";
+import { api, isAbortError, describeError } from "../lib/api.js";
+import { useAbortSignal } from "../lib/useAbortable.js";
 import BarcodeLookup from "./BarcodeLookup.jsx";
 
 const g1 = (n) => Math.round(n * 10) / 10;
@@ -50,14 +51,17 @@ function FoodDetail({ food, isAdmin, onSaved, refreshFoods }) {
   const [notice, setNotice] = useState(null);
   const [recipePicker, setRecipePicker] = useState(false);
   const [recipes, setRecipes] = useState(null);
+  const [recipeError, setRecipeError] = useState(null); // NOT the same as "no recipes"
   const [recipeQuery, setRecipeQuery] = useState("");
   const [addBusyId, setAddBusyId] = useState(null);
+  const abort = useAbortSignal();
 
   useEffect(() => {
     setDraft(null);
     setError(null);
     setNotice(null);
     setRecipePicker(false);
+    setRecipeError(null);
   }, [food.id]);
 
   const inpStyle = { background: C.card2, border: `1.5px solid ${C.rule}`, color: C.ink };
@@ -76,21 +80,35 @@ function FoodDetail({ food, isAdmin, onSaved, refreshFoods }) {
       const res = await api.putFood(food.id, {
         kcal: +draft.kcal, protein: +draft.protein, fat: +draft.fat,
         carb: +draft.carb, fiber: +draft.fiber, category: draft.category,
-      });
+      }, { signal: abort.signal });
       setDraft(null);
       setNotice(`Saved — ${res.recipesRecomputed} recipe(s) recomputed.`);
-      await refreshFoods();
+      // The save already succeeded; a failed list refresh is reported by the
+      // list itself and must not be re-told here as a failed save.
+      await refreshFoods().catch(() => {});
       onSaved(res.food);
     } catch (e) {
-      setError(e.message + (e.status === 400 ? " (values must satisfy kcal ≈ 4P + 4C + 9F)" : ""));
+      if (isAbortError(e)) return;
+      setError(describeError(e) + (e.status === 400 ? " (values must satisfy kcal ≈ 4P + 4C + 9F)" : ""));
     } finally {
       setBusy(false);
     }
   };
 
+  // Guarded (frontend-arch-4): this was an unguarded async handler — a failed
+  // GET /recipes threw into the global rejection handler (crash dialog) and
+  // left the picker showing skeleton rows forever.
   const openRecipePicker = async () => {
     setRecipePicker(true);
-    if (!recipes) setRecipes((await api.getRecipes()).recipes);
+    if (recipes) return;
+    setRecipeError(null);
+    try {
+      const res = await api.getRecipes({ signal: abort.signal });
+      setRecipes(res.recipes);
+    } catch (e) {
+      if (isAbortError(e)) return;
+      setRecipeError(describeError(e, "Couldn't load your recipes."));
+    }
   };
 
   const addToRecipe = async (recipe) => {
@@ -101,12 +119,13 @@ function FoodDetail({ food, isAdmin, onSaved, refreshFoods }) {
         ...recipe.ingredients.map((i) => ({ foodId: i.foodId, grams: i.baseGrams, role: i.role, scalable: i.scalable })),
         { foodId: food.id, grams: 100, role: null, scalable: true },
       ];
-      await api.updateRecipe(recipe.id, { ingredients });
+      await api.updateRecipe(recipe.id, { ingredients }, { signal: abort.signal });
       setNotice(`Added 100 g to "${recipe.name}" — adjust grams on the Recipes tab.`);
       setRecipePicker(false);
       setRecipes(null);
     } catch (e) {
-      setError(e.message);
+      if (isAbortError(e)) return;
+      setError(describeError(e));
     } finally {
       setAddBusyId(null);
     }
@@ -212,8 +231,13 @@ function FoodDetail({ food, isAdmin, onSaved, refreshFoods }) {
           <input placeholder="Search recipes…" value={recipeQuery} onChange={(e) => setRecipeQuery(e.target.value)}
             className="text-sm px-3 py-2 rounded-xl w-full mb-2" style={inpStyle} />
           <div className="max-h-56 overflow-y-auto">
-            {recipes === null ? (
+            {recipeError ? (
+              // An error must never be drawn as "you have no recipes".
+              <ErrorNote msg={`Couldn't load your recipes — ${recipeError}`} hint="Close and reopen this picker to retry." />
+            ) : recipes === null ? (
               <SkeletonRows rows={3} />
+            ) : recipes.length === 0 ? (
+              <div className="text-sm font-semibold py-2" style={{ color: C.faint }}>You have no recipes yet — create one on the Recipes tab.</div>
             ) : (
               filteredRecipes.map((r) => (
                 <button key={r.id} onClick={() => addToRecipe(r)} disabled={addBusyId === r.id}
@@ -243,15 +267,34 @@ function FoodDetail({ food, isAdmin, onSaved, refreshFoods }) {
 export default function FoodsTab({ onBack, isAdmin }) {
   const [foods, setFoods] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState(null); // NEVER rendered as "0 foods"
   const [query, setQuery] = useState("");
   const [openCats, setOpenCats] = useState({});
   const [selected, setSelected] = useState(null);
   const [showBarcode, setShowBarcode] = useState(false);
+  const abort = useAbortSignal();
 
-  const refreshFoods = async () => setFoods(await api.getFoods());
+  // frontend-arch-4: this used to be `refreshFoods().finally(...)` — a failed
+  // GET /foods was an unhandled rejection AND left `foods` at [], so the whole
+  // screen rendered "0 foods" with every category empty. A user reads that as
+  // "my food database is gone." A load failure now says so, explicitly, and
+  // offers a retry; it is never drawn as an empty database.
+  const refreshFoods = useCallback(async () => {
+    setLoadError(null);
+    try {
+      setFoods(await api.getFoods({ signal: abort.signal }));
+    } catch (e) {
+      if (isAbortError(e)) return;
+      setLoadError(describeError(e, "Couldn't load the food database."));
+      throw e; // callers that await this (e.g. an admin save) still see it
+    } finally {
+      setLoading(false);
+    }
+  }, [abort]);
+
   useEffect(() => {
-    refreshFoods().finally(() => setLoading(false));
-  }, []);
+    refreshFoods().catch(() => {}); // surfaced via loadError, never a crash dialog
+  }, [refreshFoods]);
 
   const q = query.trim().toLowerCase();
 
@@ -268,7 +311,14 @@ export default function FoodsTab({ onBack, isAdmin }) {
 
   return (
     <div>
-      <PageHead title="Food database" sub={`${foods.length} foods · per 100 g · validated against kcal ≈ 4P + 4C + 9F`}>
+      <PageHead
+        title="Food database"
+        sub={loadError
+          ? "Couldn't load the food database — the count below is not a real count."
+          : loading
+            ? "Loading your foods…"
+            : `${foods.length} foods · per 100 g · validated against kcal ≈ 4P + 4C + 9F`}
+      >
         <Btn small kind="ghost" onClick={() => setShowBarcode((v) => !v)}>
           <Barcode size={12} className="inline mr-1" />{showBarcode ? "Hide barcode lookup" : "Add by barcode"}
         </Btn>
@@ -281,9 +331,11 @@ export default function FoodsTab({ onBack, isAdmin }) {
         <div className="mb-4">
           <BarcodeLookup
             onClose={() => setShowBarcode(false)}
+            // Guarded: a failed refresh after an import must not throw out of
+            // the callback into the crash dialog — the import itself succeeded.
             onImported={async (food) => {
-              await refreshFoods();
               setSelected(food);
+              await refreshFoods().catch(() => {});
             }}
           />
         </div>
@@ -302,6 +354,23 @@ export default function FoodsTab({ onBack, isAdmin }) {
 
           {loading ? (
             <SkeletonRows rows={7} />
+          ) : loadError ? (
+            // The failed-load state. Distinct from an empty database in both
+            // words and shape — an empty state would say "no foods", this says
+            // the load broke and offers the retry.
+            <Card>
+              <ErrorNote msg={`Couldn't load the food database — ${loadError}`}
+                hint="Your foods are still on disk; this is a load failure, not a deletion. Retry below, or restart the app if it keeps failing." />
+              <div className="mt-3">
+                <Btn small onClick={() => { setLoading(true); refreshFoods().catch(() => {}); }}>Retry</Btn>
+              </div>
+            </Card>
+          ) : foods.length === 0 ? (
+            <Card>
+              <div className="text-sm font-semibold" style={{ color: C.faint }}>
+                The food database is empty. Add a food by barcode above, or reseed the library.
+              </div>
+            </Card>
           ) : q ? (
             <Card>
               <div className="text-xs font-semibold mb-1" style={{ color: C.faint }}>

@@ -136,17 +136,51 @@ function ensureDatabaseReady() {
 // to boot the new code against the user's OLD database file and 500 on any
 // table added since that install was packaged. Now, on packaged boot, any
 // shipped Prisma migrations the user DB hasn't applied are executed
-// IN-PROCESS through PrismaClient, with an automatic timestamped backup of
-// the DB first. In-process on purpose: an earlier version spawned the
-// packaged Prisma CLI as a child, which cannot resolve its dependencies out
-// of app.asar (child processes read the archive as an opaque file) — the
-// query engine the app already runs on has no such problem.
+// IN-PROCESS, with an automatic timestamped backup of the DB first.
+// In-process on purpose: an earlier version spawned the packaged Prisma CLI
+// as a child, which cannot resolve its dependencies out of app.asar (child
+// processes read the archive as an opaque file).
 //
-// Each migration's statements run inside ONE interactive transaction (single
-// connection, so `PRAGMA defer_foreign_keys` behaves as the migration files
-// intend, and a failed migration rolls back atomically). Bookkeeping matches
-// `prisma migrate deploy`: applied names + sha256 checksums are recorded in
+// ── HARDENED 2026-07-23 (fleet finding schema-model-1, P0) ───────────────
+// The previous version ran the migration SQL through the shared PrismaClient
+// inside `prisma.$transaction`. That is unsafe in two compounding ways, both
+// measured, not theorised:
+//
+//   1. SQLite SILENTLY IGNORES `PRAGMA foreign_keys` inside a transaction
+//      ("this pragma is a no-op within a transaction"). Every Prisma
+//      RedefineTables block opens with `PRAGMA foreign_keys=OFF`, so running
+//      that block transactionally means the OFF never lands. Measured through
+//      the real Prisma path: inside `$transaction`, after
+//      `$executeRawUnsafe("PRAGMA foreign_keys=OFF")`, `pragma_foreign_keys`
+//      still reads 1. `defer_foreign_keys` does work there, but it only
+//      DEFERS the constraint CHECK to COMMIT — it does not stop FK ACTIONS.
+//      A `DROP TABLE "X"` with enforcement live performs an implicit
+//      `DELETE FROM X`, and ON DELETE CASCADE children are deleted for real.
+//      Shipped migrations DROP "User" and DROP "Recipe"; the schema has 10
+//      cascade relations hanging off them (MealLog, BrainConversation,
+//      LlmUsage, CartItem, …). Upgrading across those migrations silently
+//      ate that data.
+//   2. PRAGMAs are per-connection state, and PrismaClient is a POOL — a
+//      pragma issued outside the transaction can land on a different physical
+//      connection than the transaction that needs it.
+//
+// So the runner now owns ONE dedicated connection (`node:sqlite`, a Node core
+// module — nothing native to rebuild, nothing to resolve out of app.asar;
+// present in the Electron 43 / Node 24 runtime this app ships on) and drives
+// the sequence SQLite actually honours:
+//
+//   open → PRAGMA foreign_keys=OFF (outside any txn, read back to prove it)
+//        → BEGIN → DDL → _prisma_migrations row → PRAGMA foreign_key_check
+//        → COMMIT (or ROLLBACK on any violation/throw) → foreign_keys=ON
+//        → close
+//
+// Bookkeeping is INSIDE the transaction with the DDL, so a crash can never
+// leave the DB migrated-but-unrecorded (next boot replays DDL onto an
+// already-migrated schema) or recorded-but-unmigrated. Bookkeeping content
+// still matches `prisma migrate deploy`: applied names + sha256 checksums in
 // `_prisma_migrations`.
+
+const DEFAULT_MIGRATIONS_DIR = path.join(__dirname, "..", "..", "prisma", "migrations");
 
 // Prisma-generated SQLite migrations terminate every statement with ";" at
 // end-of-line and use only `--` line comments — split on that shape.
@@ -168,59 +202,161 @@ function splitSqlStatements(sql) {
   return statements;
 }
 
-async function ensureSchemaCurrent() {
-  const dbPath = process.env.CUT_PROTOCOL_DB_PATH;
+// `PRAGMA foreign_keys` is the one statement we must own ourselves. Prisma
+// writes it into every RedefineTables block, where it is a guaranteed no-op
+// (see the note above), and a stray `PRAGMA foreign_keys=ON` mid-run would be
+// actively dangerous if it ever did land. Strip both directions and set the
+// pragma from the runner, outside the transaction, where SQLite honours it.
+// `defer_foreign_keys` is deliberately left in place: it genuinely works
+// inside a transaction and is harmlessly inert while enforcement is off.
+function isForeignKeysPragma(stmt) {
+  return /^\s*PRAGMA\s+foreign_keys\s*=/i.test(stmt);
+}
+
+function readForeignKeysPragma(db) {
+  return Number(db.prepare("SELECT foreign_keys AS v FROM pragma_foreign_keys").get().v);
+}
+
+// File-level snapshot taken before the first statement of the first pending
+// migration. Any outstanding WAL is folded back into the main file first so
+// the copy is self-contained; the sidecars are copied too as belt and braces.
+// Restoring = copy this file back over the live path.
+function backupDatabaseFile(dbPath) {
+  const backupPath = `${dbPath}.backup-pre-migrate-${new Date().toISOString().replace(/[:.]/g, "-")}`;
+  fs.copyFileSync(dbPath, backupPath);
+  for (const suffix of ["-wal", "-shm"]) {
+    if (fs.existsSync(`${dbPath}${suffix}`)) fs.copyFileSync(`${dbPath}${suffix}`, `${backupPath}${suffix}`);
+  }
+  return backupPath;
+}
+
+// One migration, one transaction. DDL + bookkeeping + the FK audit all commit
+// together or none of them do.
+function applyOneMigration(db, migrationsDir, name) {
+  const sql = fs.readFileSync(path.join(migrationsDir, name, "migration.sql"), "utf8");
+  // Checksum is of the RAW file, exactly as `prisma migrate deploy` records it.
+  const checksum = crypto.createHash("sha256").update(sql).digest("hex");
+  const statements = splitSqlStatements(sql).filter((s) => !isForeignKeysPragma(s));
+  const startedAt = new Date().toISOString();
+
+  db.exec("BEGIN");
+  try {
+    for (const stmt of statements) db.exec(stmt);
+
+    // Bookkeeping INSIDE the transaction, on purpose — see the header note.
+    db.prepare(
+      "INSERT INTO _prisma_migrations (id, checksum, finished_at, migration_name, logs, rolled_back_at, started_at, applied_steps_count) VALUES (?, ?, ?, ?, NULL, NULL, ?, ?)"
+    ).run(crypto.randomUUID(), checksum, new Date().toISOString(), name, startedAt, statements.length);
+
+    // Last gate before the point of no return. Enforcement is off for the
+    // whole migration, which is what makes table rebuilds possible — and also
+    // what lets a bad migration strand orphaned rows with no error at all.
+    // Any row here means committing would corrupt the user's data.
+    const violations = db.prepare("PRAGMA foreign_key_check").all();
+    if (violations.length > 0) {
+      const sample = violations.slice(0, 5)
+        .map((v) => `${v.table} rowid=${v.rowid} -> ${v.parent} (fk #${v.fkid})`).join("; ");
+      throw new Error(
+        `${name} would leave ${violations.length} orphaned foreign-key row(s) — rolled back, nothing applied. First: ${sample}`
+      );
+    }
+
+    db.exec("COMMIT");
+  } catch (e) {
+    try { db.exec("ROLLBACK"); } catch { /* no active transaction — already unwound */ }
+    throw e;
+  }
+  return statements.length;
+}
+
+/**
+ * Bring the database at `dbPath` up to the shipped migration set.
+ *
+ * @param {object} [options]
+ * @param {string} [options.dbPath]        defaults to process.env.CUT_PROTOCOL_DB_PATH
+ * @param {string} [options.migrationsDir] defaults to backend/prisma/migrations
+ *
+ * Both options exist so tests can drive the real runner against a throwaway
+ * database; server.js calls it with no arguments and gets the packaged
+ * behaviour. Resolves when the DB is current (a no-op in dev, where
+ * CUT_PROTOCOL_DB_PATH is unset). Rejects — loudly, with the backup path in
+ * the message — rather than ever letting boot continue on a half-migrated DB.
+ */
+async function ensureSchemaCurrent(options = {}) {
+  const dbPath = options.dbPath || process.env.CUT_PROTOCOL_DB_PATH;
   if (!dbPath || !fs.existsSync(dbPath)) return; // dev mode / nothing to migrate
 
-  const migrationsDir = path.join(__dirname, "..", "..", "prisma", "migrations");
+  const migrationsDir = options.migrationsDir || DEFAULT_MIGRATIONS_DIR;
+  if (!fs.existsSync(migrationsDir)) return;
   const shipped = fs.readdirSync(migrationsDir)
     .filter((n) => fs.existsSync(path.join(migrationsDir, n, "migration.sql")))
     .sort();
   if (shipped.length === 0) return;
 
-  // The app-wide client in prisma.js is constructed lazily enough for this:
-  // requiring it here reuses the same instance the routes will use.
-  const { prisma } = require("./prisma.js");
+  // Required lazily so a dev boot (which returns above) never loads it or
+  // prints its ExperimentalWarning.
+  const { DatabaseSync } = require("node:sqlite");
 
-  let applied;
+  let db = null;
+  let backupPath = null;
   try {
-    const rows = await prisma.$queryRawUnsafe(
-      "SELECT migration_name FROM _prisma_migrations WHERE finished_at IS NOT NULL"
-    );
-    applied = new Set(rows.map((r) => r.migration_name));
-  } catch (e) {
-    // No bookkeeping table — this DB didn't come from `prisma migrate` and
-    // guessing would risk data. Refuse loudly and leave it untouched.
-    throw new Error(`cannot read _prisma_migrations (${e.message}) — database left untouched`);
-  }
+    // THE dedicated connection. Opened with FK enforcement on (node:sqlite's
+    // default) precisely so the explicit OFF below has something to prove.
+    db = new DatabaseSync(dbPath, { timeout: 15000 });
 
-  const pending = shipped.filter((n) => !applied.has(n));
-  if (pending.length === 0) return;
-
-  const backupPath = `${dbPath}.backup-pre-migrate-${new Date().toISOString().replace(/[:.]/g, "-")}`;
-  fs.copyFileSync(dbPath, backupPath);
-  console.log(`[desktopBootstrap] Applying ${pending.length} schema migration(s); backup at ${backupPath}`);
-
-  try {
-    for (const name of pending) {
-      const sql = fs.readFileSync(path.join(migrationsDir, name, "migration.sql"), "utf8");
-      const checksum = crypto.createHash("sha256").update(sql).digest("hex");
-      const statements = splitSqlStatements(sql);
-      const startedAt = new Date().toISOString();
-      await prisma.$transaction(async (tx) => {
-        for (const stmt of statements) await tx.$executeRawUnsafe(stmt);
-      }, { timeout: 120000 });
-      await prisma.$executeRawUnsafe(
-        "INSERT INTO _prisma_migrations (id, checksum, finished_at, migration_name, logs, rolled_back_at, started_at, applied_steps_count) VALUES (?, ?, ?, ?, NULL, NULL, ?, ?)",
-        crypto.randomUUID(), checksum, new Date().toISOString(), name, startedAt, statements.length
-      );
-      console.log(`[desktopBootstrap] applied ${name} (${statements.length} statements)`);
+    let applied;
+    try {
+      const rows = db.prepare(
+        "SELECT migration_name FROM _prisma_migrations WHERE finished_at IS NOT NULL"
+      ).all();
+      applied = new Set(rows.map((r) => r.migration_name));
+    } catch (e) {
+      // No bookkeeping table — this DB didn't come from `prisma migrate` and
+      // guessing would risk data. Refuse loudly and leave it untouched.
+      throw new Error(`cannot read _prisma_migrations (${e.message}) — database left untouched`);
     }
+
+    const pending = shipped.filter((n) => !applied.has(n));
+    if (pending.length === 0) return;
+
+    try { db.exec("PRAGMA wal_checkpoint(TRUNCATE)"); } catch { /* not in WAL mode */ }
+    backupPath = backupDatabaseFile(dbPath);
+    console.log(`[desktopBootstrap] Applying ${pending.length} schema migration(s); backup at ${backupPath}`);
+
+    // OUTSIDE the transaction — the only place SQLite honours this — and then
+    // read back, because a silently-ignored pragma here is the entire bug
+    // class this runner was rewritten to eliminate.
+    db.exec("PRAGMA foreign_keys=OFF");
+    if (readForeignKeysPragma(db) !== 0) {
+      throw new Error(
+        "could not disable foreign-key enforcement on the migration connection — refusing to run table-rebuild migrations with constraints live"
+      );
+    }
+
+    for (const name of pending) {
+      const count = applyOneMigration(db, migrationsDir, name);
+      console.log(`[desktopBootstrap] applied ${name} (${count} statements)`);
+    }
+
+    db.exec("PRAGMA foreign_keys=ON");
   } catch (e) {
-    const detail = `${e.message}\nDB backup: ${backupPath}`;
+    const where = backupPath
+      ? `\nDB backup (copy this file back over ${dbPath} to undo): ${backupPath}`
+      : "\nNo migration was started — the database was not modified.";
+    const detail = `${e.message}${where}`;
     try { fs.writeFileSync(`${dbPath}.migrate-error.log`, `${new Date().toISOString()}\n${detail}\n`); } catch { /* best effort */ }
     throw new Error(`schema migration failed: ${detail}`);
+  } finally {
+    try { if (db) db.close(); } catch { /* already closed */ }
   }
 }
 
-module.exports = { ensureDatabaseReady, ensureSchemaCurrent, getTemplateDbPath, TEMPLATE_DB_FILENAME, isValidSqlite };
+module.exports = {
+  ensureDatabaseReady,
+  ensureSchemaCurrent,
+  getTemplateDbPath,
+  TEMPLATE_DB_FILENAME,
+  isValidSqlite,
+  splitSqlStatements,
+  DEFAULT_MIGRATIONS_DIR,
+};

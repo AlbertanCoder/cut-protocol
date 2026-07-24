@@ -8,28 +8,52 @@
 const { prisma } = require("./prisma.js");
 const { computeMacros } = require("./bmrEngine.js");
 const { getWeightNowKg } = require("./weightNow.js");
-const { recipeExcludedByStyle, matchesExclusionTerm, recipeExceedsKetoCeiling } = require("./dietaryFilter.js");
+const { reconcileTarget } = require("./profileTarget.js");
+const { recipeExcludedByStyle, matchesExclusionTerm, recipeExceedsKetoCeiling, additionalIngredientNames } = require("./dietaryFilter.js");
+
+// The pool carries the diet style it was admitted under (solver-core-3).
+// "Pool membership = compliance" is this codebase's invariant, but membership is
+// decided at 1× while the solver ships PORTIONS — and its two-factor scaling can
+// double a side's carbs. Stamping the style onto each recipe lets the post-scale
+// keto ceiling in weeklyPlanner.enforceScaledCarbCeiling() re-check the shipped
+// portion without every call site having to thread a profile down. Pure: the
+// input rows are never mutated, and a null style stamps nothing.
+function stampDietGuard(recipes, dietaryStyle) {
+  if (!dietaryStyle) return recipes;
+  return recipes.map((r) => (r.dietGuardStyle === dietaryStyle ? r : { ...r, dietGuardStyle: dietaryStyle }));
+}
 
 function filterRecipePool(recipePool, profile) {
   const dietaryStyle = profile.dietaryStyle || null;
   const excludedFoods = Array.isArray(profile.excludedFoods) ? profile.excludedFoods : [];
   if (!dietaryStyle && excludedFoods.length === 0) return recipePool;
-  return recipePool.filter((recipe) => {
+  return stampDietGuard(recipePool.filter((recipe) => {
     // Shared keto ceiling — single-sourced in dietaryFilter so the library
     // listing (recipes.js) can never diverge from the solver pool (M8).
     if (recipeExceedsKetoCeiling(recipe, dietaryStyle)) return false;
     const flatIngredients = recipe.ingredients.map((i) => ({ name: i.food.name }));
-    if (recipeExcludedByStyle({ ingredients: flatIngredients }, dietaryStyle)) return false;
-    if (excludedFoods.length && flatIngredients.some((ing) => excludedFoods.some((term) => matchesExclusionTerm(ing.name, term)))) return false;
+    // Defence-in-depth: fold in any "Add'l ingredients:" the importer left in the
+    // step text but never turned into ingredient rows, so an allergen declared
+    // only in prose (e.g. mayonnaise -> egg) can't slip past the filter.
+    const addl = additionalIngredientNames(recipe.steps);
+    const checkIngredients = addl.length ? flatIngredients.concat(addl.map((name) => ({ name }))) : flatIngredients;
+    if (recipeExcludedByStyle({ ingredients: checkIngredients }, dietaryStyle)) return false;
+    if (excludedFoods.length && checkIngredients.some((ing) => excludedFoods.some((term) => matchesExclusionTerm(ing.name, term)))) return false;
     return true;
-  });
+  }), dietaryStyle);
 }
 
 async function planContext(userId) {
   const profile = await prisma.profile.findUnique({ where: { userId } });
   if (!profile) throw Object.assign(new Error("no profile set up yet"), { status: 404 });
   const weightNowKg = await getWeightNowKg(userId, profile);
-  const dailyTarget = computeMacros(profile, weightNowKg, profile.targetKcal);
+  // adaptive-tdee-2: reconcile the cached Profile.targetKcal against the live
+  // resolver before solving. This is the highest-stakes reader of that number —
+  // a stale target here is a whole WEEK of meal plans built to the wrong
+  // calorie goal, and the drift is invisible because the plan looks internally
+  // consistent. The resolver is authoritative; the row is a cache.
+  const reconciled = await reconcileTarget(userId, { profile, reason: "planContext" });
+  const dailyTarget = computeMacros(profile, weightNowKg, reconciled.target);
   const mealConfig = { meals: profile.mealsPerDay, snacks: profile.snacksPerDay };
   const rawRecipePool = await prisma.recipe.findMany({ include: { ingredients: { include: { food: true } } } });
   const recipePool = filterRecipePool(rawRecipePool, profile);
@@ -58,4 +82,4 @@ function parseFilters(body) {
   };
 }
 
-module.exports = { planContext, filterRecipePool, parseFilters };
+module.exports = { planContext, filterRecipePool, parseFilters, stampDietGuard };

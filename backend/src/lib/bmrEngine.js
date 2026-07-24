@@ -217,7 +217,15 @@ function deriveTarget(profile, tdee, rmr) {
   const raw = Math.round(tdee - deficit);
   const floor = effectiveFloor(profile, rmr);
   const target = Math.max(raw, floor);
-  return { rate, deficit, raw, target, floor, floored: raw < floor };
+  const floored = raw < floor;
+  // When the target is clamped to the floor, the chosen rate is NOT what the
+  // user will actually get. Compute and expose the rate the floored target DOES
+  // deliver, so the UI can level with them ("you'll lose about X lb/wk") instead
+  // of only saying "not achievable" and leaving them to guess. Additive fields;
+  // `target` itself is unchanged, so meal-plan output is unaffected.
+  const actualDeficit = Math.max(0, tdee - target);
+  const achievableRate = Math.round((actualDeficit * 7 / KCAL_PER_LB) * 100) / 100;
+  return { rate, deficit, raw, target, floor, floored, actualDeficit, achievableRate };
 }
 
 /**
@@ -234,7 +242,7 @@ function rateSafety(profile, weightKg, tdee, rmr) {
     reasons.push(`${rate} lb/wk is ${pctOfBw.toFixed(2)}% of your body weight per week — above the ~1% guideline`);
   }
   if (t.floored) {
-    reasons.push(`the math wants ${t.raw.toLocaleString("en-CA")} kcal, below your ${t.floor.toLocaleString("en-CA")} floor — target is clamped and the chosen rate won't actually be achieved through diet alone`);
+    reasons.push(`the math wants ${t.raw.toLocaleString("en-CA")} kcal, below your ${t.floor.toLocaleString("en-CA")} floor — so we hold you at ${t.target.toLocaleString("en-CA")}, which loses about ${t.achievableRate} lb/wk through diet alone (not the ${t.rate} you picked). To go faster, add movement, not less food`);
   }
   return { unsafe: reasons.length > 0, reasons, pctOfBw: Math.round(pctOfBw * 100) / 100 };
 }
@@ -242,21 +250,83 @@ function rateSafety(profile, weightKg, tdee, rmr) {
 // ── macros (unchanged heuristics, per-lb-LBM convention) ─────────────────
 
 const CARB_MIDPOINT_BUFFER_G = 25;
+// Keto: a real ketogenic target holds carbs to a hard low cap and lets FAT fill
+// the remaining calories — the opposite of the default (fat fixed by LBM, carbs
+// as leftover). Without this a "keto" plan targeted ~150 g carbs (a QC customer
+// found 32-117 g/day against a 30 g ceiling). ~25 g/day, ceiling 30, is standard
+// nutritional-keto. Protein stays LBM-based (moderate protein is correct on keto).
+const KETO_CARB_TARGET_G = 25;
+const KETO_CARB_LO_G = 10;
+const KETO_CARB_CEILING_G = 30;
+// When body-fat% is unknown (null OR 0 — the same dual-accept as bmrRows), lean
+// mass can't be measured, so the per-lb-LBM protein/fat would otherwise be taken
+// off the FULL bodyweight (LBM = weight × (1 − 0)), inflating a 176 lb man to
+// ~200 g protein. Assume a sex-typical body fat instead and DISCLOSE it
+// (bfAssumed) so the UI can prompt for the real number. 21/28 % are the ACE
+// adult "average/acceptable" midpoints (M/F).
+const ASSUMED_BODY_FAT_PCT = { M: 21, F: 28 };
+// Essential-fat floor (single-sourced; the keto branch uses it too): fat never
+// drops below this per-lb-LBM amount.
+const ESSENTIAL_FAT_PER_LB_LBM = 0.3;
+// A NON-keto plan holds at least this many carb grams. Below ~50 g/day a diet
+// drifts into ketosis, so squeezing a "none"/omnivore target to 0 g carbs (which
+// a lean, heavy, aggressive-deficit profile used to do) is silently making the
+// plan ketogenic. When the leftover carb falls under this floor we hold carbs
+// here and pull the calories back out of fat (down to essential fat).
+const NONKETO_CARB_FLOOR_G = 50;
 
 function computeMacros(profile, weightKg, targetKcal) {
   const weightLb = kg2lb(weightKg);
-  const lbmLb = weightLb * (1 - profile.bodyFatPct / 100);
+  const bfKnown = profile.bodyFatPct != null && profile.bodyFatPct > 0;
+  const bfForLbm = bfKnown ? profile.bodyFatPct : (profile.sex === "F" ? ASSUMED_BODY_FAT_PCT.F : ASSUMED_BODY_FAT_PCT.M);
+  const lbmLb = weightLb * (1 - bfForLbm / 100);
   const proteinLo = Math.round(lbmLb * 1.14);
   const proteinHi = Math.round(lbmLb * 1.25);
-  const fatLo = Math.round(lbmLb * 0.34);
-  const fatHi = Math.round(lbmLb * 0.4);
   const proteinMid = (proteinLo + proteinHi) / 2;
-  const fatMid = (fatLo + fatHi) / 2;
-  // Stage-C fix (#28): clamp carbs at 0. For a lean, heavy, floor-clamped
-  // target, protein+fat alone can exceed the calorie budget, which used to
-  // render nonsensical negative carb grams ("~0–-131 g") and a broken macro
-  // bar. Carbs simply floor at zero (protein+fat already meet the target).
-  const carbMid = Math.max(0, Math.round((targetKcal - proteinMid * 4 - fatMid * 9) / 4) - CARB_MIDPOINT_BUFFER_G);
+
+  // Keto branch — carbs capped, fat fills the balance. Only for dietaryStyle
+  // "keto", so every other profile (including the diet="none" golden fixture)
+  // takes the byte-identical path below and its goldens are unaffected.
+  if (profile.dietaryStyle === "keto") {
+    const carbMid = KETO_CARB_TARGET_G;
+    const fatFromBalance = Math.round((targetKcal - proteinMid * 4 - carbMid * 4) / 9);
+    const fatMid = Math.max(Math.round(lbmLb * ESSENTIAL_FAT_PER_LB_LBM), fatFromBalance); // never below essential fat
+    return {
+      lbmLb, kcal: targetKcal,
+      proteinLo, proteinHi,
+      fatLo: Math.round(fatMid * 0.9), fatHi: Math.round(fatMid * 1.12),
+      carbLo: KETO_CARB_LO_G, carbMid, carbHi: KETO_CARB_CEILING_G,
+      carbBufferG: 0,
+      macroKcalGap: Math.round(targetKcal - (proteinMid * 4 + fatMid * 9 + carbMid * 4)),
+      keto: true,
+      bfAssumed: !bfKnown, assumedBodyFatPct: bfKnown ? null : bfForLbm,
+    };
+  }
+
+  let fatLo = Math.round(lbmLb * 0.34);
+  let fatHi = Math.round(lbmLb * 0.4);
+  let fatMid = (fatLo + fatHi) / 2;
+  // Carbs are the leftover calories after LBM-based protein + fat.
+  let carbMid = Math.round((targetKcal - proteinMid * 4 - fatMid * 9) / 4) - CARB_MIDPOINT_BUFFER_G;
+  let carbFloored = false;
+  if (carbMid < NONKETO_CARB_FLOOR_G) {
+    // A lean/heavy/aggressive-deficit profile squeezes the leftover carb toward 0.
+    // For a NON-keto plan that's wrong (it silently becomes ketogenic): hold carbs
+    // at the floor and pull the calories back out of FAT, down to essential fat —
+    // the mirror image of the keto branch. If protein + essential fat + floor carbs
+    // STILL overshoot the target (Stage-C / #28: a lean, heavy, floor-clamped user),
+    // the target is too low to be non-keto at this body composition; carbs take
+    // whatever's left (never negative) and the overshoot surfaces honestly in
+    // macroKcalGap rather than as negative carb grams.
+    carbFloored = true;
+    const essentialFat = Math.round(lbmLb * ESSENTIAL_FAT_PER_LB_LBM);
+    const fatFromBalance = Math.round((targetKcal - proteinMid * 4 - NONKETO_CARB_FLOOR_G * 4) / 9);
+    fatMid = Math.max(essentialFat, fatFromBalance);
+    fatLo = Math.round(fatMid * 0.9);
+    fatHi = Math.round(fatMid * 1.12);
+    const roomForCarb = Math.round((targetKcal - proteinMid * 4 - fatMid * 9) / 4);
+    carbMid = Math.max(0, Math.min(NONKETO_CARB_FLOOR_G, roomForCarb));
+  }
   const macroKcalGap = Math.round(targetKcal - (proteinMid * 4 + fatMid * 9 + carbMid * 4));
   return {
     lbmLb,
@@ -268,6 +338,8 @@ function computeMacros(profile, weightKg, targetKcal) {
     carbHi: carbMid + 12,
     carbBufferG: CARB_MIDPOINT_BUFFER_G,
     macroKcalGap,
+    carbFloored,
+    bfAssumed: !bfKnown, assumedBodyFatPct: bfKnown ? null : bfForLbm,
   };
 }
 

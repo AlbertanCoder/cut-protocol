@@ -3,7 +3,8 @@ import { Database, ArrowRight } from "lucide-react";
 import { C } from "../lib/theme.js";
 import { Card, Stat, Btn, PageHead, ErrorNote } from "./ui/Parts.jsx";
 import AdaptiveTdeeCard from "./AdaptiveTdeeCard.jsx";
-import { api } from "../lib/api.js";
+import { api, isAbortError, isNoAnswer, describeError } from "../lib/api.js";
+import { useAbortSignal } from "../lib/useAbortable.js";
 
 const kc = (n) => Math.round(n).toLocaleString("en-CA");
 
@@ -18,24 +19,39 @@ export default function EngineTab({ profile, summary, refresh, openFoods, openPr
   const effectiveTdee = summary.adaptive?.effectiveTdee ?? energy.tdee;
   const [error, setError] = useState(null);
   const [meta, setMeta] = useState(null); // used here only for the protein-floor citation
-  useEffect(() => { api.getProfileMeta().then(setMeta).catch(() => {}); }, []);
+  const [savingKey, setSavingKey] = useState(null);
+  const abort = useAbortSignal();
+  // Citation text only — a failed fetch hides one paragraph and nothing else,
+  // so it stays silent by design (no data is misrepresented by its absence).
+  useEffect(() => {
+    api.getProfileMeta({ signal: abort.signal }).then(setMeta).catch(() => {});
+  }, [abort]);
   // Optimistic local copy so rapid formula toggles compose (same race as the
   // allergy toggles — M14). Re-syncs when the server truth changes.
   const [excludedLocal, setExcludedLocal] = useState(() => (Array.isArray(profile.excludedFormulas) ? profile.excludedFormulas : []));
   useEffect(() => { setExcludedLocal(Array.isArray(profile.excludedFormulas) ? profile.excludedFormulas : []); }, [profile.excludedFormulas]);
 
   const toggleFormula = async (key) => {
+    const truth = Array.isArray(profile.excludedFormulas) ? profile.excludedFormulas : [];
     const next = excludedLocal.includes(key) ? excludedLocal.filter((k) => k !== key) : [...excludedLocal, key];
     setExcludedLocal(next);
     setError(null);
+    setSavingKey(key);
     try {
-      await api.putProfile({ excludedFormulas: next });
+      await api.putProfile({ excludedFormulas: next }, { signal: abort.signal });
       await refresh();
     } catch (e) {
+      if (isAbortError(e)) return;
       // Stage-C fix (M15): a failed toggle used to be a silent unhandled
-      // rejection. Surface it and roll the optimistic state back.
-      setExcludedLocal(Array.isArray(profile.excludedFormulas) ? profile.excludedFormulas : []);
-      setError(e.message);
+      // rejection. Surface it and roll the optimistic state back — and say
+      // whether the server refused it or never answered (they are not the
+      // same fact).
+      setExcludedLocal(truth);
+      setError(isNoAnswer(e)
+        ? `${describeError(e)} The checkbox has been put back to the last confirmed setting.`
+        : describeError(e));
+    } finally {
+      setSavingKey(null);
     }
   };
 
@@ -60,14 +76,26 @@ export default function EngineTab({ profile, summary, refresh, openFoods, openPr
             // default-off (absent → off, present → on). Optimistic: reflects the click.
             const inList = excludedLocal.includes(r.key);
             const off = r.defaultOn ? inList : !inList;
+            const cite = r.prov?.citation;
             return (
-            <label key={r.key} className="flex items-center justify-between py-1.5" style={{ borderBottom: `1px solid ${C.rule}`, opacity: off ? 0.45 : 1 }}>
-              <span className="flex items-center gap-2.5 text-sm font-semibold" style={{ color: C.ink }}>
-                <input type="checkbox" checked={!off} onChange={() => toggleFormula(r.key)} style={{ accentColor: C.accent }} />
-                {r.label}
-              </span>
-              <span className="mono text-sm font-bold" style={{ color: C.ink, textDecoration: off ? "line-through" : "none" }}>{kc(r.v)}</span>
-            </label>
+            <div key={r.key} style={{ borderBottom: `1px solid ${C.rule}`, opacity: off ? 0.45 : 1 }}>
+              <label className="flex items-center justify-between pt-1.5">
+                <span className="flex items-center gap-2.5 text-sm font-semibold" style={{ color: C.ink }}>
+                  <input type="checkbox" checked={!off} disabled={savingKey === r.key} aria-busy={savingKey === r.key}
+                    onChange={() => toggleFormula(r.key)} style={{ accentColor: C.accent }} />
+                  {r.label}
+                  {savingKey === r.key && <span className="text-[10px] font-bold uppercase" style={{ color: C.warn }}>saving…</span>}
+                </span>
+                <span className="mono text-sm font-bold" style={{ color: C.ink, textDecoration: off ? "line-through" : "none" }}>{kc(r.v)}</span>
+              </label>
+              {cite && (
+                // Provenance (Law 3): journal + year, and the honest independence
+                // note where one exists — the "show the math" trust signal.
+                <div className="text-[10px] font-medium pb-1.5 pl-[26px]" style={{ color: C.faint }}>
+                  {[cite.journal, cite.year].filter(Boolean).join(" · ")}{cite.note ? ` — ${cite.note}` : ""}
+                </div>
+              )}
+            </div>
             );
           })}
           {energy.allExcludedFallback && (
@@ -137,7 +165,9 @@ export default function EngineTab({ profile, summary, refresh, openFoods, openPr
           </div>
           {target.floored && (
             <div className="text-xs font-bold mt-1" style={{ color: C.warn }}>
-              The raw math wanted {kc(target.raw)} — clamped to your floor. The chosen rate won't be fully reached through diet alone.
+              The raw math wanted {kc(target.raw)} — clamped to your floor. At {kc(target.target)} you'll lose
+              about {target.achievableRate} lb/wk through food alone, not the {target.rate} you picked. To go
+              faster, add movement — not less food.
             </div>
           )}
           {adaptiveOn && (
