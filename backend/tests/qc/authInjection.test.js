@@ -13,10 +13,26 @@ const BACKEND = path.resolve(__dirname, "..", "..");
 const liveDb = path.join(BACKEND, "prisma", "dev.db");
 const testDb = path.join(BACKEND, "prisma", "dev.db.qcauth");
 
+// Source DB to clone. Locally that's dev.db. On CI dev.db is gitignored and
+// never exists — the migrated+seeded database lives wherever DATABASE_URL points
+// (the workflow sets file:./ci.db, which prisma resolves next to schema.prisma).
+// Without this, the whole file threw ENOENT on CI and its tests never ran — one
+// of the suites the broken `**` glob had been hiding from CI entirely.
+function resolveSourceDb() {
+  if (fs.existsSync(liveDb)) return liveDb;
+  const m = /^file:(.*)$/.exec(process.env.DATABASE_URL || "");
+  if (m) {
+    const raw = m[1].replace(/^\.\//, "");
+    const p = path.isAbsolute(raw) ? raw : path.join(BACKEND, "prisma", raw);
+    if (fs.existsSync(p)) return p;
+  }
+  throw new Error("authInjection: no source DB — neither dev.db nor the DATABASE_URL file exists");
+}
+
 let app, srv, base, prisma;
 test.before(async () => {
   for (const s of ["", "-journal", "-wal", "-shm"]) { try { fs.rmSync(testDb + s, { force: true }); } catch {} }
-  fs.copyFileSync(liveDb, testDb);
+  fs.copyFileSync(resolveSourceDb(), testDb);
   process.env.DATABASE_URL = `file:${testDb.replace(/\\/g, "/")}`;
   process.env.QC_NO_LISTEN = "1";
   process.env.BRAIN = "off";
