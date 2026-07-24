@@ -190,7 +190,26 @@ router.get("/me", requireAuth, async (req, res) => {
   // role === "admin" rather than showing it to every account. See
   // roadmap/09-ux-onboarding.md's finding on this.
   const user = await prisma.user.findUnique({ where: { id: req.userId }, select: { id: true, email: true, role: true } });
-  if (!user) return res.status(404).json({ error: "user not found" });
+  if (!user) {
+    // A cryptographically valid token whose user no longer exists is an INVALID
+    // SESSION, not a missing resource — so 401, not 404.
+    //
+    // 404 was a real dead end, hit in the wild: the session cookie is scoped to
+    // the HOST (localhost), not the port or the database, so a cookie minted
+    // against one database is replayed against another — e.g. the packaged
+    // build's cutprotocol.db vs the dev tree's dev.db, where the same user id
+    // does not exist. The client only treats 401 as an auth failure, so a 404
+    // fell into the "server never answered" bucket and rendered
+    // "Can't reach the app's server / user not found / You are not signed out"
+    // — three mutually contradictory claims — with a Retry that could never
+    // succeed and no route to sign-in. Cookie TTL is 30 days, so it did not
+    // time itself out.
+    //
+    // Clearing the cookie is the other half: without it the next boot replays
+    // the same dead token forever.
+    clearSessionCookie(res);
+    return res.status(401).json({ error: "session expired" });
+  }
   res.json(user);
 });
 
