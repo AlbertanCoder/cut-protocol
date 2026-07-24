@@ -26,6 +26,12 @@ backend/prisma/dev.db.snapshot-*
 # full history and are regenerable; never commit one into the history it holds.
 *.bundle
 
+# Agent scratch directories. Build/verify agents materialise DB copies and
+# intermediate artifacts here (one run left 17 MB). Regenerable by definition,
+# and a stray `add -A` would otherwise commit a copy of the personal database.
+.scratch*/
+**/scratchpad/
+
 # Audit/fix run artifacts (regenerate with scripts/auditFoodData.mjs)
 backend/reports/
 
