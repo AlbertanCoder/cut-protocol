@@ -7,15 +7,21 @@ allergy/dietary, diet-specific (keto/vegan/IF/low-cal), ED-safety, and four comp
 
 ## Read this first: a real limit on the scrub
 
-**Reddit is blocked to automated tools in this environment.** Every agent hit the same wall —
-`reddit.com` refuses WebSearch (400) and WebFetch (403), and the read-only mirrors
-(old.reddit, redlib, libreddit, teddit) are 403/blocked too. One agent got **one** real
-r/leangains page through the connected browser before the extension dropped. So this is **not**
-a verbatim-Reddit scrape. It is built from *reachable* public sources that voice the same
-demand: competitor forums (Cronometer), app-store review aggregators, comparison/review
-articles, help centers, and clinical/press coverage. Findings are directional and cited in the
-per-source files; nothing was invented. A browser-driven Reddit pass is the honest follow-up if
-you want verbatim posts + permalinks.
+**Automated Reddit access is blocked; the browser works.** The background agents' `WebSearch`
+(400) and `WebFetch` (403) go through Claude's cloud egress, which Reddit's CDN blocks — as do
+the mirrors (old.reddit, redlib, libreddit, teddit), and even anonymous `.json` from the owner's
+own residential IP (403, 0 bytes). Reddit now requires OAuth for programmatic reads. So the
+agent portion of this synthesis is built from *reachable* proxy sources (competitor forums,
+app-store aggregators, comparison articles, clinical/press coverage) — directional, cited,
+nothing invented.
+
+**A real Reddit pass was then done through the owner's Chrome** (which Reddit serves as a normal
+visitor). Real posts + scores from `r/loseit`, `r/MacroFactor`, and `r/foodallergies` are in
+`reddit-browser-verified.md`, and they **confirmed every load-bearing claim below that we could
+reach** — the solver demand, adaptive-TDEE pain, the MFP exodus, allergen-filter wishes, AI-photo
+distrust, and food-preoccupation. Two ways to go deeper still exist and are built:
+`scripts/redditScrub.mjs` (the sanctioned OAuth API, needs a free app credential) and continuing
+the browser pass.
 
 ## The one-line verdict
 
