@@ -125,7 +125,15 @@ function withDeadline(promise, ms, label = "model call") {
       e.code = "llm-timeout";
       reject(e);
     }, ms);
-    if (typeof timer.unref === "function") timer.unref();
+    // Deliberately NOT unref'd. The timer is always cleared in the .finally
+    // below the instant the race settles, so it can never outlive its purpose
+    // and leak. Unref'ing it would mean that when the guarded call produces no
+    // I/O of its own — a stuck retry loop, or a fake client in a test that
+    // never settles — the event loop can drain to empty and the deadline never
+    // fires, so a "hard deadline" silently fails to enforce anything. (That is
+    // exactly what surfaced as CI-only "Promise resolution is still pending"
+    // on Node 20: the sole pending work was an unref'd deadline the loop
+    // refused to wait for.)
   });
   return Promise.race([promise, deadline]).finally(() => clearTimeout(timer));
 }

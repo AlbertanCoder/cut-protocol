@@ -49,9 +49,17 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # Node 24, not 20. The migration runner (src/lib/desktopBootstrap.js) and
+      # its tests use the core `node:sqlite` module, which does not exist on
+      # Node 20 and is flag-free only from Node 22.13/24 onward. On Node 20
+      # `require("node:sqlite")` threw at import, silently taking out
+      # migrationRunner.test.js and auth.registration.test.js — which the old
+      # broken `**` glob had never run on CI in the first place, so the gap only
+      # became visible once tests-quality-1 made every file actually run. 24
+      # matches the local dev runtime and the Node bundled by Electron 43.
       - uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: "24"
           cache: "npm"
           cache-dependency-path: backend/package-lock.json
 
