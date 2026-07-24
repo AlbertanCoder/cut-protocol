@@ -134,6 +134,14 @@ function SolverNarration({ meta }) {
   const pct = rawPct == null ? null : Math.round(rawPct <= 1 ? rawPct * 100 : rawPct);
   const days = Array.isArray(meta.days) ? meta.days : [];
   const missedDays = days.filter((d) => d && d.inTolerance === false);
+  // Week-level verdict, held to the SAME green-scarcity law as the day cards:
+  // the headline % is a distance measure, not a pass mark, so it never earns
+  // the accent — and the aggregate that IS a verdict states the count in
+  // words. Amber the moment a single day sits outside tolerance, so a healthy
+  // average can't stand in for "the week is fine".
+  const daysInTol = typeof meta.score?.daysInTolerance === "number" ? meta.score.daysInTolerance : null;
+  const dayTotal = days.length || null;
+  const weekOnTarget = daysInTol != null && dayTotal != null && daysInTol === dayTotal;
   const varietyNotes = Array.isArray(meta.variety?.notes) ? meta.variety.notes : [];
   // "Best of N" only if the response actually carries an attempt count.
   const bestOf = typeof meta.attempts === "number" ? meta.attempts
@@ -167,8 +175,13 @@ function SolverNarration({ meta }) {
         {pct != null && (
           <div className="flex items-baseline gap-1.5">
             <span className="mono stat-hero text-2xl" style={{ color: C.ink }}>{pct}%</span>
-            <span className="text-xs font-semibold" style={{ color: C.faint }}>match to your targets</span>
+            <span className="text-xs font-semibold" style={{ color: C.faint }}>average match to your targets</span>
           </div>
+        )}
+        {daysInTol != null && dayTotal != null && (
+          <span className="text-xs font-bold" style={{ color: weekOnTarget ? C.ink : C.warn }}>
+            {daysInTol} of {dayTotal} days inside tolerance
+          </span>
         )}
         {floorMet != null && (
           <div className="flex items-center gap-1.5">
@@ -235,15 +248,45 @@ function SolverNarration({ meta }) {
 function DayCandidates({ data, targetKcal, onAccept, accepting }) {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-3">
-      {data.candidates.map((c, idx) => (
-        <div key={idx} className="p-4 rounded-2xl flex flex-col" style={{ background: C.card, border: `1px solid ${idx === 0 ? C.accent : C.rule}` }}>
-          <div className="flex items-baseline justify-between mb-1">
-            <span className="mono stat-hero text-3xl" style={{ color: idx === 0 ? C.accent : C.ink }}>{c.score.matchPct}%</span>
-            <span className="text-[10px] font-bold uppercase" style={{ color: C.faint }}>{idx === 0 ? "Best match" : `Option ${idx + 1}`}</span>
+      {data.candidates.map((c, idx) => {
+        // GREEN SCARCITY (design law a) + colour-encodes-truth, not ranking.
+        // This card used to paint the top-ranked candidate brand green no
+        // matter how badly it missed, so "green" silently degraded from
+        // "on target" to "the least-bad thing we found". Brand green now
+        // means exactly one thing: the day landed INSIDE tolerance on all
+        // four macros (the server's own dayTolerance verdict, single-sourced
+        // in mealSolver — never recomputed here).
+        //
+        // Fail closed: a response that does not publish `inTolerance` is not
+        // proof of being on target, so it gets the neutral treatment. Green
+        // is a claim; we only make it when the server actually made it.
+        const onTarget = c.inTolerance === true;
+        const isBest = idx === 0;
+        // Ranking is still legible — as a LIGHTNESS step (--card-2 + a
+        // brighter hairline), which is this design system's own way of
+        // saying "selected/primary" without borrowing the accent.
+        const border = onTarget ? C.accent : isBest ? C.faintLight : C.rule;
+        const bg = !onTarget && isBest ? C.card2 : C.card;
+        const label = onTarget
+          ? (isBest ? "Best match" : `Option ${idx + 1}`)
+          : (isBest ? "Closest we found" : `Option ${idx + 1}`);
+        return (
+        <div key={idx} className="p-4 rounded-2xl flex flex-col" style={{ background: bg, border: `1px solid ${border}` }}>
+          <div className="flex items-baseline justify-between gap-2 mb-1">
+            <span className="mono stat-hero text-3xl" style={{ color: onTarget ? C.accent : C.ink }}>{c.score.matchPct}%</span>
+            <span className="text-[10px] font-bold uppercase flex items-center gap-1 text-right" style={{ color: onTarget ? C.faint : C.warn }}>
+              {!onTarget && isBest && <AlertTriangle size={10} aria-hidden="true" />}
+              {label}
+            </span>
           </div>
           <div className="mono text-xs font-bold mb-2" style={{ color: C.faint }}>
             {kc(c.score.totals.kcal)} / {kc(targetKcal)} kcal · {c.score.totals.protein}P {c.score.totals.fat}F {c.score.totals.carb}C
           </div>
+          {/* What it actually missed by — amber + plain numbers (law b: no red
+              on food data, no scolding). Silent when the day is on target. */}
+          {!onTarget && c.miss && (
+            <div className="text-[10.5px] font-semibold mb-2" style={{ color: C.warn }}>{c.miss}</div>
+          )}
           {c.score.proteinFloor && (
             <div className="flex items-center gap-1.5 mb-2 text-[10.5px] font-bold" style={{ color: c.score.proteinFloor.met ? C.faint : C.warn }}>
               <Beef size={11} style={{ color: c.score.proteinFloor.met ? C.proteinText : C.warn }} />
@@ -267,7 +310,8 @@ function DayCandidates({ data, targetKcal, onAccept, accepting }) {
             <Check size={12} className="inline mr-1" />{accepting ? "Writing…" : "Accept this day"}
           </Btn>
         </div>
-      ))}
+        );
+      })}
     </div>
   );
 }
@@ -723,7 +767,11 @@ export default function PlanTab({ profile, summary, refresh }) {
               <div className="mb-4">
                 {dayOptions.diagnosis && !dayOptions.diagnosis.feasible && (
                   <div className="p-3.5 rounded-xl mb-3" style={{ background: C.warnBg, border: `1px solid ${C.warn}66` }}>
-                    <div className="text-xs font-extrabold uppercase tracking-wide mb-1" style={{ color: C.warn }}>Targets are out of reach with current constraints</div>
+                    {/* This panel now also fires when the best day we found is
+                        merely OUTSIDE tolerance (not only when the targets are
+                        unreachable), so the heading states that severity rather
+                        than overstating it. Copy encodes truth, same as colour. */}
+                    <div className="text-xs font-extrabold uppercase tracking-wide mb-1" style={{ color: C.warn }}>Closest fit we could find — here's what's binding</div>
                     {dayOptions.diagnosis.reasons.map((r, i) => <div key={i} className="text-xs font-semibold" style={{ color: C.ink }}>· {r}</div>)}
                     {dayOptions.diagnosis.suggestions.map((s, i) => <div key={i} className="text-xs font-semibold mt-0.5" style={{ color: C.warn }}>→ {s}</div>)}
                   </div>
@@ -732,7 +780,7 @@ export default function PlanTab({ profile, summary, refresh }) {
                   <>
                     <DayCandidates data={dayOptions} targetKcal={targetKcal} onAccept={acceptCandidate} accepting={accepting} />
                     <div className="text-[10.5px] font-semibold mt-2" style={{ color: C.faint }}>
-                      Scores are closeness to your daily targets — closest-fit is the goal, 100% is rare and not required. Accepting writes this day into the meal plan.
+                      Scores are closeness to your daily targets — closest-fit is the goal, 100% is rare and not required. Green means the day landed inside tolerance on calories, protein, fat AND carbs; anything else is the closest fit we found, with the miss stated on the card. Accepting writes this day into the meal plan.
                     </div>
                   </>
                 )}
