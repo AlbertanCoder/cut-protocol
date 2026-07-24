@@ -112,9 +112,24 @@ import, and that write path is verified working end to end.
 - No live model call in tests: injected client throws if reached; LlmUsage
   unchanged 12→12.
 
-## STAGE 5 — Progress UX + Stage 3 filter controls · IN PROGRESS
+## STAGE 5 — Progress UX + Stage 3 filter controls · BUILT
+- Four optional filter caps in PlanTab's generate panel, each with an explicit
+  OFF state; cost carries the "estimated, not live pricing" disclosure and uses
+  --ink (cost is not a macro, never green).
+- Honest staged generation progress (no fake %), Cancel aborts the in-flight
+  request and returns a clean retryable state.
+- Also closed a real gap S5 found in the Stage-3 backend wiring: the PRIMARY
+  week/month Generate applied prep but not the caps; plans.js now applies
+  applyFilterStack at its single narrowing point. Proven: maxCostCad=3 -> 330.
+- oxlint + vite build clean. NOT browser-verified (see Stage 6 note).
 
-## STAGE 6 — Agent gauntlet · PENDING (10 QC agents, per owner)
+## STAGE 6 — The 10-agent QC gauntlet · RUNNING (per owner)
+Read-only reproduce-and-report fleet, all against the live app + scratch DB
+copies, zero live model calls. Results land in docs/qc/gauntlet-2026-07-24/.
+- qc07 migration/upgrade: **PASS** — 0 row loss across 8 real DBs to migration 25.
+- qc08 UI reachability: **BLOCKED** at auth — Chrome has no Electron session and
+  registration is gated (dev.db already has users). Boot dead-end confirmed GONE;
+  login renders clean. A fresh-install self-driven walk is the way to close this.
 
 **Suite: 84 files, 1032 tests, 0 failures.**
 
