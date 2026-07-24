@@ -63,12 +63,53 @@ const MIN_INTAKE_DAYS = 14;
 const MIN_EFFECTIVE_COVERAGE = 0.6;
 const MAX_STALE_DAYS = 10; // days since the last weigh-in
 
+// ── intake RECENCY, not just intake VOLUME (finding adaptive-tdee-1) ──────
+//
+// Every gate above counts food-logged days ACROSS the whole look-back and is
+// blind to WHEN they landed. That let a real and dangerous shape through:
+// 30 fresh daily weigh-ins + a food log that stopped two or three weeks ago
+// still cleared MIN_INTAKE_DAYS and (because the log covered most of the older
+// half of a 56-day window) MIN_EFFECTIVE_COVERAGE too. The estimator then read
+// a falling scale, believed a stale — usually low, "the week I actually
+// logged" — intake mean still described today, and returned expenditure =
+// staleIntake − ρ·slope. A LOW expenditure becomes a LOW calorie target, and
+// it arrived wearing a "confident" label.
+//
+// Weight and intake are not the same kind of measurement, which is why they get
+// different staleness bars. Weight is a STOCK: a reading 8 days old still
+// constrains what the body can weigh today. Intake is a FLOW: a log 8 days old
+// says nothing at all about what was eaten since. So intake gets the tighter
+// bar, and it is a HARD gate rather than a note — the failure direction is
+// under-eating, which is the direction that hurts.
+//
+// The numbers:
+//  · RECENT_WINDOW_DAYS = 14 — two weeks. One week is too brittle (a single
+//    sick/holiday week would blank the estimate); a month is long enough for a
+//    log that stopped to hide inside it, which is the bug being fixed.
+//  · MIN_RECENT_INTAKE_DAYS = 8 — a majority of the last 14 (57%), deliberately
+//    a shade under the 60% whole-window coverage bar. This gate exists to catch
+//    "stopped logging", not to punish ordinary gaps: both weekends off (4 days)
+//    plus two more still passes.
+//  · MAX_INTAKE_STALE_DAYS = 4 — at HALF_LIFE_DAYS = 21 a 4-day-old log still
+//    carries 0.5^(4/21) = 0.88 of full weight, so it is genuinely "current".
+//    A long weekend of not logging is tolerated; a week is not.
+// Recency is measured on COMPLETE logged days only — a part-logged day is
+// already treated as unknown, so it must not count as evidence of currency.
+const RECENT_WINDOW_DAYS = 14;
+const MIN_RECENT_INTAKE_DAYS = 8;
+const MAX_INTAKE_STALE_DAYS = 4;
+
 // Promotion from "provisional" to "confident" — the 28-day mark is where the
 // benchmark's median error drops to ~155 kcal, the published-reference range.
 const CONFIDENT_SPAN_DAYS = 28;
 const CONFIDENT_WEIGHINS = 21;
 const CONFIDENT_COVERAGE = 0.8;
 const CONFIDENT_SE_KCAL = 250;
+// "Confident" additionally demands a genuinely CURRENT log, on the same logic
+// as the hard gates above: 11 = floor(CONFIDENT_COVERAGE × RECENT_WINDOW_DAYS),
+// i.e. the same 80% bar applied to the trailing fortnight, rounded to the day.
+const CONFIDENT_INTAKE_STALE_DAYS = 2;
+const CONFIDENT_RECENT_INTAKE_DAYS = Math.floor(CONFIDENT_COVERAGE * RECENT_WINDOW_DAYS); // 11
 
 // Published static-formula performance: ~335 kcal MEDIAN absolute error. For a
 // normal error distribution median|e| = 0.6745σ, so the implied SD of
@@ -345,6 +386,19 @@ function estimateExpenditure({ weighins = [], intake = [], asOf, priorTdee, prio
   const rawCoverage = spanDays > 0 ? loggedDays / spanDays : 0;
   const effectiveCoverage = spanDays > 0 ? Math.max(0, Math.min(1, completeDays / spanDays)) : 0;
 
+  // ── intake recency (finding adaptive-tdee-1) ────────────────────────────
+  // WHEN the food was logged, measured on complete days only. `lastIntakeDate`
+  // is the honest answer to "what is this expenditure number actually based
+  // on"; it ships in `window` so the UI can say it out loud.
+  const completeIntakePts = usableIntakePts;
+  const lastCompleteIntakeDay = completeIntakePts.length ? completeIntakePts[completeIntakePts.length - 1].x : null;
+  const lastCompleteIntakeDate = completeIntakePts.length ? completeIntakePts[completeIntakePts.length - 1].date : null;
+  const intakeStaleDays = lastCompleteIntakeDay == null ? null : asOfDay - lastCompleteIntakeDay;
+  const recentStartDay = asOfDay - RECENT_WINDOW_DAYS + 1;
+  const recentIntakeDays = new Set(completeIntakePts.filter((p) => p.x >= recentStartDay).map((p) => p.x)).size;
+  const recentSpanDays = Math.max(1, Math.min(RECENT_WINDOW_DAYS, spanDays));
+  const recentCoverage = Math.max(0, Math.min(1, recentIntakeDays / recentSpanDays));
+
   // ── gates ───────────────────────────────────────────────────────────────
   if (prior == null) blocked.push("no formula TDEE to reconcile against");
   if (spanDays < MIN_SPAN_DAYS) {
@@ -361,6 +415,14 @@ function estimateExpenditure({ weighins = [], intake = [], asOf, priorTdee, prio
   }
   if (staleDays != null && staleDays > MAX_STALE_DAYS) {
     blocked.push(`last weigh-in was ${staleDays} days ago — needs one within ${MAX_STALE_DAYS}`);
+  }
+  // adaptive-tdee-1: a stale food log alongside a fresh scale is the shape that
+  // manufactures a confident LOW target. Block it and say exactly why.
+  if (intakeStaleDays != null && intakeStaleDays > MAX_INTAKE_STALE_DAYS) {
+    blocked.push(`last full day of food logged was ${intakeStaleDays} days ago — needs one within ${MAX_INTAKE_STALE_DAYS}. A current scale plus an out-of-date food log reads as a lower burn than it is, so the target stays on the formula`);
+  }
+  if (spanDays >= MIN_SPAN_DAYS && completeDays > 0 && recentIntakeDays < MIN_RECENT_INTAKE_DAYS) {
+    blocked.push(`only ${recentIntakeDays} full day${recentIntakeDays === 1 ? "" : "s"} of food logged in the last ${RECENT_WINDOW_DAYS} — needs ${MIN_RECENT_INTAKE_DAYS}. Older logging cannot describe what you are eating now`);
   }
   if (partialDays > 0) {
     notes.push(`${partialDays} day${partialDays === 1 ? "" : "s"} logged under half the window's typical intake — read as a part-logged day, dropped from the average rather than believed`);
@@ -388,6 +450,13 @@ function estimateExpenditure({ weighins = [], intake = [], asOf, priorTdee, prio
     rawCoveragePct: round(rawCoverage * 100, 0),
     effectiveCoveragePct: round(effectiveCoverage * 100, 0),
     staleDays,
+    // adaptive-tdee-1: recency, shown next to volume so a reader can tell a
+    // well-covered CURRENT log from a well-covered ABANDONED one.
+    lastIntakeDate: lastCompleteIntakeDate,
+    intakeStaleDays,
+    recentWindowDays: RECENT_WINDOW_DAYS,
+    recentIntakeDays,
+    recentCoveragePct: round(recentCoverage * 100, 0),
   };
   if (wPts.length || iPts.length) {
     const startPt = [...wPts, ...iPts].reduce((m, p) => (p.x < m ? p.x : m), asOfDay);
@@ -398,6 +467,7 @@ function estimateExpenditure({ weighins = [], intake = [], asOf, priorTdee, prio
     version: VERSION,
     status: "insufficient",
     applied: false,
+    confidence: confidenceBlock("insufficient", false, window),
     reasons: blocked,
     notes,
     window,
@@ -474,16 +544,24 @@ function estimateExpenditure({ weighins = [], intake = [], asOf, priorTdee, prio
     spanDays >= CONFIDENT_SPAN_DAYS &&
     wPts.length >= CONFIDENT_WEIGHINS &&
     effectiveCoverage >= CONFIDENT_COVERAGE &&
-    dataSe <= CONFIDENT_SE_KCAL;
+    dataSe <= CONFIDENT_SE_KCAL &&
+    // adaptive-tdee-1: volume is not currency. "Confident" must also mean the
+    // log describes NOW, or the label is the lie the finding was about.
+    intakeStaleDays != null && intakeStaleDays <= CONFIDENT_INTAKE_STALE_DAYS &&
+    recentIntakeDays >= CONFIDENT_RECENT_INTAKE_DAYS;
   const status = isConfident ? "confident" : "provisional";
   if (!isConfident) {
     notes.push("provisional — the data supports a direction, not a precise number; the estimate stays pulled toward the formula until the window widens");
+  }
+  if (!isConfident && intakeStaleDays != null && intakeStaleDays > CONFIDENT_INTAKE_STALE_DAYS) {
+    notes.push(`the newest full day of food logged is ${intakeStaleDays} days old — the estimate is held provisional until the log catches up`);
   }
 
   return {
     version: VERSION,
     status,
     applied: true,
+    confidence: confidenceBlock(status, true, window),
     reasons: [],
     notes,
     window,
@@ -540,6 +618,36 @@ function estimateExpenditure({ weighins = [], intake = [], asOf, priorTdee, prio
   };
 }
 
+/**
+ * The honest one-line answer to "how much should I trust this number, and what
+ * is it built on". Every caller (Engine screen, ledger, materializer) reads the
+ * SAME block, so no surface can dress a formula fallback up as a measurement.
+ *
+ *   insufficient → the target is the FORMULA target; nothing was measured
+ *   provisional  → measured, but shrunk hard toward the formula
+ *   confident    → measured on a current, well-covered window
+ */
+function confidenceBlock(status, applied, window) {
+  const stale = window?.intakeStaleDays;
+  const basis = applied ? "logged-intake-vs-weight-trend" : "formula-only";
+  let label;
+  if (!applied) {
+    label = "This target comes straight from the formula — there is not enough current data to measure your burn.";
+  } else if (status === "confident") {
+    label = "Measured from your own logged intake against your weight trend, on a current, well-covered window.";
+  } else {
+    label = "Measured from your own data, but held provisional — the number is still pulled toward the formula.";
+  }
+  return {
+    level: status,
+    basis,
+    measured: Boolean(applied),
+    intakeCurrentThrough: window?.lastIntakeDate ?? null,
+    intakeStaleDays: stale ?? null,
+    label,
+  };
+}
+
 function methodBlock(cfg, priorSd) {
   return {
     version: VERSION,
@@ -555,6 +663,10 @@ function methodBlock(cfg, priorSd) {
       minIntakeDays: MIN_INTAKE_DAYS,
       minCoveragePct: Math.round(MIN_EFFECTIVE_COVERAGE * 100),
       maxStaleDays: MAX_STALE_DAYS,
+      // adaptive-tdee-1 recency gates
+      recentWindowDays: RECENT_WINDOW_DAYS,
+      minRecentIntakeDays: MIN_RECENT_INTAKE_DAYS,
+      maxIntakeStaleDays: MAX_INTAKE_STALE_DAYS,
     },
     doc: "docs/adaptive-tdee-methodology.md",
   };
@@ -569,7 +681,10 @@ module.exports = {
   LB_PER_KG, KCAL_PER_LB, KCAL_PER_KG, RHO_RELATIVE_SD,
   WINDOW_MAX_DAYS, HALF_LIFE_DAYS,
   MIN_SPAN_DAYS, MIN_WEIGHINS, MIN_INTAKE_DAYS, MIN_EFFECTIVE_COVERAGE, MAX_STALE_DAYS,
+  RECENT_WINDOW_DAYS, MIN_RECENT_INTAKE_DAYS, MAX_INTAKE_STALE_DAYS,
+  CONFIDENT_INTAKE_STALE_DAYS, CONFIDENT_RECENT_INTAKE_DAYS,
   CONFIDENT_SPAN_DAYS, CONFIDENT_WEIGHINS, CONFIDENT_COVERAGE, CONFIDENT_SE_KCAL,
+  confidenceBlock,
   PRIOR_SD_KCAL, STATIC_FORMULA_MEDIAN_ERR_KCAL,
   PARTIAL_LOG_FRACTION, MISSING_DAY_BIAS_KCAL,
   MIN_WEIGHT_SCALE_KG, MIN_INTAKE_SCALE_KCAL, MAX_DEVIATION_FRAC, MAX_VARIANCE_INFLATION, MODEL_ERROR_KCAL,
