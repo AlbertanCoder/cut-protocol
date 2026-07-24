@@ -4,7 +4,7 @@ const { requireAuth } = require("../lib/auth.js");
 const { todayStr, mondayOf, dayNum, addDays } = require("../lib/dates.js");
 const { regenerateOneSlot, buildSlots, targetsForSlots, scaleRecipe, RECENCY_WEIGHTS } = require("../lib/weeklyPlanner.js");
 const {
-  generateDayCandidates, alternatesForSlot, buildBias, applyPrepFilter, varietyOutlook,
+  generateDayCandidates, alternatesForSlot, buildBias, applyPrepFilter, applyFilterStack, varietyOutlook,
   resolveHorizon, horizonWindows, generateHorizonPlan, solveOneMeal, HORIZON_PRESETS, MAX_HORIZON_DAYS, DAYS_PER_WEEK,
 } = require("../lib/mealSolver.js");
 const { buildCostCache } = require("../lib/recipeCost.js");
@@ -163,12 +163,19 @@ router.post("/generate", async (req, res) => {
     const monday = mondayOf(today);
     const todayIndex = dayNum(today) - dayNum(monday); // 0 = Monday … 6 = Sunday
 
-    const pool = applyPrepFilter(recipePool, filters.maxPrepMin);
+    const prepped = applyPrepFilter(recipePool, filters.maxPrepMin);
+    // Stage 3: the week / month / horizon Generate path applies the optional
+    // cost/complexity/taste caps HERE — this is its single pool-narrowing point.
+    // (The day-options, swap and one-meal solvers narrow inside mealSolver; this
+    // one hands an already-narrowed pool to generateHorizonPlan, so the caps
+    // reach the primary Generate button too, not only those three surfaces.)
+    const { survivors: pool, explain: stackExplain } = applyFilterStack(prepped, filters, filters.ratings);
     const costCache = filters.budget ? buildCostCache(pool) : null;
     // Stage-C fix (M10): pass the pool counts so a rough-plan diagnosis can name
     // the TRUE binding constraint (e.g. a maxPrep cap that emptied the pool)
-    // instead of always blaming diet/allergy rules.
-    const poolCounts = { raw: rawPoolCount, afterDiet: recipePool.length, afterPrep: pool.length };
+    // instead of always blaming diet/allergy rules. stackExplain lets diagnose()
+    // name a cost/complexity/taste cap as the binding constraint too.
+    const poolCounts = { raw: rawPoolCount, afterDiet: recipePool.length, afterPrep: pool.length, stackExplain };
 
     // ── 1 MEAL ───────────────────────────────────────────────────────────
     // One dish against what is LEFT of today. No writes, no week solve — this
