@@ -20,6 +20,20 @@ export const parseWeight = (val, pref) => (pref === "metric" ? val : lb2kg(val))
 export const displayHeight = (cm, pref) => (cm == null ? null : r1(pref === "metric" ? cm : cm2in(cm)));
 export const parseHeight = (val, pref) => (pref === "metric" ? val : in2cm(val));
 
+// Imperial height as feet + inches — most people know their height as 6'1", not
+// 73 in. Storage stays cm; these only convert at the input boundary.
+// cm2ftin rounds inches to the nearest whole inch and carries 12 up to a foot
+// so it never shows "5 ft 12 in".
+export const cm2ftin = (cm) => {
+  if (cm == null) return { feet: "", inches: "" };
+  const totalIn = Math.round(cm2in(cm));
+  let feet = Math.floor(totalIn / 12);
+  let inches = totalIn - feet * 12;
+  if (inches === 12) { feet += 1; inches = 0; }
+  return { feet, inches };
+};
+export const ftin2cm = (feet, inches) => in2cm((Number(feet) || 0) * 12 + (Number(inches) || 0));
+
 // rate is stored in lb/wk (the option menu's native unit)
 export const displayRate = (lbPerWk, pref) => (lbPerWk == null ? null : r1(pref === "metric" ? lbPerWk * 0.453592 : lbPerWk));
 
