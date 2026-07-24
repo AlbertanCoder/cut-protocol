@@ -10,9 +10,10 @@ Pages read: `r/loseit` top-of-year; `r/loseit` search (app / meal plan / what to
 eat); `r/MacroFactor` search (wish / missing / meal plan); `r/foodallergies`
 search (app / meal plan / recipe filter); `r/keto` search (app / net carbs /
 electrolytes / meal plan); `r/EatCheapAndHealthy` search (app / meal plan / pantry
-/ grocery / leftovers). Six subs / seven pages — broad, not exhaustive; `r/mealprep`,
-`r/intermittentfasting`, `r/Celiac`, `r/Cronometer` and `r/fitness` remain for a
-next pass (the OAuth scrubber can also sweep them structured).
+/ grocery / leftovers); `r/intermittentfasting` search (app / eating window /
+timer / macros); `r/cronometer` search (wish / missing / adaptive / feature / meal
+plan). **Eight subs / nine pages** — broad. `r/mealprep`, `r/Celiac` and `r/fitness`
+remain for a next pass (the OAuth scrubber can also sweep them structured).
 
 ## Theme 1 — "just tell me what to eat" / decision fatigue (validates the SOLVER)
 
@@ -109,6 +110,32 @@ Protocol touches:
   gone. This is the mental-load / "just tell me what to eat" pain from a different
   angle, and it reinforces the wellbeing framing (be supportive, not shaming, when
   someone is struggling to feed themselves).
+
+## Theme 9 — communities are actively BANNING AI logging (reinforces deterministic)
+
+- r/intermittentfasting **"New rule: No AI of any kind going forward"** — 2,399 pts,
+  202 comments. The mods formally banned AI, explicitly including **"no AI calorie
+  tracking apps or fasting timers."** Combined with r/loseit's 2,519-pt "AI photo
+  tracking doesn't work," this is a large community *rejecting* AI logging outright —
+  strong support for Cut Protocol's deterministic-over-AI stance.
+- Recurring **"food noise"** language (IF "helped me loads with food noise") — the
+  same preoccupation the wellbeing check targets.
+- People give their eating window a **"+/- 30-minute buffer"** and flex it around
+  life/cycle — a lesson for any eating-window feature: make it forgiving, not rigid.
+
+## Theme 10 — even Cronometer's users want the solver (and will pay for it)
+
+r/cronometer — the micronutrient tracker's own community — keeps reaching for the
+thing Cronometer doesn't do: build a plan.
+- **"Example daily diet that hits almost all targets"** — 97 pts, 63 comments: a
+  user hand-assembling a day that hits nearly all macro *and* micro targets in a
+  1,500-cal deficit. That is precisely Cut Protocol's solver output, done manually.
+- **"I figured out how to create a set of daily and weekly plans and STORE them for
+  retrieval"** — 45 pts: users hacking a tracker into a meal-planner.
+- **"A few Cronometer feature requests I would genuinely pay Gold for"** — 52 pts:
+  explicit willingness-to-pay for features. Plus **"Preview how adding a food affects
+  today's macro and micronutrient targets"** (a will-this-fit-my-day preview) and
+  **"Hypothetical Days"** (plan-ahead). All point at planning/solving, not tracking.
 
 ---
 
