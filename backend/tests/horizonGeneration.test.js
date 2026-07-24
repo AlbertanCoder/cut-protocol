@@ -411,9 +411,16 @@ test("classifyBinding names the ONE thing that is binding, per stack", () => {
 });
 
 test("an impossible prep cap over a month is named as the prep cap, not blamed on the diet", async () => {
-  const strict = applyPrepFilter(POOL, 5);
+  // The pool handed to the solver represents what survived the prep cap; counts
+  // says prep cut the wider pool down to these 8. The recipes must be MEAL-
+  // eligible so this actually exercises the prep-cap-binding branch — an
+  // arbitrary slice used to work only because the library was full of null-prep
+  // rows that passed any cap, and the Stage-3 backfill filled those in (so a
+  // 5-min cap now leaves mostly snacks). Selecting meal-eligible rows keeps the
+  // test testing what it names: prep is binding, the diet is not.
+  const mealPool = POOL.filter((r) => (r.slotType === "meal" || r.slotType === "either") && !r.mealCategory);
   const r = await generateHorizonPlan({
-    dailyTarget: TARGET, mealConfig: CFG, recipePool: strict.slice(0, 8),
+    dailyTarget: TARGET, mealConfig: CFG, recipePool: mealPool.slice(0, 8),
     horizon: resolveHorizon("month"), filters: { maxPrepMin: 5 },
     counts: { raw: RAW.length, afterDiet: POOL.length, afterPrep: 8 },
     rng: rng(3),

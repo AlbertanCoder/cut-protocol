@@ -44,9 +44,27 @@ test("batch — repeats penalised only when batch cooking is disallowed", () => 
   assert.equal("batch" in on.terms, false);
 });
 
-test("budget & complexity — active but not scorable -> reported in noSignal", () => {
+// Stage 3 made budget and complexity evaluable. They are now asymmetric, and
+// the honest behaviour follows the data, not a placeholder:
+//   - complexity is derivable from ANY recipe's structure (ingredient + step
+//     count), so a resolvable recipe always yields a signal — it is SCORED.
+//   - cost needs priceable ingredients; a recipe with none (these fixtures carry
+//     only prepTimeMin) has tier "unknown", so budget still lands in noSignal.
+test("complexity is scorable from recipe structure; budget needs prices -> noSignal when unpriceable", () => {
   const cs = compileConstraints({ budgetTier: "cheap", maxComplexity: 2 }, TARGET);
   const r = scoreSoftConstraints({ slots: [{ recipeId: "r1" }] }, cs, ctx);
+  // complexity: fixtures resolve to a recipe object, so it is scored, not skipped
+  assert.equal("complexity" in r.terms, true);
+  assert.equal(r.noSignal.includes("complexity"), false);
+  // budget: no ingredient prices in these fixtures -> honestly unscorable
+  assert.ok(r.noSignal.includes("budget"));
+  assert.equal("budget" in r.terms, false);
+});
+
+test("budget & complexity fall to noSignal when NO picked recipe resolves at all", () => {
+  const cs = compileConstraints({ budgetTier: "cheap", maxComplexity: 2 }, TARGET);
+  // recipeById returns null for an unknown id -> nothing to score either metric on
+  const r = scoreSoftConstraints({ slots: [{ recipeId: "does-not-exist" }] }, cs, ctx);
   assert.ok(r.noSignal.includes("budget"));
   assert.ok(r.noSignal.includes("complexity"));
   assert.equal("budget" in r.terms, false);

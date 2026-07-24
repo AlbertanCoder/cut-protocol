@@ -5,9 +5,13 @@
 //
 // LLM-proposed weights are clamped to [wMin,wMax] then applied by pure
 // arithmetic — raw model weights are never used unclamped (LAW 1-adjacent).
-// A soft constraint with NO per-recipe data to evaluate (budget, complexity —
-// the schema has no cost/complexity column) is reported in noSignal[]: honestly
-// skipped, never silently scored as "passed" (LAW 7).
+// Budget and complexity became evaluable in Stage 3 (recipeCost.js /
+// recipeComplexity.js); a constraint with NO usable per-recipe data still lands
+// in noSignal[] — honestly skipped, never silently scored as "passed" (LAW 7).
+
+const { computeRecipeCost } = require("../recipeCost.js");
+const { computeComplexity } = require("../recipeComplexity.js");
+const BUDGET_ORDER = { cheap: 0, moderate: 1, premium: 2 };
 
 const DEFAULT_SOFT_WEIGHTS = { time: 0.4, batch: 0.3, budget: 0.2, complexity: 0.1 };
 const SOFT_WEIGHT_BOUNDS = { min: 0, max: 1 };
@@ -65,10 +69,25 @@ function scoreSoftConstraints(day = {}, cs = {}, ctx = {}, opts = {}) {
     terms.batch = w.batch * cap(varietyPenalty(slots));
   }
 
-  // BUDGET / COMPLEXITY — no per-recipe cost or complexity column exists yet
-  // (a later stage adds them). Report honestly rather than score a phantom pass.
-  if (soft.budget?.value?.tier != null) noSignal.push("budget");
-  if (soft.complexity?.value?.max != null) noSignal.push("complexity");
+  // BUDGET / COMPLEXITY — Stage 3 made both evaluable per recipe (recipeCost.js
+  // + recipeComplexity.js), so the phantom-pass placeholder retires. Still honest
+  // when coverage is too thin: if no picked recipe yields a usable signal, it
+  // stays in noSignal rather than scoring a guess. This is BRAIN-scoring only —
+  // BRAIN=off never reaches scoreSoftConstraints, so Law 2 (byte-identical)
+  // holds.
+  const budgetTier = soft.budget?.value?.tier;
+  if (budgetTier != null) {
+    const tiers = slots.map((s) => recipeById(s.recipeId)).filter(Boolean).map((r) => computeRecipeCost(r).tier);
+    const usable = tiers.filter((t) => t !== "unknown");
+    if (usable.length === 0) noSignal.push("budget");
+    else terms.budget = w.budget * cap(usable.filter((t) => BUDGET_ORDER[t] > BUDGET_ORDER[budgetTier]).length / usable.length);
+  }
+  const maxCx = soft.complexity?.value?.max;
+  if (maxCx != null) {
+    const scores = slots.map((s) => recipeById(s.recipeId)).filter(Boolean).map((r) => computeComplexity(r).score);
+    if (scores.length === 0) noSignal.push("complexity");
+    else terms.complexity = w.complexity * cap(scores.filter((x) => x > maxCx).length / scores.length);
+  }
 
   const cost = Object.values(terms).reduce((a, b) => a + b, 0);
   return {

@@ -341,37 +341,65 @@ function unsolvedResult(warning) {
 // callsRemaining is a boxed number so decrements are visible across every
 // resolveSlot() call sharing the same object within one run - a real cap on
 // live Claude calls per request, not per-slot.
+// Turn a generated/routed Recipe row into a stored slot: last-gate compliance
+// check, style stamp, register into THIS run's pool (only if new), and portion
+// it. `scaled` may be supplied (the router already computed it identically) or
+// null to compute here — both go through the same enforceScaledCarbCeiling.
+function finishAiSlot(recipe, target, recipePool, usageCount, aiFallback, preScaled = null) {
+  if (!recipe) return null;
+  // Never write a diet/allergy-violating AI recipe into the plan (C3). A failed
+  // check yields an honest unsolved slot, same as any other miss. This is the
+  // last gate before the slot is stored — belt-and-braces even when the router
+  // already re-screened.
+  if (!aiRecipeCompliant(recipe, aiFallback.profile)) return null;
+  // Same post-scale ceiling as the pool path (solver-core-3). Style comes from
+  // the profile and is stamped so later slots inherit the guard from the pool.
+  const aiStyle = aiFallback.profile?.dietaryStyle || null;
+  if (aiStyle) recipe.dietGuardStyle = aiStyle;
+  const scaled = preScaled || enforceScaledCarbCeiling(recipe, scaleRecipe(recipe, target.kcalTarget, target.proteinTarget), aiStyle);
+  if (!scaled) return null; // portioning it into this slot would break the ceiling
+  const isNew = !recipePool.some((r) => r.id === recipe.id);
+  if (isNew) {
+    recipePool.push(recipe); // available to later slots in this same run too
+    aiFallback.existingRecipeNames.push(recipe.name);
+  }
+  usageCount.set(recipe.id, (usageCount.get(recipe.id) || 0) + 1);
+  const kcalOff = kcalOffPct(target.kcalTarget, scaled.kcal);
+  const proteinShort = proteinShortfallPct(target.proteinTarget, scaled.protein);
+  const aiMisses = [];
+  if (kcalOff > KCAL_TOLERANCE_PCT) aiMisses.push(`landed ${Math.round(scaled.kcal)} kcal vs a ${Math.round(target.kcalTarget)} target`);
+  if (proteinShort > PROTEIN_TOLERANCE_PCT) aiMisses.push(`delivered ${Math.round(scaled.protein)}g protein vs a ${Math.round(target.proteinTarget)}g target`);
+  const warning = aiMisses.length ? `AI-generated recipe still missed tolerance — ${aiMisses.join("; ")}.` : null;
+  return { recipeId: recipe.id, warning, ...scaled };
+}
+
 async function tryAiFallback(target, recipePool, usageCount, aiFallback) {
   aiFallback.callsRemaining.n--;
   try {
-    // Lazy require (see the top-of-file note): only load the Prisma-backed
-    // generator when AI fallback actually runs, never at module load.
-    const generateImpl = aiFallback.generateAndSaveSlotRecipeImpl || require("./recipeGeneration.js").generateAndSaveSlotRecipe;
-    const generated = await generateImpl(target, aiFallback.profile, aiFallback.existingRecipeNames);
-    // Never write a diet/allergy-violating AI recipe into the plan (C3). A
-    // failed check yields an honest unsolved slot, same as any other miss.
-    if (!aiRecipeCompliant(generated, aiFallback.profile)) return null;
-    // Same post-scale ceiling as the pool path (solver-core-3). The generated
-    // recipe is not pool-tagged, so the style comes from the profile here; it
-    // is also stamped onto the recipe so later slots in this same run inherit
-    // the guard when they draw it out of the pool.
-    const aiStyle = aiFallback.profile?.dietaryStyle || null;
-    if (aiStyle) generated.dietGuardStyle = aiStyle;
-    recipePool.push(generated); // available to later slots in this same run too
-    aiFallback.existingRecipeNames.push(generated.name);
-    const scaled = enforceScaledCarbCeiling(generated, scaleRecipe(generated, target.kcalTarget, target.proteinTarget), aiStyle);
-    if (!scaled) return null; // portioning it into this slot would break the ceiling
-    usageCount.set(generated.id, 1);
-    const kcalOff = kcalOffPct(target.kcalTarget, scaled.kcal);
-    const proteinShort = proteinShortfallPct(target.proteinTarget, scaled.protein);
-    const aiMisses = [];
-    if (kcalOff > KCAL_TOLERANCE_PCT) aiMisses.push(`landed ${Math.round(scaled.kcal)} kcal vs a ${Math.round(target.kcalTarget)} target`);
-    if (proteinShort > PROTEIN_TOLERANCE_PCT) aiMisses.push(`delivered ${Math.round(scaled.protein)}g protein vs a ${Math.round(target.proteinTarget)}g target`);
-    const warning = aiMisses.length ? `AI-generated recipe still missed tolerance — ${aiMisses.join("; ")}.` : null;
-    return { recipeId: generated.id, warning, ...scaled };
+    // A directly-injected generator BYPASSES the router (existing weeklyPlanner /
+    // recipeGeneration tests rely on this exact seam). Behaviour is unchanged.
+    if (aiFallback.generateAndSaveSlotRecipeImpl) {
+      const generated = await aiFallback.generateAndSaveSlotRecipeImpl(target, aiFallback.profile, aiFallback.existingRecipeNames);
+      return finishAiSlot(generated, target, recipePool, usageCount, aiFallback);
+    }
+    // Production default (Stage 4): route through the Library->Brain router,
+    // which adds the fingerprint cache, per-user cost cap + tiering, and a
+    // post-persist allergen re-screen on the resolved (not just model-named)
+    // ingredients. It calls filterRecipePool itself, so passing this run's
+    // already-filtered pool is a safe idempotent no-op.
+    const routeImpl = aiFallback.routeMealSlotImpl || require("./mealRouter.js").routeMealSlot;
+    const routed = await routeImpl(
+      { target, profile: aiFallback.profile, recipePool, existingRecipeNames: aiFallback.existingRecipeNames },
+      aiFallback.routerDeps || {}
+    );
+    // ok:false is honest degradation (closest-fit or unsolved). The solver's own
+    // resolveSlot already shipped its closest pool miss before reaching here, so
+    // an unfilled slot with a reason is the correct outcome — not a crash.
+    if (!routed.ok || !routed.recipe) return null;
+    return finishAiSlot(routed.recipe, target, recipePool, usageCount, aiFallback, routed.scaled || null);
   } catch (e) {
-    // Live generation failed (network, refusal, allergy-filtered all 3
-    // drafts) - fall through to an honest unsolved state rather than
+    // Live generation failed (network, refusal, allergy-filtered all 3 drafts,
+    // budget cap) - fall through to an honest unsolved state rather than
     // crashing the whole run over one slot.
     return null;
   }
@@ -483,7 +511,11 @@ function buildAiFallbackContext(options, recipePool) {
     profile: options.aiFallback.profile,
     existingRecipeNames: recipePool.map((r) => r.name),
     // Test-only override (see recipeGeneration.test.js) — real callers never set this.
+    // When present it BYPASSES the router (the direct-generator path below).
     generateAndSaveSlotRecipeImpl: options.aiFallback.generateAndSaveSlotRecipeImpl,
+    // Stage 4: test/override seam for the Library->Brain router and its deps.
+    routeMealSlotImpl: options.aiFallback.routeMealSlotImpl,
+    routerDeps: options.aiFallback.routerDeps,
   };
 }
 
