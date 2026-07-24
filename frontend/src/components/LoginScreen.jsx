@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Eye, EyeOff } from "lucide-react";
 import { C } from "../lib/theme.js";
 import { Card, Btn } from "./ui/Parts.jsx";
 import CutMark from "./ui/CutMark.jsx";
@@ -85,6 +86,40 @@ function FieldError({ children }) {
   return <div className="text-[11px] font-semibold mt-1" style={{ color: C.red }}>{children}</div>;
 }
 
+// A password field with a show/hide eye. There is no way to reveal a STORED
+// password (it's a one-way hash) — this only shows what you're typing right now,
+// so you can confirm a login or read back a new password before you commit to it.
+// Defaults to hidden; the toggle never leaves the field's value anywhere.
+function PasswordInput({ value, onChange, autoComplete, autoFocus, required, ariaInvalid }) {
+  const [show, setShow] = useState(false);
+  return (
+    <div className="relative mt-1">
+      <input
+        type={show ? "text" : "password"}
+        value={value}
+        onChange={onChange}
+        autoComplete={autoComplete}
+        autoFocus={autoFocus}
+        required={required}
+        aria-invalid={ariaInvalid}
+        className="text-sm pl-3 pr-10 py-2.5 rounded-xl w-full"
+        style={inpStyle}
+      />
+      <button
+        type="button"
+        onClick={() => setShow((s) => !s)}
+        aria-label={show ? "Hide password" : "Show password"}
+        aria-pressed={show}
+        title={show ? "Hide password" : "Show password"}
+        className="absolute right-2 top-1/2 -translate-y-1/2 p-1 rounded-md hover:opacity-80"
+        style={{ color: C.faint }}
+      >
+        {show ? <EyeOff size={16} aria-hidden="true" /> : <Eye size={16} aria-hidden="true" />}
+      </button>
+    </div>
+  );
+}
+
 function LoginForm({ onLoggedIn, statusError }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -126,8 +161,7 @@ function LoginForm({ onLoggedIn, statusError }) {
       </label>
       <label className="block">
         <span className="text-xs font-bold" style={{ color: C.faint }}>Password</span>
-        <input type="password" required value={password} onChange={(e) => setPassword(e.target.value)}
-          className="text-sm px-3 py-2.5 rounded-xl w-full mt-1" style={inpStyle} />
+        <PasswordInput required value={password} onChange={(e) => setPassword(e.target.value)} autoComplete="current-password" />
       </label>
       {error && <div role="alert" className="text-xs font-semibold" style={{ color: C.red }}>{error}</div>}
       <Btn disabled={busy}>{busy ? "Logging in…" : "Log in"}</Btn>
@@ -240,16 +274,14 @@ function ResetPanel({ initialEmail, onLoggedIn, onCancel }) {
           </label>
           <label className="block">
             <span className="text-xs font-bold" style={{ color: C.faint }}>New password</span>
-            <input type="password" value={password} onChange={(e) => { setPassword(e.target.value); if (fields.password) setFields((f) => ({ ...f, password: undefined })); }}
-              autoComplete="new-password" aria-invalid={!!fields.password}
-              className="text-sm px-3 py-2.5 rounded-xl w-full mt-1" style={inpStyle} />
+            <PasswordInput value={password} onChange={(e) => { setPassword(e.target.value); if (fields.password) setFields((f) => ({ ...f, password: undefined })); }}
+              autoComplete="new-password" ariaInvalid={!!fields.password} />
             <FieldError>{fields.password}</FieldError>
           </label>
           <label className="block">
             <span className="text-xs font-bold" style={{ color: C.faint }}>Confirm new password</span>
-            <input type="password" value={confirm} onChange={(e) => { setConfirm(e.target.value); if (fields.confirm) setFields((f) => ({ ...f, confirm: undefined })); }}
-              autoComplete="new-password" aria-invalid={!!fields.confirm}
-              className="text-sm px-3 py-2.5 rounded-xl w-full mt-1" style={inpStyle} />
+            <PasswordInput value={confirm} onChange={(e) => { setConfirm(e.target.value); if (fields.confirm) setFields((f) => ({ ...f, confirm: undefined })); }}
+              autoComplete="new-password" ariaInvalid={!!fields.confirm} />
             <FieldError>{fields.confirm}</FieldError>
           </label>
           {error && <div role="alert" className="text-xs font-semibold" style={{ color: C.red }}>{error}</div>}
@@ -329,19 +361,15 @@ function RegisterForm({ onLoggedIn }) {
       </label>
       <label className="block">
         <span className="text-xs font-bold" style={{ color: C.faint }}>Password</span>
-        <input type="password" value={password} onChange={set(setPassword, "password")} autoComplete="new-password"
-          aria-invalid={!!fields.password}
-          className="text-sm px-3 py-2.5 rounded-xl w-full mt-1" style={inpStyle} />
+        <PasswordInput value={password} onChange={set(setPassword, "password")} autoComplete="new-password" ariaInvalid={!!fields.password} />
         <FieldError>{fields.password}</FieldError>
         {!fields.password && (
-          <div className="text-[11px] mt-1" style={{ color: C.faintLight }}>At least {MIN_PASSWORD_LENGTH} characters. Forgot it later? You can reset it from the sign-in screen using a code saved on this computer.</div>
+          <div className="text-[11px] mt-1" style={{ color: C.faintLight }}>At least {MIN_PASSWORD_LENGTH} characters — use the eye to check it. Forgot it later? You can reset it from the sign-in screen using a code saved on this computer.</div>
         )}
       </label>
       <label className="block">
         <span className="text-xs font-bold" style={{ color: C.faint }}>Confirm password</span>
-        <input type="password" value={confirmPassword} onChange={set(setConfirmPassword, "confirmPassword")} autoComplete="new-password"
-          aria-invalid={!!fields.confirmPassword}
-          className="text-sm px-3 py-2.5 rounded-xl w-full mt-1" style={inpStyle} />
+        <PasswordInput value={confirmPassword} onChange={set(setConfirmPassword, "confirmPassword")} autoComplete="new-password" ariaInvalid={!!fields.confirmPassword} />
         <FieldError>{fields.confirmPassword}</FieldError>
       </label>
       {error && <div role="alert" className="text-xs font-semibold" style={{ color: C.red }}>{error}</div>}
