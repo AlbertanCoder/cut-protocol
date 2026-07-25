@@ -22,7 +22,7 @@ const kc = (n) => Math.round(n).toLocaleString("en-CA");
 // shows the math. Commit-on-blur for typed fields, commit-on-change for
 // pickers; every commit refreshes profile+summary so targets update
 // instantly (Phase 3 spec).
-export default function ProfileTab({ profile, summary, refresh }) {
+export default function ProfileTab({ profile, summary, refresh, openToday }) {
   const pref = profile.unitPref;
   const [meta, setMeta] = useState(null);
   const [metaError, setMetaError] = useState(null); // distinct from "meta is still loading"
@@ -433,7 +433,15 @@ export default function ProfileTab({ profile, summary, refresh }) {
               </button>
             </label>
             <label className="block">{label(`Current weight (${weightUnit(pref)})`)}
-              <input type="number" value={displayWeight(avg7Kg, pref)} readOnly className={inp} style={{ ...inpStyle, color: C.faint }} />
+              <input type="number" value={displayWeight(avg7Kg, pref)} readOnly aria-readonly="true"
+                title="Calculated from your weigh-ins — log one on Today to change it"
+                className={inp} style={{ ...inpStyle, color: C.faint, cursor: "not-allowed" }} />
+              {openToday && (
+                <button type="button" onClick={openToday}
+                  className="text-[11px] font-bold underline mt-1 hover:opacity-80" style={{ color: C.faint }}>
+                  Log a weigh-in on Today →
+                </button>
+              )}
             </label>
             <label className="block">{label(`Goal weight (${weightUnit(pref)})`)}
               <input type="number" value={draft.goal}
@@ -443,7 +451,7 @@ export default function ProfileTab({ profile, summary, refresh }) {
             </label>
           </div>
           <div className="text-xs font-semibold mt-3" style={{ color: C.faint }}>
-            Weight feeds from your 7-day average. Body fat % unlocks the two LBM-based BMR formulas.
+            Current weight is the average of your last 7 weigh-ins — it can't be typed here; log a weigh-in on Today to move it. Body fat % unlocks the two LBM-based BMR formulas.
           </div>
         </Card>
 
