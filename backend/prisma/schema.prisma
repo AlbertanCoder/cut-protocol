@@ -1,5 +1,34 @@
-// Schema intentionally avoids Postgres-only features (native enums, arrays)
-// so it's a one-line provider swap ("sqlite" -> "postgresql") at deploy time.
+// PORTABILITY — what is and isn't true (corrected 2026-07-24; the old claim
+// that this is "a one-line provider swap" was measured and is false).
+//
+// TRUE: the MODEL LAYER is portable. No native enums, no scalar lists/arrays,
+// no `@db.*` native type attributes — every "enum" is a String with the legal
+// values in a comment, and every list is a Json column. Point `provider` at
+// "postgresql" and `prisma db push` produces a working Postgres schema from
+// this file. That property is deliberate and worth keeping.
+//
+// FALSE: that the swap costs one line. The MIGRATION HISTORY is SQLite-only
+// and cannot be replayed on Postgres (measured 2026-07-24 over all 25
+// migrations):
+//   - 21 of 25 contain SQLite-flavoured SQL: 8 use `PRAGMA foreign_keys` /
+//     `defer_foreign_keys`, 14 declare `JSONB` columns (SQLite's alias for
+//     BLOB affinity — NOT Postgres jsonb semantics), 17 use `DATETIME`, 12 use
+//     `REAL`. Postgres has none of those spellings.
+//   - Prisma's whole table-rebuild idiom (`CREATE TABLE new_X` → copy → `DROP
+//     TABLE X` → `RENAME`) exists only because SQLite cannot `ALTER COLUMN`.
+//     On Postgres those are one-line `ALTER TABLE`s, so the SQL is not merely
+//     differently spelled, it is differently shaped.
+//   - `prisma/migrations/migration_lock.toml` pins `provider = "sqlite"` and
+//     Prisma hard-fails on a provider mismatch rather than reinterpreting.
+//
+// So the real cost is: squash the 25 migrations into one Postgres baseline
+// (`prisma migrate diff --from-empty --to-schema-datamodel`), rewrite
+// migration_lock.toml, and port the data separately. Half a day, not one line.
+// Also unportable at the app layer, for whoever does it: `Food.fdcId`/`upc` are
+// nullable `@unique`, and SQLite lets a nullable unique column hold unlimited
+// NULLs while Postgres does too — that one is fine — but SQLite's `LIKE` is
+// case-insensitive for ASCII by default and Postgres's is not, which silently
+// changes every `contains` filter (see routes/foods.js's search).
 
 generator client {
   provider = "prisma-client-js"
@@ -26,6 +55,49 @@ model User {
   // no createdByUserId); a plain "user" can only mutate recipes they created.
   role         String    @default("user")
   createdAt    DateTime  @default(now())
+  // ── DELETING A USER IS CURRENTLY IMPOSSIBLE (audited 2026-07-24) ────────
+  // Six relations below default to Prisma's `onDelete: Restrict` because they
+  // declare no onDelete at all: profile, weighins, plans, cartItems, recipes,
+  // trainingPlan. Any one of them having a row makes `prisma.user.delete()`
+  // throw P2003. Three more are Cascade (mealLogs, llmUsage, brainPreference),
+  // and six tables carry a bare `userId` with NO foreign key at all
+  // (RecipeRating, BrainConversation, GeneratedRecipe, GeneratedPlan,
+  // BrainSolveRun, UserLibraryEntry — deliberate, see their own comments), so
+  // even a successful delete would strand them permanently.
+  //
+  // No delete path exists in the app today (no DELETE /users route, no
+  // account-closure UI), so nothing is broken right now. But "erase my
+  // account" is not an optional feature forever, and the constitution's "data
+  // is never trapped" cuts both ways: a user must be able to leave.
+  //
+  // INTENDED BEHAVIOUR, decided here so the next person doesn't have to
+  // re-derive it — deliberately NOT yet implemented, see why below:
+  //   Cascade  — Profile, Weighin, Plan (→PlanSlot, GroceryList), CartItem,
+  //              TrainingPlan (→week/session/exercise): purely personal, has
+  //              no meaning without its owner.
+  //   SetNull  — Recipe.createdByUserId: recipes are SHARED LIBRARY content
+  //              that other users' plans and carts point at. Cascading here
+  //              would delete another user's dinner. Null already means
+  //              "shared library content, admin-only to mutate", which is
+  //              exactly the right resting state for an orphaned recipe.
+  //   SetNull  — LlmUsage.userId, which is Cascade today and SHOULD NOT BE:
+  //              it is the spend ledger the pre-call cost caps read
+  //              (src/lib/brain/ledger.js). Deleting a user currently erases
+  //              their spend and RESETS THE GLOBAL BUDGET SUM, which turns
+  //              account deletion into a budget-cap bypass. userId is already
+  //              nullable, so SetNull is representable with no data change.
+  //   Delete   — the six FK-less userId tables must be cleaned up explicitly
+  //              by whatever implements the delete, in the same transaction.
+  //
+  // WHY NOT NOW: changing an FK action in SQLite is not an ALTER — it is a
+  // full table rebuild (CREATE new → copy → DROP old → RENAME) per table, i.e.
+  // seven `DROP TABLE`s. The migration runner in src/lib/desktopBootstrap.js
+  // runs with foreign-key enforcement OFF precisely because that idiom is
+  // otherwise unsurvivable, and the last time this schema shipped a rebuild
+  // touching User/Recipe it took a P0 fix to stop it eating cascade children
+  // on upgrade. Seven rebuilds against installed user databases, to enable a
+  // feature that does not exist yet, is the wrong trade. Do it in the same
+  // change that adds the delete path, with the runner's FK audit as the gate.
   profile      Profile?
   weighins     Weighin[]
   plans        Plan[]
@@ -145,8 +217,25 @@ model Weighin {
 // permits many NULLs under SQLite, so hand-entered foods are unaffected.
 model Food {
   id       String   @id @default(cuid())
+  // NOT unique — see the model comment above. Consequence, measured
+  // 2026-07-24: 169 case-insensitive duplicate name groups (342 rows) in
+  // dev.db, e.g. "radicchio, raw" ×3, with nothing to tell them apart in a
+  // picker. This is the accepted cost of the FDC import, but it is a cost:
+  // the disambiguators that DO exist per row are `brand`, `fdcCategory` and
+  // `fdcId`, and any UI that lets a user choose between two same-named foods
+  // must show at least one of them or the choice is a coin flip. There is no
+  // structural fix available here — a unique constraint on (name, brand,
+  // fdcId) would still permit "radicchio, raw" ×3 with all three NULL.
   name     String
-  category String // "protein" | "carb" | "veg" | "fat" | "dairy" | "other"
+  // The 7 grocery-store slugs in src/lib/foodCategories.js (CATEGORY_SLUGS):
+  // "protein" | "grains" | "fruit-veg" | "fats-nuts-oils" | "dairy-eggs" |
+  // "pantry" | "drinks". Corrected 2026-07-24 — this comment used to document
+  // a 6-value taxonomy ("carb"|"veg"|"fat"|"dairy"|"other") that Phase 2
+  // replaced. That old taxonomy is still live in INSTALLED databases packaged
+  // before the recategorisation (the owner's own AppData copy holds
+  // other/carb/veg/protein/dairy/fat/fruit), so any consumer that switches on
+  // this value must tolerate both vocabularies or migrate the rows first.
+  category String
   // @unique — THE structural fix for the provenance corruption. One FDC record's
   // macros were copied onto six different curry/tahini/garlic pastes (fdcId 170160,
   // "Nuts, almond paste"); the final count was 472 of 738 id-claiming rows wrong,
@@ -177,11 +266,41 @@ model Food {
   // "community"     (Open Food Facts — crowd-sourced, lower trust, tagged as such)
   // "ai-estimated"  (model-derived, always carries "verify me")
   // "manual" | "manual-placeholder" (hand-entered, pre-import legacy rows)
+  //
+  // OPEN VOCABULARY — do not treat this list as exhaustive. Measured
+  // 2026-07-24: dev.db holds usda-verified / manual / manual-placeholder,
+  // but the owner's INSTALLED database holds "usda" (939 rows) — a value no
+  // comment ever documented. A "quarantined" tier is being added separately.
+  // Any consumer must have a default branch; an unknown source is a row to
+  // show cautiously, never a row to crash on or silently trust.
   source   String   @default("manual")
-  // Fiber-adjusted-Atwater validator verdict recorded at import time:
-  // "pass" | "warn:<reason>" | "exception:<documented-reason>". Null = not yet run
-  // (all pre-import rows). Surfaced by the startup [data-audit] report.
+  // Fiber-adjusted-Atwater validator verdict recorded at import time, as PROSE:
+  // "pass — <evidence>" | "warn:<codes>" | "exception:<documented-reason>".
+  // Null = not yet run. Surfaced by the startup [data-audit] report and read by
+  // the UI (frontend/src/data/foodCategories.js dataQualityFlag/quarantineNote),
+  // so it is part of the GET /api/foods contract and cannot be dropped from the
+  // list payload.
+  //
+  // The prose is the POINT of this column — "carried fdcId 169225 (\"Cucumber,
+  // peeled, raw\"), whose description does not denote this food" is an audit
+  // trail, and collapsing it to a code would destroy the evidence the
+  // provenance repair depends on. But it makes the column unusable as data:
+  // measured 2026-07-24, 13,872 distinct values across 14,122 rows (essentially
+  // a unique string per row), 1.19 MB, up to 367 chars each. It cannot be
+  // indexed, grouped, or filtered — "show me every warn" is a full scan plus a
+  // string prefix test in JS.
   dataQuality String?
+  // The structured half of the pair, added 2026-07-24. Exactly one of
+  // "pass" | "warn" | "exception", parsed from dataQuality's prefix (null when
+  // dataQuality is null). Purely DERIVED — dataQuality stays authoritative and
+  // keeps the evidence; this is the filterable/indexable projection of it, so
+  // an audit screen can ask "every food whose macros didn't reconcile" without
+  // reading 1.19 MB of prose. Backfilled for existing rows by migration
+  // 20260724203000. Whatever writes dataQuality must write this alongside it;
+  // a null flag on a non-null dataQuality means "not yet classified", not
+  // "clean". Deliberately NOT a foreign key to a lookup table — the vocabulary
+  // is three values and has been stable since Phase 2.
+  dataQualityFlag String?
   // Micronutrients per 100g as { nutrientKey: amount } in the canonical units
   // declared by the nutrient registry (see backend/src/lib/nutrients.js). Stored as
   // one JSON column rather than 40+ scalar columns: adding a nutrient must not cost
@@ -230,6 +349,18 @@ model Food {
 
   @@index([name])
   @@index([source])
+  // Serves the Foods list query (routes/foods.js GET /) two ways at once, which
+  // is why it earns its ~0.4 MB: it supplies `ORDER BY category, name` in index
+  // order (killing "USE TEMP B-TREE FOR ORDER BY" — the sort of all 14,122 rows
+  // that made every page request pay for the whole table), AND it is a prefix
+  // match for `WHERE category = ? ORDER BY name`. Measured on dev.db:
+  // first page LIMIT 100 7.84 ms -> 0.14 ms, page at OFFSET 13000 34.35 ms ->
+  // 0.44 ms, search+count 10.18 ms -> 1.74 ms.
+  // Column order matters and is not arbitrary: (category, name) serves both the
+  // combined sort and the category filter; (name, category) would serve
+  // neither. NOT redundant with @@index([name]) above, which still carries
+  // name-only lookups.
+  @@index([category, name])
 }
 
 model Recipe {
@@ -240,7 +371,15 @@ model Recipe {
   slotType    String   @default("meal") // "meal" | "snack" | "either"
   cuisine     String?
   prepTimeMin Int?
-  source      String   @default("curated") // "curated" | "ai-generated"
+  // Corrected 2026-07-24 — documented as 2 values, DB holds 4. Measured in
+  // dev.db: "themealdb-import" 602, "ai-generated" 262, "curated" 24,
+  // "imported" 1. The bulk TheMealDB load and the URL importer
+  // (src/lib/recipeImporter.js) each invented their own tag and neither is a
+  // typo for the other: "imported" is the one-off URL import, "themealdb-import"
+  // is the bulk load. Both are library content with no per-user owner. Anything
+  // switching on this value needs a default branch — the importer seam
+  // (`PROVIDERS` in recipeImporter.js) is explicitly built to grow more.
+  source      String   @default("curated") // "curated" | "ai-generated" | "imported" | "themealdb-import"
   // NEW (roadmap/03-recipe-curation.md §2): null = ordinary meal-eligible
   // (the default for ~88% of the pool). Only set for recipes reviewed and
   // found not to belong in a full lunch/dinner slot on their own merits.
@@ -303,7 +442,52 @@ model RecipeIngredient {
   food      Food    @relation(fields: [foodId], references: [id])
   baseGrams Float
   scalable  Boolean @default(true) // false = fixed (spices, a single egg, etc.) — not scaled with the recipe multiplier
-  role      String? // "protein" | "carb" | "veg" | "fat" | null — informational, not used for selection
+  // Corrected 2026-07-24 — documented as 4 values, DB holds 7 plus null.
+  // Measured in dev.db: null 2788, carb 1711, veg 1528, protein 925, fat 271,
+  // other 17, dairy 4, fruit 1. The three undocumented values come from the
+  // ingredient classifier tagging by grocery category rather than macro role.
+  // Still informational only and still not used for selection — the ONE
+  // consumer that matters is the solver's protein/sides split, which tests
+  // `role === "protein"` and is unaffected by the extra vocabulary. Left as
+  // data rather than normalised: with 4 of the 7 values on 22 rows total,
+  // a lookup table would cost a join to describe noise.
+  role      String? // "protein" | "carb" | "veg" | "fat" | "dairy" | "fruit" | "other" | null
+
+  // ── ONE LINE PER FOOD PER RECIPE (added 2026-07-24) ─────────────────────
+  // This table shipped with NO constraint and NO index. Both were load-bearing
+  // omissions, measured on dev.db before the fix:
+  //
+  //   (a) Duplicates were representable, so they happened: 208 duplicate
+  //       (recipeId, foodId) pairs spanning 429 rows across 125 recipes — 14%
+  //       of the library. "Jamaican Beef Patties" listed Water four separate
+  //       times (59.25 g + 118.5 g + 3.7 g + 14.825 g). The cached per-serving
+  //       macros were NOT wrong (each row carried real distinct grams and
+  //       computeRecipeMacros sums them all, so cached == recomputed), but a
+  //       shopping list and an ingredient panel that say "Water" four times are
+  //       wrong to a human, and no amount of application care could prevent the
+  //       next one while the DB permitted it. Migration 20260724203000 merges
+  //       each group into one row (grams summed) FIRST, then adds this — the
+  //       constraint cannot be created before the data satisfies it.
+  //
+  //   (b) With no index on either FK column, every ingredient lookup was a full
+  //       scan of all 7,245 rows. Fetching ingredients for the 889-recipe
+  //       library took 167.8 ms; routes/foods.js's "which recipes use this
+  //       food?" ripple took 121.1 ms for 500 foods. After: 33.1 ms and
+  //       33.6 ms — and 7.8 ms / 19.5 ms once the DB is in WAL. Prisma never
+  //       generates FK indexes for a plain relation on SQLite; they must be
+  //       declared.
+  //
+  // NOTE — there is deliberately NO separate @@index([recipeId]). The unique
+  // constraint's index is (recipeId, foodId), and SQLite uses a leading-column
+  // prefix of it for `WHERE recipeId = ?` without any help. Measured over 5
+  // interleaved runs of the 889-recipe fetch: 34.12 ms with the unique index
+  // alone vs 33.95 ms with a standalone recipeId index added — inside the
+  // run-to-run spread, for 0.23 MB. Adding it would be cargo cult.
+  // THE DEPENDENCY IS REAL THOUGH: if the @@unique is ever removed, this table
+  // loses its recipeId index too and every ingredient fetch silently returns to
+  // a 7,245-row scan. Remove one, add the other back.
+  @@unique([recipeId, foodId])
+  @@index([foodId])
 }
 
 model Plan {
@@ -419,6 +603,14 @@ model MealLog {
 // relation, matching the standing brain-persistence convention.
 model LlmUsage {
   id              String   @id @default(cuid())
+  // WRONG ACTION, KNOWN, NOT YET CHANGED (audited 2026-07-24). Cascade here
+  // means deleting a user ERASES their spend history, which is not a privacy
+  // win — it is a budget-cap bypass, because ledger.js's caps read the SUM of
+  // this table. `SetNull` is the correct action and is already representable
+  // (userId is nullable); the anonymised row keeps the money accounted for
+  // while dropping the person. Not changed in this pass because it is a SQLite
+  // table rebuild — see the delete-behaviour block on User for the full
+  // reasoning and the rest of the intended FK map.
   userId          String?
   user            User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
   model           String
