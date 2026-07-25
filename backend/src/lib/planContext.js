@@ -2,14 +2,26 @@
 // Extracted from routes/plans.js (Stage 1, v2) so the brain's chat planner and
 // every /plans route build the SAME exclusion-filtered pool. The M8 invariant
 // (the recipe LISTING and the solver POOL can never diverge) depends on this
-// staying single-sourced: exclusions are computed HERE, in code, from the
+// staying single-sourced: exclusions are computed in code from the
 // authoritative profile only — never from LLM output, memory, or free text
-// (LAW 2). No behavior change from the in-route originals; verbatim move.
+// (LAW 2).
+//
+// The exclusion DECISION itself no longer lives here. It moved to
+// exclusionGate.js, because "single-sourced" was only ever true of the plan
+// pool: the library browse, the cart and the brain pool each had their own
+// weaker copy, and against the real library those copies showed 210 recipe/
+// allergy pairs this pool correctly hid. This file now owns two things — the
+// diet stamp the solver needs, and the library cache the eight /plans call
+// sites need.
 const { prisma } = require("./prisma.js");
 const { computeMacros } = require("./bmrEngine.js");
 const { getWeightNowKg } = require("./weightNow.js");
 const { reconcileTarget } = require("./profileTarget.js");
-const { recipeExcludedByStyle, matchesExclusionTerm, foodMatchesExclusionTerm, recipeExceedsKetoCeiling, additionalIngredientNames } = require("./dietaryFilter.js");
+// The exclusion decision is NOT made here anymore. It lives in exclusionGate.js
+// so the library browse, the cart, the brain pool and this pool answer the same
+// question with the same evidence — see that file's header for the 210 recipe/
+// allergy pairs the old five-implementations arrangement was leaking.
+const { filterRecipes, RECIPE_GATE_SELECT } = require("./exclusionGate.js");
 
 // The pool carries the diet style it was admitted under (solver-core-3).
 // "Pool membership = compliance" is this codebase's invariant, but membership is
@@ -23,60 +35,119 @@ function stampDietGuard(recipes, dietaryStyle) {
   return recipes.map((r) => (r.dietGuardStyle === dietaryStyle ? r : { ...r, dietGuardStyle: dietaryStyle }));
 }
 
+// The solver's pool = the gate's verdict + the diet stamp. All four evidence
+// sources (ingredient rows with metadata, "Add'l ingredients:" prose, the
+// title, the full step text) now live in exclusionGate.collectEvidence(), so
+// this function no longer decides anything about allergens — it only decides
+// what the SOLVER additionally needs to know about what it admitted.
 function filterRecipePool(recipePool, profile) {
   const dietaryStyle = profile.dietaryStyle || null;
-  const excludedFoods = Array.isArray(profile.excludedFoods) ? profile.excludedFoods : [];
-  if (!dietaryStyle && excludedFoods.length === 0) return recipePool;
-  return stampDietGuard(recipePool.filter((recipe) => {
-    // Shared keto ceiling — single-sourced in dietaryFilter so the library
-    // listing (recipes.js) can never diverge from the solver pool (M8).
-    if (recipeExceedsKetoCeiling(recipe, dietaryStyle)) return false;
-    // Carry the WHOLE Food row, not just its name. Stripping to { name } here is
-    // what made the persisted allergen metadata inert on the only path that
-    // matters: fdcCategory / allergenTags / mayContain were written to the DB and
-    // then thrown away one function before the matcher, so the four-probe union
-    // degraded to a one-probe name check on every generated plan.
-    const flatIngredients = recipe.ingredients.map((i) => i.food);
-    // Defence-in-depth: fold in any "Add'l ingredients:" the importer left in the
-    // step text but never turned into ingredient rows, so an allergen declared
-    // only in prose (e.g. mayonnaise -> egg) can't slip past the filter.
-    const addl = additionalIngredientNames(recipe.steps);
-    // The FULL step text is evidence too. The importer routinely leaves an
-    // ingredient in the instructions without ever creating a row for it —
-    // "stir in 1 TBSP butter", "heat the ghee", "add 1 egg to the soup", a
-    // Sushi step naming raw salmon/tuna/prawn — and the "Add'l ingredients:"
-    // parser above catches only ~1 of 889 of those. A QC sweep confirmed 20
-    // step-only dairy leaks alone reaching a dairy-excluded plate. So the whole
-    // step prose is matched as one more name.
-    //
-    // This over-excludes: a step reading "serve without butter" or "dairy-free
-    // version" will drop a genuinely-safe recipe. That is the deliberate, and
-    // per the constitution the ONLY acceptable, failure direction for an
-    // allergy — a lost safe recipe beats a medical incident. Negation parsing
-    // ("without", "-free") was rejected on purpose: "add butter, or omit for a
-    // dairy-free version" carries a negation word yet DOES cook butter in, so a
-    // negation-aware scan would re-open the exact leak this closes.
-    const stepText = Array.isArray(recipe.steps) ? recipe.steps.join("  ") : String(recipe.steps || "");
-    // The recipe's own NAME is evidence and was read by nothing. A dish is
-    // routinely named after an ingredient its rows omit — "Egg Drop Soup" has no
-    // egg row, "Roasted Eggplant With Tahini, Pine Nuts" has no tahini row, and
-    // "Cubano pork belly" carries only its marinade — so those reached egg-,
-    // sesame- and pork-excluded plans respectively. Treating the title as one
-    // more name to match is add-only: it can raise an exclusion, never clear one.
-    const checkIngredients = [
-      ...flatIngredients,
-      ...addl.map((name) => ({ name })),
-      { name: recipe.name || "" },
-      { name: stepText },
-    ];
-    if (recipeExcludedByStyle({ ingredients: checkIngredients }, dietaryStyle)) return false;
-    // foodMatchesExclusionTerm, not matchesExclusionTerm: the former consults the
-    // metadata probes as well as the name, and is the function the add-only union
-    // was actually built for. Rows synthesised from prose/title carry only a name,
-    // which it handles — absent metadata simply contributes no evidence.
-    if (excludedFoods.length && checkIngredients.some((ing) => excludedFoods.some((term) => foodMatchesExclusionTerm(ing, term)))) return false;
-    return true;
-  }), dietaryStyle);
+  return stampDietGuard(filterRecipes(recipePool, profile), dietaryStyle);
+}
+
+// ── the recipe library cache (plan-perf-1) ────────────────────────────────
+// planContext() is called from eight places in routes/plans.js, and every one
+// of them was re-loading all 889 recipes with their ingredients and foods:
+// measured 192–532 ms and ~7 MB per call, then 350–400 ms to filter them —
+// 10-17x the solve itself (30-50 ms). It is the dominant cost of a plan
+// request by an order of magnitude, and the data is a shared LIBRARY that
+// changes a few times a day at most.
+//
+// Two layers, both keyed on a library VERSION so a stale pool is not
+// representable:
+//   • _library — the raw rows, loaded with the gate's own selection.
+//   • _pools   — the FILTERED pool per exclusion-rule set. The filter is the
+//     more expensive half (the step-prose probe runs the whole allergen vocab
+//     over multi-KB strings), and a user's rules change far less often than
+//     they request a plan, so this is the layer that actually pays.
+//
+// INVALIDATION is belt-and-braces on purpose, because getting it wrong means
+// serving a plan built from a recipe that no longer exists — or worse, from
+// one whose allergen metadata just changed:
+//   1. invalidateRecipeLibrary() — called explicitly by the routes that mutate
+//      recipes. Instant, and the only mechanism that catches a change made
+//      microseconds before the next read.
+//   2. LIBRARY_VERSION_SQL — a checksum over exactly the columns the gate and
+//      the solver read (row counts, name/steps/metadata lengths, macro and
+//      gram sums). ~12 ms, run on every planContext() call, and it is what
+//      covers the paths that do NOT call (1): a maintenance script in another
+//      process, a seeder, or a mutation route wired after this comment was
+//      written. Any insert, delete, rename, macro edit, allergen-tag edit or
+//      portion change moves it.
+// Prisma 6 removed $use, so a client-level write hook is not available; if the
+// checksum ever becomes the bottleneck the right answer is an updatedAt column
+// on Recipe/Food, not a longer TTL.
+const LIBRARY_VERSION_SQL =
+  "SELECT (SELECT COUNT(*)||'/'||IFNULL(SUM(LENGTH(name)+LENGTH(steps)+kcal+protein+fat+carb),0) FROM Recipe) r," +
+  " (SELECT COUNT(*)||'/'||IFNULL(SUM(LENGTH(name)+LENGTH(IFNULL(allergenTags,''))+LENGTH(IFNULL(fdcCategory,''))+LENGTH(IFNULL(mayContain,''))+kcal+protein+fat+carb+fiber),0) FROM Food) f," +
+  " (SELECT COUNT(*)||'/'||IFNULL(SUM(baseGrams),0) FROM RecipeIngredient) i";
+// Distinct rule-sets held at once. A single-user desktop app needs 1; the cap
+// exists so a future multi-tenant deployment cannot grow this without bound.
+const POOL_CACHE_MAX = 32;
+let _epoch = 0;
+let _library = null; // { version, rows }
+let _pools = new Map(); // rulesKey -> filtered+stamped pool
+
+// Called by every route that mutates a Recipe, RecipeIngredient or Food.
+function invalidateRecipeLibrary() {
+  _epoch++;
+  _library = null;
+  _pools = new Map();
+}
+
+async function libraryVersion() {
+  try {
+    const [row] = await prisma.$queryRawUnsafe(LIBRARY_VERSION_SQL);
+    return `${_epoch}|${row.r}|${row.f}|${row.i}`;
+  } catch {
+    // No checksum (unsupported provider, schema drift, a mocked client) means
+    // no PROOF the cache is current — so don't use one. Fails toward slow,
+    // never toward stale.
+    return null;
+  }
+}
+
+// The raw library rows, cached by version. Returns the array itself; callers
+// must treat it as read-only (filterRecipePool already never mutates).
+async function loadRecipeLibrary() {
+  const version = await libraryVersion();
+  if (version && _library && _library.version === version) return _library.rows;
+  const rows = await prisma.recipe.findMany({ select: RECIPE_GATE_SELECT });
+  if (version) {
+    if (!_library || _library.version !== version) _pools = new Map();
+    _library = { version, rows };
+  } else {
+    _library = null;
+    _pools = new Map();
+  }
+  return rows;
+}
+
+// The exclusion-filtered, diet-stamped pool for one profile's rules, cached by
+// (library version + rules). The key is built from the AUTHORITATIVE profile
+// fields only — the same two the gate reads — so two profiles that exclude the
+// same things share one entry and nothing else about the user leaks into it.
+// The returned ARRAY is always a fresh copy, never the cached one. The solver's
+// AI-fallback path (weeklyPlanner.finishAiSlot) push()es a newly generated
+// recipe into the pool it was handed so later slots in the same run can use it
+// — which, against a shared cached array, would append that recipe to every
+// subsequent request's pool and mutate a live array another request may be
+// iterating. Copying the array (550 refs, sub-millisecond) keeps that
+// per-run behaviour exactly as it was while the rows themselves stay shared.
+async function loadRecipePool(profile) {
+  const rows = await loadRecipeLibrary();
+  if (!_library) return { pool: filterRecipePool(rows, profile), rawPoolCount: rows.length };
+  const excluded = Array.isArray(profile?.excludedFoods) ? profile.excludedFoods : [];
+  const rulesKey = JSON.stringify([
+    profile?.dietaryStyle || null,
+    [...excluded].map((t) => String(t).trim().toLowerCase()).sort(),
+  ]);
+  const hit = _pools.get(rulesKey);
+  if (hit) return { pool: [...hit], rawPoolCount: rows.length };
+  const pool = filterRecipePool(rows, profile);
+  if (_pools.size >= POOL_CACHE_MAX) _pools.delete(_pools.keys().next().value);
+  _pools.set(rulesKey, pool);
+  return { pool: [...pool], rawPoolCount: rows.length };
 }
 
 async function planContext(userId) {
@@ -91,13 +162,12 @@ async function planContext(userId) {
   const reconciled = await reconcileTarget(userId, { profile, reason: "planContext" });
   const dailyTarget = computeMacros(profile, weightNowKg, reconciled.target);
   const mealConfig = { meals: profile.mealsPerDay, snacks: profile.snacksPerDay };
-  const rawRecipePool = await prisma.recipe.findMany({ include: { ingredients: { include: { food: true } } } });
-  const recipePool = filterRecipePool(rawRecipePool, profile);
+  const { pool: recipePool, rawPoolCount } = await loadRecipePool(profile);
   // T (v2): the user's SOFT taste ratings, as a Map for the solver's bias. A
   // soft re-rank only — hard diet/allergy filtering already happened above.
   const ratingRows = await prisma.recipeRating.findMany({ where: { userId }, select: { recipeId: true, rating: true } });
   const ratings = new Map(ratingRows.map((r) => [r.recipeId, r.rating]));
-  return { profile, dailyTarget, mealConfig, recipePool, rawPoolCount: rawRecipePool.length, ratings };
+  return { profile, dailyTarget, mealConfig, recipePool, rawPoolCount, ratings };
 }
 
 // The generation filters the Phase 4 UI sends. Cuisine/protein/budget are
@@ -124,4 +194,10 @@ function parseFilters(body) {
   };
 }
 
-module.exports = { planContext, filterRecipePool, parseFilters, stampDietGuard };
+module.exports = {
+  planContext, filterRecipePool, parseFilters, stampDietGuard,
+  // plan-perf-1: the cache and its invalidator. Any route that creates,
+  // edits or deletes a Recipe / RecipeIngredient / Food must call
+  // invalidateRecipeLibrary() after the write commits.
+  invalidateRecipeLibrary, loadRecipeLibrary, loadRecipePool,
+};

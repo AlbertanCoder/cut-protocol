@@ -11,7 +11,14 @@ const { sumMacros, resolveDraftIngredients, persistRecipe, resolvedDraftViolatio
 const router = express.Router();
 router.use(requireAuth);
 
-const { recipeExcludedByStyle, matchesExclusionTerm, recipeExceedsKetoCeiling } = require("../lib/dietaryFilter.js");
+// One authority for "may this user see this recipe?" — see exclusionGate.js.
+// This route used to carry its own copy of the check reading ingredient NAMES
+// only, and against the real library that copy showed 210 recipe/allergy pairs
+// the solver hides — a sesame-allergic user browsing "Roasted Eggplant With
+// Tahini, Pine Nuts, and Lentils" (tahini in the title, no tahini row), an
+// egg-allergic user browsing a Banh Mi whose mayo lives in the step prose.
+const { partitionRecipes, explainRecipeExclusion } = require("../lib/exclusionGate.js");
+const { invalidateRecipeLibrary } = require("../lib/planContext.js");
 
 // Phase 3: the library never surfaces a recipe containing an excluded
 // ingredient — the same hard filter the solver pool uses. `hiddenCount`
@@ -22,21 +29,22 @@ router.get("/", async (req, res) => {
   if (req.query.all === "1") return res.json({ recipes, hiddenCount: 0 });
 
   const profile = await prisma.profile.findUnique({ where: { userId: req.userId } });
-  const dietaryStyle = profile?.dietaryStyle || null;
-  const excludedFoods = Array.isArray(profile?.excludedFoods) ? profile.excludedFoods : [];
-  if (!dietaryStyle && excludedFoods.length === 0) return res.json({ recipes, hiddenCount: 0 });
-
-  const visible = recipes.filter((r) => {
-    // Stage-C fix (M8): the keto whole-recipe carb ceiling was enforced only in
-    // the solver pool, so a keto user saw every recipe in the library and got
-    // a misleading error when placing a non-keto one. Same ceiling here now.
-    if (recipeExceedsKetoCeiling(r, dietaryStyle)) return false;
-    const flat = r.ingredients.map((i) => ({ name: i.food.name }));
-    if (recipeExcludedByStyle({ ingredients: flat }, dietaryStyle)) return false;
-    if (excludedFoods.length && flat.some((ing) => excludedFoods.some((term) => matchesExclusionTerm(ing.name, term)))) return false;
-    return true;
+  // No short-circuit on "this profile has no rules": the gate's fail-closed
+  // screen (a recipe whose ingredients cannot be read at all) is a property of
+  // the RECIPE, not of the eater, and letting it depend on the caller is how
+  // surfaces drifted apart in the first place. It hides nothing on the real
+  // library — 0 of 889 recipes have an empty ingredient list, a null food or a
+  // blank food name.
+  const { allowed, blocked } = partitionRecipes(recipes, profile);
+  // hiddenBecauseUnreadable is reported separately because it is a DATA bug on
+  // our side, not a diet decision about the user — conflating the two would
+  // let a broken import masquerade as an allergy.
+  const unreadable = blocked.filter((b) => b.failClosed);
+  res.json({
+    recipes: allowed,
+    hiddenCount: blocked.length,
+    hiddenBecauseUnreadable: unreadable.length,
   });
-  res.json({ recipes: visible, hiddenCount: recipes.length - visible.length });
 });
 
 // GET /api/recipes/ai-status — lets a client ask whether AI drafting is armed
@@ -47,6 +55,34 @@ router.get("/ai-status", (req, res) => {
   const availability = llmAvailability("recipeDrafts");
   res.json({ enabled: availability.enabled, reason: availability.reason || null });
 });
+
+// ── allergen-override audit trail ─────────────────────────────────────────
+// "ALLOW MY ALLERGENS" is a real, legitimate escape hatch (the user knows
+// their own tolerance better than a keyword table does) but it was leaving NO
+// trace anywhere: aiRecipeClient labelled each overridden draft with exactly
+// what it violates, this route returned that label, and then it evaporated —
+// nothing on the server, and a frontend that never rendered it, so a violating
+// draft arrived visually identical to a safe one. If someone later has a
+// reaction, "which drafts did we knowingly hand over, and what did we say they
+// contained?" has to be answerable. One line per overridden draft, tagged for
+// grep, machine-parseable, and carrying the rules that were overridden rather
+// than just the fact that they were.
+//
+// This is a LOG, not a table: adding a Prisma model would need a migration,
+// and the value here is forensic (an operator reading server output), not
+// queryable-in-app. If an in-app audit view is ever wanted, this is the shape
+// to persist.
+function auditAllergenOverride({ userId, recipeName, violation, stage, dietaryStyle, excludedFoods }) {
+  console.warn(`[allergen-override] ${JSON.stringify({
+    at: new Date().toISOString(),
+    userId: userId || null,
+    recipe: recipeName || "(unnamed)",
+    violates: violation,
+    stage, // "model-output" | "post-resolution"
+    profileRules: { dietaryStyle: dietaryStyle || null, excludedFoods: excludedFoods || [] },
+    note: "user ticked ALLOW MY ALLERGENS; draft was NOT dropped",
+  })}`);
+}
 
 // POST /api/recipes/generate-drafts — the ONE LLM-calling route outside
 // /api/brain. Governed by src/lib/brain/governance.js (fleet finding
@@ -99,7 +135,45 @@ router.post("/generate-drafts", async (req, res) => {
       resolved.push(r);
     }
 
-    res.json({ drafts: resolved, droppedForAllergies, droppedForShape, allergenOverrides });
+    // AUDIT every override, from BOTH screens (aiRecipeClient filled
+    // allergenOverrides for the model's own names; the loop above added the
+    // post-resolution ones). Logged before the response so a crash mid-send
+    // still leaves the trace.
+    for (const o of allergenOverrides) {
+      auditAllergenOverride({
+        userId: req.userId, recipeName: o.name, violation: o.reason,
+        stage: /after ingredient resolution/.test(o.reason || "") ? "post-resolution" : "model-output",
+        dietaryStyle, excludedFoods,
+      });
+    }
+
+    // Make the override UNMISSABLE in the payload instead of leaving it as an
+    // easily-ignored sidecar array. `overriddenByName` lets a renderer answer
+    // "is THIS card unsafe?" with a lookup instead of a scan, and each draft
+    // now carries its own verdict, so a client cannot render a violating draft
+    // identically to a safe one without actively discarding the field. The
+    // sidecar array stays for existing consumers.
+    const overriddenByName = {};
+    for (const o of allergenOverrides) overriddenByName[o.name] = o.reason;
+    const draftsOut = resolved.map((d) => (
+      overriddenByName[d.name]
+        ? { ...d, allergenViolation: overriddenByName[d.name], allergenOverridden: true }
+        : { ...d, allergenViolation: null, allergenOverridden: false }
+    ));
+
+    res.json({
+      drafts: draftsOut,
+      droppedForAllergies,
+      droppedForShape,
+      allergenOverrides,
+      // Top-level flags so a client cannot miss the state by only reading
+      // `drafts`. allergenOverrideActive is true whenever the user ASKED for
+      // the override, even if nothing ended up violating — that is the state
+      // the warning banner should reflect.
+      allergenOverrideActive: !!allowAllergens,
+      allergenOverrideCount: allergenOverrides.length,
+      overriddenByName,
+    });
   } catch (e) {
     // A governance refusal is a DECIDED outcome with an honest status
     // (503 off/keyless · 400 input refused · 429 cost cap · 504 timeout),
@@ -140,8 +214,29 @@ function validateDraftFoods(ingredients, foodById) {
   return problems;
 }
 
+// Shape a draft (AI or imported) as the gate expects a recipe, so a
+// never-persisted draft is judged by exactly the same evidence a saved recipe
+// is: whole Food rows for the metadata probes, plus the title and the step
+// prose. Building this here rather than checking names is the difference
+// between catching a Banh Mi whose mayo only exists in step 1 and not.
+function draftAsRecipe({ name, steps, ingredients }, foodById) {
+  return {
+    name,
+    steps,
+    // The gate's keto ceiling reads cached recipe totals; a draft has none yet,
+    // so it is left undefined and the ceiling correctly declines to judge. The
+    // per-ingredient style rules still apply.
+    ingredients: (ingredients || []).map((i) => ({
+      foodId: i.foodId,
+      baseGrams: i.grams,
+      food: foodById ? foodById.get(i.foodId) : i.food,
+      name: i.name,
+    })),
+  };
+}
+
 router.post("/save-draft", async (req, res) => {
-  const { name, description, cuisine, slotType, prepTimeMin, ingredients, steps, source } = req.body || {};
+  const { name, description, cuisine, slotType, prepTimeMin, ingredients, steps, source, allowAllergens } = req.body || {};
   if (!name || !Array.isArray(ingredients) || ingredients.length === 0) {
     return res.status(400).json({ error: "name and at least one ingredient are required" });
   }
@@ -157,6 +252,34 @@ router.post("/save-draft", async (req, res) => {
     return res.status(422).json({ error: "recipe fails the data validator", invalidIngredients: problems });
   }
 
+  // ALLERGEN GATE. This route ran validateDraftFoods() and NOTHING else — it
+  // was the one write path into the shared recipe library with no allergen
+  // check at all. Both of its callers (the AI draft editor and the URL
+  // importer) let the user EDIT ingredients before saving, so whatever
+  // generate-drafts or the importer screened is not what necessarily arrives
+  // here; and a saved recipe is permanent, shared, and immediately eligible
+  // for every other user's plan pool. Checked against the saver's own profile,
+  // with the same explicit per-request override the generator offers — the
+  // override stops the REFUSAL, never the check, and is always audited.
+  const saverProfile = await prisma.profile.findUnique({ where: { userId: req.userId } });
+  const verdict = explainRecipeExclusion(draftAsRecipe({ name, steps, ingredients }, foodById), saverProfile);
+  if (verdict.excluded) {
+    if (!allowAllergens) {
+      return res.status(422).json({
+        error: "this recipe violates your own diet & allergy settings",
+        reason: verdict.reason,
+        failClosed: verdict.failClosed,
+        hint: verdict.failClosed
+          ? "one or more ingredients can't be read — fix the ingredient rows and try again"
+          : "edit the ingredients, or re-send with allowAllergens:true if you know this is safe for you",
+      });
+    }
+    auditAllergenOverride({
+      userId: req.userId, recipeName: name, violation: verdict.reason, stage: "save-draft",
+      dietaryStyle: saverProfile?.dietaryStyle, excludedFoods: saverProfile?.excludedFoods,
+    });
+  }
+
   const macros = sumMacros(ingredients.map((i) => ({ food: foodById.get(i.foodId), grams: i.grams })));
   const finalCuisine = cuisine && CUISINES.some((c) => c.key === cuisine)
     ? cuisine
@@ -167,7 +290,10 @@ router.post("/save-draft", async (req, res) => {
       { name, description, cuisine: finalCuisine, slotType, prepTimeMin, steps, ingredients, ...macros },
       { source: source === "imported" ? "imported" : "ai-generated" }
     );
-    res.status(201).json(recipe);
+    // plan-perf-1: a new recipe changes the shared library the plan pool is
+    // cached from.
+    invalidateRecipeLibrary();
+    res.status(201).json({ ...recipe, allergenViolation: verdict.excluded ? verdict.reason : null });
   } catch (e) {
     if (e.code === "P2002") return res.status(409).json({ error: `a recipe named "${name}" already exists` });
     res.status(500).json({ error: e.message });
@@ -175,13 +301,70 @@ router.post("/save-draft", async (req, res) => {
 });
 
 // Phase 5 importer: URL → reviewable draft (same shape as AI drafts — the
-// frontend reuses the draft editor). Nothing is saved here.
+// frontend reuses the draft editor).
+//
+// ── correction: this route DOES write. ────────────────────────────────────
+// The comment here used to read "Nothing is saved here" and that was false.
+// importRecipeFromUrl() calls resolveIngredient() once per ingredient line,
+// and resolveIngredient() creates a Food row for every line it cannot match
+// locally — a USDA-backed row when the lookup succeeds, a zero-macro
+// `manual-placeholder` row when it doesn't (ingredientResolver.js:533 and
+// :559). So PREVIEWING an import — a page the user may glance at and close —
+// permanently adds rows to the shared Food library. Paste five URLs, save
+// none, and the food table still grew; on a bad page ("2 15 oz. cans" style
+// lines) the growth is placeholder junk that then shows up in the Foods
+// browser and in ingredient pickers.
+//
+// It should NOT write. A preview is a read. The correct fix is a dry-run seam
+// in the resolver — importRecipeFromUrl(url, { resolveIngredientImpl }) with a
+// non-persisting implementation that returns the same
+// { food, matched } shape from an in-memory candidate instead of a created
+// row — and it belongs in recipeImporter.js / ingredientResolver.js, which
+// this route does not own. Two reasons not to bodge it from here: deleting the
+// rows afterwards races every other request that may already have referenced
+// them, and doing the write-then-delete inside a transaction is impossible
+// because the resolver writes through the shared client, not a tx handle.
+// Until that seam exists, the honest thing is to say what happens rather than
+// claim it doesn't. TODO(recipe-import-dryrun).
 router.post("/import", async (req, res) => {
   const { url } = req.body || {};
   if (typeof url !== "string" || !url.trim()) return res.status(400).json({ error: "url required" });
   try {
     const draft = await importRecipeFromUrl(url.trim());
-    res.json({ draft });
+    // …and because the line above may have created Food rows, the cached plan
+    // pool is no longer provably current.
+    invalidateRecipeLibrary();
+
+    // The returned draft used to be UNFILTERED — an imported page could put a
+    // sesame or shellfish recipe straight into the review editor of a user who
+    // excludes it, with nothing marking it. Run the same gate the library and
+    // the solver use and LABEL the draft; the import is not refused (the user
+    // asked for this specific URL and may be cooking for someone else), but it
+    // can no longer arrive looking safe.
+    // The draft carries foodIds but not the Food ROWS, and the gate refuses to
+    // judge a recipe whose metadata was not loaded (that refusal is the point —
+    // it is what makes a stripped query impossible to under-check with). So
+    // load them.
+    const draftFoodIds = [...new Set((draft.ingredients || []).map((i) => i.foodId).filter(Boolean))];
+    const draftFoods = draftFoodIds.length
+      ? await prisma.food.findMany({ where: { id: { in: draftFoodIds } } })
+      : [];
+    const profile = await prisma.profile.findUnique({ where: { userId: req.userId } });
+    const verdict = explainRecipeExclusion(
+      draftAsRecipe(draft, new Map(draftFoods.map((f) => [f.id, f]))),
+      profile
+    );
+    res.json({
+      draft: {
+        ...draft,
+        allergenViolation: verdict.excluded ? verdict.reason : null,
+        allergenFailClosed: verdict.failClosed,
+      },
+      allergenViolation: verdict.excluded ? verdict.reason : null,
+      // Naming what the preview changed on the server, because "preview" reads
+      // as read-only and it is not.
+      sideEffects: ["unmatched ingredient lines were added to the food library as USDA or placeholder rows"],
+    });
   } catch (e) {
     res.status(422).json({ error: e.message });
   }
@@ -250,6 +433,9 @@ router.put("/:id", async (req, res) => {
       }
       return tx.recipe.update({ where: { id: recipe.id }, data: patch, include: RECIPE_INCLUDE });
     });
+    // plan-perf-1: edited ingredients/macros/steps change what the cached plan
+    // pool would decide about this recipe.
+    invalidateRecipeLibrary();
     res.json(updated);
   } catch (e) {
     if (e.code === "P2002") return res.status(409).json({ error: `a recipe named "${name}" already exists` });
@@ -265,6 +451,7 @@ router.delete("/:id", async (req, res) => {
   // PlanSlot -> Recipe is ON DELETE SET NULL, so old plans survive intact.
   await prisma.recipeIngredient.deleteMany({ where: { recipeId: recipe.id } });
   await prisma.recipe.delete({ where: { id: recipe.id } });
+  invalidateRecipeLibrary(); // plan-perf-1
   res.status(204).end();
 });
 
