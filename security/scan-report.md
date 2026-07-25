@@ -1,3 +1,48 @@
+> # ⚠ CERTIFICATE VOID — 2026-07-24
+> **This report certifies an artifact that no longer exists, and today's
+> installer has never been scanned.** Every PASS below is void. The checklist
+> is kept because the method is right; the verdict is not.
+>
+> | | Scanned artifact (2026-07-21) | `release/` today |
+> |---|---|---|
+> | Size | 209,270,871 B | **243,269,113 B** |
+> | SHA-256 | `996877c6…590a1ef3` | **`bfdef822…c940a34d7`** |
+> | Built | 2026-07-21 | **2026-07-24 18:44** |
+>
+> Different size, different hash, different build. **A hash-pinned scan
+> certifies exactly one file and expires the moment that file is rebuilt** —
+> and this one was rebuilt at least twice on 2026-07-24 alone (an 18:25 build
+> was superseded by the 18:44 one before this note was written). Nothing in the
+> repo re-runs the scan or invalidates this page on rebuild, so it has been
+> sitting here vouching for a binary that was replaced days ago.
+>
+> **The current installer is known-unsafe to share.** It leaks secrets and
+> real user health data:
+> - `backend/.env.qc` ships, because the payload denylist blocks `.env` and
+>   `.env.local` **by name** and never anticipated a third variant.
+> - `backend/prisma/dev.db.snapshot-agentcontam-20260721-212858` ships — a real
+>   3.2 MB user database containing **10 users' health data**. The exclusions
+>   `dev.db.backup-*` and `*.db.backup*` both miss it: it is a *snapshot*, not a
+>   *backup*.
+>
+> This directly falsifies rows 2, 3 and 4 of the table below ("Secrets in the
+> UNPACKED installer: PASS", "Real `.env` / API keys shipped: PASS (none)",
+> "Personal data in the shipped DB: PASS"). Row 9's "864 foods" is also stale —
+> the library is 14,122 foods / 889 recipes.
+>
+> **Do not share `release/Cut Protocol Setup 1.0.0.exe` with anyone.** If a
+> build was already sent to a tester, note the open question in
+> `BATTLE-PLAN.md`: the 2026-07-21 share predates `.env.qc` (created 07-22), but
+> the DB snapshot is stamped 07-21 21:28 — if that build was cut after 21:28,
+> the tester already has the data.
+>
+> **Before this page may carry a verdict again:** convert `build.files` to an
+> allowlist (see CLAUDE.md → Packaging), rebuild, re-run `npm run dist:check`
+> and `npm run scan:secrets` against *that* binary, and replace the size/hash
+> above in the same commit that produces it. A scan report that is not
+> regenerated with its artifact is worse than no scan report — it converts an
+> unknown into a false assurance.
+
 # Cut Protocol — release security scan report
 
 **Artifact:** `release/Cut Protocol Setup 1.0.0.exe` (v0.1.0-prototype)

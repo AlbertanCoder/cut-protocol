@@ -52,11 +52,21 @@ function gitList(mode) {
   }
 }
 
-function walk(target, out) {
+// SKIP_DIR prunes DESCENDANT directories only — NEVER the root the caller
+// explicitly asked for.
+//
+// The bug this guards (found 2026-07-24): "release" is in SKIP_DIR so that a
+// repo-wide scan doesn't waste minutes walking build output. But the same
+// check fired on the TARGET itself, so `scanSecrets.mjs release` — and, via
+// checkDistSafe's scanPaths([target]), `npm run dist:check` — returned on the
+// first line and scanned ZERO files. The gate printed "safe to share" over an
+// installer that shipped backend/.env.qc. An explicit path is an instruction,
+// not a suggestion: honour it, then prune below it.
+function walk(target, out, isRoot = false) {
   let st;
   try { st = fs.statSync(target); } catch { return; }
   if (st.isDirectory()) {
-    if (SKIP_DIR.has(path.basename(target))) return;
+    if (!isRoot && SKIP_DIR.has(path.basename(target))) return;
     for (const name of fs.readdirSync(target)) walk(path.join(target, name), out);
   } else if (st.isFile()) {
     out.push(target);
@@ -72,18 +82,7 @@ function scanFile(file, findings) {
   let buf;
   try { buf = fs.readFileSync(file); } catch { return; }
   if (buf.includes(0)) return; // a NUL byte marks a binary file — skip it
-  const lines = buf.toString("utf8").split(/\r?\n/);
-  for (let i = 0; i < lines.length; i++) {
-    const line = lines[i];
-    if (line.includes(ALLOW_MARK)) continue;
-    if (PLACEHOLDER.test(line)) continue;
-    for (const rule of RULES) {
-      if (rule.re.test(line)) {
-        findings.push({ file: path.relative(ROOT, file), line: i + 1, rule: rule.id, note: rule.note });
-        break; // one finding per line is enough to fail
-      }
-    }
-  }
+  for (const f of scanText(buf.toString("utf8"), path.relative(ROOT, file))) findings.push(f);
 }
 
 function main() {
@@ -95,7 +94,7 @@ function main() {
   const files = [];
   if (args[0] === "--tracked") gitList("tracked").forEach((f) => files.push(f));
   else if (args[0] === "--staged") gitList("staged").forEach((f) => files.push(f));
-  else for (const a of args) walk(path.resolve(a), files);
+  else for (const a of args) walk(path.resolve(a), files, true);
 
   const findings = [];
   for (const f of files) scanFile(f, findings);
@@ -112,14 +111,36 @@ function main() {
 }
 
 // Reusable by checkDistSafe.mjs and tests: scan explicit paths, return findings.
+// Each path is a ROOT — walked even if its own name is in SKIP_DIR.
 export function scanPaths(paths) {
   const files = [];
-  for (const a of paths) walk(path.resolve(a), files);
+  for (const a of paths) walk(path.resolve(a), files, true);
   const findings = [];
   for (const f of files) scanFile(f, findings);
   return findings;
 }
-export { RULES, PLACEHOLDER };
+
+// Scan text that has no path on disk — e.g. a file entry unpacked from inside
+// an .asar archive. Same rules, same allow-mark and placeholder handling as a
+// real file; `label` is whatever the caller wants printed as the location.
+export function scanText(text, label) {
+  const findings = [];
+  const lines = text.split(/\r?\n/);
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+    if (line.includes(ALLOW_MARK)) continue;
+    if (PLACEHOLDER.test(line)) continue;
+    for (const rule of RULES) {
+      if (rule.re.test(line)) {
+        findings.push({ file: label, line: i + 1, rule: rule.id, note: rule.note });
+        break; // one finding per line is enough to fail
+      }
+    }
+  }
+  return findings;
+}
+
+export { RULES, PLACEHOLDER, MAX_BYTES, ALLOW_MARK, SKIP_DIR };
 
 // Run the CLI only when invoked directly (not when imported).
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) main();
