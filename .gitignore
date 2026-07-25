@@ -6,21 +6,31 @@
 release/
 backend/prisma/dev.db.template
 
-# Env / secrets
-**/.env
-**/.env.local
+# Env / secrets.
+# Matched by CLASS, not by name. Listing `.env` and `.env.local` individually is
+# what let `backend/.env.qc` (real JWT secret, USDA key, seed email + cleartext
+# password) ship inside a built installer — the same denylist-by-enumeration
+# failure that `build.files` in package.json was inverted to an allowlist to fix.
+# Any new .env variant is ignored by default; add an explicit `!` only for a file
+# you have READ and confirmed carries no secret.
+**/.env*
+!**/.env.example
 
-# Local databases + phase backups
-backend/prisma/dev.db
-backend/prisma/dev.db-journal
-backend/prisma/dev.db.backup-*
+# Local databases + phase backups.
+# Also matched by class. SQLite writes sidecars next to the DB (`-wal`, `-shm`
+# under WAL mode, `-journal` otherwise) and every one of them holds real rows:
+# `dev.db-wal` was 74 KB of live user data. Agent/QC runs additionally leave
+# `.db.snapshot-*` and `.db.backup-*` copies. None of those end in `.db`, so a
+# bare `*.db` rule misses all of them.
+# The repo is PUBLIC — one `git add -A` on any of these publishes a real
+# person's health records. Do not narrow these patterns.
 *.db
-*.db-journal
-# Snapshot copies taken during agent/QC runs carry the same personal health
-# data as dev.db but don't end in .db, so the rules above miss them. The repo
-# is PUBLIC — an `add -A` on one of these publishes a real person's records.
-backend/prisma/dev.db.snapshot-*
-*.db.snapshot-*
+*.db-*
+*.db.*
+*.sqlite
+*.sqlite-*
+*.sqlite3
+*.sqlite3-*
 
 # Git bundles used to shuttle work between machines/sessions. They contain
 # full history and are regenerable; never commit one into the history it holds.
