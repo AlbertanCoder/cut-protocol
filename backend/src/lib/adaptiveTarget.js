@@ -83,16 +83,53 @@ function offReason(profile) {
   return null;
 }
 
-/** Load the two series the estimator reconciles. Diary rows are summed per day. */
+/** Load the two series the estimator reconciles. Diary rows are summed per day.
+ *
+ * INTAKE PROVENANCE. MealLog rows arrive two ways and they are not equally
+ * strong evidence:
+ *   source "manual"  — the user logged what they actually ate.
+ *   source "planned" — the user pressed "ate as planned", so the row was copied
+ *                      from the PlanSlot macros (see diary.js, which carries a
+ *                      matching DOWNSTREAM CONTRACT note at the write site).
+ *
+ * A planned row is NOT discarded, and filtering it out would be the wrong fix:
+ * if the user really did eat the plan it is accurate intake, and the estimator
+ * reconciles intake against the WEIGHT TREND — the slope carries the signal
+ * whether or not intake happens to equal the target. Deleting good data to
+ * avoid a labelling problem would make the estimate worse, not more honest.
+ *
+ * What is genuinely wrong today is narrower, and both parts are about honesty
+ * rather than arithmetic:
+ *   1. A planned day can never trip the partial-log detector, because that test
+ *      is "below half the window's median" and a planned day IS the median.
+ *      A day where you ate breakfast off the plan and then went out is recorded
+ *      as a complete day. No system can detect that from the data alone — but
+ *      it means a planned-heavy window deserves less confidence, not more.
+ *   2. confidenceBlock() says "Measured from your own logged intake", which is
+ *      only true of manual rows.
+ * So we carry the composition forward and let the caller qualify its claims.
+ */
 async function loadHistory(userId) {
   const [weighins, logs] = await Promise.all([
     prisma.weighin.findMany({ where: { userId }, orderBy: { date: "asc" }, select: { date: true, weightKg: true } }),
-    prisma.mealLog.findMany({ where: { userId }, select: { date: true, kcal: true } }),
+    prisma.mealLog.findMany({ where: { userId }, select: { date: true, kcal: true, source: true } }),
   ]);
   const byDay = new Map();
-  for (const l of logs) byDay.set(l.date, (byDay.get(l.date) || 0) + (l.kcal || 0));
+  for (const l of logs) {
+    const day = byDay.get(l.date) || { kcal: 0, plannedKcal: 0 };
+    day.kcal += l.kcal || 0;
+    // Anything not explicitly "planned" counts as user-entered. Defaulting the
+    // unknown case to "manual" would overstate how much was really measured.
+    if (l.source === "planned") day.plannedKcal += l.kcal || 0;
+    byDay.set(l.date, day);
+  }
   const intake = [...byDay.entries()]
-    .map(([date, kcal]) => ({ date, kcal }))
+    .map(([date, d]) => ({
+      date,
+      kcal: d.kcal,
+      // 1 = the whole day came from "ate as planned"; 0 = entirely hand-logged.
+      plannedFraction: d.kcal > 0 ? d.plannedKcal / d.kcal : 0,
+    }))
     .sort((a, b) => (a.date < b.date ? -1 : 1));
   return { weighins: weighins.map((w) => ({ date: w.date, weightKg: w.weightKg })), intake };
 }

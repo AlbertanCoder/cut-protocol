@@ -350,7 +350,10 @@ function estimateExpenditure({ weighins = [], intake = [], asOf, priorTdee, prio
     .sort((a, b) => a.x - b.x);
   const iAll = intake
     .filter((r) => r && typeof r.date === "string" && Number.isFinite(r.kcal) && r.kcal > 0)
-    .map((r) => ({ x: dayNum(r.date), y: r.kcal, date: r.date }))
+    // plannedFraction rides along so the window can report how much of the
+    // intake was "ate as planned" vs hand-logged. It is carried, never used in
+    // the fit — provenance qualifies the CLAIM, it does not reweight the data.
+    .map((r) => ({ x: dayNum(r.date), y: r.kcal, date: r.date, plannedFraction: r.plannedFraction }))
     .filter((p) => p.x <= asOfDay)
     .sort((a, b) => a.x - b.x);
 
@@ -457,6 +460,19 @@ function estimateExpenditure({ weighins = [], intake = [], asOf, priorTdee, prio
     recentWindowDays: RECENT_WINDOW_DAYS,
     recentIntakeDays,
     recentCoveragePct: round(recentCoverage * 100, 0),
+    // Share of this window's intake CALORIES that came from "ate as planned"
+    // rather than hand-logged food. Weighted by kcal, not by day count, so a
+    // day that was half planned and half logged counts as half. Points that
+    // predate this field (or callers that don't supply it) contribute 0, which
+    // reads as "hand-logged" — the same wording the app used before, so an old
+    // caller is never made to look worse than it is.
+    // Used only to qualify the confidence WORDING; it does not change a number.
+    plannedIntakeFraction: (() => {
+      const total = iPts.reduce((s, p) => s + (p.y || 0), 0);
+      if (!(total > 0)) return 0;
+      const planned = iPts.reduce((s, p) => s + (p.y || 0) * (Number.isFinite(p.plannedFraction) ? p.plannedFraction : 0), 0);
+      return round(planned / total, 3);
+    })(),
   };
   if (wPts.length || iPts.length) {
     const startPt = [...wPts, ...iPts].reduce((m, p) => (p.x < m ? p.x : m), asOfDay);
@@ -630,18 +646,32 @@ function estimateExpenditure({ weighins = [], intake = [], asOf, priorTdee, prio
 function confidenceBlock(status, applied, window) {
   const stale = window?.intakeStaleDays;
   const basis = applied ? "logged-intake-vs-weight-trend" : "formula-only";
+  // What share of the window's intake was auto-filled by "ate as planned"
+  // rather than hand-logged. See loadHistory() in adaptiveTarget.js for why
+  // those rows are kept in the estimate but must not be called "measured":
+  // a planned day is a claim made in advance, and it can never trip the
+  // partial-log detector, so a planned-heavy window is weaker evidence than
+  // its coverage number suggests. Absent (older callers) → treat as 0 so the
+  // wording is unchanged rather than silently pessimistic.
+  const planned = Number.isFinite(window?.plannedIntakeFraction) ? window.plannedIntakeFraction : 0;
+  const mostlyPlanned = planned >= 0.5;
   let label;
   if (!applied) {
     label = "This target comes straight from the formula — there is not enough current data to measure your burn.";
   } else if (status === "confident") {
-    label = "Measured from your own logged intake against your weight trend, on a current, well-covered window.";
+    label = mostlyPlanned
+      ? "Measured against your weight trend on a current, well-covered window — but most of your intake came from \"ate as planned\" rather than food you logged, so it reflects what you meant to eat."
+      : "Measured from your own logged intake against your weight trend, on a current, well-covered window.";
   } else {
-    label = "Measured from your own data, but held provisional — the number is still pulled toward the formula.";
+    label = mostlyPlanned
+      ? "Measured from your own data, but held provisional — the number is still pulled toward the formula, and most days came from \"ate as planned\" rather than logged food."
+      : "Measured from your own data, but held provisional — the number is still pulled toward the formula.";
   }
   return {
     level: status,
     basis,
     measured: Boolean(applied),
+    plannedIntakeFraction: planned,
     intakeCurrentThrough: window?.lastIntakeDate ?? null,
     intakeStaleDays: stale ?? null,
     label,

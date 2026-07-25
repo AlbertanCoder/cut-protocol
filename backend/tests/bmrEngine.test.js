@@ -114,7 +114,9 @@ test("verdict bands derive from the CHOSEN rate — no hardcoded personal band",
   assert.equal(fast.tone, "warn");
 
   const atFloor = verdict({ rate: 0.2, chosenRate: 1.0, daysIn: 30, atFloor: true });
-  assert.equal(atFloor.tone, "bad");
+  // tone "bad" retired: a moral word on body data. "warn" renders identically
+  // (getStampStyle maps both to calm amber, law b).
+  assert.equal(atFloor.tone, "warn");
   assert.ok(/floor/i.test(atFloor.tag));
 
   const early = verdict({ rate: null, chosenRate: 1.0, daysIn: 3, atFloor: false });
@@ -178,8 +180,13 @@ test("REGRESSION (E1): FAO/WHO/UNU, Owen, Livingston, Nelson reproduce published
   // Livingston — power-law
   assert.equal(one(M(40), "livingston"), Math.round(293 * Math.pow(80, 0.4330) - 5.92 * 40));
   assert.equal(one(F(40), "livingston"), Math.round(248 * Math.pow(80, 0.4356) - 5.09 * 40));
-  // Nelson — FFM/FM split (bf 20 → FFM 64, FM 16): 25.9·64 + 4.04·16 = 1722
-  assert.equal(one(M(40), "nelson"), Math.round(25.9 * 64 + 4.04 * 16));
+  // Nelson 1992 — FFM/FM split. Published in kJ/day as 108·FFM + 16.9·FM;
+  // ÷4.184 kJ/kcal gives 25.81·FFM + 4.04·FM, i.e. the 25.8/4.04 pair the
+  // literature quotes. (bf 20 → FFM 64, FM 16.) The engine read 25.9, which is
+  // not 108/4.184 under any conversion constant — corrected 2026-07-24.
+  assert.equal(one(M(40), "nelson"), Math.round(25.8 * 64 + 4.04 * 16));
+  assert.equal(Math.round((108 / 4.184) * 10) / 10, 25.8, "25.8 IS 108 kJ ÷ 4.184");
+  assert.equal(Math.round((16.9 / 4.184) * 100) / 100, 4.04, "4.04 IS 16.9 kJ ÷ 4.184 — same conversion, so the pair must agree");
 });
 
 test("E1 flip: the 4 new formulas are DEFAULT-OFF; the 6 legacy stay default-on", () => {
