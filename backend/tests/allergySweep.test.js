@@ -418,3 +418,271 @@ test("real-corpus sweep: a free-text symptom/protein term excludes the same rows
   }
   assert.deepEqual(violations, [], `free-text alias under-excluded: ${violations.slice(0, 5).join(" · ")}`);
 });
+
+// ═════════════════════════════════════════════════════════════════════════
+// STAGE-2 ADVERSARIAL SWEEP (2026-07-24)
+// ═════════════════════════════════════════════════════════════════════════
+// An adversarial sweep of the real 14,122-food / 889-recipe corpus across all
+// ten UI allergy categories, scored in BOTH directions against an oracle
+// maintained independently of CATEGORY_SYNONYMS. It found 163 rows that passed
+// a filter while genuinely carrying the declared allergen AND 255 rows removed
+// while genuinely safe. Both halves are bugs, and they trade against each
+// other: a fix that closes a leak by over-blocking is not a fix, and an
+// over-block "fix" that swallows a real hit is worse than the over-block.
+//
+// Every name below is a VERBATIM row from that table (the Egg-Plants lesson: an
+// assertion written from memory proves nothing).
+
+test("STAGE-2 LEAKS: gluten inflections the word-boundary matcher could not reach", () => {
+  // "bread" and "batter" were both in the list; `\bbread(?:es|s)?\b` cannot
+  // match "breaded". 84 rows.
+  for (const n of [
+    "Fast foods, onion rings, breaded and fried",
+    "DENNY'S, fish fillet, battered or breaded, fried",
+    "Chicken, thighs, frozen, breaded, reheated",
+    "KFC, Fried Chicken, ORIGINAL RECIPE, Breast, meat and skin with breading",
+    "Chicken tenders or strips, breaded, from fast food",
+  ]) assert.ok(matchesExclusionTerm(n, "gluten"), `breaded/battered must be gluten: ${n}`);
+  // …and the two rows whose name states the breading is absent.
+  for (const n of [
+    "Veal, leg (top round), separable lean and fat, cooked, pan-fried, not breaded",
+    "Veal, leg (top round), separable lean only, cooked, pan-fried, not breaded",
+  ]) assert.ok(!matchesExclusionTerm(n, "gluten"), `"not breaded" is not breaded: ${n}`);
+  // The inflection fix must NOT have been made by loosening the MATCHER: a
+  // general -ed suffix would fire "corn" on "corned beef", which the corn
+  // taxonomy row explicitly relies on staying clear.
+  assert.ok(!matchesExclusionTerm("Corned beef, canned", "corn"), "'corned' is not corn");
+});
+
+test("STAGE-2 LEAKS: granola is gluten unless the name says it is absent", () => {
+  for (const n of [
+    "Snacks, granola bars, hard, plain",
+    "Snacks, granola bar, KASHI GOLEAN, chewy, mixed flavors",
+    "Breakfast bars, oats, sugar, raisins, coconut (include granola bar)",
+    "Yogurt parfait, lowfat, with fruit and granola",
+  ]) assert.ok(matchesExclusionTerm(n, "gluten"), `granola must be gluten: ${n}`);
+  assert.ok(!matchesExclusionTerm("McDONALD'S, Fruit 'n Yogurt Parfait (without granola)", "gluten"),
+    "the name states the granola is absent");
+});
+
+test("STAGE-2 LEAKS: the mayonnaise emulsions reach an egg allergy", () => {
+  for (const n of [
+    "Salad dressing, thousand island, commercial, regular",
+    "Salad dressing, ranch dressing, regular",
+    "Salad dressing, coleslaw",
+    "Coleslaw",
+    "Fast foods, fish sandwich, with tartar sauce",
+    "Thousand Island dressing, light",
+  ]) {
+    assert.ok(matchesExclusionTerm(n, "eggs"), `mayonnaise emulsion must be egg: ${n}`);
+    assert.ok(matchesExclusionTerm(n, "egg"), `…and the legacy singular key must agree: ${n}`);
+  }
+  // Ranch is buttermilk as well as mayonnaise.
+  assert.ok(matchesExclusionTerm("Ranch dressing", "dairy"), "ranch is a buttermilk dressing");
+});
+
+test("STAGE-2 LEAKS: USDA meat ANALOGUES are soy — meat-free DISHES are not", () => {
+  const { NON_EVIDENCE_FDC_CATEGORIES } = require("../src/lib/dietaryFilter.js");
+  for (const n of [
+    "Chicken, meatless", "Bacon, meatless", "Frankfurter, meatless",
+    "Sausage, meatless", "Meatballs, meatless", "Luncheon slices, meatless",
+    "Swiss steak, with gravy, meatless",
+  ]) assert.ok(matchesExclusionTerm(n, "soy"), `a meat analogue is textured soy: ${n}`);
+  // FNDDS uses the same word for the meat-free version of an ordinary dish.
+  // Excluding these would close 15 leaks by over-blocking 25 rows.
+  for (const n of [
+    "Lasagna, meatless", "Stuffed tomato, with rice, meatless",
+    "Taco or tostada salad, meatless", "Cheese quiche, meatless",
+  ]) assert.ok(!matchesExclusionTerm(n, "soy"), `a meat-free dish is not soy: ${n}`);
+  // The metadata backstop: the ANALOGUE shelf is evidence, the LEGUME shelf is
+  // not — promoting "Legumes and Legume Products" to soy evidence would delete
+  // every bean, lentil and chickpea for a soy allergy.
+  assert.ok(!NON_EVIDENCE_FDC_CATEGORIES.has("soy and meat-alternative products"));
+  assert.ok(NON_EVIDENCE_FDC_CATEGORIES.has("legumes and legume products"));
+});
+
+test("STAGE-2 LEAKS: the hidden fish/shellfish carriers", () => {
+  for (const n of ["Kimchi", "Cabbage, kimchi"]) {
+    assert.ok(matchesExclusionTerm(n, "fish"), `kimchi carries fish sauce: ${n}`);
+    assert.ok(matchesExclusionTerm(n, "shellfish"), `kimchi carries jeotgal/salted shrimp: ${n}`);
+  }
+  assert.ok(matchesExclusionTerm("Olive tapenade", "fish"), "tapenade is anchovy");
+  assert.ok(matchesExclusionTerm("Soup, pho, no meat", "fish"), "pho broth is finished with fish sauce");
+  assert.ok(matchesExclusionTerm("Seafood paella, Puerto Rican style", "shellfish"));
+  assert.ok(matchesExclusionTerm("Paella, NFS", "shellfish"), "NFS paella is paella mixta");
+  assert.ok(matchesExclusionTerm("Soup, bisque", "shellfish"), "a bisque is a crustacean-shell soup");
+  // …and the correct NON-matches. Over-fixing here is the failure mode.
+  assert.ok(!matchesExclusionTerm("Soup, tomato bisque, canned, condensed", "shellfish"),
+    "tomato bisque is the vegetable usage");
+  assert.ok(!matchesExclusionTerm("Paella Rice", "shellfish"), "paella rice is the raw bomba-rice ingredient");
+});
+
+test("STAGE-2 LEAKS: nondairy whipped topping is sodium caseinate", () => {
+  for (const n of [
+    "Fruit salad, excluding citrus fruits, with nondairy whipped topping",
+    "Fruit salad, including citrus fruits, with nondairy whipped topping",
+  ]) assert.ok(matchesExclusionTerm(n, "dairy"), `caseinate is a milk protein: ${n}`);
+  // An industrial FAT used to make them carries no protein.
+  assert.ok(!matchesExclusionTerm("Oil, industrial, palm kernel (hydrogenated) , used for whipped toppings, non-dairy", "dairy"));
+});
+
+test("STAGE-2 OVER-BLOCKS: gluten must never delete the foods a celiac eats", () => {
+  // The worst over-block in the file: 47 explicitly gluten-free products, every
+  // one of them filed under USDA "Baked Products" — so the NAME guard alone was
+  // not enough, the coarse shelf probe had to be suppressed too.
+  for (const row of [
+    { name: "Pasta, gluten-free, corn, dry", fdcCategory: "Cereal Grains and Pasta" },
+    { name: "Bread, gluten-free, white, made with rice flour, corn starch, and/or tapioca", fdcCategory: "Baked Products" },
+    { name: "Rolls, gluten-free, white, made with rice flour, rice starch, and corn starch", fdcCategory: "Baked Products" },
+    { name: "Udi's, Gluten Free, Soft & Delicious White Sandwich Bread", fdcCategory: "Baked Products" },
+    { name: "Pretzels, hard, plain, gluten free", fdcCategory: "Baked Products" },
+    { name: "Crackers, gluten free, plain", fdcCategory: "Baked Products" },
+    { name: "Roll, gluten free", fdcCategory: "Baked Products" },
+  ]) {
+    assert.ok(!matchesExclusionTerm(row.name, "gluten"), `gluten-free is gluten-free: ${row.name}`);
+    assert.ok(!foodMatchesExclusionTerm(row, "gluten"), `…including through its USDA shelf: ${row.name}`);
+  }
+  // The gluten-free GRAINS filed under the wheat-default nouns.
+  for (const row of [
+    { name: "Flour, quinoa" }, { name: "Flour, amaranth" }, { name: "Flour, sorghum" },
+    { name: "Flour, rice, brown" }, { name: "Flour, potato" },
+    { name: "Corn Tortillas", fdcCategory: "Tortillas" },
+    { name: "Tortillas, ready-to-bake or -fry, corn", fdcCategory: "Baked Products" },
+    { name: "Tortilla, corn, shelf stable" },
+    { name: "Cereals, corn grits, white, regular and quick, enriched, dry", fdcCategory: "Breakfast Cereals" },
+    { name: "Cereals, QUAKER, hominy grits, white, quick, dry", fdcCategory: "Breakfast Cereals" },
+  ]) assert.ok(!foodMatchesExclusionTerm(row, "gluten"), `a gluten-free grain form: ${row.name}`);
+  // …and the wheat forms of the very same nouns are STILL excluded.
+  for (const n of [
+    "Flour, wheat, all-purpose, enriched, bleached", "Flour, 00", "Flour, semolina, fine",
+    "Tortillas, ready-to-bake or -fry, flour, refrigerated",
+    "Tortillas, ready-to-bake or -fry, whole wheat",
+    "Wheat flour, white, tortilla mix, enriched",
+    "Corned beef and potatoes in tortilla (Apache)",
+    "Cereals ready-to-eat, KELLOGG, KELLOGG'S CORN FLAKES",
+  ]) assert.ok(matchesExclusionTerm(n, "gluten"), `still gluten: ${n}`);
+});
+
+test("STAGE-2: the free-from veto can never turn an over-block into a LEAK", () => {
+  // A whole-string veto is the dangerous half of this work. Three leashes, each
+  // with the case it exists to beat. Any of these regressing is a LEAK, which is
+  // strictly worse than the over-block the veto was added to fix.
+  //
+  // (a) PROSE is never a label claim — planContext scans recipe STEP text
+  //     through this same matcher.
+  assert.ok(matchesExclusionTerm("Cook the rice without butter for a dairy-free version.", "dairy"),
+    "the butter is right there in the prose");
+  assert.ok(foodMatchesExclusionTerm({ name: "Cook the rice without butter for a dairy-free version." }, "dairy"),
+    "…and through the object-aware path too");
+  assert.ok(matchesExclusionTerm("Add gluten-free flour and a splash of beer.", "gluten"),
+    "the beer is barley");
+  assert.ok(matchesExclusionTerm("Stir in the dairy-free cheese and the parmesan.", "dairy"),
+    "the parmesan is dairy");
+  // (b) a CONDITIONAL claim offers a variant, it does not assert one.
+  assert.ok(matchesExclusionTerm("Add butter, or omit for a dairy-free version.", "dairy"));
+  // (c) a claim governs its own CLAUSE, never the alternative offered after it.
+  assert.ok(matchesExclusionTerm("Serve with gluten-free bread, or regular sourdough if you prefer", "gluten"));
+  assert.ok(matchesExclusionTerm("gluten-free pasta or regular spaghetti", "gluten"));
+  // …but FDC also uses " or " to list product VARIANTS, where the claim at the
+  // end governs everything before it. The split therefore only applies when the
+  // claim comes FIRST.
+  assert.ok(!foodMatchesExclusionTerm({ name: "Cake or cupcake, gluten free", fdcCategory: "Baked Products" }, "gluten"));
+  // …while the real label claims still clear, and only for THEIR category.
+  assert.ok(!matchesExclusionTerm("Bread, gluten free", "gluten"));
+  assert.ok(matchesExclusionTerm("Pizza, cheese and vegetables, gluten-free thick crust", "dairy"),
+    "a gluten claim says nothing about the cheese");
+  // "lactose free" is NOT a dairy claim — lactose-free milk is still milk protein.
+  assert.ok(matchesExclusionTerm("Infant formula, ABBOTT NUTRITION, SIMILAC, SENSITIVE (LACTOSE FREE)", "dairy"));
+});
+
+test("STAGE-2 OVER-BLOCKS: tree nuts must not delete peanut butter or coconut", () => {
+  for (const n of [
+    "Peanut butter, creamy", "Peanut Butter", "Candies, confectioner's coating, peanut butter",
+  ]) assert.ok(!matchesExclusionTerm(n, "tree nuts"), `tree-nut-allergic + peanut-safe is a common profile: ${n}`);
+  for (const n of [
+    "Nuts, coconut meat, raw", "Nuts, coconut meat, dried (desiccated), not sweetened",
+    "Nuts, coconut milk, frozen (liquid expressed from grated meat and water)",
+  ]) assert.ok(!matchesExclusionTerm(n, "tree nuts"), `"Nuts," is USDA's shelf prefix over a coconut row: ${n}`);
+  // …and the real nuts on the same shelf are still caught.
+  for (const n of ["Nuts, almonds, raw", "Nuts, mixed nuts, oil roasted, with salt added", "Almond nut butter"]) {
+    assert.ok(matchesExclusionTerm(n, "tree nuts"), `still a tree nut: ${n}`);
+  }
+  assert.ok(matchesExclusionTerm("Peanut butter, creamy", "peanuts"), "peanut butter is still a peanut");
+});
+
+test("STAGE-2 OVER-BLOCKS: dairy must not delete plant yogurt, plant cheese or plant milk", () => {
+  for (const row of [
+    { name: "Yogurt, almond milk", fdcCategory: "Plant-based yogurt" },
+    { name: "Yogurt, soy", fdcCategory: "Plant-based yogurt" },
+    { name: "Yogurt, coconut milk", fdcCategory: "Plant-based yogurt" },
+    { name: "SILK Plain soy yogurt", fdcCategory: "Legumes and Legume Products" },
+    { name: "Vegan cheese" }, { name: "Cashew cheese" }, { name: "Soybean, curd cheese" },
+    { name: "Coffee, Latte, with non-dairy milk" }, { name: "Non-dairy milk, NFS" },
+    { name: "Oatmeal, instant, plain, made with non-dairy milk, fat added" },
+  ]) assert.ok(!foodMatchesExclusionTerm(row, "dairy"), `a plant food a dairy-allergic user can eat: ${row.name}`);
+  // The vegan pool gains them too — the same keyword list drove both.
+  for (const n of ["Yogurt, soy", "Vegan cheese", "SILK Plain soy yogurt"]) {
+    assert.ok(!adjusterExcludedByStyle({ name: n }, "vegan"), `a vegan food must survive a vegan pool: ${n}`);
+  }
+  // …and real dairy is untouched, including the FDC comma spellings.
+  for (const n of ["Yogurt, Greek, plain, nonfat", "Cheese, cheddar", "Yogurt, plain, whole milk", "Goats Cheese"]) {
+    assert.ok(matchesExclusionTerm(n, "dairy"), `still dairy: ${n}`);
+    assert.ok(adjusterExcludedByStyle({ name: n }, "vegan"), `still not vegan: ${n}`);
+  }
+  // The undeclared creamers stay excluded — caseinate, per COMPOUND_VETOES' note.
+  assert.ok(matchesExclusionTerm("Coffee creamer, liquid", "dairy"));
+  assert.ok(matchesExclusionTerm("Frozen coffee drink, with non-dairy milk and whipped cream", "dairy"),
+    "the whipped cream is still cream");
+});
+
+test("STAGE-2 OVER-BLOCKS: soybean OIL stays permitted, as CATEGORY_SYNONYMS.soy always promised", () => {
+  for (const n of [
+    "Oil, soybean, salad or cooking", "Oil, vegetable, soybean, refined",
+    "Oil, industrial, soy, refined, for woks and light frying", "Soybean oil",
+    "Snacks, potato chips, plain, made with partially hydrogenated soybean oil, salted",
+    "Salad dressing, mayonnaise, soybean oil, without salt",
+  ]) assert.ok(!matchesExclusionTerm(n, "soy"), `refined soybean oil is protein-free: ${n}`);
+  // Every other soy form is untouched.
+  for (const n of [
+    "Soybeans, mature seeds, raw", "Soy sauce", "Tofu, firm", "Soy protein isolate",
+    "Soybean, curd cheese", "Flour, soy, defatted", "Soy milk",
+  ]) assert.ok(matchesExclusionTerm(n, "soy"), `still soy: ${n}`);
+  // The mayonnaise is still an EGG problem, just not a soy one.
+  assert.ok(matchesExclusionTerm("Salad dressing, mayonnaise, soybean oil, without salt", "eggs"));
+});
+
+test("STAGE-2: a plural keyword can never bypass its singular's guard", () => {
+  // "Tortillas, ready-to-bake or -fry, corn" stayed excluded AFTER the corn
+  // guard landed, because CATEGORY_SYNONYMS carries both "tortilla" and
+  // "tortillas" and WORD_GUARDS is keyed by the exact synonym string.
+  const { WORD_GUARDS, CATEGORY_SYNONYMS } = require("../src/lib/dietaryFilter.js");
+  const unguarded = [];
+  for (const list of Object.values(CATEGORY_SYNONYMS)) {
+    for (const w of list) {
+      const singular = w.replace(/(?:es|s)$/, "");
+      if (w !== singular && WORD_GUARDS[singular] && !WORD_GUARDS[w]) unguarded.push(w);
+    }
+  }
+  assert.deepEqual(unguarded, [], `plural synonyms that skip their singular's guard: ${unguarded.join(", ")}`);
+});
+
+test("STAGE-2 (task C): the free-text phrasings that used to be inert now resolve", async () => {
+  const { resolveExclusionTerm } = require("../src/lib/dietaryFilter.js");
+  const CASES = [
+    ["all nuts", "nuts"], ["any nuts", "nuts"], ["anything with dairy", "dairy"],
+    ["no dairy products", "dairy"], ["everything with soy", "soy"],
+    ["shellfish and fish", "seafood"], ["fish or shellfish", "seafood"],
+    ["shrimp paste", "shellfish"], ["surimi", "fish"], ["dashi", "fish"],
+    ["panko", "gluten"], ["ponzu", "soy"], ["bean curd", "soy"], ["nougat", "egg"],
+  ];
+  const wrong = CASES.filter(([typed, key]) => resolveExclusionTerm(typed).synonymKey !== key)
+    .map(([typed, key]) => `${typed} -> ${resolveExclusionTerm(typed).synonymKey} (want ${key})`);
+  assert.deepEqual(wrong, [], `phrasings that still do not resolve: ${wrong.join(" · ")}`);
+  // …and each one now actually removes something from the real pool.
+  const names = await corpusPromise;
+  const inert = CASES.map(([typed]) => typed).filter((t) => !names.some((n) => matchesExclusionTerm(n, t)));
+  assert.deepEqual(inert, [], `recognised terms that still remove nothing: ${inert.join(" · ")}`);
+  // The narrow-scope terms are NOT collapsed into their family.
+  assert.equal(resolveExclusionTerm("soy protein").synonymKey, "soy protein");
+  assert.ok(!matchesExclusionTerm("Soybean oil", "soy protein"));
+});

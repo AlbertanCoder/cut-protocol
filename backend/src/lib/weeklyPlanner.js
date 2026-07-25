@@ -17,7 +17,13 @@
 // the same-day/variety rules) loadable and unit-testable without a generated
 // Prisma client. No production behavior change: the require still happens the
 // first time AI fallback actually fires.
-const { recipeExcludedByStyle, matchesExclusionTerm, recipeExceedsKetoCeiling } = require("./dietaryFilter.js");
+// recipeExceedsKetoCeiling is kept for the POST-SCALE carb ceiling below
+// (enforceScaledCarbCeiling) — that operates on {carb, kcal} scalars after
+// portioning, not on a recipe's ingredient evidence, so it is not a recipe
+// exclusion check and correctly does not belong to the gate.
+const { recipeExceedsKetoCeiling } = require("./dietaryFilter.js");
+// The single authority for "may this recipe be shown to this profile".
+const { recipeAllowed } = require("./exclusionGate.js");
 // Single source of truth for which mealCategory values are excluded from main
 // "meal" slots. Shared with the classifier so the two can never drift.
 const { NON_MEAL_CATEGORIES } = require("./recipeClassification.js");
@@ -26,14 +32,21 @@ const { NON_MEAL_CATEGORIES } = require("./recipeClassification.js");
 // Stage-C fix (C3): the /swap AI fallback used to write its output straight
 // into the plan with no dietary check — the one generation path that skipped
 // the "pool membership = compliance" invariant. Re-check here before accepting.
+// Routed through the shared gate (exclusionGate.js) rather than re-deriving the
+// check here. The old body flattened ingredients to bare NAMES, which made this
+// surface strictly weaker than the solver's own pool filter: it could not see
+// allergens named only in the recipe title or in step prose ("Add'l ingredients:
+// mayonnaise"), and it dropped the Food metadata probes entirely. The gate reads
+// ingredient rows WITH their Food rows, the title, the step text, and the
+// `additionalIngredientNames` list, so this path now returns the same verdict as
+// every other surface — which is the point of having one gate.
+//
+// It also fails CLOSED: an ingredient carrying a foodId whose Food row was not
+// loaded returns excluded/"ingredient-metadata-not-loaded" rather than a cheerful
+// pass. For an AI-generated recipe about to be written into someone's plan, an
+// unsolved slot is the correct answer to "I cannot tell if this is safe".
 function aiRecipeCompliant(recipe, profile) {
-  const style = profile?.dietaryStyle || null;
-  const excl = Array.isArray(profile?.excludedFoods) ? profile.excludedFoods : [];
-  const flat = (recipe.ingredients || []).map((i) => ({ name: i.food?.name || i.name }));
-  if (recipeExceedsKetoCeiling(recipe, style)) return false;
-  if (recipeExcludedByStyle({ ingredients: flat }, style)) return false;
-  if (excl.length && flat.some((ing) => excl.some((t) => matchesExclusionTerm(ing.name, t)))) return false;
-  return true;
+  return recipeAllowed(recipe, profile);
 }
 
 // Phase 4 spec bounds: portions scale 0.5×–2× — beyond that a "serving"
@@ -333,6 +346,56 @@ function proteinShortfallPct(target, scaledProtein) {
   return target > 0 ? Math.max(0, (target - scaledProtein) / target) : 0;
 }
 
+// ── composition targets (solver-core-4) ──────────────────────────────────
+//
+// A slot target MAY carry `fatTarget`/`carbTarget` (what is LEFT of the day's
+// budget, this slot's share) alongside `fatShare`/`carbShare` (that slot's
+// share of the day's fat/carb midpoint, unaffected by what earlier slots did).
+// They are deliberately NOT a gate: kcal and protein are the two walls a
+// PORTION can move, and they keep the accept/reject rules above to themselves.
+// Fat and carbs are COMPOSITION — scaling a dish changes its calories, not its
+// fat-per-kcal — so the only way to steer them is WHICH dish gets picked, which
+// is exactly what these numbers are used for below (choosing among candidates
+// that already passed the gate).
+//
+// Two fields rather than one because the ASK and the SCALE do different jobs.
+// The ask absorbs the whole remaining budget — after two fat-heavy dishes there
+// may be almost none left, and the honest ask is "as little fat as possible".
+// The scale is what that distance is measured against, and it must stay a
+// stable positive number: dividing by a near-zero remaining ask would make one
+// macro's term explode and silently drown the other out.
+//
+// Absent (regenerateOneSlot, alternatesForSlot, any target built straight from
+// targetsForSlots) means "not judged" — never a silent zero.
+const hasCompositionTarget = (t) => t && (t.fatShare > 0 || t.carbShare > 0);
+
+// Within 5% of the slot's remaining fat AND carb budget is as good as this
+// search is going to get, so stop paying for the rest of the shortlist rather
+// than always spending the full MAX_SLOT_ATTEMPTS. Measured on the real library:
+// ~10% off a 90-day horizon (878 → 788 ms) and ~5% off a week, with no
+// detectable effect on days-in-tolerance over 1,470 audit days (40.8% → 40.7%).
+const COMPOSITION_GOOD_ENOUGH = 0.05;
+
+// Mean distance from the slot's remaining fat/carb budget, each measured in
+// units of that slot's own nominal share so the two different-magnitude gram
+// numbers are comparable and neither can dominate by having a small divisor.
+// Symmetric, because a fat SHORTFALL and a fat overshoot are both misses
+// (mealSolver's bandMiss judges the day the same way).
+function compositionDistance(target, scaled) {
+  let sum = 0;
+  let n = 0;
+  if (target.fatShare > 0) { sum += Math.abs((scaled.fat || 0) - (target.fatTarget ?? target.fatShare)) / target.fatShare; n++; }
+  if (target.carbShare > 0) { sum += Math.abs((scaled.carb || 0) - (target.carbTarget ?? target.carbShare)) / target.carbShare; n++; }
+  return n ? sum / n : 0;
+}
+
+// Midpoint of a target band, or null when the target carries no such band
+// (older fixtures, partial targets). Absent is absent — never 0.
+function bandMidpoint(lo, hi) {
+  if (!Number.isFinite(lo) || !Number.isFinite(hi) || !(hi > 0)) return null;
+  return (lo + hi) / 2;
+}
+
 function unsolvedResult(warning) {
   return { recipeId: null, proteinScale: 1, sidesScale: 1, ingredients: [], kcal: 0, protein: 0, fat: 0, carb: 0, warning };
 }
@@ -423,8 +486,25 @@ async function tryAiFallback(target, recipePool, usageCount, aiFallback) {
 // Measured on the benchmark grid: naive freshness-first cost ~150 of 5,040 weeks
 // their clean 7/7 day count; fit-first alone cost thin-pool variety (keto week-3
 // novelty 28.6% → 7.1%). This shape keeps both.
+//
+// SEARCHING ON THE SAME MACROS THE DAY IS GRADED ON (solver-core-4, 2026-07-24).
+// solver-core-2 made mealSolver's dayInTolerance a FOUR-macro verdict (kcal,
+// protein, fat, carb) but left this search on two: the first candidate to clear
+// the kcal/protein gate shipped and every other passing candidate was discarded,
+// so nothing in the solver ever read a fat or carb number. Measured against the
+// real 889-recipe library over 1,470 sampled days: 25.8% of days landed in
+// tolerance, and fat alone accounted for essentially every miss (fat in range on
+// 36.3% of days against 96.7% for calories and 94.1% for protein). It was not an
+// infeasible ask — the fits existed, the search simply never looked for them.
+// So: keep ALL passing candidates (the `fits` machinery cross-week memory
+// already used), and pick the one whose fat/carb land closest to what is LEFT of
+// the day's budget. Same shortlist, same gate, same MAX_SLOT_ATTEMPTS ceiling —
+// the only cost is that a composed slot no longer STOPS at the first fit, which
+// on the real library is ~10% of a 90-day horizon (the good-enough exit above
+// buys most of it back).
 async function resolveSlot(target, recipePool, usageCount, usedYesterday, usedToday, rng, aiFallback = null, bias = null, repeatCap = DEFAULT_REPEAT_CAP, priorUsage = null) {
   const targetRatio = target.kcalTarget > 0 ? target.proteinTarget / target.kcalTarget : 0;
+  const composed = hasCompositionTarget(target);
   const tried = new Set();
   let best = null;
   // Candidates rejected because the SHIPPED portion would break a hard diet
@@ -458,13 +538,27 @@ async function resolveSlot(target, recipePool, usageCount, usedYesterday, usedTo
       const worstRatio = Math.max(kcalOff / KCAL_TOLERANCE_PCT, proteinShort / PROTEIN_TOLERANCE_PCT);
       if (!best || worstRatio < best.worstRatio) best = { recipe, scaled, kcalOff, proteinShort, worstRatio };
       if (kcalOff <= KCAL_TOLERANCE_PCT && proteinShort <= PROTEIN_TOLERANCE_PCT) {
-        // No cross-week memory → the original first-fit-wins path, unchanged.
-        if (!passUsage) return ship(recipe, scaled);
-        fits.push({ recipe, scaled, worstRatio, prior: passUsage.get(recipe.id) || 0 });
+        // Nothing to choose BETWEEN on — no cross-week memory and no fat/carb
+        // budget → the original first-fit-wins path, byte-identical.
+        if (!passUsage && !composed) return ship(recipe, scaled);
+        const comp = composed ? compositionDistance(target, scaled) : 0;
+        fits.push({
+          recipe, scaled, worstRatio,
+          prior: passUsage ? passUsage.get(recipe.id) || 0 : 0,
+          comp,
+        });
+        // Good enough on all four macros, and no freshness ledger asking for a
+        // second opinion — take it rather than evaluate the rest.
+        if (!passUsage && comp <= COMPOSITION_GOOD_ENOUGH) return ship(recipe, scaled);
       }
     }
     if (fits.length) {
-      fits.sort((a, b) => a.prior - b.prior || a.worstRatio - b.worstRatio);
+      // Freshness stays the FIRST key so the measured cross-week variety
+      // property holds exactly as before — but most of an ordinary pool is
+      // prior 0, so composition decides inside the fresh bucket instead of
+      // arrival order deciding it. Fit on the two gated macros breaks the
+      // remaining ties, as it always did.
+      fits.sort((a, b) => a.prior - b.prior || a.comp - b.comp || a.worstRatio - b.worstRatio);
       return ship(fits[0].recipe, fits[0].scaled);
     }
   }
@@ -551,6 +645,16 @@ function buildLockedMap(lockedSlots) {
  */
 async function solveDay(dayTargets, dailyTarget, recipePool, usageCount, prevDayRecipeIds, rng, aiCtx, bias, repeatCap, priorUsage = null, lockedByKey = null) {
   const proteinTargetMid = (dailyTarget.proteinLo + dailyTarget.proteinHi) / 2;
+  // solver-core-4: the day's fat/carb budget, carried alongside kcal/protein so
+  // resolveSlot can pick on the SAME four macros the day is graded on. Null when
+  // the target carries no such band — then nothing downstream is judged on it.
+  // Carbs prefer the engine's own `carbMid` where it exists (the keto branch
+  // stamps it, and its band is lo…CEILING, so aiming at the band midpoint would
+  // aim above the number the engine actually prescribes).
+  const fatTargetMid = bandMidpoint(dailyTarget.fatLo, dailyTarget.fatHi);
+  const carbTargetMid = Number.isFinite(dailyTarget.carbMid) && bandMidpoint(dailyTarget.carbLo, dailyTarget.carbHi) != null
+    ? dailyTarget.carbMid
+    : bandMidpoint(dailyTarget.carbLo, dailyTarget.carbHi);
   const todayIds = new Set();
   const results = new Array(dayTargets.length);
 
@@ -558,6 +662,8 @@ async function solveDay(dayTargets, dailyTarget, recipePool, usageCount, prevDay
   const openIdx = [];
   let lockedKcal = 0;
   let lockedProtein = 0;
+  let lockedFat = 0;
+  let lockedCarb = 0;
   dayTargets.forEach((t, i) => {
     const locked = lockedByKey ? lockedByKey.get(slotKeyOf(t)) : null;
     if (!locked) { openIdx.push(i); return; }
@@ -565,6 +671,8 @@ async function solveDay(dayTargets, dailyTarget, recipePool, usageCount, prevDay
     if (locked.recipeId) todayIds.add(locked.recipeId);
     lockedKcal += locked.kcal || 0;
     lockedProtein += locked.protein || 0;
+    lockedFat += locked.fat || 0;
+    lockedCarb += locked.carb || 0;
   });
 
   // Pass 2 — the open slots share what the locks left, split by their own
@@ -574,14 +682,21 @@ async function solveDay(dayTargets, dailyTarget, recipePool, usageCount, prevDay
   const openWeight = openTargets.reduce((s, x) => s + x.weight, 0);
   const budgetKcal = Math.max(0, dailyTarget.kcal - lockedKcal);
   const budgetProtein = Math.max(0, proteinTargetMid - lockedProtein);
+  const budgetFat = fatTargetMid == null ? null : Math.max(0, fatTargetMid - lockedFat);
+  const budgetCarb = carbTargetMid == null ? null : Math.max(0, carbTargetMid - lockedCarb);
+  const share0 = (t) => (openWeight > 0 ? t.weight / openWeight : 0);
   const nominal = openTargets.map((t) => ({
     ...t,
     kcalTarget: openWeight > 0 ? budgetKcal * (t.weight / openWeight) : 0,
     proteinTarget: openWeight > 0 ? budgetProtein * (t.weight / openWeight) : 0,
+    ...(budgetFat == null ? {} : { fatShare: budgetFat * share0(t) }),
+    ...(budgetCarb == null ? {} : { carbShare: budgetCarb * share0(t) }),
   }));
 
   let dayAchievedKcal = 0;
   let dayAchievedProtein = 0;
+  let dayAchievedFat = 0;
+  let dayAchievedCarb = 0;
   for (let i = 0; i < nominal.length; i++) {
     const target = nominal[i];
     // Redistribute what's left of the day's budget across this slot and
@@ -595,6 +710,19 @@ async function solveDay(dayTargets, dailyTarget, recipePool, usageCount, prevDay
       ...target,
       kcalTarget: clamp(proposedKcal, { min: target.kcalTarget * (1 - CARRY_CAP_PCT), max: target.kcalTarget * (1 + CARRY_CAP_PCT) }),
       proteinTarget: clamp(proposedProtein, { min: target.proteinTarget * (1 - CARRY_CAP_PCT), max: target.proteinTarget * (1 + CARRY_CAP_PCT) }),
+      // Carry-forward for the two composition macros: what is LEFT of the day's
+      // fat/carb after the slots already solved, so an early fat-heavy dish
+      // makes the rest of the day prefer leaner ones.
+      //
+      // Deliberately NOT capped the way kcal/protein are. CARRY_CAP_PCT exists
+      // to protect PORTION sanity — it stops one bad miss forcing the next meal
+      // to an unreasonable SIZE — and these two numbers size nothing; they only
+      // rank candidates that already passed the gate. Capping them would just
+      // blunt the correction, so a day that has already spent its fat can say so
+      // ("as lean as you have") instead of asking for 70% of a share it no
+      // longer has.
+      ...(target.fatShare == null ? {} : { fatTarget: Math.max(0, (budgetFat - dayAchievedFat) * share) }),
+      ...(target.carbShare == null ? {} : { carbTarget: Math.max(0, (budgetCarb - dayAchievedCarb) * share) }),
     };
 
     const result = await resolveSlot(effectiveTarget, recipePool, usageCount, prevDayRecipeIds, todayIds, rng, aiCtx, bias, repeatCap, priorUsage);
@@ -605,6 +733,8 @@ async function solveDay(dayTargets, dailyTarget, recipePool, usageCount, prevDay
     // pushes its whole share onto the rest of the day.
     dayAchievedKcal += result.kcal;
     dayAchievedProtein += result.protein;
+    dayAchievedFat += result.fat;
+    dayAchievedCarb += result.carb;
   }
   return { slots: results, todayIds };
 }
@@ -733,6 +863,7 @@ module.exports = {
   resolveSlot, scaleRecipe, buildAiFallbackContext, estimateSlotTarget,
   eligibleRecipes, buildPriorUsage, practicalGrams, RECENCY_WEIGHTS,
   applyScales, enforceScaledCarbCeiling, buildLockedMap, slotKeyOf,
+  hasCompositionTarget, compositionDistance, bandMidpoint,
   normalizeDayIndices, ALL_DAY_INDICES, DAYS,
   SCALE_BOUNDS, DEFAULT_REPEAT_CAP, BATCH_REPEAT_CAP,
   KCAL_TOLERANCE_PCT, PROTEIN_TOLERANCE_PCT,

@@ -1,103 +1,50 @@
 // Brain v3 — the exclusion engine (LAW 2: zero-tolerance exclusions).
 //
-// Exclusions are computed IN CODE, from the AUTHORITATIVE user profile ONLY
-// (profile.dietaryStyle + profile.excludedFoods) — never from LLM output,
-// conversation memory, or user free-text. isExcluded() is:
+// This file is now a THIN ADAPTER over ../exclusionGate.js and holds no
+// exclusion logic of its own. It used to hold a second implementation, and
+// that implementation was weaker than the solver's in two ways at once: it
+// checked ingredient NAMES only (no recipe title, no "Add'l ingredients:"
+// prose, no step text) and it dropped `ing.food` before matching, discarding
+// the persisted fdcCategory / allergenTags / mayContain metadata. Measured
+// against the real 889-recipe library that was 210 recipe/allergy pairs the
+// deterministic solver correctly hid and the brain pool still handed to the
+// model — so the "the model never sees an excluded item" guarantee below was
+// true about the pool and false about the recipes.
+//
+// The guarantees are unchanged; only their implementation moved:
 //   • TRANSITIVE — a recipe inherits the union of its ingredients' exclusions.
 //     (The current schema has no sub-recipes: a Recipe's ingredients are Food
-//     rows, so the closure is recipe → ingredient foods → names. If nested
-//     sub-recipes are ever added, extend collectNames() and nothing else.)
-//   • FAIL-CLOSED — an ingredient we cannot resolve to a checkable NAME is not
-//     "probably fine", it is treated as EXCLUDED and flagged, never surfaced.
-//     (With no allergen-tag columns in the schema, "untagged/unknown" == "no
-//     resolvable name to run the exhaustive exclusion vocab against". When the
-//     schema later gains explicit allergen tags, tighten the checkable test to
-//     "has an allergen tag" — the fail-closed direction stays identical.)
+//     rows. If nested sub-recipes are ever added, extend the gate's
+//     collectEvidence() and nothing else.)
+//   • FAIL-CLOSED — an item that cannot be resolved to checkable evidence is
+//     not "probably fine", it is treated as EXCLUDED and flagged, never
+//     surfaced. The gate additionally fails closed when an ingredient row
+//     names a persisted Food it did not LOAD — the exact shape this file used
+//     to produce — so the old weakening cannot be reintroduced silently.
+//   • AUTHORITATIVE-ONLY — exclusions are computed in code from
+//     profile.dietaryStyle + profile.excludedFoods, never from LLM output,
+//     conversation memory, or user free-text.
 //
-// It adds NO vocabulary of its own: every keyword decision is delegated to
-// dietaryFilter.js's exhaustive, regression-locked maps, so the brain's notion
-// of "excluded" can never drift from the deterministic solver's.
-const {
-  recipeExcludedByStyle,
-  matchesExclusionTerm,
-  recipeExceedsKetoCeiling,
-  applyDietaryFilters,
-} = require("../dietaryFilter.js");
-
-// A name is checkable iff it's a non-empty string we can run the vocab against.
-// Anything else (null food ref, missing/blank name, non-string) is unresolvable.
-function isCheckableName(name) {
-  return typeof name === "string" && name.trim().length > 0;
-}
-
-function normProfile(profile) {
-  return {
-    dietaryStyle: profile?.dietaryStyle || "none",
-    excludedFoods: Array.isArray(profile?.excludedFoods) ? profile.excludedFoods : [],
-  };
-}
-
-// An item is a Recipe if it carries an ingredients array; otherwise a flat Food.
-function isRecipe(item) {
-  return item && Array.isArray(item.ingredients);
-}
-
-// Every ingredient name in a recipe, resolved the same way the solver does
-// (food.name first, then a bare .name fallback for AI/imported shapes).
-function ingredientNames(recipe) {
-  return (recipe.ingredients || []).map((i) => (i.food?.name ?? i.name));
-}
+// It still adds NO vocabulary of its own: the gate delegates every keyword
+// decision to dietaryFilter.js's exhaustive, regression-locked maps, so the
+// brain's notion of "excluded" can never drift from the solver's.
+const { explainExclusion, isExcluded, isCheckableName } = require("../exclusionGate.js");
 
 /**
  * explainExclusion(item, profile) -> { excluded, failClosed, reason }
  *   reason is a short machine-usable tag ("unresolvable-ingredient",
- *   "dietary-style", "keto-ceiling", `excluded-food:<term>`, "food-filtered")
- *   or null when not excluded. failClosed is true only for the fail-closed
- *   (unresolvable) path, so callers can LOG those specifically (LAW 2).
+ *   "ingredient-metadata-not-loaded", "dietary-style", "keto-ceiling",
+ *   `excluded-food:<term>`, "unresolvable-food", "food-filtered") or null when
+ *   not excluded. failClosed is true only for the fail-closed paths, so
+ *   callers can LOG those specifically (LAW 2).
+ *
+ * isExcluded(item, profile) -> boolean
+ *   The LAW-2 public predicate. The model can never overrule it; the pool is
+ *   built from it (before any LLM turn) and the verifier re-runs it after
+ *   every turn.
+ *
+ * Re-exported rather than re-declared so `require("./exclusions.js")` and
+ * `require("../exclusionGate.js")` are the same function object — two names
+ * for one authority, which is the whole point.
  */
-function explainExclusion(item, profile) {
-  const { dietaryStyle, excludedFoods } = normProfile(profile);
-
-  if (isRecipe(item)) {
-    const names = ingredientNames(item);
-    // FAIL-CLOSED first: if a recipe has NO ingredients at all, or ANY ingredient
-    // can't be resolved to a checkable name, we cannot prove the recipe is safe →
-    // exclude it, flagged. An empty ingredient list (bad importer draft, partial
-    // delete, missing rows) is "unprovable", not "safe" (LAW 2).
-    if (names.length === 0 || names.some((n) => !isCheckableName(n))) {
-      return { excluded: true, failClosed: true, reason: "unresolvable-ingredient" };
-    }
-    const flat = { ingredients: names.map((name) => ({ name })) };
-    if (recipeExceedsKetoCeiling(item, dietaryStyle)) {
-      return { excluded: true, failClosed: false, reason: "keto-ceiling" };
-    }
-    if (recipeExcludedByStyle(flat, dietaryStyle)) {
-      return { excluded: true, failClosed: false, reason: "dietary-style" };
-    }
-    for (const term of excludedFoods) {
-      if (names.some((n) => matchesExclusionTerm(n, term))) {
-        return { excluded: true, failClosed: false, reason: `excluded-food:${String(term).trim().toLowerCase()}` };
-      }
-    }
-    return { excluded: false, failClosed: false, reason: null };
-  }
-
-  // Flat food.
-  if (!isCheckableName(item?.name)) {
-    return { excluded: true, failClosed: true, reason: "unresolvable-food" };
-  }
-  // Reuse the solver's exact food-level filter (style + list + per-100g keto).
-  // An empty result means this single food was filtered out == excluded.
-  if (applyDietaryFilters([item], { dietaryStyle, excludedFoods }).length === 0) {
-    return { excluded: true, failClosed: false, reason: "food-filtered" };
-  }
-  return { excluded: false, failClosed: false, reason: null };
-}
-
-// LAW-2 public predicate. The model can never overrule this; the pool is built
-// from it (before any LLM turn) and the verifier re-runs it after every turn.
-function isExcluded(item, profile) {
-  return explainExclusion(item, profile).excluded;
-}
-
 module.exports = { isExcluded, explainExclusion, isCheckableName };

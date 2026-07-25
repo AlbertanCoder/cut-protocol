@@ -3,25 +3,18 @@ const { prisma } = require("../lib/prisma.js");
 const { requireAuth } = require("../lib/auth.js");
 const { RECIPE_INCLUDE } = require("../lib/recipeGeneration.js");
 const { buildGroceryList } = require("../lib/groceryList.js");
-const { recipeExcludedByStyle, matchesExclusionTerm, recipeExceedsKetoCeiling } = require("../lib/dietaryFilter.js");
+// One authority for "may this user see this recipe?" — see exclusionGate.js.
+// This route used to carry its own copy of the check that read ingredient
+// NAMES only; against the real library that copy shopped 210 recipe/allergy
+// pairs the solver hides, including a sesame-allergic user's grocery list for
+// "Roasted Eggplant With Tahini, Pine Nuts, and Lentils" (tahini is in the
+// title, never in an ingredient row). RECIPE_INCLUDE already loads whole Food
+// rows, which is what keeps the gate at full strength here — a query that
+// stripped them would fail CLOSED, loudly, instead of under-checking.
+const { partitionRecipes } = require("../lib/exclusionGate.js");
 
 const router = express.Router();
 router.use(requireAuth);
-
-// A cart recipe complies with the current profile if it survives the same
-// diet-style + allergy + keto filter the plan pool and library use. Stage-C
-// fix (M12): the cart can hold recipes that were compliant when added but
-// aren't after a diet/allergy change; its grocery list must not silently
-// shop an allergen.
-function recipeCompliant(recipe, profile) {
-  const dietaryStyle = profile?.dietaryStyle || null;
-  const excludedFoods = Array.isArray(profile?.excludedFoods) ? profile.excludedFoods : [];
-  if (recipeExceedsKetoCeiling(recipe, dietaryStyle)) return false;
-  const flat = recipe.ingredients.map((i) => ({ name: i.food.name }));
-  if (recipeExcludedByStyle({ ingredients: flat }, dietaryStyle)) return false;
-  if (excludedFoods.length && flat.some((ing) => excludedFoods.some((t) => matchesExclusionTerm(ing.name, t)))) return false;
-  return true;
-}
 
 router.get("/", async (req, res) => {
   const items = await prisma.cartItem.findMany({
@@ -76,9 +69,16 @@ router.post("/grocery-list", async (req, res) => {
 
   // Drop cart items that no longer comply with the current diet/allergy rules,
   // and report them by name — never silently shop an excluded ingredient (M12).
+  // The cart can hold recipes that were compliant when added but aren't after a
+  // diet/allergy change, so this is re-decided at list time, never trusted from
+  // the add. partitionRecipes runs the gate ONCE per item and hands back both
+  // halves — the old code called its checker twice per item and could, in
+  // principle, disagree with itself.
   const profile = await prisma.profile.findUnique({ where: { userId: req.userId } });
-  const compliant = cartItems.filter((it) => recipeCompliant(it.recipe, profile));
-  const skippedForDiet = cartItems.filter((it) => !recipeCompliant(it.recipe, profile)).map((it) => it.recipe.name);
+  const verdicts = partitionRecipes(cartItems.map((it) => it.recipe), profile);
+  const allowedIds = new Set(verdicts.allowed.map((r) => r.id));
+  const compliant = cartItems.filter((it) => allowedIds.has(it.recipe.id));
+  const skippedForDiet = verdicts.blocked.map((b) => b.recipe.name);
   if (!compliant.length) {
     return res.status(400).json({ error: "no cart items comply with your current diet & allergy rules", skippedForDiet });
   }
