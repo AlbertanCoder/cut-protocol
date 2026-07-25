@@ -12,8 +12,10 @@ const {
   validateRegistration,
   createAttemptThrottle,
   MIN_PASSWORD_LENGTH,
+  SESSION_EXPIRED_MESSAGE,
+  BAD_CREDENTIALS_MESSAGE,
 } = require("../lib/auth.js");
-const { beginReset, verifyResetCode, recoveryFilePath } = require("../lib/passwordReset.js");
+const { beginReset, verifyResetCode, recoveryDisplayPath } = require("../lib/passwordReset.js");
 
 const router = express.Router();
 
@@ -123,8 +125,10 @@ router.post("/register", optionalAuth, async (req, res) => {
   }
 
   // Same session issuance as /login, so registering IS signing in — no dead
-  // "account created, now go log in" second step.
-  setSessionCookie(res, signToken(user.id));
+  // "account created, now go log in" second step. The hash is passed so the
+  // session is pinned to the password epoch it was minted under (lib/auth.js
+  // passwordEpoch) — that is what makes a later reset able to revoke it.
+  setSessionCookie(res, signToken(user.id, passwordHash));
   res.status(201).json(user);
 });
 
@@ -168,20 +172,20 @@ router.post("/login", async (req, res) => {
   const user = await prisma.user.findUnique({ where: { email } });
   if (!user) {
     loginThrottle.record(throttleKey);
-    return res.status(401).json({ error: "invalid credentials" });
+    return res.status(401).json({ error: BAD_CREDENTIALS_MESSAGE });
   }
 
   const ok = await verifyPassword(password, user.passwordHash);
   if (!ok) {
     loginThrottle.record(throttleKey);
-    return res.status(401).json({ error: "invalid credentials" });
+    return res.status(401).json({ error: BAD_CREDENTIALS_MESSAGE });
   }
 
   // A success clears the budget, so someone who mistypes twice and then gets it
   // right starts clean rather than carrying the failures for 15 minutes.
   loginThrottle.clear(throttleKey);
 
-  setSessionCookie(res, signToken(user.id));
+  setSessionCookie(res, signToken(user.id, user.passwordHash));
   res.json({ id: user.id, email: user.email });
 });
 
@@ -215,15 +219,26 @@ router.post("/reset/begin", async (req, res) => {
 
   // Write a code ONLY for a real account, but answer identically either way so
   // this can't be used to test which emails have accounts — the same
-  // account-existence-oracle guard /login keeps with its single "invalid
-  // credentials". The file PATH is not secret (it's a fixed local location); the
-  // code inside it is, and that's only written when the account exists.
+  // account-existence-oracle guard /login keeps with its single bad-credentials
+  // message. The file LOCATION is not secret; the code inside it is, and that's
+  // only written when the account exists.
   const user = await prisma.user.findUnique({ where: { email }, select: { id: true } });
   if (user) beginReset(email);
 
+  // A DISPLAY path (`~\…`), never the absolute one.
+  //
+  // This route is unauthenticated by necessity, so anything it returns is
+  // readable by any caller that reaches the port — and an absolute Windows path
+  // is `C:\Users\<username>\…`, i.e. the machine's account name handed out for
+  // free. routes/meta.js suppresses paths in its responses for exactly this
+  // reason, and Phase 9 rewrote this repo's history to scrub that same username
+  // before going public. See lib/passwordReset.js recoveryDisplayPath.
+  //
+  // Note the path derives from the email the CALLER supplied, so it is the same
+  // shape whether or not the account exists — no oracle.
   res.json({
     ok: true,
-    filePath: recoveryFilePath(),
+    filePath: recoveryDisplayPath(email),
     message: "If that account exists, a one-time code was written to the file below. Open it, then enter the code to set a new password. The code expires in 15 minutes.",
   });
 });
@@ -271,8 +286,14 @@ router.post("/reset/complete", async (req, res) => {
 
   // A successful reset clears the attempt budget and signs the user straight in —
   // same session issuance as /login, so there's no "now go sign in" dead end.
+  //
+  // The NEW hash pins the new session, which is what kills every session issued
+  // under the old password. bcrypt salts, so this holds even when the "new"
+  // password is the same string as the old one: the hash differs, the epoch
+  // differs, and the stolen 30-day cookie the user is resetting BECAUSE of is
+  // dead on the next request. See lib/auth.js passwordEpoch/resolveSession.
   resetThrottle.clear(key);
-  setSessionCookie(res, signToken(user.id));
+  setSessionCookie(res, signToken(user.id, passwordHash));
   res.json({ id: user.id, email: user.email });
 });
 
@@ -301,8 +322,11 @@ router.get("/me", requireAuth, async (req, res) => {
     //
     // Clearing the cookie is the other half: without it the next boot replays
     // the same dead token forever.
+    // Belt and braces: requireAuth now resolves the user itself, so this branch
+    // only fires on a delete that lands between the two reads. Same sentence
+    // either way — the user does not care which of the two noticed.
     clearSessionCookie(res);
-    return res.status(401).json({ error: "session expired" });
+    return res.status(401).json({ error: SESSION_EXPIRED_MESSAGE });
   }
   res.json(user);
 });

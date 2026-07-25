@@ -3,33 +3,109 @@ import { Eye, EyeOff } from "lucide-react";
 import { C } from "../lib/theme.js";
 import { Card, Btn } from "./ui/Parts.jsx";
 import CutMark from "./ui/CutMark.jsx";
-import { api } from "../lib/api.js";
+import { api, ApiError, ERR, TIMEOUT, describeError } from "../lib/api.js";
+import { logApi } from "../lib/bugLog.js";
 
 // Minimum must match backend/src/lib/auth.js MIN_PASSWORD_LENGTH. The server is
 // the authority — this only saves a round trip and lets the message sit next to
 // the field. A mismatch fails safe: the server rejects and we render its errors.
 const MIN_PASSWORD_LENGTH = 8;
 
-// /auth/status and /auth/register are not on api.js yet — that file is owned by
-// another workstream this session, so these two calls live here rather than
-// racing an edit into it. They mirror api.js's request(): same relative /api
-// path, same credentials mode, same { error, fields } unwrapping onto the thrown
-// Error. Fold them into api.js when that file is free (they belong there).
-async function authRequest(path, body) {
-  const res = await fetch(`/api${path}`, {
-    method: body ? "POST" : "GET",
-    credentials: "include",
-    headers: body ? { "Content-Type": "application/json" } : undefined,
-    body: body ? JSON.stringify(body) : undefined,
-  });
-  const parsed = await res.json().catch(() => null);
-  if (!res.ok) {
-    const err = new Error(parsed?.error || `request failed: ${res.status}`);
-    err.status = res.status;
-    err.fields = parsed?.fields || {};
-    throw err;
+// ── /auth/status · /auth/register · /auth/reset/begin · /auth/reset/complete ──
+//
+// These four are the ONLY calls in the app that don't have an api.js method, so
+// they were a bare fetch() with NO TIMEOUT — while every other call in the app
+// goes through api.js and gets one. A wedged backend (started but not
+// answering: mid-migration, a locked SQLite file, a half-dead dev server) left
+// "Create account" spinning forever with no error and no way out — on the exact
+// screen where a brand-new user meets a broken install and has nothing else to
+// judge the app by.
+//
+// api.js's request() is module-private and that file belongs to another
+// workstream this session, so this cannot literally call it. It instead uses
+// api.js's PRIMITIVES — the same ApiError class, the same ERR taxonomy, the
+// same TIMEOUT budgets, the same base-URL/nonce resolution, the same
+// describeError() copy — so the two behave identically and a screen can't tell
+// which one it went through. THE FIX THAT BELONGS UPSTREAM: four methods on
+// api.js (authStatus / register / resetBegin / resetComplete, all authExempt),
+// after which everything between here and the end of this block is deleted.
+//
+// Mirrors api.js's apiUrl()/handshakeHeaders(): inert with the current Electron
+// shell (the bridge publishes neither key), correct if it ever does.
+function bridge() {
+  return (typeof window !== "undefined" && window.cutProtocol) || null;
+}
+
+/** A sentence, not a status code. `request failed: 404` told the user nothing
+ *  and read like a crash on the first screen they ever see. */
+function httpFallback(status) {
+  if (status === 404) return "This version of the app asked the server for something it doesn't have — the two halves may be out of step.";
+  if (status === 429) return "Too many attempts. Wait a few minutes and try again.";
+  if (status >= 500) return `The app's server hit an error (${status}).`;
+  return `The app's server refused that request (${status}).`;
+}
+
+async function authRequest(path, body, { timeoutMs = TIMEOUT.WRITE } = {}) {
+  const method = body ? "POST" : "GET";
+  const controller = new AbortController();
+  let timedOut = false;
+  const timer = timeoutMs > 0 ? setTimeout(() => { timedOut = true; controller.abort(); }, timeoutMs) : null;
+
+  try {
+    let res;
+    try {
+      res = await fetch(`${bridge()?.apiBaseUrl || ""}/api${path}`, {
+        method,
+        credentials: "include",
+        headers: {
+          ...(body ? { "Content-Type": "application/json" } : null),
+          ...(bridge()?.apiNonce ? { "X-Cut-Protocol-Nonce": bridge().apiNonce } : null),
+        },
+        body: body ? JSON.stringify(body) : undefined,
+        signal: controller.signal,
+      });
+    } catch (netErr) {
+      // "We stopped waiting" and "it refused the connection" are DIFFERENT
+      // failures — the first leaves the outcome genuinely unknown, and the
+      // screen must not claim to know which one happened.
+      if (timedOut) {
+        logApi(method, path, "timeout");
+        throw new ApiError(`no answer from the app's server after ${Math.round(timeoutMs / 1000)}s`, {
+          kind: ERR.TIMEOUT, method, path, timeoutMs, cause: netErr,
+        });
+      }
+      logApi(method, path, "network-error");
+      throw new ApiError(netErr?.message || "couldn't reach the app's server", {
+        kind: ERR.OFFLINE, method, path, cause: netErr,
+      });
+    }
+
+    logApi(method, path, res.status); // status only — never a request/response body
+    const parsed = await res.json().catch(() => null);
+    if (!res.ok) {
+      const err = new ApiError(parsed?.error || httpFallback(res.status), {
+        kind: ERR.HTTP, status: res.status, body: parsed, method, path,
+      });
+      err.fields = parsed?.fields || {};
+      throw err;
+    }
+    return parsed;
+  } finally {
+    if (timer) clearTimeout(timer);
   }
-  return parsed;
+}
+
+/**
+ * One honest sentence for anything thrown on this screen.
+ *
+ * describeError() alone is wrong here: it maps EVERY 401 to "Your session
+ * expired", which is true on the rest of the app but nonsense on a sign-in form
+ * where a 401 means the password was wrong. So auth's own 401 is handled first
+ * and everything else falls through to the shared copy.
+ */
+function authErrorMessage(err, on401 = "Wrong email or password.") {
+  if (err?.kind === ERR.HTTP && err.status === 401) return on401;
+  return describeError(err, "Something went wrong. Try again.");
 }
 
 export default function LoginScreen({ onLoggedIn }) {
@@ -41,15 +117,19 @@ export default function LoginScreen({ onLoggedIn }) {
 
   useEffect(() => {
     let cancelled = false;
-    authRequest("/auth/status")
+    // READ budget, not WRITE: this is the very first request the app makes, and
+    // it decides whether a new user is shown "Create account" or "Sign in". It
+    // must resolve one way or the other rather than hang on a wedged backend.
+    authRequest("/auth/status", undefined, { timeoutMs: TIMEOUT.READ })
       .then((s) => {
         if (!cancelled) setMode(s?.needsSetup ? "register" : "login");
       })
       .catch((err) => {
-        // Backend down / not reachable. Fall back to sign-in (the safe default)
-        // and say what happened out loud — never a blank screen.
+        // Backend down / not reachable / not answering. Fall back to sign-in
+        // (the safe default) and say what happened out loud — never a blank
+        // screen and never an endless spinner.
         if (cancelled) return;
-        setStatusError(err.message);
+        setStatusError(describeError(err, "the app's server didn't answer"));
         setMode("login");
       });
     return () => { cancelled = true; };
@@ -135,7 +215,10 @@ function LoginForm({ onLoggedIn, statusError }) {
       const user = await api.login(email, password);
       onLoggedIn(user);
     } catch (err) {
-      setError(err.status === 401 ? "Wrong email or password." : err.message);
+      // A 401 here is a bad password, NOT an expired session — see
+      // authErrorMessage. Everything else (timeout, refused, 500) gets the
+      // shared honest copy instead of a raw status code.
+      setError(authErrorMessage(err));
     } finally {
       setBusy(false);
     }
@@ -202,7 +285,7 @@ function ResetPanel({ initialEmail, onLoggedIn, onCancel }) {
       setFields({});
       setStep("verify");
     } catch (err) {
-      setError(err.message);
+      setError(authErrorMessage(err, "That didn't work — sign in again or start over."));
     } finally {
       setBusy(false);
     }
@@ -225,7 +308,7 @@ function ResetPanel({ initialEmail, onLoggedIn, onCancel }) {
       onLoggedIn(user); // the reset issues a session — lands straight in the app
     } catch (err) {
       setFields(err.fields || {});
-      setError(err.message);
+      setError(authErrorMessage(err, "That didn't work — start the reset over."));
     } finally {
       setBusy(false);
     }
@@ -261,9 +344,13 @@ function ResetPanel({ initialEmail, onLoggedIn, onCancel }) {
       {step === "verify" && (
         <form onSubmit={complete} className="space-y-3" noValidate>
           <div className="text-[11px] rounded-xl p-3" style={{ background: C.card2, border: `1px solid ${C.rule}`, color: C.faint }}>
-            Open this file on your computer and copy the code inside:
+            Open this file on your computer and copy the code inside
+            {" "}(<span className="font-mono">~</span> is your user folder):
             <div className="font-mono mt-1 break-all" style={{ color: C.ink }}>{filePath || "the app's data folder"}</div>
-            <div className="mt-1" style={{ color: C.faintLight }}>The code expires 15 minutes after you requested it.</div>
+            {/* C.faint (60%), not C.faintLight (38% = 3.26:1) — this is body
+                text a user has to READ to finish a reset, and the 38% tier
+                fails WCAG AA. The 38% tier is for decoration, never prose. */}
+            <div className="mt-1" style={{ color: C.faint }}>The code expires 15 minutes after you requested it.</div>
           </div>
           <label className="block">
             <span className="text-xs font-bold" style={{ color: C.faint }}>Code from the file</span>
@@ -333,7 +420,7 @@ function RegisterForm({ onLoggedIn }) {
       // Never a silent no-op: field messages where the server gave them, and
       // always a form-level line saying what happened.
       setFields(err.fields || {});
-      setError(err.message);
+      setError(authErrorMessage(err, "Couldn't create the account — try again."));
     } finally {
       setBusy(false);
     }
@@ -363,8 +450,11 @@ function RegisterForm({ onLoggedIn }) {
         <span className="text-xs font-bold" style={{ color: C.faint }}>Password</span>
         <PasswordInput value={password} onChange={set(setPassword, "password")} autoComplete="new-password" ariaInvalid={!!fields.password} />
         <FieldError>{fields.password}</FieldError>
+        {/* C.faint (60%), not C.faintLight (38% = 3.26:1, fails WCAG AA):
+            this is the password rule itself, on the first screen a new user
+            ever sees. It has to be readable. */}
         {!fields.password && (
-          <div className="text-[11px] mt-1" style={{ color: C.faintLight }}>At least {MIN_PASSWORD_LENGTH} characters — use the eye to check it. Forgot it later? You can reset it from the sign-in screen using a code saved on this computer.</div>
+          <div className="text-[11px] mt-1" style={{ color: C.faint }}>At least {MIN_PASSWORD_LENGTH} characters — use the eye to check it. Forgot it later? You can reset it from the sign-in screen using a code saved on this computer.</div>
         )}
       </label>
       <label className="block">
