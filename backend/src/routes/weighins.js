@@ -4,12 +4,16 @@ const { requireAuth } = require("../lib/auth.js");
 const { kg2lb, computeMacros, trendRate, verdict } = require("../lib/bmrEngine.js");
 const { recomputeTarget, reconcileTarget } = require("../lib/profileTarget.js");
 const { adaptiveContext } = require("../lib/adaptiveTarget.js");
+// One definition of "what day is it", shared with every other consumer. This
+// file used to carry a THIRD private copy of dayNum/todayStr (the lib had one,
+// the frontend had another), and the copy here computed today in UTC — so on
+// any evening after 18:00 local the `daysIn` below counted a day that had not
+// happened yet and the "WEEK 1 — WATER NOISE" hold lifted early. Never
+// re-declare these; import them.
+const { dayNum, todayStr } = require("../lib/dates.js");
 
 const router = express.Router();
 router.use(requireAuth);
-
-const dayNum = (d) => Math.round(Date.parse(d + "T12:00:00") / 864e5);
-const todayStr = () => new Date().toISOString().slice(0, 10);
 
 router.get("/", async (req, res) => {
   const weighins = await prisma.weighin.findMany({ where: { userId: req.userId }, orderBy: { date: "asc" } });
