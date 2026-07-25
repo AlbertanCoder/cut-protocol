@@ -25,16 +25,44 @@ phase of the staged overhaul (Phases 0–8, driven by an external prompt pack).
   package installer `npm run dist` (root) · tests `npm test` (in `backend/`)
   · lint `npm run lint` (in `frontend/`).
 - **CI:** GitHub Actions runs backend tests + frontend lint/build on push.
-- **Packaging caveat:** the current electron-builder config deliberately
-  ships the real `backend/.env` (API keys, JWT secret) and real `dev.db`
-  inside the installer — acceptable for a personal single-machine build,
-  MUST be reverted before the app is ever distributed to anyone else.
-  **Guard (Stage 2, v2):** `npm run dist:check` scans a built `release/` and
-  FAILS if it carries secrets or personal data; `npm run scan:secrets` scans
-  tracked files (also a CI job). Neither auto-strips — a shareable build still
-  needs a secretless env (fresh JWT, empty keys) + a depersonalized seed DB in
-  `extraResources`. That auto-`dist:share` split is designed but not yet wired
-  (it needs Shad's call on which DB tables are library-vs-personal).
+- **Packaging — the installer payload is an ALLOWLIST, never a denylist.**
+  This is a standing rule, not a status note. Read it before touching
+  `build.files` in the root `package.json`.
+
+  The safe-share split IS wired: `extraResources` ships only
+  `backend/prisma/dev.db.template` (a depersonalized seed DB), and `predist`
+  runs `backend/scripts/buildTemplateDb.mjs && scripts/distPrecheck.mjs`
+  before every `npm run dist`. Do NOT write that the installer "deliberately
+  ships the real `.env` and `dev.db`" — it does not, and the earlier version
+  of this section saying so sent sessions chasing a bug that was already
+  fixed.
+
+  **But the leak did not go away.** It moved. The historical `build.files`
+  list excluded secrets and personal data **by name** — `!backend/.env`,
+  `!backend/prisma/dev.db`, `!backend/prisma/dev.db.backup-*`,
+  `!backend/prisma/*.db.backup*`. A denylist only blocks the names someone
+  thought of. Two files created later slipped straight past it:
+  - `backend/.env.qc` — not `.env`, not `.env.local`; matches no pattern.
+  - `backend/prisma/dev.db.snapshot-agentcontam-20260721-212858` — a real
+    3.2 MB user DB. `dev.db.backup-*` and `*.db.backup*` both miss it,
+    because it is a *snapshot*, not a *backup*.
+
+  That is the whole lesson: **a denylist over a directory that agents and
+  scripts keep writing new files into is structurally unable to stay
+  correct.** Every new `.env.<something>`, `.db.<something>`, dump, or
+  scratch file defaults to SHIPPED. The fix is to invert it — enumerate the
+  exact files and directories the app needs at runtime and ship nothing else,
+  so an unrecognized new file defaults to EXCLUDED. That conversion is in
+  progress; if `build.files` still reads as a list of `!` exclusions when you
+  open it, the inversion is not finished and the payload is not trustworthy.
+  Never add a new `!pattern` as the fix for a leak — that is re-committing
+  the original error.
+
+  Guards, which are checks and not the fix: `npm run dist:check` scans a
+  built `release/` and FAILS on secrets or personal data; `npm run
+  scan:secrets` scans tracked files (also a CI job). Neither auto-strips, and
+  neither can vouch for a build it was not run against — see
+  `security/scan-report.md`'s void header.
 
 ## Standing rules (every phase, every session)
 
@@ -63,6 +91,25 @@ phase of the staged overhaul (Phases 0–8, driven by an external prompt pack).
 6. **Parallel subagents welcome, never colliding.** Independent workstreams
    (e.g. one on UI, one on data) may run as parallel subagents — but never
    two agents editing the same files at once.
+7. **Navigation order lives in code, not in this file.** The `NAV` array in
+   `frontend/src/components/Sidebar.jsx` is the single source of truth. As of
+   2026-07-24 it is Profile · Today · Plan · Recipes · Training · Trend ·
+   Engine, with **Wellbeing landing below Trend**; Training is flag-gated
+   (`frontend/src/lib/flags.js`: `"on" | "soon" | "hidden"`) and Foods is a
+   child view of Recipes, never a top-level item. Compare ("How it compares")
+   and the Wellbeing check are launched from the sidebar footer, not from
+   NAV. The old "Profile/Today/Plan/Recipes/Trend/Engine" order quoted in the
+   Phase 1 log below predates Training, Compare and Wellbeing — read the
+   array, not the log.
+8. **No hardcoded colors outside the theme tokens.** Every color comes from
+   `frontend/src/index.css` (mirrored in `frontend/src/lib/theme.js`). A
+   literal hex or `rgba()` in a component is a defect regardless of how close
+   it looks to a token — near-duplicates are worse than obvious ones, because
+   they survive a token change and silently drift. This is a RULE about what
+   must be true, not a claim that it currently is: Phase 7's "zero hardcoded
+   hexes confirmed" is stale, and violations have since reappeared (see the
+   corrections block below). If you need a tint of an existing token, add a
+   token — do not inline the rgba.
 
 ## Design constitution — AURORA RINGLIGHT color laws (binding, no session may violate)
 
@@ -100,9 +147,13 @@ From the design research (2026-07-18). These are laws, not preferences:
   (transform-only), glass-card gradient hairline, and film grain are
   ambience, not spectacle. All motion freezes under
   `prefers-reduced-motion`.
-- Reference docs live in `docs/design/` (research report + final
-  direction HTML when available; `docs/design/inspiration/` is the
-  local-only scouting library).
+- `docs/design/` holds exactly two things: `inspiration/` (the local-only
+  scouting library) and `v2/` (shipped screenshots). **There is no design
+  research report and no "final direction" HTML.** They were referenced by
+  the original prompt pack but never landed on this machine, and the color
+  laws above were written from the prompt spec + the inspiration library,
+  Shad-approved. Do not go looking for those files and do not cite them —
+  the laws in this section ARE the source of truth.
 
 ## Constitution (retained from the RECOMP master doc — still binding)
 
@@ -123,6 +174,23 @@ From the design research (2026-07-18). These are laws, not preferences:
 
 Blunt, data-first, no filler. Tables for numbers. Show the math when
 challenged. Never suggest intake below the safety floor.
+
+## Superseded claims in the phase log below — READ THIS FIRST (2026-07-24)
+
+The phase tracker is an append-only **history**: each entry records what was
+true on the day it was written. Several entries have since been overtaken by
+reality, and sessions have been reading them as current law. The log stays as
+written; these corrections override it.
+
+| Claim in the log | Reality as of 2026-07-24 |
+|---|---|
+| Phase 2: "969→854 foods"; Phase 4: "exhaustive **854-name** food-table audit"; `security/scan-report.md`: "864 foods" | The library is **14,122 foods / 889 recipes**. Every count in the 800s is historical. Any rule, test, or audit described as sweeping "the 854-name food table" covers roughly 6% of today's corpus and must not be cited as exhaustive. |
+| Phase 2: "Audit exits clean: 0 failures" | **470 food rows carry another food's macros verbatim** and say so in their own `dataQuality` string. They pass the Atwater check perfectly, because the numbers are real numbers — just the wrong food's. Atwater consistency is not a correctness warrant. See `docs/qc/integrity-sweep.md`'s void header. |
+| Phase 1: nav order "Profile/Today/Plan/Recipes/Trend/Engine" | Predates Training, Compare and Wellbeing. See standing rule 7 — `Sidebar.jsx`'s `NAV` array is authoritative. |
+| Phase 7: "zero hardcoded hexes confirmed outside theme tokens" | Was true then, is not now. Known live violations: `WellbeingCheck.jsx:95` (`#04150b`, an invented near-duplicate of `--accent-ink` #05130B) and `CompareDialog.jsx` (literal `rgba(47,213,118,0.05)`). Both are being fixed. Treat standing rule 8 as the law and re-verify rather than trusting this line. |
+| Phase 9 / packaging notes: installer ships real `.env` + `dev.db` | False — see the Packaging section above. The real, current problem is that the payload is a **denylist**, and `backend/.env.qc` plus `dev.db.snapshot-agentcontam-*` slip past it. |
+| `docs/design/` "research report + final direction HTML" | Never existed. See the design constitution above. |
+| `backend/prisma/schema.prisma:2` — "one-line provider swap (`sqlite` → `postgresql`)" | Overstated, and echoed unqualified in `DEPLOY.md` and `roadmap/10-backend-readiness-and-testing.md`. The *schema* does avoid Postgres-only features, but **8 of the 25 migrations carry SQLite `PRAGMA foreign_keys` / `defer_foreign_keys` statements** for table-rebuild steps. Postgres rejects those, so the migration history would have to be squashed and regenerated against Postgres first. Budget that work; it is not one line. |
 
 ## Overhaul phase tracker (append-only; newest last)
 

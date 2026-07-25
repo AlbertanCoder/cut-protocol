@@ -24,7 +24,7 @@ The design bias throughout is honesty over polish: if the meal solver can't hit 
 
 - Calorie/macro engine: six BMR formulas (averaged, individually excludable, spread shown), TDEE built from a 36-occupation activity table plus training load, and a daily target derived from your chosen rate of loss — clamped to a safety floor, recomputed as your weigh-ins move
 - Weekly meal-plan solver: scored day candidates against your calories and protein, portion scaling, swap-with-alternates, slot locking, and plain-language diagnosis when targets are genuinely out of reach
-- Recipe library (600+): grouped browsing, search, protein-density sort; dietary styles and allergy filters applied server-side before anything reaches you
+- Recipe library (889 recipes over a 14,122-food library): grouped browsing, search, protein-density sort; dietary styles and allergy exclusions applied server-side. To be clear about a safety claim: this is a thorough filter, **not a guarantee** — it can't see cross-contamination or "may contain" warnings, and known gaps are being closed. Read labels.
 - Recipe import from the web (reads standard schema.org markup, converts amounts to grams with estimates flagged) and AI-assisted recipe generation, both gated by the same nutrition validator as every other food
 - Grocery lists with raw-purchase quantities, store sections, and labeled rough cost estimates
 - Daily weigh-in tracking with a 7-day trend, pace verdicts, and a projected goal date
@@ -38,10 +38,11 @@ The design bias throughout is honesty over polish: if the meal solver can't hit 
 
 **Ideas for later** (ideas, not promises)
 
-- A proper food diary (logging what you actually ate, not just what was planned)
 - Smarter workout suggestions
-- Barcode scanning for packaged foods
+- Barcode scanning straight into the diary (scanning already works for adding a product to the food library, but not yet for logging a meal)
 - Maybe a store release someday, if it ever feels ready
+
+*(A food diary and barcode product lookup have since been built — they sat on this list after they shipped.)*
 
 ## Screenshots
 

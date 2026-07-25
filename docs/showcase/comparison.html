@@ -75,9 +75,11 @@
     <span class="tag">How it compares</span>
     <h2>A solver in a market of trackers.</h2>
     <p class="lede">Every major app — MyFitnessPal, MacroFactor, Cronometer, Lose It, Carbon —
-      <b>logs what you ate</b> or <b>coaches a number</b>. Cut Protocol <b>builds the plan</b>:
-      a full day, week or month that actually hits your macro target and respects your diet and
-      allergies. That is the one thing none of them do — and the thing people keep asking for.</p>
+      is built to <b>log what you ate</b> or <b>coach a number</b>. Cut Protocol is built to
+      <b>solve the plan</b>: a full day, week or month scaled to hit your macro target while
+      respecting your diet and exclusions. MyFitnessPal and Lose It do ship meal planners on their
+      paid tiers; the difference is that they suggest recipes from a fixed library, while this
+      scales portions against your exact target — and says so when it can’t hit it.</p>
   </div>
 
   <div class="oneliner">The market <b>tracks</b>. People want something that <b>plans</b> — and they
@@ -99,12 +101,12 @@
       </thead>
       <tbody>
         <tr>
-          <td class="feat">Builds a compliant meal plan to your target<span class="why">A solver, not a tracker — the core difference</span></td>
-          <td class="cell"><span class="mark yes">●</span><small>day → month</small></td>
+          <td class="feat">Solves a full day to your target<span class="why">Others suggest recipes from a fixed library; this scales portions to hit the number — or says it can’t and why</span></td>
+          <td class="cell"><span class="mark yes">●</span><small>portion-scaled, day → month</small></td>
+          <td class="cell"><span class="mark part">◐</span><small>Premium+ planner, 1,500 recipes</small></td>
           <td class="cell"><span class="mark no">—</span></td>
           <td class="cell"><span class="mark no">—</span></td>
-          <td class="cell"><span class="mark no">—</span></td>
-          <td class="cell"><span class="mark no">—</span></td>
+          <td class="cell"><span class="mark part">◐</span><small>Premium, pre-log style</small></td>
           <td class="cell"><span class="mark no">—</span></td>
         </tr>
         <tr>
@@ -117,9 +119,9 @@
           <td class="cell"><span class="mark yes">●</span></td>
         </tr>
         <tr>
-          <td class="feat">Zero-tolerance allergy exclusion<span class="why">Removes unsafe food — not just “tagged” filtering</span></td>
-          <td class="cell"><span class="mark yes">●</span><small>+ rares, step-text scan</small></td>
-          <td class="cell"><span class="mark no">—</span></td>
+          <td class="feat">Allergen exclusion<span class="why">Filters ingredients, recipe titles and step text — not a safety guarantee; see the caveat below</span></td>
+          <td class="cell"><span class="mark part">◐</span><small>+ rares, step-text scan — not a guarantee</small></td>
+          <td class="cell"><span class="mark part">◐</span><small>foods-to-avoid list</small></td>
           <td class="cell"><span class="mark no">—</span></td>
           <td class="cell"><span class="mark no">—</span></td>
           <td class="cell"><span class="mark no">—</span></td>
@@ -144,8 +146,8 @@
           <td class="cell"><span class="mark no">—</span></td>
         </tr>
         <tr>
-          <td class="feat">Works fully offline, data stays on your device<span class="why">No account, no cloud, no data sold</span></td>
-          <td class="cell"><span class="mark yes">●</span></td>
+          <td class="feat">Runs offline, data stays on your device<span class="why">A local account on your machine — no cloud, no data sold</span></td>
+          <td class="cell"><span class="mark yes">●</span><small>local account</small></td>
           <td class="cell"><span class="mark no">—</span></td>
           <td class="cell"><span class="mark no">—</span></td>
           <td class="cell"><span class="mark part">◐</span><small>cloud, some offline</small></td>
@@ -166,7 +168,7 @@
           <td class="cell"><span class="mark yes">●</span></td>
           <td class="cell"><span class="mark no">—</span><small>ads on free tier</small></td>
           <td class="cell"><span class="mark yes">●</span></td>
-          <td class="cell"><span class="mark yes">●</span></td>
+          <td class="cell"><span class="mark part">◐</span><small>banner ads on free; ad-free is Gold’s headline benefit</small></td>
           <td class="cell"><span class="mark part">◐</span></td>
           <td class="cell"><span class="mark yes">●</span></td>
         </tr>
@@ -181,7 +183,7 @@
         </tr>
         <tr>
           <td class="feat">Barcode / photo quick-logging<span class="why">Where Cut Protocol is behind</span></td>
-          <td class="cell"><span class="mark no">—</span><small>plans, doesn’t track intake</small></td>
+          <td class="cell"><span class="mark no">—</span><small>barcode imports to the library, not to a log</small></td>
           <td class="cell"><span class="mark part">◐</span><small>barcode paywalled</small></td>
           <td class="cell"><span class="mark yes">●</span></td>
           <td class="cell"><span class="mark yes">●</span></td>
@@ -203,7 +205,7 @@
           <td class="cell"><span class="mark yes">●</span><small>~20M (error-prone)</small></td>
           <td class="cell"><span class="mark yes">●</span><small>verified</small></td>
           <td class="cell"><span class="mark yes">●</span><small>~1.1M USDA-verified</small></td>
-          <td class="cell"><span class="mark yes">●</span><small>~63M</small></td>
+          <td class="cell"><span class="mark yes">●</span><small>large, crowd-sourced</small></td>
           <td class="cell"><span class="mark part">◐</span></td>
         </tr>
       </tbody>
@@ -212,18 +214,20 @@
   <div class="legend">
     <span><b class="yes">●</b> yes / strong</span>
     <span><b class="part">◐</b> partial / limited</span>
-    <span><b class="no">—</b> no</span>
+    <span><b class="no">—</b> no equivalent found</span>
     <span><b class="part">$</b> paid / subscription</span>
   </div>
 
   <h3 class="section">Where Cut Protocol wins</h3>
   <div class="cards">
-    <div class="c win"><h4>It plans, it doesn’t nag</h4><p>MacroFactor, Cronometer and MyFitnessPal users
-      hand-build meal plans their apps can’t make. Cut Protocol solves the whole day to your target automatically.</p></div>
-    <div class="c win"><h4>Allergies are a wall, not a tag</h4><p>True zero-tolerance exclusion — majors, species
-      depth, rare allergens, and hidden ones cooked into recipe steps. People in allergy communities try to build this themselves.</p></div>
-    <div class="c win"><h4>Own it, offline, private</h4><p>No subscription, no ads, no account, no cloud —
-      exactly the pains that pushed people off MyFitnessPal.</p></div>
+    <div class="c win"><h4>It plans, it doesn’t just log</h4><p>The big trackers are built to record what you
+      already ate. Cut Protocol solves the whole day to your target, scales the portions, and tells you when it
+      can’t hit the number instead of quietly missing it.</p></div>
+    <div class="c win"><h4>Allergies are a filter, not a tag</h4><p>Exclusions are matched across ingredients,
+      recipe titles and step text — majors, species depth and rare allergens — rather than a single diet label.
+      It is a filter, not a safety guarantee; see the caveat below.</p></div>
+    <div class="c win"><h4>Own it, offline, private</h4><p>One-time, no subscription, no ads, no cloud. Your
+      account and your data live on your own machine.</p></div>
     <div class="c win"><h4>Honest by design</h4><p>No red on food, a hard calorie floor, no streak-shaming,
       and an optional eating-disorder wellbeing check. Calm, not a slot machine.</p></div>
   </div>
@@ -238,11 +242,19 @@
   </div>
 
   <div class="disclaimer">
-    <b>About this comparison.</b> Compiled 2026-07-24 from public reviews, app-store listings and community
-    discussion. Feature sets and pricing of other apps change frequently — check each app for its current
-    details. Cut Protocol is an independent project and is <b>not affiliated with, endorsed by, or partnered
-    with</b> any other app named here; all product names belong to their respective owners. Cut Protocol is a
-    planning tool, not medical advice.
+    <b>Allergen caveat.</b> Cut Protocol’s exclusion filter is thorough, but it is <b>not a guarantee</b>. It
+    cannot see cross-contamination, “may contain” warnings, or an ingredient a recipe never named. Always read
+    labels and treat a generated plan as a starting point, not a clearance. This matches the disclaimer shown
+    inside the app.
+    <br><br>
+    <b>About this comparison.</b> Checked 2026-07-24 against each vendor’s own documentation, help centre and
+    store listing; community discussion was used for context, never as the basis for a feature mark. Feature
+    sets and pricing change frequently — verify with each app before relying on a row. A “—” means no
+    equivalent feature was found in public documentation on that date, not that one cannot exist. Where
+    published figures disagreed (for example, third-party counts of Lose It!’s food database range from ~7M to
+    ~63M), the number is omitted rather than guessed. Cut Protocol is an independent project and is <b>not
+    affiliated with, endorsed by, or partnered with</b> any other app named here; all product names belong to
+    their respective owners. Cut Protocol is a planning tool, not medical advice.
   </div>
   <div class="foot">Cut Protocol · own-your-data body-recomposition engine · <a href="https://github.com/AlbertanCoder/cut-protocol">github.com/AlbertanCoder/cut-protocol</a></div>
 </div>
