@@ -1,9 +1,10 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import {
-  Lock, LockOpen, RefreshCw, ChefHat, ShoppingCart, Copy, Utensils, Apple,
+  Lock, LockOpen, RefreshCw, ChefHat, ShoppingCart, Copy,
   MessageCircle, Mail, Sparkles, Check, AlertTriangle, X, ArrowRight, Beef,
 } from "lucide-react";
 import { toHouseholdUnit } from "../lib/householdUnits.js";
+import FoodTile from "./ui/FoodTile.jsx";
 import { C } from "../lib/theme.js";
 import { addDays, fmtD } from "../lib/dates.js";
 import { proteinPriorityPref } from "../lib/storage.js";
@@ -526,8 +527,6 @@ function DayCandidates({ data, targetKcal, onAccept, accepting }) {
 
 function SlotCard({ plan, slot, expanded, onToggleExpand, onLockToggle, busy, filters, reloadPlan, onCart, inCart }) {
   const recipe = slot.recipe;
-  const Icon = slot.slotType === "snack" ? Apple : Utensils;
-  const roleColor = slot.ingredients?.[0]?.role === "carb" ? C.carb : slot.ingredients?.[0]?.role === "fat" ? C.fat : C.protein;
   const [alts, setAlts] = useState(null);
   const [altBusy, setAltBusy] = useState(false);
   const [applyingId, setApplyingId] = useState(null);
@@ -581,9 +580,7 @@ function SlotCard({ plan, slot, expanded, onToggleExpand, onLockToggle, busy, fi
       aria-label={`${slot.slotType}: ${recipe ? recipe.name : "empty slot"}, ${kc(slot.kcal)} kcal — toggle details`}
       style={{ background: C.card, border: `1px solid ${C.rule}` }}>
       <div className="flex gap-3">
-        <div className="w-11 h-11 rounded-xl flex items-center justify-center shrink-0" aria-hidden="true" style={{ background: `${roleColor}22` }}>
-          <Icon size={19} style={{ color: roleColor }} />
-        </div>
+        <FoodTile recipe={{ ingredients: slot.ingredients, slotType: slot.slotType, mealCategory: recipe?.mealCategory }} size={44} />
         <div className="min-w-0 flex-1">
           <div className="flex justify-between items-start gap-2">
             <div className="text-left min-w-0">
