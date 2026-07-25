@@ -3,6 +3,13 @@ const assert = require("node:assert/strict");
 const { brainChat } = require("../../src/lib/brain/chat.js");
 const { reviewDay } = require("../../src/lib/brain/critic.js");
 const { makeLedger, memoryStore } = require("../../src/lib/brain/ledger.js");
+const { signTurn } = require("../../src/lib/brain/historyGuard.js");
+
+// historyGuard signs assistant turns with BRAIN_HISTORY_SECRET || JWT_SECRET.
+// Pin a test-only secret so these cases don't depend on the ambient env (and so
+// a machine with neither set still exercises the signed path rather than the
+// fail-closed one).
+process.env.BRAIN_HISTORY_SECRET = process.env.BRAIN_HISTORY_SECRET || "test-history-secret-not-a-real-key";
 
 function food(id, kcal, p, f, c) { return { id, name: id, category: "other", kcal, protein: p, fat: f, carb: c }; }
 function ing(fd, g, role) { return { foodId: fd.id, baseGrams: g, scalable: true, role, food: fd }; }
@@ -59,7 +66,8 @@ test("brainChat OUTPUT GUARD: a reply leaking the system prompt is swapped for a
 test("brainChat DEGRADE: a load/model failure returns an honest canned message, not a crash", async () => {
   const r = await brainChat({ userId: "u", message: "plan me a day" }, deps({ loadLibrary: async () => { throw new Error("db down"); } }));
   assert.equal(r.degraded, true);
-  assert.match(r.reply, /deterministic plan/);
+  assert.match(r.reply, /Plan tab/, "the degrade points at the surface that still works");
+  assert.equal(/deterministic/i.test(r.reply), false, "no implementation jargon in a reassurance the user reads");
 });
 
 // ── G1: cost cap enforced on the live model paths ──
@@ -156,7 +164,14 @@ test("brainChat PLAN: a plan ask is still gated — injection is refused before 
 test("brainChat: prior turns become model history (invalid shapes dropped, new message last)", async () => {
   let seen = null;
   const runLoop = async ({ messages }) => { seen = messages; return { content: [{ type: "text", text: "ok" }], usage: {} }; };
-  const history = [{ role: "you", content: "x" }, { role: "user", content: "high-protein ideas" }, { role: "assistant", content: "try chicken" }, { role: "bogus", content: "drop me" }];
+  // An assistant turn must now carry the server-issued signature it was handed
+  // out with, or it is dropped as unauthenticated (see historyGuard.js).
+  const history = [
+    { role: "you", content: "x" },
+    { role: "user", content: "high-protein ideas" },
+    { role: "assistant", content: "try chicken", token: signTurn("u", "try chicken") },
+    { role: "bogus", content: "drop me" },
+  ];
   await brainChat({ userId: "u", message: "why not?", history }, deps({ runLoop, classify: async () => ({ decision: "allow", category: "food" }) }));
   assert.deepEqual(seen.map((m) => m.role), ["user", "assistant", "user"], "invalid roles dropped; valid history precedes the new message");
   assert.equal(seen[seen.length - 1].content, "why not?");

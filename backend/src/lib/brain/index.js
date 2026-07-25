@@ -73,7 +73,7 @@ const { clampProposedTier, effectiveTasteScore, recomputeAgg, TIERS } = require(
 // Brain v3 — Stage J: cost controls (pure, keyless). Version-hash BrainCache
 // (stale input never serves a wrong answer), deterministic candidate prefilter,
 // prompt-cache breakpoint planning, think-on-first-only.
-const { BrainCache, makeCacheKey, hashInputs, prefilterCandidates, planCacheBreakpoints, thinkOnFirstOnly } = require("./cache.js");
+const { BrainCache, makeCacheKey, hashInputs, prefilterCandidates, planCacheBreakpoints, toSystemParam, cachedSystemParam, thinkOnFirstOnly } = require("./cache.js");
 
 module.exports = {
   // shared single gate
@@ -106,5 +106,5 @@ module.exports = {
   // Stage T (v2) — taste tier
   clampProposedTier, effectiveTasteScore, recomputeAgg, TIERS,
   // Stage J — cost controls / caching
-  BrainCache, makeCacheKey, hashInputs, prefilterCandidates, planCacheBreakpoints, thinkOnFirstOnly,
+  BrainCache, makeCacheKey, hashInputs, prefilterCandidates, planCacheBreakpoints, toSystemParam, cachedSystemParam, thinkOnFirstOnly,
 };

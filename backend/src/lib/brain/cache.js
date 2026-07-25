@@ -78,8 +78,9 @@ function prefilterCandidates(candidates = [], target = {}, { k = 30 } = {}) {
 }
 
 // Prompt-cache breakpoints on the ordered system blocks. Cache is PREFIX-based,
-// so we mark a breakpoint after the last static block (persona/scope/laws) and
-// after the profile block (≤3 total); the volatile depth block is never cached.
+// so we mark a breakpoint after the last static block (persona/scope/laws/
+// narration) and after the profile block (≤2 total, well under the API's limit
+// of 4); the volatile depth block is never cached.
 // blocks: [{ role:'static'|'profile'|'volatile', text }] -> same, some { cache:true }.
 function planCacheBreakpoints(blocks = []) {
   const out = blocks.map((b) => ({ ...b }));
@@ -91,10 +92,60 @@ function planCacheBreakpoints(blocks = []) {
   return out;
 }
 
+// The wire form. Turns planned blocks into the `system` parameter the Messages
+// API takes: an ordered array of text blocks, each marked breakpoint carrying
+// `cache_control: {type:"ephemeral"}` (the 5-minute TTL — cache WRITE bills at
+// 1.25x input, READ at 0.1x, so break-even is 2 requests inside the window).
+//
+// THIS IS THE STEP THAT WAS MISSING. planCacheBreakpoints() was fully
+// implemented and unit-tested since Stage J and called by NOTHING — the system
+// prompt went to the wire as a plain string, so `cache_control` appeared in zero
+// request bodies and the ~1.2k-token static prefix was re-billed at full input
+// price on every single turn.
+//
+// ⚠️ MEASURE BEFORE YOU BELIEVE THE SAVING. The minimum cacheable prefix is
+// MODEL-DEPENDENT and failing it is SILENT: a prefix shorter than the minimum
+// simply does not cache — no error, `cache_creation_input_tokens: 0`. The
+// minimum is 1024 tokens on claude-sonnet-5 (today's workhorse) and 512 on
+// claude-opus-5.
+//
+// Measured 2026-07-24 (character count / 3.7, the usual English ratio — an
+// ESTIMATE; an exact figure needs the count_tokens endpoint, i.e. a live call):
+//
+//   chat tool definitions (render BEFORE system) ~128 tok
+//   static block  (persona+scope+laws+narration) ~651 tok
+//   profile block (<user_data>)                   ~48 tok
+//   -> prefix at the static breakpoint  ~779 tok
+//   -> prefix at the profile breakpoint ~827 tok
+//
+// So on claude-sonnet-5 BOTH breakpoints currently sit UNDER the 1024 minimum
+// and will not cache; on claude-opus-5 (512) both would. The wiring is still
+// correct and still worth having: a below-minimum breakpoint costs nothing, and
+// it starts paying the moment the prefix grows (more tools, a longer profile
+// note, added laws) or the workhorse tier moves. What is NOT true today is the
+// headline "~89% off the prefix" — that number is real arithmetic (see
+// tests/brain/promptCacheWiring.test.js C9) but it only lands once the prefix
+// clears the model's minimum. Do not quote it as a current saving.
+// tests/brain/promptCacheWiring.test.js C10 pins this measurement so the day the
+// prefix crosses 1024 is visible rather than discovered by accident.
+function toSystemParam(blocks = []) {
+  return blocks.map((b) => ({
+    type: "text",
+    text: b.text,
+    ...(b.cache ? { cache_control: { type: "ephemeral" } } : {}),
+  }));
+}
+
+// One call: ordered blocks -> the cache-marked `system` request parameter.
+const cachedSystemParam = (blocks) => toSystemParam(planCacheBreakpoints(blocks));
+
 // Extended thinking only on the FIRST proposal (iter 0). Later refinement turns
 // are cheap tool-driven corrections where thinking mostly burns tokens.
 function thinkOnFirstOnly(iter) {
   return iter === 0;
 }
 
-module.exports = { BrainCache, makeCacheKey, hashInputs, stableStringify, prefilterCandidates, planCacheBreakpoints, thinkOnFirstOnly };
+module.exports = {
+  BrainCache, makeCacheKey, hashInputs, stableStringify, prefilterCandidates,
+  planCacheBreakpoints, toSystemParam, cachedSystemParam, thinkOnFirstOnly,
+};

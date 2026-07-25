@@ -5,7 +5,16 @@
 // table like groceryPrices.js. Cache reads bill at ~0.1× input (prompt caching).
 const PRICING = {
   "claude-haiku-4-5": { inputPerM: 1.0, outputPerM: 5.0 },
+  // Sonnet 5 carries an INTRO rate of $2/$10 through 2026-08-31. We deliberately
+  // price at the standard $3/$15: over-estimating trips the cap sooner, which is
+  // the safe direction, and the table does not silently change under us on
+  // 2026-09-01.
   "claude-sonnet-5": { inputPerM: 3.0, outputPerM: 15.0 },
+  "claude-opus-5": { inputPerM: 5.0, outputPerM: 25.0 },
+  // Retained: Opus 4.8 is still served, is the documented refusal-fallback
+  // target for Opus 5, and may be pinned via BRAIN_MODEL_ESCALATION. An
+  // unpriced model makes estimateUsd() return Infinity and the cap DENY, so
+  // dropping a still-reachable id here would silently disable that tier.
   "claude-opus-4-8": { inputPerM: 5.0, outputPerM: 25.0 },
 };
 

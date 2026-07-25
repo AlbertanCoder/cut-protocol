@@ -10,7 +10,9 @@ const { validProv, provenanceLint } = require("../../src/lib/brain/telemetry.js"
 test("config: three model tiers + USD caps present", () => {
   assert.equal(MODELS.classifier, "claude-haiku-4-5");
   assert.equal(MODELS.workhorse, "claude-sonnet-5");
-  assert.equal(MODELS.escalation, "claude-opus-4-8");
+  // Opus 5 supersedes Opus 4.8 at the SAME $5/$25 per MTok — a free capability
+  // step, so the escalation tier tracks it.
+  assert.equal(MODELS.escalation, "claude-opus-5");
   assert.ok(CAPS.monthlyUsd > 0 && CAPS.dailyUsd > 0 && CAPS.perRequestUsd > 0);
 });
 
@@ -64,8 +66,8 @@ test("router: pickModel routes classify→haiku, normal→sonnet, hard/escalate�
   assert.equal(pickModel("classify"), "claude-haiku-4-5");
   assert.equal(pickModel("guard"), "claude-haiku-4-5");
   assert.equal(pickModel("plan", "normal"), "claude-sonnet-5");
-  assert.equal(pickModel("plan", "hard"), "claude-opus-4-8");
-  assert.equal(pickModel("escalate"), "claude-opus-4-8");
+  assert.equal(pickModel("plan", "hard"), "claude-opus-5");
+  assert.equal(pickModel("escalate"), "claude-opus-5");
 });
 
 // ── ledger (pre-call cap → degrade) ──

@@ -4,6 +4,7 @@
 // The deterministic meal solver is always authoritative; nothing here sets
 // macros. Every caller (critic/tailor) treats a throw as a no-op fallback.
 const Anthropic = require("@anthropic-ai/sdk");
+const { MODELS } = require("./config.js");
 
 // Lazily construct the client so merely REQUIRING this module never needs a key
 // (aiRecipeClient constructs at load; the brain must be importable — and
@@ -35,7 +36,37 @@ function isBrainEnabled() {
 }
 
 const BRAIN_TIMEOUT_MS = 15000;
-const BRAIN_MODEL = "claude-opus-4-8";
+
+// The transport's default model comes from config.js — there is no second
+// hardcoded id here. (There used to be: `BRAIN_MODEL = "claude-opus-4-8"`,
+// which silently overrode the config table for every caller that omitted
+// `model`. Its only live consumer was the dormant tailor.js, which therefore
+// would have billed a cheap judgment turn at Opus rates.)
+const DEFAULT_MODEL = MODELS.workhorse;
+
+// ── THINKING: an explicit OFF, because the default flipped underneath us ──────
+// On Opus 4.8 and earlier, omitting `thinking` meant NO thinking. On Claude
+// Opus 5 and Claude Sonnet 5 — the two tiers this brain actually runs — omitting
+// it runs ADAPTIVE thinking, and `max_tokens` is a hard cap on thinking PLUS the
+// reply. Our judgment calls are bounded at 1024 output tokens, so an unrequested
+// adaptive-thinking turn can consume the whole budget and return a truncated (or
+// empty) answer, which chat.js would surface as the honest-but-wrong "I couldn't
+// pull that together just now".
+//
+// So every call on a model whose default is adaptive sends `{type:"disabled"}`
+// explicitly. That is accepted on Sonnet 5, and on Opus 5 at effort `high` or
+// below (`high` is the default and we never raise it). Models NOT in this set —
+// Haiku 4.5, and anything older — are left alone: they default to no thinking
+// already, and sending an unexpected `thinking` shape to them risks a 400.
+//
+// If a future tier genuinely benefits from thinking, raise its maxTokens FIRST.
+const THINKING_OFF_MODELS = new Set([
+  "claude-opus-5", "claude-opus-4-8", "claude-opus-4-7", "claude-opus-4-6",
+  "claude-sonnet-5", "claude-sonnet-4-6",
+]);
+function thinkingParam(model) {
+  return THINKING_OFF_MODELS.has(model) ? { type: "disabled" } : undefined;
+}
 
 // A long-form STRUCTURED generation (recipe drafting) legitimately takes longer
 // than a judgment turn — thinking + 8k output tokens. It still gets a HARD
@@ -56,13 +87,15 @@ function parseJSON(text) {
 // with zero SDK retries (a judgment layer must fail fast into its fallback, not
 // stall a request). Throws on timeout, refusal, missing text, or invalid JSON —
 // callers convert that throw into their documented no-op fallback.
-async function askJSON({ system, user, maxTokens = 1024, model = BRAIN_MODEL, onUsage } = {}) {
+async function askJSON({ system, user, maxTokens = 1024, model = DEFAULT_MODEL, onUsage } = {}) {
+  const thinking = thinkingParam(model);
   const response = await client().messages.create(
     {
       model,
       max_tokens: maxTokens,
       system,
       messages: [{ role: "user", content: user }],
+      ...(thinking ? { thinking } : {}),
     },
     { timeout: BRAIN_TIMEOUT_MS, maxRetries: 0 }
   );
@@ -83,11 +116,14 @@ async function askJSON({ system, user, maxTokens = 1024, model = BRAIN_MODEL, on
 // mock. Bounded by `timeoutMs` (default DRAFT_TIMEOUT_MS). Usage is surfaced via
 // onUsage BEFORE any throw so the ledger books tokens that were really spent.
 async function askSchemaJSON({
-  system, user, schema, maxTokens = 4096, model = BRAIN_MODEL,
+  system, user, schema, maxTokens = 4096, model = DEFAULT_MODEL,
   timeoutMs = DRAFT_TIMEOUT_MS, thinking, effort, onUsage,
 } = {}) {
   const params = { model, max_tokens: maxTokens, system, messages: [{ role: "user", content: user }] };
-  if (thinking) params.thinking = thinking;
+  // An explicit caller-supplied `thinking` wins; otherwise force it OFF on the
+  // models whose default flipped to adaptive (see THINKING_OFF_MODELS).
+  const think = thinking || thinkingParam(model);
+  if (think) params.thinking = think;
   if (schema) params.output_config = { format: { type: "json_schema", schema }, ...(effort ? { effort } : {}) };
 
   const response = await client().messages.create(params, { timeout: timeoutMs, maxRetries: 0 });
@@ -105,21 +141,36 @@ async function askSchemaJSON({
 // call (name + input) so tests can assert exactly what was invoked. Bounded to
 // BRAIN_TIMEOUT_MS with zero SDK retries: a judgment layer fails fast into its
 // deterministic fallback, it never stalls a request.
-async function runToolLoop({ system, messages = [], tools = {}, toolDefs = [], maxTurns = 4, maxTokens = 1024, model = BRAIN_MODEL } = {}) {
+// `system` accepts a plain string OR an ordered array of text blocks (some
+// carrying `cache_control`) — the SDK takes both, and the block form is how
+// prompt-cache breakpoints reach the wire (see cache.js / prompts/system.js).
+//
+// `onUsage(usage)` is invoked after EVERY turn with the running total. That is
+// the LAW-4 accounting fix for a mid-loop throw: previously the accumulated
+// usage lived only in the return value, so a turn-3 failure discarded the two
+// turns Anthropic had already billed and the caps never saw them.
+async function runToolLoop({ system, messages = [], tools = {}, toolDefs = [], maxTurns = 4, maxTokens = 1024, model = DEFAULT_MODEL, onUsage } = {}) {
   const convo = messages.map((m) => ({ ...m }));
   const calls = [];
-  const usage = { input_tokens: 0, output_tokens: 0, cache_read_input_tokens: 0 }; // summed across turns for the cost ledger
+  // Summed across turns for the cost ledger. cache_creation_input_tokens is
+  // counted too — a cache WRITE bills at 1.25x input and was previously invisible
+  // to the ledger, so wiring prompt caching without this would have under-counted
+  // exactly the turns that cost the most.
+  const usage = { input_tokens: 0, output_tokens: 0, cache_read_input_tokens: 0, cache_creation_input_tokens: 0 };
+  const thinking = thinkingParam(model);
   let turns = 0;
   while (turns < maxTurns) {
     turns++;
     const resp = await client().messages.create(
-      { model, max_tokens: maxTokens, system, messages: convo, tools: toolDefs },
+      { model, max_tokens: maxTokens, system, messages: convo, tools: toolDefs, ...(thinking ? { thinking } : {}) },
       { timeout: BRAIN_TIMEOUT_MS, maxRetries: 0 }
     );
     const u = resp.usage || {};
     usage.input_tokens += u.input_tokens || 0;
     usage.output_tokens += u.output_tokens || 0;
     usage.cache_read_input_tokens += u.cache_read_input_tokens || 0;
+    usage.cache_creation_input_tokens += u.cache_creation_input_tokens || 0;
+    if (typeof onUsage === "function") onUsage(usage);
     const content = resp.content || [];
     convo.push({ role: "assistant", content });
     const toolUses = content.filter((b) => b && b.type === "tool_use");
@@ -145,5 +196,6 @@ async function runToolLoop({ system, messages = [], tools = {}, toolDefs = [], m
 
 module.exports = {
   isBrainEnabled, askJSON, askSchemaJSON, parseJSON, runToolLoop, __setClient,
-  DEPTH_PROFILES, BRAIN_TIMEOUT_MS, DRAFT_TIMEOUT_MS, BRAIN_MODEL,
+  DEPTH_PROFILES, BRAIN_TIMEOUT_MS, DRAFT_TIMEOUT_MS,
+  DEFAULT_MODEL, THINKING_OFF_MODELS, thinkingParam,
 };
