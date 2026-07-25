@@ -192,7 +192,10 @@ async function governedModelCall(ctx = {}, fn) {
     gate = await guardedCall(
       ledger,
       { projectedUsd, userId, model, phase, intent },
-      () => withDeadline(Promise.resolve().then(fn), timeoutMs, `${feature} model call`) // 6 — timeout
+      // `collect` is forwarded to fn so a call site can surface usage that was
+      // already billed even when it throws afterwards (ledger.js
+      // withUsageLogging). Call sites that ignore the argument are unaffected.
+      (collect) => withDeadline(Promise.resolve().then(() => fn(collect)), timeoutMs, `${feature} model call`) // 6 — timeout
     );
   } catch (e) {
     if (e && e.code === "llm-timeout") {

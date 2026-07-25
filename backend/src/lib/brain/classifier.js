@@ -27,8 +27,18 @@ function makeClassifier(deps = {}) {
     let usage = null;
     let gate;
     try {
-      gate = await guardedCall(ledger, { projectedUsd, model, phase: "classify", intent: "guard" },
-        async () => ({ data: await ask({ system: CLASSIFY_SYSTEM, user: String(text || ""), model, maxTokens: 128, onUsage: (u) => { usage = u; } }), usage }));
+      // `collect` carries usage out even when ask() throws after the HTTP
+      // response (refusal / no text block / unparseable JSON). Those tokens were
+      // billed; the ledger books them (LAW 4) instead of losing them exactly in
+      // the failure modes that recur.
+      gate = await guardedCall(ledger, { projectedUsd, userId: deps.userId ?? null, model, phase: "classify", intent: "guard" },
+        async (collect) => ({
+          data: await ask({
+            system: CLASSIFY_SYSTEM, user: String(text || ""), model, maxTokens: 128,
+            onUsage: (u) => { usage = u; if (collect) collect.usage = u; },
+          }),
+          usage,
+        }));
     } catch {
       return null; // model error -> preGate fails closed
     }

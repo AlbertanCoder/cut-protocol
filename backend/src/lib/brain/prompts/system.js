@@ -3,8 +3,24 @@
 // NARRATION with an interpolated depth block and a compact profile block wrapped
 // in <user_data>. Assembly is SECURITY-ordered — laws before data before tools —
 // so nothing inside <user_data> can override the laws, the scope, or the
-// exclusions (LAW 6). Only profile + depth vary; the rest is static, which keeps
-// the long prefix cacheable (cache breakpoints are wired in Stage J).
+// exclusions (LAW 6). Only profile + depth vary; the rest is static.
+//
+// TWO ENTRY POINTS, one assembly:
+//   buildSystemBlocks() -> [{role:'static'|'profile'|'volatile', text}]  — the
+//     ordered blocks, tagged by how often each one changes. This is what the
+//     live chat path uses, because prompt-cache breakpoints can only be placed
+//     on a BLOCK boundary (cache.js planCacheBreakpoints → toSystemParam).
+//   buildSystemPrompt() -> the same blocks joined into one string, for callers
+//     and tests that just want the text.
+//
+// NARRATION moved UP, next to PERSONA/SCOPE/LAWS (2026-07-24). It never varies,
+// but it used to sit AFTER the volatile depth line, which split the static
+// prefix in two and left roughly a third of the cacheable text stranded behind a
+// block that changes whenever the user taps a different depth. Prompt caching is
+// a PREFIX match, so everything after the first varying byte is uncacheable —
+// the ordering is now stability-ordered as well as security-ordered. Nothing
+// about the security ordering changes: laws still precede <user_data>, which
+// still precedes the tool list.
 const { DEPTH_PROFILES } = require("../llm.js");
 
 const PERSONA =
@@ -63,17 +79,29 @@ function sanitizeUserData(s) {
   return String(s).replace(/<\s*\/?\s*user_data\s*>/gi, "[user_data]");
 }
 
-function buildSystemPrompt({ profile = {}, depth = "balanced", toolNames = [] } = {}) {
+// The ordered system blocks, tagged by volatility:
+//   static   — PERSONA + SCOPE + LAWS + NARRATION. Identical on every request
+//              for every user; the whole point of the cache breakpoint.
+//   profile  — the <user_data> wrapper. Changes only when the profile changes.
+//   volatile — depth + the tool list. Depth flips whenever the user taps a
+//              different button, so this block is NEVER cached.
+function buildSystemBlocks({ profile = {}, depth = "balanced", toolNames = [] } = {}) {
   const d = DEPTH_PROFILES[depth] ? depth : "balanced";
   return [
-    PERSONA,
-    SCOPE,
-    LAWS,
-    `<user_data>\n${sanitizeUserData(profileBlock(profile))}\n</user_data>`,
-    depthBlock(d),
-    NARRATION,
-    `Tools available (call these; they enforce the pool and compute every number): ${toolNames.length ? toolNames.join(", ") : "(none)"}.`,
-  ].join("\n\n");
+    { role: "static", text: [PERSONA, SCOPE, LAWS, NARRATION].join("\n\n") },
+    { role: "profile", text: `<user_data>\n${sanitizeUserData(profileBlock(profile))}\n</user_data>` },
+    {
+      role: "volatile",
+      text: [
+        depthBlock(d),
+        `Tools available (call these; they enforce the pool and compute every number): ${toolNames.length ? toolNames.join(", ") : "(none)"}.`,
+      ].join("\n\n"),
+    },
+  ];
 }
 
-module.exports = { buildSystemPrompt, sanitizeUserData, PERSONA, SCOPE, LAWS, NARRATION };
+function buildSystemPrompt(opts = {}) {
+  return buildSystemBlocks(opts).map((b) => b.text).join("\n\n");
+}
+
+module.exports = { buildSystemPrompt, buildSystemBlocks, sanitizeUserData, PERSONA, SCOPE, LAWS, NARRATION };

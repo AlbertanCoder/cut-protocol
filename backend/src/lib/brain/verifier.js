@@ -1,5 +1,17 @@
-// Brain v3 — the VERIFIER: the gate the LLM can NEVER overrule (LAWS 1, 2, 3).
-// For every slot a selector proposes it independently:
+// ⚠️ SCAFFOLDING — NOT WIRED. NOTHING IN src/ CALLS verifyPlan().
+//
+// Read the description below as a SPEC, not as a running control. No live route
+// reaches this function: the deterministic solver (mealSolver.js) owns every
+// number the app actually displays, and the Brain v3 selector spine this was
+// built for is still dormant. It is unit-tested (tests/brain/spine.test.js) and
+// correct; it is simply not protecting anything today, and describing it in the
+// present tense — "the gate the LLM can never overrule" — implied a guarantee
+// that is not in force. tests/brain/dormantScaffolding.test.js fails the build
+// if this banner is removed while the module is still uncalled, or if a caller
+// appears outside src/lib/brain/ while it still says NOT WIRED.
+//
+// WHAT IT WOULD DO, once a selector path exists: the gate the LLM can never
+// overrule (LAWS 1, 2, 3). For every slot a selector proposes it independently:
 //   (a) confirms the recipe is actually in the (already-exclusion-filtered) pool
 //       and re-runs isExcluded — an excluded/unknown item is rejected;
 //   (b) RECOMPUTES the macros from source via the deterministic tool layer and

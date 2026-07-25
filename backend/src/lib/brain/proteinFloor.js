@@ -40,8 +40,53 @@ const PROTEIN_FLOOR_SOURCE = {
 // Protein-priority weighting: protein goes from "one of four traded-off
 // terms" to the dominant one. kcal stays meaningful (a plan that blows the
 // calorie target isn't "priority," it's broken) but no longer outweighs
-// protein 0.55-to-0.30 the way the default weights do.
-const PROTEIN_PRIORITY_WEIGHTS = { kcal: 0.35, protein: 0.5, fat: 0.075, carb: 0.075 };
+// protein the way the default weights do.
+//
+// REBALANCED 2026-07-24 — these numbers are MEASURED, not chosen by eye.
+//
+// WHY. mealSolver's default SCORE_WEIGHTS moved to 0.46/0.30/0.12/0.12, and at
+// the same time the fat/carb error basis changed: it is now `bandMiss ÷ that
+// macro's own day tolerance`, capped at 1, so a term of 1.0 IS the line
+// dayInTolerance() draws. This table kept its pre-change 0.075 fat/carb
+// weights, so protein-priority mode inherited the new, harsher error basis but
+// only ~62% of the weight to express it — it systematically UNDER-reported a
+// fat miss relative to default mode.
+//
+// MEASURED, 175 real solver-days (5 body shapes x 5 diets x a week each, real
+// computeMacros targets, real 889-recipe pool, filters.proteinPriority on),
+// looking at the days that FAILED the four-macro tolerance:
+//
+//   fat/carb weight | fail-days scoring >=90 | worst fake-green | avg fail score
+//   ----------------|------------------------|------------------|---------------
+//   0.075 (old)     | 29.4%                  | 92               | 86.5
+//   0.12  (this)    |  0.0%                  | 88               | 80.0
+//   0.12  (default) |  0.0%                  | 88               | 79.8
+//
+// So under the old weights, 30 of 102 out-of-tolerance days were still shown a
+// 90-something match — the exact "fake-green" overstatement that was just fixed
+// in default mode. At 0.12 that class is empty, and priority mode's honesty is
+// within 0.2 points of default mode's.
+//
+// WHY 0.12 SPECIFICALLY and not higher: fat/carb match SCORE_WEIGHTS exactly, so
+// a given fat miss costs the SAME number of points in both modes. That is the
+// property that matters — the headline number must not disagree with the
+// green/amber verdict more in one mode than the other. Raising them further
+// (0.15 was measured: worst fake-green 87, avg 75.6) would make protein-priority
+// mode HARSHER on fat than default mode, which is a different bug in the other
+// direction.
+//
+// kcal 0.32 / protein 0.44 splits the remaining 0.76 with protein dominant, so
+// the mode still does its job (protein > kcal, and 0.44 is well above both
+// SCORE_WEIGHTS.protein 0.30 and scorer.js DEFAULT_WEIGHTS.protein 0.35). Sums
+// to 1.00, like SCORE_WEIGHTS, so matchPct stays a true weighted closeness
+// measure rather than clamping early at 0.
+//
+// NOTE: these weights are a POST-HOC READ of an already-solved day — the same
+// 175-day sweep showed candidate SELECTION is byte-identical across every weight
+// set tried (the solver now ranks candidates by remaining fat/carb budget, not
+// by this objective). So this change moves the reported number and nothing else;
+// days-in-tolerance was 41.7% before and after.
+const PROTEIN_PRIORITY_WEIGHTS = { kcal: 0.32, protein: 0.44, fat: 0.12, carb: 0.12 };
 
 // A day is short of the floor once achieved protein falls more than this
 // fraction below the target's floor. 5% (~10g at a 200g floor) is inside

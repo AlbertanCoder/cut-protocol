@@ -36,6 +36,17 @@ function userScopedStore(store, userId) {
  * would silently exempt it from the per-user cap or wrongly charge someone else.
  * The global cap still binds it.
  */
+// A per-user denial, worded so the UI can say "you are paused" rather than
+// "everyone is paused" — the whole point of having a second cap.
+function userDenial(u) {
+  return {
+    ...u,
+    scope: "user",
+    reason: `user-${u.reason}`,
+    notice: `AI generation paused for this account: your ${u.reason.replace(/-/g, " ")} was reached. Using the free deterministic planner.`,
+  };
+}
+
 function makeBudget({ store, userId = null, caps = CAPS, userCaps = USER_CAPS, now } = {}) {
   const globalLedger = makeLedger({ store, caps, now });
   if (!userId) return globalLedger;
@@ -57,20 +68,41 @@ function makeBudget({ store, userId = null, caps = CAPS, userCaps = USER_CAPS, n
       const g = await globalLedger.precheck(projectedUsd);
       if (!g.allowed) return { ...g, scope: "global" };
       const u = await perUser.precheck(projectedUsd);
-      if (!u.allowed) {
-        return {
-          ...u,
-          scope: "user",
-          reason: `user-${u.reason}`,
-          notice: `AI generation paused for this account: your ${u.reason.replace(/-/g, " ")} was reached. Using the free deterministic planner.`,
-        };
-      }
+      if (!u.allowed) return userDenial(u);
       return { allowed: true, spent: { global: g.spent, user: u.spent } };
+    },
+
+    // Reserving form (see ledger.js reserve()). BOTH budgets are reserved, so
+    // concurrent requests from one account cannot jointly breach the per-user
+    // cap any more than they can the global one. If the per-user budget denies
+    // AFTER the global one reserved, the global reservation is released
+    // immediately — a denied request must not hold budget it will never spend.
+    async reserve(projectedUsd = 0) {
+      const g = await globalLedger.reserve(projectedUsd);
+      if (!g.allowed) return { ...g, scope: "global", release: () => {} };
+      const u = await perUser.reserve(projectedUsd);
+      if (!u.allowed) {
+        g.release();
+        return { ...userDenial(u), release: () => {} };
+      }
+      return {
+        allowed: true,
+        spent: { global: g.spent, user: u.spent },
+        release: () => { u.release(); g.release(); },
+      };
     },
 
     // ONE row, written through the global ledger. The per-user view reads it
     // back on the next precheck because it is the same store.
-    async record(entry) { return globalLedger.record({ userId, ...entry }); },
+    //
+    // The budget's userId is applied AFTER the spread, not before it. Written
+    // the other way round (`{ userId, ...entry }`) an entry carrying an explicit
+    // `userId: undefined` — which is exactly what withUsageLogging produces when
+    // the call-site ctx omits it — silently overwrote the attribution with
+    // undefined. The row still landed, so nothing looked broken; it was simply
+    // invisible to every per-user sum from then on, i.e. the per-user cap
+    // quietly stopped counting.
+    async record(entry) { return globalLedger.record({ ...entry, userId: entry?.userId ?? userId }); },
 
     async spentThisMonth() { return globalLedger.spentThisMonth(); },
     async userSpentThisMonth() { return perUser.spentThisMonth(); },
