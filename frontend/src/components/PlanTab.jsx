@@ -325,7 +325,11 @@ function SolverNarration({ meta }) {
     : typeof meta.score === "number" ? meta.score
       : typeof meta.score?.avgMatch === "number" ? meta.score.avgMatch : null;
   const pct = rawPct == null ? null : Math.round(rawPct <= 1 ? rawPct * 100 : rawPct);
-  const days = Array.isArray(meta.days) ? meta.days : [];
+  // The per-day strip lives at meta.score.days for a week/horizon solve; older
+  // shapes put it at meta.days. Read either, else the "every day, its own match"
+  // strip silently never renders even though the data is right there.
+  const days = Array.isArray(meta.days) ? meta.days
+    : Array.isArray(meta.score?.days) ? meta.score.days : [];
   const missedDays = days.filter((d) => d && d.inTolerance === false);
   // Week-level verdict, held to the SAME green-scarcity law as the day cards:
   // the headline % is a distance measure, not a pass mark, so it never earns
