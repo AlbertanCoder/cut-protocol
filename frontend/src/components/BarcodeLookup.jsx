@@ -12,38 +12,68 @@ const g1 = (n) => (n == null ? "—" : Math.round(n * 10) / 10);
 // codes on packaging, etc.) picked up in the same camera frame.
 const BARCODE_FORMATS = ["upc_a", "upc_e", "ean_13", "ean_8"];
 
-const inpStyle = { background: C.card2, border: `1.5px solid ${C.rule}`, color: C.ink };
+// Control borders wear --rule-strong (3.34:1 over card): the border is the
+// only thing that says where this input is. --rule is 1.17:1 and decorative.
+const inpStyle = { background: C.card2, border: `1.5px solid ${C.ruleStrong}`, color: C.ink };
+
+// Validator issue codes are internal identifiers ("atwater", "name-shape",
+// "zero-kcal"). They were rendered raw, as `{iss.code}: {iss.detail}`, which
+// asks a person scanning a barcode to know what the food validator calls its
+// own rules. The detail line is already a sentence; the code just needs a
+// human name in front of it.
+const ISSUE_LABEL = {
+  atwater: "Calories don't match the macros",
+  "name-shape": "The name and the numbers disagree",
+  "zero-kcal": "Listed as zero calories with real macros",
+  absurd: "Numbers outside what food can be",
+  negative: "A negative value",
+  missing: "A missing value",
+  placeholder: "No real numbers yet",
+  category: "Unrecognised food category",
+};
 
 // Verdict → tone. Green is scarce (law a) and reserved for on-target/
 // primary-action/success — a per-lookup "this one's fine" badge is exactly
 // the kind of recurring badge use the law rules out, so "pass" gets no
 // color at all, just a quiet plain line (silence IS the signal, same as
-// every USDA/manual row that's never had a reason to flag itself). "warn"
-// is the calm amber every other caution state in this app uses. "reject"
-// borrows the system-error red — this is "we refuse to save broken data",
-// system/data-integrity UI, not a judgment on food/body data (law b's own
-// carve-out, same one ErrorNote uses).
+// every USDA/manual row that's never had a reason to flag itself).
+//
+// "reject" used to borrow the system-error RED on the argument that refusing
+// to save broken data is data-integrity UI rather than a verdict on food. It
+// isn't: what the user sees is a red panel attached to a food they scanned,
+// which is precisely the shape law b forbids ("red on food reads as moral
+// judgment"). Red on this screen is reserved for the app failing — ErrorNote —
+// not for a crowd-sourced listing having bad numbers. Both verdicts are calm
+// amber now, and the LABEL carries the difference between "we won't save this"
+// and "saved, marked unverified".
 function VerdictBanner({ verdict, issues }) {
   if (verdict === "pass") {
     return (
-      <div className="text-xs font-semibold flex items-center gap-1.5" style={{ color: C.faint }}>
-        <CheckCircle2 size={13} style={{ color: C.faintLight }} />
-        Reconciles with the shared fiber-adjusted-Atwater check.
+      // Was: "Reconciles with the shared fiber-adjusted-Atwater check" — an
+      // in-house method name presented as a verification badge, on data that
+      // has been verified by nobody. It is an arithmetic consistency test, and
+      // saying so out loud is the honest version of the same sentence.
+      <div className="text-xs font-semibold flex items-start gap-1.5" style={{ color: C.faint }}>
+        <CheckCircle2 size={13} className="mt-0.5 shrink-0" style={{ color: C.faint }} aria-hidden="true" />
+        <span>
+          The calories add up against the protein, fat, carbs and fibre listed. That is an arithmetic check on what
+          whoever entered this product typed — not a check that they typed the right thing.
+        </span>
       </div>
     );
   }
-  const color = verdict === "reject" ? C.red : C.warn;
-  const label = verdict === "reject" ? "Rejected — not imported" : "Flagged — imported anyway, marked unverified";
+  const label = verdict === "reject" ? "Not adding this one — the numbers don't work" : "Added, but flagged — treat these numbers as unverified";
   return (
-    <div className="rounded-xl p-3 flex items-start gap-2.5" style={{ background: `color-mix(in srgb, ${color} 10%, transparent)`, border: `1px solid color-mix(in srgb, ${color} 30%, transparent)` }}>
-      <AlertTriangle size={15} className="mt-0.5 shrink-0" style={{ color }} />
+    <div role="status" className="rounded-xl p-3 flex items-start gap-2.5" style={{ background: C.warnBg, border: `1px solid color-mix(in srgb, ${C.warn} 30%, transparent)` }}>
+      <AlertTriangle size={15} className="mt-0.5 shrink-0" style={{ color: C.warn }} aria-hidden="true" />
       <div className="min-w-0">
-        <div className="text-xs font-extrabold uppercase tracking-wide" style={{ color }}>{label}</div>
+        <div className="text-xs font-extrabold" style={{ color: C.warn }}>{label}</div>
         {issues?.length > 0 && (
-          <ul className="mt-1 space-y-0.5">
+          <ul className="mt-1 space-y-0.5 list-none p-0">
             {issues.map((iss, i) => (
-              <li key={i} className="text-xs font-medium" style={{ color: C.faint }}>
-                {iss.code}: {iss.detail}
+              <li key={i} className="text-xs font-medium" style={{ color: C.ink }}>
+                <b>{ISSUE_LABEL[iss.code] || "Failed a check"}</b>
+                <span style={{ color: C.faint }}> — {iss.detail}</span>
               </li>
             ))}
           </ul>
@@ -81,7 +111,17 @@ function CameraScanner({ onDetected, onClose }) {
         streamRef.current = stream;
         if (videoRef.current) {
           videoRef.current.srcObject = stream;
-          videoRef.current.play().catch(() => {});
+          // A swallowed play() rejection left a black pane with no message
+          // while the detect loop kept running against a stopped video — the
+          // scanner looked broken-but-alive and never said why. A rejection
+          // here means the camera opened but the element refused to play
+          // (autoplay policy, a device grabbed by another app); that is a
+          // dead end, so it stops the loop and says so.
+          videoRef.current.play().catch((e) => {
+            if (cancelled) return;
+            if (rafRef.current) cancelAnimationFrame(rafRef.current);
+            setError(`The camera opened but the video wouldn't start (${e?.name || "playback blocked"}).`);
+          });
         }
         const tick = async () => {
           if (cancelled || !videoRef.current) return;
@@ -109,19 +149,23 @@ function CameraScanner({ onDetected, onClose }) {
     <div className="mt-3 rounded-xl overflow-hidden relative" style={{ border: `1px solid ${C.rule}`, background: C.paper }}>
       {error ? (
         <div className="p-4">
-          <ErrorNote msg={error} hint="Use manual entry below instead." />
+          <ErrorNote msg={error} hint="Use manual entry below instead — it's the supported path; the webcam scan is a convenience." />
         </div>
       ) : (
         <>
           {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
           <video ref={videoRef} className="w-full max-h-64 object-cover" muted playsInline />
-          <div className="absolute inset-x-0 bottom-0 p-2 text-center text-[10.5px] font-semibold" style={{ color: C.ink, background: "linear-gradient(transparent, rgba(0,0,0,.6))" }}>
+          {/* was a hand-typed rgba(0,0,0,.6) gradient — standing rule 8 */}
+          <div className="absolute inset-x-0 bottom-0 p-2 text-center text-[10.5px] font-semibold" style={{ color: C.ink, background: `linear-gradient(transparent, ${C.scrim})` }}>
             Hold a barcode steady in view
           </div>
         </>
       )}
-      <button onClick={onClose} className="absolute top-2 right-2 p-1.5 rounded-lg" style={{ background: "rgba(0,0,0,.5)" }} aria-label="Close camera">
-        <X size={14} color="#fff" />
+      {/* was rgba(0,0,0,.5) + color="#fff". The app has ONE off-white at three
+          tiers and no pure white; a literal hex survives a token change and
+          silently drifts (standing rule 8). */}
+      <button onClick={onClose} className="absolute top-2 right-2 p-1.5 rounded-lg" style={{ background: C.scrim }} aria-label="Close camera">
+        <X size={14} style={{ color: C.ink }} aria-hidden="true" />
       </button>
     </div>
   );
@@ -266,7 +310,7 @@ export default function BarcodeLookup({ onImported, onClose }) {
           {result.product.notes?.length > 0 && (
             <div className="mt-2 space-y-0.5">
               {result.product.notes.map((n, i) => (
-                <div key={i} className="text-[10.5px] font-medium" style={{ color: C.faintLight }}>· {n}</div>
+                <div key={i} className="text-[10.5px] font-medium" style={{ color: C.faint }}>· {n}</div>
               ))}
             </div>
           )}
@@ -280,10 +324,25 @@ export default function BarcodeLookup({ onImported, onClose }) {
               <Plus size={14} className="inline mr-1" />{importing ? "Adding…" : "Add to food library"}
             </Btn>
             {!result.importable && (
-              <span className="text-xs font-semibold" style={{ color: C.faintLight }}>
+              <span className="text-xs font-semibold" style={{ color: C.faint }}>
                 Can't be saved until Open Food Facts' own listing has usable numbers.
               </span>
             )}
+          </div>
+        </div>
+      )}
+
+      {/* The resting state. This card had a loading state, an error state, a
+          not-found state and a result state — and nothing at all before the
+          first lookup, so it opened as a bare input with no idea what a good
+          input looks like or what happens next. */}
+      {!loading && !error && !result && !imported && !cameraOpen && (
+        <div className="mt-4 flex flex-col items-center justify-center gap-2 text-center" style={{ padding: "14px 0" }}>
+          <Barcode size={22} style={{ color: C.faintLight }} aria-hidden="true" />
+          <div className="text-sm font-semibold" style={{ color: C.faint }}>Nothing looked up yet</div>
+          <div className="text-xs font-medium max-w-[300px]" style={{ color: C.faint }}>
+            Type the number printed under the barcode — 8, 12 or 13 digits{cameraSupported ? ", or scan the package with your webcam" : ""}.
+            You&apos;ll see the product and its numbers here first; nothing is saved until you say so.
           </div>
         </div>
       )}

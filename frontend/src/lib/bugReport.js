@@ -15,13 +15,50 @@ import { scrub } from "./scrub.js";
 const REPO = "AlbertanCoder/cut-protocol";
 const PENDING_KEY = "cutprotocol:pendingBugReports";
 const URL_BUDGET = 7000; // practical cap for a browser/GitHub issue URL
+// The desktop log is the single most useful attachment and the one the user was
+// previously told to go find in %AppData% and email. Capped so it can't crowd
+// out the description; the full text always reaches the clipboard when the URL
+// has to be truncated.
+const LOG_TAIL_BYTES = 12 * 1024;
+const LOG_TAIL_LINES = 40;
 
 export async function fetchMeta() {
   try {
     const m = await fetch("/api/meta", { credentials: "include" }).then((r) => r.json());
+    // The shell knows things the backend doesn't: which loopback port it got,
+    // where its data folder is, and whether that folder is being synced to the
+    // cloud (a SQLite corruption vector worth seeing in a report).
+    try {
+      const info = await window.cutProtocol?.getBackendInfo?.();
+      if (info) return { ...m, shell: info };
+    } catch { /* not running under the desktop shell */ }
     return m;
   } catch {
     return { version: "unknown", platform: navigator.platform || "unknown", packaged: false };
+  }
+}
+
+/**
+ * The tail of the desktop app's own diagnostic log
+ * (%AppData%\Cut Protocol\logs\cut-protocol.log). Returns "" in a browser.
+ *
+ * Everything it returns is scrubbed by buildReportBody and shown to the user in
+ * the review pane before anything is sent — the same two-stage consent as the
+ * rest of the report.
+ */
+export async function fetchLogTail() {
+  try {
+    const res = await window.cutProtocol?.readLogTail?.(LOG_TAIL_BYTES);
+    if (!res || !res.text) return "";
+    return res.text
+      .split("\n")
+      // The boot data-audit dumps the whole food library's health, tens of
+      // lines of it, and names foods. It is never what a bug report is about.
+      .filter((l) => l && !l.includes("[data-audit]"))
+      .slice(-LOG_TAIL_LINES)
+      .join("\n");
+  } catch {
+    return "";
   }
 }
 
@@ -36,7 +73,7 @@ function trimStack(stack) {
 }
 
 // The exact text that will be filed — shown to the user for review before send.
-export function buildReportBody({ meta, error, userText }) {
+export function buildReportBody({ meta, error, userText, logTail }) {
   const L = [];
   L.push("### What happened");
   L.push(userText && userText.trim() ? scrub(userText.trim()) : "_(no description provided)_");
@@ -45,6 +82,13 @@ export function buildReportBody({ meta, error, userText }) {
   L.push(`- App version: \`${meta?.version || "unknown"}\``);
   L.push(`- OS: ${osLabel(meta)}`);
   L.push(`- Build: ${meta?.packaged ? "packaged desktop app" : "dev / web"}`);
+  if (meta?.shell) {
+    L.push(`- Local engine port: ${meta.shell.port ?? "unknown"}`);
+    // Both of these are diagnoses waiting to happen: a non-writable data folder
+    // explains "nothing saves", and a synced one explains a corrupted database.
+    if (meta.shell.userDataWritable === false) L.push("- Data folder: **NOT WRITABLE**");
+    if (meta.shell.userDataSynced) L.push("- Data folder: **inside a cloud-synced folder** (OneDrive/Dropbox)");
+  }
   L.push("");
   if (error) {
     L.push("### Error");
@@ -61,6 +105,17 @@ export function buildReportBody({ meta, error, userText }) {
   L.push(logs.slice(-25).join("\n") || "(no recent activity captured)");
   L.push("```");
   L.push("");
+  if (logTail && logTail.trim()) {
+    // The desktop shell's own log. This is where a boot failure, a port
+    // conflict, a failed update check and every backend 500 now land — none of
+    // which the renderer can see. Previously the user had to find this file in
+    // %AppData% and email it, which in practice meant it never arrived.
+    L.push("### Desktop app log (tail)");
+    L.push("```");
+    L.push(scrub(logTail.trim()));
+    L.push("```");
+    L.push("");
+  }
   L.push("<sub>Filed via Cut Protocol's in-app reporter. Reviewed and sent by the user; personal data is excluded by design.</sub>");
   return L.join("\n");
 }

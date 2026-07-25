@@ -65,17 +65,41 @@ export const isNoAnswer = (e) => isTimeoutError(e) || isOfflineError(e);
 
 const secs = (ms) => (ms >= 1000 ? Math.round(ms / 1000) : ((ms || 0) / 1000).toFixed(1));
 
+// The default sentence for anything unclassified, app-wide. "Something went
+// wrong." named no cause, offered no next step, and — because it is the
+// fallback for EVERY error this file doesn't recognise — was the most-shown
+// error message in the product. A dead end is not honesty; it is just a shorter
+// way of saying nothing. This says what to do with the same certainty.
+export const GENERIC_FAILURE =
+  "That didn't go through, and the app couldn't tell why. Try it once more — if it fails again, use Report a bug in the sidebar so the details get sent with it.";
+
+/**
+ * A sentence, not a status code, for an HTTP failure with no server-supplied
+ * message. `request failed: 404` is what the machine saw; none of it means
+ * anything to the person reading it.
+ */
+export function httpFallbackMessage(status) {
+  if (status === 404) return "This version of the app asked the server for something it doesn't have — the two halves may be out of step.";
+  if (status === 403) return "The app's server refused that — your account doesn't have permission for it.";
+  if (status === 409) return "That clashed with a change already saved. Reload the screen to see the current state, then try again.";
+  if (status === 413) return "That was too large to send.";
+  if (status === 429) return "Too many attempts in a row. Wait a minute and try again.";
+  if (status >= 500) return `The app's server hit an error (${status}) — your change was not saved.`;
+  if (status >= 400) return `The app's server refused that request (${status}).`;
+  return `The app's server answered with an unexpected status (${status}).`;
+}
+
 /**
  * One honest sentence for any thrown error, in the app's voice. Never claims
  * to know what the server did when it doesn't.
  */
-export function describeError(e, fallback = "Something went wrong.") {
+export function describeError(e, fallback = GENERIC_FAILURE) {
   if (!e) return fallback;
   if (isAbortError(e)) return "The request was cancelled.";
   if (isTimeoutError(e)) {
-    return `No answer from the app's server after ${secs(e.timeoutMs)}s — it may or may not have gone through.`;
+    return `No answer from the app's server after ${secs(e.timeoutMs)}s — it may or may not have gone through. Check the screen before repeating it.`;
   }
-  if (isOfflineError(e)) return "Couldn't reach the app's server — the change was not sent.";
+  if (isOfflineError(e)) return "Couldn't reach the app's server — the change was not sent. If this keeps happening, close Cut Protocol completely and open it again.";
   if (isAuthError(e)) return "Your session expired.";
   if (isApiError(e) && e.status >= 500) return `The server hit an error (${e.status}) — your change was not saved.`;
   return e.message || fallback;
@@ -106,6 +130,36 @@ function apiUrl(path) {
   const base = bridge()?.apiBaseUrl || "";
   return `${base}/api${path}`;
 }
+
+/**
+ * THE QUERY-STRING SEAM.
+ *
+ * Every api.* method takes a trailing options object, and until now those were
+ * fetch options only — there was no way to pass query parameters through, so a
+ * route that grew server-side search or pagination (GET /api/foods is getting
+ * both) had no caller-side expression at all. `{ params: {...} }` is that
+ * expression; it is generic on purpose, so the next route that needs it does
+ * not need another edit here.
+ *
+ *   api.getFoods({ params: { q: "chicken", limit: 50, offset: 100 } })
+ *     → GET /api/foods?q=chicken&limit=50&offset=100
+ *
+ * null/undefined/"" values are dropped rather than sent as empty keys, so a
+ * cleared search box produces the unfiltered request, not `?q=`. Arrays repeat
+ * the key (`?tag=a&tag=b`).
+ */
+function withParams(path, params) {
+  if (!params) return path;
+  const qs = new URLSearchParams();
+  for (const [k, v] of Object.entries(params)) {
+    if (v === undefined || v === null || v === "") continue;
+    if (Array.isArray(v)) { for (const item of v) if (item !== undefined && item !== null && item !== "") qs.append(k, String(item)); }
+    else qs.append(k, String(v));
+  }
+  const s = qs.toString();
+  if (!s) return path;
+  return path.includes("?") ? `${path}&${s}` : `${path}?${s}`;
+}
 function handshakeHeaders() {
   const nonce = bridge()?.apiNonce;
   return nonce ? { "X-Cut-Protocol-Nonce": nonce } : null;
@@ -135,15 +189,18 @@ function notifySessionExpired(path) {
  *   signal      AbortSignal  caller's signal (component unmount) — composed
  *                            with the timeout; aborting it throws ABORTED
  *   authExempt  boolean  skip the global 401 handler (auth routes own theirs)
+ *   params      object   query-string values, appended to `path` (see withParams)
  */
-async function request(path, options = {}) {
+async function request(rawPath, options = {}) {
   const {
     timeoutMs = TIMEOUT.READ,
     signal: callerSignal,
     authExempt = false,
     headers: extraHeaders,
+    params,
     ...fetchOpts
   } = options || {};
+  const path = withParams(rawPath, params);
   const method = (fetchOpts.method || "GET").toUpperCase();
 
   // Already-cancelled (component unmounted before the call) — don't open a socket.
@@ -217,13 +274,18 @@ async function request(path, options = {}) {
     }
 
     if (!res.ok) {
-      throw new ApiError(body?.error || `request failed: ${res.status}`, {
+      const err = new ApiError(body?.error || httpFallbackMessage(res.status), {
         kind: ERR.HTTP,
         status: res.status,
         body, // 422 rate-ack responses carry {requiresAck, reasons}
         method,
         path,
       });
+      // Field-level validation errors, hoisted so a form can put the message
+      // next to the input without reaching into `.body`. Always an object, so
+      // `e.fields.email` is safe to read on any HTTP error.
+      err.fields = (body && body.fields) || {};
+      throw err;
     }
     return body;
   } finally {
@@ -243,6 +305,23 @@ export const api = {
   logout: (opts) => request("/auth/logout", { method: "POST", authExempt: true, timeoutMs: TIMEOUT.WRITE, ...opts }),
   me: (opts) => request("/auth/me", { authExempt: true, ...opts }),
 
+  // The rest of the auth surface. These four were the ONLY calls in the app
+  // with no api.js method, so LoginScreen.jsx had to hand-roll a fetch — which
+  // for a long time meant NO TIMEOUT on the first screen a new user ever sees:
+  // a backend that had started but wasn't answering left "Create account"
+  // spinning forever with no error and no way out. They live here now, with the
+  // same timeouts, the same ApiError taxonomy and the same describeError() copy
+  // as everything else. All authExempt: a 401 from a sign-in form means "wrong
+  // password", not "your session expired", and must never trip the global
+  // signed-out handler.
+  authStatus: (opts) => request("/auth/status", { authExempt: true, ...opts }),
+  register: (payload, opts) =>
+    request("/auth/register", { method: "POST", body: JSON.stringify(payload), authExempt: true, timeoutMs: TIMEOUT.WRITE, ...opts }),
+  resetBegin: (payload, opts) =>
+    request("/auth/reset/begin", { method: "POST", body: JSON.stringify(payload), authExempt: true, timeoutMs: TIMEOUT.WRITE, ...opts }),
+  resetComplete: (payload, opts) =>
+    request("/auth/reset/complete", { method: "POST", body: JSON.stringify(payload), authExempt: true, timeoutMs: TIMEOUT.WRITE, ...opts }),
+
   getProfile: (opts) => request("/profile", opts),
   getProfileMeta: (opts) => request("/profile/meta", opts),
   putProfile: (patch, opts) => request("/profile", { method: "PUT", body: JSON.stringify(patch), timeoutMs: TIMEOUT.WRITE, ...opts }),
@@ -252,6 +331,9 @@ export const api = {
   deleteWeighin: (date, opts) => request(`/weighins/${date}`, { method: "DELETE", timeoutMs: TIMEOUT.WRITE, ...opts }),
   getSummary: (opts) => request("/weighins/summary", opts),
 
+  // Pass `{ params: { q, limit, offset, … } }` for server-side search and
+  // pagination; with no params this is the same unfiltered bulk read it has
+  // always been, so existing callers are untouched.
   getFoods: (opts) => request("/foods", { timeoutMs: TIMEOUT.BULK, ...opts }),
   putFood: (id, patch, opts) => request(`/foods/${id}`, { method: "PUT", body: JSON.stringify(patch), timeoutMs: TIMEOUT.SOLVER, ...opts }),
   // Barcode-off track: manual UPC entry. lookupUpc previews (never writes);

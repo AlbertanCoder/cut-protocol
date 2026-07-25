@@ -60,12 +60,17 @@ export default function GenerationProgress({ kind = "plan", days = 7, onCancel }
           {phases.map((p, idx) => {
             const active = idx === i;
             const past = idx < i;
-            const color = active ? C.ink : past ? C.faint : C.faintLight;
+            // a11y contrast: the phase TEXT never drops below --faint (60%,
+            // 6.5:1) — --faint-light is 38% ink (3.26:1) and fails WCAG AA at
+            // body size (Parts.jsx:31-34 documents the same fix). The three-tier
+            // hierarchy still reads, carried by the dot rather than the label.
+            const textColor = active ? C.ink : C.faint;
+            const dotColor = active ? C.ink : past ? C.faint : C.faintLight;
             return (
-              <li key={p} className="flex items-center gap-2 text-xs font-semibold" style={{ color }}>
+              <li key={p} className="flex items-center gap-2 text-xs font-semibold" style={{ color: textColor }}>
                 <span
                   className={active ? "ring-breathe" : ""}
-                  style={{ width: 6, height: 6, borderRadius: 999, background: color, display: "inline-block", flexShrink: 0 }}
+                  style={{ width: 6, height: 6, borderRadius: 999, background: dotColor, display: "inline-block", flexShrink: 0 }}
                 />
                 {p}
               </li>

@@ -12,20 +12,30 @@
 // Deliberately Canadian/Alberta-first: the app is used from Alberta, so the US
 // NEDA (whose telephone helpline closed in 2023) is not the right primary line.
 //
-// Hours are kept coarse ("7 days a week", "24/7") on purpose — exact hours vary
-// by contact method and change over time, and a wrong specific time is worse
-// than an honest coarse one. Send people to the site/number for current hours.
+// Hours are kept coarse ("24/7") WHERE THAT IS TRUE, and specific where a
+// coarse answer would send someone to a line that doesn't pick up. Correction
+// 2026-07-24: this file previously said NEDIC was a "Free helpline & live chat,
+// 7 days a week". Only the LIVE CHAT is 7 days — the phone line is closed on
+// weekends, so anyone calling 1-866-633-4220 on a Saturday in crisis got
+// nothing. A comfortable round number is not worth that. When a service's hours
+// differ by contact method, say so per method.
+//
+// Where the hours below are still coarse (24/7), they are genuinely 24/7.
 
 export const WELLBEING_RESOURCES = [
   {
     name: "NEDIC — National Eating Disorder Information Centre",
-    detail: "Free helpline & live chat, 7 days a week",
+    // Verified 2026-07-24 against nedic.ca. Phone and chat have DIFFERENT
+    // hours; do not collapse them back into one line.
+    detail: "Live chat 7 days a week. Phone line Mon–Thu 9am–9pm ET, Fri 9am–5pm ET, closed weekends",
     phone: "1-866-633-4220",
     url: "https://nedic.ca",
   },
   {
     name: "Eating Disorder Support Network of Alberta (EDSNA)",
-    detail: "Edmonton-based peer support groups, referrals & resource lists",
+    // Their peer support groups are 18+ — worth stating up front so someone
+    // under 18 isn't turned away at the door.
+    detail: "Edmonton-based peer support groups (18+), referrals & resource lists",
     email: "info@edsna.ca",
     url: "https://edsna.ca",
   },

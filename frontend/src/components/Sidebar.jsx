@@ -4,7 +4,7 @@ import {
   Calculator, Dumbbell, LogOut, ChevronsLeft, ChevronsRight, Bug, Heart, Scale,
 } from "lucide-react";
 import { C } from "../lib/theme.js";
-import { TRAINING } from "../lib/flags.js";
+import { TRAINING, WELLBEING } from "../lib/flags.js";
 import { sidebarPref } from "../lib/storage.js";
 import CutMark from "./ui/CutMark.jsx";
 
@@ -17,10 +17,15 @@ const NAV = [
   // "soon" (greyed, SOON chip, not clickable) | "hidden".
   ...(TRAINING !== "hidden" ? [{ id: "training", label: "Training", icon: Dumbbell, soon: TRAINING === "soon" }] : []),
   { id: "trend", label: "Trend", icon: TrendingUp },
+  // Wellbeing sits directly below Trend: the ED self-check, the micronutrient
+  // detail, and the Alberta/Canada support contacts. It replaced the footer
+  // "Wellbeing check" button — a real destination, not a dialog launcher
+  // buried under three other quiet buttons.
+  ...(WELLBEING === "on" ? [{ id: "wellbeing", label: "Wellbeing", icon: Heart }] : []),
   { id: "engine", label: "Engine", icon: Calculator },
 ];
 
-export default function Sidebar({ tab, setTab, onLogout, onReportBug, onWellbeing, onCompare }) {
+export default function Sidebar({ tab, setTab, onLogout, onReportBug, onCompare, wellbeingMarked }) {
   const [collapsed, setCollapsed] = useState(() => sidebarPref.get());
   const toggle = () => {
     sidebarPref.set(!collapsed);
@@ -52,11 +57,20 @@ export default function Sidebar({ tab, setTab, onLogout, onReportBug, onWellbein
         {NAV.map((t) => {
           const active = activeId === t.id;
           const Icon = t.icon;
+          // One quiet marker, never a count. App decides when it's warranted
+          // (see wellbeingSignals) and it stands down as soon as the tab is
+          // opened — no streaks, no repeats, no notification mechanics.
+          const marked = t.id === "wellbeing" && wellbeingMarked;
           // Accessible name: icon-only (collapsed) buttons need it spelled
           // out since there's no visible text; the "coming soon" state is
           // carried by the SOON chip visually, so screen readers get the
-          // same fact in words even when collapsed hides the chip.
-          const a11yName = t.soon ? `${t.label} — coming soon` : (collapsed ? t.label : undefined);
+          // same fact in words even when collapsed hides the chip. The
+          // wellbeing marker is a dot — meaningless to AT — so it gets words.
+          const a11yName = t.soon
+            ? `${t.label} — coming soon`
+            : marked
+              ? `${t.label} — something in your current plan may be worth a look`
+              : (collapsed ? t.label : undefined);
           return (
             <button
               key={t.id}
@@ -71,6 +85,15 @@ export default function Sidebar({ tab, setTab, onLogout, onReportBug, onWellbein
               {active && <span className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-5 rounded-full" aria-hidden="true" style={{ background: C.ink }}></span>}
               <Icon size={18} strokeWidth={active ? 2.5 : 2} aria-hidden="true" />
               {!collapsed && t.label}
+              {marked && (
+                // Calm amber (law b) — the strongest tone allowed on anything
+                // touching food or body data. A 6px dot, no number on it.
+                <span
+                  className={collapsed ? "absolute top-1.5 right-3 w-1.5 h-1.5 rounded-full" : "ml-auto w-1.5 h-1.5 rounded-full"}
+                  aria-hidden="true"
+                  style={{ background: C.warn }}
+                />
+              )}
               {!collapsed && t.soon && (
                 <span className="ml-auto text-[9px] font-extrabold px-1.5 py-0.5 rounded" style={{ background: C.card2, color: C.faint, border: `1px solid ${C.rule}` }}>SOON</span>
               )}
@@ -98,20 +121,10 @@ export default function Sidebar({ tab, setTab, onLogout, onReportBug, onWellbein
         </button>
       </div>
 
-      {/* wellbeing check — an optional ED self-check + support resources +
-          the health/legal disclaimer. Always reachable, never nagged. */}
-      <div className="px-3 pb-1">
-        <button
-          onClick={onWellbeing}
-          title="Wellbeing check"
-          aria-label="Wellbeing check"
-          className={`flex items-center gap-2 text-xs font-semibold rounded-lg hover:opacity-80 ${collapsed ? "w-8 h-8 justify-center mx-auto" : "w-full px-2.5 py-2"}`}
-          style={{ color: C.faint, border: `1px solid ${C.rule}` }}
-        >
-          <Heart size={14} aria-hidden="true" />
-          {!collapsed && "Wellbeing check"}
-        </button>
-      </div>
+      {/* The "Wellbeing check" footer button used to live here. It is now the
+          Wellbeing NAV ITEM above (below Trend), which holds the self-check,
+          the micronutrient detail and the support contacts. Keeping both would
+          have meant two doors to the same room, one of them hidden. */}
 
       {/* report a bug — always available, not only on an error */}
       <div className="px-3 pb-1">

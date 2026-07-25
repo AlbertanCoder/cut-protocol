@@ -2,7 +2,7 @@ import { useState, useEffect, useRef, useId } from "react";
 import { Bug, X, Send, Copy, Check, ShieldCheck, WifiOff } from "lucide-react";
 import { C } from "../lib/theme.js";
 import {
-  fetchMeta, buildReportBody, buildTitle, buildIssueUrl, openExternal,
+  fetchMeta, fetchLogTail, buildReportBody, buildTitle, buildIssueUrl, openExternal,
   savePending, loadPending, clearPending,
 } from "../lib/bugReport.js";
 import { useFocusTrap } from "../lib/useFocusTrap.js";
@@ -12,6 +12,10 @@ import { useFocusTrap } from "../lib/useFocusTrap.js";
 // they submit (privacy review #2). Nothing sends without an explicit click.
 export default function BugReportDialog({ open, error, onClose }) {
   const [meta, setMeta] = useState(null);
+  // The desktop shell's diagnostic log. Empty in a browser, and empty until it
+  // arrives — the preview re-renders when it does, so the user still reviews
+  // the exact final text before anything is sent.
+  const [logTail, setLogTail] = useState("");
   const [userText, setUserText] = useState("");
   const [status, setStatus] = useState(null); // null | "sent" | "saved" | "copied"
   const [online, setOnline] = useState(typeof navigator !== "undefined" ? navigator.onLine : true);
@@ -29,7 +33,9 @@ export default function BugReportDialog({ open, error, onClose }) {
     if (!open) return;
     setStatus(null);
     setUserText("");
+    setLogTail("");
     fetchMeta().then(setMeta);
+    fetchLogTail().then(setLogTail).catch(() => setLogTail(""));
     setPendingCount(loadPending().length);
   }, [open]);
 
@@ -42,7 +48,7 @@ export default function BugReportDialog({ open, error, onClose }) {
 
   if (!open) return null;
 
-  const body = buildReportBody({ meta, error, userText });
+  const body = buildReportBody({ meta, error, userText, logTail });
   const title = buildTitle(error, userText);
 
   const send = () => {
@@ -116,7 +122,7 @@ export default function BugReportDialog({ open, error, onClose }) {
 
           <div className="flex items-center gap-2 mb-1.5">
             <ShieldCheck size={13} style={{ color: C.good }} />
-            <span className="text-[11px] font-bold uppercase tracking-wide" style={{ color: C.good }}>Exactly what will be sent — no weights, food logs, names, or allergies</span>
+            <span className="text-[11px] font-bold uppercase tracking-wide" style={{ color: C.good }}>Exactly what will be sent — no weights, food logs, names, allergies, or your Windows username</span>
           </div>
           <pre className="text-[11px] leading-relaxed p-3 rounded-xl overflow-auto mb-3" style={{ background: C.card2, border: `1px solid ${C.rule}`, color: C.faint, maxHeight: 260, whiteSpace: "pre-wrap", wordBreak: "break-word" }}>
 {body}

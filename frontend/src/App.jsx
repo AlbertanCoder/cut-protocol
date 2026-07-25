@@ -17,11 +17,13 @@ import TrainingTab from "./components/TrainingTab.jsx";
 import BrainChat from "./components/BrainChat.jsx";
 import BugReportDialog from "./components/BugReportDialog.jsx";
 import WellbeingCheck from "./components/WellbeingCheck.jsx";
+import WellbeingTab, { wellbeingSignals } from "./components/WellbeingTab.jsx";
 import CompareDialog from "./components/CompareDialog.jsx";
 import HeaderBar from "./components/ui/HeaderBar.jsx";
 import { SkeletonCard } from "./components/ui/Skeleton.jsx";
 import { onUncaughtError } from "./lib/bugLog.js";
-import { TRAINING } from "./lib/flags.js";
+import { TRAINING, WELLBEING } from "./lib/flags.js";
+import { wellbeingScreenPref } from "./lib/storage.js";
 
 export default function App() {
   // checking | out | unreachable | in
@@ -34,10 +36,11 @@ export default function App() {
   const [summary, setSummary] = useState(null);
   const [needsSetup, setNeedsSetup] = useState(false);
   const [tab, setTab] = useState("today");
-  // If the training flag is flipped off while Training is the active tab,
-  // land on Today instead of a blank pane.
+  // If a flag is flipped off while its tab is active, land on Today instead
+  // of a blank pane.
   useEffect(() => {
     if (tab === "training" && TRAINING !== "on") setTab("today");
+    if (tab === "wellbeing" && WELLBEING !== "on") setTab("today");
   }, [tab]);
   const [error, setError] = useState(null);
   const [loadError, setLoadError] = useState(null); // startup data-load failure (session is still valid)
@@ -46,6 +49,28 @@ export default function App() {
   const [isAdmin, setIsAdmin] = useState(false);
   const [bugReport, setBugReport] = useState({ open: false, error: null });
   const [wellbeingOpen, setWellbeingOpen] = useState(false);
+  // The SCOFF result. LOCAL-ONLY by design — see storage.js#wellbeingScreenPref
+  // for why a mental-health screening result must never reach the backend.
+  // App holds it (rather than the tab) because both the dialog that produces it
+  // and the tab that reacts to it live here, and because the sidebar marker
+  // below needs to know whether the check has ever been taken.
+  const [wellbeingScreen, setWellbeingScreen] = useState(() => wellbeingScreenPref.get());
+  // Session-scoped: the quiet sidebar marker stands down the moment the user
+  // opens the tab. It is a pointer, not a nag — it never counts, never
+  // escalates, and never comes back in the same session.
+  const [wellbeingSeen, setWellbeingSeen] = useState(false);
+  useEffect(() => { if (tab === "wellbeing") setWellbeingSeen(true); }, [tab]);
+  // STABLE identities, deliberately. useFocusTrap keys its effect on `onClose`,
+  // and its cleanup restores focus to whatever opened the dialog — so an inline
+  // arrow (a new function every App render) tears the trap down and rebuilds it
+  // on every unrelated re-render, and focus can land back on the trigger while
+  // the dialog is still open. Memoized, the trap mounts once and focus stays
+  // where it belongs.
+  const closeWellbeing = useCallback(() => setWellbeingOpen(false), []);
+  const openWellbeingCheck = useCallback(() => setWellbeingOpen(true), []);
+  const recordWellbeingResult = useCallback((r) => setWellbeingScreen(wellbeingScreenPref.set(r)), []);
+  const clearWellbeingScreen = useCallback(() => setWellbeingScreen(wellbeingScreenPref.clear()), []);
+  const showMicrosAnyway = useCallback(() => setWellbeingScreen(wellbeingScreenPref.setShowDetailAnyway(true)), []);
   const [compareOpen, setCompareOpen] = useState(false);
   const abort = useAbortSignal();
 
@@ -198,7 +223,13 @@ export default function App() {
   // aurora + grain ambience layers wrap every state the same way; content
   // sits at z-1 so the fixed aurora stays behind it.
   const dialog = <BugReportDialog open={bugReport.open} error={bugReport.error} onClose={() => setBugReport({ open: false, error: null })} />;
-  const wellbeing = <WellbeingCheck open={wellbeingOpen} onClose={() => setWellbeingOpen(false)} />;
+  const wellbeing = (
+    <WellbeingCheck
+      open={wellbeingOpen}
+      onClose={closeWellbeing}
+      onResult={recordWellbeingResult}
+    />
+  );
   const compare = <CompareDialog open={compareOpen} onClose={() => setCompareOpen(false)} />;
   const withDialog = (content) => (
     <>
@@ -274,10 +305,22 @@ export default function App() {
 
   const openFoods = () => setTab("foods");
 
+  // The gentle, non-nagging entry point. A single quiet marker on the
+  // Wellbeing nav item, shown ONLY when the user's own numbers give a reason
+  // (aggressive rate, floor-clamped target, measured loss outrunning the plan,
+  // an underweight goal) — and only until they've either opened the tab this
+  // session or taken the check at all. No badge count, no repetition, no
+  // notification, nothing that accumulates (constitutional: no engagement
+  // bait, no nagging). Before this, the check was unreachable in practice:
+  // nothing in the app ever pointed at it.
+  const signals = wellbeingSignals(profile, summary);
+  const wellbeingMarked =
+    WELLBEING === "on" && signals.length > 0 && !wellbeingSeen && !wellbeingScreen;
+
   return withDialog(
     <div className="min-h-svh flex" style={{ color: C.ink }}>
       <a href="#main-content" className="skip-link">Skip to main content</a>
-      <Sidebar tab={tab} setTab={setTab} onLogout={logout} onReportBug={openBugReport} onWellbeing={() => setWellbeingOpen(true)} onCompare={() => setCompareOpen(true)} />
+      <Sidebar tab={tab} setTab={setTab} onLogout={logout} onReportBug={openBugReport} onCompare={() => setCompareOpen(true)} wellbeingMarked={wellbeingMarked} />
 
       <div className="flex-1 min-w-0">
         <HeaderBar profile={profile} summary={summary} />
@@ -289,13 +332,23 @@ export default function App() {
 
         <main id="main-content" ref={mainRef} tabIndex={-1} className="px-5 py-6 lg:px-9 lg:py-8 max-w-[1600px]">
           {tab === "profile" && <ProfileTab profile={profile} summary={summary} refresh={refresh} openToday={() => setTab("today")} />}
-          {tab === "today" && <TodayTab profile={profile} summary={summary} refresh={refresh} openTrend={() => setTab("trend")} />}
+          {tab === "today" && <TodayTab profile={profile} summary={summary} refresh={refresh} openTrend={() => setTab("trend")} openWellbeing={() => setTab("wellbeing")} />}
           {tab === "trend" && <TrendTab profile={profile} summary={summary} openTraining={() => setTab("training")} />}
           {tab === "engine" && <EngineTab profile={profile} summary={summary} refresh={refresh} openFoods={openFoods} openProfile={() => setTab("profile")} />}
           {tab === "plan" && <PlanTab profile={profile} summary={summary} refresh={refresh} />}
           {tab === "foods" && <FoodsTab onBack={() => setTab("recipes")} isAdmin={isAdmin} />}
           {tab === "recipes" && <RecipesTab openFoods={openFoods} profile={profile} />}
           {tab === "training" && TRAINING === "on" && <TrainingTab />}
+          {tab === "wellbeing" && WELLBEING === "on" && (
+            <WellbeingTab
+              profile={profile}
+              summary={summary}
+              screen={wellbeingScreen}
+              onOpenCheck={openWellbeingCheck}
+              onClearScreen={clearWellbeingScreen}
+              onShowMicrosAnyway={showMicrosAnyway}
+            />
+          )}
         </main>
       </div>
       <BrainChat />

@@ -14,15 +14,33 @@ import { useAbortSignal } from "../lib/useAbortable.js";
 
 const kc = (n) => Math.round(n).toLocaleString("en-CA");
 const g1 = (n) => Math.round(n * 10) / 10;
-const getInpStyle = () => ({ background: C.card2, border: `1.5px solid ${C.rule}`, color: C.ink });
+// Inputs, selects and textareas wear --rule-strong: their border is the only
+// thing that says where the control is, which is what WCAG 1.4.11 asks 3:1 of.
+// --rule (1.17:1 over card) is for decorative separators, not control edges.
+const getInpStyle = () => ({ background: C.card2, border: `1.5px solid ${C.ruleStrong}`, color: C.ink });
 const CUISINES = ["", "mexican", "italian", "mediterranean", "asian", "indian", "middle-eastern", "british-irish", "western-comfort"];
 const PROTEINS = ["", "chicken", "beef", "turkey", "salmon", "fish", "eggs", "tofu", "lentil"];
+
+// Last-resort humaniser for any enum value that reaches the screen without a
+// hand-written label. Every `LABEL[x] || x` fallback in this file used to leak
+// the raw database value straight into the UI — "bread_or_pastry_side",
+// "dairy-eggs". A user should never have to read a column name.
+const humanize = (s) =>
+  String(s || "").replace(/[_-]+/g, " ").replace(/\s+/g, " ").trim()
+    .replace(/^./, (ch) => ch.toUpperCase());
+
 const SECTION_LABELS = {
   produce: "Produce", protein: "Protein", dairy: "Dairy", pantry: "Pantry / dry goods", spices: "Spices", other: "Other",
   carb: "Carbs", veg: "Veg", fat: "Fats", fruit: "Fruit",
   "dairy-eggs": "Dairy & Eggs", "fruit-veg": "Fruit & Veg", "grains": "Grains & Carbs",
   "fats-nuts-oils": "Fats, Nuts & Oils", "drinks": "Drinks",
 };
+// Plain-English option text for the two enums this screen lets you SET.
+const SLOT_TYPE_LABEL = { meal: "Meal", snack: "Snack", either: "Meal or snack" };
+const ROLE_LABEL = {
+  protein: "Protein", carb: "Carbs", veg: "Veg", fat: "Fat", dairy: "Dairy", other: "Other",
+};
+const ROLES = ["protein", "carb", "veg", "fat", "dairy", "other"];
 const CUISINE_LABEL = {
   mexican: "Mexican", italian: "Italian", mediterranean: "Mediterranean", asian: "Asian",
   indian: "Indian", "middle-eastern": "Middle Eastern", "british-irish": "British & Irish",
@@ -63,12 +81,12 @@ const MEAL_CATEGORY_LABEL = {
   condiment_or_sauce: "Condiments & Sauces", breakfast_only: "Breakfast",
 };
 function mealTypeGroupOf(recipe) {
-  if (recipe.mealCategory) return MEAL_CATEGORY_LABEL[recipe.mealCategory] || recipe.mealCategory;
+  if (recipe.mealCategory) return MEAL_CATEGORY_LABEL[recipe.mealCategory] || humanize(recipe.mealCategory);
   return recipe.slotType === "snack" ? "Snacks" : recipe.slotType === "either" ? "Meals or Snacks" : "Meals";
 }
 function cuisineGroupOf(recipe) {
   if (!recipe.cuisine) return "Uncategorized";
-  return CUISINE_LABEL[recipe.cuisine] || recipe.cuisine[0].toUpperCase() + recipe.cuisine.slice(1);
+  return CUISINE_LABEL[recipe.cuisine] || humanize(recipe.cuisine);
 }
 
 const MacroChips = ({ x }) => (
@@ -168,9 +186,11 @@ function RecipeDetail({ recipe, profile, onSave, onDelete, inCart, onToggleCart,
         <textarea aria-label="Description" className="text-sm px-3 py-2 rounded-xl w-full mb-2" style={inpStyle} rows={2} value={draft.description}
           onChange={(e) => setDraft((d) => ({ ...d, description: e.target.value }))} placeholder="Description" />
         <div className="grid grid-cols-3 gap-2 mb-2">
-          <select aria-label="Slot type" className="text-xs px-2 py-2 rounded-xl" style={inpStyle} value={draft.slotType}
+          <select aria-label="When this is eaten" className="text-xs px-2 py-2 rounded-xl" style={inpStyle} value={draft.slotType}
             onChange={(e) => setDraft((d) => ({ ...d, slotType: e.target.value }))}>
-            <option value="meal">meal</option><option value="snack">snack</option><option value="either">either</option>
+            {/* was: the raw enum values "meal" / "snack" / "either" rendered as
+                the visible option text. A stored value is not a label. */}
+            {Object.entries(SLOT_TYPE_LABEL).map(([v, l]) => <option key={v} value={v}>{l}</option>)}
           </select>
           <select aria-label="Cuisine" className="text-xs px-2 py-2 rounded-xl" style={inpStyle} value={draft.cuisine}
             onChange={(e) => setDraft((d) => ({ ...d, cuisine: e.target.value }))}>
@@ -185,11 +205,15 @@ function RecipeDetail({ recipe, profile, onSave, onDelete, inCart, onToggleCart,
             <span className="text-xs font-semibold flex-1 truncate" style={{ color: C.ink }}>{ing.name}</span>
             <input type="number" aria-label={`${ing.name} — grams`} className="text-xs px-2 py-1.5 rounded-lg w-16" style={inpStyle} value={ing.grams}
               onChange={(e) => setIng(idx, { grams: e.target.value })} />
-            <select aria-label={`${ing.name} — role`} className="text-xs px-1.5 py-1.5 rounded-lg" style={inpStyle} value={ing.role}
+            <select aria-label={`${ing.name} — what this ingredient counts as`} className="text-xs px-1.5 py-1.5 rounded-lg" style={inpStyle} value={ing.role}
               onChange={(e) => setIng(idx, { role: e.target.value })}>
-              {["protein", "carb", "veg", "fat", "dairy", "other"].map((r) => <option key={r} value={r}>{r}</option>)}
+              {ROLES.map((r) => <option key={r} value={r}>{ROLE_LABEL[r]}</option>)}
             </select>
-            <input type="checkbox" aria-label={`${ing.name} — scalable`} checked={ing.scalable} onChange={(e) => setIng(idx, { scalable: e.target.checked })} style={{ accentColor: C.accent }} />
+            {/* accentColor was C.accent. Green is scarce (law a): on-target,
+                primary action, success, the hero ring, the trend line — a
+                ticked checkbox is none of those, it is a selected state, and
+                selected reads as a lightness step. */}
+            <input type="checkbox" aria-label={`${ing.name} — scales with serving size`} checked={ing.scalable} onChange={(e) => setIng(idx, { scalable: e.target.checked })} style={{ accentColor: C.ink }} />
             <button onClick={() => removeIng(idx)} aria-label={`Remove ${ing.name}`} style={{ color: C.red }}><X size={13} aria-hidden="true" /></button>
           </div>
         ))}
@@ -207,7 +231,7 @@ function RecipeDetail({ recipe, profile, onSave, onDelete, inCart, onToggleCart,
   return (
     <div className="mt-2.5 pt-2.5" style={{ borderTop: `1px solid ${C.rule}` }} onClick={(e) => e.stopPropagation()}>
       <div className="flex items-center gap-1.5 mb-2 flex-wrap">
-        <span className="text-[10.5px] font-extrabold uppercase tracking-wide mr-1" style={{ color: C.faintLight }}>Serving</span>
+        <span className="text-[10.5px] font-extrabold uppercase tracking-wide mr-1" style={{ color: C.faint }}>Serving</span>
         {SCALES.map((s) => (
           <button key={s} onClick={() => setScale(s)}
             className="text-xs font-bold px-2.5 py-1 rounded-lg"
@@ -245,7 +269,7 @@ function RecipeDetail({ recipe, profile, onSave, onDelete, inCart, onToggleCart,
               {Array.from({ length: profile.snacksPerDay }, (_, i) => <option key={`s${i}`} value={`snack:${i}`}>Snack {i + 1}</option>)}
             </select>
             <Btn small onClick={place} disabled={placing}>{placing ? "Placing…" : `Place ×${scale}`}</Btn>
-            <button onClick={() => setPlacePick(null)} style={{ color: C.faintLight }}><X size={13} /></button>
+            <button onClick={() => setPlacePick(null)} aria-label="Cancel adding to a plan slot" style={{ color: C.faint }}><X size={13} aria-hidden="true" /></button>
           </span>
         )}
         <Btn small kind="ghost" onClick={() => onToggleCart(recipe.id)} disabled={cartBusy}>
@@ -255,11 +279,11 @@ function RecipeDetail({ recipe, profile, onSave, onDelete, inCart, onToggleCart,
         {onRate && (
           <span className="inline-flex items-center gap-1 ml-0.5" title="Taste preference — softly re-ranks future plans, never overrides your diet">
             <button onClick={() => onRate(recipe.id, 1)} aria-pressed={rating === 1} aria-label="Prefer this recipe"
-              className="p-1.5 rounded-lg" style={{ background: rating === 1 ? C.card2 : "transparent", border: `1px solid ${rating === 1 ? C.faintLight : C.rule}`, color: rating === 1 ? C.ink : C.faintLight }}>
+              className="p-1.5 rounded-lg" style={{ background: rating === 1 ? C.card2 : "transparent", border: `1px solid ${rating === 1 ? C.faintLight : C.rule}`, color: rating === 1 ? C.ink : C.faint }}>
               <ThumbsUp size={13} />
             </button>
             <button onClick={() => onRate(recipe.id, -1)} aria-pressed={rating === -1} aria-label="See this recipe less"
-              className="p-1.5 rounded-lg" style={{ background: rating === -1 ? C.card2 : "transparent", border: `1px solid ${rating === -1 ? C.faintLight : C.rule}`, color: rating === -1 ? C.ink : C.faintLight }}>
+              className="p-1.5 rounded-lg" style={{ background: rating === -1 ? C.card2 : "transparent", border: `1px solid ${rating === -1 ? C.faintLight : C.rule}`, color: rating === -1 ? C.ink : C.faint }}>
               <ThumbsDown size={13} />
             </button>
           </span>
@@ -281,11 +305,38 @@ function RecipeDetail({ recipe, profile, onSave, onDelete, inCart, onToggleCart,
 
 function DraftCard({ draft, onSave, onEditGrams, saving, saveError }) {
   const inpStyle = getInpStyle();
+  // routes/recipes.js stamps every draft with `allergenViolation` /
+  // `allergenOverridden` when the user ticked "ALLOW MY ALLERGENS" and the
+  // draft then broke one of their own rules — the backend went to the trouble
+  // of screening the model's names AND the resolved ingredient names, auditing
+  // every override, and shipping a per-draft verdict so a client "cannot render
+  // a violating draft identically to a safe one without actively discarding the
+  // field". The frontend was discarding the field. A card that will feed
+  // someone an allergen looked exactly like one that won't.
+  const violation = draft.allergenViolation || null;
   return (
-    <div className="p-3 rounded-2xl" style={{ background: C.card, border: `1.5px solid ${C.rule}` }}>
+    <div className="p-3 rounded-2xl" style={{ background: C.card, border: `1.5px solid ${violation ? C.red : C.rule}` }}>
+      {violation && (
+        // Red is legal here and only here on this screen: the constitution
+        // names "the allergen override warning" as an explicit carve-out from
+        // law b. This is not a judgment about food, it is a safety warning.
+        <div role="alert" className="mb-2.5 p-2.5 rounded-xl flex items-start gap-2" style={{ background: C.redBg, border: `1px solid ${C.red}` }}>
+          <AlertTriangle size={15} className="mt-0.5 shrink-0" style={{ color: C.red }} aria-hidden="true" />
+          <div className="min-w-0">
+            <div className="text-xs font-extrabold" style={{ color: C.red }}>Breaks your allergy rules — you allowed it for this generation</div>
+            <div className="text-xs font-semibold mt-0.5" style={{ color: C.ink }}>{violation}</div>
+            <div className="text-[10.5px] font-semibold mt-1" style={{ color: C.faint }}>
+              Read the ingredients below before saving. Untick “Allow my allergens” and generate again to get options that follow your Profile.
+            </div>
+          </div>
+        </div>
+      )}
       <div className="flex items-start justify-between gap-2">
         <div className="text-sm font-extrabold" style={{ color: C.ink }}>{draft.name}</div>
-        {draft.source === "imported" && <Chip color={C.faint} bg={C.card2}>IMPORT PREVIEW</Chip>}
+        <span className="flex items-center gap-1.5 shrink-0">
+          {violation && <Chip color={C.red} bg={C.redBg}>ALLERGEN</Chip>}
+          {draft.source === "imported" && <Chip color={C.faint} bg={C.card2}>IMPORT PREVIEW</Chip>}
+        </span>
       </div>
       <div className="text-xs italic mb-1.5 font-semibold" style={{ color: C.faint }}>{draft.description}</div>
       <div className="flex flex-wrap gap-1.5 mb-2.5">
@@ -300,9 +351,11 @@ function DraftCard({ draft, onSave, onEditGrams, saving, saveError }) {
       {draft.ingredients.map((ing, idx) => (
         <div key={idx} className="flex justify-between items-center text-xs py-1 font-semibold">
           <span style={{ color: C.ink }}>
-            {ing.name} {ing.placeholderMacros && <span style={{ color: C.red }}>(no macro data — fix it in the Food database before saving)</span>}
+            {/* was C.red. Law b: no red on food data, ever — a missing macro
+                row is a data gap to fix, not a verdict on the food. */}
+            {ing.name} {ing.placeholderMacros && <span style={{ color: C.warn }}>(no macro data — fix it in the Food database before saving)</span>}
           </span>
-          <input type="number" className="text-xs px-2 py-1 rounded-lg w-16" style={inpStyle} value={ing.grams}
+          <input type="number" aria-label={`${ing.name} — grams`} className="text-xs px-2 py-1 rounded-lg w-16" style={inpStyle} value={ing.grams}
             onChange={(e) => onEditGrams(idx, e.target.value)} />
         </div>
       ))}
@@ -333,6 +386,8 @@ export default function RecipesTab({ openFoods, profile }) {
   const [sortBy, setSortBy] = useState("name");
   const [openGroups, setOpenGroups] = useState({});
   const [expandedId, setExpandedId] = useState(null);
+  // How many rows of each group are currently mounted. See RENDER_PAGE.
+  const [shown, setShown] = useState({});
 
   const [cartItems, setCartItems] = useState([]);
   const [ratings, setRatings] = useState({}); // T (v2): recipeId -> 1 (like) | -1 (dislike)
@@ -346,6 +401,10 @@ export default function RecipesTab({ openFoods, profile }) {
   const [form, setForm] = useState({ slotType: "meal", protein: "", cuisine: "", prepTimeMin: "", freeText: "", batchStyle: "single", allowAllergens: false });
   const [drafts, setDrafts] = useState(null);
   const [droppedForAllergies, setDroppedForAllergies] = useState([]);
+  // The override half of the same payload. `droppedForAllergies` (options the
+  // server REFUSED) was already rendered; `allergenOverrides` (options the
+  // server let through because the user asked it to) was not read at all.
+  const [overrideInfo, setOverrideInfo] = useState(null);
   const [generating, setGenerating] = useState(false);
   const [savingIdx, setSavingIdx] = useState(null);
   const [draftErrors, setDraftErrors] = useState({});
@@ -492,6 +551,7 @@ export default function RecipesTab({ openFoods, profile }) {
     setDrafts(null);
     setDraftErrors({});
     setDroppedForAllergies([]); // Stage-C: don't leave a stale drop note under a new run
+    setOverrideInfo(null);
     try {
       const res = await api.generateRecipeDrafts(
         { ...form, prepTimeMin: form.prepTimeMin ? +form.prepTimeMin : undefined },
@@ -499,6 +559,11 @@ export default function RecipesTab({ openFoods, profile }) {
       );
       setDrafts(res.drafts.map((d) => withKey(d, "ai-generated")));
       setDroppedForAllergies(res.droppedForAllergies);
+      setOverrideInfo({
+        active: !!res.allergenOverrideActive,
+        overrides: res.allergenOverrides || [],
+        droppedForShape: res.droppedForShape || [],
+      });
       // The allergen override is per-generation and never sticky.
       setForm((f) => ({ ...f, allowAllergens: false }));
     } catch (e) {
@@ -598,6 +663,30 @@ export default function RecipesTab({ openFoods, profile }) {
 
   const searching = query.trim().length > 0;
 
+  // ── render cap ──
+  // Nothing here was capped: an open group mounted every row it held, and a
+  // broad search collapsed the whole library into ONE "Search results" group
+  // and mounted all 889 rows — each a FoodTile, four macro chips and a
+  // disclosure button.
+  //
+  // Why this is a progressive reveal and not FoodsTab's windowed list: that
+  // primitive is built on a PINNED row height ("windowing needs row geometry it
+  // can trust"), and it works there because a food row is one fixed-height line
+  // and the detail opens in a separate card. A recipe row expands IN PLACE into
+  // a variable-height editor, so there is no row height to pin — reusing the
+  // window would mean either measuring the expanded row every frame or moving
+  // recipe detail out into its own panel, which is a UX change, not a
+  // performance fix. A reveal keeps the DOM bounded, states out loud how much
+  // is hidden (a silent cap would amputate browse, which is the whole point of
+  // the groups), and needs no geometry at all.
+  const RENDER_PAGE = 60;
+  const shownFor = (groupName) => shown[groupName] ?? RENDER_PAGE;
+  const revealMore = (groupName) => setShown((s) => ({ ...s, [groupName]: (s[groupName] ?? RENDER_PAGE) + RENDER_PAGE }));
+  const revealAll = (groupName, total) => setShown((s) => ({ ...s, [groupName]: total }));
+  // A new query / grouping / sort is a new list — start it at the top again
+  // rather than leaving it mid-reveal from the previous one.
+  useEffect(() => { setShown({}); }, [query, groupBy, sortBy]);
+
   return (
     <div>
       <PageHead title="Recipes" sub="Library, AI generation, URL import, and the cart that feeds your plan and grocery list.">
@@ -627,8 +716,19 @@ export default function RecipesTab({ openFoods, profile }) {
               </div>
               <Btn small onClick={handleImport} disabled={importing}>{importing ? "Reading…" : "Import"}</Btn>
             </div>
+            {/* This used to end "USDA stays the nutrition source of truth",
+                which overclaims on exactly this path. An imported line is
+                matched to a food row BY NAME, and name-matching is where
+                identity errors enter: 470 rows in this library already carry
+                another food's macros verbatim. The numbers are real USDA
+                numbers — the open question is whether they are the right
+                food's. Say that, rather than presenting the provenance as a
+                verification. */}
             <div className="text-[10.5px] font-semibold mt-2" style={{ color: C.faint }}>
-              Reads the site's standard recipe markup (schema.org) — no paid API. Amounts convert to grams with flagged estimates; you review before anything saves. USDA stays the nutrition source of truth.
+              Reads the site&apos;s standard recipe markup (schema.org) — no paid API. Amounts convert to grams with flagged
+              estimates; you review before anything saves. Each ingredient line is matched to a food in your library
+              <b style={{ color: C.ink }}> by name</b>, which is the step most likely to go wrong — check that the matched
+              foods are the ones you meant before you save.
             </div>
           </Card>
 
@@ -667,12 +767,14 @@ export default function RecipesTab({ openFoods, profile }) {
               className="text-sm px-3 py-2 rounded-xl w-full mb-2" style={inpStyle}
               value={form.freeText} onChange={(e) => setForm((f) => ({ ...f, freeText: e.target.value }))} />
             <div className="flex flex-wrap gap-4 items-center mb-2">
+              {/* accentColor was C.accent on both — see the checkbox above; a
+                  chosen radio is a selected state, not a success. */}
               <label className="flex items-center gap-1.5 text-xs font-semibold" style={{ color: C.ink }}>
-                <input type="radio" checked={form.batchStyle === "single"} onChange={() => setForm((f) => ({ ...f, batchStyle: "single" }))} style={{ accentColor: C.accent }} />
+                <input type="radio" name="batchStyle" checked={form.batchStyle === "single"} onChange={() => setForm((f) => ({ ...f, batchStyle: "single" }))} style={{ accentColor: C.ink }} />
                 Single serving
               </label>
               <label className="flex items-center gap-1.5 text-xs font-semibold" style={{ color: C.ink }}>
-                <input type="radio" checked={form.batchStyle === "batch"} onChange={() => setForm((f) => ({ ...f, batchStyle: "batch" }))} style={{ accentColor: C.accent }} />
+                <input type="radio" name="batchStyle" checked={form.batchStyle === "batch"} onChange={() => setForm((f) => ({ ...f, batchStyle: "batch" }))} style={{ accentColor: C.ink }} />
                 Batch-cook
               </label>
             </div>
@@ -696,9 +798,50 @@ export default function RecipesTab({ openFoods, profile }) {
             )}
           </Card>
 
+          {/* The override banner. `allergenOverrideActive` is true whenever the
+              user ASKED for the override, even if nothing ended up violating —
+              that is the state this banner reflects, per the route's own note.
+              It sits ABOVE the draft list so it cannot be scrolled past. */}
+          {overrideInfo?.active && (
+            <div role="alert" className="p-3 rounded-xl" style={{ background: C.redBg, border: `1.5px solid ${C.red}` }}>
+              <div className="flex items-start gap-2">
+                <AlertTriangle size={15} className="mt-0.5 shrink-0" style={{ color: C.red }} aria-hidden="true" />
+                <div className="min-w-0">
+                  <div className="text-xs font-extrabold" style={{ color: C.red }}>
+                    {overrideInfo.overrides.length > 0
+                      ? `${overrideInfo.overrides.length} of these options break your allergy rules`
+                      : "Your allergy rules were switched off for this generation"}
+                  </div>
+                  {overrideInfo.overrides.length > 0 ? (
+                    <ul className="mt-1 space-y-0.5 list-none p-0">
+                      {overrideInfo.overrides.map((o, i) => (
+                        <li key={i} className="text-xs font-semibold" style={{ color: C.ink }}>
+                          <b>{o.name}</b> — {o.reason}
+                        </li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <div className="text-xs font-semibold mt-0.5" style={{ color: C.ink }}>
+                      Nothing that came back happened to break one, but nothing was checked against your Profile either.
+                    </div>
+                  )}
+                  <div className="text-[10.5px] font-semibold mt-1.5" style={{ color: C.faint }}>
+                    The override is per-generation and has already re-armed. Read every ingredient list before saving.
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
           {droppedForAllergies.length > 0 && (
             <div className="text-xs font-semibold px-1" style={{ color: C.warn }}>
-              Dropped {droppedForAllergies.length} option(s) for allergy rules: {droppedForAllergies.map((d) => `${d.name} (${d.reason})`).join(", ")}
+              Dropped {droppedForAllergies.length} option{droppedForAllergies.length === 1 ? "" : "s"} for allergy rules: {droppedForAllergies.map((d) => `${d.name} (${d.reason})`).join(", ")}
+            </div>
+          )}
+          {overrideInfo?.droppedForShape?.length > 0 && (
+            <div className="text-xs font-semibold px-1" style={{ color: C.warn }}>
+              Dropped {overrideInfo.droppedForShape.length} option{overrideInfo.droppedForShape.length === 1 ? "" : "s"} that
+              didn&apos;t come back in a usable shape: {overrideInfo.droppedForShape.map((d) => (typeof d === "string" ? d : `${d.name || "unnamed"} (${d.reason || "malformed"})`)).join(", ")}
             </div>
           )}
 
@@ -724,7 +867,7 @@ export default function RecipesTab({ openFoods, profile }) {
             ) : (
               <>
                 <div className="flex flex-wrap gap-1.5 mb-3">
-                  <span className="text-[10.5px] font-extrabold uppercase tracking-wide self-center mr-1" style={{ color: C.faintLight }}>Totals</span>
+                  <span className="text-[10.5px] font-extrabold uppercase tracking-wide self-center mr-1" style={{ color: C.faint }}>Totals</span>
                   <MacroChips x={cartTotals} />
                 </div>
                 <div className="flex flex-col gap-1.5 mb-3">
@@ -768,7 +911,9 @@ export default function RecipesTab({ openFoods, profile }) {
                       .filter(([, items]) => items.length > 0)
                       .map(([section, items]) => (
                         <div key={section} className="mb-2">
-                          <div className="text-[10.5px] font-extrabold uppercase tracking-wide mb-0.5" style={{ color: C.faint }}>{SECTION_LABELS[section] || section}</div>
+                          {/* `|| section` leaked raw store-section keys like
+                              "dairy-eggs" into the visible list. */}
+                          <div className="text-[10.5px] font-extrabold uppercase tracking-wide mb-0.5" style={{ color: C.faint }}>{SECTION_LABELS[section] || humanize(section)}</div>
                           {items.map((i) => {
                             const grams = cartItemGrams(i);
                             const hh = toHouseholdUnit(i.name, grams);
@@ -796,17 +941,19 @@ export default function RecipesTab({ openFoods, profile }) {
               <input placeholder={`Search ${recipes.length} recipes…`} aria-label="Search recipes" className="text-sm pl-9 pr-3 py-2 rounded-xl w-full" style={inpStyle}
                 value={query} onChange={(e) => setQuery(e.target.value)} />
             </div>
-            <select value={groupBy} onChange={(e) => { setGroupBy(e.target.value); setOpenGroups({}); }}
+            <select value={groupBy} aria-label="Group recipes by" onChange={(e) => { setGroupBy(e.target.value); setOpenGroups({}); }}
               className="text-xs px-2 py-2 rounded-xl" style={inpStyle}>
-              <option value="cuisine">Group: Cuisine</option>
-              <option value="mealtype">Group: Meal type</option>
-              <option value="protein">Group: Protein</option>
+              <option value="cuisine">Group by cuisine</option>
+              <option value="mealtype">Group by meal type</option>
+              <option value="protein">Group by main protein</option>
             </select>
-            <select value={sortBy} onChange={(e) => setSortBy(e.target.value)}
+            {/* "Protein density" was a unit nobody outside the Engine speaks.
+                Every option now names what the sort DOES. */}
+            <select value={sortBy} aria-label="Sort recipes by" onChange={(e) => setSortBy(e.target.value)}
               className="text-xs px-2 py-2 rounded-xl" style={inpStyle}>
-              <option value="name">Sort: Name</option>
-              <option value="kcal">Sort: kcal</option>
-              <option value="density">Sort: Protein density</option>
+              <option value="name">Sort A–Z</option>
+              <option value="kcal">Fewest calories first</option>
+              <option value="density">Most protein per calorie</option>
             </select>
           </div>
           {hiddenCount > 0 && (
@@ -849,41 +996,46 @@ export default function RecipesTab({ openFoods, profile }) {
                     )}
                     {open && (
                       <div className="px-3 pb-3 flex flex-col gap-2">
-                        {list.map((r) => {
+                        {list.slice(0, shownFor(groupName)).map((r) => {
                           const badge = sourceBadge(r);
                           const expanded = expandedId === r.id;
-                          // a11y: expandable row — same pattern as PlanTab's
-                          // SlotCard. role="button" + keyboard toggle; the
-                          // currentTarget guard stops Enter/Space on a real
-                          // nested control (edit/delete/thumbs/etc. inside
-                          // RecipeDetail) from bubbling up and re-toggling.
-                          const onRowKeyDown = (e) => {
-                            if (e.target !== e.currentTarget) return;
-                            if (e.key === "Enter" || e.key === " ") {
-                              e.preventDefault();
-                              setExpandedId(expanded ? null : r.id);
-                            }
-                          };
                           return (
-                            <div key={r.id} className="p-3 rounded-xl" onClick={() => setExpandedId(expanded ? null : r.id)}
-                              onKeyDown={onRowKeyDown} role="button" tabIndex={0} aria-expanded={expanded}
-                              aria-label={`${r.name}, ${kc(r.kcal)} kcal — toggle details`}
+                            // a11y: the row is a plain container. It used to be
+                            // role="button" tabIndex={0} WRAPPING the whole
+                            // RecipeDetail — which contains a dozen real
+                            // buttons, selects and inputs. Interactive controls
+                            // nested inside a button role is invalid ARIA: a
+                            // screen reader's browse mode flattens the subtree,
+                            // so the inner controls fold into the outer label or
+                            // are lost. Same fix as PlanTab's SlotCard — the
+                            // disclosure is a real <button> around the title and
+                            // macros ONLY, and everything else is its sibling.
+                            // The click-anywhere handler and its stopPropagation
+                            // plumbing are gone with it.
+                            <div key={r.id} className="p-3 rounded-xl"
                               style={{ background: C.card2, border: `1px solid ${expanded ? C.faintLight : C.rule}` }}>
-                              <div className="flex justify-between items-start gap-2">
-                                <div className="flex items-center gap-2.5 min-w-0">
-                                  <FoodTile recipe={r} size={38} />
-                                  <div className="min-w-0">
-                                    <div className="text-sm font-extrabold" style={{ color: C.ink }}>{r.name}</div>
-                                    <div className="text-[10.5px] font-semibold mt-0.5" style={{ color: C.faint }}>
-                                      {r.slotType}{r.cuisine ? ` · ${CUISINE_LABEL[r.cuisine] || r.cuisine}` : ""}{r.prepTimeMin ? ` · ${r.prepTimeMin} min` : ""} · {g1(density(r))}g P/100kcal
+                              <button type="button" onClick={() => setExpandedId(expanded ? null : r.id)}
+                                aria-expanded={expanded} className="w-full text-left"
+                                aria-label={`${r.name}, ${kc(r.kcal)} kcal — ${expanded ? "hide" : "show"} details`}>
+                                <div className="flex justify-between items-start gap-2">
+                                  <div className="flex items-center gap-2.5 min-w-0">
+                                    <FoodTile recipe={r} size={38} />
+                                    <div className="min-w-0">
+                                      <div className="text-sm font-extrabold" style={{ color: C.ink }}>{r.name}</div>
+                                      <div className="text-[10.5px] font-semibold mt-0.5" style={{ color: C.faint }}>
+                                        {/* was the raw enum: "meal" / "snack" / "either" */}
+                                        {SLOT_TYPE_LABEL[r.slotType] || humanize(r.slotType)}
+                                        {r.cuisine ? ` · ${CUISINE_LABEL[r.cuisine] || humanize(r.cuisine)}` : ""}
+                                        {r.prepTimeMin ? ` · ${r.prepTimeMin} min` : ""} · {g1(density(r))}g protein per 100 kcal
+                                      </div>
                                     </div>
                                   </div>
+                                  <div className="flex items-center gap-1.5 shrink-0">
+                                    {badge && <Chip color={badge.color} bg={badge.bg}>{badge.label}</Chip>}
+                                    <span className="mono text-sm font-extrabold" style={{ color: C.ink }}>{kc(r.kcal)}</span>
+                                  </div>
                                 </div>
-                                <div className="flex items-center gap-1.5 shrink-0">
-                                  {badge && <Chip color={badge.color} bg={badge.bg}>{badge.label}</Chip>}
-                                  <span className="mono text-sm font-extrabold" style={{ color: C.ink }}>{kc(r.kcal)}</span>
-                                </div>
-                              </div>
+                              </button>
                               {expanded && (
                                 <RecipeDetail recipe={r} profile={profile}
                                   onSave={handleUpdate} onDelete={handleDelete}
@@ -893,6 +1045,24 @@ export default function RecipesTab({ openFoods, profile }) {
                             </div>
                           );
                         })}
+                        {list.length > shownFor(groupName) && (
+                          // The render cap, made visible instead of silent. A
+                          // broad search used to mount all 889 rows at once (and
+                          // an open group every row it held) — each one a
+                          // FoodTile, four chips and a disclosure button.
+                          <div className="flex items-center gap-3 pt-1">
+                            <Btn small kind="ghost" onClick={() => revealMore(groupName)}>
+                              Show {Math.min(RENDER_PAGE, list.length - shownFor(groupName))} more
+                            </Btn>
+                            <button type="button" onClick={() => revealAll(groupName, list.length)}
+                              className="text-xs font-bold hover:opacity-80" style={{ color: C.faint }}>
+                              Show all {list.length}
+                            </button>
+                            <span className="text-xs font-semibold" style={{ color: C.faint }}>
+                              Showing {shownFor(groupName)} of {list.length}
+                            </span>
+                          </div>
+                        )}
                       </div>
                     )}
                   </div>

@@ -4,7 +4,8 @@
 // literal values, not var() refs — the values are read live off the DOM,
 // never hand-typed here, so color literals exist in exactly one place.
 const CSS_VAR = {
-  paper: "--paper", card: "--card", card2: "--card-2", cardGlass: "--card-glass", rule: "--rule",
+  paper: "--paper", card: "--card", card2: "--card-2", cardGlass: "--card-glass",
+  rule: "--rule", ruleStrong: "--rule-strong", focus: "--focus", scrim: "--scrim",
   ink: "--ink", faint: "--faint", faintLight: "--faint-light",
   accent: "--accent", accentTail: "--accent-tail", accentInk: "--accent-ink", accentBg: "--accent-bg",
   protein: "--protein", carb: "--carb", fat: "--fat",
@@ -27,7 +28,9 @@ export const C = typeof document !== "undefined"
   : {
     // SSR/non-DOM fallback (not expected at runtime for this app, but keeps
     // the module import-safe outside a browser) — mirrors :root above.
-    paper: "#0B0D0C", card: "#161A18", card2: "#1D2320", cardGlass: "rgba(22, 26, 24, 0.82)", rule: "rgba(255, 255, 255, 0.06)",
+    paper: "#0B0D0C", card: "#161A18", card2: "#232A27", cardGlass: "rgba(22, 26, 24, 0.82)",
+    rule: "rgba(255, 255, 255, 0.06)", ruleStrong: "rgba(255, 255, 255, 0.36)",
+    focus: "#EDF2EF", scrim: "rgba(0, 0, 0, 0.55)",
     ink: "rgba(237, 242, 239, 0.87)", faint: "rgba(237, 242, 239, 0.60)", faintLight: "rgba(237, 242, 239, 0.38)",
     accent: "#2FD576", accentTail: "#7EFFB2", accentInk: "#05130B", accentBg: "#103322",
     protein: "#56B4E9", carb: "#E69F00", fat: "#CC79A7",
