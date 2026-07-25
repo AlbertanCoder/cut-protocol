@@ -136,6 +136,12 @@
       button:hover {
         border-color: var(--faint-light);
       }
+      button + button {
+        margin-left: 0.5rem;
+      }
+      button:disabled {
+        color: var(--faint-light);
+      }
     </style>
   </head>
   <body>
@@ -158,6 +164,10 @@
         <div class="logrow">
           <span>Diagnostic log</span>
           <span class="logpath" id="fail-log">(not available)</span>
+          <!-- Without a menu bar there is no Ctrl+R and no File → Reload, so a
+               failure screen with no button was a dead end that could only be
+               left by closing the app. -->
+          <button id="retry" type="button">Try again</button>
           <button id="open-log" type="button">Open log folder</button>
         </div>
       </div>
@@ -186,6 +196,19 @@
         api.onBootState(render);
         document.getElementById("open-log").addEventListener("click", function () {
           api.openLogFolder();
+        });
+        var retry = document.getElementById("retry");
+        retry.addEventListener("click", function () {
+          if (!api.retryBoot) return;
+          retry.disabled = true;
+          retry.textContent = "Trying…";
+          api.retryBoot().catch(function () {});
+          // Re-arm rather than latching: if the retry fails, the state comes
+          // back here and the button has to work again.
+          setTimeout(function () {
+            retry.disabled = false;
+            retry.textContent = "Try again";
+          }, 4000);
         });
       })();
     </script>

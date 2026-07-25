@@ -30,6 +30,26 @@ contextBridge.exposeInMainWorld("cutProtocol", {
     return () => ipcRenderer.removeListener("boot-state", handler);
   },
   openLogFolder: () => ipcRenderer.invoke("open-log-folder"),
+  // Splash's "Try again" button. The main process decides what a retry means
+  // (reload the loaded app vs. re-run the whole boot sequence).
+  retryBoot: () => ipcRenderer.invoke("retry-boot"),
+
+  // MAIN-PROCESS FAULTS, POST-BOOT. The old code pushed these down the
+  // "boot-state" channel, which had exactly zero subscribers in frontend/src —
+  // so an uncaught throw at hour three was logged and then vanished. This
+  // channel has a real subscriber: frontend/src/lib/bugLog.js wires it into the
+  // same "Something went wrong" report dialog as the renderer's own uncaught
+  // errors. Payload is a kind + a message; never user data.
+  onMainProcessError: (cb) => {
+    const handler = (_e, info) => cb(info);
+    ipcRenderer.on("main-process-error", handler);
+    return () => ipcRenderer.removeListener("main-process-error", handler);
+  },
+
+  // The tail of %AppData%\Cut Protocol\logs\cut-protocol.log, for attaching to
+  // a bug report. Read-only, capped, and scrubbed + shown to the user for
+  // review in the renderer before it can go anywhere.
+  readLogTail: (maxBytes) => ipcRenderer.invoke("read-log-tail", maxBytes),
 
   // Update channel. A "Check for updates" button anywhere in the UI can call
   // this; it reports its own outcome (including failures) because the user
