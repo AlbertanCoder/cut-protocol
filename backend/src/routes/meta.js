@@ -55,10 +55,16 @@ function str(v) {
   return typeof v === "string" ? v.trim() : "";
 }
 
+/** The taxonomy module itself. Kept separate so loadTaxonomy can prefer the
+ *  module's own allergenCatalog() helper when it exists. */
+function readTaxonomyModuleExports() {
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  return require("../lib/allergenTaxonomy.js");
+}
+
 /** Pull the taxonomy array out of whatever shape the module exports. */
 function readTaxonomyModule() {
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const mod = require("../lib/allergenTaxonomy.js");
+  const mod = readTaxonomyModuleExports();
   const raw =
     (Array.isArray(mod) && mod) ||
     (Array.isArray(mod?.ALLERGEN_TAXONOMY) && mod.ALLERGEN_TAXONOMY) ||
@@ -72,11 +78,28 @@ function readTaxonomyModule() {
 function loadTaxonomy() {
   if (taxonomyCache) return taxonomyCache;
   try {
-    const entries = readTaxonomyModule()
+    // Use the taxonomy's own published catalog rather than re-projecting the
+    // raw array. allergenCatalog() already filters `hidden` entries and keeps
+    // matcher internals (nameKeywords / fdcCategories / offTags) server-side,
+    // so it satisfies both rules this endpoint has to honour — and it carries
+    // two fields the old hand-rolled projection silently dropped:
+    //   `note`   — e.g. sulphites' honest limit ("dried fruit only, not wine").
+    //              allergenTaxonomy.js requires the UI to surface this; the
+    //              dropped field meant it reached nobody.
+    //   `hidden` — the legacy `egg` mirror row was rendering as a second
+    //              "Eggs" entry in the picker.
+    // Falls back to the raw projection if the catalog helper is absent, so an
+    // older taxonomy module still serves rather than 500ing.
+    const mod = readTaxonomyModuleExports();
+    const source =
+      typeof mod?.allergenCatalog === "function" ? mod.allergenCatalog() : readTaxonomyModule();
+    const entries = source
+      .filter((e) => !e?.hidden)
       .map((e) => ({
         key: str(e?.key) || str(e?.label).toLowerCase(),
         label: str(e?.label) || str(e?.key),
         synonyms: Array.isArray(e?.synonyms) ? e.synonyms.map(str).filter(Boolean) : [],
+        ...(str(e?.note) ? { note: str(e.note) } : {}),
       }))
       .filter((e) => e.key && e.label);
     if (!entries.length) throw new Error("allergen taxonomy is empty");
