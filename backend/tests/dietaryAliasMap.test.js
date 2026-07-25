@@ -72,13 +72,20 @@ test("peanut and tree-nut aliases stay on opposite sides of the line", () => {
   assert.equal(resolveExclusionTerm("almond").synonymKey, "tree nuts");
   assert.ok(!matchesExclusionTerm("Almonds, raw", "groundnut"), "a peanut term must not exclude almonds");
   assert.ok(!matchesExclusionTerm("Peanuts, dry roasted", "almond"), "a tree-nut term must not exclude plain peanuts");
-  // Documented pre-existing over-match, NOT introduced by the alias map: the
-  // "tree nuts" category carries the phrase "nut butter", and "peanut butter"
-  // contains that phrase as a substring, so peanut butter is excluded for a
-  // tree-nut allergy. Over-exclusion in the safe direction (commercial peanut
-  // butter routinely carries a tree-nut trace statement), and it predates this
-  // change — pinned here so the behaviour is a decision, not a surprise.
-  assert.ok(matchesExclusionTerm("Peanut butter, smooth", "tree nuts"));
+  // FIXED 2026-07-24 (Stage-2 adversarial sweep). This assertion used to read
+  // the other way round, pinned as "documented pre-existing over-match": the
+  // "tree nuts" category carries the phrase "nut butter", multi-word keywords
+  // are matched as plain SUBSTRINGS, and "peanut butter" contains "nut butter".
+  // 57 real peanut-butter rows were removed from a tree-nut-allergic pool — and
+  // tree-nut-allergic-but-peanut-safe is one of the most common profiles there
+  // is. It is also the EXACT trap allergenTaxonomy :178-182 warns about for
+  // "nut milk"/"nut oil" and then fell into. The keyword now carries a
+  // word-boundary guard (WORD_GUARDS["nut butter"]): "peanut butter" has no
+  // boundary before "nut", "Almond nut butter" does.
+  assert.ok(!matchesExclusionTerm("Peanut butter, smooth", "tree nuts"),
+    "a tree-nut allergy must not delete peanut butter — 'nut butter' is a substring of it");
+  assert.ok(matchesExclusionTerm("Almond nut butter", "tree nuts"), "a real nut butter is still a tree nut");
+  assert.ok(matchesExclusionTerm("Peanut butter, smooth", "peanuts"), "…and peanut butter is still a peanut");
 });
 
 // ── 2. the union rule ────────────────────────────────────────────────────

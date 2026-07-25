@@ -76,6 +76,17 @@ const ALLERGEN_TAXONOMY = [
       "brioche", "pesto", "eclair", "éclair", "crepe", "crêpe", "ladyfinger",
       "panna cotta", "cannoli", "tres leches", "alfredo", "bechamel", "béchamel",
       "raita", "cheesecake", "custard", "condensed milk", "evaporated milk",
+      // ── Stage-2 adversarial sweep (2026-07-24) ────────────────────────────
+      // "nondairy whipped topping" is sodium CASEINATE — a milk protein, and
+      // exactly the reasoning dietaryFilter already applies to undeclared coffee
+      // creamers (COMPOUND_VETOES' note: "non-dairy" is a marketing term, not an
+      // allergy statement). Four real rows carried it and none matched anything.
+      // Guarded in dietaryFilter so an industrial OIL "used for whipped
+      // toppings" — pure fat, no protein — is not swept up.
+      "whipped topping",
+      // Ranch is a buttermilk/sour-cream dressing. Same measured class as the
+      // mayonnaise emulsions on the eggs row; it is a carrier for BOTH.
+      "ranch dressing",
     ],
     fdcCategories: [
       "Dairy and Egg Products", "Cheese", "Cottage/ricotta cheese",
@@ -123,6 +134,17 @@ const ALLERGEN_TAXONOMY = [
       "ladyfinger", "tiramisu", "creme brulee", "crème brûlée", "angel food",
       "brioche", "eclair", "éclair", "flan", "tempura", "egg wash", "crepe", "crêpe",
       "pavlova", "zabaglione", "tamagoyaki",
+      // ── Stage-2 adversarial sweep (2026-07-24): the MAYONNAISE EMULSIONS ──
+      // The lists knew "mayonnaise" and "aioli"; the four commercial dressings
+      // BUILT on mayonnaise say neither word. 32 real rows reached an
+      // egg-allergic user: "Salad dressing, thousand island", every "…ranch
+      // dressing" variant, "Salad dressing, coleslaw" / plain "Coleslaw", and
+      // "Fast foods, fish sandwich, with tartar sauce". All five are mayonnaise
+      // (i.e. raw-egg-emulsion) products by standard commercial formulation.
+      // "mayo" is the clipping the compound dictionary already anticipated but
+      // that no list carried as a literal token.
+      "mayo", "thousand island", "ranch dressing", "coleslaw", "cole slaw",
+      "tartar sauce", "remoulade", "rémoulade", "russian dressing",
     ],
     fdcCategories: ["Dairy and Egg Products", "Eggs and omelets", "Mayonnaise"],
     offTags: ["eggs", "egg"],
@@ -202,12 +224,29 @@ const ALLERGEN_TAXONOMY = [
     label: "Soy",
     tier: TIER_MAJOR,
     family: "soy",
-    synonyms: ["soya", "soja", "soybean", "soybeans", "soy free", "soy lecithin", "soy protein"],
+    synonyms: [
+      "soya", "soja", "soybean", "soybeans", "soy free", "soy lecithin", "soy protein",
+      // Typed forms the audit measured resolving to nothing.
+      "bean curd", "soybean curd", "textured vegetable protein", "tvp",
+    ],
     nameKeywords: [
       "teriyaki", "hoisin",     // agent 09 §2: in the GLUTEN list, missing from SOY
       "worcestershire",         // agent 05 P1-1: declared for gluten + fish, not soy
       "tamari", "shoyu", "ponzu", "gochujang", "doubanjiang", "okara", "yuba",
-      "black bean sauce", "soy sauce",
+      "black bean sauce", "soy sauce", "bean curd",
+      // ── Stage-2 adversarial sweep (2026-07-24) ────────────────────────────
+      // USDA's meat ANALOGUES are textured soy protein: "Chicken, meatless",
+      // "Bacon, meatless", "Frankfurter, meatless", "Sausage, meatless". The
+      // metadata backstop does not reach them — the ones filed under "Soy and
+      // meat-alternative products" are caught by the category probe, but nine
+      // are filed under "Legumes and Legume Products", which is (correctly)
+      // non-evidence: that shelf also holds every bean, lentil and chickpea, so
+      // promoting it to soy evidence would delete the entire legume aisle for a
+      // soy allergy. See the WORD_GUARD in dietaryFilter: "meatless" fires only
+      // when the name also carries a MEAT-PRODUCT noun, because FNDDS uses the
+      // same word for a plain meat-free dish ("Lasagna, meatless", "Stuffed
+      // tomato, with rice, meatless") that contains no soy at all.
+      "meatless", "meat substitute", "meat analogue", "meat analog",
     ],
     fdcCategories: ["Soy-based condiments", "Stir-fry and soy-based sauce mixtures", "Soy and meat-alternative products"],
     offTags: ["soybeans", "soy", "soja"],
@@ -240,6 +279,25 @@ const ALLERGEN_TAXONOMY = [
       "ladyfinger", "roux", "melba", "pierogi", "perogi",
       // wheat species the alias map knew but the keyword list did not
       "durum", "kamut", "einkorn", "emmer", "freekeh",
+      // ── Stage-2 adversarial sweep (2026-07-24) ────────────────────────────
+      // INFLECTIONS the matcher could never reach. "bread" and "batter" were
+      // both already listed, but the matching contract is word-boundary +
+      // s/es-plural — `\bbread(?:es|s)?\b` cannot match "breaded"/"breading" and
+      // `\bbatter(?:es|s)?\b` cannot match "battered". 84 real rows (onion rings
+      // breaded · DENNY'S fish fillet battered or breaded · every KFC/POPEYES
+      // "skin and breading" row · chicken tenders) passed a celiac exclusion on
+      // that alone. Adding the inflections is the targeted fix; making the
+      // MATCHER accept a general -ed/-ing suffix is not, because it would break
+      // "corn"→"corned beef", which this table explicitly relies on staying
+      // clear (see the corn row's note). "breaded" carries a "not breaded"
+      // guard in dietaryFilter for the two real "pan-fried, not breaded" rows.
+      "breaded", "breading", "battered",
+      // Commercial granola/muesli carries wheat flour and/or barley malt, and
+      // standard celiac guidance is "no granola unless it is labelled GF". 73
+      // real rows, none of which any other keyword reached — "Snacks" is
+      // deliberately non-evidence, so the metadata backstop was disarmed too.
+      // Guarded in dietaryFilter so "(without granola)" is not excluded.
+      "granola", "muesli",
     ],
     fdcCategories: [
       "Baked Products", "Yeast breads", "Rolls and buns", "Bagels and English muffins",
@@ -271,6 +329,15 @@ const ALLERGEN_TAXONOMY = [
       "wolffish", "sablefish", "lingcod", "sucker", "stingray", "shark",
       "bouillabaisse", "lutefisk", "gravlax", "lox", "nam pla", "garum",
       "anchovy paste", "fish stick", "fish finger", "fishcake", "kedgeree",
+      // ── Stage-2 adversarial sweep (2026-07-24): hidden fish carriers ──────
+      // Same plausibility bar as worcestershire/caesar dressing, all measured
+      // against real rows:
+      //   kimchi   — jeotgal (salted-shrimp) and/or fish sauce is standard in
+      //              commercial and traditional baechu kimchi. Also shellfish.
+      //   tapenade — anchovy is a defining ingredient ("Olive tapenade").
+      //   pho      — the broth is finished with nuoc mam (fish sauce);
+      //              "Soup, pho, no meat" declares no MEAT, not no fish sauce.
+      "kimchi", "tapenade", "pho",
     ],
     fdcCategories: ["Finfish and Shellfish Products", "Fish", "Seafood mixed dishes", "Seafood sandwiches"],
     offTags: ["fish"],
@@ -284,7 +351,20 @@ const ALLERGEN_TAXONOMY = [
     tier: TIER_MAJOR,
     family: "shellfish",
     synonyms: ["shell fish", "shellfish free"],
-    nameKeywords: ["bouillabaisse", "seafood boil", "paella mixta"],
+    nameKeywords: [
+      "bouillabaisse", "seafood boil", "paella mixta",
+      // ── Stage-2 adversarial sweep (2026-07-24) ────────────────────────────
+      //   kimchi          — jeotgal / saeujeot (salted shrimp). Also fish.
+      //   seafood paella  — "paella mixta" was listed but the two rows the
+      //                     corpus actually carries are "Seafood paella, Puerto
+      //                     Rican style" and "Paella with seafood".
+      //   bisque          — a bisque is by definition a crustacean-shell soup.
+      //                     GUARDED in dietaryFilter: "Soup, tomato bisque" (3
+      //                     rows) is the modern vegetable usage and is a correct
+      //                     NON-match, so the guard vetoes a plant qualifier
+      //                     exactly the way plantQualified() does for dairy.
+      "kimchi", "paella", "bisque",
+    ],
     fdcCategories: ["Finfish and Shellfish Products", "Shellfish", "Seafood mixed dishes"],
     offTags: ["crustaceans", "molluscs", "mollusks", "shellfish"],
   },
@@ -307,7 +387,14 @@ const ALLERGEN_TAXONOMY = [
     tier: TIER_MAJOR,
     family: "fish",
     includes: ["fish", "shellfish"],
-    synonyms: ["sea food", "fish and shellfish", "all seafood", "no seafood"],
+    synonyms: [
+      "sea food", "fish and shellfish", "all seafood", "no seafood",
+      // Stage-2 sweep: "shellfish and fish" resolved to kind:"literal" and
+      // excluded 0 of 889 recipes. A user naming BOTH majors must land on the
+      // umbrella, in either word order and with either conjunction.
+      "shellfish and fish", "fish or shellfish", "shellfish or fish",
+      "fish shellfish", "seafood allergy", "all fish and shellfish",
+    ],
     nameKeywords: ["seafood"],
     note:
       "An UMBRELLA row: its keyword list is the UNION of fish and shellfish at merge time, so " +
@@ -454,12 +541,25 @@ const ALLERGEN_TAXONOMY = [
     tier: TIER_RARE,
     family: "sulphites",
     synonyms: ["sulphite", "sulfite", "sulfites", "sulphur dioxide", "sulfur dioxide", "e220", "metabisulphite", "metabisulfite"],
-    nameKeywords: ["sulphite", "sulfite", "sulphur dioxide", "sulfur dioxide", "e220", "metabisulphite", "metabisulfite"],
+    nameKeywords: [
+      "sulphite", "sulfite", "sulphur dioxide", "sulfur dioxide", "e220",
+      "metabisulphite", "metabisulfite",
+      // Stage-2 sweep (2026-07-24): the ONE place sulphites DO appear in a food
+      // name. USDA marks sulphited dried fruit explicitly — 18 real rows
+      // ("Apricots, dried, sulfured", "Peaches, dehydrated (low-moisture),
+      // sulfured", "Apples, dried, sulfured", "Pears, dried, sulfured"). Before
+      // these, this key excluded 0 of 14,122 foods and 0 of 889 recipes.
+      // "sulfured" is word-boundary matched, so "calcium sulfate" (a tofu
+      // coagulant, not a sulphite) and "sodium aluminum sulfate" stay clear.
+      "sulfured", "sulphured", "sulfuring", "sulphuring",
+    ],
     offTags: ["sulphur-dioxide-and-sulphites", "sulphites", "sulfites"],
     note:
-      "HONEST LIMIT: sulphites are almost never in a food NAME. Until allergenTags/mayContain " +
-      "are populated (barcode import only), this key protects a coeliac-grade zero. The UI must " +
-      "say so rather than imply protection — audit agent 07, finding F4.",
+      "HONEST LIMIT: outside USDA's 'sulfured' dried-fruit rows, sulphites are almost never in " +
+      "a food NAME — they are a label declaration. Until allergenTags/mayContain are populated " +
+      "(barcode import only), this key catches the dried fruit and nothing else: not wine, not " +
+      "vinegar, not processed potato. The UI must say so rather than imply full protection — " +
+      "audit agent 07, finding F4.",
   },
   {
     key: "kiwi",
@@ -565,7 +665,21 @@ function normaliseExclusionText(raw) {
 
 // Intent wrappers. A user writing the CONSTRAINT ("dairy-free") or the
 // DIAGNOSIS ("milk allergy") means the same allergen as one writing the noun.
+// ORDER IS LOAD-BEARING. stripIntentAffixes() applies EVERY matching prefix in
+// array order within one pass, so a LONGER phrase must appear before any shorter
+// phrase it starts with — otherwise "anything with dairy" is peeled by "any "
+// into "thing with dairy" and never resolves. Longest-first is the rule; the
+// quantifier block below was added by the Stage-2 sweep, which measured
+// "all nuts", "anything with dairy" and "any nuts" each excluding 0 of 889
+// recipes because they fell through to a literal text match.
 const LEADING_AFFIXES = [
+  "anything containing ", "everything containing ", "anything made with ",
+  "anything with ", "everything with ", "nothing with ", "anything that has ",
+  "any kind of ", "any sort of ", "any form of ", "all kinds of ", "all forms of ",
+  "stay away from ", "keep away from ", "i am allergic to ", "im allergic to ",
+  "i react to ", "reacts to ", "react to ", "cut out ", "leave out ", "skip ",
+  "all of ", "any of ",
+  "all ", "any ", "every ", "contains ", "containing ", "with ",
   "no ", "non ", "not ", "never ", "avoid ", "avoiding ", "without ", "minus ",
   "free of ", "free from ", "anti ", "allergic to ", "allergy to ",
   "intolerant to ", "intolerance to ", "sensitive to ", "sensitivity to ",

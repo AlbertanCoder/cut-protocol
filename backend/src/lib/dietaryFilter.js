@@ -94,8 +94,12 @@ const PROCESSED_MEAT_KEYWORDS = [
 // NOTE: no bare "butter"/"cream" here — those need compound guards (peanut
 // butter, butter beans, coconut cream are all plant foods); see
 // isVeganAnimalProduct() below.
+// NOTE: "cheese"/"yogurt"/"yoghurt" are deliberately NOT here — they need the
+// same plant-qualifier guard butter/cream/milk already had, or a vegan pool
+// loses "Soy yogurt" and "Vegan cheese", which are vegan foods. See
+// isDairyCheese()/isDairyYogurt(), called from isVeganAnimalProduct().
 const ANIMAL_DERIVED_EXTRA_KEYWORDS = [
-  "egg", "eggs", "cheese", "yogurt", "yoghurt", "whey", "casein", "ghee",
+  "egg", "eggs", "whey", "casein", "ghee",
   "honey", "mayonnaise", "skyr", "kefir", "custard", "quark", "milk powder",
   // Cheese VARIETY names — none contain the word "cheese", all are dairy
   // (caught by the 854-name food-table audit, Phase 4).
@@ -706,8 +710,59 @@ function plantQualified(n, noun) {
   return new RegExp(`\\b(?:${q})[\\s-]*${noun}(?:es|s)?\\b`, "i").test(n);
 }
 
+// FDC INVERTS the qualifier into a comma field: the corpus writes plant yogurt
+// as "Yogurt, almond milk" / "Yogurt, soy", never "almond yogurt". plantQualified
+// above only sees the adjacent QUALIFIER-FIRST order, so all three plant-yogurt
+// rows were excluded for a DAIRY allergy — the same two-word-order problem
+// isButterBean() already solves for "Beans, butter". Adjacency is still what
+// makes it safe: the qualifier has to be the noun's own comma field (up to two
+// intervening fields, which is how FDC writes "Yogurt, Greek, plain, soy"), not
+// merely present somewhere in the name.
+function plantQualifiedEitherOrder(n, noun) {
+  if (plantQualified(n, noun)) return true;
+  const q = PLANT_MILK_QUALIFIERS.map((x) => x.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).join("|");
+  return new RegExp(`\\b${noun}(?:es|s)?\\b\\s*,\\s*(?:[a-z0-9 '()/&-]+,\\s*){0,2}(?:${q})\\b`, "i").test(String(n || ""));
+}
+
+// A name that DECLARES itself plant-based. "Vegan cheese" and "Soy yogurt" are
+// the foods a dairy-allergic user is supposed to be able to eat; blocking them
+// is the same class of error as blocking gluten-free bread from a celiac.
+// "non-dairy"/"dairy-free" are here for cheese/yogurt only — they deliberately
+// do NOT clear the undeclared coffee creamers or the caseinate whipped
+// toppings, which are handled by their own keywords (see COMPOUND_VETOES' note
+// on why "non-dairy" is a marketing term, not an allergy statement: a product
+// that calls itself non-dairy CHEESE is a plant cheese, whereas a "non-dairy
+// creamer" is overwhelmingly sodium caseinate).
+const PLANT_FOOD_DECLARED = /\b(?:vegan|plant[\s-]?based|dairy[\s-]?free|non[\s-]?dairy|meat[\s-]?free)\b/i;
+
+// Dairy yogurt/cheese with the same plant guard milk/cream/butter already had.
+// Measured 2026-07-24: "Yogurt, soy", "Yogurt, almond milk", "Yogurt, coconut
+// milk" and all ten "SILK … soy yogurt" rows were removed from a dairy-allergic
+// pool AND from every vegan pool.
+function isDairyYogurt(n) {
+  return hasWordOrPlural(n, "yogurt") || hasWordOrPlural(n, "yoghurt")
+    ? !plantQualifiedEitherOrder(n, "yogurt") && !plantQualifiedEitherOrder(n, "yoghurt")
+      && !PLANT_FOOD_DECLARED.test(String(n || ""))
+    : false;
+}
+function isDairyCheese(n) {
+  if (!hasWordOrPlural(n, "cheese")) return false;
+  // "Soybean, curd cheese" / "Soybean curd cheese" is tofu.
+  if (/\b(?:soy|soya|soybean)\b[a-z, ]*\bcurd\b/i.test(String(n || ""))) return false;
+  return !plantQualifiedEitherOrder(n, "cheese") && !PLANT_FOOD_DECLARED.test(String(n || ""));
+}
+
 function isDairyMilk(n) {
-  return hasWordOrPlural(n, "milk") && !plantQualified(n, "milk");
+  const s = String(n || "");
+  // FNDDS uses "non-dairy milk" to describe a PREPARATION, not to make a label
+  // claim: "Coffee, Latte, with non-dairy milk", "Oatmeal … made with non-dairy
+  // milk", and "Non-dairy milk, NFS" IS the plant-milk row — 33 rows, all
+  // removed from a dairy-allergic pool by the bare word "milk". This is NOT the
+  // "non-dairy creamer" case COMPOUND_VETOES warns about; those are sodium
+  // caseinate and stay excluded, because "creamer" and "whipped topping" are
+  // matched by their own keywords, not by this one.
+  if (/\bnon[\s-]?dairy\s+milk\b/i.test(s)) return false;
+  return hasWordOrPlural(s, "milk") && !plantQualified(s, "milk");
 }
 
 // Paleo's dairy exclusion, minus butter/ghee (see excludedByStyle's paleo
@@ -820,7 +875,9 @@ function isVeganAnimalProduct(n) {
   return matchesAny(stripPlantFlesh(n), MEAT_FISH_KEYWORDS)
     || matchesAny(stripEggPlant(n), ANIMAL_DERIVED_EXTRA_KEYWORDS)
     || isDairyMilk(n)
-    || isDairyButterOrCream(n);
+    || isDairyButterOrCream(n)
+    || isDairyCheese(n)
+    || isDairyYogurt(n);
 }
 
 function excludedByStyle(food, dietaryStyle) {
@@ -894,6 +951,76 @@ function excludedByStyle(food, dietaryStyle) {
 // the allergen is not. Keeping them in one table (rather than an if-chain
 // inside the matcher) is what lets the taxonomy add keywords like "ground nut"
 // and "potato" without re-opening the matcher.
+
+// ── gluten-free grain guard (the mirror of plantQualified, for grains) ────
+// "flour", "cereal" and "tortilla" are gluten keywords because the DEFAULT of
+// each is wheat. But FDC files the corn/rice/quinoa forms under the same nouns,
+// and blocking those deletes the staples a celiac actually lives on: 11 corn
+// grits rows, 7 corn tortilla rows and 5 gluten-free flours ("Flour, quinoa",
+// "Flour, amaranth", "Flour, sorghum") were all removed from a celiac pool.
+//
+// ADJACENCY IS WHAT MAKES THIS SAFE. The grain must qualify the noun ("corn
+// tortilla", "rice flour") or be the noun's own FDC comma field ("Tortillas,
+// ready-to-bake or -fry, corn"). A grain merely PRESENT somewhere in the name
+// does not count — "Corned beef and potatoes in tortilla (Apache)" is a wheat
+// tortilla and stays excluded, which the loose form would have cleared.
+//
+// OATS ARE DELIBERATELY ABSENT from this list. The gluten row's note leaves the
+// oats call to the existing list, unchanged; adding "oat" here would silently
+// reverse it.
+const GLUTEN_FREE_GRAINS = [
+  "corn", "maize", "hominy", "masa", "cornmeal", "polenta", "rice", "quinoa",
+  "amaranth", "sorghum", "millet", "teff", "buckwheat", "potato", "tapioca",
+  "cassava", "arrowroot", "chickpea", "garbanzo", "almond", "coconut",
+  "chestnut", "soy", "peanut", "plantain", "lentil",
+];
+function gfGrainQualified(n, noun) {
+  const s = String(n || "");
+  const q = GLUTEN_FREE_GRAINS.map(escapeRe).join("|");
+  // "corn tortilla" | "brown rice flour" | "whole grain corn cereal"
+  if (new RegExp(`\\b(?:${q})[a-z]*[\\s-]+(?:flour[\\s-]+)?${noun}(?:es|s)?\\b`, "i").test(s)) return true;
+  // FDC's inverted comma form: "Tortillas, ready-to-bake or -fry, corn"
+  return new RegExp(`\\b${noun}(?:es|s)?\\b\\s*,\\s*(?:[a-z0-9 '()/&-]+,\\s*){0,3}(?:${q})\\b`, "i").test(s);
+}
+// Named wheat/barley/rye anywhere in the name overrides the guard outright —
+// "Pasta, gluten-free, corn flour and quinoa flour" is safe, "Wheat flour,
+// white, tortilla mix" is not, and both carry a GF grain.
+const NAMES_A_GLUTEN_GRAIN = /\b(?:wheat|barley|rye|spelt|semolina|durum|kamut|triticale|farro|bulgur|malt|malted|seitan|graham)\b/i;
+const glutenFreeGrainForm = (n, noun) => gfGrainQualified(n, noun) && !NAMES_A_GLUTEN_GRAIN.test(String(n || ""));
+
+// :253 promises "soybean oil stays permitted" (highly refined, protein-free) —
+// but the "soybean" keyword catches it anyway, so all 15 refined-soy-oil rows
+// were removed from a soy-allergic pool in direct contradiction of the comment.
+// Narrow by design: the row must BE the oil, not a food MADE with it. "Salad
+// dressing, mayonnaise, soybean oil" and "Snacks, potato chips, … soybean oil"
+// stay excluded — a composite food can carry soy protein the name never states.
+// A soy form that is NOT the refined oil. If any of these is named, the row is
+// not oil-only and the veto does not apply.
+const OTHER_SOY_FORM = /\bsoy\w*\b|\btofu\b|\btempeh\b|\bmiso\b|\bedamame\b|\bnatto\b|\btamari\b|\bshoyu\b|\btvp\b|\bbean curd\b/i;
+const isRefinedSoyOilRow = (n) => {
+  const s = String(n || "");
+  // The row IS the oil: "Oil, soybean, salad or cooking" · "Oil, industrial,
+  // soy, refined" · "Oil, vegetable, soybean, refined" · "Soybean oil".
+  if (/^\s*oils?\s*,\s*(?:vegetable\s*,\s*|industrial\s*,\s*)?soy(?:a|bean)?\b/i.test(s)) return true;
+  if (/^\s*soy(?:a|bean)?\s+oil\b/i.test(s)) return true;
+  if (!/\bsoy(?:a|bean)?\s+oil\b/i.test(s)) return false;
+  // …or a composite whose ONLY declared soy is the oil: "Snacks, potato chips,
+  // … made with partially hydrogenated soybean oil". Blocking a potato chip for
+  // a soy allergy because of the frying oil is over-exclusion with no safety
+  // gain, and it is the same reasoning :253 already committed to. Strike out
+  // every "soy(bean) oil" mention first — testing for a leftover soy word on the
+  // raw string would match the word "soybean" inside "soybean oil" itself.
+  const rest = s.replace(/\bsoy(?:a|bean)?\s+oil\b/gi, " ");
+  return !OTHER_SOY_FORM.test(rest);
+};
+
+// FNDDS uses "meatless" for two different things. A MEAT-PRODUCT noun qualified
+// by it is a textured-soy analogue ("Chicken, meatless" is TVP); a DISH
+// qualified by it is just the meat-free version and may contain no soy at all
+// ("Stuffed tomato, with rice, meatless"). Bare "meatless" would have closed 15
+// leaks by over-blocking 25 rows, which is not a fix.
+const MEAT_ANALOGUE_NOUN = /\b(?:chicken|beef|pork|turkey|bacon|ham|sausage|frankfurter|hot ?dogs?|meatballs?|meatloaf|burgers?|patt(?:y|ies)|luncheon|deli|salami|pepperoni|steak|jerky|nuggets?|strips?|links?|slices?|bits|crumbles|cutlets?|spread|fillets?|tenders?|riblets?|scallopini)\b/i;
+
 const WORD_GUARDS = {
   // milk/cream/butter: the plant-qualifier guards the style filter already uses,
   // so a dairy allergy doesn't wrongly remove coconut cream, almond milk or
@@ -910,6 +1037,25 @@ const WORD_GUARDS = {
   milk: (name) => isDairyMilk(name),
   cream: (name) => hasWord(name, "cream") && !hasPhrase(name, "cream of tartar") && !matchesAny(name, PLANT_MILK_QUALIFIERS),
   butter: (name) => isDairyButterOrCream(name),
+  // …and the two dairy nouns that never got one. "Yogurt, soy", "Yogurt, almond
+  // milk", "Yogurt, coconut milk" and the ten "SILK … soy yogurt" rows were all
+  // removed from a dairy-allergic pool; so would "Vegan cheese" / "Cashew
+  // cheese" be. See isDairyYogurt()/isDairyCheese().
+  yogurt: (name) => isDairyYogurt(name),
+  yoghurt: (name) => isDairyYogurt(name),
+  cheese: (name) => isDairyCheese(name),
+  // "curd" is a dairy synonym, but BEAN curd is tofu — the corpus row is
+  // "Soybean, curd cheese", and "bean curd" is what a large share of users type
+  // for tofu. Both word orders, because FDC inverts them.
+  curd: (name) => hasWordOrPlural(name, "curd")
+    && !/\b(?:bean|soy|soya|soybean|tofu)\b[a-z, ]{0,12}\bcurds?\b/i.test(String(name || ""))
+    && !/\bcurds?\b[a-z, ]{0,12}\b(?:bean|soy|soya|soybean)\b/i.test(String(name || "")),
+  // "nondairy whipped topping" is sodium caseinate — milk protein. The one
+  // exception is a row that IS an industrial fat ("Oil, industrial, palm kernel
+  // (hydrogenated), used for whipped toppings"): a refined oil carries no
+  // protein, and excluding it would be over-blocking for no safety gain.
+  "whipped topping": (name) => hasPhrase(name, "whipped topping")
+    && !/^\s*oils?\s*,|\bindustrial\b|\bshortening\b/i.test(String(name || "")),
   // chestnut is a tree nut, but WATER chestnut is an aquatic vegetable — a nut
   // allergy must not remove it. hasWordOrPlural, NOT hasWord: the singular-only
   // match leaked all 18 "Nuts, chestnuts, japanese/chinese/european, …" rows
@@ -926,7 +1072,194 @@ const WORD_GUARDS = {
   "ground nut": (name) => /\bground\s+nuts?\b/i.test(String(name || "")),
   // SWEET potato is Convolvulaceae, not a nightshade.
   potato: (name) => hasWordOrPlural(name, "potato") && !hasPhrase(name, "sweet potato"),
+
+  // ── Stage-2 adversarial sweep (2026-07-24) ──────────────────────────────
+  // GLUTEN — inflections the boundary matcher could not reach (84 rows), and
+  // the two rows whose names state the breading is absent.
+  breaded: (name) => hasWordOrPlural(name, "breaded")
+    && !/\bnot\s+breaded\b|\bwithout\s+breading\b|\bno\s+breading\b/i.test(String(name || "")),
+  // Granola: standard celiac guidance is "not gluten-free unless labelled so".
+  // The absence guard mirrors COMPOUND_VETOES.caesar's "no dressing" rule —
+  // "McDONALD'S, Fruit 'n Yogurt Parfait (without granola)" is a real row.
+  granola: (name) => hasWordOrPlural(name, "granola")
+    && !/\b(?:without|no|free\s+of)\s+granola\b/i.test(String(name || "")),
+  // GLUTEN over-block: the three wheat-DEFAULT nouns that FDC also uses for
+  // corn/rice/quinoa forms. Guard = the gluten-free-grain adjacency rule.
+  flour: (name) => hasWordOrPlural(name, "flour") && !glutenFreeGrainForm(name, "flour"),
+  tortilla: (name) => hasWordOrPlural(name, "tortilla")
+    && !glutenFreeGrainForm(name, "tortilla")
+    // Tortilla CHIPS are corn masa essentially without exception; the ones that
+    // are not say "flour"/"wheat", which NAMES_A_GLUTEN_GRAIN catches below.
+    && !(/\btortilla\s+chips?\b/i.test(String(name || "")) && !NAMES_A_GLUTEN_GRAIN.test(String(name || ""))),
+  // "cereal" is scoped harder than flour/tortilla: a ready-to-eat cereal is
+  // wheat or malt-flavoured far more often than not (corn flakes carry barley
+  // malt), so only the COOKED grits/porridge shelf is cleared.
+  cereal: (name) => hasWordOrPlural(name, "cereal")
+    && !(/^\s*cereals?\s*,/i.test(String(name || ""))
+      && /\b(?:corn|hominy)\s+grits\b/i.test(String(name || ""))
+      && !NAMES_A_GLUTEN_GRAIN.test(String(name || ""))),
+
+  // SOY — the promise at :253 that "soybean oil stays permitted", finally kept.
+  soy: (name) => hasWordOrPlural(name, "soy") && !isRefinedSoyOilRow(name),
+  soya: (name) => hasWordOrPlural(name, "soya") && !isRefinedSoyOilRow(name),
+  soybean: (name) => hasWordOrPlural(name, "soybean") && !isRefinedSoyOilRow(name),
+  // SOY — the USDA meat analogues, without the meat-free DISHES. See
+  // MEAT_ANALOGUE_NOUN.
+  meatless: (name) => hasWordOrPlural(name, "meatless") && MEAT_ANALOGUE_NOUN.test(String(name || "")),
+
+  // SHELLFISH — restaurant paella is mixta (shellfish) far more often than not,
+  // which is why the taxonomy already carried "paella mixta"; "Paella, NFS" is
+  // the same dish under USDA's not-further-specified label. "Paella Rice" is the
+  // raw bomba-rice INGREDIENT and carries nothing.
+  paella: (name) => hasWordOrPlural(name, "paella") && !/\bpaella\s+rice\b/i.test(String(name || "")),
+  // SHELLFISH — a bisque is a crustacean-shell soup; the modern vegetable
+  // "bisques" are not. Same shape as plantQualified() for dairy.
+  bisque: (name) => hasWordOrPlural(name, "bisque")
+    && !/\b(?:tomato|tomatoe|squash|pumpkin|butternut|corn|mushroom|carrot|sweet\s+potato|potato|vegetable|asparagus|pepper|bean|lentil|cauliflower|broccoli|chestnut)\b/i.test(String(name || "")),
+
+  // TREE NUTS — the two false friends that were costing whole safe food groups.
+  // "nut butter" is a MULTI-WORD keyword, so the default rule matches it as a
+  // plain SUBSTRING — and it sits inside "peanut butter", which removed 57
+  // peanut-butter rows from a tree-nut-allergic (peanut-safe) pool. This is the
+  // exact trap allergenTaxonomy :178-182 warns about for "nut milk"/"nut oil".
+  // A word-boundary on the phrase fixes it: "peanut butter" has no boundary
+  // before "nut", "coconut butter" has none either, "Almond nut butter" does.
+  "nut butter": (name) => /\bnut\s+butter/i.test(String(name || "")),
+  // Bare "nut" fires on FDC's SHELF PREFIX: it files coconut as "Nuts, coconut
+  // meat, raw" (15 rows). Coconut is deliberately not a tree nut here
+  // (allergenTaxonomy :178-182) and is a vegan staple. Only the shelf prefix is
+  // discounted — "Frostings, coconut-nut" keeps its own "-nut" and stays out.
+  nut: (name) => {
+    const s = String(name || "");
+    if (!hasWordOrPlural(s, "nut")) return false;
+    const withoutShelf = s.replace(/^\s*nuts?\s*,\s*/i, "");
+    if (/\bcoconut\b/i.test(withoutShelf) && !hasWordOrPlural(withoutShelf, "nut")) return false;
+    return true;
+  },
 };
+
+// CATEGORY_SYNONYMS carries several keywords in BOTH singular and plural form
+// ("tortilla"/"tortillas", "cracker"/"crackers", "biscuit"/"biscuits"), and
+// WORD_GUARDS is keyed by the exact synonym string — so a guard written for the
+// singular is silently bypassed by the plural entry sitting next to it in the
+// same list. That is precisely how "Tortillas, ready-to-bake or -fry, corn"
+// stayed excluded from a celiac pool AFTER the corn-tortilla guard landed: the
+// guard was consulted for "tortilla" and skipped for "tortillas". Mirroring the
+// table onto its plurals once, here, makes the class of bug unrepeatable.
+// Existing entries always win, so this can never change a hand-written guard.
+for (const [word, guard] of Object.entries(WORD_GUARDS)) {
+  for (const plural of [`${word}s`, `${word}es`]) {
+    if (!WORD_GUARDS[plural]) WORD_GUARDS[plural] = guard;
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────
+// DECLARED ABSENCE — the one licensed reduction, and its exact leash
+// ─────────────────────────────────────────────────────────────────────────
+// "Pasta, gluten-free, corn, dry" · "Bread, gluten-free, white" · "Rolls,
+// gluten-free" — 47 rows whose names carry a REGULATED absence claim were
+// removed from a celiac pool by the very category they are formulated for. That
+// is the worst over-block in this file: it deletes exactly the foods the user
+// is supposed to eat. WORD_GUARDS.dairy has had a "dairy-free"/"non-dairy" veto
+// since audit 09; gluten never got one, and the guard mechanism is per-KEYWORD,
+// so gluten would have needed ~140 copies of it. It belongs one level up.
+//
+// SCOPE, deliberately tight:
+//   · Only a claim about THIS category counts. "Pizza, cheese, gluten-free thin
+//     crust" is cleared for gluten and still excluded for dairy.
+//   · Only the regulated FREE-FROM form. "lactose free" is NOT a dairy claim —
+//     lactose-free milk is still cow's-milk protein, which this file already
+//     excludes on purpose and must keep excluding.
+//   · It suppresses the NAME probe and the coarse USDA-CATEGORY probe (a shelf
+//     label like "Baked Products" cannot outrank a free-from claim in the
+//     product's own name — every one of the 47 rows is filed there). It does
+//     NOT suppress allergenTags / mayContain: those are declarations ABOUT THE
+//     PRODUCT, and a product that declares both is telling us something the
+//     name is not, so the declaration wins.
+const CATEGORY_ABSENCE_DECLARED = {
+  gluten: /\b(?:gluten|wheat)[\s-]?free\b/i,
+  dairy: /\b(?:dairy|milk)[\s-]?free\b/i,
+  egg: /\beggs?[\s-]?free\b/i,
+  eggs: /\beggs?[\s-]?free\b/i,
+  soy: /\bsoya?[\s-]?free\b/i,
+  "soy protein": /\bsoya?[\s-]?free\b/i,
+  peanuts: /\bpeanut[\s-]?free\b/i,
+  nuts: /\b(?:tree[\s-]?nut|nut)[\s-]?free\b/i,
+  "tree nuts": /\b(?:tree[\s-]?nut|nut)[\s-]?free\b/i,
+  fish: /\bfish[\s-]?free\b/i,
+  shellfish: /\bshellfish[\s-]?free\b/i,
+  seafood: /\bseafood[\s-]?free\b/i,
+  sesame: /\bsesame[\s-]?free\b/i,
+};
+
+// ── THREE LEASHES ON THE VETO ────────────────────────────────────────────
+// A whole-string veto is dangerous in a way the over-block it fixes is not: it
+// converts an over-block into a LEAK, which is strictly worse. This matcher is
+// run over recipe STEP TEXT as well as product names (planContext scans steps),
+// so "Cook the rice without butter for a dairy-free version." must still be
+// excluded for dairy — the butter is right there — and "serve with gluten-free
+// bread, or regular sourdough if you prefer" must still be excluded for gluten.
+//
+// 1. PROSE IS NEVER A LABEL CLAIM. The three signals below were measured
+//    against all 14,122 real names: of the 65 rows carrying a free-from claim,
+//    ZERO match any of them, and " your"/" you"/" if"/" until"/" then"/" while"
+//    and a trailing period appear in no claim-carrying name at all. (An
+//    imperative-verb signal was tried and REJECTED — "Roll, gluten free" and
+//    "Roast beef" start with cooking verbs.)
+const LOOKS_LIKE_PROSE = [
+  /\.\s*$/,                                    // a sentence ends; a food name does not
+  /\s(?:the|your|you|if|until|then|while)\s/,  // lowercase function words
+];
+// 2. A CONDITIONAL claim OFFERS an allergen-free variant; it does not assert
+//    one. "Bread, gluten-free" asserts. "…or omit for a dairy-free version"
+//    offers, and cooks the allergen in for everyone who doesn't take the offer.
+const CONDITIONAL_ABSENCE = /\b(?:for|or|to make|make it|if|instead|optional|omit|substitute|swap)\b[^.,;]{0,24}(?:gluten|wheat|dairy|milk|soya?|eggs?|nut|peanut|fish|shellfish|seafood|sesame)[\s-]?free\b|(?:gluten|wheat|dairy|milk|soya?|eggs?|nut|peanut|fish|shellfish|seafood|sesame)[\s-]?free\s+(?:version|option|alternative|variation|swap)\b/i;
+// 3. A claim governs ITS OWN CLAUSE, never an alternative offered AFTER it.
+//    "gluten-free pasta or regular spaghetti" — the spaghetti is still gluten.
+//    Two deliberate limits, both measured against the real table:
+//      · `\sor\s` does not fire inside "and/or" (no space before "or"), which is
+//        how FDC writes "…rice flour, corn starch, and/or tapioca";
+//      · the split only applies when the claim comes FIRST. FDC also uses " or "
+//        to list product VARIANTS — "Cake or cupcake, gluten free", "Chow mein or
+//        chop suey" — where the claim at the end governs everything before it.
+const ALTERNATIVE_CLAUSE = /\s(?:or|but|otherwise|instead|however|except|unless)\s/i;
+
+/**
+ * How much of `name` a free-from claim for `synonymKey` does NOT cover.
+ *   null  — there is no claim to honour (no claim, or prose, or conditional):
+ *           match the whole string exactly as before.
+ *   ""    — the claim governs everything: nothing is left to match.
+ *   other — the ungoverned remainder, which still gets matched in full.
+ */
+function absenceUngoverned(name, synonymKey) {
+  const re = CATEGORY_ABSENCE_DECLARED[synonymKey];
+  const s = String(name || "");
+  if (!re) return null;                 // NB: s.match(undefined) matches EVERYTHING
+  const claim = s.match(re);
+  if (!claim) return null;
+  if (LOOKS_LIKE_PROSE.some((p) => p.test(s))) return null;
+  if (CONDITIONAL_ABSENCE.test(s)) return null;
+  const alt = s.match(ALTERNATIVE_CLAUSE);
+  return alt && alt.index > claim.index ? s.slice(alt.index + alt[0].length) : "";
+}
+
+/** True if an unconditional free-from claim governs the WHOLE of `name`. */
+function declaresAbsenceOf(name, synonymKey) {
+  return absenceUngoverned(name, synonymKey) === "";
+}
+
+// The second (and last) name statement allowed to outrank the coarse USDA shelf
+// category, for gluten only. USDA files corn tortillas under "Baked Products",
+// which the taxonomy declares gluten evidence — so "Tortillas, ready-to-bake or
+// -fry, corn" survived the name guard and was then removed by the shelf label
+// anyway. Naming the grain IS the product statement here, and it is more
+// specific than the aisle the product is sold in. Restricted to the three nouns
+// the guard covers: "bread" and "muffin" are deliberately absent, because
+// "cornbread" and "corn muffins" are wheat-flour products.
+function namesAGlutenFreeGrainForm(name) {
+  if (NAMES_A_GLUTEN_GRAIN.test(String(name || ""))) return false;
+  return gfGrainQualified(name, "tortilla") || gfGrainQualified(name, "flour") || /\b(?:corn|hominy)\s+grits\b/i.test(String(name || ""));
+}
 
 // The styles the Profile UI offers — single source for route validation.
 const DIETARY_STYLES = ["none", "mediterranean", "vegetarian", "vegan", "paleo", "keto", "carnivore", "halal", "kosher"];
@@ -943,6 +1276,13 @@ function matchesExclusionTerm(rawName, term) {
   // Prepared-dish names are matched against the compound-expanded text (the
   // raw name plus any tokens a curated compound implies). Purely additive —
   // see expandCompoundTokens().
+  // A regulated free-from claim for THIS category clears only the text it
+  // GOVERNS — its own clause, and only on a product name, and only when it
+  // asserts rather than offers. Everything it does not govern is still matched
+  // in full, so the veto can never turn an over-block into a leak. Evaluated on
+  // the RAW name so a compound expansion cannot smuggle a keyword past it.
+  const ungoverned = absenceUngoverned(rawName, resolved.synonymKey);
+  if (ungoverned !== null) return ungoverned.trim() ? matchesExclusionTerm(ungoverned, term) : false;
   const name = expandCompoundTokens(rawName);
   const synonyms = resolved.synonymKey ? CATEGORY_SYNONYMS[resolved.synonymKey] : null;
   if (synonyms) {
@@ -1118,6 +1458,34 @@ function mergeAllergenTaxonomy() {
       FREE_TEXT_ALIASES[a] = target;
     }
   }
+  // 4b — KEYWORDS ARE ALSO THINGS PEOPLE TYPE. Measured 2026-07-24: "panko",
+  //      "dashi", "ponzu", "surimi", "shrimp paste" and "nougat" each excluded
+  //      0 of 889 recipes, because a term that is only a KEYWORD (what a food
+  //      name says) and never a SYNONYM (what a user types) fell through to a
+  //      literal grep — and nothing in the corpus is literally named "panko".
+  //      Mapping them onto their category is the same call this file already
+  //      made for "salmon"→fish and "cashew"→tree nuts: a user naming a
+  //      carrier is over-excluded to the family, the documented safe direction.
+  //
+  //      TWO LEASHES, both measured:
+  //      · MAJOR categories only. The broad avoidance rows must not do this —
+  //        "tomato" would drag in every potato and pepper via nightshades,
+  //        "cumin" would delete the whole spice shelf, "banana" would take
+  //        avocado and kiwi with it through latex-fruit.
+  //      · ≥5 characters. The literal-substring probe in matchesExclusionTerm
+  //        is a plain includes(), so a short keyword is a landmine: "sole" is
+  //        inside "casserole", "roe" inside a dozen words. Those stay literal.
+  const ALIASABLE_KEYWORD_CATEGORIES = [
+    "gluten", "dairy", "egg", "eggs", "soy", "fish", "shellfish", "seafood",
+    "nuts", "tree nuts", "peanuts", "sesame",
+  ];
+  for (const cat of ALIASABLE_KEYWORD_CATEGORIES) {
+    for (const kw of CATEGORY_SYNONYMS[cat] || []) {
+      const a = normaliseExclusionText(kw);
+      if (!a || a.length < 5 || CATEGORY_SYNONYMS[a] || FREE_TEXT_ALIASES[a]) continue;
+      FREE_TEXT_ALIASES[a] = cat;
+    }
+  }
   // 5 — metadata evidence: USDA/FNDDS categories and Open Food Facts tags.
   for (const e of ALLERGEN_TAXONOMY) {
     const fam = SYNONYM_KEY_FAMILY[categoryKeyOf(e)];
@@ -1203,8 +1571,17 @@ function exclusionEvidence(food, term, options = {}) {
   }
 
   // ── probe 2: authoritative USDA food category ──
+  // Suppressed by a free-from claim in the product's own name: all 47
+  // "gluten-free" rows are filed under "Baked Products", and a coarse shelf
+  // label cannot outrank a regulated absence claim on the product itself. This
+  // is the ONLY place a probe is conditioned on another signal, and it is
+  // conditioned on a NAME claim, never on another probe's negative result — the
+  // add-only rule between probes is intact. Probes 3 and 4 (the product's own
+  // declarations) are deliberately NOT suppressed.
   const fdcCategory = typeof food?.fdcCategory === "string" ? food.fdcCategory.trim().toLowerCase() : null;
-  if (fdcCategory && resolved.family) {
+  const nameOutranksCategory = declaresAbsenceOf(name, resolved.synonymKey)
+    || (resolved.family === "gluten" && namesAGlutenFreeGrainForm(name));
+  if (fdcCategory && resolved.family && !nameOutranksCategory) {
     const fams = FDC_CATEGORY_FAMILIES[fdcCategory];
     if (fams && fams.includes(resolved.family)) {
       reasons.push({ source: "fdc-category", detail: `USDA files this under "${food.fdcCategory}"`, advisory: false });

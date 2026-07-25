@@ -40,8 +40,14 @@ test("QC v2 1D sweep: gelato->dairy, natto->soy, triticale/matzo->gluten", () =>
 });
 
 test("false-exclusion boundary: soybean OIL stays permitted, non-soy foods unaffected", () => {
-  // Oil was deliberately left out of the fix; the primary account permits it.
-  assert.equal(matchesExclusionTerm("Soybean oil", "soy"), true); // "soybean" matches — acceptable over-exclusion, documented
+  // Refined soybean oil is protein-free, so it carries no soy allergen risk.
+  // This assertion previously expected `true` and called it "acceptable
+  // over-exclusion" — but that contradicted CATEGORY_SYNONYMS.soy's own stated
+  // intent ("Oil is deliberately NOT added — soybean oil stays permitted"). The
+  // test was locking in the bug the source comment said was not wanted.
+  // Now enforced by WORD_GUARDS.soy / isRefinedSoyOilRow, which also spares
+  // composites whose only declared soy is the oil (potato chips, mayonnaise).
+  assert.equal(matchesExclusionTerm("Soybean oil", "soy"), false);
   // genuinely unrelated foods must not be dragged in by the new terms
   for (const n of ["Chicken breast", "White rice", "Broccoli", "Vegetable stock (yeast-based)"]) {
     // "vegetable" alone must not trigger via "textured vegetable protein"
