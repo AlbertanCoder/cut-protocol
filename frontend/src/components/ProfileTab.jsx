@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo, useCallback, useRef } from "react";
-import { Search, AlertTriangle, ShieldCheck, ChevronRight } from "lucide-react";
+import { Search, AlertTriangle, ShieldCheck, ChevronRight, Info } from "lucide-react";
 import { C } from "../lib/theme.js";
 import {
   displayWeight, parseWeight, displayHeight, parseHeight, displayRate,
@@ -17,6 +17,22 @@ import { WELLBEING_RESOURCES_NOTE } from "../lib/wellbeingResources.js";
 
 const r1 = (n) => Math.round(n * 10) / 10;
 const kc = (n) => Math.round(n).toLocaleString("en-CA");
+
+// A stored key shown to a person when the server's own label isn't available.
+// "desk-office" → "Desk office". Deliberately a generic transform and not a
+// second copy of the occupation/training vocabulary: /api/profile/meta is the
+// one source of those labels, and duplicating them here is how a list drifts.
+const humanizeKey = (key) => {
+  if (!key) return null;
+  const words = String(key).replace(/[-_]+/g, " ").trim();
+  return words ? words[0].toUpperCase() + words.slice(1) : null;
+};
+
+/** One message, under the input that caused it. Mirrors LoginScreen. */
+function FieldError({ children }) {
+  if (!children) return null;
+  return <div className="text-[11px] font-semibold mt-1" style={{ color: C.warn }}>{children}</div>;
+}
 
 // The user-facing home of every personal input. Engine reads these and only
 // shows the math. Commit-on-blur for typed fields, commit-on-change for
@@ -70,7 +86,16 @@ export default function ProfileTab({ profile, summary, refresh, openToday }) {
   const [occQuery, setOccQuery] = useState("");
   const [occOpen, setOccOpen] = useState(false);
   const [aiPrefsOpen, setAiPrefsOpen] = useState(false); // AI-recipe fields collapsed by default (de-clutter)
-  const [pendingAck, setPendingAck] = useState(null); // { patch, reasons }
+  const [pendingAck, setPendingAck] = useState(null); // { patch, reasons, ack }
+  // Per-input messages from the server. The PUT used to answer a bad edit with
+  // one semicolon-joined string of column names and enum unions
+  // ("heightCm must be a number between 100 and 250; goalWeightKg must be…"),
+  // rendered raw in a red box at the top of the page — developer output that
+  // escaped into the product. It now returns { field: sentence }.
+  const [fieldErrors, setFieldErrors] = useState({});
+  // The two refusals that are not field errors: an under-18 profile, and a
+  // goal weight below the app's floor. Both explain themselves.
+  const [gate, setGate] = useState(null); // { gate, error, detail[] }
 
   // Every failed commit REVERTS the on-screen drafts to server truth. A typed
   // value that didn't save must not keep sitting in the box looking saved
@@ -83,35 +108,61 @@ export default function ProfileTab({ profile, summary, refresh, openToday }) {
     });
   }, [draftFromProfile, profile]);
 
+  const clearFeedback = () => { setError(null); setFieldErrors({}); setGate(null); };
+
   const commit = async (patch) => {
-    setError(null);
+    clearFeedback();
     try {
       await api.putProfile(patch, { signal: abort.signal });
       await refresh();
     } catch (e) {
       if (isAbortError(e)) return;
-      if (e.status === 422 && e.body?.requiresAck) {
-        setPendingAck({ patch, reasons: e.body.reasons });
-      } else {
-        setError(describeError(e));
-        revertDrafts();
-      }
+      handleSaveError(e, patch);
     }
   };
-  const confirmAck = async () => {
-    const { patch } = pendingAck;
-    setPendingAck(null);
-    await commitWithAck(patch);
+
+  // Every way the server can refuse a profile edit, each in its own shape.
+  // Nothing here falls back to dumping a raw payload on screen.
+  const handleSaveError = (e, patch) => {
+    const b = e.body || {};
+    // A refusal that is about the PERSON, not about a badly-typed number:
+    // under 18, or a goal weight below the app's hard floor. Both come with
+    // their own reasoning, and neither is something to "try again".
+    if ((e.status === 403 && b.gate === "adult-only") || (e.status === 400 && b.gate === "goal-weight-floor")) {
+      setGate(b);
+      if (b.fields) setFieldErrors(b.fields);
+      revertDrafts();
+      return;
+    }
+    if (e.status === 422 && b.requiresAck) {
+      // `ack` names WHICH confirmation is being asked for — the aggressive
+      // rate and the low goal weight are different questions and both are 422.
+      setPendingAck({ patch, reasons: b.reasons || [b.error], ack: b.ack || "rate" });
+      return;
+    }
+    if (b.fields && Object.keys(b.fields).length) {
+      setFieldErrors(b.fields);
+      revertDrafts();
+      return;
+    }
+    setError(describeError(e));
+    revertDrafts();
   };
-  const commitWithAck = async (patch) => {
-    setError(null);
+
+  const confirmAck = async () => {
+    const { patch, ack } = pendingAck;
+    setPendingAck(null);
+    await commitWithAck(patch, ack);
+  };
+  const commitWithAck = async (patch, ack) => {
+    clearFeedback();
+    const flag = ack === "goalWeight" ? { goalWeightAcknowledged: true } : { rateAcknowledged: true };
     try {
-      await api.putProfile({ ...patch, rateAcknowledged: true }, { signal: abort.signal });
+      await api.putProfile({ ...patch, ...flag }, { signal: abort.signal });
       await refresh();
     } catch (e) {
       if (isAbortError(e)) return;
-      setError(describeError(e));
-      revertDrafts();
+      handleSaveError(e, patch);
     }
   };
 
@@ -309,20 +360,88 @@ export default function ProfileTab({ profile, summary, refresh, openToday }) {
     return meta.occupations.filter((o) => o.label.toLowerCase().includes(q) || o.group.includes(q));
   }, [meta, occQuery]);
   const currentOcc = meta?.occupations.find((o) => o.key === profile.occupationKey);
+  // A label a person recognises, never the stored key. The summary endpoint
+  // already carries the label the engine actually used, so it survives a
+  // failed /meta load — which is exactly when this is needed.
+  const savedOccupationLabel =
+    currentOcc?.label
+    || summary.energy?.jobLabel
+    || humanizeKey(profile.occupationKey)
+    || "not set";
 
   const inp = "text-sm px-3 py-2 rounded-xl w-full mt-1";
   const inpStyle = { background: C.card2, border: `1.5px solid ${C.rule}`, color: C.ink };
+  const badStyle = { ...inpStyle, border: `1.5px solid ${C.warn}` };
   const label = (t) => <span className="text-xs font-bold" style={{ color: C.faint }}>{t}</span>;
 
-  const goalDate = useMemo(() => {
-    const goalDisp = displayWeight(profile.goalWeightKg, "imperial");
-    const nowDisp = displayWeight(avg7Kg, "imperial");
-    const rate = profile.rateLbPerWeek;
-    if (!rate || nowDisp <= goalDisp) return null;
-    const days = ((nowDisp - goalDisp) / rate) * 7;
+  // ── COMMIT-ON-BLUR, WITHOUT THE SILENT REWRITE ────────────────────────
+  //
+  // THE BUG: imperial height round-trips lossily. 178 cm → cm2ftin → 5'10" →
+  // ftin2cm → 177.8 cm. 180 → 5'11" → 180.34. Both ft and in committed on
+  // blur unconditionally, so simply TABBING THROUGH the height fields — no
+  // keystroke, nothing changed on screen — rewrote the stored value. Worth up
+  // to ±1.27 cm, about 8 kcal on Mifflin, and it compounded every visit.
+  //
+  // THE FIX, and why it is here rather than in units.js: a blur is not an
+  // edit. The commit is now driven by the value in the USER'S OWN UNIT
+  // actually differing from what is stored. If the boxes still read 5 ft
+  // 10 in, the user has said nothing, and nothing is written. A genuine edit
+  // to 5'11" still writes 180.34 cm, which is correct — that IS what they
+  // said. units.js needs no change for this; see the report.
+  const commitHeight = () => {
+    if (pref === "metric") {
+      const shown = displayHeight(profile.heightCm, "metric");
+      if (+draft.height === shown) return;
+      commit({ heightCm: parseHeight(+draft.height, "metric") });
+      return;
+    }
+    const saved = cm2ftin(profile.heightCm);
+    const ft = Number(draft.heightFt) || 0;
+    const inches = Number(draft.heightIn) || 0;
+    if (ft === Number(saved.feet) && inches === Number(saved.inches)) return;
+    commit({ heightCm: ftin2cm(ft, inches) });
+  };
+
+  // Same lossy round-trip, same guard: displayWeight() rounds to 0.1, so
+  // blurring an untouched goal-weight box re-wrote the stored kg by up to
+  // 0.05 lb every time.
+  const commitGoalWeight = () => {
+    if (+draft.goal === displayWeight(profile.goalWeightKg, pref)) return;
+    commit({ goalWeightKg: parseWeight(+draft.goal, pref) });
+  };
+
+  // ── PROJECTED GOAL DATE ───────────────────────────────────────────────
+  //
+  // This used to divide by `profile.rateLbPerWeek` — the rate the user PICKED
+  // — and ignore the floor clamp entirely. So when the target was held at the
+  // floor (a fact this very card states eight lines above, "→ held at floor ·
+  // ~0.37 lb/wk actual"), the date underneath it was still computed at the
+  // 2.0 lb/wk that is not going to happen. The screen knew and said it anyway.
+  //
+  // Two fixes, both about honesty rather than arithmetic:
+  //   1. When the target is floored, re-derive from `achievableRate` — the
+  //      rate the floored target actually delivers — and say so.
+  //   2. Label the whole thing as a PLAN, not a measurement. TrendTab has this
+  //      right ("At current/planned pace"); this card claimed a projection off
+  //      a chosen number as though it were an observation. The trend line is
+  //      where the measured answer lives, and the copy now points there.
+  const goalProjection = useMemo(() => {
+    const goalLb = displayWeight(profile.goalWeightKg, "imperial");
+    const nowLb = displayWeight(avg7Kg, "imperial");
+    const planRate = profile.rateLbPerWeek;
+    const floored = !!summary.target?.floored;
+    const rate = floored ? summary.target?.achievableRate : planRate;
+    if (nowLb == null || goalLb == null || nowLb <= goalLb) return { date: null, floored, rate, planRate, reason: "at-or-past-goal" };
+    // A floored target can deliver ~0 deficit. Dividing by that is an infinity
+    // dressed up as a date.
+    if (!rate || rate <= 0) return { date: null, floored, rate, planRate, reason: "no-deficit" };
+    const days = ((nowLb - goalLb) / rate) * 7;
     const d = new Date(Date.now() + days * 864e5);
-    return d.toLocaleDateString("en-CA", { year: "numeric", month: "short", day: "numeric" });
-  }, [profile.goalWeightKg, profile.rateLbPerWeek, avg7Kg]);
+    return {
+      date: d.toLocaleDateString("en-CA", { year: "numeric", month: "short", day: "numeric" }),
+      floored, rate, planRate, reason: null,
+    };
+  }, [profile.goalWeightKg, profile.rateLbPerWeek, avg7Kg, summary.target]);
 
   return (
     <div>
@@ -348,17 +467,41 @@ export default function ProfileTab({ profile, summary, refresh, openToday }) {
         </div>
       )}
 
+      {/* A refusal about the person rather than the typing: under 18, or a goal
+          weight below the floor. Neutral surface, not red — this is not a
+          crash and not a judgment (colour law b), and there is nothing to
+          retry. It explains its reasoning; it does not just block. */}
+      {gate && (
+        <div role="alert" className="mb-4 p-5 rounded-2xl" style={{ background: C.card, border: `1px solid ${C.faintLight}` }}>
+          <div className="flex items-start gap-3">
+            <Info size={20} style={{ color: C.faint }} className="mt-0.5 shrink-0" aria-hidden="true" />
+            <div className="min-w-0 flex-1">
+              <div className="text-sm font-extrabold" style={{ color: C.ink }}>{gate.error}</div>
+              {(gate.detail || []).map((p, i) => (
+                <p key={i} className="text-xs font-semibold leading-relaxed mt-2" style={{ color: C.faint }}>{p}</p>
+              ))}
+              {gate.whatNow && <p className="text-xs font-bold mt-3" style={{ color: C.ink }}>{gate.whatNow}</p>}
+              <div className="mt-3">
+                <Btn small kind="ghost" onClick={() => setGate(null)}>Got it</Btn>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {pendingAck && (
-        // role="alert": this is the safety-rail gate on an aggressive rate —
-        // it must reach a screen reader immediately, not wait for the user
-        // to stumble onto it.
+        // role="alert": this is a safety rail — an aggressive rate, or a goal
+        // weight under the population range. It must reach a screen reader
+        // immediately, not wait for the user to stumble onto it.
         <div role="alert" className="mb-4 p-4 rounded-2xl" style={{ background: C.warnBg, border: `1px solid ${C.warn}66` }}>
           <div className="flex items-start gap-2.5">
             <AlertTriangle size={18} style={{ color: C.warn }} className="mt-0.5 shrink-0" aria-hidden="true" />
             <div className="flex-1">
-              <div className="text-sm font-extrabold mb-1" style={{ color: C.warn }}>This rate needs an explicit OK</div>
+              <div className="text-sm font-extrabold mb-1" style={{ color: C.warn }}>
+                {pendingAck.ack === "goalWeight" ? "That goal weight needs an explicit OK" : "This rate needs an explicit OK"}
+              </div>
               {pendingAck.reasons.map((r, i) => (
-                <div key={i} className="text-xs font-semibold mb-0.5" style={{ color: C.ink }}>· {r}</div>
+                <div key={i} className="text-xs font-semibold mb-1 leading-relaxed" style={{ color: C.ink }}>· {r}</div>
               ))}
               <div className="flex gap-2 mt-2.5">
                 <Btn small onClick={confirmAck}>I understand — apply anyway</Btn>
@@ -395,37 +538,49 @@ export default function ProfileTab({ profile, summary, refresh, openToday }) {
               </select>
             </label>
             <label className="block">{label("Age")}
-              <input type="number" value={draft.age}
+              <input type="number" value={draft.age} aria-invalid={!!fieldErrors.age}
                 onChange={(e) => setDraft((d) => ({ ...d, age: +e.target.value || 0 }))}
                 onBlur={() => commit({ age: draft.age })}
-                className={inp} style={inpStyle} />
+                className={inp} style={fieldErrors.age ? badStyle : inpStyle} />
+              <FieldError>{fieldErrors.age}</FieldError>
             </label>
             {pref === "metric" ? (
               <label className="block">{label("Height (cm)")}
-                <input type="number" value={draft.height}
+                <input type="number" value={draft.height} aria-invalid={!!fieldErrors.heightCm}
                   onChange={(e) => setDraft((d) => ({ ...d, height: +e.target.value || 0 }))}
-                  onBlur={() => commit({ heightCm: parseHeight(draft.height, pref) })}
-                  className={inp} style={inpStyle} />
+                  onBlur={commitHeight}
+                  className={inp} style={fieldErrors.heightCm ? badStyle : inpStyle} />
+                <FieldError>{fieldErrors.heightCm}</FieldError>
               </label>
             ) : (
-              <div className="block">{label("Height (ft / in)")}
+              // a11y: this was a <div className="block"> wrapping the caption,
+              // so NEITHER the feet box nor the inches box was associated with
+              // the visible "Height (ft / in)" label. One caption over two
+              // inputs is what fieldset/legend is for; the per-input
+              // aria-labels stay for the individual boxes.
+              <fieldset className="block border-0 p-0 m-0 min-w-0">
+                <legend className="p-0">{label("Height (ft / in)")}</legend>
                 <div className="flex gap-2 mt-1">
                   <input type="number" aria-label="Height feet" value={draft.heightFt} min="0" max="8"
+                    aria-invalid={!!fieldErrors.heightCm}
                     onChange={(e) => setDraft((d) => ({ ...d, heightFt: e.target.value }))}
-                    onBlur={() => commit({ heightCm: ftin2cm(draft.heightFt, draft.heightIn) })}
-                    className="text-sm px-3 py-2.5 rounded-xl w-full" style={inpStyle} placeholder="ft" />
+                    onBlur={commitHeight}
+                    className="text-sm px-3 py-2.5 rounded-xl w-full" style={fieldErrors.heightCm ? badStyle : inpStyle} placeholder="ft" />
                   <input type="number" aria-label="Height inches" value={draft.heightIn} min="0" max="11"
+                    aria-invalid={!!fieldErrors.heightCm}
                     onChange={(e) => setDraft((d) => ({ ...d, heightIn: e.target.value }))}
-                    onBlur={() => commit({ heightCm: ftin2cm(draft.heightFt, draft.heightIn) })}
-                    className="text-sm px-3 py-2.5 rounded-xl w-full" style={inpStyle} placeholder="in" />
+                    onBlur={commitHeight}
+                    className="text-sm px-3 py-2.5 rounded-xl w-full" style={fieldErrors.heightCm ? badStyle : inpStyle} placeholder="in" />
                 </div>
-              </div>
+                <FieldError>{fieldErrors.heightCm}</FieldError>
+              </fieldset>
             )}
             <label className="block">{label("Body fat % (optional)")}
-              <input type="number" placeholder="unknown" value={draft.bf}
+              <input type="number" placeholder="unknown" value={draft.bf} aria-invalid={!!fieldErrors.bodyFatPct}
                 onChange={(e) => setDraft((d) => ({ ...d, bf: e.target.value }))}
                 onBlur={() => commit({ bodyFatPct: draft.bf === "" ? 0 : +draft.bf })}
-                className={inp} style={inpStyle} />
+                className={inp} style={fieldErrors.bodyFatPct ? badStyle : inpStyle} />
+              <FieldError>{fieldErrors.bodyFatPct}</FieldError>
               <button type="button" onClick={() => setBfPickerOpen(true)}
                 className="text-[11px] font-bold underline mt-1" style={{ color: C.faint }}>
                 Estimate visually
@@ -444,10 +599,11 @@ export default function ProfileTab({ profile, summary, refresh, openToday }) {
               )}
             </label>
             <label className="block">{label(`Goal weight (${weightUnit(pref)})`)}
-              <input type="number" value={draft.goal}
+              <input type="number" value={draft.goal} aria-invalid={!!fieldErrors.goalWeightKg}
                 onChange={(e) => setDraft((d) => ({ ...d, goal: +e.target.value || 0 }))}
-                onBlur={() => commit({ goalWeightKg: parseWeight(draft.goal, pref) })}
-                className={inp} style={inpStyle} />
+                onBlur={commitGoalWeight}
+                className={inp} style={fieldErrors.goalWeightKg ? badStyle : inpStyle} />
+              <FieldError>{fieldErrors.goalWeightKg}</FieldError>
             </label>
           </div>
           <div className="text-xs font-semibold mt-3" style={{ color: C.faint }}>
@@ -495,36 +651,50 @@ export default function ProfileTab({ profile, summary, refresh, openToday }) {
             </div>
           )}
           {metaError && (
+            // `profile.occupationKey` is a database key. Printed straight out
+            // it read "your saved occupation (desk-office)" — the app showing
+            // a person its own internals. The summary endpoint already carries
+            // the real label the engine used (energy.jobLabel), so that is what
+            // is shown; humanizeKey is only the last resort.
             <div className="text-[10.5px] font-bold mt-1.5" style={{ color: C.warn }}>
-              Occupation list unavailable — your saved occupation ({profile.occupationKey || "unset"}) is unchanged. Use the multiplier override below if you need to adjust now.
+              Occupation list unavailable — your saved occupation ({savedOccupationLabel}) is unchanged. Use the multiplier override below if you need to adjust now.
             </div>
           )}
           <div className="grid grid-cols-2 gap-3 mt-3">
             <label className="block">{label("Multiplier override")}
               <input type="number" step="0.05" placeholder={currentOcc ? `auto ×${currentOcc.multiplier}` : "e.g. 1.4"}
-                value={draft.override}
+                value={draft.override} aria-invalid={!!fieldErrors.activityOverride}
                 onChange={(e) => setDraft((d) => ({ ...d, override: e.target.value }))}
                 onBlur={() => commit({ activityOverride: draft.override === "" ? null : +draft.override })}
-                className={inp} style={inpStyle} />
+                className={inp} style={fieldErrors.activityOverride ? badStyle : inpStyle} />
+              <FieldError>{fieldErrors.activityOverride}</FieldError>
             </label>
             <label className="block">{label("Training style")}
               {/* Fallback option = the saved value, so a failed meta load shows
-                  the truth instead of an empty (apparently unset) select. */}
+                  the truth instead of an empty (apparently unset) select. It is
+                  humanized rather than printed raw — the option used to render
+                  the stored key verbatim ("mixed", "very-heavy"), which is the
+                  same "app shows you its own column values" problem as the
+                  occupation line above. */}
               <select value={profile.trainingStyle} disabled={!meta} onChange={(e) => commit({ trainingStyle: e.target.value })} className={inp} style={inpStyle}>
-                {(meta?.trainingStyles || [{ key: profile.trainingStyle, label: profile.trainingStyle }]).map((t) => <option key={t.key} value={t.key}>{t.label}</option>)}
+                {(meta?.trainingStyles || [{ key: profile.trainingStyle, label: humanizeKey(profile.trainingStyle) || "Your saved style" }])
+                  .map((t) => <option key={t.key} value={t.key}>{t.label}</option>)}
               </select>
+              <FieldError>{fieldErrors.trainingStyle}</FieldError>
             </label>
             <label className="block">{label("Sessions / week")}
-              <input type="number" min={0} max={14} value={draft.sessions}
+              <input type="number" min={0} max={14} value={draft.sessions} aria-invalid={!!fieldErrors.sessionsPerWeek}
                 onChange={(e) => setDraft((d) => ({ ...d, sessions: +e.target.value || 0 }))}
                 onBlur={() => commit({ sessionsPerWeek: draft.sessions })}
-                className={inp} style={inpStyle} />
+                className={inp} style={fieldErrors.sessionsPerWeek ? badStyle : inpStyle} />
+              <FieldError>{fieldErrors.sessionsPerWeek}</FieldError>
             </label>
             <label className="block">{label("Minutes / session")}
-              <input type="number" min={0} max={300} value={draft.minutes}
+              <input type="number" min={0} max={300} value={draft.minutes} aria-invalid={!!fieldErrors.minutesPerSession}
                 onChange={(e) => setDraft((d) => ({ ...d, minutes: +e.target.value || 0 }))}
                 onBlur={() => commit({ minutesPerSession: draft.minutes })}
-                className={inp} style={inpStyle} />
+                className={inp} style={fieldErrors.minutesPerSession ? badStyle : inpStyle} />
+              <FieldError>{fieldErrors.minutesPerSession}</FieldError>
             </label>
           </div>
           <div className="text-xs font-semibold mt-3" style={{ color: C.faint }}>
@@ -630,6 +800,7 @@ export default function ProfileTab({ profile, summary, refresh, openToday }) {
                 <option key={s} value={s}>{s === "none" ? "None (no restriction)" : s[0].toUpperCase() + s.slice(1)}</option>
               ))}
             </select>
+            <FieldError>{fieldErrors.dietaryStyle}</FieldError>
           </label>
 
           {/* AI-recipe fields are optional — collapsed by default so they stop
@@ -700,22 +871,55 @@ export default function ProfileTab({ profile, summary, refresh, openToday }) {
               </div>
             </div>
             <div>
-              <div className="text-xs font-semibold" style={{ color: C.faint }}>Projected goal date</div>
-              <div className="text-lg font-extrabold" style={{ color: C.ink }}>{goalDate || "—"}</div>
-              <div className="text-[10.5px] font-semibold mt-0.5" style={{ color: C.faint }}>at {displayRate(profile.rateLbPerWeek, pref)} {rateUnit(pref)} from your current average</div>
+              {/* "If the plan holds", not "projected" — this is arithmetic on a
+                  rate you CHOSE, not a reading of what your weight is doing.
+                  The measured answer lives on the Trend tab and the copy says
+                  so. When the target is floored the date is re-derived from the
+                  rate that floor actually delivers; the old version divided by
+                  the picked rate and produced a date the card itself, eight
+                  lines above, had already contradicted. */}
+              <div className="text-xs font-semibold" style={{ color: C.faint }}>Goal date, if the plan holds</div>
+              <div className="text-lg font-extrabold" style={{ color: C.ink }}>{goalProjection.date || "—"}</div>
+              <div className="text-[10.5px] font-semibold mt-0.5" style={{ color: goalProjection.floored ? C.warn : C.faint }}>
+                {goalProjection.reason === "at-or-past-goal"
+                  ? "You're at or past your goal weight — nothing to project."
+                  : goalProjection.reason === "no-deficit"
+                    ? "Your target is held at the floor and isn't producing a deficit, so there's no date to give. Going faster means adding movement, not eating less."
+                    : goalProjection.floored
+                      ? `Re-figured at the ${displayRate(goalProjection.rate, pref)} ${rateUnit(pref)} your floored target actually delivers — not the ${displayRate(goalProjection.planRate, pref)} you picked.`
+                      : `A plan, not a measurement: ${displayRate(goalProjection.rate, pref)} ${rateUnit(pref)} from your current average, assuming it holds. Trend shows the pace you're actually on.`}
+              </div>
             </div>
             <label className="block">{label(`Personal floor (kcal, min ${meta?.safeFloor?.[profile.sex] ?? 1500})`)}
               <input type="number" placeholder={`default ${meta?.safeFloor?.[profile.sex] ?? 1500}`} value={draft.floor}
+                aria-invalid={!!fieldErrors.floorKcal}
                 onChange={(e) => setDraft((d) => ({ ...d, floor: e.target.value }))}
                 onBlur={() => commit({ floorKcal: draft.floor === "" ? null : +draft.floor })}
-                className={inp} style={inpStyle} />
+                className={inp} style={fieldErrors.floorKcal ? badStyle : inpStyle} />
+              <FieldError>{fieldErrors.floorKcal}</FieldError>
             </label>
-            <div className="flex items-center gap-2 pb-1.5">
+            <div className="pb-1.5">
+              {/* NOT a clinical clearance. The old green "Within safety rails"
+                  shield read as one — and WellbeingCheck says the opposite in
+                  as many words ("conservative defaults, not a statement that
+                  any intake is safe for you"). It also spent the accent on
+                  something that is not on-target / primary-action / success
+                  (colour law a). It now says exactly what it knows: the
+                  numbers are inside the limits THIS APP ships with. */}
               {summary.rateSafety?.unsafe ? (
-                <><AlertTriangle size={16} style={{ color: C.warn }} aria-hidden="true" /><span className="text-xs font-bold" style={{ color: C.warn }}>Aggressive — acknowledged</span></>
+                <div className="flex items-center gap-2">
+                  <AlertTriangle size={16} style={{ color: C.warn }} aria-hidden="true" />
+                  <span className="text-xs font-bold" style={{ color: C.warn }}>Aggressive — acknowledged</span>
+                </div>
               ) : (
-                <><ShieldCheck size={16} style={{ color: C.good }} aria-hidden="true" /><span className="text-xs font-bold" style={{ color: C.good }}>Within safety rails</span></>
+                <div className="flex items-center gap-2">
+                  <ShieldCheck size={16} style={{ color: C.faint }} aria-hidden="true" />
+                  <span className="text-xs font-bold" style={{ color: C.ink }}>Inside this app&apos;s default limits</span>
+                </div>
               )}
+              <div className="text-[10.5px] font-semibold mt-1" style={{ color: C.faintLight }}>
+                Conservative defaults — not a statement that this intake is safe for you.
+              </div>
             </div>
           </div>
           <div className="text-xs font-semibold mt-3" style={{ color: C.faint }}>
