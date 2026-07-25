@@ -12,6 +12,24 @@ const path = require("path");
 const express = require("express");
 const cookieParser = require("cookie-parser");
 
+// ── logging seam ────────────────────────────────────────────────────────────
+// Every boot-time diagnostic in this file goes through `log`, never through
+// `console` directly. In a packaged Windows GUI build there IS no console, so a
+// console-only line about a failed schema migration or a failed data audit is a
+// guardrail that reports to nobody. electron/logger.cjs already writes to a file
+// in the user's data dir and mirrors to stdout; the Electron main process can
+// point this at it with ONE assignment before requiring this file:
+//
+//   require("./backend/server.js").setLogger((level, ...args) => log.write("backend", args.join(" ")));
+//
+// Default is console, so `node server.js` and the tests are unchanged.
+let logSink = (level, ...args) => (console[level] || console.log)(...args);
+const log = {
+  info: (...a) => logSink("log", ...a),
+  warn: (...a) => logSink("warn", ...a),
+  error: (...a) => logSink("error", ...a),
+};
+
 const authRoutes = require("./src/routes/auth.js");
 const profileRoutes = require("./src/routes/profile.js");
 const weighinRoutes = require("./src/routes/weighins.js");
@@ -26,6 +44,15 @@ const brainRoutes = require("./src/routes/brain.js");
 const micronutrientRoutes = require("./src/routes/micronutrients.js");
 
 const app = express();
+
+// A full data export is megabytes of JSON, and POST /api/import takes that same
+// document back. The global express.json() below caps bodies at body-parser's
+// 100 kB default, which would 413 every real restore before the route ever saw
+// it. Mounted FIRST and PATH-SCOPED: body-parser marks `req._body` once it has
+// parsed, so the global parser skips this request, and no other route's size
+// limit changes.
+app.use("/api/import", express.json({ limit: "64mb" }));
+
 app.use(express.json());
 app.use(cookieParser());
 
@@ -36,9 +63,39 @@ app.use(cookieParser());
 // On failure the data is untouched and every request says exactly where the
 // backup and the error log are, instead of a generic 500.
 const schemaReady = ensureSchemaCurrent();
-schemaReady.catch((e) => console.error("[desktopBootstrap]", e.message));
+schemaReady.catch((e) => log.error("[desktopBootstrap]", e.message));
+
+// M2 (cont.): once the schema is current, bring the SHIPPED FOOD/RECIPE LIBRARY
+// current too. Migrations move the schema; they do not move data, so an install
+// created before the 14,122-food import stays frozen at whatever library it was
+// packaged with and can never receive a data fix — the owner's own copy sat at
+// 973 foods. src/lib/librarySync.js closes that; it no-ops in dev (no
+// CUT_PROTOCOL_DB_PATH) and on an already-current library, backs up first, and
+// never overwrites user-owned rows.
+//
+// Guarded by an existence check because this file and librarySync.js can land
+// independently: if the module is not present, the app boots exactly as before
+// rather than crashing on a require that isn't there yet.
+const LIBRARY_SYNC_PATH = path.join(__dirname, "src", "lib", "librarySync.js");
+const bootReady = schemaReady.then(async () => {
+  // An explicit file check, NOT a try/catch around require: catching
+  // MODULE_NOT_FOUND would also swallow a missing dependency INSIDE
+  // librarySync.js and silently skip a sync that was supposed to run. This asks
+  // the one question it means to ask — is the module here yet?
+  if (!require("node:fs").existsSync(LIBRARY_SYNC_PATH)) return;
+  const { ensureLibraryCurrent } = require(LIBRARY_SYNC_PATH);
+  try {
+    await ensureLibraryCurrent();
+  } catch (e) {
+    // A library that could not be refreshed is a stale library, not a broken
+    // one. Boot on what is already there and say so; never block the app.
+    log.error("[librarySync] library update failed, booting on the existing library:", e.message);
+  }
+});
+bootReady.catch(() => { /* handled above; the /api gate reports the schema half */ });
+
 app.use("/api", (req, res, next) => {
-  schemaReady.then(
+  bootReady.then(
     () => next(),
     (e) => res.status(500).json({ error: `Database schema update failed: ${e.message}. Your data was not modified.` })
   );
@@ -56,6 +113,10 @@ app.use("/api/training", trainingRoutes);
 app.use("/api/diary", diaryRoutes);
 app.use("/api/brain", brainRoutes); // Stage D2: guarded chat surface (gated; inert with BRAIN=off)
 app.use("/api/micronutrients", micronutrientRoutes);
+// GET /api/export + POST /api/import. Mounted at /api (the router declares both
+// full paths itself and attaches requireAuth per route), so an unmatched /api
+// path still falls through to the JSON 404 below.
+app.use("/api", require("./src/routes/export.js"));
 
 // ── Identity handshake (resilience-errors-2) ────────────────────────────────
 // The desktop shell picks a port, then loads a URL. If ANOTHER process holds
@@ -105,7 +166,7 @@ app.use((err, req, res, next) => {
   if (res.headersSent) return next(err);
   const prismaStatus = { P2002: 409, P2025: 404, P2021: 500, P2022: 500 }[err.code];
   const status = err.status || prismaStatus || 500;
-  if (status >= 500) console.error(`[error] ${req.method} ${req.path}:`, err.message);
+  if (status >= 500) log.error(`[error] ${req.method} ${req.path}:`, err.message);
   res.status(status).json({ error: status < 500 ? err.message : "something went wrong on our end" });
 });
 
@@ -126,35 +187,54 @@ const PORT = process.env.PORT || 3001;
 // which is the only place a non-loopback bind is legitimate.
 const HOST = process.env.HOST || "127.0.0.1";
 
+// ── Phase 2 guardrail, without the per-launch bill ──────────────────────────
+// Bad food/recipe data must never come back silently, so the library is still
+// audited and the verdict is still said out loud. What changed is WHEN.
+//
+// Measured on the live 14,122-food library, as this ran before: 973 ms wall,
+// 155 ms of contiguous event-loop block, RSS 65 -> 320 MB with ~220 MB never
+// returned to the OS, re-paid IN FULL on the second boot (913 ms — there was no
+// cache). It fired inside the listen() callback, which is exactly when the
+// renderer requests /me, /profile and /summary, so it taxed first paint by up to
+// ~155 ms and then tripled backend RSS for the life of the process. Its entire
+// output was a console.log that a packaged Windows GUI app cannot display, and
+// it printed "ATTENTION NEEDED" on every single launch because of one known
+// placeholder food.
+//
+// Now: the audit runs only when the LIBRARY FINGERPRINT MOVED (see
+// dataQualityAudit.auditIfLibraryChanged — a boot on an unchanged library costs
+// five aggregate queries), it is deferred past first paint, its own queries no
+// longer select the columns it never reads, and the banner distinguishes a
+// placeholder from a defect. Set CUT_PROTOCOL_AUDIT=1 to force a full re-run,
+// or CUT_PROTOCOL_AUDIT=off to skip it entirely.
+const AUDIT_DELAY_MS = Number(process.env.CUT_PROTOCOL_AUDIT_DELAY_MS) || 4000;
+
+function scheduleDataQualityAudit() {
+  const mode = String(process.env.CUT_PROTOCOL_AUDIT || "").toLowerCase();
+  if (mode === "off" || mode === "0") {
+    log.info("[data-audit] skipped (CUT_PROTOCOL_AUDIT=off)");
+    return null;
+  }
+  // unref() so a short-lived process (a test, a script that requires this file)
+  // is never held open by a pending audit.
+  const timer = setTimeout(() => {
+    const { auditIfLibraryChanged, formatAuditSummary } = require("./src/lib/dataQualityAudit.js");
+    auditIfLibraryChanged({ force: mode === "1" || mode === "always" })
+      .then(({ summary, source }) => log.info(formatAuditSummary(summary, source)))
+      // Was console-only, which meant this Phase-2 guardrail could be silently
+      // dead in a packaged build — the one place it matters most. It goes
+      // through the replaceable sink now, so the Electron logger picks it up.
+      .catch((e) => log.error("[data-audit] failed to run — the food/recipe guardrail did NOT report this boot:", e.message));
+  }, AUDIT_DELAY_MS);
+  if (typeof timer.unref === "function") timer.unref();
+  return timer;
+}
+
 let server = null;
 if (!process.env.QC_NO_LISTEN) {
   server = app.listen(PORT, HOST, () => {
-  console.log(`Cut Protocol backend listening on ${HOST}:${PORT}`);
-  // Phase 2 guardrail: bad food/recipe data can never come back silently â€”
-  // every boot re-audits the library and says so out loud.
-  const { runDataQualityAudit } = require("./src/lib/dataQualityAudit.js");
-  runDataQualityAudit()
-    .then((s) => {
-      const status = s.empty ? "EMPTY — database may not have initialized" : s.clean ? "CLEAN" : "ATTENTION NEEDED";
-      console.log(`[data-audit] ${status} â€” foods ${s.foods} (${s.foodFailures.length} failing), recipes ${s.recipes} (${s.recipeFailures.length} failing), duplicate groups ${s.duplicateGroups}`);
-      // Data-quality + provenance breakdown: which trust tier every food sits
-      // in, and how each was validated. `unvalidated` is the honest count of
-      // rows predating the USDA import pipeline — visible, never rounded away.
-      const q = s.quality;
-      console.log(`[data-audit]   quality: ${q.pass} pass, ${q.exception} documented exception, ${q.warn} warn, ${q.unvalidated} not yet validated`);
-      console.log(`[data-audit]   provenance: ${Object.entries(s.bySource).map(([k, v]) => `${k} ${v}`).join(", ")}`);
-      if (s.placeholders.length) {
-        console.log(`[data-audit]   ${s.placeholders.length} placeholder row(s) awaiting real data (no number invented): ${s.placeholders.map((p) => p.name).join(", ")}`);
-      }
-      if (s.duplicateFdcIdGroups) {
-        console.log(`[data-audit]   ${s.duplicateFdcIdGroups} fdcId(s) claimed by more than one row — run: node scripts/auditFoodProvenance.mjs`);
-      }
-      if (!s.clean) {
-        for (const f of s.foodFailures.slice(0, 10)) console.log(`[data-audit]   food "${f.name}": ${f.issues.join(", ")}`);
-        for (const r of s.recipeFailures.slice(0, 10)) console.log(`[data-audit]   recipe "${r.name}": ${r.issues.join(", ")}`);
-      }
-    })
-    .catch((e) => console.error("[data-audit] failed to run:", e.message));
+    log.info(`Cut Protocol backend listening on ${HOST}:${PORT}`);
+    scheduleDataQualityAudit();
   });
 
   // resilience-errors-2: a bind failure used to be an UNCAUGHT 'error' event
@@ -167,9 +247,9 @@ if (!process.env.QC_NO_LISTEN) {
   server.on("error", (err) => {
     module.exports.listenError = err;
     if (err && err.code === "EADDRINUSE") {
-      console.error(`[server] port ${PORT} on ${HOST} is already in use — refusing to start a second listener.`);
+      log.error(`[server] port ${PORT} on ${HOST} is already in use — refusing to start a second listener.`);
     } else {
-      console.error("[server] listen failed:", err && err.message);
+      log.error("[server] listen failed:", err && err.message);
     }
   });
 }
@@ -183,3 +263,13 @@ module.exports.server = server;       // null when QC_NO_LISTEN is set
 module.exports.listenError = null;    // set by the 'error' handler above
 module.exports.host = HOST;
 module.exports.port = Number(PORT);
+/**
+ * Replace the destination of this file's boot diagnostics.
+ * `sink(level, ...args)` where level is "log" | "warn" | "error".
+ * Call it BEFORE requiring/booting if you want the listen line too.
+ * Passing nothing restores console.
+ */
+module.exports.setLogger = (sink) => {
+  logSink = typeof sink === "function" ? sink : (level, ...args) => (console[level] || console.log)(...args);
+};
+module.exports.scheduleDataQualityAudit = scheduleDataQualityAudit;

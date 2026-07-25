@@ -21,7 +21,18 @@ const isDateStr = (d) => typeof d === "string" && /^\d{4}-\d{2}-\d{2}$/.test(d) 
 
 // GET /api/micronutrients/today?date=YYYY-MM-DD (defaults to today)
 // -> { date, hasPlan, totalGrams, portionCount, wholeFoodsWithMicros,
-//      wholeFoodsWithoutMicros, coverage:{...}, nutrients:{...} }
+//      wholeFoodsWithoutMicros, distinctFoods, distinctFoodsWithMicros,
+//      distinctFoodsWithoutMicros, coverage:{...}, nutrients:{...} }
+//
+// NAMING WARNING (kept honest rather than quietly renamed): aggregatePortions'
+// `wholeFoodsWithMicros` / `wholeFoodsWithoutMicros` count PORTIONS, not
+// distinct foods — chicken appearing in lunch and dinner is 2, not 1 (see
+// microAggregation.js:90-91). The UI wanted to say "N of M distinct foods",
+// which those numbers cannot support: with repeated ingredients M is inflated
+// and the sentence is simply false. The portion counts stay in the response
+// under their existing names (they are real, and callers may depend on them);
+// the DISTINCT counts below are computed here, where the deduplicated foodId
+// set already exists, so no shared aggregation math had to change.
 router.get("/today", async (req, res) => {
   const date = typeof req.query.date === "string" && req.query.date ? req.query.date : todayStr();
   if (!isDateStr(date)) return res.status(400).json({ error: "date must be yyyy-mm-dd" });
@@ -45,13 +56,31 @@ router.get("/today", async (req, res) => {
   const portions = todaySlots.flatMap((s) => portionsFromPlanSlotIngredients(s.ingredients, foodsById));
   const result = aggregatePortions(portions);
 
+  // Distinct-food coverage. `foodIds` is already deduplicated above, so this
+  // counts each food ONCE however many slots use it. An id with no matching
+  // Food row (a stale foodId) counts as "without micros" — it is genuinely a
+  // food we hold no micronutrient data for, which is exactly what the number
+  // is meant to convey. Ingredients carrying no foodId at all are not distinct
+  // foods we can name, so they are excluded here and remain visible through
+  // portionCount / totalGrams instead.
+  let distinctFoodsWithMicros = 0;
+  for (const id of foodIds) {
+    const food = foodsById.get(id);
+    if (food && food.micros && typeof food.micros === "object") distinctFoodsWithMicros += 1;
+  }
+
   res.json({
     date,
     hasPlan: todaySlots.length > 0,
     totalGrams: result.totalGrams,
     portionCount: result.portionCount,
+    // Portion-level counts (see the naming warning above) — unchanged.
     wholeFoodsWithMicros: result.wholeFoodsWithMicros,
     wholeFoodsWithoutMicros: result.wholeFoodsWithoutMicros,
+    // Distinct-food counts — what "N of M foods" actually means.
+    distinctFoods: foodIds.length,
+    distinctFoodsWithMicros,
+    distinctFoodsWithoutMicros: foodIds.length - distinctFoodsWithMicros,
     coverage: summarizeCoverage(result),
     nutrients: result.nutrients,
   });
