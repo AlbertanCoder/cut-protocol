@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo, useCallback, useRef } from "react";
-import { Search, AlertTriangle, ShieldCheck, ExternalLink, ChevronRight } from "lucide-react";
+import { Search, AlertTriangle, ShieldCheck, ChevronRight } from "lucide-react";
 import { C } from "../lib/theme.js";
 import {
   displayWeight, parseWeight, displayHeight, parseHeight, displayRate,
@@ -12,6 +12,8 @@ import { fetchAllergenTaxonomy, fetchExclusionDescriptions, normTerm } from "./u
 import { api, isAbortError, isNoAnswer, describeError } from "../lib/api.js";
 import { useAbortSignal } from "../lib/useAbortable.js";
 import BodyFatPicker from "./BodyFatPicker.jsx";
+import ResourceList from "./ui/ResourceList.jsx";
+import { WELLBEING_RESOURCES_NOTE } from "../lib/wellbeingResources.js";
 
 const r1 = (n) => Math.round(n * 10) / 10;
 const kc = (n) => Math.round(n).toLocaleString("en-CA");
@@ -720,18 +722,12 @@ export default function ProfileTab({ profile, summary, refresh }) {
             Neutral tone: not a warning, not framed around this app, no red/
             amber judgment color. */}
         <Card section="RESOURCES" title="Outside help, if you ever want it" className="xl:col-span-12">
-          <div className="text-xs font-semibold" style={{ color: C.faint }}>
-            NEDA (the National Eating Disorders Association) runs a free, anonymous online screening — a few minutes, entirely optional, opens in your browser. This app doesn't know whether you click it or what you answer.
-          </div>
-          <a
-            href="https://www.nationaleatingdisorders.org/screening-tool/"
-            target="_blank" rel="noopener noreferrer"
-            className="text-xs font-bold inline-flex items-center gap-1.5 mt-2.5 hover:opacity-80"
-            style={{ color: C.ink }}
-          >
-            Take NEDA's free screening <ExternalLink size={12} aria-hidden="true" />
-            <span className="sr-only">(opens in a new browser window)</span>
-          </a>
+          <p className="text-xs font-semibold mb-1" style={{ color: C.faint }}>
+            If food, eating, or your body ever feels hard, these are free, confidential Alberta &amp; Canada
+            services — entirely optional. You can also run the private Wellbeing check any time from the sidebar.
+          </p>
+          <p className="text-[11px] mb-3" style={{ color: C.faintLight }}>{WELLBEING_RESOURCES_NOTE}</p>
+          <ResourceList />
         </Card>
       </div>
     </div>

@@ -1,8 +1,9 @@
 import { useState, useRef, useId } from "react";
-import { X, Heart, Phone, ExternalLink } from "lucide-react";
+import { X, Heart } from "lucide-react";
 import { C } from "../lib/theme.js";
 import { useFocusTrap } from "../lib/useFocusTrap.js";
-import { openExternal } from "../lib/bugReport.js";
+import ResourceList from "./ui/ResourceList.jsx";
+import { WELLBEING_RESOURCES_NOTE } from "../lib/wellbeingResources.js";
 
 // Wellbeing check — an OPTIONAL, non-diagnostic eating-disorder self-screen
 // (SCOFF) plus the health/legal disclaimer and support resources. Calorie and
@@ -24,15 +25,9 @@ const SCOFF = [
   { id: "food", q: "Would you say that Food dominates your life?" },
 ];
 
-// Alberta / Canada support resources (as of 2026-07). Phone numbers are shown
-// as plain, dialable text; the web links open in the user's browser.
-const RESOURCES = [
-  { name: "NEDIC — National Eating Disorder Information Centre", detail: "Helpline & live chat, 9–9 ET weekdays", phone: "1-866-633-4220", url: "https://nedic.ca" },
-  { name: "Eating Disorder Support Network of Alberta (EDSNA)", detail: "Peer support, referrals, resources", url: "https://edsna.ca" },
-  { name: "Alberta Mental Health Help Line", detail: "24/7, confidential", phone: "1-877-303-2642" },
-  { name: "Health Link Alberta", detail: "Health advice & navigation, 24/7", phone: "811" },
-  { name: "988 Suicide Crisis Helpline", detail: "Call or text, 24/7, if you are in crisis", phone: "988" },
-];
+// Support resources moved to lib/wellbeingResources.js (single source of truth,
+// shared with the Profile "Outside help" card) so a verified number can never
+// drift between the two places it's shown.
 
 export default function WellbeingCheck({ open, onClose }) {
   const [answers, setAnswers] = useState({});
@@ -134,29 +129,12 @@ export default function WellbeingCheck({ open, onClose }) {
           </div>
         )}
 
-        {/* Resources — always visible, not gated behind a positive result. */}
+        {/* Resources — always visible, not gated behind a positive result.
+            Shared with the Profile "Outside help" card via ResourceList. */}
         <div className="mt-5">
-          <div className="text-xs font-bold uppercase tracking-wide mb-2" style={{ color: C.faint }}>Support (Alberta / Canada)</div>
-          <div className="space-y-2">
-            {RESOURCES.map((r) => (
-              <div key={r.name} className="rounded-xl p-3" style={{ background: C.card2, border: `1px solid ${C.rule}` }}>
-                <div className="text-sm font-semibold" style={{ color: C.ink }}>{r.name}</div>
-                <div className="text-xs" style={{ color: C.faint }}>{r.detail}</div>
-                <div className="flex items-center gap-4 mt-1.5">
-                  {r.phone && (
-                    <span className="inline-flex items-center gap-1 text-xs font-bold" style={{ color: C.ink }}>
-                      <Phone size={12} aria-hidden="true" /> {r.phone}
-                    </span>
-                  )}
-                  {r.url && (
-                    <button onClick={() => openExternal(r.url)} className="inline-flex items-center gap-1 text-xs font-semibold hover:opacity-80" style={{ color: C.accent }}>
-                      <ExternalLink size={12} aria-hidden="true" /> {r.url.replace("https://", "")}
-                    </button>
-                  )}
-                </div>
-              </div>
-            ))}
-          </div>
+          <div className="text-xs font-bold uppercase tracking-wide mb-1" style={{ color: C.faint }}>Support (Alberta / Canada)</div>
+          <p className="text-[11px] mb-2" style={{ color: C.faintLight }}>{WELLBEING_RESOURCES_NOTE}</p>
+          <ResourceList />
         </div>
 
         {/* Health / legal disclaimer — collapsible; the key line is always shown. */}
