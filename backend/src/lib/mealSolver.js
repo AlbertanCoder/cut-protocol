@@ -104,11 +104,27 @@ function buildBias(filters = {}, costCache = null) {
 
 // ── day scoring ──────────────────────────────────────────────────────────
 
-// Honest match %: weighted, capped error terms — 55% calories (the wall),
-// 30% protein shortfall (the other wall, asymmetric), 7.5% each for fat and
-// carb landing outside their ranges. 100% = everything on target; the UI is
-// expected to present this as closest-fit, not a promise of perfection.
-const SCORE_WEIGHTS = { kcal: 0.55, protein: 0.3, fat: 0.075, carb: 0.075 };
+// Honest match %: weighted, capped error terms — 46% calories (the wall),
+// 30% protein shortfall (the other wall, asymmetric), 12% each for fat and carb
+// landing outside their ranges. 100% = everything on target; the UI is expected
+// to present this as closest-fit, not a promise of perfection.
+//
+// REWEIGHTED 2026-07-24 (solver-core-4). solver-core-2 made dayInTolerance a
+// FOUR-macro verdict but left this headline number weighting fat and carb at
+// 0.075 each against an error term that could only ever reach 1.0 — so a day
+// sitting 98 g outside its fat band lost at most 7.5 points. Measured on the
+// real library: days the app itself graded OUT of tolerance scored a median 93%,
+// and 743 of 1,091 of them scored 90% or better. `meta.matchPct` is the first
+// field in the generate response; it cannot say 93% about a day the same
+// response marks as missed. The UI's green gate reads `inTolerance` and is
+// already correct — this fixes the NUMBER, not the colour.
+//
+// The fat/carb error terms are also now measured in units of their OWN
+// tolerance (see missTerm in scoreDay), so 1.0 means "exactly at the line
+// dayInTolerance draws" and a day that fails on fat forfeits the whole fat
+// weight. Calories keep a raw-fraction term so their long-standing calibration
+// ("a 10% calorie miss costs ~5 points") is preserved.
+const SCORE_WEIGHTS = { kcal: 0.46, protein: 0.3, fat: 0.12, carb: 0.12 };
 
 /**
  * scoreDay(dailyTarget, slots, opts?) -> honest match% + totals (+ proteinFloor
@@ -132,9 +148,31 @@ function scoreDay(dailyTarget, slots, opts = {}) {
   const pMid = (dailyTarget.proteinLo + dailyTarget.proteinHi) / 2;
   const kcalErr = dailyTarget.kcal > 0 ? Math.abs(t.kcal - dailyTarget.kcal) / dailyTarget.kcal : 1;
   const proteinShort = pMid > 0 ? Math.max(0, (pMid - t.protein) / pMid) : 0;
-  const rangeMiss = (v, lo, hi) => (v < lo ? (lo - v) / Math.max(hi, 1) : v > hi ? (v - hi) / Math.max(hi, 1) : 0);
-  const fatOut = rangeMiss(t.fat, dailyTarget.fatLo, dailyTarget.fatHi);
-  const carbOut = rangeMiss(t.carb, dailyTarget.carbLo, dailyTarget.carbHi);
+  // Fat/carb error is expressed as a MULTIPLE of that macro's own day tolerance
+  // — the exact same bandMiss/allowance arithmetic dayTolerance() grades on, so
+  // the headline number and the green/amber verdict can never disagree about
+  // what "outside the range" means. 1.0 IS the line, and it is where the term
+  // saturates: past the line the verdict has already flipped, and matchPct is a
+  // closeness measure, not a punishment scale. A target with no fat/carb band
+  // (older fixtures, partial targets) contributes nothing, exactly as before.
+  // (bandMiss/hasBand/DAY_*_TOLERANCE_PCT are declared below with dayTolerance,
+  // their single source of truth; nothing calls scoreDay during module init.)
+  const missTerm = (miss, tolShort, tolOver) => {
+    if (miss.shortPct > 0) return tolShort > 0 ? Math.min(1, miss.shortPct / tolShort) : 1;
+    if (miss.overPct > 0) return tolOver > 0 ? Math.min(1, miss.overPct / tolOver) : 1;
+    return 0;
+  };
+  const fatJudged = hasBand(dailyTarget.fatLo, dailyTarget.fatHi);
+  const carbJudged = hasBand(dailyTarget.carbLo, dailyTarget.carbHi);
+  // Keto's carb ceiling is a diet LAW, not a preference — no upward allowance,
+  // same as dayTolerance.
+  const carbOverAllowance = dailyTarget.keto ? 0 : DAY_CARB_TOLERANCE_PCT;
+  const fatOut = fatJudged
+    ? missTerm(bandMiss(t.fat, dailyTarget.fatLo, dailyTarget.fatHi), DAY_FAT_TOLERANCE_PCT, DAY_FAT_TOLERANCE_PCT)
+    : 0;
+  const carbOut = carbJudged
+    ? missTerm(bandMiss(t.carb, dailyTarget.carbLo, dailyTarget.carbHi), DAY_CARB_TOLERANCE_PCT, carbOverAllowance)
+    : 0;
   const cap = (x) => Math.min(1, x);
   const err =
     weights.kcal * cap(kcalErr) +
@@ -620,6 +658,20 @@ async function generateBestWeekPlan(dailyTarget, mealConfig, recipePool, options
   const attempts = options.attempts ?? 5;
   const filters = options.filters || {};
   const priority = Boolean(filters.proteinPriority);
+  // Stage-C fix (M10): when pool counts are supplied, the diagnosis derives from
+  // raw/afterDiet/afterPrep so it names the real binding constraint.
+  //
+  // Computed BEFORE the attempts loop (solver-core-4). It used to be computed
+  // after it, under a variable literally named `preSolve` — so an empty pool ran
+  // five full week solves before anything was declared. Cheap, but the fail-fast
+  // property the name claims was not real. It is now: the pre-solve verdict
+  // exists first, and a pool with nothing in it stops after ONE pass, because a
+  // re-roll of an empty pool is a re-roll of the same empty week.
+  const windowDays = normalizeDayIndices(options.dayIndices).length;
+  const preSolve = options.counts
+    ? diagnose({ counts: options.counts, filters, dailyTarget, mealConfig, pool: recipePool, days: windowDays })
+    : undefined;
+  const nothingToSolve = recipePool.length === 0 || options.counts?.afterDiet === 0;
   let best = null;
   let attemptsRun = 0;
   for (let i = 0; i < attempts; i++) {
@@ -643,14 +695,11 @@ async function generateBestWeekPlan(dailyTarget, mealConfig, recipePool, options
     // full week always could. For a full week days.length IS 7.
     if (best.score.days.length > 0 && best.score.daysInTolerance === best.score.days.length
         && best.score.avgMatch >= 95 && (!priority || best.score.floorDaysMet === best.score.floorDaysTotal)) break;
+    // Nothing eligible to draw from: every further attempt reproduces this
+    // attempt's empty week, so stop and let the diagnosis below speak.
+    if (nothingToSolve) break;
   }
   // A rough week never ships silently: attach the result-driven diagnosis.
-  // Stage-C fix (M10): when pool counts are supplied, the diagnosis derives
-  // from raw/afterDiet/afterPrep so it names the real binding constraint.
-  const windowDays = normalizeDayIndices(options.dayIndices).length;
-  const preSolve = options.counts
-    ? diagnose({ counts: options.counts, filters, dailyTarget, mealConfig, pool: recipePool, days: windowDays })
-    : undefined;
   // Solver benchmark, 2026-07-21: this used to fire only below 6/7 days — a
   // threshold lottery that let 306 of 5,040 benchmarked weeks ship short of a
   // clean week with NO reason attached at all. "Unsolvable + why" is owed the
@@ -663,7 +712,15 @@ async function generateBestWeekPlan(dailyTarget, mealConfig, recipePool, options
   const anyDayMissed = best.score.daysInTolerance < best.score.days.length;
   const anyUnfilledSlot = best.slots.some((s) => !s.recipeId);
   const floorMissed = priority && best.score.floorDaysMet < best.score.floorDaysTotal;
-  best.diagnosis = anyDayMissed || anyUnfilledSlot || floorMissed
+  // A solve that produced NO days at all is the one shape that slipped through:
+  // with days.length === 0 both counters above read false, so a plan delivering
+  // 0 kcal against a real calorie target shipped with diagnosis: null — "nothing
+  // missed" because nothing was measured. A window that was asked for days, and
+  // carries a target to hit, owes the same explanation as one that missed them.
+  // (A window of ZERO days — windowDays 0 — is not that: nothing was asked for,
+  // so nothing is owed. horizonWindows never emits one.)
+  const noDaysAtAll = windowDays > 0 && best.score.days.length === 0 && dailyTarget?.kcal > 0;
+  best.diagnosis = anyDayMissed || anyUnfilledSlot || floorMissed || noDaysAtAll
     ? diagnoseFromResult({ dailyTarget, slots: best.slots, pool: recipePool, mealConfig, filters, preSolve })
     : null;
   best.attempts = attemptsRun;
@@ -912,11 +969,67 @@ const BINDING = {
   VARIETY_CAP: "variety-cap",
   POOL_DEPTH: "pool-depth",
   PROTEIN_DENSITY: "protein-density",
+  // Fat/carbs are COMPOSITION, not size (solver-core-4). Portion scaling moves a
+  // dish's calories, never its fat-per-kcal — so a fat- or carb-shaped miss is a
+  // statement about which dishes exist, and it is a DIFFERENT constraint from
+  // the portion band. Before this key existed the flow fell through to
+  // PORTION_BOUNDS, whose sentence names "calorie and protein target" — i.e. it
+  // reported the two macros that were actually satisfied. For the 3,200 kcal
+  // high-protein profile (0 of 7 days in tolerance, every one of them a fat
+  // failure, calories and protein perfect) that was the literal machine-readable
+  // output. The prose reasons[] already told the truth; only this key lied.
+  MACRO_COMPOSITION: "macro-composition",
   PORTION_BOUNDS: "portion-bounds",
   NO_BUDGET: "no-remaining-budget",
 };
 
-function classifyBinding({ counts = null, filters = {}, dailyTarget, mealConfig = {}, pool = [], days = 7, variety = null }) {
+/**
+ * Can the pool's dishes, in ANY mix and at ANY portion, land inside this
+ * target's fat (or carb) band? Portion scaling multiplies a dish's grams, so
+ * its macro-per-kcal is invariant, and a day is a positive combination of its
+ * dishes — therefore the day's achievable fat-per-kcal lies between the pool's
+ * min and max. When that whole interval sits on one side of the allowed band,
+ * no re-pick and no re-portion can ever land it, and saying "portion limit"
+ * would be blaming the wrong thing. Returns null when the target carries no
+ * such band or the pool has no usable recipe.
+ */
+function compositionReach(pool, key, dailyTarget, tolShortPct, tolOverPct) {
+  const lo = dailyTarget?.[`${key}Lo`];
+  const hi = dailyTarget?.[`${key}Hi`];
+  if (!hasBand(lo, hi) || !(dailyTarget?.kcal > 0)) return null;
+  const mid = (lo + hi) / 2;
+  const allowLoG = Math.max(0, lo - mid * tolShortPct);
+  const allowHiG = hi + mid * tolOverPct;
+  let poolLo = Infinity;
+  let poolHi = -Infinity;
+  let n = 0;
+  for (const r of pool) {
+    if (!(r.kcal > 0)) continue;
+    const perKcal = (Number(r[key]) || 0) / r.kcal;
+    if (!Number.isFinite(perKcal)) continue;
+    poolLo = Math.min(poolLo, perKcal);
+    poolHi = Math.max(poolHi, perKcal);
+    n++;
+  }
+  if (!n) return null;
+  // Grams the pool could deliver at this day's calorie level, at its extremes.
+  const reachLoG = poolLo * dailyTarget.kcal;
+  const reachHiG = poolHi * dailyTarget.kcal;
+  return {
+    key, n, allowLoG, allowHiG, reachLoG, reachHiG, lo, hi,
+    unreachable: reachLoG > allowHiG ? "over" : reachHiG < allowLoG ? "short" : null,
+  };
+}
+
+const g = (n) => Math.round(n);
+
+/**
+ * `observed` (optional): what the solve ACTUALLY missed —
+ * { fatOffDays, carbOffDays, kcalOffDays, proteinShortDays, totalDays }. Absent
+ * means "no solve to read", and every branch below then reasons from the pool
+ * alone exactly as it always did.
+ */
+function classifyBinding({ counts = null, filters = {}, dailyTarget, mealConfig = {}, pool = [], days = 7, variety = null, observed = null }) {
   const c = counts || { raw: pool.length, afterDiet: pool.length, afterPrep: pool.length };
   const perWeekCap = filters.allowBatchRepeats ? BATCH_REPEAT_CAP : DEFAULT_REPEAT_CAP;
   const weeks = variety?.weeks || Math.max(1, Math.ceil(days / DAYS_PER_WEEK));
@@ -978,6 +1091,36 @@ function classifyBinding({ counts = null, filters = {}, dailyTarget, mealConfig 
     return { key: BINDING.PROTEIN_DENSITY, label: "protein density in your recipe pool",
       detail: `your targets need ~${Math.round(neededRatio * 1000) / 10} g protein per 100 kcal and only ${dense} of ${pool.length} compliant recipes come close.` };
   }
+
+  // ── fat / carb COMPOSITION (solver-core-4) ─────────────────────────────
+  // Two ways to conclude it: the pool provably cannot reach the band (pure
+  // arithmetic, true with or without a solve), or the solve we just ran came
+  // back fat/carb-shaped. Either way the answer is the same, and it is NOT the
+  // portion limit — stretching a dish cannot change what it is made of.
+  const fatReach = compositionReach(pool, "fat", dailyTarget, DAY_FAT_TOLERANCE_PCT, DAY_FAT_TOLERANCE_PCT);
+  const carbReach = compositionReach(pool, "carb", dailyTarget, DAY_CARB_TOLERANCE_PCT, dailyTarget?.keto ? 0 : DAY_CARB_TOLERANCE_PCT);
+  const unreachable = fatReach?.unreachable ? fatReach : carbReach?.unreachable ? carbReach : null;
+  const fatOffDays = observed?.fatOffDays || 0;
+  const carbOffDays = observed?.carbOffDays || 0;
+  if (unreachable) {
+    const macro = unreachable.key === "fat" ? "fat" : "carbs";
+    const side = unreachable.unreachable === "over" ? "carries more" : "carries less";
+    return { key: BINDING.MACRO_COMPOSITION, label: `${macro} in your recipe pool`,
+      detail: `every one of the ${unreachable.n} compliant dishes ${side} ${macro} than your ${g(unreachable.lo)}-${g(unreachable.hi)} g range allows — at ${g(dailyTarget.kcal)} kcal they land between ${g(unreachable.reachLoG)} and ${g(unreachable.reachHiG)} g. Portion scaling changes a dish's size, not its ${macro}-per-calorie, so no mix of these recipes reaches the band.` };
+  }
+  if (fatOffDays > 0 || carbOffDays > 0) {
+    const total = observed?.totalDays || days;
+    const bits = [];
+    if (fatOffDays > 0) bits.push(`${fatOffDays} of ${total} day(s) landed outside your ${g(dailyTarget?.fatLo)}-${g(dailyTarget?.fatHi)} g fat range`);
+    if (carbOffDays > 0) bits.push(`${carbOffDays} of ${total} day(s) landed outside your ${g(dailyTarget?.carbLo)}-${g(dailyTarget?.carbHi)} g carb range`);
+    const macro = fatOffDays >= carbOffDays ? "fat" : "carbs";
+    const clean = (observed?.kcalOffDays || 0) === 0 && (observed?.proteinShortDays || 0) === 0
+      ? " Calories and protein landed on target on every day — it is composition, not portion size, that is short."
+      : "";
+    return { key: BINDING.MACRO_COMPOSITION, label: `${macro} in your recipe pool`,
+      detail: `${bits.join(", and ")}. Portion scaling moves a dish's calories, not its fat/carb ratio, so what binds here is which dishes your rules leave in the pool.${clean}` };
+  }
+
   return { key: BINDING.PORTION_BOUNDS, label: "the 0.5x-2x portion limit",
     detail: "the compliant dishes exist, but they cannot be scaled far enough to land on every slot's calorie and protein target at once." };
 }
@@ -1111,7 +1254,16 @@ async function generateHorizonPlan({
     if (suggestions.length === 0) {
       suggestions.push("Shorten the horizon, allow batch-cooking repeats, or AI-generate more compliant recipes to deepen the pool.");
     }
-    const binding = classifyBinding({ counts, filters, dailyTarget, mealConfig, pool: recipePool, days: horizon.days, variety });
+    // What the solve ACTUALLY missed, so the named constraint describes this
+    // horizon rather than a guess from pool shape alone (solver-core-4).
+    const observed = {
+      totalDays: allDays.length,
+      fatOffDays: allDays.filter((d) => d.fatOk === false).length,
+      carbOffDays: allDays.filter((d) => d.carbOk === false).length,
+      kcalOffDays: allDays.filter((d) => Math.abs(d.kcalDeltaPct) > DAY_KCAL_TOLERANCE_PCT * 100).length,
+      proteinShortDays: allDays.filter((d) => d.proteinShortPct > DAY_PROTEIN_TOLERANCE_PCT * 100).length,
+    };
+    const binding = classifyBinding({ counts, filters, dailyTarget, mealConfig, pool: recipePool, days: horizon.days, variety, observed });
     diagnosis = { feasible: false, reasons, suggestions, binding };
   }
 
