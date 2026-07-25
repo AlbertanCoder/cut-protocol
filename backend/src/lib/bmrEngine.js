@@ -7,6 +7,13 @@
 //   TDEE  = BMR × occupation multiplier  +  training kcal/day
 //   target = TDEE − rate×500, clamped to max(sex floor, user floor)
 const { OCCUPATION_BY_KEY, TRAINING_BY_KEY } = require("./activityData.js");
+// ONE definition of "what day is it" — dates.js owns it and every consumer
+// imports it. The trend window below used to carry a private
+// `Date.parse(d + "T12:00:00")` copy, which is the exact local-noon parse
+// dates.js documents as a bug: in a zone whose DST crosses UTC+0 the constant
+// offset changes with the season, so a span measured across the switch comes
+// out a day short. Never re-declare these.
+const { dayNum } = require("./dates.js");
 
 const kg2lb = (kg) => kg * 2.20462;
 const mean = (a) => a.reduce((s, x) => s + x, 0) / a.length;
@@ -90,9 +97,18 @@ const FORMULAS = [
   {
     key: "nelson", label: "Nelson (FFM/FM)", needsBodyFat: true,
     applicable: ({ bf }) => bf > 0,
+    // Nelson 1992 (Am J Clin Nutr 56:848-56) publishes the two-compartment
+    // model in kJ/day: REE = 108·FFM + 16.9·FM. The kcal form the literature
+    // quotes is that divided by 4.184 kJ/kcal → 25.81·FFM + 4.04·FM.
+    // The FM coefficient here is exactly 16.9/4.184 = 4.039 → 4.04, so the FFM
+    // coefficient must come off the SAME conversion: 108/4.184 = 25.813 → 25.8.
+    // It read 25.9, which is not 108/4.184 under any conversion constant
+    // (4.1868 gives 25.796) — an arithmetic slip worth ~+7 kcal/day at 70 kg
+    // FFM. Corrected to 25.8. Formula is default-off, so no shipped target
+    // moves; the row it renders is now right.
     fn: ({ kg, bf }) => {
       const ffm = leanBodyMass(kg, bf);
-      return 25.9 * ffm + 4.04 * (kg - ffm);
+      return 25.8 * ffm + 4.04 * (kg - ffm);
     },
   },
 ];
@@ -345,13 +361,62 @@ function computeMacros(profile, weightKg, targetKcal) {
 
 // ── trend + verdict ──────────────────────────────────────────────────────
 
-function trendRate(entries) {
-  // entries: [{ date: "yyyy-mm-dd", weightLb }], most recent last
-  const pts = entries.slice(-14);
-  if (pts.length < 8) return null;
-  const dayNum = (d) => Math.round(Date.parse(d + "T12:00:00") / 864e5);
-  const x0 = dayNum(pts[0].date);
-  const xs = pts.map((p) => dayNum(p.date) - x0);
+// A DAY window, not a ROW window.
+//
+// `entries.slice(-14)` took the last fourteen ROWS, whatever calendar range
+// they happened to span, while the app told the user "the last 14 days" and
+// "verdicts judge 7-day averages only". For anyone who does not weigh in daily
+// those are different windows, and the gap is not cosmetic: eight MONTHLY
+// weigh-ins, 209.4 → 196.2 lb over 213 days, produced a 0.44 lb/wk rate and a
+// "slower than planned — consider a higher rate" verdict; adding six flat
+// weigh-ins across the real last fortnight (true rate 0.0 lb/wk) only moved it
+// to 0.40, because seven months of old history stayed in the fit and diluted
+// the fortnight that was actually being judged. The same rate drives the
+// goal-date projection, so the error propagates.
+//
+// Now: take every weigh-in inside a real TREND_WINDOW_DAYS-day calendar window,
+// and refuse to speak unless enough of them landed inside it.
+const TREND_WINDOW_DAYS = 14;
+const TREND_MIN_POINTS = 8;
+// Belt-and-braces: 8 points on distinct days already span ≥ 8 days, but a
+// caller passing duplicate dates must not be able to extrapolate a weekly rate
+// off a two-day cluster.
+const TREND_MIN_SPAN_DAYS = 7;
+
+/**
+ * The weigh-ins a trend may be fitted to: those inside the trailing
+ * `windowDays` calendar days, anchored on `asOf` (default: the newest entry, so
+ * the function stays pure and clock-free — pass `asOf: todayStr()` to judge
+ * against today instead).
+ */
+function trendWindow(entries, { asOf = null, windowDays = TREND_WINDOW_DAYS } = {}) {
+  const rows = (Array.isArray(entries) ? entries : [])
+    .filter((e) => e && Number.isFinite(e.weightLb) && Number.isFinite(dayNum(e.date)))
+    .map((e) => ({ day: dayNum(e.date), weightLb: e.weightLb, date: e.date }))
+    .sort((a, b) => a.day - b.day);
+  const empty = { points: [], anchorDay: null, firstDay: null, windowDays, spanDays: 0, dropped: 0 };
+  if (!rows.length) return empty;
+  const anchorDay = Number.isFinite(dayNum(asOf)) ? dayNum(asOf) : rows[rows.length - 1].day;
+  const firstDay = anchorDay - (windowDays - 1);
+  const points = rows.filter((r) => r.day >= firstDay && r.day <= anchorDay);
+  const spanDays = points.length ? points[points.length - 1].day - points[0].day + 1 : 0;
+  return { points, anchorDay, firstDay, windowDays, spanDays, dropped: rows.length - points.length };
+}
+
+/**
+ * lb/wk lost (positive = losing) from a least-squares fit over the trend
+ * window. null — never a guess — when the window is too thin to carry a slope.
+ * @param {{date:string, weightLb:number}[]} entries any order
+ */
+function trendRate(entries, opts = {}) {
+  const minPoints = opts.minPoints ?? TREND_MIN_POINTS;
+  const minSpanDays = opts.minSpanDays ?? TREND_MIN_SPAN_DAYS;
+  const w = trendWindow(entries, opts);
+  const pts = w.points;
+  if (pts.length < minPoints) return null;
+  if (w.spanDays < minSpanDays) return null;
+  const x0 = pts[0].day;
+  const xs = pts.map((p) => p.day - x0);
   const ys = pts.map((p) => p.weightLb);
   const mx = mean(xs), my = mean(ys);
   let num = 0, den = 0;
@@ -360,45 +425,100 @@ function trendRate(entries) {
   return -(num / den) * 7; // lb/wk lost (positive = losing)
 }
 
+// ── "7-day average" must also mean SEVEN DAYS ─────────────────────────────
+//
+// The same row-vs-day confusion runs through the app's headline weight: the
+// "7-day avg" on Today/Trend, ProfileTab's current weight, and the weight that
+// feeds every BMR formula are all `slice(-7)` — the last seven ROWS. Someone
+// weighing 3×/week gets a "7-day average" spanning ~16 days, which at 1 lb/wk
+// lags the truth by ~1.2 lb while the label promises 7 days.
+//
+// This is the correct primitive. It reports what it actually averaged
+// (`count`, `fromDate`→`toDate`) and, when the window is EMPTY, falls back to
+// the single most recent weigh-in and says so (`stale`, `staleDays`) rather
+// than returning null and sending callers back to the start weight.
+const TRAILING_AVG_DAYS = 7;
+
+function trailingAverage(entries, valueOf = (e) => e.weightLb, { asOf = null, days = TRAILING_AVG_DAYS } = {}) {
+  const rows = (Array.isArray(entries) ? entries : [])
+    .filter((e) => e && Number.isFinite(dayNum(e.date)) && Number.isFinite(valueOf(e)))
+    .map((e) => ({ day: dayNum(e.date), v: valueOf(e), date: e.date }))
+    .sort((a, b) => a.day - b.day);
+  if (!rows.length) return null;
+  const anchorDay = Number.isFinite(dayNum(asOf)) ? dayNum(asOf) : rows[rows.length - 1].day;
+  const upto = rows.filter((r) => r.day <= anchorDay);
+  if (!upto.length) return null;
+  const firstDay = anchorDay - (days - 1);
+  const inWindow = upto.filter((r) => r.day >= firstDay);
+  const stale = inWindow.length === 0;
+  const src = stale ? [upto[upto.length - 1]] : inWindow;
+  const newest = upto[upto.length - 1];
+  return {
+    avg: src.reduce((s, r) => s + r.v, 0) / src.length,
+    count: src.length,
+    windowDays: days,
+    fromDate: src[0].date,
+    toDate: src[src.length - 1].date,
+    staleDays: anchorDay - newest.day,
+    stale,
+  };
+}
+
 /**
  * Verdict bands derive from the user's CHOSEN rate — nobody's personal
  * 1.4–1.9 band. In-band = chosen ± max(0.25, 20%). Advisory only: the fix
- * for a wrong pace is the rate selector on the Profile tab (or adherence),
- * so there are no one-tap target mutations here anymore.
+ * for a wrong pace is the rate selector on the Profile tab, so there are no
+ * one-tap target mutations here anymore.
+ *
+ * VOICE. These are the highest-emotion strings in the app and they render every
+ * day on the dashboard, so they state a FACT, number first, cause second — not
+ * a one-word ALL-CAPS grade. What they used to say and why it changed:
+ *   · "SLOW" + "Check logging accuracy first" blamed the user before it helped;
+ *     a slow week is far more often a real week than a dishonest one.
+ *   · "BORDERLINE SLOW — HOLD 1 WK" is the compressed-code label style the
+ *     owner has explicitly banned, and "adherence" is jargon that reads as an
+ *     accusation of non-compliance.
+ *   · The two slow branches carried tone "bad" — a moral word attached to body
+ *     data. They are now "warn", which renders identically (getStampStyle maps
+ *     both to calm amber, law b) without the payload calling a person bad.
+ * The lean-mass caution on the too-fast branch stays: it is clinically right.
  */
 function verdict({ rate, chosenRate, daysIn, atFloor }) {
   const r1 = (n) => Math.round(n * 10) / 10;
+  const chosen = Number.isFinite(chosenRate) ? chosenRate : 1.0;
   if (daysIn < 10) {
-    return { tone: "wait", tag: "WEEK 1 — WATER NOISE", sub: "Early weigh-ins are mostly water shifting. Log daily; judge nothing before day 10." };
+    return { tone: "wait", tag: "Too early to tell", sub: "Early weigh-ins are mostly water moving, not fat. Keep logging — the first honest read on your pace lands around day 10." };
   }
   if (rate == null) {
-    return { tone: "wait", tag: "INSUFFICIENT DATA", sub: "Need 8+ weigh-ins across the last 14 days for a verdict." };
+    return { tone: "wait", tag: "Not enough weigh-ins yet", sub: `A pace needs at least ${TREND_MIN_POINTS} weigh-ins inside the last ${TREND_WINDOW_DAYS} days. Older weigh-ins still show on the trend chart — they just can't describe this fortnight.` };
   }
-  const bandWidth = Math.max(0.25, chosenRate * 0.2);
-  const lo = Math.round((chosenRate - bandWidth) * 100) / 100;
-  const hi = Math.round((chosenRate + bandWidth) * 100) / 100;
+  const bandWidth = Math.max(0.25, chosen * 0.2);
+  const lo = Math.round((chosen - bandWidth) * 100) / 100;
+  const hi = Math.round((chosen + bandWidth) * 100) / 100;
   const band = { lo, hi };
   if (rate > hi + 0.4) {
-    return { band, tone: "warn", tag: "TOO FAST", sub: `Losing ${r1(rate)} lb/wk against a ${r1(chosenRate)} lb/wk plan. Sustained, that costs muscle — pick a lower rate on the Profile tab.` };
+    return { band, tone: "warn", tag: "Faster than planned", sub: `${r1(rate)} lb/wk against your ${r1(chosen)} lb/wk plan. Held at this pace, part of what comes off is lean mass rather than fat — Profile is where you slow it down.` };
   }
   if (rate > hi) {
-    return { band, tone: "warn", tag: "FAST — HOLD", sub: `${r1(rate)} lb/wk vs the ${r1(chosenRate)} plan. Acceptable short-term; watch next week.` };
+    return { band, tone: "warn", tag: "A little faster than planned", sub: `${r1(rate)} lb/wk against your ${r1(chosen)} lb/wk plan. Fine for a week — worth another look at this time next week.` };
   }
   if (rate >= lo) {
-    return { band, tone: "good", tag: "ON TARGET", sub: `${r1(rate)} lb/wk — inside your ${r1(lo)}–${r1(hi)} band. Touch nothing.` };
+    return { band, tone: "good", tag: "On target", sub: `${r1(rate)} lb/wk, inside your ${r1(lo)}–${r1(hi)} lb/wk band. Nothing to change.` };
   }
   if (rate >= lo - 0.15) {
-    return { band, tone: "warn", tag: "BORDERLINE SLOW — HOLD 1 WK", sub: `${r1(rate)} lb/wk vs the ${r1(chosenRate)} plan. If it repeats next week, tighten adherence or raise the rate.` };
+    return { band, tone: "warn", tag: "Slightly slower than planned", sub: `${r1(rate)} lb/wk against your ${r1(chosen)} lb/wk plan. One week isn't a signal — if it repeats, Profile is where you change pace.` };
   }
   if (atFloor) {
-    return { band, tone: "bad", tag: "SLOW — AT YOUR FLOOR", sub: `${r1(rate)} lb/wk and intake is already at the floor. The lever left is movement, not food.` };
+    return { band, tone: "warn", tag: "Slower than planned, and at your calorie floor", sub: `${r1(rate)} lb/wk against your ${r1(chosen)} lb/wk plan, with intake already at your floor. The lever left is movement, not less food.` };
   }
-  return { band, tone: "bad", tag: "SLOW", sub: `${r1(rate)} lb/wk vs the ${r1(chosenRate)} plan. Check logging accuracy first; then consider a higher rate on the Profile tab.` };
+  return { band, tone: "warn", tag: "Slower than planned", sub: `${r1(rate)} lb/wk against your ${r1(chosen)} lb/wk plan. Portion sizes drifting upward is the usual reason; if the number repeats next week, Profile is where you change pace.` };
 }
 
 module.exports = {
   kg2lb, mean, median, leanBodyMass,
   FORMULAS, FORMULA_KEYS, DEFAULT_ENABLED, isFormulaOn, bmrRows, computeEnergy,
   RATE_OPTIONS, SAFE_FLOOR, effectiveFloor, deriveTarget, rateSafety,
-  computeMacros, trendRate, verdict,
+  computeMacros, trendRate, trendWindow, trailingAverage, verdict,
+  TREND_WINDOW_DAYS, TREND_MIN_POINTS, TREND_MIN_SPAN_DAYS, TRAILING_AVG_DAYS,
+  ASSUMED_BODY_FAT_PCT,
 };
