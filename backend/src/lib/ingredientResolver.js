@@ -1,6 +1,6 @@
 const { prisma } = require("./prisma.js");
 const { searchFoods } = require("./usdaClient.js");
-const { validateFood, checkNameShape } = require("./foodValidation.js");
+const { validateFood, checkNameShape, macroTrustIssue } = require("./foodValidation.js");
 const { classifyFood } = require("./foodCategories.js");
 const { loadFoodOverrides } = require("./foodOverrides.js");
 
@@ -155,6 +155,52 @@ const DESCRIPTOR_TOKENS = new Set([
   // size grading
   "large", "medium", "small", "extra", "jumbo", "baby", "mini",
 ]);
+
+// ---------------------------------------------------------------------------
+// The density ban, written out.
+//
+// DESCRIPTOR_TOKENS is an ALLOWLIST, and rule 2 above ("dehydration and
+// concentration words are BANNED") is enforced there only structurally — by
+// those words being absent, so tier 3 rejects any candidate carrying one. The
+// USDA tier below cannot use the same mechanism (USDA descriptions are verbose
+// and would all be rejected), so it needs the ban stated as an explicit DENY
+// list. This is that list: the exact words rule 2 names, plus the fat-adding
+// preparations it names, plus the same class of composition-changing words
+// fdcMatch.js calls HARD_STATE.
+//
+// Every one of these moves kcal/100g by a factor, not a margin:
+//   Milk 61 -> "Milk, dry, whole" 496                (8.1x)
+//   Egg 143 -> "Egg, whole, dried" 594               (4.2x)
+//   Garlic 149 -> "Garlic powder" 331                (2.2x)
+//   Tomato 18 -> "Tomato powder" 302                 (16.8x)
+//
+// INVARIANT (asserted in tests/ingredientResolverDensity.test.js): this set and
+// DESCRIPTOR_TOKENS must never intersect, or the two tiers would disagree about
+// whether the same word is safe.
+// ---------------------------------------------------------------------------
+const DENSITY_TOKENS = new Set([
+  // water removed
+  "dried", "dehydrated", "powder", "powdered",
+  // water removed / sugar added
+  "concentrate", "concentrated", "condensed", "evaporated", "sweetened",
+  "candied", "instant",
+  // fat or breading added
+  "fried", "breaded", "battered", "buttered", "creamed",
+  // solvent-concentrated flavourings sold by the teaspoon
+  "extract", "essence",
+  // salt/water composition changed enough to be a different food
+  "cured", "smoked",
+]);
+
+// "dry" is the one genuinely AMBIGUOUS density word in FDC's vocabulary. For a
+// natively wet food it means dehydrated ("Milk, dry, whole" — the 8.1x bug);
+// for a natively dry staple it just means uncooked ("Oats, rolled, dry", which
+// is the correct record for rolled oats). A name-only rule cannot tell those
+// apart in general, so it is banned only for the GENERIC request — a query
+// naming exactly one substantive thing ("milk", "egg", "beef"), whose only
+// honest reading is the food's ordinary retail form. A query that already
+// specified a form ("rolled oats") has said which one it wants.
+const AMBIGUOUS_DENSITY_TOKEN = "dry";
 
 // Multi-token descriptor clauses, stripped as contiguous sequences before the
 // single-token pass. Same two rules as above.
@@ -355,21 +401,51 @@ const byStableOrder = (a, b) => {
  * @returns {{status:"resolved"|"needs_review", confidence:string|null,
  *            food:object|null, query:string, canonicalQuery:string,
  *            extras:string[], candidates:Array<{id:number,name:string}>,
- *            reason:string}}
+ *            reason:string, untrustedMatch?:{food:object,reason:string}}}
+ *
+ * SECOND SAFETY NET (fleet finding food-data-2). Until this pass, every tier
+ * here returned any row whose NAME lined up, at confidence "exact", without
+ * ever asking whether that row's NUMBERS are trustworthy. The food table
+ * currently holds 470 rows that carry another food's macros verbatim and say so
+ * in their own `dataQuality` — "Flour" holding arrowroot's, "Rice" holding rice
+ * crackers', "Mayonnaise" holding low-calorie mayo's. An exact name match on
+ * those hands back a confidently wrong number, which is the one outcome this
+ * whole file exists to prevent.
+ *
+ * So the ladder now runs against TRUSTED rows only. A row the trust check
+ * rejects can still be reported (as `untrustedMatch`) so the caller can say
+ * "we have a row for this but its data is not usable" instead of pretending
+ * nothing was found — but it is never a `resolved` match at any confidence.
  */
 function matchExistingFood(query, foods) {
   const queryTokens = normalizeTokens(query);
   const pool = Array.isArray(foods) ? [...foods].sort(byStableOrder) : [];
 
-  const unresolved = (reason, canonical = queryTokens.join(" ")) => ({
+  // Trust is a property of the ROW, judged by foodValidation — quarantined
+  // rows, rows whose USDA provenance was cleared, and zero-macro placeholders.
+  // Placeholders stay in the trusted pool because resolveIngredient() already
+  // has a correct, tested branch for them (reuse the row, keep it flagged);
+  // pulling them out here would duplicate rows instead.
+  const untrustedReason = (f) => {
+    const issue = macroTrustIssue(f);
+    return issue && issue.code !== "placeholder" ? issue.detail : null;
+  };
+  const trusted = [], untrusted = [];
+  for (const f of pool) (untrustedReason(f) ? untrusted : trusted).push(f);
+
+  const unresolved = (reason, canonical = queryTokens.join(" "), untrustedMatch = null) => ({
     status: "needs_review",
     confidence: null,
     food: null,
     query: String(query ?? ""),
     canonicalQuery: canonical,
     extras: [],
+    // Suggestions come from the FULL pool on purpose: a human reviewing the
+    // queue should see the quarantined row, clearly labelled, not be told the
+    // library has nothing.
     candidates: suggestCandidates(queryTokens, pool),
     reason,
+    ...(untrustedMatch ? { untrustedMatch } : {}),
   });
 
   if (!queryTokens.length) return unresolved("empty ingredient name", "");
@@ -394,38 +470,61 @@ function matchExistingFood(query, foods) {
     reason,
   });
 
-  // --- Tier 1: exact normalised name -------------------------------------
-  const exact = pool.find((f) => normalizeKey(f.name) === queryKey && allergenSafe(f.name));
-  if (exact) return resolve(exact, "exact", [], `exact name match on "${exact.name}"`);
+  // The three tiers, over whichever pool they are handed. Returning the hit
+  // rather than a finished result lets the SAME ladder run a second time over
+  // the untrusted rows purely to explain a refusal — the rule that decides a
+  // match and the rule that describes it can never drift apart.
+  const ladder = (candidates) => {
+    // --- Tier 1: exact normalised name -----------------------------------
+    const exact = candidates.find((f) => normalizeKey(f.name) === queryKey && allergenSafe(f.name));
+    if (exact) return { food: exact, confidence: "exact", extras: [], reason: `exact name match on "${exact.name}"` };
 
-  // --- Tier 2: curated alias ---------------------------------------------
-  if (aliasTarget) {
-    const viaAlias = pool.find((f) => normalizeKey(f.name) === canonicalKey && allergenSafe(f.name));
-    if (viaAlias) {
-      return resolve(viaAlias, "alias", [], `curated alias "${queryKey}" -> "${canonicalKey}", exact match on "${viaAlias.name}"`);
+    // --- Tier 2: curated alias -------------------------------------------
+    if (aliasTarget) {
+      const viaAlias = candidates.find((f) => normalizeKey(f.name) === canonicalKey && allergenSafe(f.name));
+      if (viaAlias) {
+        return { food: viaAlias, confidence: "alias", extras: [], reason: `curated alias "${queryKey}" -> "${canonicalKey}", exact match on "${viaAlias.name}"` };
+      }
     }
-  }
 
-  // --- Tier 3: descriptor-only containment --------------------------------
-  // Prefer the candidate that adds the FEWEST descriptor tokens — the closest
-  // thing to the plain ingredient. Ties break on stable order.
-  let best = null;
-  for (const f of pool) {
-    const extras = descriptorOnlyContainment(canonicalTokens, normalizeTokens(f.name));
-    if (!extras) continue;
-    if (!allergenSafe(f.name)) continue;
-    if (!best || extras.length < best.extras.length) best = { food: f, extras };
-  }
-  if (best) {
-    return resolve(
-      best.food,
-      aliasTarget ? "alias" : "containment",
-      best.extras,
-      `"${best.food.name}" is "${canonicalKey}" plus descriptors only [${best.extras.join(", ")}]`
+    // --- Tier 3: descriptor-only containment ------------------------------
+    // Prefer the candidate that adds the FEWEST descriptor tokens — the closest
+    // thing to the plain ingredient. Ties break on stable order.
+    let best = null;
+    for (const f of candidates) {
+      const extras = descriptorOnlyContainment(canonicalTokens, normalizeTokens(f.name));
+      if (!extras) continue;
+      if (!allergenSafe(f.name)) continue;
+      if (!best || extras.length < best.extras.length) best = { food: f, extras };
+    }
+    if (best) {
+      return {
+        food: best.food,
+        confidence: aliasTarget ? "alias" : "containment",
+        extras: best.extras,
+        reason: `"${best.food.name}" is "${canonicalKey}" plus descriptors only [${best.extras.join(", ")}]`,
+      };
+    }
+    return null;
+  };
+
+  const hit = ladder(trusted);
+  if (hit) return resolve(hit.food, hit.confidence, hit.extras, hit.reason);
+
+  // --- Tier 4: no trusted resolution. Do not guess. ------------------------
+  // Before reporting nothing, say whether the ONLY thing that lined up was a
+  // row we refuse to vouch for. That is a materially different answer for the
+  // review queue than "the library has no such food".
+  const refused = ladder(untrusted);
+  if (refused) {
+    const why = untrustedReason(refused.food);
+    return unresolved(
+      `"${refused.food.name}" matches by name (${refused.reason}), but its data cannot be trusted: ${why}`,
+      canonicalKey,
+      { food: refused.food, confidence: refused.confidence, reason: why }
     );
   }
 
-  // --- Tier 4: no resolution. Do not guess. -------------------------------
   return unresolved(
     `no exact, alias, or descriptor-only match for "${queryKey}" — needs a human to pick or add the food`,
     canonicalKey
@@ -442,17 +541,29 @@ function matchExistingFood(query, foods) {
 //   a) every SUBSTANTIVE token of the query must appear in the candidate name
 //      (order-free) — this alone kills "coconut milk" -> "Milk, whole",
 //      "almond butter" -> "Butter, salted", "chickpea flour" -> "Wheat flour";
-//   b) the allergen root sets must be identical.
+//   b) the candidate may not ADD a density word the query did not ask for;
+//   c) the allergen root sets must be identical.
 //
-// (a) means the candidate may only ADD detail, never swap the food out.
+// (a) means the candidate may only ADD detail, never swap the food out. (b) is
+// the fix for the reopened Phase 2 bug: "detail" that dehydrates, concentrates
+// or breads the food is not detail, it is a different food with a different
+// kcal/100g, and it passes validateFood() every time because a dried food's
+// Atwater arithmetic is perfectly self-consistent. The 4/4/9 gate cannot see
+// this class of error; only the name can.
 // ---------------------------------------------------------------------------
 function usdaCandidateAcceptable(query, candidateName) {
   const queryKey = normalizeKey(query);
   const canonical = ALIASES.get(queryKey) || queryKey;
   const wanted = stripDescriptors(normalizeTokens(canonical));
   if (!wanted.length) return false;
+  const asked = new Set(normalizeTokens(canonical));
   const have = new Set(normalizeTokens(candidateName));
   for (const t of wanted) if (!have.has(t)) return false;
+  // (b) — the density ban, applied to what the CANDIDATE adds. A query that
+  // spells the word out itself ("dried oregano", "smoked salmon") is asking
+  // for that form and keeps it.
+  for (const t of have) if (DENSITY_TOKENS.has(t) && !asked.has(t)) return false;
+  if (have.has(AMBIGUOUS_DENSITY_TOKEN) && !asked.has(AMBIGUOUS_DENSITY_TOKEN) && wanted.length === 1) return false;
   return sameAllergenRoots(canonical, candidateName);
 }
 
@@ -462,8 +573,19 @@ function usdaCandidateAcceptable(query, candidateName) {
 // Return contract (unchanged for existing callers: `food` is ALWAYS a real row
 // and `matched` still reads "existing" | "usda" | "placeholder"):
 //   food         Food row. Never null. On needs_review it is a zero-macro
-//                placeholder whose name is the caller's text VERBATIM.
+//                placeholder whose name is the caller's text VERBATIM — or, when
+//                the library holds a row for this name whose macros are known to
+//                be untrustworthy, THAT row, still reported as "placeholder".
 //   matched      "existing" | "usda" | "placeholder"
+//
+// "placeholder" is deliberately the label for an untrustworthy existing row as
+// well as for a freshly-minted zero-macro one. Downstream, `matched ===
+// "placeholder"` is what raises RecipesTab's red "no macro data" warning and
+// what recipeGeneration blocks a draft on; those are exactly the behaviours a
+// quarantined row needs, and the equivalence `needsReview <=> matched ===
+// "placeholder"` is asserted as an invariant in ingredientResolver.test.js.
+// Widening `matched` with a fourth value would have silently switched that
+// warning off for the one case that most needs it.
 //   status       "resolved" | "needs_review"
 //   needsReview  boolean convenience mirror of status
 //   confidence   "exact" | "alias" | "containment" | "usda" | null
@@ -553,6 +675,25 @@ async function resolveIngredient(name, deps = {}) {
     // is not.
   }
 
+  // The library DOES hold a row for this name, but its macros are quarantined
+  // or otherwise unverified. Hand that row back so the caller can name it and a
+  // human can fix the one row — but flagged, never as truth, and never as a
+  // number anything is allowed to add up. Minting a second row with the same
+  // name instead would leave two "Flour"s and hide which one is broken.
+  if (match.untrustedMatch) {
+    return {
+      food: match.untrustedMatch.food,
+      matched: "placeholder",
+      status: "needs_review",
+      needsReview: true,
+      confidence: null,
+      query,
+      candidates: match.candidates,
+      extras: [],
+      reason: match.reason,
+    };
+  }
+
   // Nothing safe to point at. Keep the user's words EXACTLY as written, zero
   // the macros, and hand it to a human. No rename, no substitution, no
   // borrowed allergen profile.
@@ -591,5 +732,7 @@ module.exports = {
   ROOT_EQUIVALENCE,
   DESCRIPTOR_TOKENS,
   DESCRIPTOR_PHRASES,
+  DENSITY_TOKENS,
+  AMBIGUOUS_DENSITY_TOKEN,
   ALLERGEN_ROOTS,
 };

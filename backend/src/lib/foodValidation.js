@@ -181,6 +181,126 @@ function validateFood(food, opts = {}) {
   return { ok: issues.length === 0, issues };
 }
 
+// ── is this row's number allowed to be shown or added up? ────────────────
+//
+// WHY THIS IS SEPARATE FROM validateFood()  (fleet finding food-data-2)
+//
+// validateFood() asks "is this row internally coherent?". That question CANNOT
+// catch the corruption this section exists for. 470 rows in the food library
+// carry a DIFFERENT food's macros verbatim — "Chicken Breast" holding breaded
+// tenders' 263 kcal, "Tomato" holding tomato POWDER's 302, "Mayonnaise" holding
+// low-calorie mayo's 263 against real mayo's 680. Every one of those is a real
+// USDA record, so every one of them satisfies 4/4/9 perfectly. The Atwater gate
+// passes them. The name is the only thing that says they are wrong, and a prior
+// repair pass already wrote that finding into each row's own `dataQuality`.
+//
+// So trust is asked as its own question, of the row's PROVENANCE rather than
+// its arithmetic. And it is deliberately NOT folded into validateFood(): that
+// function gates writes (POST/PUT /foods, USDA import), and a quarantined row
+// must stay editable — fixing its numbers is the whole point.
+//
+// Direction of the error matters. Mayonnaise reading 263 instead of 680 makes
+// every recipe containing it UNDER-count fat, which on a cutting app is the
+// worst possible direction to be wrong in: the user eats the deficit they were
+// promised and it isn't one.
+
+const QUARANTINE_SOURCE = "quarantined";
+
+// dataQuality prefixes written by the provenance repair that mean "this row's
+// USDA claim did not survive verification". Distinct from the OTHER
+// `exception:` prefixes — atwater-exempt, alcohol-energy, usda-source-model,
+// curated-override — which are DOCUMENTED, reviewed explanations of a healthy
+// row and must never be treated as untrustworthy. (There are ~500 of those; a
+// blanket "starts with exception:" rule would condemn all of them.)
+const UNVERIFIED_PROVENANCE_PREFIXES = [
+  "exception:provenance-cleared",   // carried another food's record; macros are that record's
+  "exception:unverifiable-fdcid",   // claimed an FDC id that is not in any dataset
+];
+
+/** Has this row been pulled from service by scripts/quarantineCorruptFoods.mjs? */
+function isQuarantined(food) {
+  if (!food) return false;
+  if (food.source === QUARANTINE_SOURCE) return true;
+  // Also true BEFORE the migration runs, so the app is honest about these rows
+  // from the moment this code ships rather than from the moment someone
+  // remembers to run a script.
+  return (food.dataQuality || "").startsWith("exception:provenance-cleared");
+}
+
+/**
+ * Why this row's macros may not be presented as fact, or null if they may.
+ * Returns { code, detail } — `detail` is plain English, safe to show a user.
+ */
+function macroTrustIssue(food) {
+  if (!food) return { code: "missing-food", detail: "no food record" };
+  if (isQuarantined(food)) {
+    return {
+      code: "quarantined",
+      detail: `"${food.name}" is quarantined — its stored macros are another food's numbers, so they are not this food's calories`,
+    };
+  }
+  const dq = food.dataQuality || "";
+  if (UNVERIFIED_PROVENANCE_PREFIXES.some((p) => dq.startsWith(p))) {
+    return {
+      code: "unverified-provenance",
+      detail: `"${food.name}" lost its USDA source and its macros were never re-verified`,
+    };
+  }
+  if (food.source === "manual-placeholder") {
+    return {
+      code: "placeholder",
+      detail: `"${food.name}" has no nutrition data yet — it is a placeholder waiting for real numbers`,
+    };
+  }
+  return null;
+}
+
+/** Cheap boolean for filtering pools. */
+const hasUsableMacros = (food) => macroTrustIssue(food) === null;
+
+/**
+ * Throwing form, for the write paths and any caller that would otherwise put a
+ * quarantined number in front of a user. Returns the food so it can be used
+ * inline: `const f = assertUsableMacros(row)`.
+ */
+function assertUsableMacros(food) {
+  const issue = macroTrustIssue(food);
+  if (issue) {
+    const err = new Error(issue.detail);
+    err.code = issue.code;
+    err.status = 422;
+    err.foodId = food?.id ?? null;
+    throw err;
+  }
+  return food;
+}
+
+/**
+ * Can this recipe's totals be shown as a number, or must it say "incomplete
+ * data"? Pure — hand it a recipe with `ingredients: [{ food }]`.
+ *
+ * Returns { complete, unusable, reason } where `reason` is a plain-English
+ * sentence for the UI and `unusable` lists the offending ingredients. A recipe
+ * with even one untrusted ingredient has a wrong total, and the honest thing to
+ * render is the ingredient's name, not a confident kcal figure.
+ */
+function recipeDataConfidence(recipe) {
+  const ingredients = recipe?.ingredients || [];
+  const unusable = [];
+  for (const ing of ingredients) {
+    const issue = macroTrustIssue(ing?.food);
+    if (issue) unusable.push({ foodId: ing.food?.id ?? null, name: ing.food?.name ?? "(unnamed)", code: issue.code, detail: issue.detail });
+  }
+  if (!unusable.length) return { complete: true, unusable: [], reason: null };
+  const names = unusable.map((u) => u.name);
+  const list = names.length <= 3 ? names.join(", ") : `${names.slice(0, 3).join(", ")} and ${names.length - 3} more`;
+  return {
+    complete: false,
+    unusable,
+    reason: `Calories for this recipe are incomplete — ${list} ${names.length === 1 ? "does not have" : "do not have"} verified nutrition data yet.`,
+  };
+}
+
 // ── recipes ──────────────────────────────────────────────────────────────
 
 /**
@@ -212,6 +332,19 @@ function validateRecipe(recipe) {
     issues.push({
       code: "placeholder-ingredients",
       detail: `${placeholders.length} ingredient(s) with no real data: ${placeholders.map((i) => i.food.name).join(", ")}`,
+    });
+  }
+  // A quarantined ingredient makes the total wrong by an unknown amount, which
+  // is a different failure from macro-drift: recomputing does not fix it,
+  // because the number being summed is another food's.
+  const untrusted = recipe.ingredients.filter((i) => {
+    const issue = macroTrustIssue(i.food);
+    return issue && issue.code !== "placeholder";
+  });
+  if (untrusted.length) {
+    issues.push({
+      code: "untrusted-ingredients",
+      detail: `${untrusted.length} ingredient(s) whose macros are not verified for that food: ${untrusted.map((i) => i.food.name).join(", ")} — this recipe's total cannot be trusted and should read "incomplete data"`,
     });
   }
   const computed = computeRecipeMacros(recipe.ingredients);
@@ -256,6 +389,13 @@ module.exports = {
   checkAtwater,
   checkNameShape,
   validateFood,
+  QUARANTINE_SOURCE,
+  UNVERIFIED_PROVENANCE_PREFIXES,
+  isQuarantined,
+  macroTrustIssue,
+  hasUsableMacros,
+  assertUsableMacros,
+  recipeDataConfidence,
   computeRecipeMacros,
   validateRecipe,
   nameKey,
