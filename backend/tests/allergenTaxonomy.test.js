@@ -12,9 +12,10 @@
 // were not real rows, so the corpus's actual "Egg Plants" spelling was never
 // asserted and quietly hid six aubergine recipes from an egg-allergic user.
 // A fixture would have made the same mistake again. This suite therefore copies
-// backend/prisma/dev.db to a scratch file and reads THAT — read-only, never the
-// real database — and honestly SKIPS the corpus tests when the DB is absent
-// (CI has no dev.db), rather than pretending to have checked.
+// the configured database to a scratch file and reads THAT — read-only, never
+// the real database — and honestly SKIPS the corpus tests when there is no such
+// database, rather than pretending to have checked. See resolveDbPath() below
+// for why it is no longer hardcoded to dev.db.
 
 const { test } = require("node:test");
 const assert = require("node:assert/strict");
@@ -54,9 +55,26 @@ const {
 // SAFETY: a SQLite handle CREATES the file it is pointed at. The real path is
 // only ever passed to fs.existsSync/fs.copyFileSync; the handle is opened on the
 // COPY, read-only, and closed before the temp directory is removed.
-const REAL_DB = path.join(__dirname, "..", "prisma", "dev.db");
+//
+// WHICH DB. Hardcoding prisma/dev.db meant this suite ALWAYS skipped on CI, and
+// a skipped test still counts toward runTests.mjs's MIN_TESTS tripwire — so
+// seven silent skips looked like seven passes on the only run that gates a
+// merge. CI does have a database: the workflow sets DATABASE_URL=file:./ci.db
+// and runs `prisma migrate deploy` + `npm run seed` + `npm run seed:recipes`.
+// Resolve whatever this environment actually configured, exactly the way Prisma
+// does (a relative `file:` URL is relative to the schema directory), and fall
+// back to dev.db for a plain local run.
+function resolveDbPath() {
+  const url = String(process.env.DATABASE_URL || "").trim();
+  if (url.startsWith("file:")) {
+    const raw = url.slice("file:".length);
+    return path.isAbsolute(raw) ? raw : path.resolve(__dirname, "..", "prisma", raw);
+  }
+  return path.join(__dirname, "..", "prisma", "dev.db");
+}
+const REAL_DB = resolveDbPath();
 let FOODS = null;
-let CORPUS_NOTE = "no dev.db on this machine — corpus assertions skipped";
+let CORPUS_NOTE = `no database at ${path.basename(REAL_DB)} — corpus assertions skipped`;
 try {
   if (fs.existsSync(REAL_DB)) {
     const { DatabaseSync } = require("node:sqlite");
@@ -67,12 +85,22 @@ try {
     FOODS = db.prepare("SELECT name, fdcCategory, allergenTags, mayContain FROM Food").all();
     db.close();
     try { fs.rmSync(dir, { recursive: true, force: true }); } catch { /* temp dir; harmless */ }
-    CORPUS_NOTE = `real corpus: ${FOODS.length} Food rows (scratch copy)`;
+    CORPUS_NOTE = `real corpus: ${FOODS.length} Food rows from ${path.basename(REAL_DB)} (scratch copy)`;
   }
 } catch (err) {
-  CORPUS_NOTE = `could not read a scratch copy of dev.db (${err.message}) — corpus assertions skipped`;
+  CORPUS_NOTE = `could not read a scratch copy of ${path.basename(REAL_DB)} (${err.message}) — corpus assertions skipped`;
 }
+if (FOODS && !FOODS.length) { CORPUS_NOTE = `${path.basename(REAL_DB)} has an empty Food table — corpus assertions skipped`; FOODS = null; }
 const noCorpus = FOODS ? false : CORPUS_NOTE;
+// TWO GATES, not one. Some assertions only need "a real Food table" and run
+// against CI's seeded ~850-row library; the ones that name specific USDA rows
+// ("Ground Nut Oil", "farfalle", "SILK Original Creamer") need the FDC bulk
+// import, which CI does not load. Splitting them is what lets the general
+// invariants actually execute on CI instead of all seven skipping together.
+const FDC_SCALE = 5000;
+const noFdcCorpus = FOODS
+  ? (FOODS.length >= FDC_SCALE ? false : `${CORPUS_NOTE} — this corpus is the seeded library, not the ${FDC_SCALE}+-row FDC import`)
+  : noCorpus;
 const rowsNamed = (name) => (FOODS || []).filter((f) => f.name === name);
 const rowsMatching = (re) => (FOODS || []).filter((f) => re.test(f.name));
 
@@ -246,9 +274,21 @@ const PHRASINGS = [
   ["nut allergy", "tree nuts"], ["shellfish allergy", "shellfish"],
   ["soy allergy", "soy"], ["red meat", "red meat"], ["nightshades", "nightshades"],
   ["MSG", "msg"],
+  // ── Stage-2 adversarial sweep (2026-07-24) ──────────────────────────────
+  // Every one of these excluded 0 of 889 recipes: a QUANTIFIER phrasing had no
+  // affix to peel ("all nuts" / "anything with dairy"), a MULTI-ALLERGEN
+  // phrasing had no umbrella synonym ("shellfish and fish"), and a CARRIER a
+  // user actually types was only ever a matcher KEYWORD, never a user-facing
+  // synonym, so it fell through to a literal grep for a word no food is named.
+  ["all nuts", "nuts"], ["any nuts", "nuts"], ["anything with dairy", "dairy"],
+  ["no dairy products", "dairy"], ["everything with soy", "soy"],
+  ["anything containing gluten", "gluten"], ["stay away from sesame", "sesame"],
+  ["shellfish and fish", "seafood"], ["fish or shellfish", "seafood"],
+  ["shrimp paste", "shellfish"], ["surimi", "fish"], ["dashi", "fish"],
+  ["panko", "gluten"], ["ponzu", "soy"], ["bean curd", "soy"], ["nougat", "egg"],
 ];
 
-test("FREE TEXT: all 19 measured phrasings resolve to a real allergen category", () => {
+test("FREE TEXT: every measured phrasing resolves to a real allergen category", () => {
   const failures = [];
   for (const [typed, expected] of PHRASINGS) {
     const r = resolveExclusionTerm(typed);
@@ -464,7 +504,7 @@ test("KIWI: every spelling in the wild is excluded, and nothing else is", () => 
   );
 });
 
-test("KIWI: excluded from the real 14,122-row table, every row, no exception", { skip: noCorpus }, () => {
+test("KIWI: excluded from the real 14,122-row table, every row, no exception", { skip: noFdcCorpus }, () => {
   const kiwis = rowsMatching(/\bkiwi/i);
   assert.ok(kiwis.length >= 8, `expected the corpus kiwi rows, found ${kiwis.length}`);
   const leaked = kiwis.filter((f) => !foodMatchesExclusionTerm(f, "kiwi")).map((f) => f.name);
@@ -478,7 +518,7 @@ test("KIWI: excluded from the real 14,122-row table, every row, no exception", {
 // the failure mode that produced the Egg-Plants bug was asserting on names the
 // app will never see.
 
-test("CORPUS: every name asserted above is a real row in the scratch copy", { skip: noCorpus }, () => {
+test("CORPUS: every name asserted above is a real row in the scratch copy", { skip: noFdcCorpus }, () => {
   const MUST_EXIST = [
     "Egg Plants", "Ground Nut Oil", "Ground Nutmeg", "Perogies, boiled", "farfalle",
     "Hoisin Sauce", "Teriyaki sauce", "Worcestershire Sauce",
@@ -492,7 +532,7 @@ test("CORPUS: every name asserted above is a real row in the scratch copy", { sk
   assert.deepEqual(absent, [], `asserted against names that are not in the table: ${absent.join(" · ")}`);
 });
 
-test("CORPUS: the leak rows are excluded WITH their persisted metadata attached", { skip: noCorpus }, () => {
+test("CORPUS: the leak rows are excluded WITH their persisted metadata attached", { skip: noFdcCorpus }, () => {
   const CASES = [
     ["Perogies, boiled", "dairy"], ["Ground Nut Oil", "peanuts"], ["Ground Nut Oil", "tree nuts"],
     ["farfalle", "gluten"], ["Hoisin Sauce", "soy"], ["Teriyaki sauce", "soy"],
@@ -505,7 +545,7 @@ test("CORPUS: the leak rows are excluded WITH their persisted metadata attached"
   assert.deepEqual(leaks, [], `still leaking: ${leaks.join(" · ")}`);
 });
 
-test("CORPUS: the false positives are gone WITH their persisted metadata attached", { skip: noCorpus }, () => {
+test("CORPUS: the false positives are gone WITH their persisted metadata attached", { skip: noFdcCorpus }, () => {
   const CASES = [
     ["Egg Plants", "eggs"], ["Egg Plants", "egg"], ["Ground Nutmeg", "peanuts"],
     ["Ground Nutmeg", "tree nuts"], ["SILK Original Creamer", "dairy"],
@@ -523,7 +563,7 @@ test("CORPUS: the false positives are gone WITH their persisted metadata attache
   assert.deepEqual(wrong, [], `still wrongly excluded: ${wrong.join(" · ")}`);
 });
 
-test("CORPUS: no free-text phrasing is inert — each removes real rows", { skip: noCorpus }, () => {
+test("CORPUS: no free-text phrasing is inert — each removes real rows", { skip: noFdcCorpus }, () => {
   // The finding was "excludes ZERO of 889 recipes". At food level the bar is the
   // same: a recognised term that removes nothing is a lie the UI would repeat.
   // `.some` short-circuits — one hit is all this claim needs.
@@ -545,7 +585,7 @@ test("CORPUS: over-exclusion did not run away — every category keeps a usable 
   }
 });
 
-test("CORPUS: a veto suppresses the rows it was written for, and nothing else", { skip: noCorpus }, () => {
+test("CORPUS: a veto suppresses the rows it was written for, and nothing else", { skip: noFdcCorpus }, () => {
   // A veto is a licensed REDUCTION, so it needs a tighter leash than an
   // addition. Bound it two ways: it may only affect names that actually carry
   // the compound word, and the un-declared cases must still expand.
@@ -580,4 +620,55 @@ test("GLUED corn spellings fire, word-boundary guards hold (QC 2026-07-24: 'Swee
   // and the word-boundary guard still spares non-corn 'corn' substrings
   assert.equal(matchesExclusionTerm("Corned Beef", "corn"), false, "'corned beef' is not corn");
   assert.equal(matchesExclusionTerm("Acorn Squash", "corn"), false, "'acorn' is not corn");
+});
+
+
+// ═════════════════════════════════════════════════════════════════════════
+// 7. TAXONOMY HYGIENE — the keys that protected nothing (Stage-2, 2026-07-24)
+// ═════════════════════════════════════════════════════════════════════════
+
+test("HYGIENE: sulphites protected a coeliac-grade ZERO — the dried fruit closes it", { skip: noFdcCorpus }, () => {
+  // Measured before the fix: "sulphites" excluded 0 of 14,122 foods and 0 of
+  // 889 recipes, while the UI listed it as an allergen you could tick.
+  const caught = FOODS.filter((f) => foodMatchesExclusionTerm(f, "sulphites"));
+  assert.ok(caught.length >= 15,
+    `sulphites still protects almost nothing — ${caught.length} rows (USDA marks sulphited dried fruit "sulfured")`);
+  for (const n of ["Apricots, dehydrated (low-moisture), sulfured, uncooked", "Apples, dried, sulfured, uncooked"]) {
+    assert.ok(matchesExclusionTerm(n, "sulphites"), `USDA declares the sulphite in the name: ${n}`);
+  }
+  // "sulfATE" is not a sulphITE. Calcium sulfate is a tofu coagulant and sodium
+  // aluminium sulfate is a leavening agent; neither is a declarable sulphite.
+  for (const n of [
+    "Tofu, raw, firm, prepared with calcium sulfate",
+    "Leavening agents, baking powder, double-acting, sodium aluminum sulfate",
+  ]) assert.ok(!matchesExclusionTerm(n, "sulphites"), `a sulfate is not a sulphite: ${n}`);
+});
+
+test("HYGIENE: the honest-limit note is still on the row the UI has to show it for", () => {
+  const sulphites = ALLERGEN_BY_KEY.sulphites;
+  assert.ok(sulphites.note && /HONEST LIMIT/.test(sulphites.note),
+    "the sulphites row must keep its honest-limit note — the UI is required to surface it");
+  // …and the published shape must CARRY it. meta.js's loadTaxonomy() currently
+  // projects only { key, label, synonyms } and therefore drops this field, which
+  // is why the honest limit reaches nobody. allergenCatalog() is the shape that
+  // route should be using; pinning it here means the fix is a one-line swap.
+  const published = allergenCatalog().find((e) => e.key === "sulphites");
+  assert.ok(published && published.note === sulphites.note, "allergenCatalog() must publish the note");
+});
+
+test("HYGIENE: a hidden row must never reach a picker (the duplicate 'Eggs' bug)", () => {
+  // The legacy "egg" mirror row exists so a profile storing the singular gets
+  // the same protection as one storing the plural. It is marked hidden because
+  // rendering it shows the user two identical "Eggs" entries. allergenCatalog()
+  // and searchAllergens() both honour that; a consumer reading ALLERGEN_TAXONOMY
+  // directly does not — which is exactly what meta.js does today.
+  assert.equal(ALLERGEN_BY_KEY.egg.hidden, true, "the legacy mirror row stays hidden");
+  assert.ok(!allergenCatalog().some((e) => e.hidden), "allergenCatalog() must publish no hidden row");
+  const labels = allergenCatalog().map((e) => e.label);
+  const dupes = labels.filter((l, i) => labels.indexOf(l) !== i);
+  assert.deepEqual(dupes, [], `the picker would show duplicate entries: ${dupes.join(", ")}`);
+  assert.ok(!searchAllergens("egg").some((e) => e.key === "egg"), "search must not surface the mirror either");
+  // The raw table DOES still contain it — this is the trap, stated out loud.
+  assert.ok(ALLERGEN_TAXONOMY.some((e) => e.key === "egg" && e.hidden),
+    "a consumer that reads ALLERGEN_TAXONOMY without filtering `hidden` renders a duplicate 'Eggs'");
 });
