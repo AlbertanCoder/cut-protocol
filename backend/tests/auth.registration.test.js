@@ -210,6 +210,14 @@ test("register is REFUSED once an account exists and the caller is unauthenticat
   assert.ok(!r.text.includes(OWNER_EMAIL));
 });
 
+// NOTE (2026-07-24): this test is NECESSARY BUT NOT SUFFICIENT, and believing
+// otherwise cost the suite a real hole. Both cookies below name a subject that
+// does not exist, so the 403 they get is produced by the USER-EXISTENCE check
+// two tests down — not by signature verification. Delete signature checking
+// entirely (the jwt.verify -> jwt.decode mutation) and this test still passes.
+// The assertions that actually pin the signature — a token for a REAL user
+// signed with the WRONG secret, alg pinning, expiry, tampering — live in
+// tests/auth.tokenVerification.test.js.
 test("a forged or expired session cookie cannot unlock register", async () => {
   for (const cookie of [
     "cutprotocol_session=not-a-jwt",
@@ -228,7 +236,7 @@ test("a valid session for a DELETED user cannot unlock register", async () => {
   const { signToken } = require(path.join(BACKEND, "src", "lib", "auth.js"));
   const r = await call("POST", "/api/auth/register", {
     body: { email: "ghost@example.test", password: "a-perfectly-valid-password" },
-    cookie: `cutprotocol_session=${signToken("cuid-that-does-not-exist")}`,
+    cookie: `cutprotocol_session=${signToken("cuid-that-does-not-exist", "$2b$12$aFakeButWellFormedHashValue000000000000000000000000000000")}`,
   });
   assert.equal(r.status, 403, r.text);
 });
