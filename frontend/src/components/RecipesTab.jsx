@@ -8,6 +8,7 @@ import { C } from "../lib/theme.js";
 import { toHouseholdUnit } from "../lib/householdUnits.js";
 import { Card, Btn, Chip, PageHead, ErrorNote, EmptyNote } from "./ui/Parts.jsx";
 import { SkeletonRows } from "./ui/Skeleton.jsx";
+import FoodTile from "./ui/FoodTile.jsx";
 import { api, isAbortError, describeError } from "../lib/api.js";
 import { useAbortSignal } from "../lib/useAbortable.js";
 
@@ -869,10 +870,13 @@ export default function RecipesTab({ openFoods, profile }) {
                               aria-label={`${r.name}, ${kc(r.kcal)} kcal — toggle details`}
                               style={{ background: C.card2, border: `1px solid ${expanded ? C.faintLight : C.rule}` }}>
                               <div className="flex justify-between items-start gap-2">
-                                <div className="min-w-0">
-                                  <div className="text-sm font-extrabold" style={{ color: C.ink }}>{r.name}</div>
-                                  <div className="text-[10.5px] font-semibold mt-0.5" style={{ color: C.faint }}>
-                                    {r.slotType}{r.cuisine ? ` · ${CUISINE_LABEL[r.cuisine] || r.cuisine}` : ""}{r.prepTimeMin ? ` · ${r.prepTimeMin} min` : ""} · {g1(density(r))}g P/100kcal
+                                <div className="flex items-center gap-2.5 min-w-0">
+                                  <FoodTile recipe={r} size={38} />
+                                  <div className="min-w-0">
+                                    <div className="text-sm font-extrabold" style={{ color: C.ink }}>{r.name}</div>
+                                    <div className="text-[10.5px] font-semibold mt-0.5" style={{ color: C.faint }}>
+                                      {r.slotType}{r.cuisine ? ` · ${CUISINE_LABEL[r.cuisine] || r.cuisine}` : ""}{r.prepTimeMin ? ` · ${r.prepTimeMin} min` : ""} · {g1(density(r))}g P/100kcal
+                                    </div>
                                   </div>
                                 </div>
                                 <div className="flex items-center gap-1.5 shrink-0">
