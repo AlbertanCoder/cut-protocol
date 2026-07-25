@@ -1,3 +1,48 @@
+> # ⚠ EVIDENTIARY STANDARD — read before citing (added 2026-07-24)
+>
+> **Do not cite this file as verified user research.** Treat it as a
+> well-organised set of *leads*, not as primary data. Nothing below has been
+> retracted and nothing here alleges fabrication — the point is narrower and
+> it matters:
+>
+> **What is genuinely true and in this file's favour.** An owner-driven
+> browser session leaves no artifact in the repo *by its nature*. There is no
+> log to write, no JSON to commit. The absence of raw files is therefore
+> **not** evidence that the session did not happen, and it must not be read
+> that way. This file is also unusually careful for its genre: it names the
+> exact pages read, states "this is a broad, representative pass, not the
+> entire site," and volunteers that `r/Fitness` yielded nothing usable — a
+> detail no one inventing data would bother to add. `SYNTHESIS.md`'s "Read
+> this first: a real limit on the scrub" section is the honest disclosure this
+> repo should copy elsewhere: it says plainly that automated access was
+> blocked (WebSearch 400 / WebFetch 403, mirrors dead, anonymous `.json` 403
+> even from the owner's residential IP) and that the agent portion rests on
+> reachable proxy sources. That is the right way to write a limits section.
+>
+> **What is nonetheless missing.** Every one of the ~30 posts cited here is
+> identified by title and a two-digit-precision score (348 points / 127
+> comments / 786 points), and **not one carries a permalink, a post ID, a
+> timestamp, or a screenshot.** Those precise scores imply primary data — a
+> retrieved listing — that the repo cannot produce. So nothing here
+> distinguishes real retrieval from confident recall of plausible posts, and
+> **no reader can check a single claim.** Reddit scores also drift after
+> capture, so an uncaptured score is unverifiable even in principle.
+>
+> **The sibling script has never run.** `scripts/redditScrub.mjs` is the
+> sanctioned OAuth path and would produce exactly the missing artifacts
+> (`reddit-raw.json` + `reddit-digest.md`, with `permalink`, `id` and
+> `created_utc` on every row — see its `postRow()`). Its output directory
+> `docs/research/forums-2026-07-24/reddit-raw/` **does not exist**: no raw
+> JSON, no digest. It needs a free Reddit "script" app's client id/secret
+> (2 minutes, no password shared); the setup steps are in the script's header.
+>
+> **The standard for this repo going forward.** A post cited as evidence
+> carries a permalink and the date it was read. A score without a permalink is
+> an anecdote, not a data point — keep the anecdote, drop the decimal place.
+> Claims resting on this file should be written as "consistent with what users
+> report" rather than "verified", until `redditScrub.mjs` is run and its output
+> is committed beside this page.
+
 # Reddit — browser-verified findings (real posts, real scores)
 
 _2026-07-24. Pulled by driving the owner's own Chrome against `old.reddit.com` (the

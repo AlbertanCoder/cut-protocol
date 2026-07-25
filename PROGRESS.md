@@ -5,6 +5,34 @@ what got finished · what's next · anything needed from Shad.*
 
 ---
 
+## 2026-07-24 · CORRECTION — the 07-21 "scanned clean" entries are void
+
+Two entries below (Stage 1 and Stages 2–4) record the installer as clean. **That
+is no longer true, and the artifact they describe no longer exists.**
+
+- The scanned build was 209,270,871 B / SHA-256 `996877c6…590a1ef3`. The file in
+  `release/` today is **243,269,113 B / SHA-256 `bfdef822…c940a34d7`**, rebuilt
+  2026-07-24 18:44 — and rebuilt at least once more earlier the same day. **A
+  hash-pinned scan expires the moment the artifact is rebuilt**, and nothing in
+  the repo re-runs it or invalidates the report.
+- **The current installer leaks.** The Stage 1 fix was real — `extraResources`
+  ships only `dev.db.template` and `predist` gates the build — but `build.files`
+  strips secrets **by name**, and two later files match no pattern:
+  `backend/.env.qc`, and `dev.db.snapshot-agentcontam-20260721-212858`, a real
+  3.2 MB user DB with 10 users' health data (`dev.db.backup-*` and
+  `*.db.backup*` both miss a *snapshot*). Fix = invert `build.files` to an
+  allowlist; see CLAUDE.md → Packaging.
+- The "864 foods" figure below is stale — the library is **14,122 foods / 889
+  recipes**, of which 605 are manual and 470 are quarantined as known-wrong.
+- `security/scan-report.md` now carries a VOID header saying the same.
+
+**Do not share the current `.exe` with anyone.** Open question from
+`BATTLE-PLAN.md`: the 07-21 tester build predates `.env.qc` (created 07-22), but
+the DB snapshot is stamped 07-21 21:28 — if that build was cut after 21:28, the
+tester already has the data.
+
+---
+
 ## 2026-07-21 · Doc 2 Stages 2–4 — PRIVATE share (no public release)
 
 Shad chose PRIVATE distribution (not a GitHub Release). Artifact built + scanned clean.

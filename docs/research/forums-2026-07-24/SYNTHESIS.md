@@ -15,6 +15,15 @@ agent portion of this synthesis is built from *reachable* proxy sources (competi
 app-store aggregators, comparison articles, clinical/press coverage) — directional, cited,
 nothing invented.
 
+> **Caveat added 2026-07-24 — how strong "confirmed" is.** The browser pass below cites ~30 posts
+> by title and score but records **no permalinks, post IDs, timestamps or screenshots**, so none of
+> it is independently checkable. That is expected of an owner-driven browser session (it leaves no
+> repo artifact by nature) and is *not* a claim that it didn't happen — but it does mean the
+> confirmations should be read as "consistent with what users report", not as verified user
+> research. `scripts/redditScrub.mjs` — the sanctioned OAuth path, which would capture permalinks
+> and IDs — **has never been run**; its output directory does not exist. Full note at the top of
+> `reddit-browser-verified.md`.
+
 **A real Reddit pass was then done through the owner's Chrome** (which Reddit serves as a normal
 visitor). Real posts + scores from `r/loseit`, `r/MacroFactor`, and `r/foodallergies` are in
 `reddit-browser-verified.md`, and they **confirmed every load-bearing claim below that we could
