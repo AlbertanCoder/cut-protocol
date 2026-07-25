@@ -1,37 +1,122 @@
-import { useState, useEffect, useMemo, useCallback } from "react";
-import { Search, ArrowLeft, ChevronRight, ChevronDown, Save, BookOpen, NotebookPen, Barcode, AlertTriangle } from "lucide-react";
+import { useState, useEffect, useMemo, useCallback, useRef } from "react";
+import { Search, ArrowLeft, ChevronRight, ChevronDown, Save, BookOpen, NotebookPen, Barcode, AlertTriangle, UtensilsCrossed } from "lucide-react";
 import { C } from "../lib/theme.js";
-import { FOOD_CATEGORIES, CATEGORY_LABEL, CATEGORY_DOT, SOURCE_LABEL, dataQualityFlag } from "../data/foodCategories.js";
-import { Card, Btn, Chip, PageHead, Stat, ErrorNote } from "./ui/Parts.jsx";
+import { FOOD_CATEGORIES, CATEGORY_DOT, categoryLabel, sourceLabel, foodWarning, quarantineNote } from "../data/foodCategories.js";
+import { Card, Btn, Chip, PageHead, Stat, ErrorNote, EmptyNote } from "./ui/Parts.jsx";
 import { SkeletonRows } from "./ui/Skeleton.jsx";
 import { api, isAbortError, describeError } from "../lib/api.js";
 import { useAbortSignal } from "../lib/useAbortable.js";
 import BarcodeLookup from "./BarcodeLookup.jsx";
 
 const g1 = (n) => Math.round(n * 10) / 10;
-const SEARCH_RENDER_CAP = 200;
+const num = (n) => Number(n || 0).toLocaleString();
+
+// ── The food library store ───────────────────────────────────────────────
+// GET /api/foods is 14,122 rows / ~13.1 MB / ~1.1 s, and this tab UNMOUNTS on
+// every tab switch — so the old per-mount fetch re-paid all of that every
+// single time the screen was opened. The library is shared, slow-changing
+// reference data; it belongs in a module store, not in component state that
+// dies when you glance at Recipes.
+//
+// Two separate wins:
+//  1. the request is inflight-deduped and cached, so the 2nd…nth open is
+//     instant and costs zero bytes;
+//  2. what we KEEP is a projection — the 13 fields this screen renders.
+//     `Food.micros` alone is 6.9 MB of JSON per payload, for a screen that
+//     never shows a micronutrient. The parse still materialises it (only the
+//     server can stop sending it — see readFoodsPayload), but it becomes
+//     garbage the instant the projection is built instead of being pinned in
+//     React state for the life of the app.
+const FOODS_TTL_MS = 5 * 60_000;
+const PROJECTED_FIELDS = [
+  "id", "name", "category", "source", "kcal", "protein", "fat", "carb",
+  "fiber", "fdcId", "brand", "upc", "dataQuality",
+];
+
+let foodsCache = null;    // { at, list, total }
+let foodsInflight = null; // Promise<{ list, total }>
+
+function project(f) {
+  const out = {};
+  for (const k of PROJECTED_FIELDS) out[k] = f[k];
+  // Search index, built once at load instead of lower-casing 14,122 names on
+  // every keystroke (see the search memo below).
+  out.lname = String(f.name || "").toLowerCase();
+  return out;
+}
+
+// Defensive shape reader. A parallel change is adding pagination + a `select`
+// projection to GET /api/foods; today it answers with a bare array, tomorrow
+// it may answer { foods, total } / { items, page }. Accept every shape rather
+// than rendering "0 foods" the hour that lands — and carry `total` through so
+// a paged response is REPORTED as partial instead of silently truncating the
+// library behind the user's back.
+function readFoodsPayload(res) {
+  const rows =
+    Array.isArray(res) ? res
+      : Array.isArray(res?.foods) ? res.foods
+        : Array.isArray(res?.items) ? res.items
+          : Array.isArray(res?.data) ? res.data
+            : Array.isArray(res?.results) ? res.results
+              : [];
+  const declared = res && !Array.isArray(res) ? (res.total ?? res.count ?? null) : null;
+  return { rows, total: Number.isFinite(declared) ? declared : rows.length };
+}
+
+function cachedFoods() {
+  return foodsCache && Date.now() - foodsCache.at < FOODS_TTL_MS ? foodsCache : null;
+}
+
+function loadFoods({ force = false } = {}) {
+  if (force) { foodsCache = null; foodsInflight = null; }
+  const hit = cachedFoods();
+  if (hit) return Promise.resolve(hit);
+  if (foodsInflight) return foodsInflight;
+  // Deliberately NOT wired to a component unmount signal: the point of the
+  // store is that switching tabs mid-flight still WARMS it rather than
+  // throwing away a second of work. Callers guard their own setState.
+  foodsInflight = api.getFoods()
+    .then((res) => {
+      const { rows, total } = readFoodsPayload(res);
+      foodsCache = { at: Date.now(), list: rows.map(project), total };
+      return foodsCache;
+    })
+    .finally(() => { foodsInflight = null; });
+  return foodsInflight;
+}
 
 // Provenance must surface where a food is PICKED, not just after the fact
 // in the detail panel — the whole crux of the barcode-off track. A small
 // neutral-ink Barcode glyph marks community (Open Food Facts) rows right in
-// the list; an amber triangle rides alongside it only when that row's own
-// declared macros didn't reconcile (dataQuality "warn:…") — never a hue
-// borrowed from the reserved green/macro-triad palette (design law a/c).
+// the list; an amber triangle rides alongside it whenever that row carries a
+// caution — unreconciled declared macros, or the far worse case of another
+// food's record copied verbatim (see quarantineNote). Amber, never a hue
+// borrowed from the reserved green/macro-triad palette (design law a/c) and
+// never red on food data (law b).
+//
+// Height is PINNED to ROW_H: the list below is windowed, and windowing needs
+// row geometry it can trust. A single-line row (the name truncates) loses
+// nothing by being a fixed 38px — it is what the padded row measured anyway.
+const ROW_H = 38;
+
 function FoodRow({ food, selected, onSelect, dotColor }) {
   const community = food.source === "community";
-  const flag = community ? dataQualityFlag(food) : null;
+  const warn = foodWarning(food);
   return (
     <button
       onClick={() => onSelect(food)}
-      className="w-full flex items-center gap-2.5 py-2 px-2 rounded-lg text-left"
-      style={{ background: selected ? C.card2 : "transparent", borderBottom: `1px solid ${C.rule}` }}
+      className="w-full flex items-center gap-2.5 px-2 rounded-lg text-left"
+      style={{ height: ROW_H, background: selected ? C.card2 : "transparent", borderBottom: `1px solid ${C.rule}` }}
     >
       <span className="w-2 h-2 rounded-full shrink-0" style={{ background: dotColor }}></span>
       <div className="flex-1 min-w-0">
         <div className="text-sm font-bold truncate flex items-center gap-1.5" style={{ color: C.ink }}>
-          {community && <Barcode size={12} className="shrink-0" style={{ color: C.faintLight }} title="Community (Open Food Facts)" />}
+          {/* a11y: the provenance glyph is information, not ambience — it is
+              the only thing marking a row as crowd-sourced, so it reads at
+              --faint (60%), not --faint-light (38%, 3.26:1). */}
+          {community && <Barcode size={12} className="shrink-0" style={{ color: C.faint }} title="Community (Open Food Facts)" />}
           <span className="truncate">{food.name}</span>
-          {flag && <AlertTriangle size={12} className="shrink-0" style={{ color: C.warn }} title={`Unverified macros — ${flag.reason}`} />}
+          {warn && <AlertTriangle size={12} className="shrink-0" style={{ color: C.warn }} title={warn.detail} />}
         </div>
       </div>
       <div className="text-right shrink-0">
@@ -39,6 +124,81 @@ function FoodRow({ food, selected, onSelect, dotColor }) {
         <span className="text-[10.5px] font-semibold ml-1.5" style={{ color: C.faint }}>{g1(food.protein)}P {g1(food.fat)}F {g1(food.carb)}C</span>
       </div>
     </button>
+  );
+}
+
+// ── Windowed list ────────────────────────────────────────────────────────
+// This replaces the app's worst render offender: expanding "Protein" used to
+// mount 3,867 FoodRow subtrees in one synchronous commit (the "never render
+// 900 rows" comment above it was written when the whole library was 854 foods
+// and never revisited after the USDA import took it to 14,122).
+//
+// Why windowing and not a render cap: a cap is the honest 10-minute fix for
+// SEARCH, where "refine your search" is a real instruction the user can act
+// on. It is not honest for BROWSE — category browse exists precisely for the
+// case where you don't know the name, so "showing 200 of 3,867, refine your
+// search" amputates the feature and points at the affordance that browse is
+// the alternative to. react-window would be the drop-in, but it isn't a
+// dependency and installing is off the table, so the window is hand-rolled:
+// ~90 lines, fixed row height, absolute-positioned slice inside a spacer.
+// Mounted rows go from N to (visible + 2×overscan) ≈ 24, flat, whether the
+// list is 40 rows or 14,122.
+const OVERSCAN = 6;
+const MAX_VISIBLE_ROWS = 12;
+
+function VirtualFoodList({ items, label, maxRows = MAX_VISIBLE_ROWS, selectedId, onSelect, dotFor }) {
+  const [scrollTop, setScrollTop] = useState(0);
+  const boxRef = useRef(null);
+  const ticking = useRef(false);
+
+  const total = items.length;
+  const height = Math.min(total, maxRows) * ROW_H;
+
+  // A new list (new search, different category) starts at the top — never
+  // half-scrolled into results the user hasn't seen.
+  useEffect(() => {
+    if (boxRef.current) boxRef.current.scrollTop = 0;
+    setScrollTop(0);
+  }, [items]);
+
+  // rAF-coalesced: scroll fires far faster than we can usefully re-render,
+  // and reading scrollTop inside the frame means we never render a stale
+  // offset (which a leading-edge throttle would).
+  const onScroll = useCallback(() => {
+    if (ticking.current) return;
+    ticking.current = true;
+    requestAnimationFrame(() => {
+      ticking.current = false;
+      setScrollTop(boxRef.current?.scrollTop ?? 0);
+    });
+  }, []);
+
+  if (total === 0) return null;
+
+  const first = Math.max(0, Math.floor(scrollTop / ROW_H) - OVERSCAN);
+  const last = Math.min(total, Math.ceil((scrollTop + height) / ROW_H) + OVERSCAN);
+
+  return (
+    // tabIndex makes the window keyboard-scrollable: only the visible rows
+    // are in the tab order, so arrow-key scrolling is how a keyboard user
+    // reaches row 3,000 without 3,000 tab stops.
+    <div
+      ref={boxRef}
+      onScroll={onScroll}
+      role="group"
+      aria-label={label}
+      tabIndex={0}
+      className="overflow-y-auto overscroll-contain rounded-lg"
+      style={{ height }}
+    >
+      <div style={{ height: total * ROW_H, position: "relative" }}>
+        <div style={{ position: "absolute", top: first * ROW_H, left: 0, right: 0 }}>
+          {items.slice(first, last).map((f) => (
+            <FoodRow key={f.id} food={f} selected={selectedId === f.id} onSelect={onSelect} dotColor={dotFor(f)} />
+          ))}
+        </div>
+      </div>
+    </div>
   );
 }
 
@@ -134,31 +294,42 @@ function FoodDetail({ food, isAdmin, onSaved, refreshFoods }) {
   const filteredRecipes = (recipes || []).filter((r) => r.name.toLowerCase().includes(recipeQuery.toLowerCase())).slice(0, 30);
   const placeholder = food.source === "manual-placeholder";
   const community = food.source === "community";
-  const flag = community ? dataQualityFlag(food) : null;
+  const warn = foodWarning(food);
 
   return (
     <Card section="DETAIL" title={food.name}>
       <div className="flex flex-wrap gap-1.5 mb-3">
         <Chip color={C.faint}>
           <span className="inline-block w-1.5 h-1.5 rounded-full mr-1.5 align-middle" style={{ background: CATEGORY_DOT(food.category) }}></span>
-          {CATEGORY_LABEL[food.category] || food.category}
+          {categoryLabel(food.category)}
         </Chip>
-        <Chip color={placeholder ? C.red : C.faint} bg={placeholder ? C.redBg : undefined}>
-          {SOURCE_LABEL[food.source] || food.source}{food.fdcId ? ` · FDC ${food.fdcId}` : ""}{food.brand ? ` · ${food.brand}` : ""}{food.upc ? ` · UPC ${food.upc}` : ""}
+        {/* Law b: a zero-macro placeholder is BAD DATA, not a bad food. It
+            gets the same calm amber as the UNVERIFIED MACROS badge beside it
+            — the two are the same class of problem and used to be shouted in
+            two different colors. Red on food data is reserved for nothing. */}
+        <Chip color={placeholder ? C.warn : C.faint} bg={placeholder ? C.warnBg : undefined}>
+          {sourceLabel(food.source)}{food.fdcId ? ` · USDA record #${food.fdcId}` : ""}{food.brand ? ` · ${food.brand}` : ""}{food.upc ? ` · UPC ${food.upc}` : ""}
         </Chip>
-        {flag && (
-          <Chip color={C.warn} bg={C.warnBg}>{flag.label} — {flag.reason}</Chip>
-        )}
+        {warn && <Chip color={C.warn} bg={C.warnBg}>{warn.label}</Chip>}
       </div>
 
+      {warn && (
+        <div className="text-xs font-semibold mb-3" style={{ color: C.warn }}>
+          {warn.detail}
+          {quarantineNote(food) && " Don't build a plan on this row until it's corrected."}
+        </div>
+      )}
+
       {placeholder && (
-        <div className="text-xs font-bold mb-3" style={{ color: C.red }}>
+        <div className="text-xs font-bold mb-3" style={{ color: C.warn }}>
           Zero-macro placeholder — recipes using this food undercount until real values are entered.
         </div>
       )}
 
       {community && (
-        <div className="text-[10.5px] font-semibold mb-3" style={{ color: C.faintLight }}>
+        // a11y: body copy reads at --faint (60%, 6.5:1+). --faint-light is
+        // 3.26:1 and fails WCAG AA at text sizes.
+        <div className="text-[10.5px] font-semibold mb-3" style={{ color: C.faint }}>
           Crowd-sourced from Open Food Facts, not USDA-audited — treat as a reasonable estimate, not a lab-verified figure.
         </div>
       )}
@@ -220,7 +391,7 @@ function FoodDetail({ food, isAdmin, onSaved, refreshFoods }) {
             <Btn small kind="ghost" onClick={() => setDraft(null)} disabled={busy}>Cancel</Btn>
           </div>
           <div className="text-[10.5px] font-semibold mt-2" style={{ color: C.faint }}>
-            The validator rejects values where kcal drifts from 4P + 4C + 9F, so bad data can't come back.
+            The validator rejects values where kcal drifts from 4P + 4C + 9F, so numbers that can't exist can't come back.
           </div>
         </div>
       )}
@@ -262,41 +433,82 @@ function FoodDetail({ food, isAdmin, onSaved, refreshFoods }) {
   );
 }
 
-// Phase 2 UX: never render 900 rows in one endless scroll. Default view is
-// collapsed category groups with counts; search flattens to matches only.
-export default function FoodsTab({ onBack, isAdmin }) {
-  const [foods, setFoods] = useState([]);
-  const [loading, setLoading] = useState(true);
+// Search over 14,122 names ran on EVERY keystroke, lower-casing every name
+// each time. Two fixes: the lower-cased name is precomputed once at load
+// (`lname`), and the query is debounced so a burst of typing costs one filter
+// pass instead of one per character. Results stay on screen while the debounce
+// settles — the list never blanks mid-word.
+const SEARCH_DEBOUNCE_MS = 160;
+
+function useDebounced(value, ms) {
+  const [settled, setSettled] = useState(value);
+  useEffect(() => {
+    const t = setTimeout(() => setSettled(value), ms);
+    return () => clearTimeout(t);
+  }, [value, ms]);
+  return settled;
+}
+
+const NO_MATCHES = [];
+
+// Default view is collapsed category groups with counts; search flattens to
+// matches only. Both lists are windowed (see VirtualFoodList) — at 14,122
+// foods, "just render them" is not on the table in either mode.
+export default function FoodsTab({ onBack, isAdmin, backLabel = "Recipes" }) {
+  // Seeded straight from the module store: reopening this tab must not flash
+  // a skeleton for data we already hold.
+  const [foods, setFoods] = useState(() => cachedFoods()?.list || []);
+  const [serverTotal, setServerTotal] = useState(() => cachedFoods()?.total ?? null);
+  const [loading, setLoading] = useState(() => !cachedFoods());
   const [loadError, setLoadError] = useState(null); // NEVER rendered as "0 foods"
   const [query, setQuery] = useState("");
   const [openCats, setOpenCats] = useState({});
   const [selected, setSelected] = useState(null);
   const [showBarcode, setShowBarcode] = useState(false);
-  const abort = useAbortSignal();
+
+  // useAbortSignal hands out a FRESH controller once the old one is aborted,
+  // so `abort.signal.aborted` can't be used as a liveness test after unmount.
+  // The store's fetch is intentionally unsignalled anyway (it keeps warming
+  // the cache); this ref is what guards setState.
+  const alive = useRef(true);
+  useEffect(() => {
+    alive.current = true;
+    return () => { alive.current = false; };
+  }, []);
 
   // frontend-arch-4: this used to be `refreshFoods().finally(...)` — a failed
   // GET /foods was an unhandled rejection AND left `foods` at [], so the whole
   // screen rendered "0 foods" with every category empty. A user reads that as
   // "my food database is gone." A load failure now says so, explicitly, and
   // offers a retry; it is never drawn as an empty database.
-  const refreshFoods = useCallback(async () => {
-    setLoadError(null);
+  const hydrate = useCallback(async (force) => {
+    if (alive.current) setLoadError(null);
     try {
-      setFoods(await api.getFoods({ signal: abort.signal }));
+      const store = await loadFoods({ force });
+      if (alive.current) {
+        setFoods(store.list);
+        setServerTotal(store.total);
+      }
+      return store.list;
     } catch (e) {
-      if (isAbortError(e)) return;
-      setLoadError(describeError(e, "Couldn't load the food database."));
+      if (isAbortError(e)) return [];
+      if (alive.current) setLoadError(describeError(e, "Couldn't load the food database."));
       throw e; // callers that await this (e.g. an admin save) still see it
     } finally {
-      setLoading(false);
+      if (alive.current) setLoading(false);
     }
-  }, [abort]);
+  }, []);
+
+  // Anything that WROTE to the library invalidates it; a plain mount does not.
+  const refreshFoods = useCallback(() => hydrate(true), [hydrate]);
 
   useEffect(() => {
-    refreshFoods().catch(() => {}); // surfaced via loadError, never a crash dialog
-  }, [refreshFoods]);
+    hydrate(false).catch(() => {}); // surfaced via loadError, never a crash dialog
+  }, [hydrate]);
 
-  const q = query.trim().toLowerCase();
+  const debounced = useDebounced(query, SEARCH_DEBOUNCE_MS);
+  const q = debounced.trim().toLowerCase();
+  const settling = query.trim().toLowerCase() !== q;
 
   const byCategory = useMemo(() => {
     const m = Object.fromEntries(FOOD_CATEGORIES.map((c) => [c.slug, []]));
@@ -304,10 +516,23 @@ export default function FoodsTab({ onBack, isAdmin }) {
     return m;
   }, [foods]);
 
-  const searchResults = useMemo(
-    () => (q ? foods.filter((f) => f.name.toLowerCase().includes(q)) : []),
-    [foods, q]
-  );
+  const searchResults = useMemo(() => {
+    if (!q) return NO_MATCHES;
+    const out = [];
+    for (const f of foods) if ((f.lname || "").includes(q)) out.push(f);
+    return out;
+  }, [foods, q]);
+
+  // The 470 rows that carry another food's record verbatim. Counting them is
+  // one pass at load; saying the number out loud is the difference between a
+  // library that is honest about its own state and one that isn't.
+  const suspectCount = useMemo(() => foods.reduce((n, f) => n + (quarantineNote(f) ? 1 : 0), 0), [foods]);
+
+  // A paged endpoint that hands back fewer rows than it says it has must be
+  // reported, not silently browsed as if it were the whole library.
+  const partial = serverTotal != null && serverTotal > foods.length;
+
+  const dotOf = (f) => CATEGORY_DOT(f.category);
 
   return (
     <div>
@@ -317,13 +542,22 @@ export default function FoodsTab({ onBack, isAdmin }) {
           ? "Couldn't load the food database — the count below is not a real count."
           : loading
             ? "Loading your foods…"
-            : `${foods.length} foods · per 100 g · validated against kcal ≈ 4P + 4C + 9F`}
+            // The Atwater check is NOT a warrant of correctness and must not
+            // be sold as one: 470 rows in this library carry another food's
+            // macros verbatim and pass it perfectly (a real USDA tuple, just
+            // the wrong record). Say what the check actually does.
+            : `${num(foods.length)} foods · per 100 g · calories are cross-checked against each row's own protein, carbs and fat — that catches impossible numbers, not another food's numbers filed under the right name`}
       >
         <Btn small kind="ghost" onClick={() => setShowBarcode((v) => !v)}>
           <Barcode size={12} className="inline mr-1" />{showBarcode ? "Hide barcode lookup" : "Add by barcode"}
         </Btn>
+        {/* This said "Back to Recipes" and went to Recipes no matter where you
+            arrived from (Recipes OR Engine) — the destination was true, the
+            word "Back" was not. Naming the destination only is honest for
+            every caller. `backLabel` lets a caller name a different one once
+            Foods gets a real nav entry of its own. */}
         <Btn small kind="ghost" onClick={onBack}>
-          <ArrowLeft size={12} className="inline mr-1" />Back to Recipes
+          <ArrowLeft size={12} className="inline mr-1" />{backLabel}
         </Btn>
       </PageHead>
 
@@ -352,6 +586,18 @@ export default function FoodsTab({ onBack, isAdmin }) {
             />
           </div>
 
+          {!loading && !loadError && suspectCount > 0 && (
+            <div className="text-xs font-semibold mb-3 px-1" style={{ color: C.warn }}>
+              {num(suspectCount)} of these rows are known to carry another food's numbers. They're marked with an amber triangle and explain themselves when you open them.
+            </div>
+          )}
+
+          {partial && (
+            <div className="text-xs font-semibold mb-3 px-1" style={{ color: C.warn }}>
+              The server sent {num(foods.length)} of {num(serverTotal)} foods — this page isn't showing the whole library yet.
+            </div>
+          )}
+
           {loading ? (
             <SkeletonRows rows={7} />
           ) : loadError ? (
@@ -367,20 +613,29 @@ export default function FoodsTab({ onBack, isAdmin }) {
             </Card>
           ) : foods.length === 0 ? (
             <Card>
-              <div className="text-sm font-semibold" style={{ color: C.faint }}>
-                The food database is empty. Add a food by barcode above, or reseed the library.
-              </div>
+              <EmptyNote
+                icon={UtensilsCrossed}
+                title="The food database is empty"
+                hint="Add a food by barcode above, or reseed the library."
+              />
             </Card>
           ) : q ? (
             <Card>
               <div className="text-xs font-semibold mb-1" style={{ color: C.faint }}>
-                {searchResults.length} match{searchResults.length === 1 ? "" : "es"}
-                {searchResults.length > SEARCH_RENDER_CAP && ` — showing first ${SEARCH_RENDER_CAP}, refine the search`}
+                {num(searchResults.length)} match{searchResults.length === 1 ? "" : "es"}{settling ? " · searching…" : ""}
               </div>
-              {searchResults.slice(0, SEARCH_RENDER_CAP).map((f) => (
-                <FoodRow key={f.id} food={f} selected={selected?.id === f.id} onSelect={setSelected} dotColor={CATEGORY_DOT(f.category)} />
-              ))}
-              {searchResults.length === 0 && <div className="text-sm font-semibold py-2" style={{ color: C.faint }}>No foods match.</div>}
+              {searchResults.length === 0 ? (
+                <div className="text-sm font-semibold py-2" style={{ color: C.faint }}>No foods match.</div>
+              ) : (
+                <VirtualFoodList
+                  items={searchResults}
+                  label={`${searchResults.length} foods matching "${q}"`}
+                  maxRows={14}
+                  selectedId={selected?.id}
+                  onSelect={setSelected}
+                  dotFor={dotOf}
+                />
+              )}
             </Card>
           ) : (
             <div className="flex flex-col gap-2.5">
@@ -397,13 +652,21 @@ export default function FoodsTab({ onBack, isAdmin }) {
                       {open ? <ChevronDown size={16} style={{ color: C.faint }} aria-hidden="true" /> : <ChevronRight size={16} style={{ color: C.faint }} aria-hidden="true" />}
                       <span className="w-2.5 h-2.5 rounded-full" aria-hidden="true" style={{ background: CATEGORY_DOT(cat.slug) }}></span>
                       <span className="text-sm font-extrabold flex-1 text-left" style={{ color: C.ink }}>{cat.label}</span>
-                      <span className="mono text-xs font-bold px-2 py-0.5 rounded-lg" style={{ color: C.faint, background: C.card2 }}>{items.length}</span>
+                      <span className="mono text-xs font-bold px-2 py-0.5 rounded-lg" style={{ color: C.faint, background: C.card2 }}>{num(items.length)}</span>
                     </button>
                     {open && (
                       <div className="px-3 pb-3">
-                        {items.map((f) => (
-                          <FoodRow key={f.id} food={f} selected={selected?.id === f.id} onSelect={setSelected} dotColor={CATEGORY_DOT(cat.slug)} />
-                        ))}
+                        {items.length === 0 ? (
+                          <div className="text-sm font-semibold py-2 px-2" style={{ color: C.faint }}>No foods in this category yet.</div>
+                        ) : (
+                          <VirtualFoodList
+                            items={items}
+                            label={`${items.length} foods in ${cat.label}`}
+                            selectedId={selected?.id}
+                            onSelect={setSelected}
+                            dotFor={() => CATEGORY_DOT(cat.slug)}
+                          />
+                        )}
                       </div>
                     )}
                   </div>
@@ -423,9 +686,11 @@ export default function FoodsTab({ onBack, isAdmin }) {
             />
           ) : (
             <Card>
-              <div className="text-sm font-semibold" style={{ color: C.faint }}>
-                Select a food to see its full breakdown, provenance, and actions — edit it or drop it into a recipe.
-              </div>
+              <EmptyNote
+                icon={UtensilsCrossed}
+                title="No food selected"
+                hint="Pick any food on the left to see its full breakdown, where its numbers came from, and what you can do with it."
+              />
             </Card>
           )}
         </div>

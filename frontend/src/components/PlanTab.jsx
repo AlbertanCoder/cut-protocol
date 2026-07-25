@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback, useMemo, useRef, memo } from "react";
 import {
   Lock, LockOpen, RefreshCw, ChefHat, ShoppingCart, Copy,
   MessageCircle, Mail, Sparkles, Check, AlertTriangle, X, ArrowRight, Beef,
@@ -12,7 +12,7 @@ import { Card, Btn, Chip, PageHead, ErrorNote } from "./ui/Parts.jsx";
 import { Skeleton, SkeletonRows } from "./ui/Skeleton.jsx";
 import { RangeCap, ComplexityCap } from "./ui/FilterControls.jsx";
 import GenerationProgress from "./ui/GenerationProgress.jsx";
-import { api, isAbortError } from "../lib/api.js";
+import { api, isAbortError, describeError } from "../lib/api.js";
 
 const kc = (n) => Math.round(n).toLocaleString("en-CA");
 const g1 = (n) => Math.round(n * 10) / 10;
@@ -35,7 +35,7 @@ const PREP_OPTIONS = [{ v: null, l: "Any prep time" }, { v: 15, l: "≤ 15 min" 
 
 // Stage 2 — how much to generate. Mirrors the server's own catalogue
 // (GET /api/plans/horizons, and resolveHorizon() validates against the same
-// list), so the control can never offer something the solver would refuse.
+// list), so the control can never offer something the meal planner would refuse.
 const HORIZON_OPTIONS = [
   { key: "meal", label: "1 meal", days: 0 },
   { key: "day", label: "1 day", days: 1 },
@@ -60,7 +60,29 @@ const toApplyPayload = (s) => ({
   warning: s.warning || undefined,
 });
 
-// ── horizon control ──────────────────────────────────────────────────────
+// ── grocery-line helpers ─────────────────────────────────────────────────
+// Module scope: pure, and referenced from memoised derivations below, so they
+// must not be re-created on every render.
+const itemGrams = (i) => Math.round(i.purchase?.grams ?? i.preparedGrams ?? i.grams ?? 0);
+const itemSection = (i) => i.section ?? i.category ?? "other";
+const itemLine = (i) => {
+  const grams = itemGrams(i);
+  const practical = i.purchaseUnits?.display;
+  return practical ? `${practical} — ${i.name} (${grams} g)` : `${grams} g ${i.name}`;
+};
+
+// The backend's costCoverageNote ships a SOURCE PATH to the screen — the exact
+// string is "all items priced (rough CAD estimates, not sourced data - see
+// src/lib/groceryPrices.js)" (backend/src/lib/groceryList.js:236). A file path
+// is not shopping-list copy. The real fix belongs in that file; until it lands,
+// the path is stripped here so it can never reach a user.
+const stripSourcePaths = (s) => (s || "")
+  .replace(/\s*[-–—]?\s*see\s+\S+\.(?:js|jsx|ts|tsx|json)\b/gi, "")
+  .replace(/\(\s*\)/g, "")
+  .replace(/\s{2,}/g, " ")
+  .trim();
+
+// ── how far ahead ────────────────────────────────────────────────────────
 // The generate surface's "how much". Selection is a LIGHTNESS step (--card-2 +
 // a brighter hairline), never the accent — design law (a), green scarcity.
 // The line underneath restates the choice in plain words so the control's state
@@ -77,8 +99,8 @@ function HorizonBar({ horizonKey, setHorizonKey, customDays, setCustomDays, busy
       ? `${days} day${days === 1 ? "" : "s"}, starting today. The rest of the week is left exactly as it is.`
       : `${days} days (${weeks} week${weeks === 1 ? "" : "s"}) from this week's Monday${weeks > 1 ? ` — written to ${weeks} weekly plans` : ""}.`;
   return (
-    <Card section="HORIZON" title="How much to generate">
-      <div className="flex flex-wrap gap-1.5" role="group" aria-label="Plan horizon">
+    <Card section="HOW FAR AHEAD" title="How much to generate">
+      <div className="flex flex-wrap gap-1.5" role="group" aria-label="How far ahead to plan">
         {HORIZON_OPTIONS.map((h) => {
           const on = horizonKey === h.key;
           return (
@@ -99,7 +121,7 @@ function HorizonBar({ horizonKey, setHorizonKey, customDays, setCustomDays, busy
             <input type="number" min={1} max={CUSTOM_MAX_DAYS} value={customDays}
               onChange={(e) => setCustomDays(e.target.value)}
               onBlur={(e) => setCustomDays(clampDays(e.target.value))}
-              aria-label={`Custom horizon in days, 1 to ${CUSTOM_MAX_DAYS}`}
+              aria-label={`Custom length in days, 1 to ${CUSTOM_MAX_DAYS}`}
               className="text-xs px-2 py-1.5 rounded-xl w-20" style={inpStyle} />
             days
           </label>
@@ -110,7 +132,7 @@ function HorizonBar({ horizonKey, setHorizonKey, customDays, setCustomDays, busy
         {horizonKey !== "meal" && (() => {
           // Must match the server's varietyPlanFor(): perWeekCap + (weeks - 1).
           const perWeek = allowBatchRepeats ? 4 : 2;
-          return ` Locked slots survive every horizon; the variety cap widens with it — ${perWeek + weeks - 1} servings of any one dish over ${days} days, still ${perWeek} per week.`;
+          return ` Locked meals survive no matter how far ahead you plan; the variety cap widens with it — ${perWeek + weeks - 1} servings of any one dish over ${days} days, still ${perWeek} per week.`;
         })()}
       </div>
     </Card>
@@ -118,7 +140,7 @@ function HorizonBar({ horizonKey, setHorizonKey, customDays, setCustomDays, busy
 }
 
 // ── one-meal result ──────────────────────────────────────────────────────
-// The instant horizon. Nothing is written — this is an answer, not a plan — so
+// The instant answer. Nothing is written — this is an answer, not a plan — so
 // the card says what it was fitted to and what it landed on, and nothing here
 // goes green unless the dish actually hit the remaining target.
 
@@ -150,7 +172,7 @@ function OneMealCard({ oneMeal }) {
           )}
           {oneMeal.options.length > 1 && (
             <div className="mt-2 pt-2" style={{ borderTop: `1px solid ${C.rule}` }}>
-              <div className="text-[10px] font-bold tracking-wider mb-1.5" style={{ color: C.faintLight }}>OTHER DISHES THAT FIT</div>
+              <div className="text-[10px] font-bold tracking-wider mb-1.5" style={{ color: C.faint }}>OTHER DISHES THAT FIT</div>
               {oneMeal.options.slice(1).map((a) => (
                 <div key={a.recipeId} className="flex items-center justify-between gap-2 py-1 text-xs font-semibold">
                   <span className="truncate" style={{ color: C.ink }}>{a.recipeName}</span>
@@ -173,17 +195,17 @@ function OneMealCard({ oneMeal }) {
   );
 }
 
-// ── multi-week horizon summary ───────────────────────────────────────────
-// A month writes four weekly plans; the board below can only show one of them.
-// Saying so — with each week's own numbers — is the difference between "we
-// generated a month" and a month you can actually check.
+// ── multi-week summary ───────────────────────────────────────────────────
+// A month writes four weekly plans; the meal plan below can only show one of
+// them. Saying so — with each week's own numbers — is the difference between
+// "we generated a month" and a month you can actually check.
 
 function HorizonSummary({ horizon }) {
   if (!horizon || !Array.isArray(horizon.weekPlans) || horizon.weekPlans.length < 2) return null;
   return (
-    <Card section="HORIZON" title={`${horizon.label} — ${horizon.startDate} to ${horizon.endDate}`}>
+    <Card section="WEEKS WRITTEN" title={`${horizon.label} — ${fmtD(horizon.startDate)} to ${fmtD(horizon.endDate)}`}>
       <div className="text-[10.5px] font-semibold mb-2" style={{ color: C.faint }}>
-        {horizon.weeksWritten} weekly plans written in {horizon.solveMs} ms. The board below shows this week; the later weeks are stored on their own plan rows.
+        {horizon.weeksWritten} weekly plans written in {horizon.solveMs} ms. The meal plan below shows this week; the later weeks are stored on their own plan rows.
       </div>
       <div className="flex flex-col gap-1">
         {horizon.weekPlans.map((w) => {
@@ -191,10 +213,10 @@ function HorizonSummary({ horizon }) {
           return (
             <div key={w.startDate} className="flex items-center justify-between gap-2 py-1 text-xs font-semibold"
               style={{ borderBottom: `1px solid ${C.rule}` }}>
-              <span style={{ color: C.ink }}>Week of {w.startDate}</span>
+              <span style={{ color: C.ink }}>Week of {fmtD(w.startDate)}</span>
               <span className="mono" style={{ color: clean ? C.ink : C.warn }}>
                 {w.daysInTolerance}/{w.days} days on target · {w.avgMatch}% avg
-                {w.unfilledSlots > 0 ? ` · ${w.unfilledSlots} empty slot(s)` : ""}
+                {w.unfilledSlots > 0 ? ` · ${w.unfilledSlots} meal(s) not filled` : ""}
               </span>
             </div>
           );
@@ -215,7 +237,7 @@ function FiltersBar({ filters, setFilters, proteinFloorSource }) {
     setFilters((f) => ({ ...f, proteinPriority: on }));
   };
   return (
-    <Card section="FILTERS" title="Steer the solver">
+    <Card section="FILTERS" title="Steer the meal planner">
       <div className="flex flex-wrap gap-1.5 mb-3">
         {CUISINE_OPTIONS.map((c) => {
           const on = filters.cuisines.includes(c.key);
@@ -244,15 +266,17 @@ function FiltersBar({ filters, setFilters, proteinFloorSource }) {
           className="text-xs px-2 py-2 rounded-xl" style={inpStyle}>
           {PREP_OPTIONS.map((p) => <option key={p.l} value={p.v ?? ""}>{p.l}</option>)}
         </select>
+        {/* Law (a): a checkbox is control chrome, not an on-target claim — the
+            browser's accent-color takes neutral --ink, never --accent. */}
         <label className="flex items-center gap-1.5 text-xs font-semibold px-1" style={{ color: C.ink }}>
           <input type="checkbox" checked={filters.allowBatchRepeats}
             onChange={(e) => setFilters((f) => ({ ...f, allowBatchRepeats: e.target.checked }))}
-            style={{ accentColor: C.accent }} />
+            style={{ accentColor: C.ink }} />
           Batch-cooking repeats OK
         </label>
       </div>
       <div className="text-[10.5px] font-semibold mt-2" style={{ color: C.faint }}>
-        Cuisine / protein / budget bias the solver; diet & allergies from your Profile hard-filter it; max prep is a hard cap.
+        Cuisine, protein and budget are preferences — the planner bends toward them. Your diet and allergies from Profile are absolute: nothing that breaks them can appear. Max prep time is absolute too.
       </div>
 
       {/* Stage 3 — the optional caps. Each off by default with an explicit OFF
@@ -268,7 +292,7 @@ function FiltersBar({ filters, setFilters, proteinFloorSource }) {
               onChange={(v) => setFilters((f) => ({ ...f, maxCostCad: v }))}
               min={1} max={15} step={0.5} enableAt={4}
               format={(v) => `$${v.toFixed(2)}`}
-              help="Pool median ≈ $4 / serving." />
+              help="Median across your recipes ≈ $4 / serving." />
             {/* Required cost disclosure — one line per surface. */}
             <div className="text-[10px] font-semibold mt-1" style={{ color: C.faint }}>
               Estimated from a local price table, not live grocery pricing.
@@ -281,25 +305,27 @@ function FiltersBar({ filters, setFilters, proteinFloorSource }) {
             onChange={(v) => setFilters((f) => ({ ...f, minTaste: v }))}
             min={0} max={1} step={0.05} enableAt={0.58}
             format={(v) => `≥ ${v.toFixed(2)}`}
-            help="0–1; pool median ≈ 0.58. Sharpens once you rate dishes." />
+            help="0–1; median across your recipes ≈ 0.58. Sharpens once you rate dishes." />
         </div>
         <div className="text-[10px] font-semibold mt-2.5" style={{ color: C.faint }}>
-          Caps are hard filters — a dish that breaks one is removed, and if that empties the pool the solver names which cap is binding rather than failing silently.
+          Caps are hard filters — a dish that breaks one is removed, and if that leaves the meal planner nothing to choose from it names which cap is binding rather than failing silently.
         </div>
       </div>
 
       <div className="mt-3 pt-3" style={{ borderTop: `1px solid ${C.rule}` }}>
         <label className="flex items-start gap-2.5 text-sm font-bold cursor-pointer" style={{ color: C.ink }}>
+          {/* Law (c): --protein is the macro blue and may never be borrowed for
+              control chrome. Neutral --ink, like every other control here. */}
           <input type="checkbox" checked={filters.proteinPriority}
             onChange={(e) => setProteinPriority(e.target.checked)}
-            className="mt-0.5" style={{ accentColor: C.protein }} />
+            className="mt-0.5" style={{ accentColor: C.ink }} />
           <span className="flex items-center gap-1.5">
             <Beef size={14} style={{ color: C.proteinText }} />
             Protein-priority mode
           </span>
         </label>
-        <div className="text-[10.5px] font-semibold mt-1 ml-6" style={{ color: C.faintLight }}>
-          Makes the solver defend your protein floor instead of trading it off against calories — a candidate that misses it is ranked lower and the miss is always reported, never absorbed into an otherwise-good match score.
+        <div className="text-[10.5px] font-semibold mt-1 ml-6" style={{ color: C.faint }}>
+          Makes the meal planner defend your protein floor instead of trading it off against calories — an option that misses it is ranked lower and the miss is always reported, never absorbed into an otherwise-good match score.
           {proteinFloorSource && (
             <> Floor basis: {proteinFloorSource.label} — {proteinFloorSource.detail}</>
           )}
@@ -309,25 +335,32 @@ function FiltersBar({ filters, setFilters, proteinFloorSource }) {
   );
 }
 
-// ── solver narration ──────────────────────────────────────────────────────
+// ── what the meal planner did ─────────────────────────────────────────────
 // An honest, plain-language readout of what the last generation actually did,
 // from the generate response `meta`. Neutral by law: green is reserved for
-// on-target/success/hero, so the score reads in ink (not accent) and the pool
+// on-target/success/hero, so the score reads in ink (not accent) and the recipe
 // funnel in faint. Degrades to nothing if meta — or any field — is absent.
+
+// ── THE MATCH-% CONTRACT ──────────────────────────────────────────────────
+// Every match number the server publishes is an INTEGER PERCENT on 0–100.
+// Single-sourced in the solver, and there is no other producer:
+//   mealSolver.js scoreDay()  → matchPct = Math.round(max(0, 1 - err) * 100)
+//   mealSolver.js scoreWeek() → avgMatch = Math.round(mean of those matchPcts)
+//   routes/plans.js           → meta.matchPct = result.score.avgMatch
+// It is NEVER a 0–1 fraction. So the UI must not sniff the unit: the old
+// `raw <= 1 ? raw * 100 : raw` heuristic rendered a genuine 1% match as 100%
+// and 0.8% as 80% — a fabricated number on the app's headline honesty stat.
+// Anything that is not a finite number is ABSENT, not zero.
+const asPercent = (n) => (typeof n === "number" && Number.isFinite(n) ? Math.round(n) : null);
+
 function SolverNarration({ meta }) {
   if (!meta) return null;
   const pc = meta.poolCounts || {};
-  // The match % may arrive as the scalar `matchPct`, as a bare `score` number
-  // (0–1 fraction or 0–100 percent), or nested inside the week score object.
-  // Reading only `typeof meta.score === "number"` meant the server's
-  // `score: {daysInTolerance, avgMatch}` never rendered — the app's headline
-  // honesty number was computed on every generate and shown to nobody.
-  const rawPct = typeof meta.matchPct === "number" ? meta.matchPct
-    : typeof meta.score === "number" ? meta.score
-      : typeof meta.score?.avgMatch === "number" ? meta.score.avgMatch : null;
-  const pct = rawPct == null ? null : Math.round(rawPct <= 1 ? rawPct * 100 : rawPct);
-  // The per-day strip lives at meta.score.days for a week/horizon solve; older
-  // shapes put it at meta.days. Read either, else the "every day, its own match"
+  // The scalar may arrive as `matchPct`, as a bare numeric `score`, or nested
+  // in the week score object — three SHAPES, one unit (see contract above).
+  const pct = asPercent(meta.matchPct) ?? asPercent(meta.score) ?? asPercent(meta.score?.avgMatch);
+  // The per-day strip lives at meta.score.days for a week solve; older shapes
+  // put it at meta.days. Read either, else the "every day, its own match"
   // strip silently never renders even though the data is right there.
   const days = Array.isArray(meta.days) ? meta.days
     : Array.isArray(meta.score?.days) ? meta.score.days : [];
@@ -335,9 +368,9 @@ function SolverNarration({ meta }) {
   // Week-level verdict, held to the SAME green-scarcity law as the day cards:
   // the headline % is a distance measure, not a pass mark, so it never earns
   // the accent — and the aggregate that IS a verdict states the count in
-  // words. Amber the moment a single day sits outside tolerance, so a healthy
+  // words. Amber the moment a single day sits outside range, so a healthy
   // average can't stand in for "the week is fine".
-  const daysInTol = typeof meta.score?.daysInTolerance === "number" ? meta.score.daysInTolerance : null;
+  const daysInTol = asPercent(meta.score?.daysInTolerance);
   const dayTotal = days.length || null;
   const weekOnTarget = daysInTol != null && dayTotal != null && daysInTol === dayTotal;
   const varietyNotes = Array.isArray(meta.variety?.notes) ? meta.variety.notes : [];
@@ -367,7 +400,7 @@ function SolverNarration({ meta }) {
   ) return null;
 
   return (
-    <Card section="SOLVER" title="What the solver did">
+    <Card section="MEAL PLANNER" title="What the meal planner did">
       <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
         {bestOf != null && <Chip>Best of {bestOf}</Chip>}
         {pct != null && (
@@ -378,7 +411,7 @@ function SolverNarration({ meta }) {
         )}
         {daysInTol != null && dayTotal != null && (
           <span className="text-xs font-bold" style={{ color: weekOnTarget ? C.ink : C.warn }}>
-            {daysInTol} of {dayTotal} days inside tolerance
+            {daysInTol} of {dayTotal} days close enough to your targets
           </span>
         )}
         {floorMet != null && (
@@ -393,7 +426,7 @@ function SolverNarration({ meta }) {
           <div className="flex items-center gap-1.5 text-xs font-semibold flex-wrap" style={{ color: C.faint }}>
             {funnel.map((f, i) => (
               <span key={f.l} className="flex items-center gap-1.5">
-                {i > 0 && <ArrowRight size={12} style={{ color: C.faintLight }} />}
+                {i > 0 && <ArrowRight size={12} style={{ color: C.faint }} />}
                 <b className="mono" style={{ color: C.ink }}>{kc(f.n)}</b> {f.l}
               </span>
             ))}
@@ -402,14 +435,14 @@ function SolverNarration({ meta }) {
       </div>
       {days.length > 0 && (
         <div className="mt-3">
-          <div className="text-[10px] font-bold tracking-wider mb-1.5" style={{ color: C.faintLight }}>
+          <div className="text-[10px] font-bold tracking-wider mb-1.5" style={{ color: C.faint }}>
             EVERY DAY, ITS OWN MATCH
           </div>
           <div className="flex flex-wrap gap-1.5">
             {days.map((d) => (
               <div
-                // A multi-week horizon repeats dayOfWeek, so the key has to be
-                // the day's own identity across the horizon, not its weekday.
+                // A multi-week run repeats dayOfWeek, so the key has to be the
+                // day's own identity across the run, not its weekday.
                 key={d.key ?? d.dayOfWeek}
                 title={`${d.windowIndex != null ? `Week ${d.windowIndex + 1} · ` : ""}${d.miss || `${d.dayName}: on target`}`}
                 className="px-2 py-1 rounded-lg flex items-baseline gap-1.5"
@@ -460,9 +493,9 @@ function DayCandidates({ data, targetKcal, onAccept, accepting }) {
         // This card used to paint the top-ranked candidate brand green no
         // matter how badly it missed, so "green" silently degraded from
         // "on target" to "the least-bad thing we found". Brand green now
-        // means exactly one thing: the day landed INSIDE tolerance on all
-        // four macros (the server's own dayTolerance verdict, single-sourced
-        // in mealSolver — never recomputed here).
+        // means exactly one thing: the day landed INSIDE range on all four
+        // macros (the server's own dayTolerance verdict, single-sourced in
+        // mealSolver — never recomputed here).
         //
         // Fail closed: a response that does not publish `inTolerance` is not
         // proof of being on target, so it gets the neutral treatment. Green
@@ -523,24 +556,36 @@ function DayCandidates({ data, targetKcal, onAccept, accepting }) {
   );
 }
 
-// ── slot card with alternates ────────────────────────────────────────────
-
-function SlotCard({ plan, slot, expanded, onToggleExpand, onLockToggle, busy, filters, reloadPlan, onCart, inCart }) {
+// ── one meal in the plan, with its other options ─────────────────────────
+//
+// a11y: this card used to be role="button" tabIndex={0} WRAPPING three real
+// <button>s (cart, lock, swap). Interactive controls nested inside a button
+// role is invalid ARIA — a screen reader's browse mode flattens the subtree,
+// so the inner buttons are folded into the outer label or lost entirely. The
+// disclosure is now a real <button> around the title + macro chips ONLY, and
+// the action buttons are its SIBLINGS. Keyboard behaviour is unchanged
+// (Enter/Space on the title toggles); all the stopPropagation() plumbing the
+// old click-anywhere card needed is gone with it.
+//
+// memo(): a day renders one of these per meal and the common re-render is one
+// card expanding. Props are scalars + stable callbacks + a memoised filters
+// object, so the other cards genuinely skip.
+const SlotCard = memo(function SlotCard({ planId, slot, expanded, onToggleExpand, onLockToggle, busy, filters, reloadPlan, onCart, inCart }) {
   const recipe = slot.recipe;
   const [alts, setAlts] = useState(null);
   const [altBusy, setAltBusy] = useState(false);
   const [applyingId, setApplyingId] = useState(null);
   const [error, setError] = useState(null);
 
-  const loadAlternates = async (e) => {
-    e.stopPropagation();
+  const loadAlternates = async () => {
     setAltBusy(true);
     setError(null);
     try {
-      const res = await api.getSlotAlternates(plan.id, slot.id, filters);
+      const res = await api.getSlotAlternates(planId, slot.id, filters);
       setAlts(res.alternates);
     } catch (err) {
-      setError(err.message);
+      if (isAbortError(err)) return;
+      setError(describeError(err));
     } finally {
       setAltBusy(false);
     }
@@ -550,99 +595,93 @@ function SlotCard({ plan, slot, expanded, onToggleExpand, onLockToggle, busy, fi
     setApplyingId(alt.recipeId);
     setError(null);
     try {
-      await api.applySlotAlternate(plan.id, slot.id, toApplyPayload({ ...alt, slotType: slot.slotType, slotIndex: slot.slotIndex }));
+      await api.applySlotAlternate(planId, slot.id, toApplyPayload({ ...alt, slotType: slot.slotType, slotIndex: slot.slotIndex }));
       setAlts(null);
       await reloadPlan();
     } catch (err) {
-      setError(err.message);
+      if (isAbortError(err)) return;
+      setError(describeError(err));
     } finally {
       setApplyingId(null);
     }
   };
 
-  // a11y: this whole card toggles expand/collapse on click, but it wraps
-  // several REAL buttons (cart, lock, swap) that must keep working — those
-  // already call e.stopPropagation(). role="button" + tabIndex make the
-  // card itself keyboard-reachable; the currentTarget guard stops Enter/
-  // Space on an inner button from ALSO bubbling up and double-firing the
-  // outer toggle.
-  const onCardKeyDown = (e) => {
-    if (e.target !== e.currentTarget) return;
-    if (e.key === "Enter" || e.key === " ") {
-      e.preventDefault();
-      onToggleExpand(slot.id);
-    }
-  };
-
   return (
-    <div className="p-3.5 rounded-2xl row-host" onClick={() => onToggleExpand(slot.id)}
-      onKeyDown={onCardKeyDown} role="button" tabIndex={0} aria-expanded={expanded}
-      aria-label={`${slot.slotType}: ${recipe ? recipe.name : "empty slot"}, ${kc(slot.kcal)} kcal — toggle details`}
-      style={{ background: C.card, border: `1px solid ${C.rule}` }}>
+    <div className="p-3.5 rounded-2xl row-host" style={{ background: C.card, border: `1px solid ${C.rule}` }}>
       <div className="flex gap-3">
         <FoodTile recipe={{ ingredients: slot.ingredients, slotType: slot.slotType, mealCategory: recipe?.mealCategory }} size={44} />
         <div className="min-w-0 flex-1">
           <div className="flex justify-between items-start gap-2">
-            <div className="text-left min-w-0">
-              <div className="text-[10px] font-extrabold uppercase tracking-wide" style={{ color: C.faintLight }}>{slot.slotType}</div>
+            <button type="button" onClick={() => onToggleExpand(slot.id)} aria-expanded={expanded}
+              className="text-left min-w-0 flex-1"
+              aria-label={`${slot.slotType}: ${recipe ? recipe.name : "no meal yet"}, ${kc(slot.kcal)} kcal — ${expanded ? "hide" : "show"} details`}>
+              <div className="text-[10px] font-extrabold uppercase tracking-wide" style={{ color: C.faint }}>{slot.slotType}</div>
               <div className="text-sm font-extrabold" style={{ color: C.ink }}>{recipe ? recipe.name : "—"}</div>
-            </div>
+              <div className="flex flex-wrap gap-1.5 mt-2">
+                <Chip>{kc(slot.kcal)} kcal</Chip>
+                <Chip color={C.proteinText} bg={`${C.protein}1F`}>{g1(slot.protein)}P</Chip>
+                <Chip color={C.fatText} bg={`${C.fat}1F`}>{g1(slot.fat)}F</Chip>
+                <Chip color={C.carbText} bg={`${C.carb}1F`}>{g1(slot.carb)}C</Chip>
+              </div>
+            </button>
             {/* Hover-revealed actions (cart, swap); the lock stays visible
                 because it displays STATE, not just an action. */}
             <div className="flex gap-1.5 shrink-0">
               {recipe && (
-                <button onClick={(e) => { e.stopPropagation(); onCart(recipe.id); }}
+                // Law (a): "in your cart" is a toggled state — not on-target,
+                // not success — so it cannot be green. Selected reads as a
+                // LIGHTNESS step (brighter ink + a --faint-light hairline),
+                // the same language the day picker and chips already speak.
+                <button onClick={() => onCart(recipe.id)}
                   className={`w-7 h-7 rounded-lg flex items-center justify-center ${inCart ? "" : "row-reveal"}`}
-                  style={{ color: inCart ? C.good : C.faint, background: C.card2, border: `1px solid ${C.rule}` }}
-                  aria-label={inCart ? "Remove from cart" : "Add to cart"} title={inCart ? "Remove from cart" : "Add to cart"}>
+                  style={{ color: inCart ? C.ink : C.faint, background: C.card2, border: `1px solid ${inCart ? C.faintLight : C.rule}` }}
+                  aria-label={inCart ? "Remove from cart" : "Add to cart"} aria-pressed={inCart}
+                  title={inCart ? "Remove from cart" : "Add to cart"}>
                   {inCart ? <Check size={14} aria-hidden="true" /> : <ShoppingCart size={14} aria-hidden="true" />}
                 </button>
               )}
-              <button onClick={(e) => { e.stopPropagation(); onLockToggle(slot); }} disabled={busy}
+              <button onClick={() => onLockToggle(slot)} disabled={busy}
                 className={`w-7 h-7 rounded-lg flex items-center justify-center ${slot.locked ? "" : "row-reveal"}`}
-                style={{ color: slot.locked ? C.ink : C.faint, background: C.card2, border: `1px solid ${C.rule}` }}
-                aria-label={slot.locked ? "Unlock this slot" : "Lock this slot"} aria-pressed={slot.locked}
-                title={slot.locked ? "Locked — survives regeneration" : "Unlocked"}>
+                style={{ color: slot.locked ? C.ink : C.faint, background: C.card2, border: `1px solid ${slot.locked ? C.faintLight : C.rule}` }}
+                aria-label={slot.locked ? "Unlock this meal" : "Lock this meal"} aria-pressed={slot.locked}
+                title={slot.locked ? "Locked — survives a regenerate" : "Unlocked — a regenerate can replace it"}>
                 {slot.locked ? <Lock size={14} aria-hidden="true" /> : <LockOpen size={14} aria-hidden="true" />}
               </button>
               {!slot.locked && (
                 <button onClick={loadAlternates} disabled={altBusy}
                   className="w-7 h-7 rounded-lg flex items-center justify-center row-reveal"
-                  style={{ color: C.faint, background: C.card2, border: `1px solid ${C.rule}` }} aria-label="Swap — show alternates" title="Swap — show 3 alternates">
+                  style={{ color: C.faint, background: C.card2, border: `1px solid ${C.rule}` }}
+                  aria-label="Swap — show other options" title="Swap — show 3 other options">
                   <RefreshCw size={14} aria-hidden="true" />
                 </button>
               )}
             </div>
           </div>
-          <div className="flex flex-wrap gap-1.5 mt-2">
-            <Chip>{kc(slot.kcal)} kcal</Chip>
-            <Chip color={C.proteinText} bg={`${C.protein}1F`}>{g1(slot.protein)}P</Chip>
-            <Chip color={C.fatText} bg={`${C.fat}1F`}>{g1(slot.fat)}F</Chip>
-            <Chip color={C.carbText} bg={`${C.carb}1F`}>{g1(slot.carb)}C</Chip>
-          </div>
           {slot.warning && (
             <div className="mt-1.5">
               <div className="text-xs font-semibold" style={{ color: C.warn }}>{slot.warning}</div>
               <div className="text-[10.5px] font-semibold mt-0.5" style={{ color: C.faint }}>
-                → Fix it with the swap button (3 alternates), or regenerate with looser filters.
+                → Fix it with the swap button (3 other options), or regenerate with looser filters.
               </div>
             </div>
           )}
           {error && (
             <div className="mt-1.5">
-              <ErrorNote msg={error} hint="Swap and lock still work — retry, or regenerate the week if this slot is stuck." />
+              <ErrorNote msg={error} hint="Swap and lock still work — retry, or regenerate the week if this meal is stuck." />
             </div>
           )}
 
           {altBusy && !alts && <SkeletonRows rows={3} className="mt-2.5" />}
 
           {alts && (
-            <div className="mt-2.5 pt-2.5" onClick={(e) => e.stopPropagation()} style={{ borderTop: `1px solid ${C.rule}` }}>
+            <div className="mt-2.5 pt-2.5" style={{ borderTop: `1px solid ${C.rule}` }}>
               <div className="flex items-center justify-between mb-1.5">
-                <span className="text-[10.5px] font-extrabold uppercase tracking-wide" style={{ color: C.faintLight }}>Alternates for this slot</span>
-                <button onClick={() => setAlts(null)} style={{ color: C.faintLight }}><X size={13} /></button>
+                <span className="text-[10.5px] font-extrabold uppercase tracking-wide" style={{ color: C.faint }}>Other options for this meal</span>
+                <button onClick={() => setAlts(null)} style={{ color: C.faint }} aria-label="Close other options">
+                  <X size={13} aria-hidden="true" />
+                </button>
               </div>
-              {alts.length === 0 && <div className="text-xs font-semibold" style={{ color: C.faint }}>Nothing else fits this slot under current rules.</div>}
+              {alts.length === 0 && <div className="text-xs font-semibold" style={{ color: C.faint }}>Nothing else fits this meal under your current rules.</div>}
               <div className="flex flex-col gap-1.5">
                 {alts.map((a) => (
                   <div key={a.recipeId} className="flex items-center justify-between gap-2 p-2 rounded-lg" style={{ background: C.card2 }}>
@@ -676,7 +715,7 @@ function SlotCard({ plan, slot, expanded, onToggleExpand, onLockToggle, busy, fi
       </div>
     </div>
   );
-}
+});
 
 // ── main tab ─────────────────────────────────────────────────────────────
 
@@ -689,6 +728,7 @@ export default function PlanTab({ profile, summary, refresh }) {
   const [groceryBusy, setGroceryBusy] = useState(false);
   const [error, setError] = useState(null);
   const [mealsDraft, setMealsDraft] = useState({ meals: profile.mealsPerDay, snacks: profile.snacksPerDay });
+  const [mealsSaving, setMealsSaving] = useState(false);
   const [activeDay, setActiveDay] = useState(new Date().getDay() === 0 ? 6 : new Date().getDay() - 1);
   const [filters, setFilters] = useState({
     cuisines: [], protein: "", budget: null, maxPrepMin: null, allowBatchRepeats: false,
@@ -698,7 +738,7 @@ export default function PlanTab({ profile, summary, refresh }) {
   });
   // In-flight generate request, so a Cancel can abort it (api.js AbortController).
   const genAbortRef = useRef(null);
-  // Stage 2: the horizon is the user's choice, defaulting to the week this
+  // Stage 2: how far ahead is the user's choice, defaulting to the week this
   // screen has always generated.
   const [horizonKey, setHorizonKey] = useState("week");
   const [customDays, setCustomDays] = useState(21);
@@ -707,14 +747,50 @@ export default function PlanTab({ profile, summary, refresh }) {
   const [optionsBusy, setOptionsBusy] = useState(false);
   const [accepting, setAccepting] = useState(false);
   const [cartIds, setCartIds] = useState(new Set());
-  const [genMeta, setGenMeta] = useState(null); // solver narration from the last generate
+  const [genMeta, setGenMeta] = useState(null); // narration from the last generate
   const [meta, setMeta] = useState(null); // /profile/meta — used here only for proteinFloorSource
+
+  // ── THE DAY-OPTIONS RACE ────────────────────────────────────────────────
+  // Solving a day runs against a 45 s budget (TIMEOUT.SOLVER) while the day
+  // selection is one arrow-key away from changing. Before this guard:
+  //
+  //   1. Monday selected → "3 options for Mon" → request M starts.
+  //   2. → arrow → activeDay becomes Tue. setDayOptions(null) cleared the
+  //      SCREEN and did nothing whatsoever to request M.
+  //   3. M lands → setDayOptions(mondayOptions) → Monday's three candidates
+  //      render under the Tuesday heading, indistinguishable from Tuesday's.
+  //   4. "Accept this day" → acceptCandidate read the LIVE activeDay (Tue)
+  //      → api.acceptDay(1, mondaySlots) → Monday's meals written into
+  //      Tuesday. Silent, persistent, and invisible in the response.
+  //
+  // Two independent guards, because either one alone still loses:
+  //   • a monotonic request token + one AbortController per request, so a
+  //     superseded response can never reach setState. NOTE useAbortSignal
+  //     (lib/useAbortable.js) does NOT solve this — it is per-MOUNT: it
+  //     cancels on unmount and has no notion of superseding when an input
+  //     changes, which is exactly the case here.
+  //   • the day a solve was made for is STAMPED onto the state, the panel
+  //     only renders while that stamp matches the selection, and the write
+  //     refuses outright if it doesn't.
+  const dayOptionsToken = useRef(0);
+  const dayOptionsAbort = useRef(null);
+
+  // Supersede + abort whatever day solve is in flight, and clear the panel.
+  // Stable identity ([] deps) so the keyboard effect below never re-binds.
+  const cancelDayOptions = useCallback(() => {
+    dayOptionsToken.current += 1;
+    dayOptionsAbort.current?.abort();
+    dayOptionsAbort.current = null;
+    setOptionsBusy(false);
+    setDayOptions(null);
+  }, []);
 
   const loadPlan = useCallback(async () => {
     try {
       setPlan(await api.getCurrentPlan());
     } catch (e) {
-      setError(e.message);
+      if (isAbortError(e)) return;
+      setError(describeError(e));
     }
   }, []);
 
@@ -724,6 +800,12 @@ export default function PlanTab({ profile, summary, refresh }) {
     api.getProfileMeta().then(setMeta).catch(() => {}); // citation text only — a failed fetch just hides it
   }, [loadPlan]);
 
+  // Nothing in flight outlives this screen.
+  useEffect(() => () => {
+    dayOptionsAbort.current?.abort();
+    genAbortRef.current?.abort();
+  }, []);
+
   // Desktop chassis: ← / → move between days (ignored while typing).
   useEffect(() => {
     const onKey = (e) => {
@@ -732,18 +814,41 @@ export default function PlanTab({ profile, summary, refresh }) {
       if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT") return;
       e.preventDefault();
       setActiveDay((d) => (e.key === "ArrowLeft" ? (d + 6) % 7 : (d + 1) % 7));
-      setDayOptions(null);
+      cancelDayOptions(); // NOT just setDayOptions(null) — kill the request too
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, []);
+  }, [cancelDayOptions]);
 
-  const commitMealConfig = async () => {
-    await api.putProfile({ mealsPerDay: mealsDraft.meals, snacksPerDay: mealsDraft.snacks });
-    await refresh();
-  };
+  const selectDay = useCallback((i) => {
+    setActiveDay(i);
+    cancelDayOptions();
+  }, [cancelDayOptions]);
 
-  const apiFilters = () => ({
+  // A failed profile write used to escape as an unhandled rejection, which the
+  // shell surfaces as the app CRASH dialog — for a mistyped meals-per-day. It
+  // is a save that didn't happen: say so, and put the input back to what the
+  // server actually holds, so the number on screen is never a lie.
+  const commitMealConfig = useCallback(async () => {
+    if (mealsDraft.meals === profile.mealsPerDay && mealsDraft.snacks === profile.snacksPerDay) return;
+    setMealsSaving(true);
+    setError(null);
+    try {
+      await api.putProfile({ mealsPerDay: mealsDraft.meals, snacksPerDay: mealsDraft.snacks });
+      await refresh();
+    } catch (e) {
+      if (isAbortError(e)) return;
+      setMealsDraft({ meals: profile.mealsPerDay, snacks: profile.snacksPerDay });
+      setError(`Meal structure not saved — ${describeError(e)}`);
+    } finally {
+      setMealsSaving(false);
+    }
+  }, [mealsDraft, profile.mealsPerDay, profile.snacksPerDay, refresh]);
+
+  // Memoised so it is ONE stable object per filter change: it is a dependency
+  // of every solve below and a prop on every meal card, so rebuilding it each
+  // render would defeat SlotCard's memo entirely.
+  const apiFilters = useMemo(() => ({
     cuisines: filters.cuisines, protein: filters.protein || undefined,
     budget: filters.budget || undefined, maxPrepMin: filters.maxPrepMin || undefined,
     // Stage 3 caps: send only when set. `??` (not `||`) so a legit minTaste of 0
@@ -753,10 +858,10 @@ export default function PlanTab({ profile, summary, refresh }) {
     minTaste: filters.minTaste ?? undefined,
     allowBatchRepeats: filters.allowBatchRepeats,
     proteinPriority: filters.proteinPriority,
-  });
+  }), [filters]);
 
-  // What the horizon control currently means, as the server's own vocabulary:
-  // a preset key, or a plain day count for the custom input.
+  // What the how-far-ahead control currently means, in the server's own
+  // vocabulary: a preset key, or a plain day count for the custom input.
   const horizonValue = horizonKey === "custom" ? clampDays(customDays) : horizonKey;
   const horizonDays = horizonKey === "custom"
     ? clampDays(customDays)
@@ -765,10 +870,10 @@ export default function PlanTab({ profile, summary, refresh }) {
     ? `${clampDays(customDays)} days`
     : HORIZON_OPTIONS.find((h) => h.key === horizonKey)?.label ?? "1 week";
 
-  const generate = async () => {
+  const generate = useCallback(async () => {
     setGenerating(true);
     setError(null);
-    setDayOptions(null);
+    cancelDayOptions(); // a stale day solve must not land on top of a fresh plan
     setGenMeta(null);
     setOneMeal(null);
     // A fresh AbortController per generate; the Cancel affordance aborts it and
@@ -776,17 +881,17 @@ export default function PlanTab({ profile, summary, refresh }) {
     const controller = new AbortController();
     genAbortRef.current = controller;
     try {
-      // The horizon rides in the request body. api.generatePlan spreads its
+      // How far ahead rides in the request body. api.generatePlan spreads its
       // options object AFTER the default body, so passing `body` here replaces
       // it — the one seam available without editing the shared api module.
-      const body = JSON.stringify({ filters: apiFilters(), horizon: horizonValue });
-      const res = await api.generatePlan(apiFilters(), { body, signal: controller.signal });
-      const meta = res?.meta ?? null;
-      setGenMeta(meta);
-      if (meta?.horizon?.kind === "meal") {
+      const body = JSON.stringify({ filters: apiFilters, horizon: horizonValue });
+      const res = await api.generatePlan(apiFilters, { body, signal: controller.signal });
+      const resMeta = res?.meta ?? null;
+      setGenMeta(resMeta);
+      if (resMeta?.horizon?.kind === "meal") {
         // A single dish is an ANSWER, not a plan — nothing was written, so the
-        // board must keep showing whatever the plan already was.
-        setOneMeal(meta.oneMeal ?? null);
+        // meal plan must keep showing whatever it already was.
+        setOneMeal(resMeta.oneMeal ?? null);
         if (res?.id) setPlan(res);
       } else {
         setPlan(res);
@@ -795,46 +900,68 @@ export default function PlanTab({ profile, summary, refresh }) {
       // Cancel is not a failure: leave the plan exactly as it was, show no error
       // banner, and let the button go straight back to a retryable state.
       if (isAbortError(e)) return;
-      setError(e.message);
+      setError(describeError(e));
     } finally {
       if (genAbortRef.current === controller) genAbortRef.current = null;
       setGenerating(false);
     }
-  };
+  }, [apiFilters, horizonValue, cancelDayOptions]);
 
-  const cancelGenerate = () => genAbortRef.current?.abort();
+  const cancelGenerate = useCallback(() => genAbortRef.current?.abort(), []);
 
-  const loadDayOptions = async () => {
+  const loadDayOptions = useCallback(async () => {
+    const solvedFor = activeDay;              // the day THIS request is about
+    dayOptionsAbort.current?.abort();         // supersede anything already running
+    const token = ++dayOptionsToken.current;
+    const controller = new AbortController();
+    dayOptionsAbort.current = controller;
     setOptionsBusy(true);
     setError(null);
     try {
-      setDayOptions(await api.getDayOptions(activeDay, apiFilters()));
+      const res = await api.getDayOptions(solvedFor, apiFilters, { signal: controller.signal });
+      if (token !== dayOptionsToken.current) return;   // superseded — drop it on the floor
+      // Stamp the day. Everything downstream reads the stamp, never the live
+      // selection, so what is on screen and what gets written are one day.
+      setDayOptions({ ...res, solvedFor });
     } catch (e) {
-      setError(e.message);
+      if (isAbortError(e) || token !== dayOptionsToken.current) return;
+      setError(describeError(e));
     } finally {
-      setOptionsBusy(false);
+      if (dayOptionsAbort.current === controller) dayOptionsAbort.current = null;
+      if (token === dayOptionsToken.current) setOptionsBusy(false);
     }
-  };
+  }, [activeDay, apiFilters]);
 
-  const acceptCandidate = async (candidate) => {
+  const acceptCandidate = useCallback(async (candidate) => {
+    // Second guard. These options were solved for exactly one day; if the
+    // selection has moved since (or the stamp is missing — a response shape we
+    // don't recognise), refuse, rather than write a day's meals into whichever
+    // day happens to be selected right now.
+    const solvedFor = dayOptions?.solvedFor;
+    if (solvedFor == null || solvedFor !== activeDay) {
+      setDayOptions(null);
+      setError(`Those options were solved for a different day — pick ${DAY_NAMES[activeDay]} and solve again.`);
+      return;
+    }
     setAccepting(true);
     setError(null);
     try {
-      // Unsolved slots (no recipe found) simply aren't written — the day
+      // Unsolved meals (no recipe found) simply aren't written — the day
       // keeps an honest gap rather than a fabricated meal.
-      const updated = await api.acceptDay(activeDay, candidate.slots.filter((s) => s.recipeId).map(toApplyPayload));
+      const updated = await api.acceptDay(solvedFor, candidate.slots.filter((s) => s.recipeId).map(toApplyPayload));
       setPlan(updated);
       setDayOptions(null);
     } catch (e) {
-      setError(e.message);
+      if (isAbortError(e)) return;
+      setError(describeError(e));
     } finally {
       setAccepting(false);
     }
-  };
+  }, [dayOptions, activeDay]);
 
-  // Optimistic lock toggle: flip the slot now, reconcile with the server's
+  // Optimistic lock toggle: flip the meal now, reconcile with the server's
   // returned slot, roll the whole slots array back if the write fails.
-  const onLockToggle = async (slot) => {
+  const onLockToggle = useCallback(async (slot) => {
     setBusySlotId(slot.id);
     const prevSlots = plan.slots;
     setPlan((p) => ({ ...p, slots: p.slots.map((s) => (s.id === slot.id ? { ...s, locked: !s.locked } : s)) }));
@@ -843,14 +970,15 @@ export default function PlanTab({ profile, summary, refresh }) {
       setPlan((p) => ({ ...p, slots: p.slots.map((s) => (s.id === updated.id ? updated : s)) }));
     } catch (e) {
       setPlan((p) => ({ ...p, slots: prevSlots })); // rollback
-      setError(e.message);
+      if (isAbortError(e)) return;
+      setError(describeError(e));
     } finally {
       setBusySlotId(null);
     }
-  };
+  }, [plan]);
 
   // Optimistic cart toggle: reflect membership immediately, undo it on error.
-  const onCart = async (recipeId) => {
+  const onCart = useCallback(async (recipeId) => {
     const had = cartIds.has(recipeId);
     const flip = (add) => setCartIds((s) => {
       const n = new Set(s);
@@ -863,60 +991,85 @@ export default function PlanTab({ profile, summary, refresh }) {
       else await api.addToCart(recipeId);
     } catch (e) {
       flip(had); // rollback to the pre-toggle membership
-      setError(e.message);
+      if (isAbortError(e)) return;
+      setError(describeError(e));
     }
-  };
+  }, [cartIds]);
 
-  const onGenerateGroceryList = async () => {
+  const onGenerateGroceryList = useCallback(async () => {
     setGroceryBusy(true);
     try {
       const list = await api.generateGroceryList(plan.id);
       setPlan((p) => ({ ...p, groceryList: list }));
     } catch (e) {
-      setError(e.message);
+      if (isAbortError(e)) return;
+      setError(describeError(e));
     } finally {
       setGroceryBusy(false);
     }
-  };
+  }, [plan?.id]);
 
-  const onCheckItem = async (name, checked) => {
-    setPlan((p) => ({ ...p, groceryList: { ...p.groceryList, items: p.groceryList.items.map((i) => (i.name === name ? { ...i, checked } : i)) } }));
+  // A tick that silently un-ticks itself is a bug report the user can't file.
+  // Roll the checkbox back, SAY the save didn't land, then reload so the list
+  // matches what the server actually stored.
+  const onCheckItem = useCallback(async (name, checked) => {
+    const setChecked = (v) => setPlan((p) => ({
+      ...p,
+      groceryList: { ...p.groceryList, items: p.groceryList.items.map((i) => (i.name === name ? { ...i, checked: v } : i)) },
+    }));
+    setChecked(checked);
     try {
       await api.checkGroceryItem(plan.id, name, checked);
-    } catch {
-      // reload truth on failure
-      loadPlan();
+    } catch (e) {
+      if (isAbortError(e)) return;
+      setChecked(!checked);
+      setError(`"${name}" not saved — ${describeError(e)}`);
+      loadPlan(); // reload truth
     }
-  };
+  }, [plan?.id, loadPlan]);
 
-  const itemGrams = (i) => Math.round(i.purchase?.grams ?? i.preparedGrams ?? i.grams ?? 0);
-  const itemSection = (i) => i.section ?? i.category ?? "other";
-  const groceryBySection = () =>
-    plan.groceryList.bySection ||
-    plan.groceryList.items.reduce((groups, item) => {
+  // ── derived data ────────────────────────────────────────────────────────
+  // One pass over plan.slots for the whole 7-day board, instead of seven
+  // filters plus a reduce on every hover- or keystroke-driven re-render.
+  const slotsByDay = useMemo(() => {
+    const byDay = Array.from({ length: 7 }, () => []);
+    for (const s of plan?.slots || []) {
+      if (s.dayOfWeek >= 0 && s.dayOfWeek < 7) byDay[s.dayOfWeek].push(s);
+    }
+    return byDay.map((slots) => ({ slots, totals: sumSlots(slots) }));
+  }, [plan?.slots]);
+
+  const daySlots = slotsByDay[activeDay].slots;
+  const dayTotals = slotsByDay[activeDay].totals;
+  const targetKcal = summary?.macros?.kcal ?? profile.targetKcal;
+
+  const groceryBySection = useMemo(() => {
+    const gl = plan?.groceryList;
+    if (!gl) return null;
+    return gl.bySection || (gl.items || []).reduce((groups, item) => {
       const key = itemSection(item);
       (groups[key] = groups[key] || []).push(item);
       return groups;
     }, {});
+  }, [plan?.groceryList]);
 
-  const itemLine = (i) => {
-    const grams = itemGrams(i);
-    const practical = i.purchaseUnits?.display;
-    return practical ? `${practical} — ${i.name} (${grams} g)` : `${grams} g ${i.name}`;
-  };
-  const groceryListText = () => plan.groceryList.items.map(itemLine).join("\n");
-  const copyGroceryList = () => navigator.clipboard?.writeText(groceryListText());
-  const grocerySmsHref = () => `sms:?&body=${encodeURIComponent("Grocery list:\n" + groceryListText())}`;
-  const groceryMailtoHref = () =>
-    `mailto:?subject=${encodeURIComponent("Grocery list — week of " + fmtD(plan.startDate))}&body=${encodeURIComponent(groceryListText())}`;
+  const groceryText = useMemo(
+    () => (plan?.groceryList?.items || []).map(itemLine).join("\n"),
+    [plan?.groceryList],
+  );
+  const copyGroceryList = useCallback(() => navigator.clipboard?.writeText(groceryText), [groceryText]);
+  const grocerySmsHref = `sms:?&body=${encodeURIComponent("Grocery list:\n" + groceryText)}`;
+  const groceryMailtoHref = plan
+    ? `mailto:?subject=${encodeURIComponent("Grocery list — week of " + fmtD(plan.startDate))}&body=${encodeURIComponent(groceryText)}`
+    : "mailto:";
 
-  const daySlots = plan ? plan.slots.filter((s) => s.dayOfWeek === activeDay) : [];
-  const dayTotals = sumSlots(daySlots);
-  const targetKcal = summary?.macros?.kcal ?? profile.targetKcal;
+  const onToggleExpand = useCallback((id) => setExpandedId((cur) => (cur === id ? null : id)), []);
 
   return (
     <div>
-      <PageHead title="Plan" sub={plan ? `Week of ${fmtD(plan.startDate)} · locked slots survive regeneration · closest-fit by design` : "Complete days solved against your targets — closest-fit by design, not perfection."}>
+      <PageHead title="Plan" sub={plan
+        ? `Week of ${fmtD(plan.startDate)} · locked meals survive a regenerate · as close as your recipes allow`
+        : "Whole days built around your targets. It gets as close as your recipes allow, and tells you where it missed."}>
         {plan !== undefined && (
           <Btn onClick={generate} disabled={generating}>
             {generating
@@ -929,7 +1082,7 @@ export default function PlanTab({ profile, summary, refresh }) {
 
       {error && (
         <div className="mb-3">
-          <ErrorNote msg={error} hint="Hit the button again — if it keeps failing, loosen the filters above (they can over-constrain the solver)." />
+          <ErrorNote msg={error} hint="Hit the button again — if it keeps failing, loosen the filters above (they can over-constrain the meal planner)." />
         </div>
       )}
 
@@ -944,7 +1097,7 @@ export default function PlanTab({ profile, summary, refresh }) {
       </div>
 
       {/* Honest staged progress while a generate is in flight — no fake %, real
-          phases, cancellable. The board below stays mounted and interactive. */}
+          phases, cancellable. The meal plan below stays mounted and usable. */}
       {generating && (
         <div className="mb-4">
           <GenerationProgress
@@ -983,21 +1136,20 @@ export default function PlanTab({ profile, summary, refresh }) {
         <div className="grid grid-cols-1 xl:grid-cols-12 gap-4 items-start">
           {/* ── left: the week ── */}
           <div className="xl:col-span-7 min-w-0">
-            {/* 7-column week board (≥ xl): every day's slots at a glance.
-                Click or ← / → selects a day; the full slot detail renders
-                below. Selection is a lightness step, not the brand green. */}
+            {/* 7-column week board (≥ xl): every day's meals at a glance.
+                Click or ← / → selects a day; the full detail renders below.
+                Selection is a lightness step, not the brand green. */}
             <div className="hidden xl:grid grid-cols-7 gap-1.5 mb-3">
               {DAY_NAMES.map((d, i) => {
-                const slots = plan ? plan.slots.filter((s) => s.dayOfWeek === i) : [];
-                const tot = sumSlots(slots);
+                const { slots, totals: tot } = slotsByDay[i];
                 const active = activeDay === i;
                 return (
-                  <button key={d} onClick={() => { setActiveDay(i); setDayOptions(null); }} aria-current={active ? "true" : undefined}
+                  <button key={d} onClick={() => selectDay(i)} aria-current={active ? "true" : undefined}
                     className="rounded-xl p-2 text-left flex flex-col gap-1 min-h-[112px]"
                     style={{ background: active ? C.card2 : C.card, border: `1px solid ${active ? C.faintLight : C.rule}` }}>
                     <div className="flex items-baseline justify-between w-full">
-                      <span className="text-[10px] font-extrabold uppercase" style={{ color: active ? C.ink : C.faintLight }}>{d}</span>
-                      <span className="mono text-[10px] font-bold" style={{ color: C.faintLight }}>
+                      <span className="text-[10px] font-extrabold uppercase" style={{ color: active ? C.ink : C.faint }}>{d}</span>
+                      <span className="mono text-[10px] font-bold" style={{ color: C.faint }}>
                         {plan ? fmtD(addDays(plan.startDate, i)).split(" ")[1] : ""}
                       </span>
                     </div>
@@ -1005,16 +1157,16 @@ export default function PlanTab({ profile, summary, refresh }) {
                       <>
                         <div className="flex flex-col gap-0.5 w-full">
                           {slots.map((s) => (
-                            <div key={s.id} className="text-[10.5px] font-semibold flex items-center gap-1 min-w-0" style={{ color: s.recipe ? C.faint : C.faintLight }}>
+                            <div key={s.id} className="text-[10.5px] font-semibold flex items-center gap-1 min-w-0" style={{ color: C.faint }}>
                               {s.warning && <AlertTriangle size={9} className="shrink-0" style={{ color: C.warn }} />}
-                              <span className="truncate">{s.recipe ? s.recipe.name : "— open slot"}</span>
+                              <span className="truncate">{s.recipe ? s.recipe.name : "— open meal"}</span>
                             </div>
                           ))}
                         </div>
-                        <div className="mono text-[10.5px] font-bold mt-auto" style={{ color: active ? C.ink : C.faintLight }}>{kc(tot.kcal)} kcal</div>
+                        <div className="mono text-[10.5px] font-bold mt-auto" style={{ color: active ? C.ink : C.faint }}>{kc(tot.kcal)} kcal</div>
                       </>
                     ) : (
-                      <div className="text-[10.5px] font-semibold" style={{ color: C.faintLight }}>{plan ? "no slots" : "—"}</div>
+                      <div className="text-[10.5px] font-semibold" style={{ color: C.faint }}>{plan ? "no meals" : "—"}</div>
                     )}
                   </button>
                 );
@@ -1024,10 +1176,10 @@ export default function PlanTab({ profile, summary, refresh }) {
             {/* compact day picker (small windows) */}
             <div className="grid grid-cols-7 gap-1.5 mb-3 xl:hidden">
               {DAY_NAMES.map((d, i) => (
-                <button key={d} onClick={() => { setActiveDay(i); setDayOptions(null); }} aria-current={activeDay === i ? "true" : undefined}
+                <button key={d} onClick={() => selectDay(i)} aria-current={activeDay === i ? "true" : undefined}
                   className="py-2 rounded-xl text-center"
                   style={{ background: activeDay === i ? C.card2 : C.card, border: `1px solid ${activeDay === i ? C.faintLight : C.rule}` }}>
-                  <div className="text-[10px] font-bold" style={{ color: C.faintLight }}>{d}</div>
+                  <div className="text-[10px] font-bold" style={{ color: C.faint }}>{d}</div>
                   <div className="text-sm font-extrabold" style={{ color: activeDay === i ? C.ink : C.faint }}>
                     {plan ? fmtD(addDays(plan.startDate, i)).split(" ")[1] : ""}
                   </div>
@@ -1044,14 +1196,18 @@ export default function PlanTab({ profile, summary, refresh }) {
               </Btn>
             </div>
 
-            {dayOptions && (
+            {/* The stamp check is belt AND braces: the token guard already stops
+                a superseded response from landing, and this stops anything that
+                somehow did from rendering under the wrong day's heading. */}
+            {dayOptions && dayOptions.solvedFor === activeDay && (
               <div className="mb-4">
                 {dayOptions.diagnosis && !dayOptions.diagnosis.feasible && (
                   <div className="p-3.5 rounded-xl mb-3" style={{ background: C.warnBg, border: `1px solid ${C.warn}66` }}>
                     {/* This panel now also fires when the best day we found is
-                        merely OUTSIDE tolerance (not only when the targets are
-                        unreachable), so the heading states that severity rather
-                        than overstating it. Copy encodes truth, same as colour. */}
+                        merely outside the target range (not only when the
+                        targets are unreachable), so the heading states that
+                        severity rather than overstating it. Copy encodes
+                        truth, same as colour. */}
                     <div className="text-xs font-extrabold uppercase tracking-wide mb-1" style={{ color: C.warn }}>Closest fit we could find — here's what's binding</div>
                     {dayOptions.diagnosis.reasons.map((r, i) => <div key={i} className="text-xs font-semibold" style={{ color: C.ink }}>· {r}</div>)}
                     {dayOptions.diagnosis.suggestions.map((s, i) => <div key={i} className="text-xs font-semibold mt-0.5" style={{ color: C.warn }}>→ {s}</div>)}
@@ -1061,7 +1217,7 @@ export default function PlanTab({ profile, summary, refresh }) {
                   <>
                     <DayCandidates data={dayOptions} targetKcal={targetKcal} onAccept={acceptCandidate} accepting={accepting} />
                     <div className="text-[10.5px] font-semibold mt-2" style={{ color: C.faint }}>
-                      Scores are closeness to your daily targets — closest-fit is the goal, 100% is rare and not required. Green means the day landed inside tolerance on calories, protein, fat AND carbs; anything else is the closest fit we found, with the miss stated on the card. Accepting writes this day into the meal plan.
+                      The % is how close a day lands to your targets — 100% is rare and not the point. Green means it hit calories, protein, fat and carbs all within range; anything else is the closest we found, with the miss written on the card. "Accept" saves that day to your meal plan.
                     </div>
                   </>
                 )}
@@ -1071,19 +1227,19 @@ export default function PlanTab({ profile, summary, refresh }) {
             {!plan ? (
               <Card>
                 <div className="flex items-start gap-2">
-                  <ChefHat size={18} style={{ color: C.faintLight }} className="mt-0.5 shrink-0" />
+                  <ChefHat size={18} style={{ color: C.faint }} className="mt-0.5 shrink-0" />
                   <div className="text-sm font-semibold" style={{ color: C.ink }}>
-                    No plan yet — pick a horizon above (1 meal through 1 month) and hit "{horizonKey === "meal" ? "Fit one meal" : `Generate ${horizonLabel}`}", or solve a single day with "3 options".
+                    No plan yet — pick how far ahead above (1 meal through 1 month) and hit "{horizonKey === "meal" ? "Fit one meal" : `Generate ${horizonLabel}`}", or solve a single day with "3 options".
                   </div>
                 </div>
               </Card>
             ) : (
               <div className="flex flex-col gap-2.5">
                 {daySlots.map((slot) => (
-                  <SlotCard key={slot.id} plan={plan} slot={slot} expanded={expandedId === slot.id}
-                    onToggleExpand={(id) => setExpandedId((cur) => (cur === id ? null : id))}
+                  <SlotCard key={slot.id} planId={plan.id} slot={slot} expanded={expandedId === slot.id}
+                    onToggleExpand={onToggleExpand}
                     onLockToggle={onLockToggle} busy={busySlotId === slot.id}
-                    filters={apiFilters()} reloadPlan={loadPlan}
+                    filters={apiFilters} reloadPlan={loadPlan}
                     onCart={onCart} inCart={slot.recipeId ? cartIds.has(slot.recipeId) : false} />
                 ))}
               </div>
@@ -1096,21 +1252,21 @@ export default function PlanTab({ profile, summary, refresh }) {
               <div className="grid grid-cols-2 gap-2">
                 <label className="block">
                   <span className="text-xs font-bold" style={{ color: C.faint }}>Meals / day</span>
-                  <input type="number" min={1} max={6} value={mealsDraft.meals}
+                  <input type="number" min={1} max={6} value={mealsDraft.meals} disabled={mealsSaving}
                     onChange={(e) => setMealsDraft((d) => ({ ...d, meals: Math.max(1, +e.target.value || 1) }))}
                     onBlur={commitMealConfig}
                     className="text-sm px-3 py-2 rounded-xl w-full mt-1" style={inpStyle} />
                 </label>
                 <label className="block">
                   <span className="text-xs font-bold" style={{ color: C.faint }}>Snacks / day</span>
-                  <input type="number" min={0} max={4} value={mealsDraft.snacks}
+                  <input type="number" min={0} max={4} value={mealsDraft.snacks} disabled={mealsSaving}
                     onChange={(e) => setMealsDraft((d) => ({ ...d, snacks: Math.max(0, +e.target.value || 0) }))}
                     onBlur={commitMealConfig}
                     className="text-sm px-3 py-2 rounded-xl w-full mt-1" style={inpStyle} />
                 </label>
               </div>
               <div className="text-xs font-semibold mt-2" style={{ color: C.faint }}>
-                Applies on the next generate/regenerate.
+                {mealsSaving ? "Saving…" : "Applies on the next generate/regenerate."}
               </div>
             </Card>
 
@@ -1130,14 +1286,14 @@ export default function PlanTab({ profile, summary, refresh }) {
                 {plan.groceryList ? (
                   <>
                     <div className="flex gap-2 mb-3">
-                      <a href={grocerySmsHref()} className="text-xs font-bold px-2.5 py-1.5 rounded-lg flex items-center gap-1" style={{ background: C.card2, border: `1px solid ${C.rule}`, color: C.ink }}>
+                      <a href={grocerySmsHref} className="text-xs font-bold px-2.5 py-1.5 rounded-lg flex items-center gap-1" style={{ background: C.card2, border: `1px solid ${C.rule}`, color: C.ink }}>
                         <MessageCircle size={12} />Text
                       </a>
-                      <a href={groceryMailtoHref()} className="text-xs font-bold px-2.5 py-1.5 rounded-lg flex items-center gap-1" style={{ background: C.card2, border: `1px solid ${C.rule}`, color: C.ink }}>
+                      <a href={groceryMailtoHref} className="text-xs font-bold px-2.5 py-1.5 rounded-lg flex items-center gap-1" style={{ background: C.card2, border: `1px solid ${C.rule}`, color: C.ink }}>
                         <Mail size={12} />Email
                       </a>
                     </div>
-                    {Object.entries(groceryBySection())
+                    {Object.entries(groceryBySection || {})
                       .filter(([, items]) => items.length > 0)
                       .map(([section, items]) => (
                         <div key={section} className="mb-2.5">
@@ -1148,15 +1304,21 @@ export default function PlanTab({ profile, summary, refresh }) {
                             const practical = i.purchaseUnits?.display;
                             return (
                               <label key={i.name} className="flex items-start gap-2.5 py-1.5" style={{ borderBottom: `1px solid ${C.rule}`, opacity: i.checked ? 0.45 : 1 }}>
+                                {/* Law (a): a ticked box is a state, not a
+                                    success — neutral --ink, never --good. */}
                                 <input type="checkbox" checked={!!i.checked} onChange={(e) => onCheckItem(i.name, e.target.checked)}
-                                  className="mt-0.5 w-4 h-4 shrink-0" style={{ accentColor: C.good }} />
+                                  className="mt-0.5 w-4 h-4 shrink-0" style={{ accentColor: C.ink }} />
                                 <div className="flex-1 min-w-0">
                                   <div className="text-sm font-bold" style={{ color: C.ink, textDecoration: i.checked ? "line-through" : "none" }}>
                                     {practical ? `${practical} — ${i.name}` : i.name}
                                   </div>
                                   <div className="mono text-[10.5px] font-semibold" style={{ color: C.faint }}>
                                     {grams} g{hh ? ` · ≈${hh}` : ""}{i.purchaseUnits?.approx ? ` · ${i.purchaseUnits.approx}` : ""}
-                                    {i.cost != null && <> · ${i.cost.amountCad.toFixed(2)}</>}
+                                    {/* The ≈ is not decoration: this is a
+                                        keyword match against a hand-entered
+                                        price table, so it must never read as
+                                        a quoted price. */}
+                                    {i.cost != null && <> · ≈${i.cost.amountCad.toFixed(2)}</>}
                                   </div>
                                 </div>
                               </label>
@@ -1164,9 +1326,21 @@ export default function PlanTab({ profile, summary, refresh }) {
                           })}
                         </div>
                       ))}
+                    {/* WEEKLY TOTAL DELIBERATELY WITHHELD. The server sums item
+                        costs priced on the grams the plan CONSUMES
+                        (groceryList.js: estimateCostCad(name, purchase.grams))
+                        while every line above shows the whole retail package
+                        you actually buy — and items with no keyword match are
+                        dropped from the sum entirely rather than flagged. The
+                        two disagree by a large multiple, so a total here would
+                        be a confidently wrong number, which is worse than
+                        none. Restore it once the backend prices whole packages
+                        and accounts for the unpriced items. */}
                     <div className="text-xs font-semibold mt-1 pt-2" style={{ color: C.faint, borderTop: `1px solid ${C.rule}` }}>
-                      {plan.groceryList.totalEstimatedCostCad != null && <>Est. total: <b style={{ color: C.ink }}>${plan.groceryList.totalEstimatedCostCad.toFixed(2)} CAD</b> · </>}
-                      {plan.groceryList.costCoverageNote || "practical units are typical retail sizes — grams are the ground truth"}
+                      Per-item estimates only — no weekly total yet. Each price is charged on the grams your plan uses, while the line above it lists a whole package, so adding them up would understate the real shop.
+                      {plan.groceryList.costCoverageNote
+                        ? ` ${stripSourcePaths(plan.groceryList.costCoverageNote)}`
+                        : " Practical units are typical retail sizes — grams are the ground truth."}
                     </div>
                   </>
                 ) : (

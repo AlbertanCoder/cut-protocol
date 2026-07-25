@@ -29,12 +29,18 @@ const SCOFF = [
 // shared with the Profile "Outside help" card) so a verified number can never
 // drift between the two places it's shown.
 
-export default function WellbeingCheck({ open, onClose }) {
+// `onResult` receives { score, positive } the moment the user asks to see
+// their result. The caller decides where that goes — today that is
+// storage.js's wellbeingScreenPref (localStorage, never the backend; see the
+// comment on that export for why a screening result must not leave the
+// machine). This component itself persists nothing.
+export default function WellbeingCheck({ open, onClose, onResult }) {
   const [answers, setAnswers] = useState({});
   const [submitted, setSubmitted] = useState(false);
   const [showDisclaimer, setShowDisclaimer] = useState(false);
   const panelRef = useRef(null);
   const titleId = useId();
+  const resultId = useId();
   useFocusTrap(panelRef, { active: open, onClose });
 
   if (!open) return null;
@@ -44,6 +50,10 @@ export default function WellbeingCheck({ open, onClose }) {
   const positive = score >= 2;
   const set = (id, val) => { setAnswers((a) => ({ ...a, [id]: val })); setSubmitted(false); };
   const reset = () => { setAnswers({}); setSubmitted(false); };
+  const submit = () => {
+    setSubmitted(true);
+    onResult?.({ score, positive });
+  };
 
   const card = { background: C.card, border: `1px solid ${C.rule}` };
   const yesNoBtn = (active) => ({
@@ -58,10 +68,14 @@ export default function WellbeingCheck({ open, onClose }) {
       <div ref={panelRef} tabIndex={-1} className="w-full max-w-lg max-h-[88vh] overflow-y-auto rounded-2xl p-6" style={card}>
         <div className="flex items-start justify-between mb-2">
           <div className="flex items-center gap-2">
-            <Heart size={18} aria-hidden="true" style={{ color: C.accent }} />
+            {/* Law a (green scarcity): this Heart is decoration on a screening
+                dialog — not on-target, not success, not a primary action. It
+                used to be --accent, which spent the app's scarcest signal on
+                an ornament. Quiet ink tier instead. */}
+            <Heart size={18} aria-hidden="true" style={{ color: C.faint }} />
             <h2 id={titleId} className="text-lg font-extrabold" style={{ color: C.ink }}>Wellbeing check</h2>
           </div>
-          <button onClick={onClose} aria-label="Close" className="rounded-lg p-1 hover:opacity-80" style={{ color: C.faint }}>
+          <button type="button" onClick={onClose} aria-label="Close" className="rounded-lg p-1 hover:opacity-80" style={{ color: C.faint }}>
             <X size={18} />
           </button>
         </div>
@@ -79,61 +93,85 @@ export default function WellbeingCheck({ open, onClose }) {
               <div className="text-sm mb-2" style={{ color: C.ink }}>
                 <span style={{ color: C.faint }}>{i + 1}. </span>{s.q}
               </div>
+              {/* aria-pressed carries the selected state to AT — the visual
+                  cue is a lightness step (law a: selection is never green),
+                  which a screen reader cannot see. */}
               <div className="flex gap-2">
-                <button onClick={() => set(s.id, true)} className="text-xs font-bold px-4 py-1.5 rounded-lg" style={yesNoBtn(answers[s.id] === true)}>Yes</button>
-                <button onClick={() => set(s.id, false)} className="text-xs font-bold px-4 py-1.5 rounded-lg" style={yesNoBtn(answers[s.id] === false)}>No</button>
+                <button type="button" aria-pressed={answers[s.id] === true} aria-label={`Yes — ${s.q}`}
+                  onClick={() => set(s.id, true)} className="text-xs font-bold px-4 py-1.5 rounded-lg" style={yesNoBtn(answers[s.id] === true)}>Yes</button>
+                <button type="button" aria-pressed={answers[s.id] === false} aria-label={`No — ${s.q}`}
+                  onClick={() => set(s.id, false)} className="text-xs font-bold px-4 py-1.5 rounded-lg" style={yesNoBtn(answers[s.id] === false)}>No</button>
               </div>
             </div>
           ))}
         </div>
 
         <div className="mt-4 flex items-center gap-2">
+          {/* This IS the primary action of the dialog, so --accent is correct
+              here (law a). The ink colour is the --accent-ink token; it used
+              to be a hand-typed "#04150b", an invented near-duplicate of the
+              real #05130B — one hex off, one more place for the palette to
+              drift. Tokens only. */}
           <button
-            onClick={() => setSubmitted(true)}
+            type="button"
+            onClick={submit}
             disabled={answered < SCOFF.length}
+            aria-describedby={answered < SCOFF.length ? undefined : resultId}
             className="text-sm font-bold px-4 py-2 rounded-xl disabled:opacity-40"
-            style={{ background: C.accent, color: "#04150b" }}>
+            style={{ background: C.accent, color: C.accentInk }}>
             See my result
           </button>
           {answered > 0 && (
-            <button onClick={reset} className="text-xs font-semibold px-3 py-2 rounded-xl" style={{ color: C.faint, border: `1px solid ${C.rule}` }}>Reset</button>
+            <button type="button" onClick={reset} className="text-xs font-semibold px-3 py-2 rounded-xl" style={{ color: C.faint, border: `1px solid ${C.rule}` }}>Reset</button>
           )}
-          {answered < SCOFF.length && <span className="text-xs" style={{ color: C.faintLight }}>{answered} of {SCOFF.length} answered</span>}
+          {answered < SCOFF.length && <span className="text-xs" style={{ color: C.faint }}>{answered} of {SCOFF.length} answered</span>}
         </div>
 
-        {/* Result — calm amber for a positive screen, never red. */}
-        {submitted && (
-          <div className="mt-4 rounded-xl p-4" style={{ background: C.card2, border: `1px solid ${positive ? C.warn : C.rule}` }}>
-            {positive ? (
-              <>
-                <div className="text-sm font-bold mb-1" style={{ color: C.warn }}>This might be worth checking in on.</div>
-                <p className="text-xs" style={{ color: C.faint }}>
-                  You answered “yes” to {score} of 5. This is a rough screening prompt — it flags many
-                  people who do not have an eating disorder, so it is <strong>not a diagnosis</strong>.
-                  But if food, eating, or body image feels hard right now, talking to a professional is
-                  a good next step, and there is no downside to reaching out. It may also be worth
-                  easing off any aggressive deficit for a while. The resources below are free and
-                  confidential.
-                </p>
-              </>
-            ) : (
-              <>
-                <div className="text-sm font-bold mb-1" style={{ color: C.ink }}>Nothing flagged today.</div>
-                <p className="text-xs" style={{ color: C.faint }}>
-                  This quick check didn’t raise anything — but it’s just a prompt, not a clean bill of
-                  health. If something feels off with food or your body, trust that over a five-question
-                  screen, and the resources below are always here.
-                </p>
-              </>
-            )}
-          </div>
-        )}
+        {/* Result — calm amber for a positive screen, never red.
+            a11y: the live region is rendered ALWAYS (empty until submitted),
+            because an aria-live container that only appears at the same moment
+            its content does is unreliably announced. role="status" (polite)
+            rather than "alert" — this is a calm result, not an emergency, and
+            the tone of the announcement should match the tone of the copy. */}
+        <div id={resultId} role="status" aria-live="polite">
+          {submitted && (
+            <div className="mt-4 rounded-xl p-4" style={{ background: C.card2, border: `1px solid ${positive ? C.warn : C.rule}` }}>
+              {positive ? (
+                <>
+                  <div className="text-sm font-bold mb-1" style={{ color: C.warn }}>This might be worth checking in on.</div>
+                  <p className="text-xs" style={{ color: C.faint }}>
+                    You answered “yes” to {score} of 5. This is a rough screening prompt — it flags many
+                    people who do not have an eating disorder, so it is <strong>not a diagnosis</strong>.
+                    But if food, eating, or body image feels hard right now, talking to a professional is
+                    a good next step, and there is no downside to reaching out. It may also be worth
+                    easing off any aggressive deficit for a while. The resources below are free and
+                    confidential.
+                  </p>
+                </>
+              ) : (
+                <>
+                  <div className="text-sm font-bold mb-1" style={{ color: C.ink }}>Nothing flagged today.</div>
+                  <p className="text-xs" style={{ color: C.faint }}>
+                    This quick check didn’t raise anything — but it’s just a prompt, not a clean bill of
+                    health. If something feels off with food or your body, trust that over a five-question
+                    screen, and the resources below are always here.
+                  </p>
+                </>
+              )}
+              <p className="text-[11px] mt-2" style={{ color: C.faint }}>
+                Saved on this computer only — never uploaded. The Wellbeing tab can delete it in one click.
+              </p>
+            </div>
+          )}
+        </div>
 
         {/* Resources — always visible, not gated behind a positive result.
             Shared with the Profile "Outside help" card via ResourceList. */}
         <div className="mt-5">
           <div className="text-xs font-bold uppercase tracking-wide mb-1" style={{ color: C.faint }}>Support (Alberta / Canada)</div>
-          <p className="text-[11px] mb-2" style={{ color: C.faintLight }}>{WELLBEING_RESOURCES_NOTE}</p>
+          {/* --faint-light is 38% (~3.3:1) and fails WCAG AA for body text.
+              This line is real, readable content, so it takes --faint (60%). */}
+          <p className="text-[11px] mb-2" style={{ color: C.faint }}>{WELLBEING_RESOURCES_NOTE}</p>
           <ResourceList />
         </div>
 
@@ -146,7 +184,10 @@ export default function WellbeingCheck({ open, onClose }) {
             physician or registered dietitian. It cannot guarantee any plan is free of a given
             allergen; always read labels.
           </div>
-          <button onClick={() => setShowDisclaimer((v) => !v)} className="text-xs font-semibold mt-2 hover:opacity-80" style={{ color: C.accent }}>
+          {/* Law a: a disclaimer disclosure is neither on-target, success, nor
+              the primary action — it was --accent, it is now ink. */}
+          <button type="button" onClick={() => setShowDisclaimer((v) => !v)} aria-expanded={showDisclaimer}
+            className="text-xs font-semibold mt-2 hover:opacity-80 underline decoration-dotted underline-offset-4" style={{ color: C.ink }}>
             {showDisclaimer ? "Hide full disclaimer" : "Read the full disclaimer"}
           </button>
           {showDisclaimer && (

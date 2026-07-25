@@ -14,7 +14,9 @@ import ErrorBoundary from './components/ErrorBoundary.jsx'
 import { installGlobalHandlers } from './lib/bugLog.js'
 
 // Catch uncaught sync errors and unhandled promise rejections app-wide (they
-// get logged and surface the friendly "Something went wrong" dialog).
+// get logged and surface the friendly "Something went wrong" dialog) — and
+// subscribe to the Electron main process's own faults, which previously had no
+// listener anywhere in frontend/src and therefore vanished silently.
 installGlobalHandlers()
 
 createRoot(document.getElementById('root')).render(

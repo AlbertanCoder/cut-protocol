@@ -20,23 +20,37 @@ export const PageHead = ({ title, sub, children }) => (
 // Glass card: translucent fill + gradient hairline (index.css .glass-card).
 // Elevation is lightness, never shadows. Spacing between cards comes from
 // the parent grid/flex gap, not the card.
-export const Card = ({ section, title, children, tint, className = "" }) => (
-  <section
-    className={`p-5 rounded-2xl ${tint ? "" : "glass-card"} ${className}`}
-    style={tint ? { background: tint, border: `1px solid ${C.rule}` } : undefined}
-  >
-    {(section || title) && (
-      <div className="flex items-baseline justify-between mb-3">
-        <div className="text-[15px] font-bold" style={{ color: C.ink, letterSpacing: "-.01em" }}>{title}</div>
-        {/* a11y contrast fix: section eyebrows read on every card app-wide —
-            faint-light (38%, ~3.3:1) fails WCAG AA for text; faint (60%,
-            6.5:1+) passes while staying the app's second-quietest tier. */}
-        {section && <div className="text-[10.5px] font-semibold uppercase" style={{ color: C.faint, letterSpacing: ".06em" }}>{section}</div>}
-      </div>
-    )}
-    {children}
-  </section>
-);
+//
+// a11y: the title is a real <h2>, and the <section> points at it with
+// aria-labelledby. It used to be a plain <div> inside an unnamed <section>, so
+// a 7-card dashboard exposed exactly ONE heading (the PageHead <h1>) and a
+// screen-reader user had no way to jump between cards — heading navigation is
+// the primary way AT users skim a dense screen. <h2> is the right level
+// everywhere: every screen's PageHead owns the single <h1>. A card with no
+// title stays an unlabelled <section> rather than getting an invented name.
+export const Card = ({ section, title, children, tint, className = "" }) => {
+  const hid = useId();
+  return (
+    <section
+      className={`p-5 rounded-2xl ${tint ? "" : "glass-card"} ${className}`}
+      style={tint ? { background: tint, border: `1px solid ${C.rule}` } : undefined}
+      aria-labelledby={title ? hid : undefined}
+    >
+      {(section || title) && (
+        <div className="flex items-baseline justify-between mb-3">
+          {title && (
+            <h2 id={hid} className="text-[15px] font-bold m-0" style={{ color: C.ink, letterSpacing: "-.01em" }}>{title}</h2>
+          )}
+          {/* a11y contrast fix: section eyebrows read on every card app-wide —
+              faint-light (38%, 3.30:1 over card) fails WCAG AA for text; faint
+              (60%, 6.28:1) passes while staying the app's second-quietest tier. */}
+          {section && <div className="text-[10.5px] font-semibold uppercase ml-auto" style={{ color: C.faint, letterSpacing: ".06em" }}>{section}</div>}
+        </div>
+      )}
+      {children}
+    </section>
+  );
+};
 
 export const Stat = ({ label, value, unit, big }) => (
   <div className="py-1.5">
@@ -72,30 +86,84 @@ export const Btn = ({ children, onClick, kind = "ink", small, disabled }) => {
 // Status banner — verdict card's voice. Reserved status colors, never series
 // colors. Worst tone is amber (law b): a verdict about food/body data
 // re-plans, it never judges in red.
+//
+// TYPOGRAPHY. `v.tag` used to be re-shouted here with `uppercase
+// tracking-wide`, which was correct when the verdicts WERE shouted codes
+// ("SLOW", "TOO FAST", "BORDERLINE SLOW — HOLD 1 WK"). bmrEngine.verdict() has
+// since rewritten every one of them into a sentence-case statement ("Slower
+// than planned", "On target", "Too early to tell"), and a CSS transform that
+// re-capitalises a sentence is the compressed-code label style the owner
+// banned, arriving through the back door. `tracking-wide` goes with it: the
+// letter-spacing existed to keep all-caps legible and reads as loose and
+// unfinished on sentence case. Stamp has exactly one caller (TodayTab), so
+// this needs no opt-in prop.
+//
+// TONE FALLBACK. `stampStyle[v.tone]` was dereferenced unguarded, so an
+// unrecognised tone threw a TypeError on `s.bg` and took the dashboard down
+// instead of degrading — the precise failure mode the tone rename above could
+// have caused. Unknown tones now render as the neutral "wait" style.
 export const Stamp = ({ v, stampStyle }) => {
-  const s = stampStyle[v.tone];
+  const s = stampStyle?.[v.tone] || stampStyle?.wait || { color: C.faint, bg: "transparent" };
   return (
     // role="status": verdict text updates (e.g. after a weigh-in) get
     // announced to screen readers without needing focus to be on this card.
     <div role="status" className="rounded-xl p-3.5 flex items-start gap-3" style={{ background: s.bg || C.paper, border: `1px solid color-mix(in srgb, ${s.color} 20%, transparent)` }}>
       <div className="w-1 self-stretch rounded-full shrink-0" aria-hidden="true" style={{ background: s.color }}></div>
       <div>
-        <div className="text-sm font-extrabold uppercase tracking-wide" style={{ color: s.color }}>{v.tag}</div>
+        <div className="text-sm font-extrabold" style={{ color: s.color }}>{v.tag}</div>
         <div className="text-xs mt-0.5" style={{ color: C.ink }}>{v.sub}</div>
       </div>
     </div>
   );
 };
 
-// Horizontal progress bar with target — the macro-bar language used
-// throughout Today/Engine. The fill keeps its macro color and caps at 100%;
-// going over turns the NUMBER calm amber (law b — never red on food data).
-// The letter badge (P/C/F) rides the bar everywhere macros render (law c).
-export const MacroBar = ({ label, actual, target, unit = "g", color }) => {
-  const over = target > 0 && actual > target;
-  const pct = target > 0 ? Math.min(100, (actual / target) * 100) : 0;
-  const letter = (label || "?")[0].toUpperCase();
-  const a11yLabel = `${label}: ${Math.round(actual)} of ${Math.round(target)}${unit}${over ? ", over target" : ""}`;
+// Horizontal macro meter — the macro-bar language used throughout Today/Engine.
+// The fill keeps its macro color; the letter badge (P/C/F) rides it everywhere
+// macros render (law c). Over the top of a RANGE turns the number calm amber
+// (law b — never red on food data). Over a FLOOR is not a fault at all.
+//
+// WHAT THIS COMPONENT USED TO GET WRONG. It took a single scalar `target` and
+// drew `actual / target`, and its callers passed the TOP of a range
+// (proteinHi / carbHi / fatHi) as that target. The Engine's own model is
+// different and says so in one line: "calories and protein are load-bearing
+// walls · fat is a floor · carbs flex." So the old bar contradicted the engine
+// twice over —
+//   · a user sitting exactly at the BOTTOM of the protein range saw an
+//     85 %-filled bar and read it as a miss, and
+//   · fat, which only has a minimum to clear, rendered as "Fat 117 / 65 g" at
+//     180 % with the fill overflowing its own track, on a plan the solver had
+//     scored as near-perfect.
+// So a floor is now drawn as a floor and a range as a range, the numbers say
+// which is which in words, and the rail's scale grows to fit whatever was
+// actually eaten — nothing can overflow its track.
+//
+// PROPS. Preferred: `lo` + `kind="floor"` (a minimum to clear), or `lo` + `hi`
+// + `kind="range"` (a band to land inside). The legacy single `target` prop is
+// still accepted and is treated as a range whose floor and ceiling are the same
+// number, so existing callers keep rendering — but it is the shape that caused
+// the bug, and callers should move to lo/hi.
+export const MacroBar = ({ label, letter, actual, target, lo, hi, kind, unit = "g", color }) => {
+  const eaten = Number.isFinite(actual) ? actual : 0;
+  const legacy = !Number.isFinite(lo) && Number.isFinite(target);
+  const mode = kind || (legacy ? "range" : Number.isFinite(hi) ? "range" : "floor");
+  const floor = Number.isFinite(lo) ? lo : Number.isFinite(target) ? target : 0;
+  const ceil = mode === "range" ? (Number.isFinite(hi) ? hi : Number.isFinite(target) ? target : null) : null;
+  const over = ceil != null && eaten > ceil;
+  const g = (n) => Math.round(n);
+
+  // The rail spans whatever is largest — the top of the target zone or what was
+  // actually eaten — so the fill is always inside its own track.
+  const span = Math.max(ceil ?? floor, eaten, 1);
+  const pct = (v) => `${Math.max(0, Math.min(100, (v / span) * 100))}%`;
+
+  const badge = (letter || (label || "?")[0]).toString().toUpperCase();
+  const targetText = mode === "floor"
+    ? `min ${g(floor)}${unit}`
+    : ceil != null && ceil !== floor ? `${g(floor)}–${g(ceil)}${unit}` : `${g(floor)}${unit}`;
+  const a11yLabel = mode === "floor"
+    ? `${label}: ${g(eaten)}${unit}, minimum ${g(floor)}${unit}${eaten >= floor ? ", met" : ""}`
+    : `${label}: ${g(eaten)}${unit}, target ${targetText}${over ? ", above the range" : ""}`;
+
   return (
     // role="group" + aria-label give screen readers ONE clean sentence for
     // the whole meter; the letter badge and fill bar are then hidden from
@@ -103,15 +171,20 @@ export const MacroBar = ({ label, actual, target, unit = "g", color }) => {
     <div className="flex flex-col gap-1.5" role="group" aria-label={a11yLabel}>
       <div className="flex justify-between items-baseline text-xs">
         <span className="font-bold flex items-center gap-1.5" style={{ color: C.ink }}>
-          <span aria-hidden="true" className="w-4 h-4 rounded-full flex items-center justify-center text-[9px] font-extrabold shrink-0" style={{ background: color, color: C.paper }}>{letter}</span>
+          <span aria-hidden="true" className="w-4 h-4 rounded-full flex items-center justify-center text-[9px] font-extrabold shrink-0" style={{ background: color, color: C.paper }}>{badge}</span>
           {label}
         </span>
         <span className="font-semibold" style={{ color: C.faint }}>
-          <b className="mono" style={{ color: over ? C.warn : C.ink }}>{Math.round(actual)}</b> / {Math.round(target)}{unit}
+          <b className="mono" style={{ color: over ? C.warn : C.ink }}>{g(eaten)}</b> / {targetText}
         </span>
       </div>
       <div aria-hidden="true" className="h-2.5 rounded-full relative overflow-hidden" style={{ background: C.card2 }}>
-        <div className="h-full rounded-full transition-all duration-150" style={{ width: `${pct}%`, background: color }}></div>
+        {/* the acceptable zone, drawn behind the fill: floor→ceiling for a
+            range, floor→end of the rail when the floor is all there is */}
+        <div className="absolute inset-y-0" style={{ left: pct(floor), right: ceil != null ? `calc(100% - ${pct(ceil)})` : 0, background: C.rule }} />
+        <div className="h-full rounded-full transition-all duration-150 relative" style={{ width: pct(eaten), background: color }}></div>
+        {/* the floor tick — the number that actually has to be reached */}
+        <div className="absolute inset-y-0 w-px" style={{ left: pct(floor), background: C.faint }} />
       </div>
     </div>
   );
@@ -122,13 +195,32 @@ export const MacroBar = ({ label, actual, target, unit = "g", color }) => {
 // first — and the number turns calm amber. It never turns red (law b).
 // The accent ring carries the brand gradient (accent → tail) and a
 // breathing glow (opacity-only; frozen under reduced motion).
+//
+// LAPPING PAST 200%. The second arc used to be `min(1, p - 1)`, which SATURATES:
+// 200 %, 300 % and 1000 % all painted a full first ring plus a full second ring
+// and were indistinguishable, with only the aria-label carrying the true figure
+// — a graphic that stops telling the truth exactly where the truth starts to
+// matter. Apple's rings lap and keep a visible lap COUNT, so that is what this
+// does now: arc 2 shows the progress through the CURRENT lap, and once two or
+// more laps are complete a small "×3" counter rides the ring. 300 % and 1000 %
+// are now different graphics, not the same one twice.
+//
+// THE 100.5% CASE. `strokeLinecap="round"` means arc 2's starting cap is painted
+// directly over arc 1's finishing cap, so a hair over target looked identical to
+// exactly on target. A short arc in the surface color is drawn UNDER arc 2 — the
+// same "2px surface ring separates overlapping marks" rule the charts use — so
+// the second lap always begins against a visible gap.
 export const Ring = ({ pct, size = 108, stroke = 10, color = C.accent, num, unit, breathe = true }) => {
   const p = Math.max(0, pct || 0);
   const over = p > 1;
   const lap1 = Math.min(1, p);
-  const lap2 = Math.min(1, Math.max(0, p - 1));
+  // Progress through the lap currently in flight (NOT clamped-and-saturated).
+  const lapsDone = Math.floor(p);
+  const lap2 = over ? p - lapsDone : 0;
   const r = (size - stroke) / 2;
   const circ = 2 * Math.PI * r;
+  // ~2px of arc, expressed as a fraction of the circumference.
+  const gapFrac = Math.min(0.12, 2 / circ + stroke / circ);
   const gid = useId().replace(/[^a-zA-Z0-9_-]/g, "");
   const grad = color === C.accent;
   const numClass = size >= 150 ? "text-4xl" : size >= 120 ? "text-3xl" : "text-2xl";
@@ -138,7 +230,7 @@ export const Ring = ({ pct, size = 108, stroke = 10, color = C.accent, num, unit
   // every visual child below is aria-hidden so the number isn't announced
   // twice (the same digits are already the visible face of the ring).
   const pctLabel = `${Math.round(p * 100)}%`;
-  const a11yLabel = `${pctLabel}${num != null ? ` — ${num}${unit ? " " + unit : ""}` : ""}${over ? ", over target, laps past 100%" : ""}`;
+  const a11yLabel = `${pctLabel}${num != null ? ` — ${num}${unit ? " " + unit : ""}` : ""}${over ? `, over target, ${lapsDone === 1 ? "laps past 100%" : `${lapsDone} full laps past 100%`}` : ""}`;
   return (
     <div className="relative shrink-0" style={{ width: size, height: size }} role="img" aria-label={a11yLabel}>
       {breathe && (
@@ -160,15 +252,30 @@ export const Ring = ({ pct, size = 108, stroke = 10, color = C.accent, num, unit
         <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke={C.card2} strokeWidth={stroke} />
         <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke={grad ? `url(#rg${gid})` : color} strokeWidth={stroke}
           strokeLinecap="round" strokeDasharray={circ} strokeDashoffset={circ * (1 - lap1)} style={{ transition: "stroke-dashoffset .2s ease" }} />
-        {lap2 > 0 && (
-          <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke={grad ? C.accentTail : color} strokeWidth={stroke}
-            strokeLinecap="round" strokeDasharray={circ} strokeDashoffset={circ * (1 - lap2)} style={{ transition: "stroke-dashoffset .2s ease" }} />
+        {over && (
+          <>
+            {/* surface-colored separator so lap 2's round cap never lands on
+                lap 1's — 100.0% and 100.5% have to look different */}
+            <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke={C.card} strokeWidth={stroke}
+              strokeLinecap="butt" strokeDasharray={circ} strokeDashoffset={circ * (1 - Math.min(1, lap2 + gapFrac))} />
+            <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke={grad ? C.accentTail : color} strokeWidth={stroke}
+              strokeLinecap="round" strokeDasharray={circ} strokeDashoffset={circ * (1 - lap2)} style={{ transition: "stroke-dashoffset .2s ease" }} />
+          </>
         )}
       </svg>
       <div className="absolute inset-0 flex flex-col items-center justify-center" aria-hidden="true">
         <div className={`mono stat-hero ${numClass}`} style={{ color: over ? C.warn : C.ink }}>{num}</div>
         {unit && <div className="text-[10px] font-bold" style={{ color: C.faint }}>{unit}</div>}
       </div>
+      {/* Lap counter — the only thing that can tell 200% from 1000% apart at a
+          glance once both have a full ring plus a partial one. */}
+      {lapsDone >= 2 && (
+        <div aria-hidden="true"
+          className="absolute bottom-0 right-0 text-[10px] font-extrabold px-1.5 py-0.5 rounded-full"
+          style={{ background: C.warnBg, color: C.warn, border: `1px solid ${C.warn}55` }}>
+          ×{lapsDone}
+        </div>
+      )}
     </div>
   );
 };

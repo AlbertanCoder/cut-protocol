@@ -28,7 +28,11 @@ export function RangeCap({ label, value, onChange, min, max, step, enableAt, for
       <div className="flex items-center justify-between gap-2 mb-1.5">
         <span className="text-xs font-bold" style={{ color: C.ink }}>{label}</span>
         <div className="flex items-center gap-2 shrink-0">
-          <span className="mono text-xs font-bold" style={{ color: on ? C.ink : C.faintLight }}>
+          {/* a11y contrast: "Off" is the control's STATE, not decoration —
+              --faint-light is 38% ink (3.26:1) and fails WCAG AA at this size.
+              --faint (60%, 6.5:1) passes and stays the quiet tier.
+              Same fix as Parts.jsx:31-34. */}
+          <span className="mono text-xs font-bold" style={{ color: on ? C.ink : C.faint }}>
             {on ? format(value) : "Off"}
           </span>
           <button

@@ -20,14 +20,59 @@
    Elevation is LIGHTNESS, never drop shadows: canvas → card → card-2 is the
    whole ladder; hover moves a surface one step up. */
 :root {
-  /* surface ladder */
+  /* surface ladder
+     Contrast ratios computed with the WCAG relative-luminance formula:
+       paper #0B0D0C  L* 3.48
+       card  #161A18  L* 8.78   vs paper 1.11:1
+       card-2 #232A27 L* 16.30  vs card  1.20:1   vs paper 1.33:1
+     card-2 was #1D2320 (L* 13.03, 1.10:1 over card, ΔL* 4.25). A 4-point ΔL*
+     step is at the edge of perceptible in a large field, so the constitutional
+     "selection is a LIGHTNESS step" was carried almost entirely by the border
+     and text swap that accompanies it. #232A27 nearly doubles the step
+     (ΔL* 7.52) while staying unmistakably a dark surface — ink at 87% still
+     reads 10.16:1 on it, and the ladder stays monotonic (1.11 → 1.20).
+     NOTE, honestly: no surface pair in a dark elevation ladder can reach the
+     3:1 that WCAG 1.4.11 asks of a UI-component boundary without ceasing to be
+     an elevation ladder. The 3:1 signal therefore rides the BORDER, not the
+     fill — see --rule-strong and --faint-light below. */
   --paper: #0B0D0C;                       /* canvas (green-tinted near-black) */
   --card: #161A18;                        /* raised card */
-  --card-2: #1D2320;                      /* nested surface = hover step up */
+  --card-2: #232A27;                      /* nested surface = hover / selected step up */
   --card-glass: rgba(22, 26, 24, 0.82);   /* translucent card fill over the aurora */
-  --rule: rgba(255, 255, 255, 0.06);      /* hairline borders */
 
-  /* ink — one off-white, three opacity tiers */
+  /* boundaries — two tiers, because they do two different jobs.
+     --rule is DECORATIVE: card outlines, list separators, the glass hairline.
+       1.17:1 over card. It is not required to identify a control, so WCAG
+       1.4.11 does not apply to it, and pushing it to 3:1 would turn every card
+       into a boxed table.
+     --rule-strong is FUNCTIONAL: the visible boundary of an input, select,
+       textarea or ghost button — the thing 1.4.11 is actually about.
+       rgba(255,255,255,0.36) computes to 3.34:1 over card, 3.28:1 over paper
+       and 3.17:1 over card-2, so it clears 3:1 on every surface in the app. */
+  --rule: rgba(255, 255, 255, 0.06);      /* hairline borders (decorative) */
+  --rule-strong: rgba(255, 255, 255, 0.36); /* control boundaries — ≥3:1 everywhere */
+
+  /* focus ring. It CANNOT be --accent: Btn kind="ink"/"primary" and .skip-link
+     both paint --accent as their background, so an accent ring on an accent
+     button computes to 1.00:1 — invisible, saved only by a 1px offset. The ring
+     is the ink base at full opacity instead: 15.52:1 over card, 17.22:1 over
+     paper, 14.12:1 over card-2. The 2px offset shows the dark surface behind
+     the control, which separates the ring from an accent fill (card vs accent
+     = 9.12:1), so the indicator contrasts with the button AND the page. */
+  --focus: #EDF2EF;
+
+  /* modal backdrop. Was hand-typed as rgba(0,0,0,0.55) in BodyFatPicker,
+     WellbeingCheck and CompareDialog, and as .5/.6 variants elsewhere — three
+     dialogs, no token (standing rule 8). One value, one name. */
+  --scrim: rgba(0, 0, 0, 0.55);
+
+  /* ink — one off-white, three opacity tiers.
+     CONTRAST, computed over --card: ink 11.94:1 · faint 6.28:1 ·
+     faint-light 3.30:1 (3.26:1 over paper, 3.12:1 over card-2).
+     --faint-light therefore FAILS WCAG AA (4.5:1) for body text and must not
+     carry a sentence a user needs to read. It is legal, and useful, for
+     NON-text: icons, borders, chart marks and disabled affordances all need
+     only 3:1, which it clears on every surface. Text drops to --faint. */
   --ink: rgba(237, 242, 239, 0.87);
   --faint: rgba(237, 242, 239, 0.60);
   --faint-light: rgba(237, 242, 239, 0.38);
@@ -194,11 +239,16 @@ h1, h2, h3 { font-family: var(--font-display); }
 button, label, summary { cursor: default; }
 a { cursor: pointer; }
 
+/* Focus ring — see --focus. Two things make it work on every control kind:
+   the ring is the off-white ink base (not the accent, which vanished on the
+   accent-filled primary button and skip link), and the 2px offset puts a band
+   of the dark surface behind between the control and the ring, so the ring is
+   never drawn directly on top of whatever the control is filled with. */
 input:focus-visible, select:focus-visible, textarea:focus-visible,
 button:focus-visible, summary:focus-visible, a:focus-visible,
 [role="button"]:focus-visible, [tabindex]:focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 1px;
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
 }
 
 /* ── Accessibility utilities ───────────────────────────────────────────── */
@@ -233,8 +283,13 @@ button:focus-visible, summary:focus-visible, a:focus-visible,
   border-radius: 10px;
   transition: top 0.15s ease;
 }
+/* Stated explicitly rather than left to the a:focus-visible rule above: the
+   skip link is an accent-filled pill, the exact case where the old accent ring
+   computed to 1.00:1 against its own background. */
 .skip-link:focus {
   top: 12px;
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
 }
 
 /* reduced motion: ambient layers freeze, shimmer stops, count-ups and

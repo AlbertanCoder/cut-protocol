@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useCallback, useId } from "react";
 import { api } from "../lib/api.js";
+import { logEvent } from "../lib/bugLog.js";
 import { C } from "../lib/theme.js";
 
 // Stage D2 chat bar. Gated by GET /api/brain/status: with the brain off it
@@ -11,7 +12,15 @@ const CHIPS = [
   "Swap a meal that's too high in fat",
   "Vegan dinner ideas",
 ];
-const DEPTHS = ["fast", "balanced", "thorough"];
+
+// The wire values are enum tokens; the buttons show what the setting DOES.
+// Rendering "fast"/"balanced"/"thorough" in lowercase put the API's vocabulary
+// on screen and left the user to infer what any of it meant.
+const DEPTHS = [
+  { id: "fast", label: "Quick", hint: "One pass — fastest answer" },
+  { id: "balanced", label: "Balanced", hint: "A few passes — the default" },
+  { id: "thorough", label: "Thorough", hint: "More passes — slower, more considered" },
+];
 
 // Stage 1 (v2): a deterministic day the coach built via the engine. EVERY number
 // here came from the solver (LAW 1) — the card only displays them. Constitution:
@@ -22,11 +31,14 @@ function PlanCard({ plan }) {
     <div className="mt-1.5 rounded-xl overflow-hidden" style={{ background: C.card2, border: `1px solid ${C.rule}` }}>
       {plan.slots.map((s, i) => (
         <div key={i} className="px-3 py-2 flex flex-col gap-0.5" style={{ borderBottom: i < plan.slots.length - 1 ? `1px solid ${C.rule}` : "none" }}>
+          {/* --faint-light is 3.26:1 and fails WCAG AA — it is a decorative /
+              disabled tier, never body text. Everything readable here uses
+              --faint (60%, ~5.4:1). */}
           <div className="flex items-baseline justify-between gap-2">
-            <span className="text-[10px] font-bold uppercase tracking-wide" style={{ color: C.faintLight }}>{s.slotType}</span>
-            <span className="text-[12px] font-bold tabular-nums" style={{ color: C.ink }}>{s.kcal} <span className="text-[9px] font-semibold" style={{ color: C.faintLight }}>kcal</span></span>
+            <span className="text-[10px] font-bold uppercase tracking-wide" style={{ color: C.faint }}>{s.slotType}</span>
+            <span className="text-[12px] font-bold tabular-nums" style={{ color: C.ink }}>{s.kcal} <span className="text-[9px] font-semibold" style={{ color: C.faint }}>kcal</span></span>
           </div>
-          <div className="text-[12px] font-semibold" style={{ color: s.label ? C.ink : C.faintLight }}>{s.label || "— no fit from your recipes"}</div>
+          <div className="text-[12px] font-semibold" style={{ color: C.ink }}>{s.label || "— no fit from your recipes"}</div>
           <div className="flex gap-2.5 text-[10px] font-bold tabular-nums">
             <span style={{ color: C.proteinText }}>P {s.protein}</span>
             <span style={{ color: C.carbText }}>C {s.carb}</span>
@@ -38,7 +50,7 @@ function PlanCard({ plan }) {
         <span className="text-[10px] font-extrabold uppercase tracking-wide" style={{ color: C.faint }}>Day total</span>
         <div className="flex items-baseline gap-2">
           <span className="text-[14px] font-extrabold tabular-nums" style={{ color: C.ink }}>{plan.total.kcal}</span>
-          <span className="text-[9px] font-semibold" style={{ color: C.faintLight }}>kcal</span>
+          <span className="text-[9px] font-semibold" style={{ color: C.faint }}>kcal</span>
           <span className="text-[10px] font-bold tabular-nums" style={{ color: C.proteinText }}>P {plan.total.protein}</span>
           <span className="text-[10px] font-bold tabular-nums" style={{ color: C.carbText }}>C {plan.total.carb}</span>
           <span className="text-[10px] font-bold tabular-nums" style={{ color: C.fatText }}>F {plan.total.fat}</span>
@@ -94,8 +106,16 @@ export default function BrainChat() {
   const send = useCallback(async (text) => {
     const msg = (text ?? input).trim();
     if (!msg || sending) return;
-    // prior turns → history so follow-ups ("why not?") have context (backend caps + re-guards)
-    const history = messages.map((m) => ({ role: m.role === "you" ? "user" : "assistant", content: m.text }));
+    // Prior turns → history so follow-ups ("why not?") have context. The backend
+    // caps, re-guards, and — for coach turns — VERIFIES these: each coach reply
+    // came back with a server-issued `token`, and a coach turn without its token
+    // is dropped as unauthenticated rather than trusted as something the
+    // assistant said. So the token has to ride along here.
+    const history = messages.map((m) =>
+      m.role === "you"
+        ? { role: "user", content: m.text }
+        : { role: "assistant", content: m.text, token: m.token }
+    );
     setInput("");
     setMessages((m) => [...m, { role: "you", text: msg }]);
     setSending(true);
@@ -103,9 +123,23 @@ export default function BrainChat() {
       const res = await api.brainChat(msg, depth, history);
       const text2 = res && res.available === false ? "The assistant is currently off." : (res && res.reply) || "No response.";
       const tone = res && (res.refused || res.degraded) ? "muted" : "normal";
-      setMessages((m) => [...m, { role: "coach", text: text2, tone, plan: (res && res.plan) || null }]);
-    } catch {
-      setMessages((m) => [...m, { role: "coach", text: "Something went wrong — your deterministic plan on the Plan tab is unaffected.", tone: "muted" }]);
+      setMessages((m) => [...m, { role: "coach", text: text2, tone, plan: (res && res.plan) || null, token: (res && res.replyToken) || null }]);
+    } catch (err) {
+      // The binding used to be omitted (`catch {`), so after a 120 s timeout the
+      // user got one generic bubble and nothing was diagnosable — the error
+      // never reached the activity log the bug report is built from.
+      logEvent("brain-chat-failed", {
+        message: err && err.message ? String(err.message) : String(err),
+        status: err && err.status != null ? err.status : null,
+        depth,
+      });
+      setMessages((m) => [...m, {
+        role: "coach",
+        // Plain English: "deterministic" is an implementation word, and a
+        // reassurance is the worst place to spend the reader's attention on one.
+        text: "Something went wrong on my end — your meal plan on the Plan tab is built by the app's own calculator and is unaffected.",
+        tone: "muted",
+      }]);
     } finally {
       setSending(false);
     }
@@ -113,16 +147,20 @@ export default function BrainChat() {
 
   if (enabled !== true) return null; // brain off → no chat bar at all
 
+  // GREEN SCARCITY (colour law a): --accent may only mean on-target, primary
+  // action, success, the hero ring, or the trend line. A launcher pill is none
+  // of those — it is a surface that opens a panel, so it gets the ordinary
+  // lightness step (--card-2 + hairline), like every other raised state.
   if (!open) {
     return (
       <button
         ref={toggleBtnRef}
         onClick={() => setOpen(true)}
         className="fixed bottom-4 right-4 z-40 flex items-center gap-2 px-4 py-2.5 rounded-full text-sm font-bold"
-        style={{ background: C.accentBg, color: C.accent, border: `1px solid ${C.rule}` }}
+        style={{ background: C.card2, color: C.ink, border: `1px solid ${C.rule}` }}
         aria-label="Open the meal-planning assistant"
       >
-        <span aria-hidden="true">✦</span> Coach
+        <span aria-hidden="true" style={{ color: C.faint }}>✦</span> Coach
       </button>
     );
   }
@@ -135,8 +173,11 @@ export default function BrainChat() {
       style={{ background: C.cardGlass, border: `1px solid ${C.rule}`, backdropFilter: "blur(8px)" }}
     >
       <div className="flex items-center justify-between px-4 py-3" style={{ borderBottom: `1px solid ${C.rule}` }}>
+        {/* The ✦ is decoration, not a success/on-target signal — it does not get
+            the accent (colour law a). The "beta" chip is body text and moves off
+            --faint-light (3.26:1, fails AA) onto --faint. */}
         <div id={titleId} className="text-sm font-extrabold" style={{ color: C.ink }}>
-          <span aria-hidden="true" style={{ color: C.accent }}>✦</span> Coach <span className="text-[10px] font-bold uppercase tracking-wide ml-1" style={{ color: C.faintLight }}>beta</span>
+          <span aria-hidden="true" style={{ color: C.faint }}>✦</span> Coach <span className="text-[10px] font-bold uppercase tracking-wide ml-1" style={{ color: C.faint }}>beta</span>
         </div>
         <button onClick={close} className="text-xs font-bold px-2 py-1 rounded-lg" style={{ color: C.faint }} aria-label="Close assistant">✕</button>
       </div>
@@ -172,20 +213,22 @@ export default function BrainChat() {
             </div>
           ))
         )}
-        {sending && <div className="self-start text-[12px] font-semibold px-1" style={{ color: C.faintLight }}>…</div>}
+        {sending && <div className="self-start text-[12px] font-semibold px-1" style={{ color: C.faint }}>…</div>}
       </div>
 
       <div className="px-3 pt-2 pb-3 flex flex-col gap-2" style={{ borderTop: `1px solid ${C.rule}` }}>
         <div className="flex items-center gap-1">
           {DEPTHS.map((d) => (
             <button
-              key={d}
-              onClick={() => setDepth(d)}
-              aria-pressed={depth === d}
-              className="text-[10px] font-bold uppercase tracking-wide px-2 py-1 rounded-full"
-              style={depth === d ? { background: C.card2, color: C.ink, border: `1px solid ${C.faintLight}` } : { background: "transparent", color: C.faint, border: `1px solid ${C.rule}` }}
+              key={d.id}
+              onClick={() => setDepth(d.id)}
+              aria-pressed={depth === d.id}
+              title={d.hint}
+              aria-label={`${d.label} — ${d.hint}`}
+              className="text-[10px] font-bold tracking-wide px-2 py-1 rounded-full"
+              style={depth === d.id ? { background: C.card2, color: C.ink, border: `1px solid ${C.faintLight}` } : { background: "transparent", color: C.faint, border: `1px solid ${C.rule}` }}
             >
-              {d}
+              {d.label}
             </button>
           ))}
         </div>
