@@ -18,6 +18,7 @@ const path = require("path");
 const fs = require("fs");
 const net = require("net");
 const http = require("http");
+const util = require("util");
 const crypto = require("crypto");
 const { app, BrowserWindow, Menu, shell, ipcMain, dialog } = require("electron");
 
@@ -54,6 +55,56 @@ app.setName("Cut Protocol");
 log.init(app);
 log.write("main", `boot - version ${app.getVersion()}, packaged=${app.isPackaged}, ${process.platform}/${process.arch}`);
 
+// ── console → log file bridge ───────────────────────────────────────────────
+//
+// THE PROBLEM: a packaged Windows GUI app has no stdout. Nothing is attached to
+// it, nothing captures it, and there is no console window to read. Every
+// console.* call in backend/server.js and everything it requires therefore
+// writes into the void once the app is installed — including the 500-logging
+// middleware (`[error] POST /api/x: <message>`), the listen-error branch, the
+// desktopBootstrap schema failure, and the whole [data-audit] boot report. The
+// only errors a shipped copy could ever surface were the handful this file
+// happened to route through log.write() itself.
+//
+// Fixing it HERE rather than in backend/server.js is deliberate: the backend is
+// required in-process (see bootBackend below), so patching the shared console
+// object before that require captures every console call in the process — the
+// backend's, its dependencies', and Electron's own — with no edit to any
+// backend file and no import of an Electron-only logger into code that also
+// runs under plain `node server.js`.
+//
+// The one hazard is recursion: logger.cjs mirrors every line it writes to
+// console.log, which is the function being replaced. Its output has a fixed
+// shape (`<ISO timestamp> [scope] message`), so a line in that shape is
+// recognised as the logger's own mirror and passed straight to the real
+// console — printed once, never re-logged.
+const LOGGER_MIRROR_LINE = /^\d{4}-\d{2}-\d{2}T[\d:.]+Z \[[^\]]+\] /;
+const MAX_CONSOLE_LINE = 4000;
+
+function bridgeConsoleToLog() {
+  for (const level of ["log", "info", "warn", "error"]) {
+    const native = console[level].bind(console);
+    console[level] = (...args) => {
+      if (args.length === 1 && typeof args[0] === "string" && LOGGER_MIRROR_LINE.test(args[0])) {
+        native(args[0]); // logger.cjs's own stdout mirror — already on disk
+        return;
+      }
+      let line;
+      try {
+        line = util.format(...args);
+      } catch {
+        line = String(args[0]);
+      }
+      if (line.length > MAX_CONSOLE_LINE) line = `${line.slice(0, MAX_CONSOLE_LINE)} …[truncated]`;
+      // log.write() mirrors to the real console itself (via the branch above),
+      // so this both prints and persists — exactly one line of each.
+      log.write(level === "log" || level === "info" ? "console" : `console:${level}`, line);
+    };
+  }
+}
+
+bridgeConsoleToLog();
+
 // backend/.env is deliberately excluded from electron-builder's `files`
 // whitelist (it holds JWT_SECRET plus the USDA/Anthropic API keys — not
 // something to leave sitting in plain form in the general packaging list).
@@ -73,10 +124,51 @@ log.write("main", `boot - version ${app.getVersion()}, packaged=${app.isPackaged
 // simply absent in a shared build: the brain gate stays off and the app degrades
 // gracefully (deterministic solver + everything else works fully offline). In
 // dev (not packaged) nothing changes — backend/.env supplies these as before.
+
+/**
+ * Plain-English cause for the filesystem errno codes that actually reach a
+ * desktop app on someone else's machine. Nothing in this tree handled any of
+ * them before — `e.message` for EROFS reads "EROFS: read-only file system,
+ * open '...'", which tells a user nothing they can act on.
+ */
+function ioReason(e) {
+  switch (e && e.code) {
+    case "EACCES":
+    case "EPERM":
+      return "Windows refused permission to write there — antivirus, a locked-down profile, or a folder owned by another account.";
+    case "EROFS":
+      return "That location is read-only.";
+    case "ENOSPC":
+      return "The disk is full.";
+    case "EBUSY":
+      return "Another program is holding that file open.";
+    case "EMFILE":
+    case "ENFILE":
+      return "The system ran out of open file handles.";
+    case "ENOENT":
+      return "That folder does not exist and could not be created.";
+    default:
+      return (e && e.message) || String(e);
+  }
+}
+
+// Set when the per-install session secret cannot be persisted. THIS IS FATAL
+// NOW, and it was not before.
+//
+// The old code console.error'd and carried on. Two things followed. First, the
+// message went to a stdout a packaged Windows GUI app does not have, so nobody
+// ever saw it. Second — and this is the actual damage — carrying on means
+// generating a FRESH random JWT_SECRET on every launch, which invalidates every
+// cookie the previous launch issued. The user is silently signed out every
+// single time they open the app, forever, with no error anywhere and nothing to
+// suggest a cause. A permanent broken state presented as normal behaviour is
+// worse than a refusal to start, so this now lands on the boot-failure screen
+// that already exists, naming the path and the cause.
+let secretFailure = null;
+
 function ensurePackagedSecrets() {
   if (!app.isPackaged) return; // dev: backend/.env owns JWT_SECRET/keys
   if (process.env.JWT_SECRET) return; // respect an explicitly-provided secret
-  const crypto = require("crypto");
   const secretPath = path.join(app.getPath("userData"), "session-secret");
   let secret;
   try { secret = fs.readFileSync(secretPath, "utf8").trim(); } catch { /* first run */ }
@@ -85,14 +177,54 @@ function ensurePackagedSecrets() {
     try {
       fs.mkdirSync(path.dirname(secretPath), { recursive: true });
       fs.writeFileSync(secretPath, secret, { mode: 0o600 });
+      // Prove it actually landed. A write that "succeeds" into a virtualised or
+      // sync-managed folder and reads back as something else fails in exactly
+      // the same way as not writing at all — new secret every launch, signed
+      // out every launch — so it has to be caught here, not assumed.
+      if (fs.readFileSync(secretPath, "utf8").trim() !== secret) {
+        throw Object.assign(new Error("the file did not read back as written"), { code: "EIO" });
+      }
     } catch (e) {
-      console.error("[electron/main] could not persist the session secret:", e.message);
+      secretFailure = { path: secretPath, reason: ioReason(e), code: (e && e.code) || "" };
+      log.write("main", `FATAL: could not persist the session secret at ${secretPath}: ${(e && e.code) || ""} ${(e && e.message) || e}`);
+      return; // JWT_SECRET deliberately left unset — boot() refuses to continue
     }
   }
   process.env.JWT_SECRET = secret;
 }
 
 ensurePackagedSecrets();
+
+// ── userData health (disk/IO edge cases) ────────────────────────────────────
+//
+// Everything writable this app owns lives under one directory: the SQLite
+// database, the session secret, and the log. If it is not writable, or if a
+// sync client owns it, every one of those is compromised — so it is probed
+// once, up front, instead of failing later as three unrelated mysteries.
+function inspectUserData() {
+  const dir = app.getPath("userData");
+  const notes = { dir, writable: true, reason: null, code: "", synced: false };
+  try {
+    fs.mkdirSync(dir, { recursive: true });
+    const probe = path.join(dir, `.write-probe-${process.pid}`);
+    fs.writeFileSync(probe, "ok");
+    fs.unlinkSync(probe);
+  } catch (e) {
+    notes.writable = false;
+    notes.reason = ioReason(e);
+    notes.code = (e && e.code) || "";
+  }
+  // %AppData%\Roaming is OneDrive-redirectable ("Known Folder Move") and IS
+  // redirected on some machines. SQLite on a synced path is a documented
+  // corruption vector: the database and its -wal/-shm sidecars are three files
+  // a sync client can upload, restore, or lock out of step with each other,
+  // and the app has no way to notice it happened. Detect and say so.
+  notes.synced = /[\\/](OneDrive[^\\/]*|Dropbox|Google ?Drive|iCloudDrive)([\\/]|$)/i.test(dir);
+  return notes;
+}
+
+const userData = inspectUserData();
+log.write("main", `userData ${userData.dir} — writable=${userData.writable}${userData.writable ? "" : ` (${userData.code} ${userData.reason})`}${userData.synced ? " — WARNING: this path is managed by a file-sync client" : ""}`);
 
 // Stage-C fix (M3): single-instance lock. Without it, double-launching the
 // installed app started a SECOND in-process backend that raced for port 3001;
@@ -236,6 +368,13 @@ if (app.isPackaged) {
 let backend = null;
 
 async function bootBackend() {
+  // require() is cached: a second call would return the same module WITHOUT
+  // binding a second listener, so re-running boot() (the retry path) must not
+  // re-pick a port and must not re-require. Reuse what is already listening.
+  if (backend) {
+    log.write("main", `reusing the backend already listening on port ${PORT}`);
+    return backend;
+  }
   const port = await choosePort();
   PORT = String(port);
   process.env.PORT = PORT;
@@ -252,12 +391,168 @@ let mainWindow = null;
 
 // Boot state the splash page reads (and re-reads on load, so there is no race
 // between "main sends" and "splash is ready"). Never contains user data.
+//
+// PHASES: starting → ready (the app URL loaded) · failed · blocked.
+// "ready" is new. Without it the phase stayed "starting" for the entire life of
+// the process, which made every guard written as `if (phase === "starting")`
+// permanently true — see the uncaughtException handler at the bottom of this
+// file for what that cost.
 let bootState = { phase: "starting", message: "Starting up…" };
+
+// True while the window is showing splash.html rather than the app itself.
+// Tracked because it decides HOW a failure can be shown: pushing IPC at the app
+// page is useless if the app page is the thing that broke.
+let onSplash = true;
+// The verified app origin, once the handshake has passed. Used by the reload
+// path so a retry doesn't have to redo port selection or re-require the backend.
+let appBaseUrl = null;
+
+function splashPath() {
+  return path.join(__dirname, "splash.html");
+}
 
 function setBootState(next) {
   bootState = { ...bootState, ...next };
-  if (mainWindow && !mainWindow.isDestroyed()) {
-    mainWindow.webContents.send("boot-state", bootState);
+  if (!mainWindow || mainWindow.isDestroyed()) return;
+  const failing = bootState.phase === "failed" || bootState.phase === "blocked";
+  if (failing && !onSplash) {
+    // A failure AFTER the app loaded cannot be delivered by IPC to a page that
+    // may itself be broken (and, until this change, was delivered to a channel
+    // with no subscriber at all). Put the splash back instead — it PULLS the
+    // current state on load via getBootState(), so nothing can be missed.
+    onSplash = true;
+    mainWindow.loadFile(splashPath()).catch((e) => log.write("main", `could not show the failure screen: ${e.message}`));
+    return;
+  }
+  mainWindow.webContents.send("boot-state", bootState);
+}
+
+// ── runtime faults (everything after phase === "ready") ─────────────────────
+//
+// A boot failure and a fault three hours in are different problems with
+// different exits, and the old code had only the first. These are the second.
+let lastFaultAt = 0;
+let recoveryDialogOpen = false;
+let rendererAutoRecovered = false;
+
+const FAULT_TITLE = {
+  "uncaught exception": "Cut Protocol hit an unexpected error",
+  "unhandled rejection": "Something the app started never finished",
+  "renderer gone": "Cut Protocol's window crashed",
+  unresponsive: "Cut Protocol has stopped responding",
+  "page load failed": "Cut Protocol couldn't display its window",
+};
+
+/**
+ * Reload the window without restarting the local engine. This is the recovery
+ * for a wedged/crashed renderer; the backend keeps running in this same
+ * process, so its data and its port are untouched.
+ */
+function reloadApp() {
+  if (!mainWindow || mainWindow.isDestroyed()) {
+    createWindow();
+    boot();
+    return;
+  }
+  if (appBaseUrl) {
+    log.write("main", `reloading ${appBaseUrl}`);
+    mainWindow
+      .loadURL(appBaseUrl)
+      .then(() => {
+        onSplash = false;
+        // Back to a working app: clear whatever failure state got us here, so
+        // the next fault is judged on its own merits.
+        setBootState({ phase: "ready", message: "", title: null, detail: null });
+        log.write("main", "window reloaded (phase=ready)");
+      })
+      .catch((e) => {
+        log.write("main", `reload failed: ${e.message}`);
+        setBootState({
+          phase: "failed",
+          title: "Cut Protocol couldn't reload its window",
+          message: e.message,
+          detail: "The local engine is still running and your data is untouched. Try again, or close and reopen Cut Protocol.",
+          logPath: log.getLogPath(),
+        });
+      });
+    return;
+  }
+  boot(); // never got as far as a verified origin — run the whole sequence again
+}
+
+async function promptRecovery(kind, err, { offerWait = false } = {}) {
+  if (recoveryDialogOpen || !mainWindow || mainWindow.isDestroyed()) return;
+  recoveryDialogOpen = true;
+  const buttons = offerWait
+    ? ["Keep waiting", "Reload the window", "Open log folder", "Close Cut Protocol"]
+    : ["Reload the window", "Open log folder", "Close Cut Protocol"];
+  try {
+    const res = await dialog.showMessageBox(mainWindow, {
+      type: "warning",
+      title: "Cut Protocol",
+      message: FAULT_TITLE[kind] || "Cut Protocol hit an unexpected error",
+      detail:
+        `${(err && err.message) || String(err || "")}\n\n` +
+        "Your data is on disk and was not changed. Reloading redraws the window — it does not restart the local engine, and it does not sign you out.\n\n" +
+        `Log: ${log.getLogPath() || "(not available)"}`,
+      buttons,
+      defaultId: offerWait ? 1 : 0,
+      cancelId: 0,
+      noLink: true,
+    });
+    const choice = buttons[res.response];
+    log.write("main", `recovery dialog (${kind}): user chose "${choice}"`);
+    if (choice === "Reload the window") reloadApp();
+    else if (choice === "Open log folder") { const d = log.getLogDir(); if (d) shell.openPath(d); }
+    else if (choice === "Close Cut Protocol") app.quit();
+  } catch (e) {
+    log.write("main", `recovery dialog failed to open: ${e.message}`);
+  } finally {
+    recoveryDialogOpen = false;
+  }
+}
+
+/**
+ * The post-boot equivalent of the boot-failure screen.
+ *
+ * @param {string} kind          one of FAULT_TITLE's keys
+ * @param {Error|*} err
+ * @param {object} opts
+ *   nativePrompt  "always"   the OS dialog is the only thing that can be seen
+ *                 "fallback" only if the renderer could not be told
+ *                 false      log + renderer only
+ *   offerWait     add a "Keep waiting" button (unresponsive only)
+ */
+function reportRuntimeFault(kind, err, { nativePrompt = false, offerWait = false } = {}) {
+  log.write("main", `${kind}: ${(err && err.stack) || (err && err.message) || String(err)}`);
+  const now = Date.now();
+  const burst = now - lastFaultAt < 2000; // one storm, one report
+  lastFaultAt = now;
+
+  // Tell the renderer. This lands in the SAME "Something went wrong" report
+  // dialog the app already opens for its own uncaught errors (bugLog.js
+  // subscribes and calls the handler App registers), so a main-process fault is
+  // finally reportable by the user instead of vanishing. That subscriber is the
+  // whole point: the old code pushed "boot-state" here, and nothing in
+  // frontend/src listened to "boot-state" at all.
+  let notified = false;
+  if (!onSplash && mainWindow && !mainWindow.isDestroyed()) {
+    try {
+      if (!burst) {
+        mainWindow.webContents.send("main-process-error", {
+          kind,
+          message: (err && err.message) || String(err),
+        });
+      }
+      notified = true; // a live renderer, whether or not this one was debounced
+    } catch { /* renderer already gone — the native prompt below covers it */ }
+  }
+  if (burst) return;
+  // An OS-level modal on top of a report dialog the renderer is already showing
+  // is two interruptions for one fault. Only prompt natively when the renderer
+  // cannot speak for itself, or when the window itself is the thing that broke.
+  if (nativePrompt === "always" || (nativePrompt === "fallback" && !notified)) {
+    promptRecovery(kind, err, { offerWait });
   }
 }
 
@@ -267,13 +562,55 @@ ipcMain.handle("open-log-folder", () => {
   if (dir) shell.openPath(dir);
   return dir;
 });
+// Splash's "Try again" button. Safe to call repeatedly: boot() is guarded and
+// bootBackend() reuses the listener it already started.
+ipcMain.handle("retry-boot", () => {
+  log.write("main", "retry requested from the failure screen");
+  if (appBaseUrl) reloadApp(); else boot();
+  return true;
+});
+// The diagnostic log, for attaching to a bug report. Tail only, capped, and
+// handed to the renderer for scrubbing + explicit user review before it can go
+// anywhere (frontend/src/lib/bugReport.js). Without this the user had to find
+// %AppData%\Cut Protocol\logs themselves and email it.
+ipcMain.handle("read-log-tail", (_e, maxBytes) => {
+  const file = log.getLogPath();
+  if (!file) return { path: null, text: "", truncated: false };
+  const cap = Math.min(Math.max(Number(maxBytes) || 16 * 1024, 1024), 128 * 1024);
+  try {
+    const { size } = fs.statSync(file);
+    const start = Math.max(0, size - cap);
+    const fd = fs.openSync(file, "r");
+    try {
+      const buf = Buffer.alloc(size - start);
+      fs.readSync(fd, buf, 0, buf.length, start);
+      let text = buf.toString("utf8");
+      if (start > 0) text = text.slice(text.indexOf("\n") + 1); // drop the half line
+      return { path: file, text, truncated: start > 0 };
+    } finally {
+      fs.closeSync(fd);
+    }
+  } catch (e) {
+    // A log we cannot read must not break the reporter that wanted it.
+    return { path: file, text: "", truncated: false, error: ioReason(e) };
+  }
+});
 ipcMain.handle("check-for-updates", () => updater.checkForUpdates({ app, dialog, BrowserWindow }, { manual: true }));
 ipcMain.handle("updater-state", () => updater.getState());
 // The renderer is served BY the backend, so it talks to its own origin with
 // relative /api paths and never needs a hard-coded port. This is exposed only
 // so the UI can display/diagnose the real port; the nonce is deliberately NOT
 // exposed — identity is proven in the main process, before anything loads.
-ipcMain.handle("backend-info", () => ({ port: Number(PORT), host: "127.0.0.1" }));
+ipcMain.handle("backend-info", () => ({
+  port: Number(PORT),
+  host: "127.0.0.1",
+  logPath: log.getLogPath(),
+  // Environment facts a bug report should carry and a user can't be expected
+  // to know. No user data — a directory path and two booleans.
+  userDataDir: userData.dir,
+  userDataWritable: userData.writable,
+  userDataSynced: userData.synced,
+}));
 
 /**
  * Fetch a loopback URL and return { status, body } — small, no dependency.
@@ -397,7 +734,64 @@ function createWindow() {
 
   // Show a minimal loading state immediately while we wait for Express to
   // come up, instead of a blank/frozen window.
-  mainWindow.loadFile(path.join(__dirname, "splash.html"));
+  onSplash = true;
+  mainWindow.loadFile(splashPath());
+
+  const wc = mainWindow.webContents;
+
+  // Menu.setApplicationMenu(null) above removes the entire default accelerator
+  // table with it — including Ctrl+R and F5. So a renderer that wedged had
+  // exactly one exit: Task Manager. Put reload back, scoped to this window's
+  // input. Deliberately NOT globalShortcut, which would steal Ctrl+R from every
+  // other application on the machine for as long as this one is running.
+  wc.on("before-input-event", (event, input) => {
+    if (!input || input.type !== "keyDown") return;
+    const key = String(input.key || "").toLowerCase();
+    const reload = ((input.control || input.meta) && key === "r") || key === "f5";
+    if (!reload) return;
+    event.preventDefault();
+    log.write("main", "reload requested from the keyboard");
+    reloadApp();
+  });
+
+  // The main frame failed to load. Until now this was silent: the window sat on
+  // whatever it had (often nothing) with no message and no way back.
+  wc.on("did-fail-load", (_e, code, desc, url, isMainFrame) => {
+    if (!isMainFrame) return;
+    if (code === -3) return; // ERR_ABORTED — a superseded navigation, not a failure
+    log.write("main", `page failed to load: ${code} ${desc} (${url})`);
+    if (bootState.phase === "ready") {
+      setBootState({
+        phase: "failed",
+        title: "Cut Protocol couldn't display its window",
+        message: `${desc || "The page failed to load"} (${code}).`,
+        detail: "The local engine is still running and your data is untouched. Press Try again below, or Ctrl+R, to reload the window.",
+        logPath: log.getLogPath(),
+      });
+    }
+  });
+
+  // The renderer process died (out of memory, a GPU fault, a crash).
+  wc.on("render-process-gone", (_e, details) => {
+    const reason = (details && details.reason) || "unknown";
+    log.write("main", `renderer gone: ${reason} (exit ${details && details.exitCode})`);
+    if (reason === "clean-exit") return;
+    if (!rendererAutoRecovered) {
+      // One silent recovery. More than one would hide a reproducible crash
+      // behind a flicker, which is how a broken build looks "fine".
+      rendererAutoRecovered = true;
+      log.write("main", "recovering the window once, automatically");
+      reloadApp();
+      return;
+    }
+    reportRuntimeFault("renderer gone", new Error(`The window crashed (${reason}) and reloading did not fix it.`), { nativePrompt: "always" });
+  });
+
+  // The renderer stopped pumping its event loop. It may recover; it may not.
+  wc.on("unresponsive", () => {
+    reportRuntimeFault("unresponsive", new Error("The window stopped responding to input."), { nativePrompt: "always", offerWait: true });
+  });
+  wc.on("responsive", () => log.write("main", "the window started responding again"));
 
   mainWindow.on("closed", () => {
     mainWindow = null;
@@ -414,7 +808,51 @@ function createWindow() {
  * ends in splash.html's failure state instead: what happened, what it means,
  * what to try, and the log path — with a button that opens the log folder.
  */
+let booting = false;
+let listenErrorWired = false;
+
 async function boot() {
+  if (booting) return; // the retry path can call this again; one at a time
+  booting = true;
+  try {
+    await bootSequence();
+  } finally {
+    booting = false;
+  }
+}
+
+async function bootSequence() {
+  // 0. Can we write where we keep everything? The database, the session secret
+  //    and the log all live in one directory; if it is not writable, all three
+  //    fail, and failing here with the reason beats three separate mysteries
+  //    later (a login that won't stick, a database that won't open, a log that
+  //    doesn't exist).
+  if (!userData.writable) {
+    setBootState({
+      phase: "failed",
+      title: "Cut Protocol can't write to its own data folder",
+      message: `${userData.reason} (${userData.code})`,
+      detail: `Folder:\n${userData.dir}\n\nThis is where your database, your sign-in and this app's log live — it can't run without being able to write there. Check that the folder exists, that you have permission to write to it, and that the disk isn't full.`,
+      logPath: log.getLogPath(),
+    });
+    return;
+  }
+
+  // 0b. The session secret. Fatal now — see ensurePackagedSecrets().
+  if (secretFailure) {
+    setBootState({
+      phase: "failed",
+      title: "Cut Protocol couldn't save your sign-in key",
+      message: `${secretFailure.reason}${secretFailure.code ? ` (${secretFailure.code})` : ""}`,
+      detail:
+        `File:\n${secretFailure.path}\n\n` +
+        "Without it the app would sign you out every single time you open it, silently and forever, so it stops here instead. " +
+        "Free up disk space or fix the folder's permissions and reopen Cut Protocol — your data is untouched.",
+      logPath: log.getLogPath(),
+    });
+    return;
+  }
+
   // 1. Entitlement gate (inert until a public key is configured; always
   //    bypassed in dev). Runs before anything expensive so a blocked build
   //    never even opens a database.
@@ -447,8 +885,11 @@ async function boot() {
   }
 
   // A bind error arrives asynchronously on the server object. Surface it as a
-  // real screen rather than an uncaught main-process exception.
-  if (backend && backend.server) {
+  // real screen rather than an uncaught main-process exception. Attached once:
+  // bootSequence() is re-runnable now (the retry path), and a fresh listener on
+  // every attempt would leak and multi-report the same failure.
+  if (backend && backend.server && !listenErrorWired) {
+    listenErrorWired = true;
     backend.server.on("error", (err) => {
       log.write("main", `backend listen error: ${err.code || ""} ${err.message}`);
       setBootState({
@@ -505,11 +946,77 @@ async function boot() {
   }
 
   log.write("main", `loading ${base}/ (license: ${lic.state})`);
-  if (mainWindow && !mainWindow.isDestroyed()) mainWindow.loadURL(`${base}/`);
+  appBaseUrl = `${base}/`;
+  if (mainWindow && !mainWindow.isDestroyed()) {
+    let loadFailure = null;
+    try {
+      await mainWindow.loadURL(appBaseUrl);
+    } catch (e) {
+      // ERR_ABORTED means this navigation was SUPERSEDED by another one, not
+      // that it failed — treating it as a failure would put a crash screen over
+      // a page that is about to load fine.
+      if (String(e && e.code) === "ERR_ABORTED" || (e && e.errno === -3)) {
+        log.write("main", `loadURL superseded (${e.message}) — letting the newer navigation finish`);
+      } else {
+        loadFailure = e;
+      }
+    }
+    if (loadFailure) {
+      // The window never left the splash document, so the failure screen can
+      // still be shown there.
+      log.write("main", `could not load ${appBaseUrl}: ${loadFailure.message}`);
+      setBootState({
+        phase: "failed",
+        title: "Cut Protocol couldn't open its own window",
+        message: loadFailure.message,
+        detail: "The local engine started and answered — it was displaying the page that failed. Press Try again below; if it keeps failing, send the log.",
+        logPath: log.getLogPath(),
+      });
+      return;
+    }
+    onSplash = false;
+    // ── THE SUCCESS TRANSITION ──────────────────────────────────────────────
+    // Everything from here on is a RUNTIME fault, not a boot failure, and takes
+    // reportRuntimeFault() instead of the splash screen. Without this line the
+    // phase stayed "starting" for the life of the process, so the
+    // uncaughtException guard below stayed armed forever and turned an error at
+    // hour three into a boot-failure message pushed at a channel nobody read.
+    setBootState({ phase: "ready", message: "", title: null, detail: null });
+    log.write("main", "window is up (phase=ready)");
+  }
+
+  // 3b. Sync-managed data folder. Not fatal — the app works — but SQLite plus a
+  //     file-sync client is a real corruption vector and the user is the only
+  //     one who can move it. Said once per install, never nagged.
+  if (app.isPackaged && userData.synced) warnAboutSyncedDataFolder();
 
   // 4. Updates last, and only after the window is already usable. Fully
   //    fire-and-forget: offline machines log one line and carry on.
   updater.scheduleLaunchCheck({ app, dialog, BrowserWindow });
+}
+
+/**
+ * One-time warning that userData sits inside OneDrive/Dropbox/etc. Gated on a
+ * marker file so it appears once per install, not once per launch — a warning
+ * shown every time is a warning nobody reads (and this app's own rules forbid
+ * nagging).
+ */
+function warnAboutSyncedDataFolder() {
+  const marker = path.join(userData.dir, ".sync-warning-shown");
+  try { if (fs.existsSync(marker)) return; } catch { /* fall through and warn */ }
+  try { fs.writeFileSync(marker, new Date().toISOString()); } catch { /* warn anyway */ }
+  log.write("main", `WARNING: ${userData.dir} is inside a synced folder — SQLite on a synced path can be corrupted by the sync client`);
+  dialog.showMessageBox(mainWindow, {
+    type: "warning",
+    title: "Cut Protocol",
+    message: "Your Cut Protocol data folder is being synced to the cloud",
+    detail:
+      `${userData.dir}\n\n` +
+      "This folder is managed by a file-sync client (OneDrive, Dropbox or similar). Cut Protocol keeps your data in a database file there, and sync clients can copy, lock or restore that file while the app is using it — which can damage it.\n\n" +
+      "Nothing is wrong right now. But if you can, exclude this folder from syncing. Keep your own exports (Profile → export) either way.",
+    buttons: ["OK"],
+    noLink: true,
+  }).catch(() => {});
 }
 
 app.whenReady().then(() => {
@@ -528,10 +1035,11 @@ app.whenReady().then(() => {
 
 // Last-resort net: an unexpected main-process throw used to be a raw Electron
 // error dialog. Log it and, if we never got as far as loading the app, show
-// the honest failure screen instead.
+// the honest failure screen instead — otherwise take the runtime path, which
+// now exists.
 process.on("uncaughtException", (err) => {
-  log.write("main", `uncaught: ${err && err.stack ? err.stack : err}`);
   if (bootState.phase === "starting") {
+    log.write("main", `uncaught during boot: ${err && err.stack ? err.stack : err}`);
     setBootState({
       phase: "failed",
       title: "Cut Protocol hit an unexpected error while starting",
@@ -539,7 +1047,43 @@ process.on("uncaughtException", (err) => {
       detail: "Your data was not modified. Reopen the app; if it fails again, send the log below.",
       logPath: log.getLogPath(),
     });
+    return;
   }
+  // Post-boot. The window is up and the user is mid-something; a boot screen
+  // would be a lie and (before this) went nowhere anyway. Log it, tell the
+  // renderer so it can offer a report, and — because a throw that reached here
+  // may well have left the backend mid-request — offer the recovery dialog.
+  reportRuntimeFault("uncaught exception", err, { nativePrompt: "fallback" });
+});
+
+// ── unhandled promise rejections ────────────────────────────────────────────
+//
+// There was no handler for these ANYWHERE in the tree, and the consequence is
+// specific rather than theoretical. Verified empirically on this Node 24
+// runtime: with an uncaughtException handler registered, an unhandled rejection
+// is routed to THAT handler and the process survives (exit 0). So this process
+// — which is also the backend — quietly absorbed every stray rejection: no
+// crash, no zombie window, nothing in any log. What the user got instead was a
+// request that never received a response, and a spinner that ran until the
+// client-side budget expired (15s reads / 45s solver / 120s LLM) with no error
+// to show for it. Now it is written down, and the user is told something broke.
+process.on("unhandledRejection", (reason) => {
+  const err = reason instanceof Error ? reason : new Error(`Unhandled rejection: ${util.inspect(reason, { depth: 2 })}`);
+  if (bootState.phase === "starting") {
+    log.write("main", `unhandled rejection during boot: ${err.stack || err.message}`);
+    setBootState({
+      phase: "failed",
+      title: "Cut Protocol hit an unexpected error while starting",
+      message: err.message,
+      detail: "Your data was not modified. Reopen the app; if it fails again, send the log below.",
+      logPath: log.getLogPath(),
+    });
+    return;
+  }
+  // No native dialog here. A rejection is usually one failed request rather
+  // than a broken window, and an OS-level modal for each would be worse than
+  // the silence it replaces. The renderer gets it and can offer a report.
+  reportRuntimeFault("unhandled rejection", err);
 });
 
 app.on("window-all-closed", () => {
