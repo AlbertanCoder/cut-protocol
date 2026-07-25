@@ -130,6 +130,18 @@ function ensureDatabaseReady() {
 
   fs.copyFileSync(templatePath, dbPath);
   console.log(`[desktopBootstrap] Initialized database at ${dbPath} from packaged template.`);
+
+  // The file we just copied IS the template, so its library is current by
+  // definition. Stamping that fact here means the first boot of a fresh install
+  // skips librarySync's 14k-row comparison, which could only ever conclude
+  // "nothing to do". Required lazily (and tolerant of failure) so this can
+  // never be the thing that stops a first launch: the worst case is one slow
+  // boot that reaches the same conclusion the long way.
+  try {
+    require("./librarySync.js").markLibraryFromTemplate(dbPath, templatePath);
+  } catch (e) {
+    console.warn(`[desktopBootstrap] could not stamp the library version on first run: ${e.message}`);
+  }
 }
 
 // M2 fix: schema migration for installed apps. A reinstalled/updated app used
@@ -358,5 +370,10 @@ module.exports = {
   TEMPLATE_DB_FILENAME,
   isValidSqlite,
   splitSqlStatements,
+  // Exported for src/lib/librarySync.js, which takes the same file-level
+  // snapshot before it rewrites library content. One backup helper, one backup
+  // shape, one restore instruction ("copy this file back over the live path")
+  // for both of the two things that ever write to the user's DB outside Prisma.
+  backupDatabaseFile,
   DEFAULT_MIGRATIONS_DIR,
 };
