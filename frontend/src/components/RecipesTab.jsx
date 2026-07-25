@@ -348,6 +348,10 @@ export default function RecipesTab({ openFoods, profile }) {
   const [generating, setGenerating] = useState(false);
   const [savingIdx, setSavingIdx] = useState(null);
   const [draftErrors, setDraftErrors] = useState({});
+  // null = still asking, true/false = whether AI generation works in THIS build.
+  // A shareable build ships without an API key, so a Generate button here would
+  // only 503 on click — gate the card on this instead.
+  const [aiEnabled, setAiEnabled] = useState(null);
 
   const [importUrl, setImportUrl] = useState("");
   const [importing, setImporting] = useState(false);
@@ -378,6 +382,14 @@ export default function RecipesTab({ openFoods, profile }) {
         // An unreadable cart is NOT an empty cart — say which one it is.
         setCartError(describeError(e, "Couldn't load your cart."));
       });
+  }, [abort]);
+  useEffect(() => {
+    // Ask once whether AI generation is even possible in this build. On any
+    // failure, assume it's NOT — better to hide the button than show one that
+    // errors on click (URL import + the library still work without a key).
+    api.getBrainStatus({ signal: abort.signal })
+      .then((s) => setAiEnabled(!!s?.enabled))
+      .catch((e) => { if (!isAbortError(e)) setAiEnabled(false); });
   }, [abort]);
   useEffect(() => {
     // Ratings are a soft re-rank only; their absence changes no displayed
@@ -620,6 +632,20 @@ export default function RecipesTab({ openFoods, profile }) {
           </Card>
 
           <Card section="GENERATE" title="New recipe from AI">
+            {aiEnabled === false ? (
+              <div className="text-xs" style={{ color: C.faint }}>
+                <p>
+                  AI recipe generation is <strong style={{ color: C.ink }}>off in this build</strong> — it needs
+                  an Anthropic API key, which this install doesn&apos;t include. Everything else works normally,
+                  fully offline.
+                </p>
+                <p className="mt-2">
+                  To add recipes without it: <strong style={{ color: C.ink }}>import from a URL</strong> above
+                  (works offline), or browse the ones already in your library below.
+                </p>
+              </div>
+            ) : (
+            <>
             <div className="grid grid-cols-2 gap-2 mb-2">
               <select aria-label="Slot type" className="text-xs px-2 py-2 rounded-xl" style={inpStyle} value={form.slotType}
                 onChange={(e) => setForm((f) => ({ ...f, slotType: e.target.value }))}>
@@ -665,6 +691,8 @@ export default function RecipesTab({ openFoods, profile }) {
             <Btn onClick={handleGenerate} disabled={generating}>
               <Sparkles size={13} className="inline mr-1" />{generating ? "Generating…" : drafts?.length ? "Regenerate 3 options" : "Generate 3 options"}
             </Btn>
+            </>
+            )}
           </Card>
 
           {droppedForAllergies.length > 0 && (
