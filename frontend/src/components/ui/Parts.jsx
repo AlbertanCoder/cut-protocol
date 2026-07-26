@@ -215,8 +215,21 @@ export const Ring = ({ pct, size = 108, stroke = 10, color = C.accent, num, unit
   const over = p > 1;
   const lap1 = Math.min(1, p);
   // Progress through the lap currently in flight (NOT clamped-and-saturated).
-  const lapsDone = Math.floor(p);
-  const lap2 = over ? p - lapsDone : 0;
+  //
+  // THE EXACT-MULTIPLE CASE. `p - floor(p)` is 0 at exactly 200 % / 300 %, which
+  // drew an EMPTY overlay arc: 200 % rendered with less ink than 199 % and, but
+  // for the ×N badge, was the same graphic as a plain 100 %. The ring appeared to
+  // snap backwards every time it completed a lap. An exact multiple is a lap that
+  // just FINISHED, so it renders full.
+  const whole = Math.floor(p);
+  const exact = over && p === whole;
+  const lapsDone = whole;
+  const lap2 = over ? (exact ? 1 : p - whole) : 0;
+  // Which lap is in flight: 1 = second lap, 2 = third, … Each lap past the first
+  // is drawn a step further toward the over-target amber, because arc 2 used to
+  // be one fixed color at every depth — 150 %, 250 % and 350 % all painted the
+  // identical half-arc and only the small ×N badge told them apart.
+  const lapIndex = over ? (exact ? whole - 1 : whole) : 0;
   const r = (size - stroke) / 2;
   const circ = 2 * Math.PI * r;
   // ~2px of arc, expressed as a fraction of the circumference.
