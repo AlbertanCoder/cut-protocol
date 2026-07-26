@@ -6,12 +6,64 @@
 const Anthropic = require("@anthropic-ai/sdk");
 const { MODELS } = require("./config.js");
 
+// ── RELAY CONFIG ─────────────────────────────────────────────────────────────
+// A packaged install ships NO secrets, so `ANTHROPIC_API_KEY` is simply absent
+// there and the brain can never turn on. The second way in is a RELAY: a narrow
+// forwarding service that holds the only copy of the real key and accepts a
+// per-device token instead. The SDK takes a `baseURL`, so the relay needs zero
+// changes in askJSON/askSchemaJSON/runToolLoop — only client() moves.
+//
+// The device token lives on a user's machine and MUST be assumed extractable.
+// The relay's model allowlist and USD caps are therefore authoritative; nothing
+// enforced on this side of the wire is a security control.
+//
+// BASE URL NORMALIZATION, which is not cosmetic. The SDK builds a request as
+// `new URL(baseURL + "/v1/messages")` (client.js buildURL). So the baseURL must
+// be the BARE ORIGIN — a pasted `https://relay.example.com/v1` would resolve to
+// `/v1/v1/messages` and 404 against a relay that serves `/v1/messages`. Both
+// forms are accepted and normalized to the same thing, because "paste your
+// relay URL" invites the `/v1` and a 404 at that layer reads like a dead relay.
+//
+// SCHEME RULE: https anywhere, http ONLY on loopback. A relay token crossing
+// the public internet in cleartext is the one failure mode that hands an
+// attacker the credential without them having to touch either machine. Loopback
+// http stays legal because that is how Stage 3 tests against a local relay.
+const LOOPBACK_HOSTS = new Set(["localhost", "127.0.0.1", "[::1]", "::1"]);
+
+function relayConfig() {
+  const rawUrl = String(process.env.BRAIN_RELAY_URL || "").trim();
+  const token = String(process.env.BRAIN_RELAY_TOKEN || "").trim();
+  // Partial config is NOT config. Half a relay is how you get a client that
+  // authenticates to nothing, or points nowhere with a valid credential.
+  if (!rawUrl || !token) return null;
+
+  let parsed;
+  try { parsed = new URL(rawUrl); } catch { return null; }
+
+  const isLoopback = LOOPBACK_HOSTS.has(parsed.hostname);
+  if (parsed.protocol === "http:") { if (!isLoopback) return null; }
+  else if (parsed.protocol !== "https:") return null;
+
+  // Strip trailing slashes, then ONE trailing `/v1` — the SDK appends its own.
+  const baseURL = `${parsed.origin}${parsed.pathname}`.replace(/\/+$/, "").replace(/\/v1$/i, "");
+  return { baseURL, token };
+}
+
 // Lazily construct the client so merely REQUIRING this module never needs a key
 // (aiRecipeClient constructs at load; the brain must be importable — and
 // unit-testable — with the brain off and no ANTHROPIC_API_KEY present).
+//
+// RELAY WINS over a direct key when both are present. A stray ANTHROPIC_API_KEY
+// in the environment must never silently route around the relay's authoritative
+// caps — a bypass you cannot see is worse than a misconfiguration you can.
 let _client = null;
 function client() {
-  if (!_client) _client = new Anthropic(); // reads ANTHROPIC_API_KEY from env
+  if (!_client) {
+    const relay = relayConfig();
+    _client = relay
+      ? new Anthropic({ baseURL: relay.baseURL, apiKey: relay.token })
+      : new Anthropic(); // reads ANTHROPIC_API_KEY from env
+  }
   return _client;
 }
 
@@ -31,8 +83,12 @@ const DEPTH_PROFILES = { fast: { maxIters: 1 }, balanced: { maxIters: 3 }, thoro
 // Default off so a build behaves byte-identically to the deterministic-only
 // engine until the live LLM layer has been verified with a real key. This is the
 // single gate every brain feature checks. To enable: set BRAIN=on in the env.
+// Two ways to have a transport, one gate. A direct key (dev, backend/.env) or a
+// complete relay config (a packaged install, which ships no key by design).
+// Neither one is sufficient alone: BRAIN=on stays a required, explicit opt-in.
 function isBrainEnabled() {
-  return Boolean(process.env.ANTHROPIC_API_KEY) && process.env.BRAIN === "on";
+  if (process.env.BRAIN !== "on") return false;
+  return Boolean(process.env.ANTHROPIC_API_KEY) || Boolean(relayConfig());
 }
 
 const BRAIN_TIMEOUT_MS = 15000;
@@ -198,4 +254,7 @@ module.exports = {
   isBrainEnabled, askJSON, askSchemaJSON, parseJSON, runToolLoop, __setClient,
   DEPTH_PROFILES, BRAIN_TIMEOUT_MS, DRAFT_TIMEOUT_MS,
   DEFAULT_MODEL, THINKING_OFF_MODELS, thinkingParam,
+  // Exported so the status route can say WHY the brain is off without
+  // reimplementing "is this config complete" and drifting from the gate.
+  relayConfig,
 };
