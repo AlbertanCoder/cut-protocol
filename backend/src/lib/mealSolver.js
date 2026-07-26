@@ -709,6 +709,32 @@ async function generateBestWeekPlan(dailyTarget, mealConfig, recipePool, options
   // An unmet protein floor is the same kind of debt: in protein-priority mode
   // the floor IS the target the user selected the mode to defend, so missing it
   // owes a reason on exactly the same terms.
+  // ── THE BRAIN, ONCE, ON THE WINNER ─────────────────────────────────────────
+  // The attempts loop above strips aiFallback deliberately (see :679) so
+  // best-of-N stays free. This is the other half of that decision: the winning
+  // week's surviving gaps are offered to the Library→Brain router exactly once.
+  //
+  // It runs BEFORE the diagnosis below, and that ordering is the point — a slot
+  // the brain just filled must not still be reported as a miss. Running it
+  // after would make the app lie about its own result.
+  //
+  // BRAIN=off / no aiFallback: buildAiFallbackContext returns null, this is a
+  // no-op, and the goldens stay byte-identical.
+  if (options.aiFallback?.enabled && best?.slots?.length) {
+    const { fillGapsWithBrain } = require("./weeklyPlanner.js");
+    const pass = await fillGapsWithBrain(best.slots, {
+      dailyTarget, mealConfig, recipePool,
+      aiFallback: options.aiFallback,
+      dayIndices: options.dayIndices,
+    });
+    best.slots = pass.slots;
+    best.brain = { attempted: pass.attempted, filled: pass.filled, replaced: pass.replaced, callsUsed: pass.callsUsed };
+    // The score drove SELECTION and is now stale — the brain has changed what
+    // is on the plate. Rescore so daysInTolerance/avgMatch describe the week
+    // actually being returned, which the diagnosis immediately reads.
+    if (pass.filled || pass.replaced) best.score = scoreWeek(dailyTarget, best.slots, { proteinPriority: priority });
+  }
+
   const anyDayMissed = best.score.daysInTolerance < best.score.days.length;
   const anyUnfilledSlot = best.slots.some((s) => !s.recipeId);
   const floorMissed = priority && best.score.floorDaysMet < best.score.floorDaysTotal;
@@ -1144,6 +1170,11 @@ async function generateHorizonPlan({
   filters = {}, counts = null, bias = null,
   priorPlans = [], lockedSlotsByWindow = [], startDayOfWeek = 0,
   attempts, rng = Math.random, clock = Date.now,
+  // The horizon planner previously had no way to express "the brain may fill
+  // gaps", so /generate had nothing to pass even if it wanted to. Threaded
+  // through to each window's generateBestWeekPlan, which spends it on the
+  // winning week only.
+  aiFallback = null,
 }) {
   if (!horizon || horizon.kind !== "days") {
     throw Object.assign(new Error("generateHorizonPlan needs a day-kind horizon (use solveOneMeal for a single dish)"), { status: 400 });
@@ -1168,6 +1199,10 @@ async function generateHorizonPlan({
   // 1-week path is untouched.
   const admissionCeiling = variety.horizonRepeatCap - variety.perWeekCap;
 
+  // Shared across every window — see the aiFallback note in the loop.
+  let brainCallsLeft = aiFallback?.enabled ? (aiFallback.maxCalls ?? 0) : 0;
+  const brainTotals = { attempted: 0, filled: 0, replaced: 0, callsUsed: 0 };
+
   for (let i = 0; i < windows.length; i++) {
     // HORIZON REPEAT CAP. Narrowing only — a recipe leaves the pool once it has
     // spent its horizon allowance. It can never put one BACK, so the diet/
@@ -1181,10 +1216,21 @@ async function generateHorizonPlan({
       allowBatchRepeats: filters.allowBatchRepeats,
       dayIndices: windows[i],
       lockedSlots: lockedSlotsByWindow[i] || [],
+      // ONE budget for the whole horizon, not one per window. A month is four
+      // windows; handing each a fresh maxCalls would quietly quadruple the
+      // spend the caller thought it had authorised. Each window gets what is
+      // left, and what it uses is deducted below.
+      ...(aiFallback && brainCallsLeft > 0
+        ? { aiFallback: { ...aiFallback, maxCalls: brainCallsLeft } }
+        : {}),
       // Cross-window memory: the weeks THIS horizon already solved come first,
       // then the user's real plan history. Same recency weighting as before.
       priorUsage: buildPriorUsage([...solvedSoFar, ...(priorPlans || [])]),
     });
+    if (week.brain) {
+      brainCallsLeft = Math.max(0, brainCallsLeft - (week.brain.callsUsed || 0));
+      for (const k of ["attempted", "filled", "replaced", "callsUsed"]) brainTotals[k] += week.brain[k] || 0;
+    }
     for (const s of week.slots) {
       if (!s.recipeId) continue;
       horizonUsage.set(s.recipeId, (horizonUsage.get(s.recipeId) || 0) + 1);
@@ -1271,6 +1317,11 @@ async function generateHorizonPlan({
     horizon, windows: results, score, variety: varietyReport, diagnosis,
     attempts: results.reduce((s, r) => s + (r.attempts || 0), 0),
     solveMs: clock() - t0,
+    // Present ONLY when the caller opted in, so a BRAIN=off response is shaped
+    // exactly as it was before this existed. `callsUsed` is what the UI and the
+    // live-smoke report cite — a spend figure the user can check against the
+    // LlmUsage ledger rather than take on trust.
+    ...(aiFallback?.enabled ? { brain: { ...brainTotals, callsRemaining: brainCallsLeft } } : {}),
   };
 }
 

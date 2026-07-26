@@ -616,6 +616,92 @@ function buildAiFallbackContext(options, recipePool) {
 const slotKeyOf = (s) => `${s.dayOfWeek}:${s.slotType}:${s.slotIndex}`;
 
 /**
+ * THE POST-SELECTION BRAIN PASS — the missing caller.
+ *
+ * The Library→Brain router (mealRouter.js) has existed and worked for some
+ * time, and generateWeekPlan already knows how to invoke it via aiFallback.
+ * It never ran during a real generate for one reason: generateBestWeekPlan
+ * strips aiFallback before every attempt
+ * (`{ ...options, aiFallback: undefined }`), and nothing filled the gaps
+ * afterwards.
+ *
+ * That strip is CORRECT and stays. Best-of-N runs five week solves and keeps
+ * one; letting a model design recipes inside each attempt would pay for four
+ * discarded weeks every single time. The deterministic search must stay free.
+ *
+ * So the brain belongs exactly here: ONCE, on the winning week, over the gaps
+ * that survived the search. Every attempt is free; only the gaps cost money,
+ * and each one is paid for at most once because whatever passes verification is
+ * persisted to the library by the router.
+ *
+ * Targets are RECOMPUTED rather than read off the slot records, because
+ * toSlotRecord() deliberately drops them — a stored slot carries what it
+ * achieved, not what it was aiming for. targetsForSlots/buildSlots are pure and
+ * deterministic, so recomputing yields the identical targets the solve used.
+ *
+ * @returns {{slots, attempted, filled, replaced, callsUsed}} — counts are for
+ *   honest reporting (V11 progress + the live-smoke ledger), not decoration.
+ */
+async function fillGapsWithBrain(slots, { dailyTarget, mealConfig, recipePool, aiFallback, dayIndices = null }) {
+  const ctx = buildAiFallbackContext({ aiFallback }, recipePool);
+  if (!ctx) return { slots, attempted: 0, filled: 0, replaced: 0, callsUsed: 0 };
+
+  const budget = ctx.callsRemaining.n;
+  const targets = new Map(
+    targetsForSlots(dailyTarget, buildSlots(mealConfig, dayIndices)).map((t) => [slotKeyOf(t), t])
+  );
+
+  // Seed usage from the winning week so the router's variety accounting starts
+  // from what this plan already serves, not from zero.
+  const usageCount = new Map();
+  for (const s of slots) if (s.recipeId) usageCount.set(s.recipeId, (usageCount.get(s.recipeId) || 0) + 1);
+
+  const out = [...slots];
+  let attempted = 0; let filled = 0; let replaced = 0;
+
+  // ORDER MATTERS. Empty slots first: a slot with no meal at all is a strictly
+  // worse outcome than one that landed outside tolerance, so it gets first call
+  // on a bounded budget. Only if calls remain do we try to improve a slot that
+  // at least fed the user something.
+  const empty = [];
+  const roughs = [];
+  out.forEach((s, i) => {
+    if (!s.recipeId) empty.push(i);
+    else if (s.warning) roughs.push(i);
+  });
+
+  for (const i of [...empty, ...roughs]) {
+    if (ctx.callsRemaining.n <= 0) break;
+    const target = targets.get(slotKeyOf(out[i]));
+    if (!target) continue; // a slot with no matching target is not ours to fill
+    const wasFilled = Boolean(out[i].recipeId);
+    attempted++;
+    // A replacement must give back the old recipe's variety allowance first, or
+    // the discarded pick keeps occupying a slot in the repeat cap it no longer
+    // fills.
+    if (wasFilled) {
+      const prev = usageCount.get(out[i].recipeId) || 0;
+      if (prev <= 1) usageCount.delete(out[i].recipeId); else usageCount.set(out[i].recipeId, prev - 1);
+    }
+    let result = null;
+    try {
+      result = await tryAiFallback(target, recipePool, usageCount, ctx);
+    } catch {
+      result = null; // tryAiFallback already degrades; this is belt-and-braces
+    }
+    if (result && result.recipeId) {
+      out[i] = toSlotRecord(target, result);
+      if (wasFilled) replaced++; else filled++;
+    } else if (wasFilled) {
+      // Put the allowance back — we kept the original.
+      usageCount.set(out[i].recipeId, (usageCount.get(out[i].recipeId) || 0) + 1);
+    }
+  }
+
+  return { slots: out, attempted, filled, replaced, callsUsed: budget - ctx.callsRemaining.n };
+}
+
+/**
  * Index locked slot records by their slot key. Accepts an array (or null) of
  * PlanSlot-shaped rows: { dayOfWeek, slotType, slotIndex, recipeId, kcal,
  * protein, fat, carb, ingredients, proteinScale, sidesScale, warning }.
@@ -861,6 +947,7 @@ function estimateSlotTarget(dailyTarget, mealConfig, slotType) {
 module.exports = {
   generateWeekPlan, regenerateOneSlot, buildSlots, targetsForSlots, solveDay,
   resolveSlot, scaleRecipe, buildAiFallbackContext, estimateSlotTarget,
+  fillGapsWithBrain,
   eligibleRecipes, buildPriorUsage, practicalGrams, RECENCY_WEIGHTS,
   applyScales, enforceScaledCarbCeiling, buildLockedMap, slotKeyOf,
   hasCompositionTarget, compositionDistance, bandMidpoint,
