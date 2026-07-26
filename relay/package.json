@@ -1,0 +1,15 @@
+{
+  "name": "cut-protocol-relay",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Anthropic forwarding relay for Cut Protocol. Holds the only copy of the API key; accepts a per-device token instead.",
+  "type": "commonjs",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node --max-old-space-size=128 src/server.js",
+    "test": "node --test \"test/*.test.js\""
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

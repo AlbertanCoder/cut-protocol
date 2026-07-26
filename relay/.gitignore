@@ -1,0 +1,15 @@
+# The live spend ledger. No message content is ever written to it (see
+# usage.js), but it is operational data from a specific machine and has no
+# business in a public repo.
+usage.jsonl
+*.jsonl
+
+# Nothing should ever appear here — the relay has zero dependencies on purpose,
+# because this process holds the API key. If node_modules/ shows up, someone
+# added a dependency; that is a decision worth noticing, not hiding.
+node_modules/
+
+# Belt and braces. The relay's secrets live in the service environment, never
+# in a file inside this directory.
+.env
+.env.*
