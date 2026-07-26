@@ -54,6 +54,13 @@ export class ApiError extends Error {
   }
 }
 
+// Dispatched on `window` after the coach is connected or disconnected. The chat
+// bar is mounted once at the App root and the Settings card sits several levels
+// down inside Profile, so this carries one boolean between them without
+// threading a callback through three files. Named here rather than in either
+// component so there is exactly one spelling of it.
+export const BRAIN_STATUS_CHANGED = "cutprotocol:brain-status-changed";
+
 export const isApiError = (e) => e instanceof ApiError;
 export const isAuthError = (e) => isApiError(e) && e.kind === ERR.HTTP && e.status === 401;
 export const isTimeoutError = (e) => isApiError(e) && e.kind === ERR.TIMEOUT;
