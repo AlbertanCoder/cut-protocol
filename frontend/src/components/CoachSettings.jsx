@@ -51,7 +51,12 @@ const EXPLAIN = {
 };
 
 export default function CoachSettings() {
-  const signal = useAbortSignal();
+  // NOTE THE SHAPE: useAbortSignal() returns a stable HOLDER, not a signal.
+  // Read `abort.signal` at the call site — passing the holder itself makes
+  // fetch try to call .addEventListener on it, and every request in this card
+  // dies with "r?.addEventListener is not a function". Naming it `abort` (as
+  // every other component does) is what keeps that straight.
+  const abort = useAbortSignal();
   const [status, setStatus] = useState(null); // null = still checking
   const [url, setUrl] = useState("");
   const [token, setToken] = useState("");
@@ -59,14 +64,16 @@ export default function CoachSettings() {
   const [err, setErr] = useState(null);
   const [checking, setChecking] = useState(false);
 
+  // `abort` is stable across renders and `.signal` is read lazily inside the
+  // body — never in a dependency array, per useAbortable.js's own warning.
   const load = useCallback(async ({ probe = false } = {}) => {
     try {
-      setStatus(await api.getBrainStatus({ probe, signal }));
+      setStatus(await api.getBrainStatus({ probe, signal: abort.signal }));
       setErr(null);
     } catch (e) {
       if (!isAbortError(e)) setErr(describeError(e));
     }
-  }, [signal]);
+  }, [abort]);
 
   useEffect(() => { load(); }, [load]);
 
@@ -74,7 +81,7 @@ export default function CoachSettings() {
     setBusy(true);
     setErr(null);
     try {
-      const next = await api.setBrainConfig(url.trim(), token.trim(), { signal });
+      const next = await api.setBrainConfig(url.trim(), token.trim(), { signal: abort.signal });
       setStatus(next);
       // Clear the token from component state the moment it is stored. It is a
       // credential; there is no reason for it to sit in memory (or in a React
@@ -93,7 +100,7 @@ export default function CoachSettings() {
     setBusy(true);
     setErr(null);
     try {
-      setStatus(await api.clearBrainConfig({ signal }));
+      setStatus(await api.clearBrainConfig({ signal: abort.signal }));
     } catch (e) {
       if (!isAbortError(e)) setErr(describeError(e));
     } finally {
