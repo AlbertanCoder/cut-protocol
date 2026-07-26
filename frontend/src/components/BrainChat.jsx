@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useCallback, useId } from "react";
-import { api } from "../lib/api.js";
+import { api, BRAIN_STATUS_CHANGED } from "../lib/api.js";
 import { logEvent } from "../lib/bugLog.js";
 import { C } from "../lib/theme.js";
 
@@ -77,13 +77,27 @@ export default function BrainChat() {
   const inputRef = useRef(null);
   const titleId = useId();
 
+  // Status is checked on mount AND whenever the Settings card reports that it
+  // changed something.
+  //
+  // Mount-only was wrong in a way that only shows up once the coach can be
+  // turned on from inside the app: this component mounts at app start, caches
+  // "off", and never asks again — so connecting a relay appeared to do nothing
+  // at all until the next restart. The user had already done everything right.
+  //
+  // A window event rather than lifted state or a prop chain: BrainChat is
+  // mounted once at the App root and CoachSettings sits several levels down
+  // inside Profile, so threading a callback between them would touch three
+  // files to carry one boolean. The listener is inert when nothing dispatches.
   useEffect(() => {
     let alive = true;
-    api.getBrainStatus().then(
+    const check = () => api.getBrainStatus().then(
       (s) => { if (alive) setEnabled(!!(s && s.enabled)); },
       () => { if (alive) setEnabled(false); } // any error → stay hidden (fail safe)
     );
-    return () => { alive = false; };
+    check();
+    window.addEventListener(BRAIN_STATUS_CHANGED, check);
+    return () => { alive = false; window.removeEventListener(BRAIN_STATUS_CHANGED, check); };
   }, []);
 
   useEffect(() => {

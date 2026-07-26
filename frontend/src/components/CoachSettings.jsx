@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import { Check, Link2, Trash2 } from "lucide-react";
 import { C } from "../lib/theme.js";
 import { Card, Btn, ErrorNote } from "./ui/Parts.jsx";
-import { api, isAbortError, describeError } from "../lib/api.js";
+import { api, isAbortError, describeError, BRAIN_STATUS_CHANGED } from "../lib/api.js";
 import { useAbortSignal } from "../lib/useAbortable.js";
 
 // Where the coach gets turned on.
@@ -83,6 +83,9 @@ export default function CoachSettings() {
     try {
       const next = await api.setBrainConfig(url.trim(), token.trim(), { signal: abort.signal });
       setStatus(next);
+      // Tell the chat bar. Without this it keeps whatever it learned at app
+      // start, so connecting a relay looked like it did nothing until restart.
+      window.dispatchEvent(new Event(BRAIN_STATUS_CHANGED));
       // Clear the token from component state the moment it is stored. It is a
       // credential; there is no reason for it to sit in memory (or in a React
       // devtools inspector) after the save, and no read endpoint will ever give
@@ -101,6 +104,9 @@ export default function CoachSettings() {
     setErr(null);
     try {
       setStatus(await api.clearBrainConfig({ signal: abort.signal }));
+      // Same in reverse — the kill switch has to remove the chat bar NOW, not
+      // at the next restart, or "off" is a claim rather than a fact.
+      window.dispatchEvent(new Event(BRAIN_STATUS_CHANGED));
     } catch (e) {
       if (!isAbortError(e)) setErr(describeError(e));
     } finally {
