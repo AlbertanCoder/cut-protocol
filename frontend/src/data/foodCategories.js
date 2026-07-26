@@ -102,18 +102,43 @@ export function dataQualityFlag(food) {
 // signals are accepted and this reads correctly before and after that lands.
 // Amber, never red (design law b) — wrong data is a caveat about the record,
 // not a verdict on the food.
-const PROVENANCE_CLEARED = /^exception:provenance-cleared\b/;
-const CARRIED_RECORD = /carried fdcId (\d+) \("([^"]+)"\)/;
+// Tolerant of whitespace after the colon: one row in the wild reads
+// "exception: unverified" with a stray space, and an anchored match without
+// \s* silently treats it as a clean row.
+const PROVENANCE_CLEARED = /^exception:\s*provenance-cleared\b/;
+
+// Trust is revoked by the CLAIM, not by the exception code. Measured against
+// the live 14,122-row library: "carried fdcId <n>" appears on exactly 471 rows
+// — the 470 provenance-cleared set, plus `Rye`, whose code is the typo above.
+// Zero of the other 505 documented exceptions mention a carried record
+// (usda-source-model 337, alcohol-energy 153, curated-override 7,
+// atwater-exempt 6, unverifiable-fdcid 2), so this predicate is exact in both
+// directions and does not widen the amber net by a single row.
+//
+// The point is that a code-name whitelist can only ever catch the codes
+// somebody remembered to write down. `Rye` says in its own sentence that its
+// macros are rye BREAD's, and still rendered as fully trusted everywhere,
+// because one typo put it outside the list. Match what the row asserts.
+//
+// Parentheses are optional for the same reason: 470 rows read
+// `carried fdcId 169225 ("Cucumber, peeled, raw")` and the odd one out reads
+// `carried fdcId 172684 "Bread, rye"`. Requiring them cost that row its
+// detail sentence on top of its flag.
+const CARRIED_RECORD = /carried fdcId\s+(\d+)\s*\(?\s*"([^"]+)"/;
 
 export function quarantineNote(food) {
   const dq = food?.dataQuality || "";
-  if (food?.source !== "quarantined" && !PROVENANCE_CLEARED.test(dq)) return null;
+  if (
+    food?.source !== "quarantined"
+    && !PROVENANCE_CLEARED.test(dq)
+    && !CARRIED_RECORD.test(dq)
+  ) return null;
   const m = CARRIED_RECORD.exec(dq);
   const detail = m
     ? `These numbers are USDA record #${m[1]} — “${m[2]}” — copied verbatim. That is a different food, so they are not this food's values. They still add up, which is why the calorie check never caught it.`
     // No parseable provenance line: fall back to the row's own sentence,
     // minus the machine-readable "exception:<code> — " prefix.
-    : dq.replace(/^[a-z-]+:[a-z-]+\s*—\s*/i, "") ||
+    : dq.replace(/^[a-z-]+:\s*[a-z-]+\s*—\s*/i, "") ||
       "This row's macros came from another food's record — they are not this food's values.";
   return { label: "WRONG RECORD — NUMBERS NOT TRUSTED", detail };
 }
