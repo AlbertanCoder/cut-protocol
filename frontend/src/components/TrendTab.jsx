@@ -391,7 +391,17 @@ export default function TrendTab({ profile, summary, openTraining }) {
       };
     };
     if (fit && fit.se != null) {
-      return { kind: "measured", ...build(fit.at(fit.endX), -fit.slope * 7, fit.se * 7) };
+      // Start from the trend at the LAST WEIGH-IN, not at fit.endX. The
+      // estimator's window always ends "as of today" (expenditureEstimator sets
+      // window.endDate = asOf), so fit.at(fit.endX) is the line extrapolated
+      // forward across however many days have passed since the user last stood
+      // on the scale. Someone who logged three weeks ago while losing 0.5 kg/wk
+      // was silently credited with 1.5 kg they never weighed, pulling the goal
+      // date three weeks early — while the Numbers card beside this one says
+      // "every number here describes that day, not today" and the chart refuses
+      // to DRAW the line past drawEndX for exactly this reason. Same rule for
+      // the projection: a fit is not evidence about days it never saw.
+      return { kind: "measured", ...build(fit.at(fit.drawEndX), -fit.slope * 7, fit.se * 7) };
     }
     if (avg7 == null) return null;
     return { kind: "planned", ...build(avg7, chosenDisplayRate, null) };

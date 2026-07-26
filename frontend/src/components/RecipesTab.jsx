@@ -5,6 +5,7 @@ import {
   Link2, AlertTriangle, CalendarPlus, Utensils,
 } from "lucide-react";
 import { C } from "../lib/theme.js";
+import { quarantineNote } from "../data/foodCategories.js";
 import { toHouseholdUnit } from "../lib/householdUnits.js";
 import { Card, Btn, Chip, PageHead, ErrorNote, EmptyNote } from "./ui/Parts.jsx";
 import { SkeletonRows } from "./ui/Skeleton.jsx";
@@ -57,6 +58,82 @@ const sourceBadge = (r) =>
   : null;
 
 const density = (r) => (r.kcal > 0 ? (r.protein / r.kcal) * 100 : 0);
+
+// ── ingredient trust ─────────────────────────────────────────────────────
+// The startup audit fails 779 of 889 recipes with `untrusted-ingredients`,
+// and NONE of it reached the screen. A recipe built on a row carrying another
+// food's macros rendered identically to a clean one — same layout, same badge
+// row, same confident bold kcal number. validateRecipe's own detail string
+// says the total "should read 'incomplete data'"; the server computed that and
+// the client dropped it on the floor. Exactly the bug DraftCard calls out for
+// `allergenViolation` a few hundred lines down, in the same file.
+//
+// The food rows arrive complete (RECIPE_INCLUDE is `{ ingredients: { include:
+// { food: true } } }`), so `dataQuality` / `source` are already here — this
+// reads the same `quarantineNote` FoodsTab uses, rather than inventing a
+// second notion of what "untrusted" means.
+//
+// PROPORTIONALITY, which is the whole design problem. The backend flag is
+// BINARY: one quarantined row out of twenty trips it, which is how 88% of the
+// library ends up "failing". Rendering that verdict on 779 of 889 recipes
+// would be pure alarm fatigue — a warning on almost everything teaches the
+// user to ignore it, and that is strictly worse than silence, because the
+// handful of recipes whose calories are genuinely half-fiction get the same
+// grey noise as one with a quarantined pinch of salt.
+//
+// So loudness follows the SHARE of the recipe's stated calories that comes
+// from untrusted rows:
+//   * any untrusted ingredient       -> named in the expanded detail, always
+//   * >= MATERIAL_SHARE of calories  -> amber marker on the collapsed row too
+// Amber, never red (design law b): a caveat about the record, not a verdict on
+// the food.
+//
+// THE THRESHOLD IS MEASURED, NOT GUESSED. Against the real 889-recipe library
+// (counted in-page, see the findings note on this change):
+//     >=1 untrusted ingredient   779  (87.6%)   <- the audit's own number
+//     >= 5% of calories          723  (81.3%)
+//     >=15% of calories          677  (76.2%)
+//     >=25% of calories          624  (70.2%)
+//     >=40% of calories          483  (54.3%)
+//     >=60% of calories          303  (34.1%)
+//     >=80% of calories          141  (15.9%)
+//     median share among flagged      51.7%
+// The first pass used 15% on the assumption that the cascade was mostly
+// trivial — a quarantined pinch of salt tripping a binary flag. THE DATA SAYS
+// OTHERWISE: the median affected recipe draws HALF its calories from rows
+// carrying another food's macros. The 88% is largely earned, and no threshold
+// makes this library look calm without lying about it.
+//
+// So the row marker is set where it still discriminates AND still means
+// something a user can act on — "more of this total is another food's than is
+// this one's". Everything below that is carried by the always-on detail panel
+// and by the library-wide summary line, which states the true scale ONCE
+// instead of stamping it on three rows out of four.
+const MATERIAL_SHARE = 0.6;
+
+const ingredientKcal = (i) => ((i.food?.kcal || 0) * (i.baseGrams || 0)) / 100;
+
+function trustReport(recipe) {
+  const rows = recipe?.ingredients || [];
+  const flagged = [];
+  let untrustedKcal = 0;
+  let totalKcal = 0;
+  for (const i of rows) {
+    const kcal = ingredientKcal(i);
+    totalKcal += kcal;
+    const note = quarantineNote(i.food);
+    if (!note) continue;
+    untrustedKcal += kcal;
+    flagged.push({ name: i.food?.name || "unnamed ingredient", detail: note.detail });
+  }
+  if (flagged.length === 0) return null;
+  // Share of the STATED total — the number actually on screen. The untrusted
+  // row's own kcal is itself the wrong food's, so this measures how much of
+  // the displayed figure is in question. It is not a correction of it, and is
+  // deliberately not presented as one.
+  const share = totalKcal > 0 ? untrustedKcal / totalKcal : 0;
+  return { flagged, share, material: share >= MATERIAL_SHARE };
+}
 
 // Primary-protein grouping by ingredient names — display taxonomy only.
 const PROTEIN_GROUPS = [
@@ -118,6 +195,10 @@ function RecipeDetail({ recipe, profile, onSave, onDelete, inCart, onToggleCart,
     kcal: recipe.kcal * scale, protein: recipe.protein * scale,
     fat: recipe.fat * scale, carb: recipe.carb * scale,
   }), [recipe, scale]);
+
+  // Scaling a recipe scales the doubt with it — the share is invariant, so
+  // this is computed off the recipe, not off `scaled`.
+  const trust = useMemo(() => trustReport(recipe), [recipe]);
 
   const startEdit = () => {
     setDraft({
@@ -243,6 +324,23 @@ function RecipeDetail({ recipe, profile, onSave, onDelete, inCart, onToggleCart,
       <div className="flex flex-wrap gap-1.5 mb-2.5">
         <MacroChips x={scaled} />
       </div>
+      {trust && (
+        <div className="text-[10.5px] font-semibold mb-2.5 p-2 rounded-lg" style={{ color: C.warn, background: C.warnBg }}>
+          <div className="font-extrabold flex items-center gap-1.5">
+            <AlertTriangle size={12} className="shrink-0" aria-hidden="true" />
+            Incomplete data — {trust.flagged.length} ingredient{trust.flagged.length === 1 ? "" : "s"} {trust.flagged.length === 1 ? "carries" : "carry"} another food&apos;s numbers
+          </div>
+          <div className="mt-1" style={{ color: C.ink }}>
+            Roughly {Math.round(trust.share * 100)}% of the calories above come from {trust.flagged.length === 1 ? "it" : "them"}, so treat this total as an estimate, not a measurement.
+          </div>
+          <ul className="mt-1 list-none p-0 space-y-0.5">
+            {trust.flagged.map((f, i) => (
+              <li key={i}>· <b style={{ color: C.ink }}>{f.name}</b> — {f.detail}</li>
+            ))}
+          </ul>
+          <div className="mt-1">Correct these rows in the Food database and this recipe&apos;s totals recompute.</div>
+        </div>
+      )}
       <div className="text-xs font-semibold mb-1.5" style={{ color: C.ink }}>
         {recipe.ingredients.map((i) => `${Math.round(i.baseGrams * (i.scalable ? scale : 1))}g ${i.food.name}`).join(" · ")}
       </div>
@@ -663,6 +761,22 @@ export default function RecipesTab({ openFoods, profile }) {
 
   const searching = query.trim().length > 0;
 
+  // The honest headline. Per-row marks cannot carry this: at 88% affected, a
+  // mark on almost every row degrades to wallpaper. Said once, with real
+  // numbers, it is a fact about the LIBRARY rather than an accusation against
+  // whichever recipe you happen to be looking at.
+  const trustSummary = useMemo(() => {
+    let affected = 0;
+    let severe = 0;
+    for (const r of recipes) {
+      const t = trustReport(r);
+      if (!t) continue;
+      affected++;
+      if (t.material) severe++;
+    }
+    return { affected, severe, total: recipes.length };
+  }, [recipes]);
+
   // ── render cap ──
   // Nothing here was capped: an open group mounted every row it held, and a
   // broad search collapsed the whole library into ONE "Search results" group
@@ -962,6 +1076,18 @@ export default function RecipesTab({ openFoods, profile }) {
             </div>
           )}
 
+          {!loading && !loadError && trustSummary.affected > 0 && (
+            <div className="text-xs font-semibold mb-2 px-1" style={{ color: C.warn }}>
+              {trustSummary.affected} of {trustSummary.total} recipes here use at least one food whose stored numbers belong to a
+              different food, so their calorie totals are estimates.{" "}
+              {trustSummary.severe > 0 && (
+                <>In {trustSummary.severe} of them that is most of the total — those are marked. </>
+              )}
+              This is a problem with the food library, not with these recipes; open any recipe to see exactly which ingredients
+              are affected.
+            </div>
+          )}
+
           {loading ? (
             <SkeletonRows rows={7} />
           ) : loadError ? (
@@ -999,6 +1125,11 @@ export default function RecipesTab({ openFoods, profile }) {
                         {list.slice(0, shownFor(groupName)).map((r) => {
                           const badge = sourceBadge(r);
                           const expanded = expandedId === r.id;
+                          // Only the recipes whose NUMBER is materially in
+                          // question get a mark out here. The rest still say so
+                          // in full when opened — see trustReport.
+                          const rowTrust = trustReport(r);
+                          const marked = !!rowTrust?.material;
                           return (
                             // a11y: the row is a plain container. It used to be
                             // role="button" tabIndex={0} WRAPPING the whole
@@ -1016,7 +1147,7 @@ export default function RecipesTab({ openFoods, profile }) {
                               style={{ background: C.card2, border: `1px solid ${expanded ? C.faintLight : C.rule}` }}>
                               <button type="button" onClick={() => setExpandedId(expanded ? null : r.id)}
                                 aria-expanded={expanded} className="w-full text-left"
-                                aria-label={`${r.name}, ${kc(r.kcal)} kcal — ${expanded ? "hide" : "show"} details`}>
+                                aria-label={`${r.name}, ${kc(r.kcal)} kcal${marked ? " — incomplete data, some ingredients carry another food's numbers" : ""} — ${expanded ? "hide" : "show"} details`}>
                                 <div className="flex justify-between items-start gap-2">
                                   <div className="flex items-center gap-2.5 min-w-0">
                                     <FoodTile recipe={r} size={38} />
@@ -1032,6 +1163,10 @@ export default function RecipesTab({ openFoods, profile }) {
                                   </div>
                                   <div className="flex items-center gap-1.5 shrink-0">
                                     {badge && <Chip color={badge.color} bg={badge.bg}>{badge.label}</Chip>}
+                                    {marked && (
+                                      <AlertTriangle size={13} className="shrink-0" style={{ color: C.warn }} aria-hidden="true"
+                                        title={`Incomplete data — about ${Math.round(rowTrust.share * 100)}% of these calories come from ingredients carrying another food's numbers. Open for detail.`} />
+                                    )}
                                     <span className="mono text-sm font-extrabold" style={{ color: C.ink }}>{kc(r.kcal)}</span>
                                   </div>
                                 </div>

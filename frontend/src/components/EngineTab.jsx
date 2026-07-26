@@ -156,8 +156,14 @@ export default function EngineTab({ profile, summary, refresh, openFoods, openPr
 
       <div className="grid grid-cols-1 xl:grid-cols-12 gap-4 items-start">
         <Card section="Step 1" title="BMR — the formula panel" className="xl:col-span-4">
+          {/* "BMR" was used as a bare acronym on every row of this card, in the
+              card title, and again in Step 2, and was never once expanded. Step
+              2 glosses TDEE ("total daily burn") in its Stat label; this is the
+              same courtesy for the term the whole tab is built on. */}
           <div className="text-xs font-semibold mb-2" style={{ color: C.faint }}>
-            Averaging {energy.includedCount} of {energy.rows.length} applicable formulas — untick any you distrust.
+            BMR — basal metabolic rate: the energy you&apos;d burn in a day at complete rest, before your job,
+            your training or digestion. Averaging {energy.includedCount} of {energy.rows.length} applicable
+            formulas — untick any you distrust.
           </div>
           {energy.rows.map((r) => {
             // Flip-aware (E1): excludedFormulas membership FLIPS a formula from its
@@ -225,8 +231,13 @@ export default function EngineTab({ profile, summary, refresh, openFoods, openPr
           <div className="mt-3">
             <Stat label="TDEE — total daily burn" value={kc(energy.tdee)} unit="kcal" big />
           </div>
+          {/* The formula printed "MET" as a bare symbol and the row above it
+              printed "MET 6" as a bare number. It is the one term on this card a
+              reader cannot look up from context. */}
           <div className="text-xs font-semibold mt-2" style={{ color: C.faint }}>
-            Training kcal/day = sessions × minutes × MET × 3.5 × kg ÷ 200 ÷ 7.
+            Training kcal/day = sessions × minutes × MET × 3.5 × kg ÷ 200 ÷ 7. A MET (metabolic equivalent of
+            task) is how many times harder than sitting still an activity is — MET 6 burns six times resting
+            rate, so heavier training styles score higher.
           </div>
           {adaptiveOn && (
             <div className="text-xs font-semibold mt-1" style={{ color: C.warn }}>
