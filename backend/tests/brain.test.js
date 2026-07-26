@@ -139,7 +139,15 @@ test("brain ON, a throwing critic degrades to the deterministic day", async () =
 test("isBrainEnabled: explicit opt-in — needs a key AND BRAIN=on", () => {
   const key = process.env.ANTHROPIC_API_KEY;
   const flag = process.env.BRAIN;
+  // A relay config is now a SECOND way to have a transport, so "no key =>
+  // disabled" is only a true statement with the relay vars cleared. Without
+  // this the case below would pass or fail depending on the ambient shell.
+  const relayUrl = process.env.BRAIN_RELAY_URL;
+  const relayToken = process.env.BRAIN_RELAY_TOKEN;
   try {
+    delete process.env.BRAIN_RELAY_URL;
+    delete process.env.BRAIN_RELAY_TOKEN;
+
     process.env.ANTHROPIC_API_KEY = "sk-test";
     delete process.env.BRAIN;
     assert.equal(isBrainEnabled(), false, "key present but no BRAIN=on => disabled (opt-in default off)");
@@ -149,7 +157,7 @@ test("isBrainEnabled: explicit opt-in — needs a key AND BRAIN=on", () => {
 
     delete process.env.ANTHROPIC_API_KEY;
     process.env.BRAIN = "on";
-    assert.equal(isBrainEnabled(), false, "no key => disabled regardless of BRAIN");
+    assert.equal(isBrainEnabled(), false, "no key and no relay => disabled regardless of BRAIN");
 
     process.env.ANTHROPIC_API_KEY = "sk-test";
     process.env.BRAIN = "on";
@@ -157,6 +165,8 @@ test("isBrainEnabled: explicit opt-in — needs a key AND BRAIN=on", () => {
   } finally {
     if (key === undefined) delete process.env.ANTHROPIC_API_KEY; else process.env.ANTHROPIC_API_KEY = key;
     if (flag === undefined) delete process.env.BRAIN; else process.env.BRAIN = flag;
+    if (relayUrl === undefined) delete process.env.BRAIN_RELAY_URL; else process.env.BRAIN_RELAY_URL = relayUrl;
+    if (relayToken === undefined) delete process.env.BRAIN_RELAY_TOKEN; else process.env.BRAIN_RELAY_TOKEN = relayToken;
   }
 });
 
