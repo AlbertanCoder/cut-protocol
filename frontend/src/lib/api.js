@@ -391,6 +391,17 @@ export const api = {
 
   // Stage D2 — brain chat. getBrainStatus gates whether the chat bar renders at
   // all; brainChat sends one message. Both no-op cleanly when the brain is off.
-  getBrainStatus: (opts) => request("/brain/status", opts),
+  // `reason` on the response says WHY the coach is off (no-config |
+  // incomplete-config | off | relay-unreachable | ok). `probe` opts into a
+  // liveness ping of the relay and is used ONLY by the settings card — the
+  // chat bar's own status poll must stay a local call, or whether the bar
+  // renders starts depending on relay latency.
+  getBrainStatus: ({ probe = false, ...opts } = {}) =>
+    request(`/brain/status${probe ? "?probe=1" : ""}`, { timeoutMs: probe ? TIMEOUT.WRITE : undefined, ...opts }),
+  // The token goes IN and never comes back out — there is no read endpoint for
+  // it by design, so this is the only direction it travels.
+  setBrainConfig: (relayUrl, relayToken, opts) =>
+    request("/brain/config", { method: "POST", body: JSON.stringify({ relayUrl, relayToken }), timeoutMs: TIMEOUT.WRITE, ...opts }),
+  clearBrainConfig: (opts) => request("/brain/config", { method: "DELETE", timeoutMs: TIMEOUT.WRITE, ...opts }),
   brainChat: (message, depth, history, opts) => request("/brain/chat", { method: "POST", body: JSON.stringify({ message, depth, history }), timeoutMs: TIMEOUT.LLM, ...opts }),
 };

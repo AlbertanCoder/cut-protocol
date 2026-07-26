@@ -1,8 +1,13 @@
 const express = require("express");
 const { requireAuth, createAttemptThrottle } = require("../lib/auth.js");
-const { isBrainEnabled } = require("../lib/brain/llm.js");
+// isBrainEnabled is no longer read directly here — relayStatus() wraps it so
+// the route reports WHY it is off, not just that it is. Still the same single
+// gate underneath; this file just stopped asking it the narrower question.
 const { brainChat } = require("../lib/brain/chat.js");
 const { MAX_HISTORY } = require("../lib/brain/historyGuard.js");
+const {
+  status: relayStatus, writeConfig, clearConfig, probeRelay,
+} = require("../lib/brainRelayConfig.js");
 
 const router = express.Router();
 router.use(requireAuth);
@@ -23,7 +28,46 @@ const chatThrottle = createAttemptThrottle(CHAT_RATE);
 
 // The frontend calls this to decide whether to render the chat bar AT ALL — with
 // the brain off, the bar is never shown, so the app is byte-identical to today.
-router.get("/status", (req, res) => res.json({ enabled: isBrainEnabled() }));
+//
+// `reason` says WHY it is off. Until now a disabled brain and a broken one were
+// indistinguishable from outside the process, which is exactly the ambiguity
+// that costs hours when something is misconfigured. Reasons are stable strings
+// (ok | no-config | incomplete-config | off | relay-unreachable) and never
+// include the relay URL or any part of the token.
+//
+// ?probe=1 additionally pings the relay's /healthz. It is OPT-IN because
+// BrainChat polls this endpoint on mount, and putting a network round-trip in
+// that path would make the chat bar's appearance hostage to relay latency. Only
+// the Settings screen's explicit "check connection" asks for it.
+router.get("/status", async (req, res) => {
+  const base = relayStatus();
+  if (req.query.probe !== "1" || !base.enabled) return res.json(base);
+  const probe = await probeRelay();
+  if (probe.reachable) return res.json({ ...base, relayReachable: true });
+  return res.json({ enabled: true, reason: "relay-unreachable", relayReachable: false });
+});
+
+// POST /api/brain/config { relayUrl, relayToken } -> { enabled, reason }
+// Writes <userData>/brain.json. The token is accepted here and NEVER returned
+// by any endpoint afterwards — there is no read path for it, deliberately, so
+// a compromised renderer cannot exfiltrate it through the API it already has.
+router.post("/config", (req, res) => {
+  try {
+    const { relayUrl, relayToken } = req.body || {};
+    writeConfig({ relayUrl, relayToken });
+    return res.json(relayStatus());
+  } catch (e) {
+    return res.status(e.status || 500).json({ error: e.status ? e.message : "could not save relay settings" });
+  }
+});
+
+// DELETE /api/brain/config -> the kill switch, from inside the app.
+// Deletes the file and clears the live environment, so it takes effect on the
+// next message rather than the next restart.
+router.delete("/config", (req, res) => {
+  clearConfig();
+  return res.json(relayStatus());
+});
 
 // POST /api/brain/chat { message, depth?, history? } -> { available, refused?, reply?, replyToken? }
 router.post("/chat", async (req, res) => {

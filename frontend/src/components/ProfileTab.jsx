@@ -13,6 +13,7 @@ import { api, isAbortError, isNoAnswer, describeError } from "../lib/api.js";
 import { useAbortSignal } from "../lib/useAbortable.js";
 import BodyFatPicker from "./BodyFatPicker.jsx";
 import ResourceList from "./ui/ResourceList.jsx";
+import CoachSettings from "./CoachSettings.jsx";
 import { WELLBEING_RESOURCES_NOTE } from "../lib/wellbeingResources.js";
 
 const r1 = (n) => Math.round(n * 10) / 10;
@@ -941,6 +942,13 @@ export default function ProfileTab({ profile, summary, refresh, openToday }) {
           <p className="text-[11px] mb-3" style={{ color: C.faintLight }}>{WELLBEING_RESOURCES_NOTE}</p>
           <ResourceList />
         </Card>
+
+        {/* Connecting the coach lives on Profile for the same reason the
+            resources card does: it is a screen the user visits deliberately,
+            not the one they see every day. It renders identically whether or
+            not a relay is configured, and on a fresh install it simply says the
+            coach is off — no nag, no badge, no prompt. */}
+        <CoachSettings />
       </div>
     </div>
   );
