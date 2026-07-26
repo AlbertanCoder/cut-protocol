@@ -193,8 +193,13 @@ export default function WellbeingTab({ profile, summary, screen, onOpenCheck, on
           <div className="flex items-start gap-2.5">
             <Info size={17} className="shrink-0 mt-0.5" style={{ color: C.warn }} aria-hidden="true" />
             <div className="min-w-0">
+              {/* Count-aware: with one signal this read "A couple of things"
+                  over a single bullet, which makes the app look like it is
+                  reciting a script rather than reading this user's numbers. */}
               <div className="text-sm font-extrabold" style={{ color: C.ink }}>
-                A couple of things worth knowing about your current setup
+                {signals.length === 1
+                  ? "One thing worth knowing about your current setup"
+                  : "A couple of things worth knowing about your current setup"}
               </div>
               <ul className="mt-2 space-y-1.5 list-none">
                 {signals.map((s) => (

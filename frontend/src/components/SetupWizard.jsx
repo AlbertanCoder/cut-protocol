@@ -72,6 +72,33 @@ const LOCAL_ADULT_REFUSAL = (minAge) => ({
   whatNow: `If you're ${minAge} or over and mistyped your age, correct it and carry on.`,
 });
 
+// The goal-weight floor refusal, worded here for the same reason as the
+// under-18 one above: so the wizard can show its REASONING the moment the goal
+// is typed.
+//
+// THE BUG THIS CLOSES: the field note under Goal weight ends "Why, and what to
+// do instead, is below." — but the only thing that rendered a "why" was
+// `goalRefusal`, which is set from the SERVER's 400 (gate
+// "goal-weight-floor"). Client-side validation blocks Next before that request
+// is ever sent, so on the wizard the server was never reached, nothing
+// rendered below, and the app promised an explanation it then didn't give —
+// on the one screen where a refusal most needs to explain itself.
+//
+// The server's copy stays canonical (it is the enforcement, and it is what a
+// Profile-tab edit shows); this is the early, kinder version of the same
+// answer. Keep the two in step if either changes.
+const LOCAL_GOAL_REFUSAL = ({ goalLabel, heightLabel, bmi, floorLabel, ackLabel, refusedBelow }) => ({
+  gate: "goal-weight-floor",
+  error: `A goal of ${goalLabel} at ${heightLabel} works out to a BMI of ${bmi}. This app won't prescribe a deficit down to it.`,
+  detail: [
+    `BMI is a crude population statistic and it gets individuals wrong all the time — but ${refusedBelow} is far enough below the range that the risks (heart rhythm, bone density, immune function, fertility) stop being arguable.`,
+    `At ${heightLabel}, the lowest goal this app will accept is ${floorLabel}. ${ackLabel} is where the usual population range starts.`,
+    "This limits what the app will PRESCRIBE. It is not a judgment about you, and it changes nothing about tracking: your real weight is your real weight, and a weigh-in is never refused or hidden.",
+    "If a goal this low is something you have been set by a coach or a clinician, they should be the one steering it, with eyes on you.",
+  ],
+  whatNow: `Enter a goal of ${floorLabel} or above to carry on. If you simply mistyped it, correct it and nothing else changes.`,
+});
+
 // ── Provisional-profile ledger (onboarding-flow-3) ─────────────────────────
 //
 // THE BUG THIS CLOSES: the old "Skip — use defaults" button called
@@ -225,6 +252,41 @@ export default function SetupWizard({ onDone }) {
   });
   const set = (patch) => setD((cur) => ({ ...cur, ...patch }));
 
+  // Switching units CONVERTS what is already typed; it does not re-label it.
+  //
+  // THE BUG THIS CLOSES: the toggle used to be `set({ unitPref: u })` and
+  // nothing else. Every number on this step is interpreted in the CURRENT
+  // pref (`parseWeight(+d.weight, pref)`), so flipping lb → kg silently turned
+  // a typed 200 lb into 200 kg — a 441 lb person — and every downstream number
+  // (BMR, TDEE, target, the BMI the goal floor is judged on) was then computed
+  // from it. Height was worse in a quieter way: cm and ft+in are SEPARATE
+  // fields, so switching to metric showed an empty height box while the app
+  // still held the old one, and the entered height appeared to vanish.
+  const changeUnits = (u) => setD((cur) => {
+    if (u === cur.unitPref) return cur;
+    const next = { ...cur, unitPref: u };
+
+    const convWeight = (val) => {
+      if (val === "" || val == null) return val;
+      const n = Number(val);
+      if (!Number.isFinite(n)) return val;
+      return String(displayWeight(parseWeight(n, cur.unitPref), u));
+    };
+    next.weight = convWeight(cur.weight);
+    next.goal = convWeight(cur.goal);
+
+    if (u === "metric") {
+      const cm = (cur.heightFt === "" && cur.heightIn === "") ? null : ftin2cm(cur.heightFt, cur.heightIn);
+      next.height = cm == null ? "" : String(displayHeight(cm, "metric"));
+    } else {
+      const cm = cur.height === "" ? null : parseHeight(Number(cur.height), "metric");
+      const { feet, inches } = cm == null ? { feet: "", inches: "" } : cm2ftin(cm);
+      next.heightFt = feet === "" ? "" : String(feet);
+      next.heightIn = inches === "" ? "" : String(inches);
+    }
+    return next;
+  });
+
   useEffect(() => {
     api.getProfileMeta().then(setMeta).catch((e) => setError(e.message));
   }, []);
@@ -351,6 +413,25 @@ export default function SetupWizard({ onDone }) {
   const goalNeedsAck = goalBmi != null
     && goalBmi < limits.goalBmi.needsAckBelow
     && goalBmi >= limits.goalBmi.refusedBelow;
+
+  // Below the hard floor: refused. The server refuses this too, but client-side
+  // validation stops Next before the request goes out, so the explanation the
+  // field note promises has to be available without a round trip.
+  const goalRefusalShown = useMemo(() => {
+    if (goalRefusal) return goalRefusal;
+    if (goalBmi == null || !(enteredCm > 0)) return null;
+    if (goalBmi >= limits.goalBmi.refusedBelow) return null;
+    const hM2 = (enteredCm / 100) ** 2;
+    const label = (kg) => `${r1(displayWeight(kg, pref))} ${wUnit}`;
+    return LOCAL_GOAL_REFUSAL({
+      goalLabel: label(enteredGoalKg),
+      heightLabel: formatHeight(enteredCm, pref),
+      bmi: r1(goalBmi),
+      floorLabel: label(limits.goalBmi.refusedBelow * hM2),
+      ackLabel: label(limits.goalBmi.needsAckBelow * hM2),
+      refusedBelow: limits.goalBmi.refusedBelow,
+    });
+  }, [goalRefusal, goalBmi, enteredCm, enteredGoalKg, limits, pref, wUnit]);
 
   const statsValid = Object.keys(statsProblems).length === 0 && !isMinor && (!goalNeedsAck || goalAck);
 
@@ -596,17 +677,23 @@ export default function SetupWizard({ onDone }) {
               </div>
             )}
 
-            {/* GOAL-WEIGHT FLOOR — the outright refusal (server-side, no
-                override). Explains its reasoning rather than just blocking. */}
-            {goalRefusal && (
+            {/* GOAL-WEIGHT FLOOR — the outright refusal (no override).
+                Explains its reasoning rather than just blocking. Rendered from
+                the server's 400 when there is one, and from the local copy
+                when client-side validation refused before the request was
+                sent — the field note promises this panel either way. */}
+            {goalRefusalShown && (
               <div role="alert" className="mb-4 p-5 rounded-2xl" style={{ background: C.card, border: `1px solid ${C.faintLight}` }}>
                 <div className="flex items-start gap-3">
                   <Info size={20} style={{ color: C.faint }} className="mt-0.5 shrink-0" aria-hidden="true" />
                   <div className="min-w-0">
-                    <div className="text-base font-extrabold" style={{ color: C.ink }}>{goalRefusal.error}</div>
-                    {(goalRefusal.detail || []).map((p, i) => (
+                    <div className="text-base font-extrabold" style={{ color: C.ink }}>{goalRefusalShown.error}</div>
+                    {(goalRefusalShown.detail || []).map((p, i) => (
                       <p key={i} className="text-xs font-semibold leading-relaxed mt-2" style={{ color: C.faint }}>{p}</p>
                     ))}
+                    {goalRefusalShown.whatNow && (
+                      <p className="text-xs font-bold mt-3" style={{ color: C.ink }}>{goalRefusalShown.whatNow}</p>
+                    )}
                   </div>
                 </div>
               </div>
@@ -679,7 +766,7 @@ export default function SetupWizard({ onDone }) {
                       phone width — a two-option segmented control. */}
                   <div className="inline-flex gap-1.5 mb-5" role="group" aria-label="Units">
                     {["imperial", "metric"].map((u) => (
-                      <button key={u} type="button" onClick={() => set({ unitPref: u })} aria-pressed={pref === u}
+                      <button key={u} type="button" onClick={() => changeUnits(u)} aria-pressed={pref === u}
                         className="text-xs font-bold px-5 py-2 rounded-xl"
                         style={{ background: pref === u ? C.card2 : "transparent", color: pref === u ? C.ink : C.faint, border: `1px solid ${pref === u ? C.faintLight : C.rule}` }}>
                         {u === "imperial" ? "lb / in" : "kg / cm"}
