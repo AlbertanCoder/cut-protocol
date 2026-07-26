@@ -140,6 +140,27 @@ const sumIntake = (rows, p) => rows.reduce(
   { kcal: 0, protein: 0 }
 );
 
+// How many meals the brain may DESIGN for one generate.
+//
+// The old hardcoded `maxCalls: 1` on the legacy swap endpoint is the right
+// number for swapping one slot and the wrong number for everything else: a
+// month has ~84 slots, and one designed meal across thirty days is
+// indistinguishable from none.
+//
+// Roughly one designed meal per two days, floored at 1 and hard-capped so a
+// long horizon cannot run away. The cap is the point — the brain's own
+// per-user USD caps (brain/config.js CAPS) remain authoritative and will deny
+// before this ceiling is reached if the money is already spent, but a caller
+// should never be able to *request* an unbounded number of designs.
+const BRAIN_CALL_CEILING = Number(process.env.BRAIN_MAX_DESIGNS_PER_GENERATE) > 0
+  ? Number(process.env.BRAIN_MAX_DESIGNS_PER_GENERATE)
+  : 12;
+
+function brainCallBudget(horizon) {
+  const days = Math.max(1, Number(horizon?.days) || 1);
+  return Math.min(BRAIN_CALL_CEILING, Math.max(1, Math.ceil(days / 2)));
+}
+
 /**
  * POST /plans/generate — ANY horizon (Stage 2).
  *
@@ -259,11 +280,28 @@ router.post("/generate", async (req, res) => {
       include: { slots: { select: { recipeId: true } } },
     });
 
+    // ── THE BRAIN, ON THE GENERATE BUTTON ──────────────────────────────────
+    // This is P0-1. The Library→Brain router (lib/mealRouter.js) has existed
+    // and worked for some time, but it only runs when a caller passes
+    // `aiFallback` — and the ONLY caller that ever did was the legacy one-shot
+    // swap endpoint below (:626), which the UI has moved away from. So the
+    // brain has never designed a meal during a real generate. Zero LlmUsage
+    // rows confirm it.
+    //
+    // Lazy require: pulling brain/llm.js at module load would drag the
+    // Anthropic SDK into every boot, including keyless installs. The codebase
+    // keeps that off the hot path deliberately (weeklyPlanner.js:15) and this
+    // does not break the rule.
+    const { isBrainEnabled } = require("../lib/brain/llm.js");
+    const brainOn = isBrainEnabled();
     const result = await generateHorizonPlan({
       dailyTarget, mealConfig, recipePool: pool, horizon, filters,
       counts: poolCounts,
       bias: buildBias(filters, costCache),
       priorPlans, lockedSlotsByWindow, startDayOfWeek,
+      // BRAIN=off (or a keyless install) => omitted entirely => the horizon
+      // planner behaves exactly as it did before P0-1 and the goldens hold.
+      ...(brainOn ? { aiFallback: { enabled: true, maxCalls: brainCallBudget(horizon), profile } } : {}),
     });
 
     // One transaction PER WEEK (audit Tier 4): a week rewrite is atomic, so a
