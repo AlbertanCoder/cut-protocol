@@ -1,0 +1,33 @@
+{
+  "phase": "0",
+  "lane": null,
+  "updatedAt": "2026-07-26T15:20:00Z",
+  "branch": "fix/audit-remediation",
+  "head": "bd61418",
+  "done": [
+    "0.1 preserve — tree was already CLEAN (prompt's ~295-file premise was stale); 25 unpushed commits bundled to brain-alive-backup-20260726-1516.bundle",
+    "0.2 transport hijack — measured per mode: dev=DIRECT KEY, packaged=RELAY(dead). Instructed fix (unset relay vars in dev) is a NO-OP; dev has none. Live smoke NOT blocked.",
+    "0.3 call graph — mealRouter.js (478 lines) ALREADY implements V8 and is weeklyPlanner's production default at :453. Prompt's expected conclusion ('no path exists') is WRONG: the path exists but is gated on aiFallback, set only at plans.js:626 (legacy swap).",
+    "0.4 ledger truth — LlmUsage = 0 rows; all 5 brain tables present, so not a migration gap",
+    "0.6 docs/vision-gap.md written and committed"
+  ],
+  "next": "PHASE 1 / P0-1: pass aiFallback from POST /generate (plans.js:155) so the existing mealRouter runs during a real generate. Decide maxCalls per horizon (1 is wrong for a week). Then 1.3 determinism seams, then 1.5 live smoke in DEV (direct key already works).",
+  "rootCause": "The Library->Brain router exists and works, but is only reachable via aiFallback, which is set in exactly one place — the legacy one-shot swap endpoint (plans.js:626) — so POST /generate never invokes it. A missing argument, not a missing feature.",
+  "openTickets": [
+    { "id": "P0-1", "sev": "P0", "title": "POST /generate never passes aiFallback, so mealRouter never runs", "evidence": "plans.js:155 vs plans.js:626; weeklyPlanner.js:403,453" },
+    { "id": "P1-A", "sev": "P1", "title": "chat.js:160 catch{} discards the error; report relay-unreachable instead of a generic degrade", "evidence": "chat.js:160-164; reproduced 'Connection error'" },
+    { "id": "P1-B", "sev": "P1", "title": "App-as-a-user walk of V1-V12 with screenshots at 1920x1080 and 1280x720", "evidence": "not yet performed" },
+    { "id": "P2-1", "sev": "P2", "title": "Local relay in a terminal is fragile — closing the window silently kills the coach", "evidence": "observed today; port 8787 empty after the window closed" }
+  ],
+  "correctionsToPrompt": [
+    "0.1 premise stale: working tree was clean, not ~295 files",
+    "0.2 fix is a no-op: dev has no relay vars set; hijack is packaged-only",
+    "0.3 expected conclusion wrong: the generate->brain path EXISTS (mealRouter.js), it is simply not passed aiFallback"
+  ],
+  "stopGatesRespected": {
+    "push": "none attempted; 25 commits remain local",
+    "destructiveSchema": "none; all DB access read-only",
+    "liveSpend": "$0.00 — no model call has been made in this round",
+    "structuralPivot": "none"
+  }
+}
