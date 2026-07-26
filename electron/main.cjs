@@ -353,6 +353,19 @@ if (app.isPackaged) {
   process.env.CUT_PROTOCOL_DB_PATH = dbPath;
 }
 
+// The writable directory the backend may keep runtime config in — currently
+// just brain.json (relay URL + device token for the coach). Set in BOTH dev and
+// packaged, unlike DATABASE_URL above: brain.json is written by the user at
+// runtime rather than supplied by backend/.env, so there is nothing for it to
+// conflict with, and having it work identically in dev is what makes the
+// Settings screen testable without building an installer.
+//
+// It is the same directory that already holds session-secret and
+// cutprotocol.db. That is the point: it is writable, per-user, outside the
+// install tree, and — critically — NOT part of the installer payload, so a
+// device token can never end up inside a shared build.
+process.env.CUT_PROTOCOL_USERDATA = app.getPath("userData");
+
 // ---------------------------------------------------------------------------
 // 2. Boot the backend in-process. Requiring this module runs it top-to-
 //    bottom exactly like `node server.js` would, which as a side effect

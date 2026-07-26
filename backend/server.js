@@ -8,6 +8,18 @@ const { ensureDatabaseReady, ensureSchemaCurrent } = require("./src/lib/desktopB
 ensureDatabaseReady();
 
 require("dotenv/config");
+
+// Relay config for the packaged app, from <userData>/brain.json. Runs AFTER
+// dotenv and follows the same non-destructive rule, so backend/.env keeps
+// winning in dev and an explicit BRAIN=off in the environment still turns the
+// coach off regardless of what the file says.
+//
+// Absent or malformed file => nothing is set => isBrainEnabled() stays false =>
+// the app is byte-identical to one that never had this feature. That degrade
+// path is the whole contract, which is why this is a bare call with no error
+// handling to get wrong: applyToEnv() cannot throw on a missing or broken file.
+require("./src/lib/brainRelayConfig.js").applyToEnv();
+
 const path = require("path");
 const express = require("express");
 const cookieParser = require("cookie-parser");
