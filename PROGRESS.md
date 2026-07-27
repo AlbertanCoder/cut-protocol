@@ -58,6 +58,11 @@ The installer no longer ships secrets or personal data — the M4 fix.
 - **Per-install JWT:** `electron/main.cjs` now generates a session secret on first
   run into userData (never bundled) instead of reading the owner's real `.env`.
   API keys simply absent in a shared build → brain off, app works fully offline.
+  **CORRECTION (2026-07-27, autopsy-20260727-0126 E5):** true only while no
+  `<userData>/brain.json` exists. Once one is written from Settings, the packaged
+  app reports `isBrainEnabled() === true` and `status()` `{"enabled":true,
+  "reason":"ok"}` — the brain is not off, it is ON and refusing every governed
+  call. On-and-broken, not off.
 - **Config:** extraResources ships only the clean `dev.db.template` (no `.env`);
   build.files strips dev.db/backups/scripts/docs/audit/release/.agent.
 - **Blocking gate:** `scripts/distPrecheck.mjs` wired as `predist` — fails the

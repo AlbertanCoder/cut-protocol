@@ -3,17 +3,17 @@
   "lane": null,
   "updatedAt": "2026-07-26T22:04:01.766Z",
   "branch": "fix/audit-remediation",
-  "head": "bd61418",
+  "head": "d8f5c40 (was 'bd61418' — STALE by two commits; corrected 2026-07-27 per autopsy-20260727-0126, E1)",
   "done": [
     "0.1 preserve — tree was already CLEAN (prompt's ~295-file premise was stale); 25 unpushed commits bundled to brain-alive-backup-20260726-1516.bundle",
     "0.2 transport hijack — measured per mode: dev=DIRECT KEY, packaged=RELAY(dead). Instructed fix (unset relay vars in dev) is a NO-OP; dev has none. Live smoke NOT blocked.",
-    "0.3 call graph — mealRouter.js (478 lines) ALREADY implements V8 and is weeklyPlanner's production default at :453. Prompt's expected conclusion ('no path exists') is WRONG: the path exists but is gated on aiFallback, set only at plans.js:626 (legacy swap).",
-    "0.4 ledger truth — LlmUsage = 0 rows; all 5 brain tables present, so not a migration gap",
+    "0.3 call graph — mealRouter.js (478 lines) ALREADY implements V8 and is weeklyPlanner's production default at :453. Prompt's expected conclusion ('no path exists') is WRONG: the path exists but is gated on aiFallback. CORRECTED 2026-07-27 per autopsy-20260727-0126 (E7): 'set only at plans.js:626' is FALSE — /generate sets aiFallback at plans.js:304, and the legacy swap site has moved to plans.js:664.",
+    "0.4 ledger truth — CORRECTED 2026-07-27 per autopsy-20260727-0126 (E6): LlmUsage = 13 rows (~$0.393) in backend/prisma/dev.db, NOT 0. Zero is true only of the packaged userData/cutprotocol.db. Brain tables all present, so not a migration gap. Rows outside chat: exactly 1 (phase 'create', 2026-07-24); rows from the generate path: 0.",
     "0.6 docs/vision-gap.md written and committed",
     "P0-1 diagnosis refined: three breaks, not one. aiFallback occurs exactly once in mealSolver.js and it is the strip at :679. No post-selection brain pass exists."
   ],
   "next": "PHASE 1 / P0-1 implementation: (a) post-selection gap-fill pass in generateBestWeekPlan gated on aiFallback + isBrainEnabled(); (b) thread aiFallback through generateHorizonPlan; (c) pass from /generate with horizon-scaled maxCalls + hard ceiling; (d) BRAIN=off skips the pass, golden byte-identical; (e) mock-client unit tests; (f) live smoke <=12 calls <=$0.50 in DEV.",
-  "rootCause": "The Library->Brain router (mealRouter.js) exists and works, but THREE breaks keep it from ever running during a generate: (1) plans.js:155 /generate never passes aiFallback; (2) mealSolver.js:1142 generateHorizonPlan has no aiFallback parameter to forward; (3) mealSolver.js:679 generateBestWeekPlan explicitly strips it ({...options, aiFallback: undefined}) so best-of-5 attempts stay free — correct in isolation, but there is NO post-selection pass to fill the winning week gaps. The brain must run once, on the winner, after selection.",
+  "rootCause": "The Library->Brain router (mealRouter.js) exists and works, but THREE breaks keep it from ever running during a generate: (1) plans.js:155 /generate never passes aiFallback; (2) mealSolver.js:1142 generateHorizonPlan has no aiFallback parameter to forward; (3) mealSolver.js:679 generateBestWeekPlan explicitly strips it ({...options, aiFallback: undefined}) so best-of-5 attempts stay free — correct in isolation. CORRECTED 2026-07-27 per autopsy-20260727-0126 (E7): all three breaks were repaired by commit 2297f26 seven minutes after this file was last written. The post-selection pass EXISTS at mealSolver.js:723-731 and calls weeklyPlanner.fillGapsWithBrain. NOTE: the path existing is not the path running — 0 LlmUsage rows have ever originated from it.",
   "openTickets": [
     {
       "id": "P0-1",

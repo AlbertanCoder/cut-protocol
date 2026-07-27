@@ -1,0 +1,24 @@
+E1 — M0 ORIENT + PRESERVE + DRIFT CHECK  (2026-07-27T02:18:43Z)
+
+head_before (== receipt parent e328d34): e328d34847a6f4b5272a0111a9bc0de85f321454
+preserve_commit / head_after       : d8f5c408525e41df4111a771bb0e1b1726ab90b7
+branch                             : fix/audit-remediation
+drift_from_parent                  : NONE — head matched autopsy receipt exactly
+dirty_after                        : 1
+
+=== git log --oneline -10 (pre-op) ===
+e328d34 wip(autopsy): preserve pre-diagnosis state
+2297f26 feat(brain): P0-1 — the brain now runs during a real generate
+2eac08f docs(phase0): ground truth — the brain router exists, it is just never called
+bd61418 fix(coach): the chat bar appears when you turn it on, not at the next restart
+e0e0aac fix(coach): pass abort.signal, not the holder
+b68c132 feat(brain): connect the coach from Settings, without shipping a secret
+83528ca wip(ui): protect the last three agent-lane edits
+e68388a feat(relay): forwarding service that holds the key and bounds the bill
+f8bbf26 wip(ui): protect four finished agent-lane edits from a hard reset
+dd12256 feat(brain): relay-aware transport so a packaged install can reach the brain
+
+=== LIVE PACKAGED APP — SACRED, NOT TOUCHED ===
+  TCP    127.0.0.1:3001         0.0.0.0:0              LISTENING       24548
+PID 24548 = Cut Protocol.exe (packaged). dev PORT in backend/.env is ALSO 3001 -> collision.
+MITIGATION: dev server will run with PORT=3010 via env override (existing config mechanism, no file edit).
