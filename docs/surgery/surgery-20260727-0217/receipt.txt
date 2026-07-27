@@ -5,8 +5,8 @@ parent: autopsy-20260727-0126
 == REPO ==
 branch: fix/audit-remediation
 head_before: e328d34847a6f4b5272a0111a9bc0de85f321454
-head_after: 5fc7510 (preserve d8f5c40 · M1 ec5cc3d · M2 42ef521 · M3 f489264 · M7 5fc7510)
-commits: 5 (1 preserve + 4 surgical). NOT PUSHED — awaiting the owner's go.
+head_after: last CODE commit 5fc7510 · docs cf6f9f1 · plus the commit carrying this correction, which is the tip
+commits: 7 (1 preserve + 4 surgical + 2 docs). NOT PUSHED — awaiting the owner's go. 34 commits total sit unpushed on this branch, 28 of them pre-existing from earlier sessions.
 drift_from_parent: none — HEAD matched the parent receipt exactly at M0
 == VERDICTS ==
 V-GATE (governance relay-aware, fail-closed proven): VERIFIED — E2. governance.js:63 now `!ANTHROPIC_API_KEY && !relayConfig()`. Measured packaged mode before->after: all four features REFUSED no-api-key 503 -> all four ENABLED. 11 new tests incl. neither-transport still 503s, half-a-relay refuses, cleartext-http-to-public-host refuses, BRAIN=on still a required opt-in.
