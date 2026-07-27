@@ -338,6 +338,12 @@ router.post("/generate", async (req, res) => {
               // bounds the money; these two bound the time. Both are needed.
               budgetMs: BRAIN_GENERATE_BUDGET_MS,
               slotTimeoutMs: BRAIN_SLOT_TIMEOUT_MS,
+              // The clock is injected from HERE, not read inside the solver:
+              // mealSolver.js and weeklyPlanner.js are held to the solver-path
+              // purity invariant (no Math.random / Date.now / new Date), which
+              // is what keeps the goldens reproducible. A route may read the
+              // clock; the solver may not.
+              now: () => Date.now(),
             },
           }
         : {}),

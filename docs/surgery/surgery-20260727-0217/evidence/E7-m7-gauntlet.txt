@@ -1,0 +1,38 @@
+E7 — M7 THE GAUNTLET  (2026-07-27T02:44:02Z)
+
+=== STOP THE LINE EVENT (and its resolution) ===
+The first full run FAILED one test — caused by THIS session's M3 change:
+  ✖ 1C purity: mealSolver + weeklyPlanner use no Math.random / Date.now / new Date
+     AssertionError: weeklyPlanner.js contains a stray RNG/clock call
+     (tests/qc/invariants.test.js:106-112 — a source-text regex)
+
+I had written Date.now() into fillGapsWithBrain's deadline. That invariant is
+load-bearing: a solver that reads an ambient clock is not reproducible, and the
+byte-identical goldens stop meaning anything. The TEST WAS RIGHT.
+
+FIX: the clock is now INJECTED by the route (routes/plans.js passes
+now: () => Date.now() alongside budgetMs); weeklyPlanner arms the deadline only
+when both a budget AND a clock are supplied. No clock => no deadline, exactly
+as with no budget. The invariant test was NOT weakened, and a new test pins the
+injection contract plus re-asserts purity independently.
+
+=== FULL BACKEND SUITE (after the fix) ===
+  [runTests] OK — 110 files, 1482 tests, 0 failures.
+  (before the fix: 1481 tests, 1 fail)
+
+=== GOLDENS — BRAIN=off BYTE-IDENTICAL ===
+  ✔ golden: BRAIN=off engine output is byte-identical to the locked baseline
+  ✔ golden BMR: all 6 fixtures match the locked baseline exactly
+  ✔ golden BMR: the lock is armed — a one-unit drift fails the comparison
+  ℹ tests 10 · pass 10 · fail 0     NO RELOCK PERFORMED.
+
+=== ALLERGEN SWEEP (fast suite) ===
+  ✔ real-corpus sweep: no oracle-flagged ingredient name survives its allergy filter
+  ✔ every family-oracle keyword is caught by its allergy category
+  ✔ COMPOUND TOKENS: the P0 prepared-dish leaks are closed
+  ✔ safe foods still survive the expanded lists (over-exclusion has limits)
+  12 assertions shown, all pass. (The 14k sweep is NOT this session's job — deferred.)
+
+=== FRONTEND ===
+  oxlint: warnings only (all pre-existing: react-refresh export shape, one unused var)
+  vite build: ✓ built in 1.38s

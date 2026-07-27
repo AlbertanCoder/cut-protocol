@@ -1,0 +1,45 @@
+E5 — M5 THE DEAD PHONE NUMBER  (2026-07-27T02:32:33Z)
+
+RESOLUTION TAKEN: preference 1 — STARTED the relay (not clearConfig).
+  Rationale: relay/package.json already ships `npm start`; the service has ZERO
+  dependencies (pure node stdlib, no install needed). Starting it is additive and
+  reversible, whereas clearConfig() would DELETE the owner's brain.json — the coach
+  configuration he wrote from Settings on 2026-07-26 10:44.
+
+  Command (secrets read from files, never echoed, never committed):
+    ANTHROPIC_API_KEY=<backend/.env>  RELAY_TOKEN=<userData/brain.json relayToken>  npm start
+    key len 108 · token len 42
+
+=== TOKENLESS PROBE (no auth header, no token on the wire) ===
+  BEFORE (autopsy E3): RESULT: NO RESPONSE — ECONNREFUSED — fetch failed
+  AFTER              : GET /healthz -> HTTP 200   body: {"ok":true}
+  listener           : 127.0.0.1:8787 PID 21668
+
+=== PACKAGED-MODE TRUTHFULNESS, MEASURED ===
+  ANTHROPIC_API_KEY present : false
+  relayConfig()             : NON-NULL (relay)
+  isBrainEnabled()          : true
+  status()                  : {"enabled":true,"reason":"ok"}
+  probeRelay()              : {"reachable":true}   (was {reachable:false} in autopsy E3)
+  governance chat/critic/classify/recipeDrafts : ENABLED (all four)
+  -> status(), reachability and the gate now AGREE. The overclaim is resolved
+     for the running state.
+
+=== RESIDUAL OVERCLAIM — P1 DEFERRED, FIX NAMED ===
+  status() does NOT probe reachability on the ordinary poll, deliberately:
+  brainRelayConfig.js:180-186 — 'BrainChat asks for status on every mount, and a
+  network round-trip there would make the chat bar's appearance depend on relay
+  latency.' So if the relay dies, status() returns to {"enabled":true,"reason":"ok"}
+  while no call can succeed. That is the same class of lie, re-armed.
+
+  EXACT FIX (not applied — outside M5's named sites):
+    the reason string "relay-unreachable" ALREADY EXISTS and is documented at
+    brainRelayConfig.js:168 but is never returned by status(). Give status() a
+    short-TTL cached reachability result (populated by probeRelay, e.g. 30-60s)
+    and return reason:"relay-unreachable" when the last probe failed — no
+    round-trip on the hot path, no latency coupling on mount.
+
+=== KNOWN FRAGILITY (pre-existing, .agent/state.json ticket P2-1) ===
+  This relay runs as a local background process owned by this session. It dies
+  with the terminal — 'closing the window silently kills the coach'. The durable
+  answer is the London VPS deploy, which remains FUTURE WORK and was not done.

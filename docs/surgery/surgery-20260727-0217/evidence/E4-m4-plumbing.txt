@@ -1,0 +1,50 @@
+E4 — M4 THE PLUMBING: PREMISE FALSIFIED, NO CUT MADE  (2026-07-27T02:30:07Z)
+
+THE RECEIPT'S BULLET (autopsy-20260727-0126, NEXT PROMPT MUST):
+  "profile must be accepted and forwarded by generateHorizonPlan
+   (mealSolver.js:1168) and generateBestWeekPlan (:655) into
+   generateDayCandidates (:460)."
+
+THAT FORWARDING TARGET DOES NOT EXIST ON THIS PATH.
+
+=== every generateDayCandidates call site (verbatim) ===
+src/lib/brain/chatPlan.js:13:const { generateDayCandidates } = require("../mealSolver.js");
+src/lib/brain/chatPlan.js:29:  const _generate = deps.generateDayCandidates || generateDayCandidates;
+src/lib/brain/chatPlan.js:32:  // No `profile` passed → the LLM critic block inside generateDayCandidates is
+src/lib/brain/index.js:2:// (mealSolver.generateDayCandidates) and gated by isBrainEnabled(). Untouched by
+src/lib/mealSolver.js:456:async function generateDayCandidates({
+src/lib/mealSolver.js:1450:  generateDayCandidates, generateBestWeekPlan, alternatesForSlot, SCORE_WEIGHTS,
+src/routes/plans.js:7:  generateDayCandidates, alternatesForSlot, buildBias, applyPrepFilter, applyFilterStack, varietyOutlook,
+src/routes/plans.js:455:    const result = await generateDayCandidates({
+
+  -> callers are chatPlan.js and routes/plans.js:455 (POST /plans/day-options).
+  -> generateBestWeekPlan calls generateWeekPlan (weeklyPlanner), NOT generateDayCandidates:
+    const slots = await generateWeekPlan(dailyTarget, mealConfig, recipePool, { ...options, aiFallback: undefined });
+  -> generateHorizonPlan calls generateBestWeekPlan only.
+
+=== the critic's gate, unchanged (mealSolver.js:515-519) ===
+  if (profile && candidates.length) {
+    // Lazy require so nothing brain-related (or the Anthropic SDK) loads on the
+    // deterministic hot path when the brain is disabled.
+    const { isBrainEnabled, reviseDayWithCritic } = require("./brain/index.js");
+    if (isBrainEnabled()) {
+
+CONSEQUENCE: threading `profile` through generateHorizonPlan/generateBestWeekPlan
+would add a parameter with NO CONSUMER. The critic would still never fire, because
+nothing on the week path calls the function the critic lives inside. Shipping that
+plumbing and calling the critic 'reachable' would be false.
+
+WHAT WOULD ACTUALLY BE REQUIRED (named, NOT done — needs explicit authorisation):
+  a NEW call site — either generateBestWeekPlan invoking generateDayCandidates
+  per day with the profile, or reviseDayWithCritic being invoked directly from
+  the post-selection pass at mealSolver.js:723. Both are behaviour changes, not
+  parameter plumbing, and M4 explicitly forbids loosening the critic's firing
+  conditions.
+
+NOTE: routes/plans.js already carries `profile` into the solver inside the
+aiFallback object (plans.js:304 region), so no signature change is needed when
+that call site is eventually authorised.
+
+VERDICT V-PLUMBING: UNVERIFIABLE(the named forwarding target is not called by the
+generate path; delivering it would require a new call site, which is out of scope
+for M4). Ledger corroborates: phase "critic" = 0 rows, all time.

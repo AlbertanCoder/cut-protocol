@@ -55,7 +55,7 @@ test("M3: a SLOW brain cannot run the pass past its wall-clock budget", async ()
     dailyTarget: DAILY, mealConfig: CONFIG, recipePool: [flexible("f1")],
     aiFallback: {
       enabled: true, maxCalls: 10, profile: { dietaryStyle: null },
-      budgetMs: 100, slotTimeoutMs: 60,
+      budgetMs: 100, slotTimeoutMs: 60, now: () => Date.now(),
       routeMealSlotImpl: async () => {
         started++;
         await sleep(70);
@@ -76,7 +76,7 @@ test("M3: the pass reports the slots the clock left behind, and they keep their 
     dailyTarget: DAILY, mealConfig: CONFIG, recipePool: [flexible("f1")],
     aiFallback: {
       enabled: true, maxCalls: 10, profile: { dietaryStyle: null },
-      budgetMs: 100, slotTimeoutMs: 60,
+      budgetMs: 100, slotTimeoutMs: 60, now: () => Date.now(),
       routeMealSlotImpl: async () => { await sleep(70); return { ok: true, recipe: designed("b1"), scaled: null }; },
     },
   });
@@ -109,7 +109,7 @@ test("M3: a fast library-only pass is unaffected by the clock", async () => {
     dailyTarget: DAILY, mealConfig: CONFIG, recipePool: [flexible("f1")],
     aiFallback: {
       enabled: true, maxCalls: 10, profile: { dietaryStyle: null },
-      budgetMs: 75000, slotTimeoutMs: 35000,
+      budgetMs: 75000, slotTimeoutMs: 35000, now: () => Date.now(),
       // Instant router — the library/cache hit case, which costs no time at all.
       routeMealSlotImpl: async () => ({ ok: true, recipe: designed("fast"), scaled: null }),
     },
@@ -125,12 +125,43 @@ test("M3: the per-design bound is handed to the router on every request", async 
     dailyTarget: DAILY, mealConfig: CONFIG, recipePool: [flexible("f1")],
     aiFallback: {
       enabled: true, maxCalls: 10, profile: { dietaryStyle: null },
-      budgetMs: 75000, slotTimeoutMs: 35000,
+      budgetMs: 75000, slotTimeoutMs: 35000, now: () => Date.now(),
       routeMealSlotImpl: async (req) => { seen.push(req.timeoutMs); return { ok: true, recipe: designed("x"), scaled: null }; },
     },
   });
   assert.equal(seen.length, 3);
   for (const t of seen) assert.equal(t, 35000, "the router must receive the caller's per-design bound");
+});
+
+test("M3: the clock is INJECTED — a budget with no clock arms no deadline, and the solver stays pure", async () => {
+  // This is not a curiosity. mealSolver.js and weeklyPlanner.js are held to the
+  // solver-path purity invariant (tests/qc/invariants.test.js "1C purity": no
+  // Math.random / Date.now / new Date), because a solver that reads an ambient
+  // clock is not reproducible and the byte-identical goldens stop meaning
+  // anything. So the deadline needs a caller-supplied `now`; without one there
+  // is no deadline at all, and the pass behaves exactly as an unbudgeted one.
+  let started = 0;
+  const out = await fillGapsWithBrain(threeGaps(), {
+    dailyTarget: DAILY, mealConfig: CONFIG, recipePool: [flexible("f1")],
+    aiFallback: {
+      enabled: true, maxCalls: 10, profile: { dietaryStyle: null },
+      budgetMs: 1, slotTimeoutMs: 60, // a budget so small it would stop everything…
+      // …but NO `now`, so nothing is armed.
+      routeMealSlotImpl: async () => { started++; await sleep(20); return { ok: true, recipe: designed(`b${started}`), scaled: null }; },
+    },
+  });
+  assert.equal(started, 3, "with no injected clock the deadline must not engage");
+  assert.equal(out.stoppedForTime, 0);
+
+  const fs = require("node:fs");
+  const path = require("node:path");
+  for (const f of ["mealSolver.js", "weeklyPlanner.js"]) {
+    const src = fs.readFileSync(path.join(__dirname, "..", "..", "src", "lib", f), "utf8");
+    assert.ok(
+      !/Math\.random\(|Date\.now\(|new Date\(/.test(src),
+      `${f} reads an ambient clock or RNG — the wall clock must be injected, never read here`
+    );
+  }
 });
 
 // ── the transport end of the same leash ─────────────────────────────────────

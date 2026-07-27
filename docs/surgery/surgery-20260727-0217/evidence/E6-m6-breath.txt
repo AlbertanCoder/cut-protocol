@@ -1,0 +1,99 @@
+E6 — M6 THE BREATH: V-BREATH FALSIFIED. Ledger delta = 0. Spend = $0.00, zero live calls.
+
+FORCING PROFILE (dev DB, dedicated witness account surgery.witness@example.com,
+userId cms2m60s30000wlo8evgxj5dk — created for this run, additive):
+  sex M, age 35, 180cm, 95kg -> 80kg, rateLbPerWeek 1.0 (acknowledged)
+  occupation carpenter-finish, training weights 4x60min
+  dietaryStyle null (carbs INCLUDED, not keto)
+  excludedFoods: wheat, gluten, barley, rye, couscous, bread, pasta, flour, seitan,
+                 soy, soya, tofu, edamame, tempeh, soy sauce, tvp, miso
+                 (celiac WALL + soy WALL)
+  derived targetKcal 2541 · protein 189-207g · fat 56-66g · carb 263-287g
+  pool: raw 889 -> afterDiet 335 (the walls remove 554 recipes)
+
+================= RUN A — THE GAP (BRAIN=off, $0) =================
+  day horizon, meals 3 + snacks 1 : 4 slots, 0 empty, 0 warned. Day OUT of
+      tolerance on fat (83g vs 56-66g). matchPct 88, daysInTolerance 0/1.
+  TIGHTENED ONCE (meals 2, snacks 0): 2 slots, 0 empty, 0 warned. Day out of
+      tolerance on BOTH fat (155g vs 56-66) and carbs (102g vs 263-287).
+      matchPct 76. 43 ms.
+  -> The library SATURATES this profile in the sense the brain pass measures.
+     FINDING #1: a day can miss its macro targets badly with ZERO empty and
+     ZERO warned slots, and the brain pass never sees it, because the pass
+     inspects slot-level state only (weeklyPlanner.js:666-671:
+     `if (!s.recipeId) empty.push(i); else if (s.warning) roughs.push(i);`).
+     A DAY-level macro miss is invisible to it.
+  WEEK horizon (per M6's instruction to hunt a gap): 14 slots, 0 empty,
+      7 WARNED, daysInTolerance 2/7, avgMatch 77, 96 ms, meta.brain null.
+      Warnings read: "Tried 5 recipe(s) for this slot, none fit within tolerance".
+
+================= RUN B — THE BREATH (BRAIN=on, dev, governed) =================
+  Server: PORT=3010 BRAIN=on BRAIN_MAX_DESIGNS_PER_GENERATE=1
+  (capped at 1 design because worst case per slot = sonnet-5 $0.156 + opus-5
+   $0.260 = $0.416, so 1 design is the largest budget that CANNOT breach $0.50.)
+
+  POST /api/plans/generate {horizon:"week"} -> HTTP 200 in 8,864 ms
+  slots 14 · empty 0 · warned 6
+  LlmUsage BEFORE : 13 rows
+  LlmUsage AFTER  : 13 rows
+  *** DELTA: 0 — NO ROWS. NO MODEL CALL. NO SPEND. ***
+  New rows matching createdAt > 1784951499182: NONE.
+
+================= WHERE THE GAP WAS SWALLOWED (the point of M6) =================
+PROBE 1 ($0, stubbed router) — is the pass even reached?
+  isBrainEnabled()  : true
+  ROUTER CALLS      : 1
+  router saw target : {slotType:"meal", kcalTarget:1116, proteinTarget:87,
+                       timeoutMs:35000, poolSize:335}
+  -> The wiring WORKS end to end. plans.js:304 -> mealSolver.js:723 ->
+     weeklyPlanner.js:688 -> the router, carrying a real gap target and the
+     M3 per-design bound (35,000 ms) on the wire.
+
+PROBE 2 ($0, REAL router, only the model call stubbed) — which rung answers?
+  *** GENERATION REACHED : 0 ***
+  router status     : library-hit
+  router via        : scan
+  router ok         : true
+  router modelCalls : 0
+  router attempts   : []
+  recipe returned   : {"name":"Skillet Chicken Thighs, Potato & Cucumber",
+                       "source":"curated","kcal":931.9,"protein":85.2}
+  scaled            : kcal 1115.41, protein 87.52, fat 42.97, carb 93.72
+                      (proteinScale 0.96, sidesScale 1.69)
+
+THE BRANCH, NAMED:
+  backend/src/lib/mealRouter.js:311-323 — rung 3, THE LIBRARY SCAN.
+      const libraryBest = bestCandidate(eligible, target);
+      if (libraryBest && libraryBest.fit.ok) { ... return status "library-hit" }
+  It answers with a near-exact fit (1115.41 kcal vs a 1116 kcal target), so
+  execution never reaches the generation rung at mealRouter.js:330+ and the
+  brain is never asked for anything.
+
+WHY THE SOLVER AND THE ROUTER DISAGREE (the real finding):
+  The solver WARNED that slot — "Tried 5 recipe(s) for this slot, none fit
+  within tolerance" — while the router fits it almost exactly. Two reasons,
+  both structural:
+    1. SEARCH BREADTH. resolveSlot samples ~5 candidates per slot (variety cap,
+       repeat cap, bias order). The router scans ALL 335 eligible recipes.
+    2. SCALING MODEL. The solver scales a dish by ONE portion factor (0.5-2x).
+       The router scales protein and sides on SEPARATE axes (proteinScale 0.96,
+       sidesScale 1.69), which reaches targets a single factor cannot.
+  So the "gap" the solver reports is a SEARCH gap, not a LIBRARY gap. The
+  router's own free rung resolves it, and the brain — correctly, by the
+  cheap-before-expensive design — is never needed.
+
+  FINDING #2 (honesty defect, NOT fixed here): the app tells the user "none fit
+  within tolerance" for a slot where a compliant library recipe demonstrably
+  fits. That contradicts the constitution's "solver declares unsolvable + why":
+  it declared unsolvable when it was not.
+
+V-BREATH: FALSIFIED — ledger delta 0. The path is live and correctly wired
+  (PROBE 1); the brain is unreachable in practice because the router's free
+  library scan (mealRouter.js:311-323) satisfies the solver's warned slots
+  first. Per M6, scope was NOT widened to force a fire.
+MONEY: live_calls=0 · tokens=0 · dollars=$0.00 (budget 12 / $0.50).
+TIMING: the client-visible response arrived in 8,864 ms, inside the M3 client
+  budget of 120,000 ms with ~111 s to spare (no brain call occurred, so this
+  does not exercise the worst case).
+DB WRITES MADE (dev DB only, tagged per M6): one witness User + Profile, and
+  Plan/PlanSlot rows for that user. The owner's packaged DB was never touched.
