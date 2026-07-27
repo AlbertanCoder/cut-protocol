@@ -1,0 +1,100 @@
+E2 — M2 THE GATE  (2026-07-27T02:23:00Z)
+
+=== DIFF ===
+diff --git a/backend/src/lib/brain/governance.js b/backend/src/lib/brain/governance.js
+index b898d41..73c8b61 100644
+--- a/backend/src/lib/brain/governance.js
++++ b/backend/src/lib/brain/governance.js
+@@ -32,7 +32,7 @@
+ //
+ // Nothing here turns anything on. Every gate defaults to OFF and this module
+ // never reads, prompts for, or creates an API key.
+-const { isBrainEnabled } = require("./llm.js");
++const { isBrainEnabled, relayConfig } = require("./llm.js");
+ const { preGateFieldText } = require("./guard.js");
+ const { refusalText } = require("./policy.js");
+ const { scanForLeak } = require("./outputGuard.js");
+@@ -60,7 +60,20 @@ function llmAvailability(feature) {
+   if (!f) {
+     return { enabled: false, reason: "unknown-feature", status: 503, message: `Unknown AI feature "${feature}" — it is not registered in the governance table, so it is refused.` };
+   }
+-  if (!process.env.ANTHROPIC_API_KEY) {
++  // A DIRECT KEY IS NOT THE ONLY TRANSPORT. This check used to read
++  // `!process.env.ANTHROPIC_API_KEY` alone, which made the gate relay-blind: a
++  // packaged install ships no key BY DESIGN (the relay exists precisely to
++  // replace it), so every governed feature was refused here with "no API key is
++  // configured" before the relay-aware isBrainEnabled() below could ever speak.
++  // The result was an app reporting status {"enabled":true,"reason":"ok"} while
++  // 503-ing every AI call — root cause #1 in autopsy-20260727-0126.
++  //
++  // The two transports are exactly the two llm.js:91 accepts. Reachability is
++  // NOT decided here: a configured-but-unreachable relay is a transport-layer
++  // failure that surfaces as an honest call error, not a governance refusal.
++  // With NEITHER transport this still refuses 503 — fail-closed is preserved,
++  // and the reason/message contract is unchanged for that case.
++  if (!process.env.ANTHROPIC_API_KEY && !relayConfig()) {
+     return { enabled: false, reason: "no-api-key", status: 503, message: "AI features are unavailable in this build — no API key is configured. Everything else works normally." };
+   }
+   // BRAIN=on arms every registered feature (the staged turn-on switch, shared
+diff --git a/backend/tests/aiGovernanceStructure.test.js b/backend/tests/aiGovernanceStructure.test.js
+index eae09e6..8fc15a7 100644
+--- a/backend/tests/aiGovernanceStructure.test.js
++++ b/backend/tests/aiGovernanceStructure.test.js
+@@ -152,9 +152,20 @@ test("S6: the brain barrel re-exports the transport but never invokes it", () =>
+ 
+ test("S7: every registered feature is OFF unless an explicit flag is set", () => {
+   const src = code(path.join(SRC, "lib", "brain", "governance.js"));
+-  // The gate must require a key AND an explicit opt-in; there is no default-on
+-  // branch and no implicit fallback.
+-  assert.ok(has(src, /if \(!process\.env\.ANTHROPIC_API_KEY\)/), "the keyless refusal must be the first thing the gate does");
++  // The gate must require a TRANSPORT and an explicit opt-in; there is no
++  // default-on branch and no implicit fallback.
++  //
++  // This assertion used to read /if \(!process\.env\.ANTHROPIC_API_KEY\)/ — it
++  // pinned the gate to a literal key and therefore encoded root cause #1 of
++  // autopsy-20260727-0126 as a requirement: a packaged install ships no key by
++  // design, so that shape refused every governed feature before the relay-aware
++  // isBrainEnabled() below could speak. The invariant being guarded was always
++  // "no transport => refuse, first thing, fail-closed" — there are two
++  // transports (llm.js:91), and the guard now says so.
++  assert.ok(
++    has(src, /if \(!process\.env\.ANTHROPIC_API_KEY && !relayConfig\(\)\)/),
++    "the no-transport refusal must be the first thing the gate does, and it must count BOTH transports (direct key OR relay)"
++  );
+   assert.ok(has(src, /isBrainEnabled\(\)/), "the gate must reuse the single BRAIN=on implementation, not re-derive it");
+   for (const [name, f] of Object.entries(FEATURES)) {
+     assert.ok(f.flag === null || typeof f.flag === "string", `feature "${name}" has a malformed flag`);
+
+=== BEFORE (autopsy E5, packaged mode, measured 2026-07-27T01:2xZ) ===
+  ANTHROPIC_API_KEY present : false
+  relayConfig()             : NON-NULL (relay)
+  isBrainEnabled()          : true
+  chat         : REFUSED reason=no-api-key status=503
+  critic       : REFUSED reason=no-api-key status=503
+  classify     : REFUSED reason=no-api-key status=503
+  recipeDrafts : REFUSED reason=no-api-key status=503
+
+=== AFTER (same measurement, this session) ===
+  ANTHROPIC_API_KEY present : false
+  relayConfig()             : NON-NULL (relay)
+  isBrainEnabled()          : true
+  chat         : ENABLED
+  critic       : ENABLED
+  classify     : ENABLED
+  recipeDrafts : ENABLED
+
+=== TESTS ===
+✔ M2 (key transport): a direct key with no relay arms every governed feature (0.7727ms)
+✔ M2 (relay transport): NO key + a complete relay arms every governed feature — the packaged-install case (0.4846ms)
+✔ M2 (fail-closed): NEITHER a key NOR a relay refuses 503 on every governed feature (0.3393ms)
+✔ M2 (uniformity): all four governed features return the identical verdict for a given transport state (0.371ms)
+✔ M2 (fail-closed): half a relay is not a relay — URL without token still refuses (0.1616ms)
+✔ M2 (fail-closed): a token without a URL still refuses (0.1392ms)
+✔ M2 (fail-closed): cleartext http to a NON-loopback host is not a usable relay (0.1471ms)
+✔ M2 (loopback exception preserved): http on loopback IS a usable relay (0.1508ms)
+✔ M2 (opt-in preserved): a relay with BRAIN unset does NOT arm the brain-gated features (0.1698ms)
+✔ M2 (per-feature flag preserved): a relay + AI_RECIPE_DRAFTS=on arms drafting without waking the brain (0.1904ms)
+✔ M2 (registry): an unregistered feature is still refused regardless of transport (0.1386ms)
+ℹ tests 48
+ℹ pass 48
+ℹ fail 0
