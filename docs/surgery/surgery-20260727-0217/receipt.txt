@@ -1,0 +1,54 @@
+RECOMP STATE RECEIPT v2
+run_id: surgery-20260727-0217
+issued: 2026-07-27T02:17:54Z
+parent: autopsy-20260727-0126
+== REPO ==
+branch: fix/audit-remediation
+head_before: e328d34847a6f4b5272a0111a9bc0de85f321454
+head_after: 5fc7510 (preserve d8f5c40 · M1 ec5cc3d · M2 42ef521 · M3 f489264 · M7 5fc7510)
+commits: 5 (1 preserve + 4 surgical). NOT PUSHED — awaiting the owner's go.
+drift_from_parent: none — HEAD matched the parent receipt exactly at M0
+== VERDICTS ==
+V-GATE (governance relay-aware, fail-closed proven): VERIFIED — E2. governance.js:63 now `!ANTHROPIC_API_KEY && !relayConfig()`. Measured packaged mode before->after: all four features REFUSED no-api-key 503 -> all four ENABLED. 11 new tests incl. neither-transport still 503s, half-a-relay refuses, cleartext-http-to-public-host refuses, BRAIN=on still a required opt-in.
+V-CLOCK (client always outlives server worst case): VERIFIED — E3. client TIMEOUT.LLM 120,000ms; brain pass hard ceiling 75,000ms (a design is only STARTED when the remaining budget covers a whole one); per-design 35,000ms; solve+writes ~10,000ms => server worst case ~85,000ms, margin ~35,000ms (29%). Confirmed on the wire: router received timeoutMs 35000 (E6 PROBE 1).
+V-PLUMBING (profile reaches generateDayCandidates from both entries): UNVERIFIABLE(the named forwarding target is not called by the generate path — generateDayCandidates has exactly two callers, chatPlan.js and plans.js:455 /day-options; generateBestWeekPlan calls generateWeekPlan. Threading profile would add a parameter with no consumer. Making the critic fire needs a NEW call site, which M4 forbids.) — E4. NO CUT MADE.
+V-RELAY (started+truthful | cleared+honest-off): STARTED + truthful — VERIFIED — E5. `npm start` in relay/ (zero dependencies, no install). Tokenless probe: ECONNREFUSED -> HTTP 200 {"ok":true}. Chose start over clearConfig() because clearConfig would DELETE the owner's brain.json.
+V-STATUS (status() no longer overclaims): VERIFIED for the running state, P1 DEFERRED for the failure state — E5. With the relay up, status()=={"enabled":true,"reason":"ok"}, probeRelay()=={"reachable":true} and governance ENABLED all agree. BUT status() does not probe on the ordinary poll (brainRelayConfig.js:180-186), so if the relay dies it reports "ok" again. Exact fix named, not applied.
+V-BREATH (nonzero generate-path LlmUsage delta): FALSIFIED — E6. LlmUsage 13 -> 13, delta 0. Branch that swallowed it: mealRouter.js:311-323, the free LIBRARY SCAN, returns status "library-hit" / via "scan" / modelCalls 0 with a near-exact fit (scaled 1115.41 kcal vs a 1116 kcal target, proteinScale 0.96 / sidesScale 1.69), so execution never reaches generation at mealRouter.js:330+. Wiring itself is PROVEN LIVE (PROBE 1: router called once with a real gap target). Scope was NOT widened to force a fire.
+V-LEAKS (independent re-verification): UNVERIFIABLE(no brain-designed slot was ever produced, so there was nothing to re-verify. The standing allergen suite ran green: real-corpus sweep, family-oracle, compound-token P0 leaks all pass.)
+V-TOTALS (day within tolerance or honest miss): HONEST MISS — VERIFIED — E6. Run A day horizon: 2531 kcal vs a 2541 target, but 155g fat vs 56-66g and 102g carb vs 263-287g, matchPct 76, daysInTolerance 0, and the response carried a named diagnosis + binding constraint. The app said why. NOTE the defect below.
+V-GOLDENS (BRAIN=off byte-identical): VERIFIED — E7. "golden: BRAIN=off engine output is byte-identical to the locked baseline" + all 6 BMR fixtures + the drift-detector. 10/10. NO RELOCK PERFORMED.
+== MONEY ==
+live_calls=0 · tokens=0 · dollars=$0.00  (budget: 12 / $0.50)
+== LIES CORRECTED ==
+- .agent/state.json "LlmUsage = 0 rows" -> 13 rows (~$0.393) in dev.db; 0 is true only of the packaged DB
+- .agent/state.json "there is NO post-selection brain pass" -> it exists at mealSolver.js:723-731
+- .agent/state.json "aiFallback set only at plans.js:626" -> also set at :304; legacy site moved to :664
+- .agent/state.json head "bd61418" -> two commits stale
+- PROGRESS.md:59-60 "keys absent -> brain off, app fully offline" -> true only while no brain.json exists
+- commit-history lies (uneditable) recorded in REPORT.md §4: 2297f26 "the brain now runs during a real generate" (it does not — proven by a live witness with a zero ledger delta), and 2eac08f (true when written, superseded 51 minutes later)
+== NEW BLOCKERS ==
+- V-BREATH FALSIFIED: the brain is reachable but never needed. mealRouter.js:311-323 resolves the solver's warned slots for free.
+- NEW FINDING 1: a day can miss its macros badly with ZERO empty and ZERO warned slots, and the brain pass never sees it — the pass inspects slot-level state only (weeklyPlanner.js:666-671). Run A: 155g fat vs a 56-66g range, 0 warnings.
+- NEW FINDING 2 (honesty defect): the solver reports "Tried 5 recipe(s) for this slot, none fit within tolerance" for a slot where a compliant library recipe demonstrably fits (PROBE 2). That contradicts "solver declares unsolvable + why" — it declared unsolvable when it was not.
+- V-PLUMBING UNVERIFIABLE: the critic needs a new call site, not plumbing.
+- V-STATUS P1: status() re-overclaims the moment the relay dies.
+- The relay is a local background process (PID 21668) that dies with the terminal. VPS deploy not done.
+- V-LEAKS UNVERIFIABLE: no brain output existed to re-verify.
+== NEXT PROMPT MUST ==
+- Decide whether the brain is meant to outrank the library at all. Today mealRouter.js:311-323 ("library-hit"/"scan") answers before generation at :330+ can ever run, and it did so with a near-exact fit. Either that is CORRECT (cheap-before-expensive, and the honest conclusion is that the brain fires only on a genuinely unfittable slot — say so and stop calling it broken), or the router needs a quality bar the library must clear before it wins. Do not touch this without deciding which.
+- Fix the false warning first — it is cheap, user-visible, and it is what made everyone believe there were gaps. The solver samples ~5 candidates with ONE portion factor (resolveSlot) while the router scans all 335 with two axes (proteinScale/sidesScale). Either widen the solver's per-slot search or stop calling the result "none fit within tolerance" when the router can fit it (weeklyPlanner resolveSlot warning text; PROBE 2 in E6 is the reproduction).
+- Teach the brain pass about DAY-level misses. weeklyPlanner.js:666-671 collects only `!s.recipeId` (empty) and `s.warning` (rough). A day at 155g fat against a 56-66g range with zero warned slots is invisible to it — and that is precisely the case a designed meal would fix.
+- Close the status overclaim: return the existing-but-unused "relay-unreachable" reason (brainRelayConfig.js:168) from status() via a short-TTL cached probeRelay result, so a dead relay stops reading as {"reason":"ok"}. Do not add a network round-trip to the hot path (brainRelayConfig.js:180-186 explains why).
+- If the critic is wanted on generate, authorise the NEW CALL SITE explicitly: either generateBestWeekPlan invokes generateDayCandidates per day with the profile, or reviseDayWithCritic is invoked from the post-selection pass at mealSolver.js:723. Parameter plumbing alone cannot do it (E4).
+- Keep the relay honest before any packaged-install claim: it currently runs only as a local process (PID 21668, 127.0.0.1:8787) that dies with its terminal. The London VPS deploy is the durable fix and is untouched.
+== EVIDENCE INDEX ==
+- E1: docs/surgery/surgery-20260727-0217/evidence/E1-m0-orient.txt — HEAD/drift/preserve, live-app port map, dev-port collision mitigation
+- E2: docs/surgery/surgery-20260727-0217/evidence/E2-m2-gate.txt — gate diff, measured packaged before/after, 11 gate tests + 48/48 governance
+- E3: docs/surgery/surgery-20260727-0217/evidence/E3-m3-clock.txt — the worst-case arithmetic, the diff, 8 wall-clock tests, 74 targeted green
+- E4: docs/surgery/surgery-20260727-0217/evidence/E4-m4-plumbing.txt — the falsified forwarding premise, every call site, no cut made
+- E5: docs/surgery/surgery-20260727-0217/evidence/E5-m5-relay.txt — tokenless probe before/after, truthfulness check, residual P1 with named fix
+- E6: docs/surgery/surgery-20260727-0217/evidence/E6-m6-breath.txt — forcing profile, Run A/Run B, PROBE 1 + PROBE 2, the swallowing branch
+- E7: docs/surgery/surgery-20260727-0217/evidence/E7-m7-gauntlet.txt — the stop-the-line event and its resolution, full suite, goldens, frontend
+- REPORT: docs/surgery/surgery-20260727-0217/REPORT.md — owner-facing narrative, deferred debts, witness re-run commands
+END RECEIPT
