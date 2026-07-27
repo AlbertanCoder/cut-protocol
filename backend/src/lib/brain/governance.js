@@ -32,7 +32,7 @@
 //
 // Nothing here turns anything on. Every gate defaults to OFF and this module
 // never reads, prompts for, or creates an API key.
-const { isBrainEnabled } = require("./llm.js");
+const { isBrainEnabled, relayConfig } = require("./llm.js");
 const { preGateFieldText } = require("./guard.js");
 const { refusalText } = require("./policy.js");
 const { scanForLeak } = require("./outputGuard.js");
@@ -60,7 +60,20 @@ function llmAvailability(feature) {
   if (!f) {
     return { enabled: false, reason: "unknown-feature", status: 503, message: `Unknown AI feature "${feature}" — it is not registered in the governance table, so it is refused.` };
   }
-  if (!process.env.ANTHROPIC_API_KEY) {
+  // A DIRECT KEY IS NOT THE ONLY TRANSPORT. This check used to read
+  // `!process.env.ANTHROPIC_API_KEY` alone, which made the gate relay-blind: a
+  // packaged install ships no key BY DESIGN (the relay exists precisely to
+  // replace it), so every governed feature was refused here with "no API key is
+  // configured" before the relay-aware isBrainEnabled() below could ever speak.
+  // The result was an app reporting status {"enabled":true,"reason":"ok"} while
+  // 503-ing every AI call — root cause #1 in autopsy-20260727-0126.
+  //
+  // The two transports are exactly the two llm.js:91 accepts. Reachability is
+  // NOT decided here: a configured-but-unreachable relay is a transport-layer
+  // failure that surfaces as an honest call error, not a governance refusal.
+  // With NEITHER transport this still refuses 503 — fail-closed is preserved,
+  // and the reason/message contract is unchanged for that case.
+  if (!process.env.ANTHROPIC_API_KEY && !relayConfig()) {
     return { enabled: false, reason: "no-api-key", status: 503, message: "AI features are unavailable in this build — no API key is configured. Everything else works normally." };
   }
   // BRAIN=on arms every registered feature (the staged turn-on switch, shared

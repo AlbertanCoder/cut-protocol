@@ -152,9 +152,20 @@ test("S6: the brain barrel re-exports the transport but never invokes it", () =>
 
 test("S7: every registered feature is OFF unless an explicit flag is set", () => {
   const src = code(path.join(SRC, "lib", "brain", "governance.js"));
-  // The gate must require a key AND an explicit opt-in; there is no default-on
-  // branch and no implicit fallback.
-  assert.ok(has(src, /if \(!process\.env\.ANTHROPIC_API_KEY\)/), "the keyless refusal must be the first thing the gate does");
+  // The gate must require a TRANSPORT and an explicit opt-in; there is no
+  // default-on branch and no implicit fallback.
+  //
+  // This assertion used to read /if \(!process\.env\.ANTHROPIC_API_KEY\)/ — it
+  // pinned the gate to a literal key and therefore encoded root cause #1 of
+  // autopsy-20260727-0126 as a requirement: a packaged install ships no key by
+  // design, so that shape refused every governed feature before the relay-aware
+  // isBrainEnabled() below could speak. The invariant being guarded was always
+  // "no transport => refuse, first thing, fail-closed" — there are two
+  // transports (llm.js:91), and the guard now says so.
+  assert.ok(
+    has(src, /if \(!process\.env\.ANTHROPIC_API_KEY && !relayConfig\(\)\)/),
+    "the no-transport refusal must be the first thing the gate does, and it must count BOTH transports (direct key OR relay)"
+  );
   assert.ok(has(src, /isBrainEnabled\(\)/), "the gate must reuse the single BRAIN=on implementation, not re-derive it");
   for (const [name, f] of Object.entries(FEATURES)) {
     assert.ok(f.flag === null || typeof f.flag === "string", `feature "${name}" has a malformed flag`);
