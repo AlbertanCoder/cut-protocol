@@ -685,14 +685,24 @@ async function fillGapsWithBrain(slots, { dailyTarget, mealConfig, recipePool, a
   // a worst case the client's timeout provably outlives. Slots left behind by
   // the deadline are not failures: they keep their warnings and the diagnosis
   // below reports them honestly, which is the whole point of stopping in time.
+  //
+  // THE CLOCK IS INJECTED, and that is not fussiness. This file is covered by
+  // the solver-path purity invariant (tests/qc/invariants.test.js "1C purity":
+  // mealSolver.js and weeklyPlanner.js may contain no Math.random / Date.now /
+  // new Date), because a solver that reads an ambient clock is not reproducible
+  // and the byte-identical goldens stop meaning anything. So the caller supplies
+  // `now` alongside `budgetMs` — routes/plans.js does — and with no clock there
+  // is simply no deadline, exactly as with no budget.
+  const nowFn = typeof aiFallback?.now === "function" ? aiFallback.now : null;
   const budgetMs = Number(aiFallback?.budgetMs) > 0 ? Number(aiFallback.budgetMs) : null;
+  const deadlineArmed = budgetMs !== null && nowFn !== null;
   const perCallMs = Number(ctx.slotTimeoutMs) > 0 ? Number(ctx.slotTimeoutMs) : 0;
-  const startedAt = Date.now();
+  const startedAt = deadlineArmed ? nowFn() : 0;
   let stoppedForTime = 0;
 
   for (const i of [...empty, ...roughs]) {
     if (ctx.callsRemaining.n <= 0) break;
-    if (budgetMs !== null && Date.now() - startedAt + perCallMs > budgetMs) {
+    if (deadlineArmed && nowFn() - startedAt + perCallMs > budgetMs) {
       // Count what the clock cost us so the caller can report it honestly.
       stoppedForTime = [...empty, ...roughs].length - attempted;
       break;
