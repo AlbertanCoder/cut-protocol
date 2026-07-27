@@ -728,7 +728,12 @@ async function generateBestWeekPlan(dailyTarget, mealConfig, recipePool, options
       dayIndices: options.dayIndices,
     });
     best.slots = pass.slots;
-    best.brain = { attempted: pass.attempted, filled: pass.filled, replaced: pass.replaced, callsUsed: pass.callsUsed };
+    best.brain = {
+      attempted: pass.attempted, filled: pass.filled, replaced: pass.replaced, callsUsed: pass.callsUsed,
+      // Slots the wall clock left behind (routes/plans.js BRAIN_GENERATE_BUDGET_MS).
+      // Reported, never hidden: they keep their warnings and reach the diagnosis below.
+      stoppedForTime: pass.stoppedForTime ?? 0,
+    };
     // The score drove SELECTION and is now stale — the brain has changed what
     // is on the plate. Rescore so daysInTolerance/avgMatch describe the week
     // actually being returned, which the diagnosis immediately reads.

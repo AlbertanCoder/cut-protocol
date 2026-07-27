@@ -203,6 +203,15 @@ async function generateRecipeDrafts(params, deps = {}) {
   const { ask = askSchemaJSON, ledger, model = MODELS.escalation } = deps;
   const prompt = buildPrompt(params);
 
+  // A caller may bound this call more tightly than the transport's own default.
+  // The unattended generate pass does exactly that, because the whole pass has
+  // to finish inside the client's patience (routes/plans.js wall clock). Absent
+  // or junk => DRAFT_TIMEOUT_MS, so /generate-drafts is unchanged. NEVER larger
+  // than the default: a caller must be able to shorten the leash, never lengthen
+  // it past the bound this module exists to guarantee.
+  const requested = Number(params?.timeoutMs);
+  const callTimeoutMs = requested > 0 ? Math.min(requested, DRAFT_TIMEOUT_MS) : DRAFT_TIMEOUT_MS;
+
   let raw = null;
   const parsed = await governedModelCallOrThrow(
     {
@@ -214,7 +223,7 @@ async function generateRecipeDrafts(params, deps = {}) {
       maxTokens: DRAFT_MAX_TOKENS,
       turns: 1,
       userText: guardedFields(params),
-      timeoutMs: DRAFT_TIMEOUT_MS,
+      timeoutMs: callTimeoutMs,
       ledger,
       // The leak scan reads the RAW reply text, not the parsed body.
       inspectOutput: () => raw,
@@ -228,7 +237,7 @@ async function generateRecipeDrafts(params, deps = {}) {
         model,
         thinking: { type: "adaptive" },
         effort: "high",
-        timeoutMs: DRAFT_TIMEOUT_MS,
+        timeoutMs: callTimeoutMs,
       });
       raw = res && res.text != null ? res.text : null;
       // Shape the return so ledger.withUsageLogging books the ACTUAL usage.

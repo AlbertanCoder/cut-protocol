@@ -452,7 +452,12 @@ async function tryAiFallback(target, recipePool, usageCount, aiFallback) {
     // already-filtered pool is a safe idempotent no-op.
     const routeImpl = aiFallback.routeMealSlotImpl || require("./mealRouter.js").routeMealSlot;
     const routed = await routeImpl(
-      { target, profile: aiFallback.profile, recipePool, existingRecipeNames: aiFallback.existingRecipeNames },
+      {
+        target, profile: aiFallback.profile, recipePool,
+        existingRecipeNames: aiFallback.existingRecipeNames,
+        // Per-design time bound. Undefined => the transport's own default.
+        timeoutMs: aiFallback.slotTimeoutMs,
+      },
       aiFallback.routerDeps || {}
     );
     // ok:false is honest degradation (closest-fit or unsolved). The solver's own
@@ -610,6 +615,10 @@ function buildAiFallbackContext(options, recipePool) {
     // Stage 4: test/override seam for the Library->Brain router and its deps.
     routeMealSlotImpl: options.aiFallback.routeMealSlotImpl,
     routerDeps: options.aiFallback.routerDeps,
+    // The wall clock (routes/plans.js). Undefined on callers that don't set it
+    // — notably the legacy one-shot swap — and an undefined bound is no bound,
+    // so those paths behave exactly as they did.
+    slotTimeoutMs: options.aiFallback.slotTimeoutMs,
   };
 }
 
@@ -644,7 +653,7 @@ const slotKeyOf = (s) => `${s.dayOfWeek}:${s.slotType}:${s.slotIndex}`;
  */
 async function fillGapsWithBrain(slots, { dailyTarget, mealConfig, recipePool, aiFallback, dayIndices = null }) {
   const ctx = buildAiFallbackContext({ aiFallback }, recipePool);
-  if (!ctx) return { slots, attempted: 0, filled: 0, replaced: 0, callsUsed: 0 };
+  if (!ctx) return { slots, attempted: 0, filled: 0, replaced: 0, callsUsed: 0, stoppedForTime: 0 };
 
   const budget = ctx.callsRemaining.n;
   const targets = new Map(
@@ -670,8 +679,24 @@ async function fillGapsWithBrain(slots, { dailyTarget, mealConfig, recipePool, a
     else if (s.warning) roughs.push(i);
   });
 
+  // THE WALL CLOCK. maxCalls bounds the money; this bounds the time. A design is
+  // only STARTED when the remaining budget can still cover a whole one, so the
+  // pass can never overrun `budgetMs` — that is what lets routes/plans.js state
+  // a worst case the client's timeout provably outlives. Slots left behind by
+  // the deadline are not failures: they keep their warnings and the diagnosis
+  // below reports them honestly, which is the whole point of stopping in time.
+  const budgetMs = Number(aiFallback?.budgetMs) > 0 ? Number(aiFallback.budgetMs) : null;
+  const perCallMs = Number(ctx.slotTimeoutMs) > 0 ? Number(ctx.slotTimeoutMs) : 0;
+  const startedAt = Date.now();
+  let stoppedForTime = 0;
+
   for (const i of [...empty, ...roughs]) {
     if (ctx.callsRemaining.n <= 0) break;
+    if (budgetMs !== null && Date.now() - startedAt + perCallMs > budgetMs) {
+      // Count what the clock cost us so the caller can report it honestly.
+      stoppedForTime = [...empty, ...roughs].length - attempted;
+      break;
+    }
     const target = targets.get(slotKeyOf(out[i]));
     if (!target) continue; // a slot with no matching target is not ours to fill
     const wasFilled = Boolean(out[i].recipeId);
@@ -698,7 +723,7 @@ async function fillGapsWithBrain(slots, { dailyTarget, mealConfig, recipePool, a
     }
   }
 
-  return { slots: out, attempted, filled, replaced, callsUsed: budget - ctx.callsRemaining.n };
+  return { slots: out, attempted, filled, replaced, callsUsed: budget - ctx.callsRemaining.n, stoppedForTime };
 }
 
 /**

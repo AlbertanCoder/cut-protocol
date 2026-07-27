@@ -254,6 +254,9 @@ async function verifyDraft(draft, { profile, target, rules, resolveIngredientImp
 async function routeMealSlot(request, deps = {}) {
   const {
     target, profile, recipePool = [], existingRecipeNames = [], allowGeneration = true,
+    // Per-design wall-clock bound from the caller (the generate pass sets it).
+    // Undefined => aiRecipeClient falls back to its own DRAFT_TIMEOUT_MS.
+    timeoutMs,
   } = request;
   const {
     generateDraftsImpl = generateRecipeDrafts,
@@ -363,6 +366,7 @@ async function routeMealSlot(request, deps = {}) {
           excludedFoods: rules.excludedFoods,
           dietaryStyle: rules.dietaryStyle,
           userId: profile?.userId ?? null,
+          timeoutMs,
         },
         { ledger: budget, model }
       );
