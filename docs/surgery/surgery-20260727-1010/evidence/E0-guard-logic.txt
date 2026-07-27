@@ -1,0 +1,48 @@
+PASS  want=ALLOW got=ALLOW  EDIT  on-manifest  weeklyPlanner.js
+PASS  want=ALLOW got=ALLOW  EDIT  on-manifest  mealRouter.js
+PASS  want=ALLOW got=ALLOW  EDIT  on-manifest  tests/ subtree
+PASS  want=ALLOW got=ALLOW  EDIT  on-manifest  run docs subtree
+PASS  want=BLOCK got=BLOCK  EDIT  OFF-manifest bmrEngine.js
+        -> BLOCKED: backend/src/lib/bmrEngine.js not on the incision manifest.
+PASS  want=BLOCK got=BLOCK  EDIT  OFF-manifest CLAUDE.md
+        -> BLOCKED: CLAUDE.md not on the incision manifest.
+PASS  want=BLOCK got=BLOCK  EDIT  OFF-manifest package.json
+        -> BLOCKED: package.json not on the incision manifest.
+PASS  want=BLOCK got=BLOCK  EDIT  SEALED golden baseline
+        -> BLOCKED: backend/tests/golden/engine-baseline.golden.json not on the incision manifest — backend/tests/golden/ is sealed to every mode. Relocking the goldens is mechanically impossible; goldens are proof, and proof you can edit is not proof.
+PASS  want=BLOCK got=BLOCK  EDIT  SEALED golden fixtures
+        -> BLOCKED: backend/tests/golden/fixtures.js not on the incision manifest — backend/tests/golden/ is sealed to every mode. Relocking the goldens is mechanically impossible; goldens are proof, and proof you can edit is not proof.
+PASS  want=BLOCK got=BLOCK  EDIT  OFF-manifest sibling run dir
+        -> BLOCKED: docs/surgery/surgery-20260727-0217/REPORT.md not on the incision manifest.
+PASS  want=BLOCK got=BLOCK  EDIT  escape the repo
+        -> BLOCKED: ../outside.txt is outside the repository. Only paths on the incision manifest may be written.
+PASS  want=ALLOW got=ALLOW  BASH  benign npm test
+PASS  want=ALLOW got=ALLOW  BASH  benign git status
+PASS  want=BLOCK got=BLOCK  BASH  git push
+        -> BLOCKED: git push not on the incision manifest. Pushing is the owner's hand only (see .git/hooks/pre-push).
+PASS  want=BLOCK got=BLOCK  BASH  git push --dry-run
+        -> BLOCKED: git push not on the incision manifest. Pushing is the owner's hand only (see .git/hooks/pre-push).
+PASS  want=BLOCK got=BLOCK  BASH  git reset
+        -> BLOCKED: git reset not on the incision manifest. History rewriting is forbidden inside the cage.
+PASS  want=BLOCK got=BLOCK  BASH  git rebase
+        -> BLOCKED: git rebase not on the incision manifest. History rewriting is forbidden inside the cage.
+PASS  want=BLOCK got=BLOCK  BASH  --force flag
+        -> BLOCKED: a --force flag not on the incision manifest. Forced operations are forbidden inside the cage.
+PASS  want=BLOCK got=BLOCK  BASH  rm -rf
+        -> BLOCKED: rm -rf not on the incision manifest. Recursive force-delete is forbidden inside the cage.
+PASS  want=BLOCK got=BLOCK  BASH  golden relock verbatim
+        -> BLOCKED: the golden relock invocation not on the incision manifest. Relocking the goldens is mechanically impossible for this session — that is the point of the lock.
+PASS  want=BLOCK got=BLOCK  BASH  port 3001 probe
+        -> BLOCKED: port 3001 not on the incision manifest. The owner's live app on 3001 is sacred and is never touched.
+PASS  want=BLOCK got=BLOCK  BASH  packaged DB touch
+        -> BLOCKED: the packaged DB not on the incision manifest. The packaged/template DB is sacred and is never touched.
+PASS  want=BLOCK got=BLOCK  BASH  write PUSH_APPROVED
+        -> BLOCKED: PUSH_APPROVED not on the incision manifest. No session may write its own push approval. Only the owner's hand.
+PASS  want=BLOCK got=BLOCK  BASH  cat .env
+        -> BLOCKED: a key-read not on the incision manifest. Secrets are never read into the transcript.
+PASS  want=BLOCK got=BLOCK  BASH  printenv KEY
+        -> BLOCKED: a key-dump not on the incision manifest. Secrets are never read into the transcript.
+PASS  want=BLOCK got=BLOCK  BASH  literal key shape
+        -> BLOCKED: a literal API key not on the incision manifest. An API key shape may never appear in a command.
+
+guard-selftest: 26 passed, 0 failed, 26 total

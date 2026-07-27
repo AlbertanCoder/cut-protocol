@@ -1,0 +1,32 @@
+
+== 1. GOLDEN BASELINE UNTOUCHED ==
+PASS  git diff HEAD -- backend/tests/golden is empty (no working-tree drift)
+PASS  no untracked files under backend/tests/golden
+      baseline blob sha: deb25c4dcc878fd8d54d9104659a36987af4f9cc
+
+== 2. ENGINE MATCHES THE LOCKED BASELINE ==
+[runTests] SCOPED run (tests/golden) — 2 files. Tripwire floors DISABLED for a scoped run; only `npm test` with no arguments enforces them.
+✔ golden: BRAIN=off engine output is byte-identical to the locked baseline (97.343ms)
+✔ golden BMR: the locked baseline covers every BMR fixture, in order (1.1525ms)
+✔ golden BMR: "M 33 bf null" — bmrEngine matches the locked baseline exactly (4.8164ms)
+✔ golden BMR: "M 33 bf 0 (legacy unknown)" — bmrEngine matches the locked baseline exactly (0.1576ms)
+✔ golden BMR: "F 45 bf 0" — bmrEngine matches the locked baseline exactly (0.1013ms)
+✔ golden BMR: "M 65 bf 0 (schofield drops)" — bmrEngine matches the locked baseline exactly (0.1113ms)
+✔ golden BMR: "M 33 bf 20 (LBM formulas apply)" — bmrEngine matches the locked baseline exactly (0.1341ms)
+✔ golden BMR: "F 28 bf 22" — bmrEngine matches the locked baseline exactly (0.0732ms)
+✔ golden BMR: the lock is armed — a one-unit drift in any locked field fails the comparison (1.3353ms)
+✔ golden BMR: the locked values are structurally sane (a careless regenerate can't lock in nonsense) (0.2587ms)
+ℹ tests 10
+ℹ suites 0
+ℹ pass 10
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 317.8554
+
+[runTests] OK — 2 files, 10 tests, 0 failures.
+PASS  golden suite green under BRAIN=off
+
+== RESULT ==
+GOLDENS INTACT

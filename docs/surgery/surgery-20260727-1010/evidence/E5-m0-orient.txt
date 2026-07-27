@@ -1,0 +1,100 @@
+E5 — M0 ORIENT: INCISION SITES RE-DERIVED BY SYMBOL
+run_id: surgery-20260727-1010
+captured: 2026-07-27T10:22Z
+method: read-only. No source file was modified by this run.
+
+Receipt v3 charged the previous surgeon with coordinate rot: line numbers
+written into .agent/state.json were invalidated by that same surgeon's later
+commit. So this orientation names SYMBOLS. Line numbers appear only where
+re-derived at the moment of writing, and are marked as of-this-moment.
+
+REPO STATE
+----------
+  branch : fix/audit-remediation
+  head   : e86c15c26809c25ddecbf77f4797cb79ce02d484
+  matches receipt v3's recorded head exactly. No drift.
+  tree at M0: clean except docs/surgery/surgery-20260727-0217/verify/
+              (untracked artifacts left by the v3 verifier). Nothing stashed,
+              nothing preserved — there was no dirty work to protect.
+
+M1 — THE TRIGGER
+----------------
+  file   : backend/src/lib/weeklyPlanner.js
+  symbol : fillGapsWithBrain()
+  site   : the candidate-collection block, `out.forEach((s, i) => { ... })`,
+           which today reads exactly:
+               if (!s.recipeId) empty.push(i);
+               else if (s.warning) roughs.push(i);
+           (as of this moment: lines 677-680)
+  finding: confirmed live — the predicate has no day-total term and no
+           tolerance term. A day whose slots are all filled and none warned is
+           structurally invisible to the brain pass, however far its totals sit
+           outside the prescription's bands. This is receipt v3's V-BLINDSPOT,
+           re-derived here rather than inherited.
+  note   : the surrounding contract is already clock-governed and pure —
+           `nowFn`/`budgetMs`/`deadlineArmed` are read from the injected
+           aiFallback, and the file is covered by the "1C purity" invariant
+           (no Math.random / Date.now / new Date). Any day-tolerance term added
+           here must stay pure for the same reason.
+
+M2 — FREE REPAIR FIRST
+----------------------
+  file   : backend/src/lib/mealRouter.js
+  symbol : routeMealSlot()
+  site   : the rung commented "3. THE LIBRARY. Full scan; free and instant."
+           (as of this moment: line 313), returning
+               status: wasGenerated ? "cache-hit" : "library-hit",
+               via: "scan", cached: wasGenerated
+  finding: confirmed live — the library scan answers before the generation rung
+           below it. This is receipt v3's V-SWALLOW and, under D0, it is now
+           RATIFIED behavior, not a defect: free repair gets first crack, the
+           brain is residual-only.
+  helpers already present for a repair step: fitFor(), bestCandidate(),
+           missLine(), and the two-axis scale (proteinScale / sidesScale).
+
+M3 — RESIDUAL BRAIN
+-------------------
+  files  : backend/src/lib/weeklyPlanner.js  (fillGapsWithBrain)
+           backend/src/routes/plans.js       (the governance that bounds it)
+  symbols: buildAiFallbackContext(), tryAiFallback(), ctx.callsRemaining,
+           ctx.slotTimeoutMs
+  governor: BRAIN_CALL_CEILING in backend/src/routes/plans.js, fed by
+           process.env.BRAIN_MAX_DESIGNS_PER_GENERATE (as of this moment:
+           lines 155-156). The per-generate design budget is then
+               Math.min(BRAIN_CALL_CEILING, Math.max(1, Math.ceil(days / 2)))
+           (as of this moment: line 161).
+  injected clock: budgetMs / slotTimeoutMs / now are passed from
+           backend/src/routes/plans.js (as of this moment: lines 339, 340, 346).
+  finding: the governed machinery M3 is supposed to route residuals INTO is
+           present and wired. M3 is about what reaches it, not about building it.
+
+M4 — STATUS HONESTY
+-------------------
+  file   : backend/src/lib/brainRelayConfig.js
+  symbols: status()      (as of this moment: line 170)
+           probeRelay()  (as of this moment: line 188)
+  finding: the reason string "relay-unreachable" already exists and is already
+           returned by probeRelay() on both the not-ok and the throw path
+           (as of this moment: lines 195 and 197). It is documented in the
+           status() doc comment as a valid reason ("configured, but the relay
+           did not answer (probe only)") but status() itself never returns it.
+           That is the whole of the P1 overclaim: a dead relay reads "ok".
+  constraint honored: the comment block near the poll site explains why the hot
+           path must not take a round-trip. A short-TTL cache over probeRelay is
+           the shape that satisfies both.
+
+MONEY BASELINE (independently re-derived, see E2)
+-------------------------------------------------
+  13 rows all-time, $0.3928 total
+  classify 8 = $0.0026 | chat 4 = $0.1983 | create 1 = $0.1919
+  newest row: cmrzu1bcd0051wlo08nakbblp @ 2026-07-25T03:51:39.182Z
+  generate-path rows: 0, all time.
+  This reproduces receipt v3's == MONEY == block exactly, by a script written
+  for this run rather than by reading the previous session's numbers.
+
+GOLDENS BASELINE (see E1)
+-------------------------
+  backend/tests/golden/ has no working-tree drift from HEAD and no untracked
+  strays. Golden suite green under BRAIN=off: 2 files, 10 tests, 0 failures.
+  Baseline blob sha recorded in E1 so any later run can compare identity
+  directly rather than trusting a passing test.
