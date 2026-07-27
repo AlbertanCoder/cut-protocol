@@ -1,7 +1,7 @@
 {
-  "phase": "0",
+  "phase": "1",
   "lane": null,
-  "updatedAt": "2026-07-26T15:20:00Z",
+  "updatedAt": "2026-07-26T22:04:01.766Z",
   "branch": "fix/audit-remediation",
   "head": "bd61418",
   "done": [
@@ -9,15 +9,36 @@
     "0.2 transport hijack — measured per mode: dev=DIRECT KEY, packaged=RELAY(dead). Instructed fix (unset relay vars in dev) is a NO-OP; dev has none. Live smoke NOT blocked.",
     "0.3 call graph — mealRouter.js (478 lines) ALREADY implements V8 and is weeklyPlanner's production default at :453. Prompt's expected conclusion ('no path exists') is WRONG: the path exists but is gated on aiFallback, set only at plans.js:626 (legacy swap).",
     "0.4 ledger truth — LlmUsage = 0 rows; all 5 brain tables present, so not a migration gap",
-    "0.6 docs/vision-gap.md written and committed"
+    "0.6 docs/vision-gap.md written and committed",
+    "P0-1 diagnosis refined: three breaks, not one. aiFallback occurs exactly once in mealSolver.js and it is the strip at :679. No post-selection brain pass exists."
   ],
-  "next": "PHASE 1 / P0-1: pass aiFallback from POST /generate (plans.js:155) so the existing mealRouter runs during a real generate. Decide maxCalls per horizon (1 is wrong for a week). Then 1.3 determinism seams, then 1.5 live smoke in DEV (direct key already works).",
-  "rootCause": "The Library->Brain router exists and works, but is only reachable via aiFallback, which is set in exactly one place — the legacy one-shot swap endpoint (plans.js:626) — so POST /generate never invokes it. A missing argument, not a missing feature.",
+  "next": "PHASE 1 / P0-1 implementation: (a) post-selection gap-fill pass in generateBestWeekPlan gated on aiFallback + isBrainEnabled(); (b) thread aiFallback through generateHorizonPlan; (c) pass from /generate with horizon-scaled maxCalls + hard ceiling; (d) BRAIN=off skips the pass, golden byte-identical; (e) mock-client unit tests; (f) live smoke <=12 calls <=$0.50 in DEV.",
+  "rootCause": "The Library->Brain router (mealRouter.js) exists and works, but THREE breaks keep it from ever running during a generate: (1) plans.js:155 /generate never passes aiFallback; (2) mealSolver.js:1142 generateHorizonPlan has no aiFallback parameter to forward; (3) mealSolver.js:679 generateBestWeekPlan explicitly strips it ({...options, aiFallback: undefined}) so best-of-5 attempts stay free — correct in isolation, but there is NO post-selection pass to fill the winning week gaps. The brain must run once, on the winner, after selection.",
   "openTickets": [
-    { "id": "P0-1", "sev": "P0", "title": "POST /generate never passes aiFallback, so mealRouter never runs", "evidence": "plans.js:155 vs plans.js:626; weeklyPlanner.js:403,453" },
-    { "id": "P1-A", "sev": "P1", "title": "chat.js:160 catch{} discards the error; report relay-unreachable instead of a generic degrade", "evidence": "chat.js:160-164; reproduced 'Connection error'" },
-    { "id": "P1-B", "sev": "P1", "title": "App-as-a-user walk of V1-V12 with screenshots at 1920x1080 and 1280x720", "evidence": "not yet performed" },
-    { "id": "P2-1", "sev": "P2", "title": "Local relay in a terminal is fragile — closing the window silently kills the coach", "evidence": "observed today; port 8787 empty after the window closed" }
+    {
+      "id": "P0-1",
+      "sev": "P0",
+      "title": "POST /generate never reaches mealRouter: three breaks (plans.js:155 no arg; generateHorizonPlan no param; generateBestWeekPlan strips it with no post-selection pass)",
+      "evidence": "plans.js:155 vs plans.js:626; weeklyPlanner.js:403,453"
+    },
+    {
+      "id": "P1-A",
+      "sev": "P1",
+      "title": "chat.js:160 catch{} discards the error; report relay-unreachable instead of a generic degrade",
+      "evidence": "chat.js:160-164; reproduced 'Connection error'"
+    },
+    {
+      "id": "P1-B",
+      "sev": "P1",
+      "title": "App-as-a-user walk of V1-V12 with screenshots at 1920x1080 and 1280x720",
+      "evidence": "not yet performed"
+    },
+    {
+      "id": "P2-1",
+      "sev": "P2",
+      "title": "Local relay in a terminal is fragile — closing the window silently kills the coach",
+      "evidence": "observed today; port 8787 empty after the window closed"
+    }
   ],
   "correctionsToPrompt": [
     "0.1 premise stale: working tree was clean, not ~295 files",
