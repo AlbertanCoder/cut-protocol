@@ -161,6 +161,33 @@ function brainCallBudget(horizon) {
   return Math.min(BRAIN_CALL_CEILING, Math.max(1, Math.ceil(days / 2)));
 }
 
+// ── THE WALL CLOCK ──────────────────────────────────────────────────────────
+// A COUNT of calls is not a bound on TIME. The call ceiling above says "at most
+// 12 designs"; at the transport's 90s draft timeout that is 18 minutes, against
+// a client that used to hang up at 45s (frontend/src/lib/api.js) — so the user
+// got a spinner that resolved into neither a plan nor an error. That is the S2
+// defect in autopsy-20260727-0126.
+//
+// The rule: THE SERVER MUST ALWAYS ANSWER BEFORE THE CLIENT HANGS UP. A
+// truthful partial week — some slots brain-filled, the rest carrying their
+// honest warnings and diagnosis — beats a dead spinner every time.
+//
+//   client patience (TIMEOUT.LLM)      120s
+//   brain pass, hard ceiling            75s   <- can never be exceeded: a design
+//                                              is only STARTED when the budget
+//                                              still covers a whole one
+//   deterministic solve + week writes   ~10s  (measured ms-level; generous)
+//   -------------------------------------------------------------------
+//   server worst case                  ~85s   ->  ~35s margin (29%)
+//
+// Raising either constant without raising TIMEOUT.LLM re-arms the spinner.
+const BRAIN_GENERATE_BUDGET_MS = Number(process.env.BRAIN_GENERATE_BUDGET_MS) > 0
+  ? Number(process.env.BRAIN_GENERATE_BUDGET_MS)
+  : 75000;
+const BRAIN_SLOT_TIMEOUT_MS = Number(process.env.BRAIN_SLOT_TIMEOUT_MS) > 0
+  ? Number(process.env.BRAIN_SLOT_TIMEOUT_MS)
+  : 35000;
+
 /**
  * POST /plans/generate — ANY horizon (Stage 2).
  *
@@ -301,7 +328,19 @@ router.post("/generate", async (req, res) => {
       priorPlans, lockedSlotsByWindow, startDayOfWeek,
       // BRAIN=off (or a keyless install) => omitted entirely => the horizon
       // planner behaves exactly as it did before P0-1 and the goldens hold.
-      ...(brainOn ? { aiFallback: { enabled: true, maxCalls: brainCallBudget(horizon), profile } } : {}),
+      ...(brainOn
+        ? {
+            aiFallback: {
+              enabled: true,
+              maxCalls: brainCallBudget(horizon),
+              profile,
+              // The wall clock (see BRAIN_GENERATE_BUDGET_MS above). maxCalls
+              // bounds the money; these two bound the time. Both are needed.
+              budgetMs: BRAIN_GENERATE_BUDGET_MS,
+              slotTimeoutMs: BRAIN_SLOT_TIMEOUT_MS,
+            },
+          }
+        : {}),
     });
 
     // One transaction PER WEEK (audit Tier 4): a week rewrite is atomic, so a

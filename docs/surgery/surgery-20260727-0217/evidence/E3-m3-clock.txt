@@ -1,0 +1,238 @@
+E3 — M3 THE CLOCK  (2026-07-27T02:28:44Z)
+
+=== THE ARITHMETIC ===
+  BEFORE (autopsy S2): client TIMEOUT.SOLVER 45,000ms  vs  server up to 12 x 90,000ms = 1,080,000ms
+                       -> client hangs up first, always, whenever the brain engages.
+
+  AFTER:
+    client patience  TIMEOUT.LLM              120,000 ms   (api.js:126, generatePlan now on this tier)
+    brain pass ceiling BRAIN_GENERATE_BUDGET_MS 75,000 ms   (plans.js — a design is only STARTED
+                                                            when the remaining budget covers a whole one,
+                                                            so the pass can never exceed this)
+    per-design bound  BRAIN_SLOT_TIMEOUT_MS     35,000 ms   (clamped by aiRecipeClient to <= DRAFT_TIMEOUT_MS)
+    deterministic solve + per-week writes      ~10,000 ms   (measured ms-level; generous allowance)
+    ------------------------------------------------------
+    server worst case                          ~85,000 ms
+    MARGIN                                     ~35,000 ms  (29% of client patience)
+
+  Slots the clock leaves behind are counted (stoppedForTime), keep their warnings,
+  and reach the existing diagnosis — a truthful partial beats a dead spinner.
+
+=== DIFF (source only) ===
+diff --git a/backend/src/lib/aiRecipeClient.js b/backend/src/lib/aiRecipeClient.js
+index 4b834c0..31c53cc 100644
+--- a/backend/src/lib/aiRecipeClient.js
++++ b/backend/src/lib/aiRecipeClient.js
+@@ -203,6 +203,15 @@ async function generateRecipeDrafts(params, deps = {}) {
+   const { ask = askSchemaJSON, ledger, model = MODELS.escalation } = deps;
+   const prompt = buildPrompt(params);
+ 
++  // A caller may bound this call more tightly than the transport's own default.
++  // The unattended generate pass does exactly that, because the whole pass has
++  // to finish inside the client's patience (routes/plans.js wall clock). Absent
++  // or junk => DRAFT_TIMEOUT_MS, so /generate-drafts is unchanged. NEVER larger
++  // than the default: a caller must be able to shorten the leash, never lengthen
++  // it past the bound this module exists to guarantee.
++  const requested = Number(params?.timeoutMs);
++  const callTimeoutMs = requested > 0 ? Math.min(requested, DRAFT_TIMEOUT_MS) : DRAFT_TIMEOUT_MS;
++
+   let raw = null;
+   const parsed = await governedModelCallOrThrow(
+     {
+@@ -214,7 +223,7 @@ async function generateRecipeDrafts(params, deps = {}) {
+       maxTokens: DRAFT_MAX_TOKENS,
+       turns: 1,
+       userText: guardedFields(params),
+-      timeoutMs: DRAFT_TIMEOUT_MS,
++      timeoutMs: callTimeoutMs,
+       ledger,
+       // The leak scan reads the RAW reply text, not the parsed body.
+       inspectOutput: () => raw,
+@@ -228,7 +237,7 @@ async function generateRecipeDrafts(params, deps = {}) {
+         model,
+         thinking: { type: "adaptive" },
+         effort: "high",
+-        timeoutMs: DRAFT_TIMEOUT_MS,
++        timeoutMs: callTimeoutMs,
+       });
+       raw = res && res.text != null ? res.text : null;
+       // Shape the return so ledger.withUsageLogging books the ACTUAL usage.
+diff --git a/backend/src/lib/mealRouter.js b/backend/src/lib/mealRouter.js
+index e6dbaba..d4bfd4a 100644
+--- a/backend/src/lib/mealRouter.js
++++ b/backend/src/lib/mealRouter.js
+@@ -254,6 +254,9 @@ async function verifyDraft(draft, { profile, target, rules, resolveIngredientImp
+ async function routeMealSlot(request, deps = {}) {
+   const {
+     target, profile, recipePool = [], existingRecipeNames = [], allowGeneration = true,
++    // Per-design wall-clock bound from the caller (the generate pass sets it).
++    // Undefined => aiRecipeClient falls back to its own DRAFT_TIMEOUT_MS.
++    timeoutMs,
+   } = request;
+   const {
+     generateDraftsImpl = generateRecipeDrafts,
+@@ -363,6 +366,7 @@ async function routeMealSlot(request, deps = {}) {
+           excludedFoods: rules.excludedFoods,
+           dietaryStyle: rules.dietaryStyle,
+           userId: profile?.userId ?? null,
++          timeoutMs,
+         },
+         { ledger: budget, model }
+       );
+diff --git a/backend/src/lib/mealSolver.js b/backend/src/lib/mealSolver.js
+index 0d11d88..f242fe0 100644
+--- a/backend/src/lib/mealSolver.js
++++ b/backend/src/lib/mealSolver.js
+@@ -728,7 +728,12 @@ async function generateBestWeekPlan(dailyTarget, mealConfig, recipePool, options
+       dayIndices: options.dayIndices,
+     });
+     best.slots = pass.slots;
+-    best.brain = { attempted: pass.attempted, filled: pass.filled, replaced: pass.replaced, callsUsed: pass.callsUsed };
++    best.brain = {
++      attempted: pass.attempted, filled: pass.filled, replaced: pass.replaced, callsUsed: pass.callsUsed,
++      // Slots the wall clock left behind (routes/plans.js BRAIN_GENERATE_BUDGET_MS).
++      // Reported, never hidden: they keep their warnings and reach the diagnosis below.
++      stoppedForTime: pass.stoppedForTime ?? 0,
++    };
+     // The score drove SELECTION and is now stale — the brain has changed what
+     // is on the plate. Rescore so daysInTolerance/avgMatch describe the week
+     // actually being returned, which the diagnosis immediately reads.
+diff --git a/backend/src/lib/weeklyPlanner.js b/backend/src/lib/weeklyPlanner.js
+index 382f62c..35dd3fe 100644
+--- a/backend/src/lib/weeklyPlanner.js
++++ b/backend/src/lib/weeklyPlanner.js
+@@ -452,7 +452,12 @@ async function tryAiFallback(target, recipePool, usageCount, aiFallback) {
+     // already-filtered pool is a safe idempotent no-op.
+     const routeImpl = aiFallback.routeMealSlotImpl || require("./mealRouter.js").routeMealSlot;
+     const routed = await routeImpl(
+-      { target, profile: aiFallback.profile, recipePool, existingRecipeNames: aiFallback.existingRecipeNames },
++      {
++        target, profile: aiFallback.profile, recipePool,
++        existingRecipeNames: aiFallback.existingRecipeNames,
++        // Per-design time bound. Undefined => the transport's own default.
++        timeoutMs: aiFallback.slotTimeoutMs,
++      },
+       aiFallback.routerDeps || {}
+     );
+     // ok:false is honest degradation (closest-fit or unsolved). The solver's own
+@@ -610,6 +615,10 @@ function buildAiFallbackContext(options, recipePool) {
+     // Stage 4: test/override seam for the Library->Brain router and its deps.
+     routeMealSlotImpl: options.aiFallback.routeMealSlotImpl,
+     routerDeps: options.aiFallback.routerDeps,
++    // The wall clock (routes/plans.js). Undefined on callers that don't set it
++    // — notably the legacy one-shot swap — and an undefined bound is no bound,
++    // so those paths behave exactly as they did.
++    slotTimeoutMs: options.aiFallback.slotTimeoutMs,
+   };
+ }
+ 
+@@ -644,7 +653,7 @@ const slotKeyOf = (s) => `${s.dayOfWeek}:${s.slotType}:${s.slotIndex}`;
+  */
+ async function fillGapsWithBrain(slots, { dailyTarget, mealConfig, recipePool, aiFallback, dayIndices = null }) {
+   const ctx = buildAiFallbackContext({ aiFallback }, recipePool);
+-  if (!ctx) return { slots, attempted: 0, filled: 0, replaced: 0, callsUsed: 0 };
++  if (!ctx) return { slots, attempted: 0, filled: 0, replaced: 0, callsUsed: 0, stoppedForTime: 0 };
+ 
+   const budget = ctx.callsRemaining.n;
+   const targets = new Map(
+@@ -670,8 +679,24 @@ async function fillGapsWithBrain(slots, { dailyTarget, mealConfig, recipePool, a
+     else if (s.warning) roughs.push(i);
+   });
+ 
++  // THE WALL CLOCK. maxCalls bounds the money; this bounds the time. A design is
++  // only STARTED when the remaining budget can still cover a whole one, so the
++  // pass can never overrun `budgetMs` — that is what lets routes/plans.js state
++  // a worst case the client's timeout provably outlives. Slots left behind by
++  // the deadline are not failures: they keep their warnings and the diagnosis
++  // below reports them honestly, which is the whole point of stopping in time.
++  const budgetMs = Number(aiFallback?.budgetMs) > 0 ? Number(aiFallback.budgetMs) : null;
++  const perCallMs = Number(ctx.slotTimeoutMs) > 0 ? Number(ctx.slotTimeoutMs) : 0;
++  const startedAt = Date.now();
++  let stoppedForTime = 0;
++
+   for (const i of [...empty, ...roughs]) {
+     if (ctx.callsRemaining.n <= 0) break;
++    if (budgetMs !== null && Date.now() - startedAt + perCallMs > budgetMs) {
++      // Count what the clock cost us so the caller can report it honestly.
++      stoppedForTime = [...empty, ...roughs].length - attempted;
++      break;
++    }
+     const target = targets.get(slotKeyOf(out[i]));
+     if (!target) continue; // a slot with no matching target is not ours to fill
+     const wasFilled = Boolean(out[i].recipeId);
+@@ -698,7 +723,7 @@ async function fillGapsWithBrain(slots, { dailyTarget, mealConfig, recipePool, a
+     }
+   }
+ 
+-  return { slots: out, attempted, filled, replaced, callsUsed: budget - ctx.callsRemaining.n };
++  return { slots: out, attempted, filled, replaced, callsUsed: budget - ctx.callsRemaining.n, stoppedForTime };
+ }
+ 
+ /**
+diff --git a/backend/src/routes/plans.js b/backend/src/routes/plans.js
+index b3c0075..d292199 100644
+--- a/backend/src/routes/plans.js
++++ b/backend/src/routes/plans.js
+@@ -161,6 +161,33 @@ function brainCallBudget(horizon) {
+   return Math.min(BRAIN_CALL_CEILING, Math.max(1, Math.ceil(days / 2)));
+ }
+ 
++// ── THE WALL CLOCK ──────────────────────────────────────────────────────────
++// A COUNT of calls is not a bound on TIME. The call ceiling above says "at most
++// 12 designs"; at the transport's 90s draft timeout that is 18 minutes, against
++// a client that used to hang up at 45s (frontend/src/lib/api.js) — so the user
++// got a spinner that resolved into neither a plan nor an error. That is the S2
++// defect in autopsy-20260727-0126.
++//
++// The rule: THE SERVER MUST ALWAYS ANSWER BEFORE THE CLIENT HANGS UP. A
++// truthful partial week — some slots brain-filled, the rest carrying their
++// honest warnings and diagnosis — beats a dead spinner every time.
++//
++//   client patience (TIMEOUT.LLM)      120s
++//   brain pass, hard ceiling            75s   <- can never be exceeded: a design
++//                                              is only STARTED when the budget
++//                                              still covers a whole one
++//   deterministic solve + week writes   ~10s  (measured ms-level; generous)
++//   -------------------------------------------------------------------
++//   server worst case                  ~85s   ->  ~35s margin (29%)
++//
++// Raising either constant without raising TIMEOUT.LLM re-arms the spinner.
++const BRAIN_GENERATE_BUDGET_MS = Number(process.env.BRAIN_GENERATE_BUDGET_MS) > 0
++  ? Number(process.env.BRAIN_GENERATE_BUDGET_MS)
++  : 75000;
++const BRAIN_SLOT_TIMEOUT_MS = Number(process.env.BRAIN_SLOT_TIMEOUT_MS) > 0
++  ? Number(process.env.BRAIN_SLOT_TIMEOUT_MS)
++  : 35000;
++
+ /**
+  * POST /plans/generate — ANY horizon (Stage 2).
+  *
+@@ -301,7 +328,19 @@ router.post("/generate", async (req, res) => {
+       priorPlans, lockedSlotsByWindow, startDayOfWeek,
+       // BRAIN=off (or a keyless install) => omitted entirely => the horizon
+       // planner behaves exactly as it did before P0-1 and the goldens hold.
+-      ...(brainOn ? { aiFallback: { enabled: true, maxCalls: brainCallBudget(horizon), profile } } : {}),
++      ...(brainOn
++        ? {
++            aiFallback: {
++              enabled: true,
++              maxCalls: brainCallBudget(horizon),
++              profile,
++              // The wall clock (see BRAIN_GENERATE_BUDGET_MS above). maxCalls
+
+=== TESTS ===
+✔ M3: a SLOW brain cannot run the pass past its wall-clock budget (85.465ms)
+✔ M3: the pass reports the slots the clock left behind, and they keep their warnings (76.0022ms)
+✔ M3: with NO budget the pass is unbounded exactly as before — the legacy swap path is untouched (95.6736ms)
+✔ M3: a fast library-only pass is unaffected by the clock (0.4458ms)
+✔ M3: the per-design bound is handed to the router on every request (0.3926ms)
+✔ M3: generateRecipeDrafts honours a caller's shorter deadline (2.8559ms)
+✔ M3: a caller may SHORTEN the transport's leash but never lengthen it (0.3831ms)
+✔ M3: with no caller deadline the drafting route keeps its own default — /generate-drafts is unchanged (0.271ms)
+ℹ tests 8
+ℹ pass 8
+ℹ fail 0
+--- targeted regression ---
+ℹ tests 74
+ℹ pass 74
+ℹ fail 0

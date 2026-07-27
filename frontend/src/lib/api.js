@@ -359,7 +359,14 @@ export const api = {
   deleteRecipe: (id, opts) => request(`/recipes/${id}`, { method: "DELETE", timeoutMs: TIMEOUT.WRITE, ...opts }),
 
   getCurrentPlan: (opts) => request("/plans/current", opts),
-  generatePlan: (filters, opts) => request("/plans/generate", { method: "POST", body: JSON.stringify({ filters }), timeoutMs: TIMEOUT.SOLVER, ...opts }),
+  // LLM, not SOLVER. Since the brain runs on the winning week (plans.js:304 ->
+  // mealSolver.js:723), this route can legitimately make model calls, which is
+  // what the LLM tier means. It sat on SOLVER's 45s while the server was allowed
+  // to spend far longer, so the client hung up first and the user saw a spinner
+  // that never resolved into either a plan or an error. The server side is now
+  // bounded well inside this budget — see BRAIN_GENERATE_BUDGET_MS in
+  // routes/plans.js for the worst-case arithmetic.
+  generatePlan: (filters, opts) => request("/plans/generate", { method: "POST", body: JSON.stringify({ filters }), timeoutMs: TIMEOUT.LLM, ...opts }),
   getDayOptions: (dayOfWeek, filters, opts) => request("/plans/day-options", { method: "POST", body: JSON.stringify({ dayOfWeek, filters }), timeoutMs: TIMEOUT.SOLVER, ...opts }),
   acceptDay: (dayOfWeek, slots, opts) => request("/plans/accept-day", { method: "POST", body: JSON.stringify({ dayOfWeek, slots }), timeoutMs: TIMEOUT.SOLVER, ...opts }),
   setSlotLock: (planId, slotId, locked, opts) => request(`/plans/${planId}/slots/${slotId}`, { method: "PUT", body: JSON.stringify({ locked }), timeoutMs: TIMEOUT.WRITE, ...opts }),
