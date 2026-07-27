@@ -171,3 +171,113 @@ demonstration of why that distinction matters: the rows that were supposed to be
 GUARD-enforced were, in this session, no stronger than the TRUST-BASED ones —
 they were held because the occupant chose to hold them, having just proved
 nothing would stop it otherwise.
+
+---
+
+## RESUME SESSION — R3 GATE CLOSED (2026-07-27, rooted in the repository)
+
+The mis-rooting is fixed and the harness is proven. The surgery still did not
+happen, for a different and better reason: the instrument that was supposed to
+measure it is broken, and the run stopped at the gate designed to catch exactly
+that.
+
+### R0–R2: the cage bites
+
+`git rev-parse --show-toplevel` resolved to the repository, so the hooks
+registered in `.claude/settings.json` were on this session's settings chain for
+the first time. Eight forbidden acts were then issued as REAL tool calls — the
+distinction that mattered, since prior evidence (E0) could only ever prove hook
+LOGIC, never BINDING. All eight were refused with the hooks' own text; zero
+FAILED-OPEN; nothing reached disk (C16, C18, `evidence/E7-binding-proof.txt`).
+
+C4 and C5 are now bracketed: true as records of the mis-rooted session, false as
+descriptions of the guards. The scripts never changed between the two sessions.
+Only the project root did — which is precisely what C6 said (C17).
+
+A ninth, undesigned refusal is recorded honestly in E7: the read-only `ls`
+written to VERIFY that nothing had been created was itself blocked, because the
+command string contained the approval file's name. The rule is shape-based by
+design (the same property that makes the harmless 3001 probe fail), so this is
+the design working as specified, not a defect. Cost: one round trip.
+
+Both self-test suites reproduce clean at head `2ffc7a7` — 26/26 and 13/13 (C19).
+
+### R3: the instrument failed, and it fails everywhere
+
+witness.js was authored before the incisions specifically so it could not be
+tuned to its own result, and had never been executed (C14). Testing it before
+trusting it is the entire point of R3, and R3 earned its place: the witness is
+defective in three independent ways.
+
+**What worked, and deserves credit** (C24): the four dev-DB refusal branches;
+the pre-flight backup, written and its path printed before anything else ran;
+the month-to-date cap correction, which read `$0.3928` already spent and armed
+`monthly<=$0.8928` rather than starving the run at `$0.50`; boot on
+`127.0.0.1:3999` with 3001 never touched; and a ledger pre-snapshot naming
+`cmrzu1bcd0051wlo08nakbblp` — the same newest row C9 reports, re-derived through
+a different code path. Everything before authentication is sound.
+
+**Defect 1 — the transport is wrong (C20).** witness.js authenticates with an
+`authorization: Bearer <token>` header. The app has no bearer path at all:
+`requireAuth` and `optionalAuth` in `backend/src/lib/auth.js` read the session
+exclusively from the httpOnly cookie `cutprotocol_session`. Every authenticated
+call the witness makes — the profile PUT, the generate POST — would 401 even if
+it held a valid token.
+
+**Defect 2 — there is no token to hold (C21).** `POST /api/auth/register`
+responds `{ id, email, role }` and issues its session through
+`setSessionCookie`. No `token`, no `accessToken`. witness.js's `if (!token)
+throw` therefore fires even on a virgin zero-user install where the
+registration gate would have opened.
+
+Defects 1 and 2 together mean the witness cannot work against ANY database. Not
+"fails on a populated dev.db" — fails, period. Its authenticated path was
+authored against an auth model this app does not have.
+
+**Defect 3 — the gate, which is what actually fired (C22).** `POST
+/api/auth/register` returned 403. The route permits registration only on a
+zero-user install or from a caller holding a live session; the witness
+hard-asserts its target is the owner's populated `backend/prisma/dev.db` and
+sends no session. The gate is correct, documented, and predates the witness.
+
+**Defect 4 — the failure signal is corrupted (C23).** The error path exits
+**127** with a libuv assertion, not the documented 1, because `main().catch()`
+disconnects Prisma while the `process.on('exit', shutdown)` handler kills the
+spawned server. A crash and a cap breach must never be confusable by exit code;
+today they are distinguishable only by reading the text.
+
+### Why no manifest change was proposed
+
+R3 asks for "the exact one-line manifest change for the OWNER". There is no
+honest one, and inventing one would be worse than saying so.
+
+The defect is in `scripts/surgery/witness.js`, which is sealed. In
+`.claude/hooks/guard-edit.js` the `locked` block testing
+`lower.startsWith('scripts/surgery/')` runs and calls `die()` BEFORE
+`manifest.allow` is ever read — so adding `"scripts/surgery/witness.js"` to the
+allow list is **inert**, which is the obvious wrong fix and is worth naming as
+such. The only manifest edit that opens that door is `"locked": false`, which
+unseals `.claude/`, both manifests, and every harness script at once: dismantling
+the cage to repair one file, and handing this session the power to rewrite its
+own guards (C26).
+
+The correct remedy needs no manifest change at all. **The hooks bind this
+session's tool calls; they do not bind the owner's editor.** The repair is an
+owner-hand edit to witness.js, with the seal left intact and `locked:true`
+preserved. The three edit sites are named in `evidence/E8-witness-dryrun.txt`.
+
+### Second, independent blocker
+
+Even with a working witness, R4 could not have proceeded: the body of PROMPT S2
+— which R4 states is "pasted below this file", and from which M1–M6 are to be
+executed "exactly as written" — was not present in the session input. M1–M6 were
+therefore not attempted, and no file under `backend/src/` was modified (C27).
+
+### Debt status changed by this session
+
+- **`witness.js` is UNRUN** — CLOSED as written, REOPENED worse. It has now run,
+  and it does not work. Was: "its boot, auth and profile paths are unproven."
+  Now: boot proven, auth proven broken.
+- **The binding failure (C4/C5/C6)** — CLOSED. Proven bitten, nine refusals.
+- **The surgery, M1–M6** — still unstarted, now blocked on two doors rather than
+  one.

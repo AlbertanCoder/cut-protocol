@@ -1,0 +1,105 @@
+E8 — THE INSTRUMENT UNDER TEST (R3, resume session)
+===================================================
+
+witness.js was authored before the incisions, deliberately, so it could not be
+tuned to the result it is supposed to measure (its own header, lines 27-29).
+C14 recorded that it had never been executed. This is its first execution.
+Per R3, this run tests the INSTRUMENT, not the app.
+
+VERDICT: the instrument FAILED. Two defects, one fatal.
+
+
+RUN 1 — the literal invocation as written in R3
+-----------------------------------------------
+  $ node scripts/surgery/witness.js --dry-run
+
+  WITNESS REFUSED: --brain must be exactly "on" or "off".
+  EXIT=2
+
+Not a defect. `--brain` is documented as required (witness.js:22, enforced at
+:64) and the refusal is clean, named, and exits 2. Recorded because R3 quotes
+the invocation without the flag; the prompt's line is incomplete, the script
+is not.
+
+
+RUN 2 — the complete invocation
+-------------------------------
+  $ node scripts/surgery/witness.js --brain off --dry-run --label dryrun
+
+  == WITNESS ==
+  run        : brain=off port=3999 dry-run=true
+  db         : C:\Users\<account>\Desktop\cut-protocol\backend\prisma\dev.db (asserted dev)
+  backup     : C:\Users\<account>\Desktop\cut-protocol\backend\prisma\dev.db.backup-witness-20260727-104453
+  caps       : designs<=2 calls<=12 perRequest<=$0.5 daily<=$0.5 monthly<=$0.8928 (month-to-date $0.3928 + $0.5)
+  t0         : 2026-07-27T10:44:53.870Z
+  ledger pre : newest=cmrzu1bcd0051wlo08nakbblp @ 2026-07-25T03:51:39.182Z
+  boot       : node server.js on 127.0.0.1:3999
+  boot       : up
+
+  WITNESS FAILED: register failed 403: {"error":"This machine already has an account. Sign in to add another profile."}
+  Assertion failed: !(handle->flags & UV_HANDLE_CLOSING), file src\win\async.c, line 76
+  EXIT=127
+
+What PASSED, and should be credited:
+  - dev-DB assertion (all four refusal branches, witness.js:80-85)
+  - backup taken BEFORE anything else ran, path printed first
+  - cap arming, including the month-to-date correction at :95-97 — it read
+    $0.3928 already spent and set the monthly ceiling to $0.8928 rather than
+    starving the run at $0.50. That subtlety works.
+  - ledger pre-snapshot: newest row cmrzu1bcd0051wlo08nakbblp, matching C9
+    exactly and independently
+  - boot on 127.0.0.1:3999, healthz answered, 3001 never touched
+
+What FAILED:
+
+
+DEFECT 1 (FATAL, unreachable-by-construction)
+---------------------------------------------
+witness.js:208 acquires its dedicated account with an UNAUTHENTICATED
+  POST /api/auth/register
+
+backend/src/routes/auth.js:72-93 is not an open endpoint, by deliberate design
+documented at :62-71. It permits registration only when EITHER
+  (a) the install has zero users  — `isFirstRun`, :81-82, or
+  (b) the caller already holds a session resolving to a live user — :87-89.
+
+The witness hard-asserts its target is backend/prisma/dev.db (:83-85) and
+refuses every other path. That DB is the owner's populated dev database, so
+(a) is false. The witness sends no token on the register call, so (b) is false.
+403, every time.
+
+This is not flaky and not environmental. The witness can never satisfy either
+branch against a populated dev.db, and it refuses to run against anything
+else. The instrument as frozen cannot acquire an account on this machine.
+
+The gate is correct and predates the witness. The witness is what is wrong.
+
+
+DEFECT 2 (SECONDARY, and it corrupts the failure signal)
+--------------------------------------------------------
+The error path crashed rather than exiting:
+
+  Assertion failed: !(handle->flags & UV_HANDLE_CLOSING), file src\win\async.c, line 76
+  EXIT=127
+
+`main().catch()` (:297-305) calls `prisma.$disconnect()` while the
+`process.on('exit', shutdown)` handler (:165) kills the spawned server, and
+libuv aborts on Windows. The intended exit code on failure is 1 (:304); the
+observed code is 127.
+
+This matters beyond tidiness: any harness that keys on the witness's exit code
+reads a failed witness as a nonstandard crash code, not as the documented 1.
+A cap-breach exit (1, :294) and a crash (127) must not be confusable.
+
+Mitigation observed this run: no listener remained on port 3999 afterwards, so
+the child server was reaped despite the abort. That is luck, not contract.
+
+
+SIDE EFFECTS LEFT ON DISK
+-------------------------
+  backend/prisma/dev.db.backup-witness-20260727-104453   (17,629,184 bytes)
+
+Untracked and gitignored; the backup is the witness working as designed. No
+witness account was created (register was refused before any write), so dev.db
+itself is unmutated. C14 — "witness.js has never been executed, no
+dev.db.backup-witness-* exists" — is now superseded by this file.
