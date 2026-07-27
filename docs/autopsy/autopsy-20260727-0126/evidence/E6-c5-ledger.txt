@@ -1,0 +1,49 @@
+E6 — C5 THE LEDGER (read-only, node:sqlite DatabaseSync { readOnly: true })
+
+==================================================
+DEV  backend/prisma/dev.db
+==================================================
+  total tables: 26
+  brain-related tables: BrainConversation, BrainMessage, BrainPreference, BrainSolveRun,
+                        GeneratedPlan, GeneratedPlanItem, GeneratedRecipe, LlmUsage, UserLibraryEntry
+  LlmUsage columns: id, userId, model, phase, intent, inputTokens, outputTokens, cacheReadTokens, costUsd, createdAt
+  *** LlmUsage TOTAL ROWS: 13 ***
+    {"phase":"classify","model":"claude-haiku-4-5","n":8,"first":1784597049138,"last":1784651261011,"usd":0.0026}
+    {"phase":"chat","model":"claude-sonnet-5","n":4,"first":1784597069405,"last":1784600541456,"usd":0.1983}
+    {"phase":"create","model":"claude-opus-5","n":1,"first":1784951499182,"last":1784951499182,"usd":0.1919}
+  BrainConversation 0 · BrainMessage 0 · BrainPreference 0 · BrainSolveRun 0
+  GeneratedPlan 0 · GeneratedPlanItem 0 · GeneratedRecipe 0 · UserLibraryEntry 0
+
+==================================================
+PKG  userData/cutprotocol.db   (the DB the installed app uses)
+==================================================
+  total tables: 28
+  brain-related tables: (all 9 present)
+  *** LlmUsage TOTAL ROWS: 0 ***
+  every other brain table: 0 rows
+
+--- TIMESTAMPS (epoch ms -> UTC | local) ---
+classify first   2026-07-21T01:24:09.138Z | Mon Jul 20 2026 19:24:09
+classify last    2026-07-21T16:27:41.011Z | Tue Jul 21 2026 10:27:41
+chat first       2026-07-21T01:24:29.405Z | Mon Jul 20 2026 19:24:29
+chat last        2026-07-21T02:22:21.456Z | Mon Jul 20 2026 20:22:21
+create (only)    2026-07-25T03:51:39.182Z | Fri Jul 24 2026 21:51:39
+
+--- WHICH SURFACE WRITES WHICH PHASE ---
+aiRecipeClient.js:210   phase: "create"    <-- recipe DRAFTING (used by /generate-drafts AND, since
+                                               2026-07-26, by mealRouter on the generate path)
+brain/chat.js:138       phase: "chat"
+brain/classifier.js:34  phase: "classify"  (Tier-1 guard in FRONT of chat -> part of the chat surface)
+brain/critic.js:85      phase: "critic"    <-- ZERO ROWS, ALL TIME
+
+--- VERDICT ---
+V-LEDGER: the brain HAS drawn breath. 13 calls, ~$0.393 total, all in the DEV db.
+  * chat surface (chat + its classify guard): 12 of 13 calls, 2026-07-20/21.
+  * OUTSIDE chat: exactly 1 call — phase "create" (aiRecipeClient recipe drafting),
+    2026-07-24 21:51 local.
+  * FROM THE MEAL-GENERATE PATH: 0 calls, all time. That path did not exist until
+    commit 2297f26 (2026-07-26 16:11) and has not been exercised since.
+  * phase "critic": 0 rows all time — independent corroboration that
+    reviseDayWithCritic has never once fired (matches C3's code-level FALSIFIED).
+  * The PACKAGED app's own database has 0 rows: no successful LLM call has ever
+    been made from an installed build.

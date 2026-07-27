@@ -1,0 +1,80 @@
+E4 — C3 THE CALL MAP (every path from a user action to an LLM entry point)
+
+THE SINGLE TRANSPORT
+  backend/src/lib/brain/llm.js:64-65   new Anthropic(...)  <-- the ONLY SDK construction in src/
+  Entry points: askJSON(:146) · askSchemaJSON(:174) · runToolLoop(:208)
+
+================================================================
+SURFACE 1 — POST /plans/generate  ("the Generate button")
+================================================================
+plans.js:176   router.post("/generate")
+plans.js:295     const { isBrainEnabled } = require("../lib/brain/llm.js");
+plans.js:296     const brainOn = isBrainEnabled();
+plans.js:304     ...(brainOn ? { aiFallback: { enabled:true, maxCalls: brainCallBudget(horizon), profile } } : {})
+  -> mealSolver.js:1168  generateHorizonPlan({... aiFallback})
+  -> mealSolver.js:1203    brainCallsLeft = aiFallback?.enabled ? (aiFallback.maxCalls ?? 0) : 0
+  -> mealSolver.js:1223-24  forwards aiFallback per window while brainCallsLeft > 0
+  -> mealSolver.js:655   generateBestWeekPlan
+  -> mealSolver.js:679     attempts loop STRIPS aiFallback ({...options, aiFallback: undefined})  [deliberate]
+  -> mealSolver.js:723     if (options.aiFallback?.enabled && best?.slots?.length)   <-- POST-SELECTION PASS
+  -> mealSolver.js:724-25    require("./weeklyPlanner.js").fillGapsWithBrain(...)
+  -> weeklyPlanner.js:645  fillGapsWithBrain
+  -> weeklyPlanner.js:666-73  ONLY slots with (!s.recipeId) => empty[]  OR (s.warning) => roughs[]
+  -> weeklyPlanner.js:673-74  for (const i of [...empty, ...roughs]) { if (callsRemaining <= 0) break;
+  -> weeklyPlanner.js:688    tryAiFallback(target, recipePool, usageCount, ctx)
+  -> weeklyPlanner.js:453    mealRouter.routeMealSlot
+  -> mealRouter.js:301-308     1. CACHE hit  -> RETURNS, no LLM
+  -> mealRouter.js:311-323     2. LIBRARY scan hit -> RETURNS, no LLM
+  -> mealRouter.js:48 / generateRecipeDrafts   3. only if neither fit
+  -> aiRecipeClient.js:207   governedModelCallOrThrow(...)
+  -> governance.js:63          if (!process.env.ANTHROPIC_API_KEY) -> LlmRefusal "no-api-key" 503
+  -> aiRecipeClient.js:203   askSchemaJSON
+  -> llm.js:185              client().messages.create   *** LLM CALLED ***
+
+  FIRES ONLY IF ALL FOUR HOLD:
+    (a) isBrainEnabled() === true                          [plans.js:296]
+    (b) horizon.kind !== "meal"  (the 1-meal path returns at plans.js:208-243, no aiFallback)
+    (c) after best-of-5, >=1 slot is EMPTY or carries a WARNING   [weeklyPlanner.js:666-671]
+    (d) neither the slot cache nor a library scan fits that slot  [mealRouter.js:301-323]
+    (e) AND governance.js:63 passes -> requires a literal ANTHROPIC_API_KEY
+
+================================================================
+SURFACE 2 — POST /plans/day-options  (the critic; the prompt's ":518" landmark)
+================================================================
+plans.js:395   router.post("/day-options")
+plans.js:416-17  generateDayCandidates({ ..., profile })     <-- the ONLY caller passing profile
+  -> mealSolver.js:515   if (profile && candidates.length)
+  -> mealSolver.js:518     require("./brain/index.js") -> { isBrainEnabled, reviseDayWithCritic }
+  -> mealSolver.js:519     if (isBrainEnabled())
+  -> mealSolver.js:534     reviseDayWithCritic(...)  -> critic.js:76 askJSON -> llm.js:148  *** LLM CALLED ***
+
+  `profile` occurs in mealSolver.js at ONLY :460 (param, default null), :515, :538.
+  generateBestWeekPlan(:655) and generateHorizonPlan(:1168) never reference it.
+  chatPlan.js:32 comment: "No `profile` passed -> the LLM critic block ... is [skipped]".
+  => reviseDayWithCritic CANNOT fire during POST /plans/generate.
+
+================================================================
+SURFACE 3 — POST /api/recipes/generate-drafts
+================================================================
+recipes.js:94  router.post("/generate-drafts")
+recipes.js:55    llmAvailability("recipeDrafts")   [governance gate]
+recipes.js:110   generateRecipeDrafts(...) -> aiRecipeClient.js:207 -> :203 askSchemaJSON -> llm.js:185
+  NOTE: FEATURES.recipeDrafts flag = "AI_RECIPE_DRAFTS" (governance.js:52), which is set in NO env file.
+  It cannot rescue the route anyway: governance.js:63's no-api-key return precedes the flag check at :69.
+
+================================================================
+SURFACE 4 — the chat coach
+================================================================
+routes/brain.js -> brain/chat.js:53 brainChat
+  chat.js:55   enabled = isBrainEnabled()      <-- NO governance gate. Relay-aware.
+  chat.js:58   runLoop = runToolLoop -> llm.js:220 client().messages.create  *** LLM CALLED ***
+  Also reachable: classifier.js:23 askJSON · selector.js:58 runToolLoop · create.js:181 runToolLoop
+  · tailor.js:59 askJSON (dormant)
+
+================================================================
+V-WIRING: VERIFIED — a path from "user clicks generate" to an LLM EXISTS.
+          Chain above, plans.js:296 -> llm.js:185. It did not exist before commit
+          2297f26 (2026-07-26 16:11); it exists at this moment.
+V-CRITIC:  FALSIFIED — reviseDayWithCritic does NOT fire in a real generate.
+          Forced by: mealSolver.js:515 requires `profile`; the only caller that
+          passes one is plans.js:416-17 (/day-options), not /generate.

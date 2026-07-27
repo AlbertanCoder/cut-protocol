@@ -1,0 +1,50 @@
+RECOMP STATE RECEIPT v1
+run_id: autopsy-20260727-0126
+issued: 2026-07-27T01:26:06Z
+== REPO ==
+branch: fix/audit-remediation
+head: e328d34847a6f4b5272a0111a9bc0de85f321454
+preserve_commit: e328d34847a6f4b5272a0111a9bc0de85f321454 (was 2297f26; 1 dirty file: .agent/state.json)
+dirty_after: 0 (excluding this run's own docs/autopsy/ artifacts)
+== VERDICTS ==
+V-TRANSPORT: dev=direct · packaged=relay — E3, E5 (measured by execution)
+V-RELAY-VARS: present (packaged only, via userData/brain.json) · reachable: no (ECONNREFUSED 127.0.0.1:8787) — E3
+V-KEY: present+shape "sk-ant-…" len 108 in backend/.env; unreachable in packaged mode (llm.js:63 relay wins) — E3
+V-ENABLED: true in BOTH modes — the flag is not the blocker — E5
+V-WIRING (generate→LLM path exists): VERIFIED — E4, E7 (plans.js:304 → mealSolver.js:723 → weeklyPlanner.js:688/453 → mealRouter.js:48 → aiRecipeClient.js:203 → llm.js:185)
+V-CRITIC (mealSolver:515 fires in real generate): FALSIFIED — E4, E7, E6 (needs `profile`; only /day-options passes one; phase "critic" = 0 rows all time)
+V-LEDGER (LLM calls outside chat, all time): count=1 (phase "create", 2026-07-24 21:51 local); total=13, ~$0.393; from the generate path=0 — E6
+V-WITNESS (live generate observed): skipped · ledger delta=0 — E8
+== SYMPTOM MAP ==
+S1 "AI unavailable": governance.js:63-64 tests a literal ANTHROPIC_API_KEY and returns 503 "no API key is configured" BEFORE the relay-aware isBrainEnabled() at :68; a packaged install ships no key by design, so all four features (chat/critic/classify/recipeDrafts) are refused while relayStore.status() reports {"enabled":true,"reason":"ok"} — E5
+S2 endless spinner: UNVERIFIABLE(C7 witness skipped — not reproduced live; in packaged mode governance 503s instantly rather than hanging). Latent defect found, NOT claimed as cause: client aborts generatePlan at 45s (api.js:124,362) vs up to 4×90s server brain budget (llm.js:131 × plans.js:159-162) — E7
+S3 coach works: chat.js:55 gates on isBrainEnabled() ONLY, bypassing governance entirely — the relay-aware gate vs the relay-blind one is exactly why S1 and S3 coexist; 12 chat+classify ledger rows prove it really ran — E6, E7
+S4 meals never change: (a) the generate→brain path has never fired, 0 ledger rows all time; (b) the critic cannot fire on generate at all (V-CRITIC); (c) packaged governance 503s the path before any transport — E4, E5, E6
+== LIES FOUND ==
+- ".agent/state.json: LlmUsage = 0 rows" — killed by E6 (dev.db holds 13 rows, ~$0.393; 0 is true only of the packaged DB)
+- "commit 2297f26: the brain now runs during a real generate" — killed by E5 + E6 (path built, never run: 0 rows from it all time; packaged governance refuses it pre-transport)
+- ".agent/state.json rootCause: there is NO post-selection brain pass" — killed by E7 (mealSolver.js:723-731 IS that pass; claim superseded 7 minutes after it was written)
+- ".agent/state.json: aiFallback set only at plans.js:626 (legacy swap)" — killed by E7 (plans.js:304 also sets it; legacy site moved to :664)
+- "PROGRESS.md:59-60: API keys absent in a shared build → brain off, app works fully offline" — killed by E5 (with brain.json present, packaged isBrainEnabled()=true and status reason="ok"; on-and-broken, not off)
+- ".agent/state.json: head = bd61418" — killed by E1 (two commits stale; 2eac08f and 2297f26 landed after)
+== BLOCKERS ==
+- S2 endless spinner: UNVERIFIABLE — never reproduced; C7 witness skipped.
+- V-WITNESS skipped, two independent blockers: (1) dev is BRAIN=on with a live ANTHROPIC_API_KEY and a real generate can issue up to 4 paid draft calls, breaching this run's $0.00 mandate; (2) the only running server is the owner's LIVE packaged app (PID 24548, port 3001) — /api/brain/status returns 401, and exercising generate there would write into his real personal DB.
+- PROGRESS.md:381 "every safety guard proven": UNVERIFIABLE — no artifact in this run tests the guards.
+== NEXT PROMPT MUST ==
+- Make backend/src/lib/brain/governance.js:63 relay-aware — mirror llm.js:91 (`ANTHROPIC_API_KEY || relayConfig()`) or move the check below the isBrainEnabled() call at :68. This ONE line refuses all four features in every packaged install and is root cause #1.
+- Resolve the relay before anything else can be observed: 127.0.0.1:8787 is ECONNREFUSED while userData/brain.json (written 2026-07-26 10:44) still points at it. Either start/repoint it, or call clearConfig() (brainRelayConfig.js:149) to fall back cleanly.
+- Reconcile the timeout budget: frontend/src/lib/api.js:124,362 (45s) vs llm.js:131-133 (90s/call) vs plans.js:159-162 (4 calls/week, 12/month). Either move generatePlan to TIMEOUT.LLM or give the brain pass a wall-clock budget that fits inside the client's.
+- Treat "the brain runs on generate" as UNPROVEN until a witnessed run shows a NONZERO LlmUsage delta. The path exists (V-WIRING) but has 0 rows all time; it only fires when a slot survives best-of-5 empty-or-warned AND neither the fingerprint cache (mealRouter.js:301-308) nor a library scan (:311-323) fits it.
+- Decide the critic's fate explicitly: to make it reachable from a real generate, `profile` must be accepted and forwarded by generateHorizonPlan (mealSolver.js:1168) and generateBestWeekPlan (:655) into generateDayCandidates (:460). Today only /day-options (plans.js:416-17) passes one.
+- Correct or delete .agent/state.json's "LlmUsage = 0", "no post-selection pass", "set only at :626" and "head bd61418" before any session inherits them as fact.
+== EVIDENCE INDEX ==
+- E1: docs/autopsy/autopsy-20260727-0126/evidence/E1-c0-preserve.txt — branch, pre/post HEAD, dirty count, 15-commit log
+- E2: docs/autopsy/autopsy-20260727-0126/evidence/E2-agent-state.json — read-only copy of .agent/state.json as found
+- E3: docs/autopsy/autopsy-20260727-0126/evidence/E3-c2-transport.txt — transport selection, all 3 env sources (redacted), boot chain, tokenless probe
+- E4: docs/autopsy/autopsy-20260727-0126/evidence/E4-c3-callmap.txt — the four LLM surfaces, full call map, exact firing conditions
+- E5: docs/autopsy/autopsy-20260727-0126/evidence/E5-c4-flag-measured.txt — dev + packaged isBrainEnabled()/governance, measured by execution
+- E6: docs/autopsy/autopsy-20260727-0126/evidence/E6-c5-ledger.txt — LlmUsage read-only query, both DBs, phase→surface mapping
+- E7: docs/autopsy/autopsy-20260727-0126/evidence/E7-raw-output.txt — verbatim unedited command output for every load-bearing claim
+- E8: docs/autopsy/autopsy-20260727-0126/evidence/E8-c6-contradictions.txt — all 9 repo claims adjudicated + C7 witness ruling
+END RECEIPT

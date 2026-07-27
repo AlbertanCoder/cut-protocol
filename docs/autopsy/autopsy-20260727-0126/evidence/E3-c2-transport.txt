@@ -1,0 +1,63 @@
+E3 — C2 TRANSPORT (all values redacted; presence/shape/length only)
+
+--- CODE: transport selection, backend/src/lib/brain/llm.js ---
+:33  function relayConfig() {
+:34    const rawUrl = String(process.env.BRAIN_RELAY_URL || "").trim();
+:35    const token  = String(process.env.BRAIN_RELAY_TOKEN || "").trim();
+:38    if (!rawUrl || !token) return null;      // partial config is NOT config
+:44    if (parsed.protocol === "http:") { if (!isLoopback) return null; }
+:60  function client() {
+:62    const relay = relayConfig();
+:63    _client = relay
+:64      ? new Anthropic({ baseURL: relay.baseURL, apiKey: relay.token })
+:65      : new Anthropic();                      // reads ANTHROPIC_API_KEY from env
+:89  function isBrainEnabled() {
+:90    if (process.env.BRAIN !== "on") return false;
+:91    return Boolean(process.env.ANTHROPIC_API_KEY) || Boolean(relayConfig());
+
+--- ENV SOURCE 1: shell environment ---
+BRAIN: absent
+BRAIN_RELAY_URL: absent
+BRAIN_RELAY_TOKEN: absent
+ANTHROPIC_API_KEY: absent
+CUT_PROTOCOL_USERDATA: absent
+CUT_PROTOCOL_DB_PATH: absent
+
+--- ENV SOURCE 2: backend/.env (loaded by server.js:10 require("dotenv/config")) ---
+ANTHROPIC_API_KEY: present, prefix="sk-ant-...", len 108
+BRAIN: present, value len 2 ("on")
+BRAIN_RELAY_URL: ABSENT
+BRAIN_RELAY_TOKEN: ABSENT
+(backend/.env.local: ABSENT. backend/.env.qc: BRAIN present, ANTHROPIC_API_KEY EMPTY, no relay vars.)
+
+--- ENV SOURCE 3: <userData>/brain.json (packaged mode only) ---
+path: C:/Users/<account>/AppData/Roaming/Cut Protocol/brain.json
+mtime: 2026-07-26 10:44:44 -0600, 104 bytes
+relayUrl:   present, scheme=http: host=127.0.0.1, len 21
+relayToken: present, prefix="na4Psb...", len 42
+
+--- BOOT CHAIN that injects source 3 ---
+electron/main.cjs:367   process.env.CUT_PROTOCOL_USERDATA = app.getPath("userData");
+backend/server.js:21    require("./src/lib/brainRelayConfig.js").applyToEnv();
+brainRelayConfig.js:34-39  configDir(): CUT_PROTOCOL_USERDATA -> else dirname(CUT_PROTOCOL_DB_PATH) -> else null
+brainRelayConfig.js:98   if (!env.BRAIN_RELAY_URL) env.BRAIN_RELAY_URL = cfg.relayUrl;
+brainRelayConfig.js:99   if (!env.BRAIN_RELAY_TOKEN) env.BRAIN_RELAY_TOKEN = cfg.relayToken;
+brainRelayConfig.js:100  if (!env.BRAIN) env.BRAIN = "on";
+=> In DEV standalone, configDir() returns null (both vars unset), so brain.json is NOT read.
+=> In PACKAGED Electron, configDir() resolves and brain.json IS read.
+
+--- TOKENLESS REACHABILITY PROBE (no auth header, no token sent) ---
+probing: http://127.0.0.1:8787/healthz  (no headers)
+RESULT: NO RESPONSE — ECONNREFUSED — fetch failed
+
+netstat -ano -p tcp | grep 127.0.0.1:(8787|3001|5174):
+  TCP    127.0.0.1:3001         0.0.0.0:0              LISTENING       24548
+(nothing on 8787)
+
+--- VERDICT ---
+V-TRANSPORT is MODE-DEPENDENT:
+  DEV (node server.js, backend/.env)  -> direct   [relayConfig() null: no relay vars in any dev-visible source]
+  PACKAGED (Electron)                 -> relay    [brain.json injects both vars; llm.js:63 relay wins]
+V-RELAY-VARS: present (packaged only, via brain.json) · reachable: NO (ECONNREFUSED)
+V-KEY: present in backend/.env, "sk-ant-...", len 108 — but UNREACHABLE in packaged mode,
+       because llm.js:63 selects relay whenever relayConfig() is non-null.

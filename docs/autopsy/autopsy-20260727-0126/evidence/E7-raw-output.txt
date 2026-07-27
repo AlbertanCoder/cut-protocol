@@ -1,0 +1,175 @@
+E7 — RAW COMMAND OUTPUT (verbatim, unedited). Captured 2026-07-27T01:41:50Z
+
+### grep -rn 'aiFallback' src/routes/plans.js
+286:    // `aiFallback` — and the ONLY caller that ever did was the legacy one-shot
+304:      ...(brainOn ? { aiFallback: { enabled: true, maxCalls: brainCallBudget(horizon), profile } } : {}),
+664:      { aiFallback: { enabled: true, maxCalls: 1, profile } }
+
+### grep -n 'profile' src/lib/mealSolver.js
+460:  count = 3, attempts = 9, rng = Math.random, profile = null,
+508:  // behind the ANTHROPIC_API_KEY + BRAIN gate AND requiring a profile (the
+510:  // no profile is supplied (e.g. every unit test) — this whole block is skipped:
+515:  if (profile && candidates.length) {
+538:        profile,
+1004:  // high-protein profile (0 of 7 days in tolerance, every one of them a fat
+
+### grep -rn 'generateDayCandidates' src/
+src/lib/brain/chatPlan.js:13:const { generateDayCandidates } = require("../mealSolver.js");
+src/lib/brain/chatPlan.js:29:  const _generate = deps.generateDayCandidates || generateDayCandidates;
+src/lib/brain/chatPlan.js:32:  // No `profile` passed → the LLM critic block inside generateDayCandidates is
+src/lib/brain/index.js:2:// (mealSolver.generateDayCandidates) and gated by isBrainEnabled(). Untouched by
+src/lib/mealSolver.js:456:async function generateDayCandidates({
+src/lib/mealSolver.js:1445:  generateDayCandidates, generateBestWeekPlan, alternatesForSlot, SCORE_WEIGHTS,
+src/routes/plans.js:7:  generateDayCandidates, alternatesForSlot, buildBias, applyPrepFilter, applyFilterStack, varietyOutlook,
+src/routes/plans.js:416:    const result = await generateDayCandidates({
+
+### sed -n '723,731p' src/lib/mealSolver.js   (post-selection brain pass)
+  if (options.aiFallback?.enabled && best?.slots?.length) {
+    const { fillGapsWithBrain } = require("./weeklyPlanner.js");
+    const pass = await fillGapsWithBrain(best.slots, {
+      dailyTarget, mealConfig, recipePool,
+      aiFallback: options.aiFallback,
+      dayIndices: options.dayIndices,
+    });
+    best.slots = pass.slots;
+    best.brain = { attempted: pass.attempted, filled: pass.filled, replaced: pass.replaced, callsUsed: pass.callsUsed };
+
+### sed -n '666,676p' src/lib/weeklyPlanner.js   (gap-only firing condition)
+  const empty = [];
+  const roughs = [];
+  out.forEach((s, i) => {
+    if (!s.recipeId) empty.push(i);
+    else if (s.warning) roughs.push(i);
+  });
+
+  for (const i of [...empty, ...roughs]) {
+    if (ctx.callsRemaining.n <= 0) break;
+    const target = targets.get(slotKeyOf(out[i]));
+    if (!target) continue; // a slot with no matching target is not ours to fill
+
+### sed -n '58,69p' src/lib/brain/governance.js   (the relay-blind gate)
+function llmAvailability(feature) {
+  const f = FEATURES[feature];
+  if (!f) {
+    return { enabled: false, reason: "unknown-feature", status: 503, message: `Unknown AI feature "${feature}" — it is not registered in the governance table, so it is refused.` };
+  }
+  if (!process.env.ANTHROPIC_API_KEY) {
+    return { enabled: false, reason: "no-api-key", status: 503, message: "AI features are unavailable in this build — no API key is configured. Everything else works normally." };
+  }
+  // BRAIN=on arms every registered feature (the staged turn-on switch, shared
+  // with chat/critic/classify via the SAME isBrainEnabled() implementation).
+  if (isBrainEnabled()) return { enabled: true, feature };
+  if (f.flag && process.env[f.flag] === "on") return { enabled: true, feature };
+
+### sed -n '89,92p' src/lib/brain/llm.js   (isBrainEnabled)
+function isBrainEnabled() {
+  if (process.env.BRAIN !== "on") return false;
+  return Boolean(process.env.ANTHROPIC_API_KEY) || Boolean(relayConfig());
+}
+
+### sed -n '60,68p' src/lib/brain/llm.js   (client/transport selection)
+function client() {
+  if (!_client) {
+    const relay = relayConfig();
+    _client = relay
+      ? new Anthropic({ baseURL: relay.baseURL, apiKey: relay.token })
+      : new Anthropic(); // reads ANTHROPIC_API_KEY from env
+  }
+  return _client;
+}
+
+### grep -n 'SOLVER:\|LLM:\|READ:' ../frontend/src/lib/api.js
+121:  READ: 15_000,     // plain GETs against the local DB
+124:  SOLVER: 45_000,   // week/day solves, grocery lists, plan mutations
+126:  LLM: 120_000,     // AI generation / brain chat
+
+### grep -n 'generatePlan:' ../frontend/src/lib/api.js
+362:  generatePlan: (filters, opts) => request("/plans/generate", { method: "POST", body: JSON.stringify({ filters }), timeoutMs: TIMEOUT.SOLVER, ...opts }),
+
+### sed -n '131,133p' src/lib/brain/llm.js   (DRAFT_TIMEOUT_MS)
+const DRAFT_TIMEOUT_MS = Number(process.env.BRAIN_DRAFT_TIMEOUT_MS) > 0
+  ? Number(process.env.BRAIN_DRAFT_TIMEOUT_MS)
+  : 90000;
+
+### sed -n '159,162p' src/routes/plans.js   (brainCallBudget)
+function brainCallBudget(horizon) {
+  const days = Math.max(1, Number(horizon?.days) || 1);
+  return Math.min(BRAIN_CALL_CEILING, Math.max(1, Math.ceil(days / 2)));
+}
+
+### grep -rn 'swapSlot' ../frontend/src   (is the legacy path used?)
+../frontend/src/lib/api.js:368:  swapSlot: (planId, slotId, opts) => request(`/plans/${planId}/slots/${slotId}/swap`, { method: "POST", timeoutMs: TIMEOUT.SOLVER, ...opts }),
+
+=================== APPENDED: the chain's final hops ===================
+### sed -n '686,694p' src/lib/weeklyPlanner.js   (fillGaps -> tryAiFallback)
+    let result = null;
+    try {
+      result = await tryAiFallback(target, recipePool, usageCount, ctx);
+    } catch {
+      result = null; // tryAiFallback already degrades; this is belt-and-braces
+    }
+    if (result && result.recipeId) {
+      out[i] = toSlotRecord(target, result);
+      if (wasFilled) replaced++; else filled++;
+
+### sed -n '439,462p' src/lib/weeklyPlanner.js   (tryAiFallback -> mealRouter)
+async function tryAiFallback(target, recipePool, usageCount, aiFallback) {
+  aiFallback.callsRemaining.n--;
+  try {
+    // A directly-injected generator BYPASSES the router (existing weeklyPlanner /
+    // recipeGeneration tests rely on this exact seam). Behaviour is unchanged.
+    if (aiFallback.generateAndSaveSlotRecipeImpl) {
+      const generated = await aiFallback.generateAndSaveSlotRecipeImpl(target, aiFallback.profile, aiFallback.existingRecipeNames);
+      return finishAiSlot(generated, target, recipePool, usageCount, aiFallback);
+    }
+    // Production default (Stage 4): route through the Library->Brain router,
+    // which adds the fingerprint cache, per-user cost cap + tiering, and a
+    // post-persist allergen re-screen on the resolved (not just model-named)
+    // ingredients. It calls filterRecipePool itself, so passing this run's
+    // already-filtered pool is a safe idempotent no-op.
+    const routeImpl = aiFallback.routeMealSlotImpl || require("./mealRouter.js").routeMealSlot;
+    const routed = await routeImpl(
+      { target, profile: aiFallback.profile, recipePool, existingRecipeNames: aiFallback.existingRecipeNames },
+      aiFallback.routerDeps || {}
+    );
+    // ok:false is honest degradation (closest-fit or unsolved). The solver's own
+    // resolveSlot already shipped its closest pool miss before reaching here, so
+    // an unfilled slot with a reason is the correct outcome — not a crash.
+    if (!routed.ok || !routed.recipe) return null;
+    return finishAiSlot(routed.recipe, target, recipePool, usageCount, aiFallback, routed.scaled || null);
+
+### grep -n 'aiRecipeClient\|generateRecipeDrafts' src/lib/mealRouter.js
+17://   4 BRAIN     only now, and only through aiRecipeClient.generateRecipeDrafts,
+48:const { generateRecipeDrafts, DRAFT_MAX_TOKENS } = require("./aiRecipeClient.js");
+163: *     the model's own ingredient names were already screened in aiRecipeClient,
+259:    generateDraftsImpl = generateRecipeDrafts,
+
+### sed -n '200,212p' src/lib/aiRecipeClient.js   (-> governed call -> askSchemaJSON, phase 'create')
+ * nothing and get the Prisma-backed ledger and the real transport.
+ */
+async function generateRecipeDrafts(params, deps = {}) {
+  const { ask = askSchemaJSON, ledger, model = MODELS.escalation } = deps;
+  const prompt = buildPrompt(params);
+
+  let raw = null;
+  const parsed = await governedModelCallOrThrow(
+    {
+      feature: "recipeDrafts",
+      phase: "create",
+      intent: "recipe-drafts",
+      userId: params.userId ?? null,
+
+### sed -n '183,186p' src/lib/brain/llm.js   (askSchemaJSON -> the wire)
+  if (schema) params.output_config = { format: { type: "json_schema", schema }, ...(effort ? { effort } : {}) };
+
+  const response = await client().messages.create(params, { timeout: timeoutMs, maxRetries: 0 });
+  if (typeof onUsage === "function") onUsage(response.usage || null);
+
+### grep -rn 'phase: "' src/lib/aiRecipeClient.js src/lib/brain/chat.js src/lib/brain/classifier.js src/lib/brain/critic.js
+src/lib/aiRecipeClient.js:210:      phase: "create",
+src/lib/brain/chat.js:138:    const gate = await guardedCall(ledger, { projectedUsd, userId, model, phase: "chat", intent: "chat" },
+src/lib/brain/classifier.js:34:      gate = await guardedCall(ledger, { projectedUsd, userId: deps.userId ?? null, model, phase: "classify", intent: "guard" },
+src/lib/brain/critic.js:85:    const gate = await guardedCall(ledger, { projectedUsd, userId: input.userId, model, phase: "critic", intent: "critic" },
+
+### grep -n 'brain.create' src/lib/brain/governance.js   (dormant, no route)
+256:  { id: "brain.create", module: "src/lib/brain/create.js", entry: "generateRecipe", feature: null, costControl: "none", route: null, dormant: true },

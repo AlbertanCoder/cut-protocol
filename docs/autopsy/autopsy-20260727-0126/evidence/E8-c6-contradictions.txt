@@ -1,0 +1,70 @@
+E8 — C6 THE CONTRADICTIONS + C7 WITNESS RULING
+
+Each C1 claim tested against this run's own artifacts (E1-E7).
+
+K1  "0.2 transport hijack — dev=DIRECT KEY, packaged=RELAY(dead) ... dev has none"
+    [.agent/state.json done[1]]
+    VERIFIED. E3: no relay vars in shell or backend/.env. E5 (measured): dev ->
+    DIRECT KEY, packaged -> RELAY. E3 probe: ECONNREFUSED on 127.0.0.1:8787.
+
+K2  "mealRouter.js ... is weeklyPlanner's production default at :453 ... gated on
+     aiFallback, set only at plans.js:626 (legacy swap)"   [state.json done[2]]
+    PARTLY FALSIFIED. ":453" VERIFIED (E7: weeklyPlanner.js:453 requires
+    mealRouter.routeMealSlot). "set ONLY at :626" is FALSE NOW — E7 shows
+    plans.js:304 also sets it, and the legacy swap has moved to plans.js:664.
+
+K3  "0.4 ledger truth — LlmUsage = 0 rows"   [state.json done[3]]
+    FALSIFIED. E6: backend/prisma/dev.db holds 13 LlmUsage rows (~$0.393).
+    Zero is true ONLY of the packaged DB (userData/cutprotocol.db).
+
+K4  "THREE breaks ... (3) generateBestWeekPlan strips it ... there is NO
+     post-selection brain pass"   [state.json rootCause]
+    FALSIFIED AS OF NOW. E7: mealSolver.js:723-731 IS a post-selection pass
+    calling fillGapsWithBrain. The claim was true when written (22:04Z) and was
+    superseded 7 minutes later by commit 2297f26 (22:11Z).
+
+K5  "$0.00 — no model call has been made in this round"   [state.json stopGates]
+    VERIFIED. E6: newest LlmUsage row is 2026-07-24 21:51 local; the round in
+    question ran 2026-07-26. No row exists for 07-26.
+
+K6  "the brain now runs during a real generate"   [commit 2297f26]
+    FALSIFIED AS STATED. The PATH exists (V-WIRING VERIFIED, E4/E7), but "runs"
+    is not established and is contradicted twice:
+      (a) E6 — 0 LlmUsage rows have EVER originated from the generate path;
+      (b) E5 — in packaged mode governance.js:63 refuses recipeDrafts with
+          "no-api-key" 503 before any transport is attempted.
+    Wiring a path is not the same as the path running. The commit message claims
+    the second and only delivered the first.
+
+K7  "the brain router exists, it is just never called"   [commit 2eac08f]
+    VERIFIED at time of writing (15:20 local); superseded 51 minutes later.
+
+K8  "API keys simply absent in a shared build -> brain off, app works fully
+     offline"   [PROGRESS.md:59-60]
+    FALSIFIED on this machine. E5: with userData/brain.json present, packaged
+    isBrainEnabled() === true and relayStore.status() reports {"enabled":true,
+    "reason":"ok"}. The brain is not "off"; it is ON and broken. The claim holds
+    only for an install where no brain.json has been written.
+
+K9  "the A-J brain is built, verified (12-agent fleet), and LIVE on a real key —
+     every safety guard proven"   [PROGRESS.md:381]
+    SPLIT. "LIVE on a real key" VERIFIED for the chat surface only (E6: 12
+    chat+classify rows, 2026-07-20/21). "every safety guard proven" is
+    UNVERIFIABLE — no artifact in this run tests the guards.
+
+=====================================================================
+C7 — THE WITNESS: SKIPPED. Two independent blockers.
+=====================================================================
+1. SPEND. The dev environment is BRAIN=on with a live ANTHROPIC_API_KEY (E5).
+   Per the E4 call map, POST /plans/generate can now issue up to 4 paid
+   recipe-draft calls on a week horizon (12 on a month). Running a real generate
+   in dev would breach the run's $0.00 mandate. Refused.
+2. ACCESS + BLAST RADIUS. The only server running is the owner's LIVE PACKAGED
+   app (Cut Protocol.exe, PID 24548, 127.0.0.1:3001). Verified reachable:
+       GET /api/meta          -> HTTP 200
+       GET /api/brain/status  -> HTTP 401  {"error":"Your sign-in has expired..."}
+   Exercising generate there needs credentials I do not hold and would write plan
+   rows into the owner's real personal database, not a dev fixture.
+
+   V-WITNESS: skipped · ledger delta = 0 (no call made; ledger re-read not needed
+   because no request was issued).

@@ -1,0 +1,61 @@
+E5 — C4 THE FLAG (MEASURED BY EXECUTION on this machine, 2026-07-27. No network call, no model call.)
+
+--- THE LOGIC, backend/src/lib/brain/llm.js ---
+:89  function isBrainEnabled() {
+:90    if (process.env.BRAIN !== "on") return false;
+:91    return Boolean(process.env.ANTHROPIC_API_KEY) || Boolean(relayConfig());
+:92  }
+
+--- THE COMPETING GATE, backend/src/lib/brain/governance.js ---
+:58  function llmAvailability(feature) {
+:63    if (!process.env.ANTHROPIC_API_KEY) {
+:64      return { enabled:false, reason:"no-api-key", status:503,
+                message:"AI features are unavailable in this build — no API key is configured..." };
+:65    }
+:68    if (isBrainEnabled()) return { enabled: true, feature };
+     ^^ :63 RETURNS BEFORE :68 IS EVER REACHED. The gate is relay-blind.
+
+=====================================================================
+RUN 1 — DEV MODE   (cwd backend/, require("dotenv/config"), backend/.env)
+=====================================================================
+brain.json applied to env : false          <-- configDir() null in dev, as designed
+BRAIN                     : "on"
+ANTHROPIC_API_KEY present : true
+relayConfig()             : null (no relay)
+isBrainEnabled()          : true
+transport selected        : DIRECT KEY
+relayStore.status()       : {"enabled":true,"reason":"ok"}
+governance chat           : "enabled"
+governance recipeDrafts   : "enabled"
+
+=====================================================================
+RUN 2 — PACKAGED MODE  (CUT_PROTOCOL_USERDATA set, NO dotenv — a packaged
+                        install ships no .env; PROGRESS.md:59-60)
+=====================================================================
+configPath()              : resolved
+fileExists(brain.json)    : true
+brain.json applied to env : true
+BRAIN after apply         : "on"          <-- set by brainRelayConfig.js:100
+ANTHROPIC_API_KEY present : false         <-- by design; packaged ships no key
+relayConfig()             : NON-NULL (relay)
+isBrainEnabled()          : true
+transport selected        : RELAY
+relayStore.status()       : {"enabled":true,"reason":"ok"}     <-- APP REPORTS HEALTHY
+
+--- governance gate ---
+  chat         : REFUSED reason=no-api-key status=503
+  critic       : REFUSED reason=no-api-key status=503
+  classify     : REFUSED reason=no-api-key status=503
+  recipeDrafts : REFUSED reason=no-api-key status=503
+
+--- coach gate (chat.js:55 uses isBrainEnabled directly, NOT governance) ---
+  chat.js enabled would be : true
+
+--- VERDICT ---
+V-ENABLED: TRUE in both modes.
+The flag is NOT the blocker. Two gates disagree:
+  llm.js:89-92  is relay-aware  -> true
+  governance.js:63 is relay-BLIND -> refuses every governed feature in packaged mode
+The app simultaneously reports reason:"ok" and 503s every governed LLM feature.
+Independently, the relay itself is down (E3: ECONNREFUSED on 127.0.0.1:8787), so
+the one surface that bypasses governance (the coach) fails at the transport instead.
