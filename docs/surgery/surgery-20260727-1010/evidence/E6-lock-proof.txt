@@ -1,0 +1,24 @@
+== LOCK PROOF (locked:true) ==
+
+PASS  want=BLOCK got=BLOCK  a hook edit  (.claude/hooks/guard-edit.js)
+        -> BLOCKED: .claude/hooks/guard-edit.js not on the incision manifest — the harness is LOCKED (surgery-20260727-1010) and .claude/ is sealed. The cage cannot be weakened by its occupant.
+PASS  want=BLOCK got=BLOCK  a manifest edit  (docs/surgery/surgery-20260727-1010/manifest.json)
+        -> BLOCKED: docs/surgery/surgery-20260727-1010/manifest.json not on the incision manifest — the harness is LOCKED (surgery-20260727-1010) and the manifest itself is sealed. The cage cannot be weakened by its occupant.
+PASS  want=BLOCK got=BLOCK  the CURRENT copy  (docs/surgery/CURRENT/manifest.json)
+        -> BLOCKED: docs/surgery/CURRENT/manifest.json not on the incision manifest — the harness is LOCKED (surgery-20260727-1010) and the manifest itself is sealed. The cage cannot be weakened by its occupant.
+PASS  want=BLOCK got=BLOCK  the settings file  (.claude/settings.json)
+        -> BLOCKED: .claude/settings.json not on the incision manifest — the harness is LOCKED (surgery-20260727-1010) and .claude/ is sealed. The cage cannot be weakened by its occupant.
+PASS  want=BLOCK got=BLOCK  the harness scripts  (scripts/surgery/witness.js)
+        -> BLOCKED: scripts/surgery/witness.js not on the incision manifest — the harness is LOCKED (surgery-20260727-1010) and scripts/surgery/ is sealed. The cage cannot be weakened by its occupant.
+PASS  want=BLOCK got=BLOCK  this proof script  (scripts/surgery/lock-proof.js)
+        -> BLOCKED: scripts/surgery/lock-proof.js not on the incision manifest — the harness is LOCKED (surgery-20260727-1010) and scripts/surgery/ is sealed. The cage cannot be weakened by its occupant.
+PASS  want=BLOCK got=BLOCK  the golden baseline  (backend/tests/golden/engine-baseline.golden.json)
+        -> BLOCKED: backend/tests/golden/engine-baseline.golden.json not on the incision manifest — backend/tests/golden/ is sealed to every mode. Relocking the goldens is mechanically impossible; goldens are proof, and proof you can edit is not proof.
+PASS  want=ALLOW got=ALLOW  the M1 site  (backend/src/lib/weeklyPlanner.js)
+PASS  want=ALLOW got=ALLOW  the M2 site  (backend/src/lib/mealRouter.js)
+PASS  want=ALLOW got=ALLOW  the M3 governor  (backend/src/routes/plans.js)
+PASS  want=ALLOW got=ALLOW  the M4 site  (backend/src/lib/brainRelayConfig.js)
+PASS  want=ALLOW got=ALLOW  a new test file  (backend/tests/brain/dayTolerance.test.js)
+PASS  want=ALLOW got=ALLOW  the run report  (docs/surgery/surgery-20260727-1010/REPORT.md)
+
+lock-proof: 13 passed, 0 failed
