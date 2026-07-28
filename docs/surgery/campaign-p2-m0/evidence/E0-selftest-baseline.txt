@@ -1,0 +1,52 @@
+E0 — guard-selftest BASELINE, captured before any edit of mission M0.1
+================================================================================
+run_id      campaign-p2-m0
+HEAD        b82d577
+when        2026-07-28, first act of the mission, before any file was written
+command     node scripts/surgery/guard-selftest.js
+exit        1
+
+RESULT: 22 passed, 4 failed, 26 total.
+
+THE FOUR FAILURES ARE PRE-EXISTING AND ARE NOT CAUSED BY THIS MISSION.
+
+    FAIL  want=ALLOW got=BLOCK  EDIT  on-manifest  weeklyPlanner.js
+            -> BLOCKED: backend/src/lib/weeklyPlanner.js not on the incision manifest.
+    FAIL  want=ALLOW got=BLOCK  EDIT  on-manifest  mealRouter.js
+            -> BLOCKED: backend/src/lib/mealRouter.js not on the incision manifest.
+    FAIL  want=ALLOW got=BLOCK  EDIT  on-manifest  tests/ subtree
+            -> BLOCKED: backend/tests/brain/anything.test.js not on the incision manifest.
+    FAIL  want=ALLOW got=BLOCK  EDIT  on-manifest  run docs subtree
+            -> BLOCKED: docs/surgery/surgery-20260727-1010/REPORT.md not on the incision manifest.
+
+CAUSE, derived not assumed
+--------------------------------------------------------------------------------
+guard-selftest's four ALLOW cases hardcode paths from the PREVIOUS incision
+window, surgery-20260727-1010, whose allow list was:
+
+    backend/src/lib/weeklyPlanner.js, backend/src/lib/mealRouter.js,
+    backend/src/routes/plans.js, backend/src/lib/brainRelayConfig.js,
+    .agent/state.json, backend/tests/, docs/surgery/surgery-20260727-1010/
+
+The live manifest is now campaign-p2-m0, whose allow list is:
+
+    .claude/hooks/, .claude/settings.json, scripts/surgery/witness.js,
+    scripts/surgery/guard-selftest.js, docs/surgery/CAMPAIGN/,
+    docs/surgery/campaign-p2-m0/
+
+None of the four hardcoded ALLOW paths appear on the current list, so the guard
+correctly BLOCKS all four. The guard is right and the test is stale. The window
+moved under the test — by the owner's ratified manifest edit, which this mission
+is forbidden to touch.
+
+WHY THIS IS FILED RATHER THAN QUIETLY FIXED
+--------------------------------------------------------------------------------
+Order M0.1 pre-registers A1 as "exits 0, 0 failed, total > 26" and I7 as "its
+existing cases must survive". Read literally against this baseline the two
+cannot both hold: the four ALLOW cases assert a dead window's paths and cannot
+pass without being re-pointed.
+
+The rot is structural, not incidental: any explicit ALLOW expectation is coupled
+to whichever manifest window is live, so every future window change silently
+breaks this file the same way. Recorded here so the architect grades A1 against
+an honestly stated starting line of 22/26, not an assumed 26/26.

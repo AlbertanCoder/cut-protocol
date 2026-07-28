@@ -16,6 +16,28 @@ const path = require('path');
 const REPO = path.resolve(__dirname, '..', '..');
 const CURRENT = path.join(REPO, 'docs', 'surgery', 'CURRENT', 'manifest.json');
 
+// ---- TEMPORARY I1 PROBE — mission M0.1, removed in the same mission --------
+// Records what this hook CHILD PROCESS can see of CP_ROLE. Wrapped so that a
+// probe failure can never alter a guard verdict: the probe may not make the
+// cage more permissive, so it may not throw.
+try {
+  fs.appendFileSync(
+    path.join(REPO, 'docs', 'surgery', 'campaign-p2-m0', 'evidence', 'I1-hook-env-probe.jsonl'),
+    JSON.stringify({
+      hook: 'guard-edit',
+      present: Object.prototype.hasOwnProperty.call(process.env, 'CP_ROLE'),
+      raw: process.env.CP_ROLE === undefined ? null : process.env.CP_ROLE,
+      typeof_raw: typeof process.env.CP_ROLE,
+      pid: process.pid,
+      ppid: process.ppid,
+      at: new Date().toISOString(),
+    }) + '\n'
+  );
+} catch {
+  /* probe is diagnostic only; never let it speak for the guard */
+}
+// ---- END TEMPORARY I1 PROBE ------------------------------------------------
+
 function die(msg) {
   process.stderr.write(
     `BLOCKED: ${msg}\n` +

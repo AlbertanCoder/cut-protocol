@@ -20,6 +20,27 @@ const path = require('path');
 const REPO = path.resolve(__dirname, '..', '..');
 const CURRENT = path.join(REPO, 'docs', 'surgery', 'CURRENT', 'manifest.json');
 
+// ---- TEMPORARY I1 PROBE — mission M0.1, removed in the same mission --------
+// Same probe as guard-edit: the shell gate is a separate child process and is
+// proved separately rather than by analogy.
+try {
+  fs.appendFileSync(
+    path.join(REPO, 'docs', 'surgery', 'campaign-p2-m0', 'evidence', 'I1-hook-env-probe.jsonl'),
+    JSON.stringify({
+      hook: 'guard-bash',
+      present: Object.prototype.hasOwnProperty.call(process.env, 'CP_ROLE'),
+      raw: process.env.CP_ROLE === undefined ? null : process.env.CP_ROLE,
+      typeof_raw: typeof process.env.CP_ROLE,
+      pid: process.pid,
+      ppid: process.ppid,
+      at: new Date().toISOString(),
+    }) + '\n'
+  );
+} catch {
+  /* probe is diagnostic only; never let it speak for the guard */
+}
+// ---- END TEMPORARY I1 PROBE ------------------------------------------------
+
 function die(what, why) {
   process.stderr.write(
     `BLOCKED: ${what} not on the incision manifest. ${why}\n` +
