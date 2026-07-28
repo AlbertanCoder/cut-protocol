@@ -16,30 +16,10 @@
 
 const fs = require('fs');
 const path = require('path');
+const { resolveRole, describeRole, BUILDER } = require('./role');
 
 const REPO = path.resolve(__dirname, '..', '..');
 const CURRENT = path.join(REPO, 'docs', 'surgery', 'CURRENT', 'manifest.json');
-
-// ---- TEMPORARY I1 PROBE — mission M0.1, removed in the same mission --------
-// Same probe as guard-edit: the shell gate is a separate child process and is
-// proved separately rather than by analogy.
-try {
-  fs.appendFileSync(
-    path.join(REPO, 'docs', 'surgery', 'campaign-p2-m0', 'evidence', 'I1-hook-env-probe.jsonl'),
-    JSON.stringify({
-      hook: 'guard-bash',
-      present: Object.prototype.hasOwnProperty.call(process.env, 'CP_ROLE'),
-      raw: process.env.CP_ROLE === undefined ? null : process.env.CP_ROLE,
-      typeof_raw: typeof process.env.CP_ROLE,
-      pid: process.pid,
-      ppid: process.ppid,
-      at: new Date().toISOString(),
-    }) + '\n'
-  );
-} catch {
-  /* probe is diagnostic only; never let it speak for the guard */
-}
-// ---- END TEMPORARY I1 PROBE ------------------------------------------------
 
 function die(what, why) {
   process.stderr.write(
@@ -67,6 +47,30 @@ const RULES = [
   ['a key-read', /\bcat\s+[^\n|;]*\.env\b|\btype\s+[^\n|;]*\.env\b|Get-Content[^\n|;]*\.env\b/i, 'Secrets are never read into the transcript.'],
   ['a key-dump', /\bprintenv\b[^\n]*KEY|\benv\b[^\n]*\|\s*grep[^\n]*KEY|Get-ChildItem\s+env:/i, 'Secrets are never read into the transcript.'],
   ['a literal API key', /sk-ant-/, 'An API key shape may never appear in a command.'],
+];
+
+// The architect reads and runs; the builder commits (I5). These are EXTRA
+// denials layered on top of RULES, never a relaxation of them — the list below
+// only ever grows the deny set, which is what "role narrows" means in a gate
+// that is already deny-by-pattern.
+//
+// witness.js is deliberately NOT here. Whether the architect may spend is an M3
+// question and is left exactly as it was found; the only witness rule remains
+// the mode-keyed one below.
+const ARCHITECT_EXTRA = [
+  ['git add', /\bgit\s+add\b/i, 'The architect does not stage; the builder commits.'],
+  ['git commit', /\bgit\s+commit\b/i, 'The architect does not commit; it orders, verifies and signs.'],
+  ['git checkout', /\bgit\s+checkout\b/i, 'The architect does not move the working tree.'],
+  ['git switch', /\bgit\s+switch\b/i, 'The architect does not move the working tree.'],
+  ['git stash', /\bgit\s+stash\b/i, 'The architect does not hide the builder\'s tree.'],
+  ['git tag', /\bgit\s+tag\b/i, 'The architect does not mark history.'],
+  ['git merge', /\bgit\s+merge\b/i, 'The architect does not mutate history.'],
+  ['git cherry-pick', /\bgit\s+cherry-pick\b/i, 'The architect does not mutate history.'],
+  [
+    'a branch deletion',
+    /\bgit\s+branch\b[^\n]*\s(?:-[dD]\b|--delete\b)/,
+    'Branches are evidence; the architect does not delete them.',
+  ],
 ];
 
 // Verifier mode may not spend the owner's money.
@@ -97,7 +101,17 @@ function main() {
     // Unreadable manifest: keep the full deny list, assume nothing.
   }
 
-  const rules = mode === 'verifier' ? RULES.concat(VERIFIER_EXTRA) : RULES;
+  let rules = mode === 'verifier' ? RULES.concat(VERIFIER_EXTRA) : RULES;
+
+  // Role layers ON TOP of the existing rules, which continue to bind every
+  // role. Anything that is not a recognized builder gets the architect's extra
+  // denials — absent, blank and unknown values included (I2, fail-closed).
+  const r = resolveRole();
+  if (!(r.recognized && r.role === BUILDER)) {
+    rules = rules.concat(
+      ARCHITECT_EXTRA.map(([label, re, why]) => [label, re, `${why} (role: ${describeRole(r)})`])
+    );
+  }
 
   for (const [label, re, why] of rules) {
     if (re.test(cmd)) die(label, why);
