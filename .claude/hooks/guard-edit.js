@@ -12,31 +12,10 @@
 
 const fs = require('fs');
 const path = require('path');
+const { resolveRole, describeRole, BUILDER } = require('./role');
 
 const REPO = path.resolve(__dirname, '..', '..');
 const CURRENT = path.join(REPO, 'docs', 'surgery', 'CURRENT', 'manifest.json');
-
-// ---- TEMPORARY I1 PROBE — mission M0.1, removed in the same mission --------
-// Records what this hook CHILD PROCESS can see of CP_ROLE. Wrapped so that a
-// probe failure can never alter a guard verdict: the probe may not make the
-// cage more permissive, so it may not throw.
-try {
-  fs.appendFileSync(
-    path.join(REPO, 'docs', 'surgery', 'campaign-p2-m0', 'evidence', 'I1-hook-env-probe.jsonl'),
-    JSON.stringify({
-      hook: 'guard-edit',
-      present: Object.prototype.hasOwnProperty.call(process.env, 'CP_ROLE'),
-      raw: process.env.CP_ROLE === undefined ? null : process.env.CP_ROLE,
-      typeof_raw: typeof process.env.CP_ROLE,
-      pid: process.pid,
-      ppid: process.ppid,
-      at: new Date().toISOString(),
-    }) + '\n'
-  );
-} catch {
-  /* probe is diagnostic only; never let it speak for the guard */
-}
-// ---- END TEMPORARY I1 PROBE ------------------------------------------------
 
 function die(msg) {
   process.stderr.write(
@@ -50,6 +29,52 @@ function die(msg) {
 function rel(abs) {
   const r = path.relative(REPO, abs).split(path.sep).join('/');
   return r;
+}
+
+/**
+ * The role door (I3/I4).
+ *
+ * Called ONLY after the manifest has already answered "yes", and it can do
+ * exactly one thing: turn that yes into a no. It has no branch that returns
+ * "allowed" for anything the manifest refused, and it must never grow one --
+ * that would invert the law from intersection to union.
+ *
+ * builder (I4): returns immediately. Role adds no permission; the manifest,
+ * the goldens hard-deny and the lock seals govern exactly as they did before
+ * roles existed. If builder behaviour changes here, something was widened.
+ *
+ * architect (I3), and every value that fails closed onto it: may CREATE new
+ * files under docs/surgery/CAMPAIGN/, may EDIT only CAMPAIGN/ledger.md, may
+ * touch nothing else anywhere. Create-vs-edit is decided by existence on disk
+ * rather than by which tool was used, so a Write that would clobber an
+ * existing order is refused on the same footing as an Edit of it.
+ */
+function roleGate(relPath, lower, abs) {
+  const r = resolveRole();
+  if (r.recognized && r.role === BUILDER) return;
+
+  const who = describeRole(r);
+  const CAMPAIGN = 'docs/surgery/campaign/';
+  const LEDGER = 'docs/surgery/campaign/ledger.md';
+
+  if (!lower.startsWith(CAMPAIGN)) {
+    die(
+      `${relPath} is outside the ${who} door — that role may write only under ` +
+        'docs/surgery/CAMPAIGN/. A role NARROWS the incision manifest and never widens it, ' +
+        'so being on the allow list is not enough on its own.'
+    );
+  }
+
+  if (lower === LEDGER) return;
+
+  if (fs.existsSync(abs)) {
+    die(
+      `${relPath} already exists, and the ${who} door is CREATE-ONLY under ` +
+        'docs/surgery/CAMPAIGN/ with ledger.md as the single mutable file. Orders, verdicts, ' +
+        'receipts, sitreps and checkpoints are immutable the moment they are written — the ' +
+        'black box cannot be doctored after the fact, including by the role that wrote it.'
+    );
+  }
 }
 
 function main() {
@@ -125,6 +150,7 @@ function main() {
     if (!lower.startsWith(only)) {
       die(`${relPath} not on the incision manifest — verifier mode may write only docs/surgery/${runId}/verify/.`);
     }
+    roleGate(relPath, lower, abs);
     process.exit(0);
   }
 
@@ -140,6 +166,9 @@ function main() {
   });
 
   if (!ok) die(`${relPath} not on the incision manifest.`);
+
+  // The manifest has said yes. The role may still say no; it cannot say yes.
+  roleGate(relPath, lower, abs);
   process.exit(0);
 }
 
