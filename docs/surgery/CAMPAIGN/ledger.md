@@ -106,7 +106,31 @@ v1 convention got wrong.
 | 20 | 2026-07-28 20:09 | 07-29 02:09Z | `sitreps/sitrep-20260728-2009-campaign.1.md` ← **LATEST SITREP** |
 | 21 | 2026-07-28 20:24 | 07-29 02:24Z | `orders/order-20260728-2024-M1.1.md` ← **LATEST ORDER** |
 | 22 | 2026-07-28 20:24 | 07-29 02:24Z | `verdicts/verdict-20260728-2024-M0.2-final.md` ← **LATEST VERDICT** |
-| 23 | 2026-07-28 20:44 | 07-29 02:44Z | `asks/ask-20260728-2044-campaign.6.md` ← **LATEST ASK — blocks M1** |
+| 23 | 2026-07-28 20:44 | 07-29 02:44Z | `asks/ask-20260728-2044-campaign.6.md` — blocks M1 |
+| 24 | 2026-07-29 04:11 | 07-29 10:11Z | `asks/ask-20260729-0411-campaign.6a.md` — scope correction |
+| 25 | 2026-07-29 04:19 | 07-29 10:19Z | `asks/ask-20260729-0419-campaign.6b.md` ← **RULE FROM THIS ONE. Supersedes the mapping in 6 and 6a.** |
+
+| 2026-07-29 04:19 | CLAIMS M1.1.2 | 7901d72 | Builder ran an ELEVEN-FIELD check against the app's own `validateProfileFields`. **SIXTH mismatch found.** |
+| 2026-07-29 04:19 | — | 7901d72 | **ARCHITECT'S PROPOSED MAPPING WOULD HAVE FAILED.** `dietaryStyle:'omnivore'` is not in DIETARY_STYLES (`dietaryFilter.js:1265`). Carried forward unexamined in campaign.6 AND 6a. |
+| 2026-07-29 04:19 | — | 7901d72 | Root cause of the shared miss: the app's 400 body was truncated mid-field at `"trainingStyle":"Pick a t` — dietaryStyle's error never reached either session. |
+| 2026-07-29 04:19 | — | 7901d72 | ARCHITECT RAN THE SCRIPT: frozen `5 ok / 4 rejected / 2 silently dropped`; proposed `11 ok / 0 / 0`. `bmrEngine.js:288` calls it `"none"/omnivore` — meaning preserved. |
+| 2026-07-29 04:19 | — | 7901d72 | **REJECTED vs DROPPED separated — the mechanism behind the whole defect.** `weightKg` and `allergies` are not in PROFILE_FIELDS: the request SUCCEEDS and the value evaporates. No error, ever. |
+| 2026-07-29 04:19 | — | 7901d72 | Silent-drop is worse than rejection: rejection at least produces a witness. Best explanation yet of how a forcing profile looked correct indefinitely while forcing nothing. |
+| 2026-07-29 04:19 | — | 7901d72 | **ARCHITECT DEFECT 7** — incomplete mapping. Distinction from defect 6: campaign.6 NAMED dietaryStyle as unverified and ordered the eleven-field check. The instruction caught the mapping. |
+| 2026-07-29 04:19 | — | 7901d72 | **FINDING AGAINST ARCHITECT'S OWN M0.1 GRADING:** `git merge-base --is-ancestor` (read-only) BLOCKED by the role gate — `git merge` is a substring. Graded green across 74 cases. Fifth false positive of this class, first one the architect ordered into existence. |
+| 2026-07-29 04:19 | — | 7901d72 | CLOCK: builder's block stamped `2026-07-28 21:05 MDT`; its commit's real author date `2026-07-29 04:16:48 -0600`. Stamp ~7h stale. Future orders: derive the stamp at emission, never reuse. |
+| 2026-07-29 04:19 | ASK campaign.6b | 7901d72 | **AUTHORITATIVE MAPPING FILED.** Six fields. Nothing applied; witness.js byte-identical; $0.00. |
+
+| 2026-07-28 20:50 | CLAIMS M1.1.1 | d5e8d27 | Builder confirmed the `.allergies` finding independently and CORRECTED ITS SCOPE. |
+| 2026-07-29 04:11 | — | d5e8d27 | **CAMPAIGN PAUSED ~7h overnight.** Both sessions resumed from disk, no state carried in conversation. Persistence law doing its job. |
+| 2026-07-29 04:11 | — | d5e8d27 | **ARCHITECT CLAIM SCOPE-CORRECTED.** campaign.6's "consumed nowhere in the application" is true OF THE WITNESS; read fast it implies Cut Protocol ignores allergies. It does not. |
+| 2026-07-29 04:11 | — | d5e8d27 | VERIFIED: `schema.prisma:159` has `excludedFoods Json`, no `allergies` column — the witness sent a key that never existed in the data model. |
+| 2026-07-29 04:11 | — | d5e8d27 | VERIFIED `excludedFoods` LIVE in profile.js (validated), diary.js:229, aiRecipeClient.js:163 ("These are real restrictions"), export.js. **The allergy feature is wired.** |
+| 2026-07-29 04:11 | — | d5e8d27 | **ARCHITECT ADDITION (builder did not reach it): excludedFoods enters the BRAIN's hard constraints** — `brain/constraints.js:35` as a `"hard"` leaf from `"profile"`, plus pool.js:56, exclusions.js:25, guard.js:137. |
+| 2026-07-29 04:11 | — | d5e8d27 | Therefore the translation puts the two walls into the GENERATOR's own constraint path — exactly the forcing mechanism the witness criterion needs. Case for the amendment STRENGTHENED. |
+| 2026-07-29 04:11 | — | d5e8d27 | INSTRUMENT defect, NOT product defect. Distinction worth more than either session being right about the mechanism. |
+| 2026-07-29 04:11 | ASK campaign.6a | d5e8d27 | Correction filed as a NEW artifact — campaign.6 is immutable to its author. Create-only cost paid again, this time on a document already before the owner. |
+| 2026-07-29 04:11 | — | d5e8d27 | Builder corrected a claim that was in its favour to leave alone. Third declined easier-version-of-being-right this campaign. |
 
 | 2026-07-28 20:36 | CLAIMS M1.1 | 0000598 | Builder STOPPED at B2 per order. I1/I2/I3 done, B7 met. Corrupted in transit; graded from disk. |
 | 2026-07-28 20:44 | — | 0000598 | **WITNESS AUTHENTICATES for the first time in its existence** — cookie jar + Prisma-minted account + real `/api/auth/login`. `backend/src/` diff EMPTY. |
