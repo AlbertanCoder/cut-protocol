@@ -106,6 +106,21 @@ v1 convention got wrong.
 | 20 | 2026-07-28 20:09 | 07-29 02:09Z | `sitreps/sitrep-20260728-2009-campaign.1.md` ← **LATEST SITREP** |
 | 21 | 2026-07-28 20:24 | 07-29 02:24Z | `orders/order-20260728-2024-M1.1.md` ← **LATEST ORDER** |
 | 22 | 2026-07-28 20:24 | 07-29 02:24Z | `verdicts/verdict-20260728-2024-M0.2-final.md` ← **LATEST VERDICT** |
+| 23 | 2026-07-28 20:44 | 07-29 02:44Z | `asks/ask-20260728-2044-campaign.6.md` ← **LATEST ASK — blocks M1** |
+
+| 2026-07-28 20:36 | CLAIMS M1.1 | 0000598 | Builder STOPPED at B2 per order. I1/I2/I3 done, B7 met. Corrupted in transit; graded from disk. |
+| 2026-07-28 20:44 | — | 0000598 | **WITNESS AUTHENTICATES for the first time in its existence** — cookie jar + Prisma-minted account + real `/api/auth/login`. `backend/src/` diff EMPTY. |
+| 2026-07-28 20:44 | — | 0000598 | B7 MET: failure path exits **1**, not 127 and not a Windows abort. Builder disclosed its intended forcing method failed and a different real failure exercised the path. |
+| 2026-07-28 20:44 | — | 0000598 | Frozen clauses UNTOUCHED in the plumbing commit — verified by architect diff over CAP_*/profile/verdicts. |
+| 2026-07-28 20:44 | — | 0000598 | **ARCHITECT DEFECT 6.** ORDER M1.1 asserted "It does not; I checked." FALSE — checked the plumbing against the clauses, never checked the profile against the app. Wider claim than the check performed. |
+| 2026-07-28 20:44 | — | 0000598 | VERIFIED: 5 of 11 profile fields rejected. `sex` needs M/F · `carpenter` not a key (`carpenter-finish`) · `trainingStyle` needs weights/mixed/sport/cardio · `weightKg`→`startWeightKg` · `allergies`→`excludedFoods`. |
+| 2026-07-28 20:44 | — | 0000598 | Root cause: `'hypertrophy'` exists in the TRAINING GENERATOR's vocabulary; profile `trainingStyle` is a separate MET list in activityData.js. Two vocabularies, one word. |
+| 2026-07-28 20:44 | — | 0000598 | **THE REAL FINDING (architect answered what builder refused to guess): `grep "\.allergies\b" backend/src/` → NO MATCHES.** The field is consumed nowhere. |
+| 2026-07-28 20:44 | — | 0000598 | **THE FORCING PROFILE HAS NEVER FORCED ANYTHING.** Its comment claims the walls make the library thin enough that scaling cannot land the day; that mechanism was never connected. Undetectable because the witness had never completed a run. |
+| 2026-07-28 20:44 | — | 0000598 | `excludedFoods` IS real: dietaryFilter → excludedByList → exclusionEvidence, unioning name/keyword with fdcCategory/allergenTags/mayContain. `gluten` and `soy` are full families in allergenTaxonomy.js with synonym expansion. |
+| 2026-07-28 20:44 | — | 0000598 | Therefore translation STRENGTHENS the instrument — not softening after a disappointing result, but the first time the profile would bite. No prior measurement exists to invalidate. |
+| 2026-07-28 20:44 | ASK campaign.6 | 0000598 | **FROZEN-CLAUSE AMENDMENT — passphrase territory, owner's call.** Translate the profile to the app's vocabulary, preserve semantics, re-freeze at new bytes. Validate ALL ELEVEN fields, not the five found. |
+| 2026-07-28 20:44 | — | 0000598 | Builder declined to translate the profile itself though the order arguably invited it. Second refusal tonight of a cleaner-looking result; both preserved the evidence. |
 
 | 2026-07-28 20:45 | CLAIMS M0.2.2 | 1c360c4 | G3 built. Owner added the two manifest paths. A13–A16, A24 claimed met. |
 | 2026-07-28 20:24 | — | 1c360c4 | ARCHITECT VERIFIED widening is EXACT: `goldens-verify.js` BLOCK, `.git/hooks/pre-push` BLOCK, `ledger.md` BLOCK (G2 intact), `backend/src/` BLOCK. Only the two named paths opened. |
