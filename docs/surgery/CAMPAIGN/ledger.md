@@ -104,6 +104,19 @@ v1 convention got wrong.
 | 18 | 2026-07-28 20:05 | 07-29 02:05Z | `verdicts/verdict-20260728-2005-M0.2.md` ← **LATEST VERDICT** |
 | 19 | 2026-07-28 20:05 | 07-29 02:05Z | `asks/ask-20260728-2005-campaign.5.md` ← **LATEST ASK** |
 | 20 | 2026-07-28 20:09 | 07-29 02:09Z | `sitreps/sitrep-20260728-2009-campaign.1.md` ← **LATEST SITREP** |
+| 21 | 2026-07-28 20:24 | 07-29 02:24Z | `orders/order-20260728-2024-M1.1.md` ← **LATEST ORDER** |
+| 22 | 2026-07-28 20:24 | 07-29 02:24Z | `verdicts/verdict-20260728-2024-M0.2-final.md` ← **LATEST VERDICT** |
+
+| 2026-07-28 20:45 | CLAIMS M0.2.2 | 1c360c4 | G3 built. Owner added the two manifest paths. A13–A16, A24 claimed met. |
+| 2026-07-28 20:24 | — | 1c360c4 | ARCHITECT VERIFIED widening is EXACT: `goldens-verify.js` BLOCK, `.git/hooks/pre-push` BLOCK, `ledger.md` BLOCK (G2 intact), `backend/src/` BLOCK. Only the two named paths opened. |
+| 2026-07-28 20:24 | — | 1c360c4 | **A13 EVIDENCE GAP CLOSED BY CODE READ.** Hook uses `--diff-filter=MDR` — M, D and R share ONE filter and ONE path. The builder's staged-deletion test exercises the identical branch a modification would. Not a weaker proxy. |
+| 2026-07-28 20:24 | — | 1c360c4 | Hook also covers RENAMES, which nobody ordered — the third way to damage a record. |
+| 2026-07-28 20:24 | — | 1c360c4 | `git diff HEAD -- orders/order-M0.1.md` EMPTY, file still tracked. The A13 test damaged nothing. |
+| 2026-07-28 20:24 | — | 1c360c4 | ARCHITECT FINDING: installed `.git/hooks/pre-commit` DIVERGES from tracked source — 12 diff lines, **logic byte-identical**, comments only. No drift detection exists and plain `diff` cannot serve as one. Receipt item. |
+| 2026-07-28 20:24 | — | 1c360c4 | **FAIL-CLOSED PROVEN BY ACCIDENT:** owner's first manifest edit had a doubled quote; JSON stopped parsing; every write refused; guard could not self-repair (must read manifest to know manifest is writable). Only the owner's hand cleared it. |
+| 2026-07-28 20:24 | VERDICT M0.2 final | 1c360c4 | **M0.2 CLOSES 24/24.** G1–G4 all closed. |
+| 2026-07-28 20:24 | ORDER M1.1 | 1c360c4 | **ISSUED — the campaign returns to the mission.** Heal witness.js. Tier B with Tier A frozen clauses named by coordinate: CAP_CALLS=12, CAP_USD=0.5, CAP_DESIGNS=2, the forcing profile + its comment, the verdict logic, the header criterion. |
+| 2026-07-28 20:24 | — | 1c360c4 | M1 authorized by the owner's ORIGINAL ratification ("one unlock window for M0+M1"); witness.js on the allow list since the window opened. No new ruling sought. Mission spends $0 — dry-run only. |
 
 | 2026-07-28 20:20 | CLAIMS M0.2.1 | b7aa1dd | **A20 PASS.** Builder committed 2 architect files + ledger append in ONE commit, exit 0, 215 insertions. |
 | 2026-07-28 20:09 | — | b7aa1dd | ARCHITECT VERIFIED: ledger `21 insertions, 0 deletions`; verdict's first and only appearance is b7aa1dd; content intact incl. the line praising the builder and the ASK permitting a decline. |
