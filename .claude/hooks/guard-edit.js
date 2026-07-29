@@ -17,6 +17,10 @@ const { resolveRole, describeRole, BUILDER } = require('./role');
 const REPO = path.resolve(__dirname, '..', '..');
 const CURRENT = path.join(REPO, 'docs', 'surgery', 'CURRENT', 'manifest.json');
 
+// The black box. Lower-cased for the Windows-safe comparison used throughout.
+const CAMPAIGN = 'docs/surgery/campaign/';
+const LEDGER = 'docs/surgery/campaign/ledger.md';
+
 function die(msg) {
   process.stderr.write(
     `BLOCKED: ${msg}\n` +
@@ -51,11 +55,24 @@ function rel(abs) {
  */
 function roleGate(relPath, lower, abs) {
   const r = resolveRole();
-  if (r.recognized && r.role === BUILDER) return;
-
   const who = describeRole(r);
-  const CAMPAIGN = 'docs/surgery/campaign/';
-  const LEDGER = 'docs/surgery/campaign/ledger.md';
+
+  // builder (G2): the manifest governs everywhere EXCEPT the black box, which
+  // is closed to it entirely. The builder is the party CAMPAIGN/ grades, and a
+  // graded party that can edit its own verdicts, orders and charters is not
+  // being graded. It keeps the duty to COMMIT that directory as found — hooks
+  // gate the Edit/Write tools, not git.
+  if (r.recognized && r.role === BUILDER) {
+    if (lower.startsWith(CAMPAIGN)) {
+      die(
+        `${relPath} is closed to the ${who} door — docs/surgery/CAMPAIGN/ is the black box, ` +
+          'and the builder is the party it grades. Builder claims, asks and evidence belong in ' +
+          'the run directory. Committing this directory as found is still the builder\'s duty; ' +
+          'writing to it is not.'
+      );
+    }
+    return;
+  }
 
   if (!lower.startsWith(CAMPAIGN)) {
     die(

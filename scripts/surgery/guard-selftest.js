@@ -151,6 +151,21 @@ const CASES = [
   ['ROLE  "  BUILDER  " · normalizes to builder (I2 reading)', EDIT_HOOK, editPayload('.claude/hooks/guard-edit.js'), 'ALLOW', '  BUILDER  '],
   ['ROLE  "Architect"   · normalizes to architect', EDIT_HOOK, editPayload('.claude/hooks/guard-edit.js'), 'BLOCK', 'Architect'],
 
+  // === M0.2 · G2 — THE BLACK BOX IS CLOSED TO THE BUILDER ==================
+  // The builder is the party CAMPAIGN/ grades. A graded party that can edit its
+  // own verdicts, orders and charters is not being graded. R2-R7.
+  ['G2    builder   · EDIT existing order', EDIT_HOOK, editPayload(CAMPAIGN_EXISTING), 'BLOCK', 'builder'],
+  ['G2    builder   · EDIT its OWN charter', EDIT_HOOK, editPayload('docs/surgery/CAMPAIGN/charter-builder.md'), 'BLOCK', 'builder'],
+  ['G2    builder   · EDIT the ARCHITECT charter', EDIT_HOOK, editPayload('docs/surgery/CAMPAIGN/charter-architect.md'), 'BLOCK', 'builder'],
+  ['G2    builder   · EDIT the verdict that grades it', EDIT_HOOK, editPayload('docs/surgery/CAMPAIGN/verdicts/verdict-M0.1.md'), 'BLOCK', 'builder'],
+  ['G2    builder   · CREATE new file under CAMPAIGN/', EDIT_HOOK, editPayload(CAMPAIGN_NEW), 'BLOCK', 'builder'],
+  ['G2    builder   · EDIT ledger.md (architect\'s file)', EDIT_HOOK, editPayload(CAMPAIGN_LEDGER), 'BLOCK', 'builder'],
+  // The pair that proves G2 cut the right width: CAMPAIGN/ closed, manifest
+  // untouched. If the builder loses .claude/hooks/ too, the door was cut too
+  // wide; if it keeps CAMPAIGN/, nothing was cut at all.
+  ['G2    builder   · still reaches the manifest (.claude/hooks/)', EDIT_HOOK, editPayload('.claude/hooks/guard-edit.js'), 'ALLOW', 'builder'],
+  ['G2    builder   · still reaches its own run dir', EDIT_HOOK, editPayload('docs/surgery/campaign-p2-m0/claims-M0.1.md'), 'ALLOW', 'builder'],
+
   // --- A11 · the goldens are sealed above every role ------------------------
   ['ROLE  builder   · WRITE goldens', EDIT_HOOK, editPayload('backend/tests/golden/anything.json'), 'BLOCK', 'builder'],
   ['ROLE  architect · WRITE goldens', EDIT_HOOK, editPayload('backend/tests/golden/anything.json'), 'BLOCK', 'architect'],
