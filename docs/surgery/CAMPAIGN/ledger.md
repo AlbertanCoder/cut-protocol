@@ -101,6 +101,27 @@ v1 convention got wrong.
 | 15 | 2026-07-28 18:40 | 07-29 00:40Z | `CONVENTIONS-2.md` ← **current time law** |
 | 16 | 2026-07-28 19:42 | 07-29 01:42Z | `checkpoints/checkpoint-20260728-1942.md` ← first local-stamped artifact |
 | 17 | 2026-07-28 19:58 | 07-29 01:58Z | `orders/order-20260728-1958-M0.2.md` ← **LATEST ORDER** |
+| 18 | 2026-07-28 20:05 | 07-29 02:05Z | `verdicts/verdict-20260728-2005-M0.2.md` ← **LATEST VERDICT** |
+| 19 | 2026-07-28 20:05 | 07-29 02:05Z | `asks/ask-20260728-2005-campaign.5.md` ← **LATEST ASK** |
+
+## EVENTS (M0.2)
+
+| local (MDT) | block | HEAD | summary |
+|---|---|---|---|
+| 2026-07-28 20:12 | CLAIMS M0.2 | 2f46ffd | Builder delivered G1, G2, G4. G3 blocked by manifest. Three commits 008fd10 / 8c84911 / 2f46ffd. |
+| 2026-07-28 20:05 | — | 2f46ffd | ARCHITECT FRESH RUN: `guard-selftest: 74 passed, 0 failed, 74 total`, exit 0. |
+| 2026-07-28 20:05 | — | 2f46ffd | ARCHITECT PROBE A2–A7 all BLOCK for builder: existing order, both charters, the verdict grading it, a new file, ledger.md. |
+| 2026-07-28 20:05 | — | 2f46ffd | WIDTH PROOF — A11 ALLOW (`.claude/hooks/`) vs A6 BLOCK (CAMPAIGN/). Manifest preserved, CAMPAIGN closed. Neither too wide nor too narrow. |
+| 2026-07-28 20:05 | — | 2f46ffd | A8/A9 architect unchanged ALLOW. A12 goldens BLOCK. A18 `backend/src/` diff EMPTY. |
+| 2026-07-28 20:05 | — | 2f46ffd | A19: CAMPAIGN diff is all `A` except ledger.md `M` — 110 insertions, **0 deletions**. That M is architect authorship committed under the G2 duty; builder disclosed it proactively. |
+| 2026-07-28 20:05 | — | 2f46ffd | A23: role.js diff entirely inside one `/** */` block; `resolveRole()` byte-identical. Comment records the ruling. |
+| 2026-07-28 20:05 | — | 2f46ffd | A17/A22: TRUTH doc read in full. Names guard-edit's goldens comment, C7, C16, C19, and architect's own A5/A6/A11 — each read before qualifying, not paraphrased. |
+| 2026-07-28 20:05 | — | 2f46ffd | **G3 UNMET — manifest forbids both paths.** Architect verified: `scripts/surgery/pre-commit.sh` BLOCK, `.git/hooks/pre-commit` BLOCK. Not a builder failure. |
+| 2026-07-28 20:05 | — | 2f46ffd | **Builder DECLINED to install the hook via the ungated shell**, which would have met A13–A16/A24. Installing an anti-bypass guard by using the bypass would be self-refuting. Recorded as the campaign's sharpest discipline. |
+| 2026-07-28 20:05 | VERDICT M0.2 | 2f46ffd | **PASS 18/24.** A13–A16, A24 UNMET (unreachable under authorization). A20 under test. |
+| 2026-07-28 20:05 | ASK campaign.5 | 2f46ffd | Requests two exact-path manifest entries to finish G3. |
+| 2026-07-28 20:05 | — | 2f46ffd | ARCHITECT CONCEDES: the authority gate was over-careful. Passphrase typed bare in the builder's terminal IS the charter standard; the gate protected architect grading confidence, not builder authorization. |
+| 2026-07-28 20:05 | — | 2f46ffd | **A20 TEST ARMED:** two new CAMPAIGN files + this ledger append await a single builder commit. Success = the G2 standing duty survives G2 itself. |
 
 ## EVENTS (continued)
 
