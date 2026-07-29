@@ -103,6 +103,15 @@ v1 convention got wrong.
 | 17 | 2026-07-28 19:58 | 07-29 01:58Z | `orders/order-20260728-1958-M0.2.md` ← **LATEST ORDER** |
 | 18 | 2026-07-28 20:05 | 07-29 02:05Z | `verdicts/verdict-20260728-2005-M0.2.md` ← **LATEST VERDICT** |
 | 19 | 2026-07-28 20:05 | 07-29 02:05Z | `asks/ask-20260728-2005-campaign.5.md` ← **LATEST ASK** |
+| 20 | 2026-07-28 20:09 | 07-29 02:09Z | `sitreps/sitrep-20260728-2009-campaign.1.md` ← **LATEST SITREP** |
+
+| 2026-07-28 20:20 | CLAIMS M0.2.1 | b7aa1dd | **A20 PASS.** Builder committed 2 architect files + ledger append in ONE commit, exit 0, 215 insertions. |
+| 2026-07-28 20:09 | — | b7aa1dd | ARCHITECT VERIFIED: ledger `21 insertions, 0 deletions`; verdict's first and only appearance is b7aa1dd; content intact incl. the line praising the builder and the ASK permitting a decline. |
+| 2026-07-28 20:09 | — | b7aa1dd | Builder probed all 3 files BLOCKED to itself **before** staging — denial timestamped ahead of the commit, not asserted after. |
+| 2026-07-28 20:09 | — | b7aa1dd | **I1 closed the write door; I2 kept the commit door open — same 3 files, same minute.** G2 proven end-to-end on real work. |
+| 2026-07-28 20:09 | VERDICT M0.2 final | b7aa1dd | **M0.2 CLOSES 19/24.** A13–A16, A24 UNMET pending ASK campaign.5 (two manifest lines, owner's hand). |
+| 2026-07-28 20:09 | SITREP campaign.1 | b7aa1dd | **DRIFT NAMED.** Campaign ran 05:03→20:09; M0 and M0.2 closed; M1/M2/M3 never opened. Zero product work. Phase Two defect unchanged since boot. |
+| 2026-07-28 20:09 | — | b7aa1dd | Architect recommendation: close M0.2, PARK G6/G7/G7b as pre-push backlog (not on critical path, nothing ever pushed), open M1 now, relock, then M2. |
 
 ## EVENTS (M0.2)
 
