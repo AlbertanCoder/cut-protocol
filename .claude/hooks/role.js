@@ -39,21 +39,14 @@ const RECOGNIZED = new Set([ARCHITECT, BUILDER]);
  * deliberate leniency about SHAPE only; it is not leniency about VALUE, and
  * "admin", "root" and "surgeon" are all strangers here.
  *
- * CONTESTED — see ASK M0.1-a, unresolved at the time of writing. Order M0.1
- * says two incompatible things about this exact value:
- *   I2  "normalized (trim, case-fold). Recognized: architect, builder"
- *         -> "  BUILDER  " normalizes to "builder" and IS recognized.
- *   A10 "CP_ROLE='  BUILDER  ' / 'admin' / '' -> each resolves
- *        architect-or-tighter"
- *         -> "  BUILDER  " must NOT be recognized.
- * Both cannot hold: architect is a strict subset of builder in this window, so
- * there is no resolution that satisfies each. Implemented per I2, because I2
- * specifies the mechanism and its trim/case-fold clause has no other purpose
- * than to accept exactly this shape. If the owner or architect rules for A10
- * instead, the change is small and local: drop `.trim().toLowerCase()` from
- * recognition here and flip the two normalization rows in guard-selftest.js.
- * Flagged rather than silently decided, because picking one and staying quiet
- * is how a wall ends up with a door nobody remembers agreeing to.
+ * SETTLED 2026-07-28 by the owner, passphrase given: I2 stands, A10 amended.
+ * Order M0.1 said two incompatible things about this value — I2 mandated
+ * trim/case-fold (making it a builder), A10 required it to land
+ * architect-or-tighter. Architect is a strict subset of builder, so nothing
+ * could satisfy both. The ruling keeps normalization: a forgotten space is a
+ * typo, not an intrusion, and silently demoting a padded BUILDER would strand
+ * a builder mid-mission with no legible reason.
+ * Recorded in docs/surgery/campaign-p2-m0/ruling-20260728-1955-owner-G1G4.md.
  *
  * @returns {{role: string, raw: string|null, recognized: boolean, reason: string}}
  */
