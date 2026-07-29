@@ -122,6 +122,50 @@ function ledgerDelta(args) {
   return `${r.stdout || ''}${r.stderr || ''}`;
 }
 
+// ---- plumbing: the server handle and ONE idempotent shutdown ---------------
+// Both the happy path and the failure path must use the same shutdown, and it
+// must survive being called twice. Previously `shutdown` was defined inside
+// main() and registered on 'exit', while main().catch() disconnected Prisma —
+// so a failure killed the child from an exit handler while libuv was still
+// unwinding the Prisma disconnect, and the process aborted with 127. A crashed
+// witness and a cap-breached witness must never share an exit code, because
+// then the exit code stops meaning anything.
+let serverProc = null;
+let shutdownDone = false;
+function shutdown() {
+  if (shutdownDone) return;
+  shutdownDone = true;
+  try {
+    if (serverProc) serverProc.kill();
+  } catch {
+    /* already down */
+  }
+}
+process.on('exit', shutdown);
+
+// ---- plumbing: the cookie jar ----------------------------------------------
+// requireAuth in backend/src/lib/auth.js reads the session EXCLUSIVELY from the
+// httpOnly cookie `cutprotocol_session`. There is no bearer path anywhere in
+// the app, so the witness has to hold a cookie exactly as a browser does.
+const jar = new Map();
+
+function absorb(res) {
+  const lines =
+    typeof res.headers.getSetCookie === 'function'
+      ? res.headers.getSetCookie()
+      : [].concat(res.headers.get('set-cookie') || []);
+  for (const line of lines) {
+    if (!line) continue;
+    const pair = String(line).split(';')[0];
+    const eq = pair.indexOf('=');
+    if (eq > 0) jar.set(pair.slice(0, eq).trim(), pair.slice(eq + 1).trim());
+  }
+}
+
+function cookieHeader() {
+  return Array.from(jar, ([k, v]) => `${k}=${v}`).join('; ');
+}
+
 async function main() {
   const spentThisMonth = await monthSpend();
   const monthlyCap = Number((spentThisMonth + CAP_USD).toFixed(4));
@@ -150,19 +194,12 @@ async function main() {
   // ---- 5. boot -------------------------------------------------------------
   console.log(`boot       : node server.js on 127.0.0.1:${PORT}`);
   const server = spawn(process.execPath, ['server.js'], { cwd: BACKEND, env, stdio: ['ignore', 'pipe', 'pipe'] });
+  serverProc = server;
   const serverLog = [];
   server.stdout.on('data', (d) => serverLog.push(String(d)));
   server.stderr.on('data', (d) => serverLog.push(String(d)));
 
   const base = `http://127.0.0.1:${PORT}`;
-  const shutdown = () => {
-    try {
-      server.kill();
-    } catch {
-      /* already down */
-    }
-  };
-  process.on('exit', shutdown);
 
   async function waitForBoot(ms = 20000) {
     const stop = Date.now() + ms;
@@ -186,15 +223,16 @@ async function main() {
   const email = `witness-${stamp}@local`;
   const password = `witness-${stamp}-pw`;
 
-  async function api(method, url, body, token) {
+  async function api(method, url, body) {
     const r = await fetch(`${base}${url}`, {
       method,
       headers: Object.assign(
         { 'content-type': 'application/json' },
-        token ? { authorization: `Bearer ${token}` } : {}
+        jar.size ? { cookie: cookieHeader() } : {}
       ),
       body: body ? JSON.stringify(body) : undefined,
     });
+    absorb(r);
     const text = await r.text();
     let json = null;
     try {
@@ -205,10 +243,25 @@ async function main() {
     return { status: r.status, json, text };
   }
 
-  const reg = await api('POST', '/api/auth/register', { email, password });
-  if (reg.status >= 400) throw new Error(`register failed ${reg.status}: ${reg.text.slice(0, 300)}`);
-  const token = (reg.json && (reg.json.token || reg.json.accessToken)) || null;
-  if (!token) throw new Error(`register returned no token: ${reg.text.slice(0, 300)}`);
+  // Mint the account directly, then authenticate through the REAL login route.
+  //
+  // POST /api/auth/register is gated — it permits registration only on a
+  // zero-user install or from a caller already holding a live session — and on
+  // success it returns { id, email, role } with the session in a cookie and no
+  // token in the body. The witness therefore creates its own dedicated row and
+  // signs in the way a person does, so the cookie is issued by exactly the code
+  // path a user's cookie comes from. The app is not on this manifest and is not
+  // touched: no bearer path is added, no registration gate is weakened.
+  const { hashPassword } = require(path.join(BACKEND, 'src', 'lib', 'auth.js'));
+  await prisma.user.create({
+    data: { email, passwordHash: await hashPassword(password), role: 'user' },
+  });
+
+  const login = await api('POST', '/api/auth/login', { email, password });
+  if (login.status >= 400) throw new Error(`login failed ${login.status}: ${login.text.slice(0, 300)}`);
+  if (!jar.has('cutprotocol_session')) {
+    throw new Error(`login returned no session cookie: ${login.text.slice(0, 300)}`);
+  }
   console.log(`account    : ${email}`);
 
   // THE FORCING PROFILE (M5). Celiac + soy walls, non-keto, 1.0 lb/wk. The
@@ -228,7 +281,7 @@ async function main() {
     allergies: ['gluten', 'soy'],
     unitPref: 'metric',
   };
-  const prof = await api('PUT', '/api/profile', profile, token);
+  const prof = await api('PUT', '/api/profile', profile);
   if (prof.status >= 400) throw new Error(`profile failed ${prof.status}: ${prof.text.slice(0, 300)}`);
   console.log(`profile    : celiac+soy walls, non-keto, ${profile.rateLbPerWeek} lb/wk`);
 
@@ -238,7 +291,7 @@ async function main() {
     console.log('generate   : SKIPPED (--dry-run). No model call, no spend.');
   } else {
     const startedAt = Date.now();
-    gen = await api('POST', '/api/plans/generate', { horizon: 'week' }, token);
+    gen = await api('POST', '/api/plans/generate', { horizon: 'week' });
     const elapsed = Date.now() - startedAt;
     console.log(`generate   : status=${gen.status} elapsed=${elapsed}ms`);
     const evidence = path.join(
@@ -296,10 +349,20 @@ async function main() {
 
 main().catch(async (e) => {
   console.error(`\nWITNESS FAILED: ${e && e.message}`);
+  // Kill the child FIRST, then disconnect. The reverse order is what aborted
+  // libuv and produced exit 127 — an exit code that made a crash and a cap
+  // breach indistinguishable.
+  shutdown();
   try {
     await prisma.$disconnect();
   } catch {
     /* already down */
   }
-  process.exit(1);
+  // exitCode, NOT process.exit(). Forcing exit here aborted libuv mid-teardown
+  // — first as 127, then as a raw Windows abort — because the Prisma engine and
+  // the killed child were still unwinding. Setting the code and letting the loop
+  // drain gets the same answer without racing the runtime, and a failure that
+  // reports 1 is the whole point: a crash and a cap breach must never share an
+  // exit code.
+  process.exitCode = 1;
 });
