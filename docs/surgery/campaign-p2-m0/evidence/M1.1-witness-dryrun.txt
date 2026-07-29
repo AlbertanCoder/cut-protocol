@@ -1,0 +1,28 @@
+﻿== WITNESS ==
+run        : brain=off port=3999 dry-run=true
+db         : C:\Users\<account>\Desktop\cut-protocol\backend\prisma\dev.db (asserted dev)
+backup     : C:\Users\<account>\Desktop\cut-protocol\backend\prisma\dev.db.backup-witness-20260729-103947
+caps       : designs<=2 calls<=12 perRequest<=$0.5 daily<=$0.5 monthly<=$0.8928 (month-to-date $0.3928 + $0.5)
+t0         : 2026-07-29T10:39:47.406Z
+ledger pre : newest=cmrzu1bcd0051wlo08nakbblp @ 2026-07-25T03:51:39.182Z
+boot       : node server.js on 127.0.0.1:3999
+boot       : up
+account    : witness-20260729-103947@local
+profile    : celiac+soy walls, non-keto, 1 lb/wk
+generate   : SKIPPED (--dry-run). No model call, no spend.
+t1         : 2026-07-29T10:39:48.433Z
+
+-- ledger-delta.js (machine numbers, not the model's arithmetic) --
+◇ injected env (0) from backend\.env // tip: ◈ encrypted .env [www.dotenvx.com]
+== LEDGER DELTA ==
+window   : since=2026-07-29T10:39:47.406Z  until=2026-07-29T10:39:48.433Z  afterId=cmrzu1bcd0051wlo08nakbblp
+delta    : 0 row(s), $0.0000, in=0 out=0 tokens
+all-time : 13 row(s), $0.3928
+== END ==
+
+-- CAP VERDICTS --
+  calls: 0 <= 12  ok
+  dollars: 0 <= 0.5  ok
+
+backup kept at: C:\Users\<account>\Desktop\cut-protocol\backend\prisma\dev.db.backup-witness-20260729-103947
+== WITNESS COMPLETE ==

@@ -268,17 +268,33 @@ async function main() {
   // walls are what make the library thin enough that scaling alone cannot land
   // the day; the rate sets the bands. Kept here, in the frozen instrument, so
   // the profile cannot be softened after seeing a disappointing result.
+  //
+  // AMENDED 2026-07-29 on the owner's passphrase (ASK campaign.6b). Six FIELD
+  // NAMES were wrong for this app and the profile could never have been set:
+  // four were rejected outright by PUT /api/profile, and two — weightKg and
+  // allergies — are not in PROFILE_FIELDS at all, so the request SUCCEEDED and
+  // those values were silently discarded. `allergies` in particular was read by
+  // nothing in backend/src, which means THE WALLS ABOVE HAVE NEVER EXISTED and
+  // this profile has never forced anything. No prior measurement is invalidated,
+  // because the witness had never completed an authenticated run to produce one.
+  //
+  // Every value below keeps its meaning: same trade and multiplier band, same
+  // resistance training, same mass, same two walls, same rate. Nothing was
+  // softened — this is the first time the profile bites. Verified whole against
+  // the app's own validator (11 ok / 0 rejected / 0 dropped) BEFORE ratification;
+  // re-runnable at docs/surgery/campaign-p2-m0/evidence/profile-field-check.js.
+  // The clause is re-frozen at these bytes.
   const profile = {
-    sex: 'male',
+    sex: 'M',
     age: 34,
     heightCm: 180,
-    weightKg: 88,
-    occupationKey: 'carpenter',
-    trainingStyle: 'hypertrophy',
+    startWeightKg: 88,
+    occupationKey: 'carpenter-finish',
+    trainingStyle: 'weights',
     minutesPerSession: 60,
     rateLbPerWeek: 1.0,
-    dietaryStyle: 'omnivore',
-    allergies: ['gluten', 'soy'],
+    dietaryStyle: 'none',
+    excludedFoods: ['gluten', 'soy'],
     unitPref: 'metric',
   };
   const prof = await api('PUT', '/api/profile', profile);
