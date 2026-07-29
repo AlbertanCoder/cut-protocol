@@ -143,12 +143,10 @@ const CASES = [
   ['ROLE  UNSET     · CREATE under CAMPAIGN/ (architect door)', EDIT_HOOK, editPayload(CAMPAIGN_NEW), 'ALLOW', UNSET],
 
   // --- A10 · normalization: trim + case-fold, per I2 ------------------------
-  // CONTESTED. I2 mandates trim and case-fold, which makes "  BUILDER  " a
-  // recognized builder. A10 lists that same value among those that must land
-  // architect-or-tighter. Both cannot hold. Implemented per I2 and raised as
-  // ASK M0.1-a; if the ruling goes the other way these two rows flip to BLOCK
-  // and role.js drops trim/case-fold from recognition.
-  ['ROLE  "  BUILDER  " · normalizes to builder (I2 reading)', EDIT_HOOK, editPayload('.claude/hooks/guard-edit.js'), 'ALLOW', '  BUILDER  '],
+  // SETTLED 2026-07-28 by owner ruling, passphrase given: I2 stands, A10
+  // amended. A padded, upper-cased BUILDER is a builder. A forgotten space is
+  // a typo, not an intrusion.
+  ['ROLE  "  BUILDER  " · normalizes to builder (SETTLED, I2)', EDIT_HOOK, editPayload('.claude/hooks/guard-edit.js'), 'ALLOW', '  BUILDER  '],
   ['ROLE  "Architect"   · normalizes to architect', EDIT_HOOK, editPayload('.claude/hooks/guard-edit.js'), 'BLOCK', 'Architect'],
 
   // === M0.2 · G2 — THE BLACK BOX IS CLOSED TO THE BUILDER ==================

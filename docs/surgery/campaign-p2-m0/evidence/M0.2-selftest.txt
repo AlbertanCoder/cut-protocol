@@ -74,7 +74,7 @@ PASS  want=BLOCK got=BLOCK role="admin"       ROLE  "admin"   · WRITE on-manife
 PASS  want=BLOCK got=BLOCK role="surgeon"     ROLE  "surgeon" · WRITE on-manifest hook
         -> BLOCKED: .claude/hooks/guard-edit.js is outside the architect (CP_ROLE "surgeon" is not a role — fail-closed) door — that role may write only under docs/surgery/CAMPAIGN/. A role NARROWS the incision manifest and never widens it, so being on the allow list is not enough on its own.
 PASS  want=ALLOW got=ALLOW role=<unset>       ROLE  UNSET     · CREATE under CAMPAIGN/ (architect door)
-PASS  want=ALLOW got=ALLOW role="  BUILDER  " ROLE  "  BUILDER  " · normalizes to builder (I2 reading)
+PASS  want=ALLOW got=ALLOW role="  BUILDER  " ROLE  "  BUILDER  " · normalizes to builder (SETTLED, I2)
 PASS  want=BLOCK got=BLOCK role="Architect"   ROLE  "Architect"   · normalizes to architect
         -> BLOCKED: .claude/hooks/guard-edit.js is outside the architect door — that role may write only under docs/surgery/CAMPAIGN/. A role NARROWS the incision manifest and never widens it, so being on the allow list is not enough on its own.
 PASS  want=BLOCK got=BLOCK role="builder"     G2    builder   · EDIT existing order

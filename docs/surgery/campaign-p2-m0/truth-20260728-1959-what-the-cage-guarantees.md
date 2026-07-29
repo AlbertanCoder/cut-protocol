@@ -35,6 +35,20 @@ filename*. It has no path-write rule and never reads the manifest.
   by *filename*, so a write addressed to the directory trips no rule.
 - **VERDICT M0.1, criteria A5, A6, A11 (DENY results).** All probed with the
   Edit tool. They stand for that tool only and were written unqualified.
+- **C7** (`surgery-20260727-1010/claims.md`) — "with `locked:true`, `guard-edit`
+  refuses writes to `.claude/hooks/guard-edit.js`, … `docs/surgery/CURRENT/
+  manifest.json`, `scripts/surgery/`, and `backend/tests/golden/` — 13 cases, 0
+  failures." Every one of those thirteen was a `guard-edit` decision. **The lock
+  seals the Edit door only.** All five named targets are shell-writable.
+- **C16** — "eight forbidden acts, issued as real tool calls … each refused by a
+  PreToolUse hook … Zero FAILED-OPEN." True and important: it proved the hooks
+  *bind*, which the previous session could not. It says nothing about acts
+  issued as shell writes, and two of its eight — the `Edit` to
+  `guard-bash.js` and the `Edit` flipping `"locked"` to `false` — are reachable
+  from a shell today.
+- **C19** — "`guard-selftest` and `lock-proof` … `26 passed, 0 failed` … no
+  regression." Accurate, and scoped to what those two scripts test. Neither had
+  a shell-write case, so a green run there was never evidence about that door.
 - **Any earlier claim that "the cage bites."** It bit the door that was tested.
   No session tested the other one until 2026-07-28.
 - **This is not new damage.** The harness has had this shape since
