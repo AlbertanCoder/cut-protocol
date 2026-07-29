@@ -1,0 +1,41 @@
+﻿vocabulary probes (the app's own lookup tables):
+  OCCUPATION_BY_KEY["carpenter"]        NOT A KEY
+  OCCUPATION_BY_KEY["carpenter-finish"] FOUND
+  TRAINING_BY_KEY["hypertrophy"]        NOT A KEY
+  TRAINING_BY_KEY["weights"]            FOUND
+  valid trainingStyle keys             weights | mixed | sport | cardio
+  DIETARY_STYLES includes "omnivore"   NO
+  PROFILE_FIELDS (24): sex, age, heightCm, bodyFatPct, bodyFatSource, occupationKey, activityOverride, sessionsPerWeek, trainingStyle, minutesPerSession, startWeightKg, goalWeightKg, startDate, unitPref, rateLbPerWeek, rateAcknowledged, floorKcal, excludedFormulas, mealsPerDay, snacksPerDay, excludedFoods, dietaryStyle, cuisinePreferences, mealPreferencesNote
+
+=== FROZEN — witness.js as it stands today ===
+  REJECTED    sex                "male" — Choose male or female — the calorie formulas need one or the o
+  ok          age                34
+  ok          heightCm           180
+  DROPPED     weightKg           88 — not in PROFILE_FIELDS; silently discarded
+  REJECTED    occupationKey      "carpenter" — That job isn't in the list. Pick one from the search results, 
+  REJECTED    trainingStyle      "hypertrophy" — Pick a training style from the list.
+  ok          minutesPerSession  60
+  ok          rateLbPerWeek      1
+  REJECTED    dietaryStyle       "omnivore" — That dietary style isn't one this app knows — pick one from th
+  DROPPED     allergies          ["gluten","soy"] — not in PROFILE_FIELDS; silently discarded
+  ok          unitPref           "metric"
+  --> 5 ok, 4 rejected, 2 silently dropped, of 11 sent
+
+=== PROPOSED — the translation, measured not applied ===
+  ok          sex                "M"
+  ok          age                34
+  ok          heightCm           180
+  ok          startWeightKg      88
+  ok          occupationKey      "carpenter-finish"
+  ok          trainingStyle      "weights"
+  ok          minutesPerSession  60
+  ok          rateLbPerWeek      1
+  ok          dietaryStyle       "none"
+  ok          excludedFoods      ["gluten","soy"]
+  ok          unitPref           "metric"
+  --> 11 ok, 0 rejected, 0 silently dropped, of 11 sent
+
+=== SUMMARY ===
+  frozen   : 5 ok, 4 rejected, 2 silently dropped
+  proposed : 11 ok, 0 rejected, 0 silently dropped
+  the proposed translation is accepted whole by the app's own validator.
