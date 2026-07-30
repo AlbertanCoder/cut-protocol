@@ -79,6 +79,38 @@ const VEGETARIAN_MUST_KEEP = [
 // five candy rows INTO a carnivore pool, and the allergen-vocabulary widening put
 // noodles, rice and olives there. This arm exists so that coupling can never again move
 // without a test noticing.
+// hasWord()/hasWordOrPlural() share ONE compiled RegExp per word across every call, so
+// that a 14,148-name sweep compiles each pattern once instead of once per name. That is
+// only sound while the patterns stay non-global: `.test()` advances `lastIndex` under `g`
+// or `y`, and a shared stateful regex would then return alternating answers for the same
+// input. This is the test that catches it — a `g` added to wordRe() fails here and
+// nowhere else in the suite, because every other test calls each pattern once.
+test("repeated matching is stateless — a shared compiled pattern cannot drift", () => {
+  const cases = [
+    ["Almonds", "almond"], ["Tahina", "sesame"], ["Miniature Marshmallows", "shellfish"],
+    ["Vegan kimchi", "fish"], ["Cheese, Cheddar", "dairy"], ["Corn Tortillas", "gluten"],
+  ];
+  for (const [name, term] of cases) {
+    const first = matchesExclusionTerm(name, term);
+    for (let i = 0; i < 25; i++) {
+      assert.equal(
+        matchesExclusionTerm(name, term), first,
+        `matchesExclusionTerm(${JSON.stringify(name)}, ${JSON.stringify(term)}) changed answer on ` +
+          `call ${i + 2} (first said ${first}). A cached RegExp carrying the g or y flag keeps ` +
+          `lastIndex between .test() calls — the compiled-pattern cache in dietaryFilter.js ` +
+          `requires the "i" flag alone.`
+      );
+    }
+  }
+  // Same property through the style predicates, which reach the same cache.
+  for (const style of ["vegetarian", "vegan", "carnivore"]) {
+    for (const name of ["Thai Red Curry Paste", "Butter Beans", "Paella, NFS"]) {
+      const first = excl(name, style);
+      for (let i = 0; i < 10; i++) assert.equal(excl(name, style), first, `${style}/${name} drifted`);
+    }
+  }
+});
+
 // Unambiguous: a food with no animal content at all must never reach a carnivore pool.
 const CARNIVORE_MUST_EXCLUDE = ["Butter Beans", "Almond Milk", "Egg Plants", "Paella Rice"];
 
