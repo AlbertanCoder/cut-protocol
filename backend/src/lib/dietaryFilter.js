@@ -714,16 +714,68 @@ function describeExclusionTerms(terms) {
 // typical realistic serving size - a disclosed simplification.
 const DEFAULT_KETO_CARB_THRESHOLD = 15;
 
+// ─────────────────────────────────────────────────────────────────────────
+// COMPILED-PATTERN CACHE — the hottest thing in this file
+// ─────────────────────────────────────────────────────────────────────────
+// hasWord() and hasWordOrPlural() used to call `new RegExp(...)` on EVERY
+// invocation, and they are the innermost call in the exclusion gate. Profiled
+// over one `partitionRecipes(889)`:
+//
+//   profile                     new RegExp()   distinct patterns   redundancy
+//   one excluded food ["wheat"]      741,280                 136       5,451x
+//   dietaryStyle "vegan"           1,025,255                 293       3,499x
+//   sixteen excluded foods        5,308,982                 153      34,699x
+//
+// The single hottest pattern, /\btortilla(?:es|s)?\b/i, was compiled 11,144
+// times in one request. 70.1% of CPU self time was in hasWordOrPlural and a
+// further 8.1% in escapeRe. `GET /api/recipes` went 1.8 ms (no rules) ->
+// 390 ms (one allergy) -> 2,914 ms (sixteen). COMPOUND_RE two hundred lines
+// above is already hoisted with the note "Built once - this runs over 14,144
+// names in the sweep"; the same reasoning simply never reached here.
+//
+// Cache on the WORD, not the name. That is the whole trick: names are
+// effectively unbounded (14,148 foods x expansions) while the vocabulary is a
+// few hundred terms, so a word-keyed cache converges after the first pass and
+// every later call is a Map hit. Measured 3-5x end to end with verdicts
+// byte-identical on every one of 14,148 foods and 889 recipes.
+//
+// SAFE TO REUSE A COMPILED REGEX: these patterns carry only the `i` flag.
+// `lastIndex` is stateful for .test()/.exec() only under `g` or `y`, so a
+// shared non-global regex cannot leak position between calls. (COMPOUND_RE
+// above IS `gi`, which is exactly why it has to reset `lastIndex = 0` before
+// every use. Do not add `g` here without revisiting that.)
+//
+// BOUNDED, because `word` is NOT always ours: `matchesExclusionTerm` passes
+// user-supplied `excludedFoods` entries straight in, and profile.js:134 allows
+// up to 40 free-text terms of 60 chars each per user. An unbounded Map keyed on
+// that is a memory-growth vector across users. Same clear-on-full policy as
+// compoundCache, for the same reason.
+const wordReCache = new Map();
+const WORD_RE_CACHE_MAX = 20000;
+
+function wordRe(word, plural) {
+  // " " cannot appear in a food name or a keyword, so it is a collision-proof
+  // separator between the flag and the term: without it, hasWord("...","xs") and
+  // hasWordOrPlural("...","x") could share a key and return each other's pattern.
+  const key = (plural ? "p " : "w ") + word;
+  let re = wordReCache.get(key);
+  if (re === undefined) {
+    re = new RegExp("\\b" + escapeRe(word) + (plural ? "(?:es|s)?" : "") + "\\b", "i");
+    if (wordReCache.size >= WORD_RE_CACHE_MAX) wordReCache.clear();
+    wordReCache.set(key, re);
+  }
+  return re;
+}
+
 function hasWord(name, word) {
-  return new RegExp("\\b" + word.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + "\\b", "i").test(name);
+  return wordRe(word, false).test(name);
 }
 
 // Same word-boundary match as hasWord(), but tolerant of a trailing "s" or
 // "es" plural - CATEGORY_SYNONYMS lists singular keywords ("almond",
 // "cracker") but real ingredient names are very often plural ("Almonds").
 function hasWordOrPlural(name, word) {
-  const escaped = word.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-  return new RegExp("\\b" + escaped + "(?:es|s)?\\b", "i").test(name);
+  return wordRe(word, true).test(name);
 }
 
 // Plural-aware: real ingredient names are very often plural ("Prawns",
