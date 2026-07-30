@@ -30,6 +30,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { spawn } from "node:child_process";
+import { assertSchemaCurrent } from "./lib/schemaDrift.mjs";
 
 const BACKEND = path.resolve(path.join(import.meta.dirname, ".."));
 const TESTS_DIR = path.join(BACKEND, "tests");
@@ -110,6 +111,16 @@ if (listOnly) {
   console.log(`[runTests] --list: ${files.length} files, nothing executed.`);
   process.exit(0);
 }
+
+// A pending migration is not a test failure — it is 35 test failures wearing one.
+//
+// ensureSchemaCurrent() applies migrations at boot only when CUT_PROTOCOL_DB_PATH
+// is set, i.e. only in a packaged install. In dev nothing applies them, so the
+// database drifts from the schema silently. When it does, the suite reports a
+// pile of unrelated-looking P2022 errors and the real cause is one line in
+// _prisma_migrations. Check it here, once, and say the migration's name — the
+// same reason the tripwire floors above exist.
+assertSchemaCurrent({ label: "runTests" });
 
 // The test suite may never bill the owner's Anthropic account.
 //

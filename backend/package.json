@@ -8,6 +8,8 @@
     "node": ">=22.13.0"
   },
   "scripts": {
+    "//postinstall": "A fresh clone had no generated Prisma client, so every entry point died with 'did not initialize yet'. Worse, the absent client MASKED schema drift: with no client there is nothing to disagree with the database, so the first thing a newcomer was told to do (generate one) was the exact action that surfaced 35 test failures. Generate on install so the client and the schema are never silently out of step. MUST STAY NON-FATAL: @prisma/client ships its own postinstall that also generates, and that hook deliberately swallows every error and exits 0. A fail-hard duplicate turns any ordinary 'npm install <pkg>' in this directory into a failed install whenever generate cannot write the query-engine DLL -- which on Windows is simply what happens while the Electron app or a dev server is running. That exact EPERM was hit while this line was being added. Note this does NOT cover 'npm ci --ignore-scripts', which skips both hooks; runTests.mjs's schema-drift guard is what catches that case.",
+    "postinstall": "prisma generate || exit 0",
     "dev": "nodemon server.js",
     "start": "node server.js",
     "seed": "node scripts/seedUser.js",

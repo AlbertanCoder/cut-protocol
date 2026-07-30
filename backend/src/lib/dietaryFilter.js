@@ -98,7 +98,29 @@ const PROCESSED_MEAT_KEYWORDS = [
 // same plant-qualifier guard butter/cream/milk already had, or a vegan pool
 // loses "Soy yogurt" and "Vegan cheese", which are vegan foods. See
 // isDairyCheese()/isDairyYogurt(), called from isVeganAnimalProduct().
-const ANIMAL_DERIVED_EXTRA_KEYWORDS = [
+// ── The lacto-ovo split ──────────────────────────────────────────────────
+// WHY THIS IS TWO LISTS AND NOT ONE. A vegan eats neither dairy/egg nor
+// slaughter/marine products; a lacto-ovo vegetarian eats the first and not the
+// second. Before 2026-07-29 that was expressed by giving vegetarian its own,
+// SHORTER list — `MEAT_FISH_KEYWORDS` alone — which made vegetarian a strict
+// subset of vegan by construction and left every vegan-only term invisible to it.
+//
+// Measured cost of that shape, on this corpus: three curry pastes IN LIVE USE as
+// recipe ingredients ("Thai Red Curry Paste", "Red Curry Paste", "Thai Green
+// Curry Paste") reached vegetarian plans and grocery lists — while THIS SAME FILE
+// excluded them for vegan, for a fish allergy, and for a shellfish allergy, and
+// `CATEGORY_SYNONYMS.fish` carries a comment explaining they standardly contain
+// fish sauce and shrimp paste. 15 foods in total violated
+// `vegetarian ⊇ (fish ∪ shellfish)`. Marshmallows reached vegetarian grocery
+// lists the same way.
+//
+// So: one definition, split by what each style actually permits. Adding a term
+// now requires deciding which side it belongs on, which is the whole point.
+// The invariant in tests/dietaryStyleLattice.test.js asserts the containment
+// mechanically, so this cannot silently drift again.
+
+// Dairy and egg. Permitted for lacto-ovo vegetarians, excluded for vegans.
+const LACTO_OVO_KEYWORDS = [
   "egg", "eggs", "whey", "casein", "ghee",
   "honey", "mayonnaise", "skyr", "kefir", "custard", "quark", "milk powder",
   // Cheese VARIETY names — none contain the word "cheese", all are dairy
@@ -107,14 +129,49 @@ const ANIMAL_DERIVED_EXTRA_KEYWORDS = [
   "halloumi", "mascarpone", "paneer", "stilton", "gorgonzola", "camembert",
   "gruyere", "gruyère", "edam", "emmental", "manchego", "pecorino",
   "provolone", "burrata", "queso", "creme fraiche", "crème fraîche", "curd",
-  // Hidden-animal carriers caught by the 854-name audit: milk-based sweets,
-  // egg-based sauces/doughs, gelatin sweets, yogurt/ghee breads, and the
-  // shrimp-paste-based Thai pastes (same safe-side reasoning as gluten's
-  // stock cubes — over-exclusion is the correct failure direction).
-  "dulce de leche", "marshmallow", "meringue", "white chocolate",
-  "milk chocolate", "mars bar", "aioli", "aïoli", "christmas pudding",
-  "perogi", "pierogi", "toffee", "caramel sauce", "naan", "wonton",
-  "curry paste",
+  // Milk-based sweets, egg-based sauces/doughs, yogurt/ghee breads — all
+  // lacto-ovo. Caught by the 854-name audit.
+  "dulce de leche", "meringue", "white chocolate", "milk chocolate", "mars bar",
+  "aioli", "aïoli", "perogi", "pierogi", "toffee", "caramel sauce", "naan",
+  "wonton",
+  // `nougat` belongs HERE, not with the gelatin confections. Traditional and
+  // commercial nougat is whipped EGG WHITE, and this repo's own taxonomy already
+  // says so: allergenTaxonomy.js:133 lists "nougat" in the `eggs` entry's
+  // nameKeywords (and again under tree nuts at :197). It was briefly placed in
+  // SLAUGHTER_OR_MARINE_KEYWORDS below, which wrongly hid 7 real corpus rows
+  // (TOBLERONE, REESE'S FAST BREAK, "Candies, nougat, with almonds", …) from
+  // vegetarians and — because carnivore is `!isVeganAnimalProduct` — wrongly
+  // admitted those same 5 candy rows to a CARNIVORE pool. Vegan is unaffected
+  // either way, because vegan takes the union of both lists.
+  "nougat",
+];
+
+// Slaughter- or marine-derived. Excluded for BOTH vegan and vegetarian.
+// `gelatin`, `gelatine`, `lard`, `tallow`, `suet`, `worcestershire`, `dashi` and
+// `bonito` already live in MEAT_FISH_KEYWORDS, which vegetarian has always
+// consulted — these are the ones that did not, plus the gelatin confections and
+// clarifying agents whose names never say "gelatin". Over-exclusion is the
+// correct failure direction here, the same reasoning gluten's stock cubes use.
+// Corpus reach over the live 14,148-name food table is recorded per term, because
+// a keyword that matches nothing is a claim without evidence — the same standard
+// mergeAllergenTaxonomy() applies to itself further down this file.
+const SLAUGHTER_OR_MARINE_KEYWORDS = [
+  "curry paste",        // Thai red/green: fish sauce and/or shrimp paste — 3 rows, all in live use
+  "christmas pudding",  // suet — 1 row, live
+  "marshmallow",        // gelatin — 24 rows incl. "Miniature Marshmallows", live
+  "gummy",              // gelatin — 1 row
+  // `nougat` was here and is NOT: it is egg-based. See LACTO_OVO_KEYWORDS above.
+  // The three below currently match ZERO corpus rows. They are kept deliberately
+  // as forward guards for imported/AI-generated names, not because they earn a
+  // place on measured reach — stated plainly so nobody later mistakes them for
+  // evidence-backed entries.
+  "jell-o", "aspic", "isinglass", // gelatin dessert; meat jelly; fish-bladder fining agent
+];
+
+// Vegan's set is the union, so vegan behaviour is unchanged by the split itself.
+const ANIMAL_DERIVED_EXTRA_KEYWORDS = [
+  ...LACTO_OVO_KEYWORDS,
+  ...SLAUGHTER_OR_MARINE_KEYWORDS,
 ];
 const PLANT_MILK_QUALIFIERS = ["almond", "soy", "oat", "coconut", "cashew", "rice", "hemp", "pea"];
 
@@ -324,7 +381,13 @@ const CATEGORY_SYNONYMS = {
     "chestnut", "nutella", "gianduja",
     "nut butter", "mixed nuts", "nut mix", "trail mix",
   ],
-  sesame: ["sesame", "tahini", "halva", "benne", "gomashio", "hummus", "houmous"],
+  // "tahina"/"tehina" are the standard Arabic/Egyptian transliterations of tahini
+  // and are how the imported corpus actually spells it in serving instructions.
+  // Measured 2026-07-29: `matchesExclusionTerm("Tahini","sesame")` was true and
+  // `("Tahina","sesame")` was FALSE, so "Ful Medames" and "Tamiya" — which name
+  // "tahina sauce" in their own steps — reached a sesame-allergic user's pool.
+  // The gate reads full step prose by design; it read this and did not know the word.
+  sesame: ["sesame", "tahini", "tahina", "tehina", "halva", "benne", "gomashio", "hummus", "houmous"],
   // The remaining major declarable allergens. These keys exist so an Open Food
   // Facts `allergens_tags` value has somewhere to land (see
   // OFF_TAG_FAMILY below) and so a user who types one gets a category rather
@@ -871,9 +934,78 @@ function stripEggPlant(n) {
   return String(n || "").replace(/\begg\s*plants?\b/gi, " ");
 }
 
-function isVeganAnimalProduct(n) {
+// Slaughter- or marine-derived: what BOTH vegan and vegetarian must exclude.
+//
+// The last two clauses are the important ones, and they are deliberately not a
+// third keyword list. `MEAT_FISH_KEYWORDS` is the STYLE vocabulary and
+// `CATEGORY_SYNONYMS.fish`/`.shellfish` is the ALLERGEN vocabulary, and the two
+// drifted: measured 2026-07-29, twelve foods were excluded for a fish or shellfish
+// allergy and admitted to a vegetarian pool — `Shellfish, NFS`, `Soup,
+// bouillabaisse`, `Paella, NFS`, `Soup, bisque`, four `Shellfish mixture …` rows,
+// `Cabbage, kimchi` and `Kimchi` (fish sauce / shrimp paste) and `Olive tapenade`
+// (anchovies). Every one was a real leak, not a false positive of the check.
+//
+// Consulting the allergen vocabulary directly makes
+// `vegetarian ⊇ (fish ∪ shellfish)` and `vegan ⊇ vegetarian` true BY
+// CONSTRUCTION, so neither can drift again by someone adding a word to one list
+// and not the other. It uses `matchesExclusionTerm`, the GUARDED matcher, so the
+// WORD_GUARDS and free-from vetoes that stop "water chestnut" and "tomato bisque"
+// still apply. (Hoisting: `matchesExclusionTerm` is a function declaration later
+// in this file, so calling it here is resolved at call time, not load time.)
+// A DISH-NAME keyword (paella, bisque, kimchi, pho, tapenade) names a dish that
+// standardly carries a marine ingredient — which is why the allergen taxonomy carries
+// them, and correctly so, since a bare "Paella, NFS" really is usually mixta. But the
+// same word appears on rows that state their own plant identity, and there the keyword
+// is a FALSE POSITIVE in the gate's own terms.
+//
+// This was found by widening `vegetarian` to consult the allergen vocabulary (so that
+// `vegetarian ⊇ (fish ∪ shellfish)` holds by construction). That change did not create
+// the over-exclusion — it made an EXISTING one visible in a second place. Measured
+// before this guard existed:
+//
+//     matchesExclusionTerm("Roast fennel and aubergine paella", "shellfish") = true
+//     matchesExclusionTerm("Vegan kimchi", "fish")                           = true
+//     matchesExclusionTerm("Vegetarian pho", "fish")                         = true
+//     matchesExclusionTerm("Vegan tapenade", "fish")                         = true
+//
+// A shellfish-allergic user was losing a fennel-and-aubergine paella whose ingredient
+// rows contain no shellfish at all. `bisque` already carried this exemption and was
+// consequently correct; the other four simply never got one. Fixing it HERE rather than
+// in the style path is deliberate: it repairs both the allergy gate and the style filter
+// from one place, and it keeps the ⊇ invariant true instead of carving out an exception
+// that would break it.
+//
+// Deliberately NOT a general "does this name contain a vegetable" test — that would
+// exempt "Paella with shrimp and peas". It requires either an explicit plant-identity
+// declaration (vegan / vegetarian / plant-based / meat-free) or a vegetable in the
+// HEAD-NOUN position of the dish, which is the shape `bisque` was already using.
+const PLANT_DECLARED_DISH =
+  /\b(?:vegan|vegetarian|veggie|plant[-\s]?based|meat[-\s]?free|fish[-\s]?free)\b/i;
+// A vegetable may only appear here if it signals a SUBSTITUTION for the marine
+// ingredient — never if it is one of the dish's own ordinary components. Two that were
+// tried and removed, both caught by the control list in dietaryStyleLattice.test.js:
+//   `cabbage` — cabbage is KIMCHI'S OWN BASE. Traditional "Cabbage, kimchi" carries
+//               jeotgal (salted shrimp), so exempting it wrongly admitted a real
+//               shellfish carrier to a vegetarian and a shellfish-allergic pool.
+//   `pea`     — peas are an ordinary paella co-ingredient sitting beside the shrimp,
+//               not a replacement for it.
+const DISH_VEGETABLE_QUALIFIER =
+  /\b(?:tomato|tomatoe|squash|pumpkin|butternut|corn|mushroom|carrot|sweet\s+potato|potato|vegetable|asparagus|pepper|bean|lentil|cauliflower|broccoli|chestnut|fennel|aubergine|eggplant|artichoke|courgette|zucchini|leek|spinach)\b/i;
+function plantDeclaredDish(name) {
+  const s = String(name || "");
+  return PLANT_DECLARED_DISH.test(s) || DISH_VEGETABLE_QUALIFIER.test(s);
+}
+
+function isSlaughterOrMarine(n) {
   return matchesAny(stripPlantFlesh(n), MEAT_FISH_KEYWORDS)
-    || matchesAny(stripEggPlant(n), ANIMAL_DERIVED_EXTRA_KEYWORDS)
+    || matchesAny(stripEggPlant(n), SLAUGHTER_OR_MARINE_KEYWORDS)
+    || matchesExclusionTerm(n, "fish")
+    || matchesExclusionTerm(n, "shellfish");
+}
+
+function isVeganAnimalProduct(n) {
+  return isSlaughterOrMarine(n)
+    || matchesAny(stripEggPlant(n), LACTO_OVO_KEYWORDS)
     || isDairyMilk(n)
     || isDairyButterOrCream(n)
     || isDairyCheese(n)
@@ -895,8 +1027,10 @@ function excludedByStyle(food, dietaryStyle) {
     return isVeganAnimalProduct(n);
   }
   if (dietaryStyle === "vegetarian") {
-    // Same plant-flesh guard as the vegan path — see stripPlantFlesh().
-    return matchesAny(stripPlantFlesh(n), MEAT_FISH_KEYWORDS);
+    // Lacto-ovo: exactly what vegan excludes, minus dairy and egg. ONE shared
+    // predicate, so vegetarian can no longer be a silently shorter list than
+    // vegan — see the comment on isSlaughterOrMarine().
+    return isSlaughterOrMarine(n);
   }
   if (dietaryStyle === "keto") {
     return food.carb > DEFAULT_KETO_CARB_THRESHOLD;
@@ -1111,11 +1245,20 @@ const WORD_GUARDS = {
   // which is why the taxonomy already carried "paella mixta"; "Paella, NFS" is
   // the same dish under USDA's not-further-specified label. "Paella Rice" is the
   // raw bomba-rice INGREDIENT and carries nothing.
-  paella: (name) => hasWordOrPlural(name, "paella") && !/\bpaella\s+rice\b/i.test(String(name || "")),
+  paella: (name) => hasWordOrPlural(name, "paella")
+    && !/\bpaella\s+rice\b/i.test(String(name || ""))
+    && !plantDeclaredDish(name),
   // SHELLFISH — a bisque is a crustacean-shell soup; the modern vegetable
   // "bisques" are not. Same shape as plantQualified() for dairy.
   bisque: (name) => hasWordOrPlural(name, "bisque")
-    && !/\b(?:tomato|tomatoe|squash|pumpkin|butternut|corn|mushroom|carrot|sweet\s+potato|potato|vegetable|asparagus|pepper|bean|lentil|cauliflower|broccoli|chestnut)\b/i.test(String(name || "")),
+    && !plantDeclaredDish(name),
+  // SHELLFISH/FISH — traditional kimchi carries jeotgal (salted shrimp/anchovy)
+  // and traditional pho a fish-sauce broth, which is why the taxonomy carries
+  // them. A row that SAYS "vegan" or names its vegetable does not.
+  kimchi: (name) => hasWordOrPlural(name, "kimchi") && !plantDeclaredDish(name),
+  pho: (name) => hasWordOrPlural(name, "pho") && !plantDeclaredDish(name),
+  // FISH — tapenade standardly carries anchovy; the vegan versions say so.
+  tapenade: (name) => hasWordOrPlural(name, "tapenade") && !plantDeclaredDish(name),
 
   // TREE NUTS — the two false friends that were costing whole safe food groups.
   // "nut butter" is a MULTI-WORD keyword, so the default rule matches it as a
