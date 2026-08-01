@@ -1,0 +1,296 @@
+{
+  "tool": "backend/scripts/qc/scoreDays.mjs",
+  "ruler": "product/dayTolerance (as recorded)",
+  "baselineFile": "C:\\Users\\<account>\\Desktop\\cut-protocol\\fleet\\out\\W1-1\\daydump-rigshape-s424242.jsonl",
+  "treatmentFile": "C:\\Users\\<account>\\Desktop\\cut-protocol\\fleet\\out\\W1-1\\daydump-route-s424242.jsonl",
+  "baselineHeader": {
+    "schemaRun": "fleet/W1-1/run/v1",
+    "tool": "backend/scripts/qc/dayDump.mjs",
+    "label": "rigshape",
+    "agentId": "W1-1",
+    "pop": "personas",
+    "seed": 424242,
+    "seedName": "primary",
+    "customers": 250,
+    "brain": "off",
+    "poolShape": "rig (no applyFilterStack)",
+    "dbSha256": "d9037dce9754b4524943069fff7e0f3e396598c108426f370b0a189458b623a1",
+    "dbCopySha256": "d9037dce9754b4524943069fff7e0f3e396598c108426f370b0a189458b623a1",
+    "dbPath": "C:\\Users\\<account>\\Desktop\\cut-protocol\\fleet\\scratch\\W1-1\\dev.db",
+    "foodFingerprint": "b961ac3afbdf3f53905ead1353ffb05a9a2b94b7f1e0cd7fa87bbf975291f26b",
+    "foodRows": 14151,
+    "recipeRows": 910,
+    "personasPath": "docs/surgery/CAMPAIGN/qa/qa-fleet-20260729-2032/personas.jsonl",
+    "personasSha256": "e564b1ddcc36b95249b51819e03762a30da61f29f2a254312699290fae57704e",
+    "gitSha": "750e2ae6c21802b8a07cb9c1bf68f2c46c6e13b9",
+    "gitBranch": "fleet/measure-2026-08",
+    "gitDiffStat": "clean",
+    "gitDiffStatFiles": 0,
+    "gitPorcelainEntries": 2,
+    "gitDirty": true,
+    "ruler": {
+      "id": "product/dayTolerance+dayInTolerance",
+      "source": "backend/src/lib/mealSolver.js::dayTolerance / ::dayInTolerance",
+      "macros": 4,
+      "kcalTolerancePct": 0.15,
+      "proteinTolerancePct": 0.15,
+      "fatTolerancePct": 0.25,
+      "carbTolerancePct": 0.25,
+      "note": "kcal +/-15% symmetric on target; protein one-sided shortfall vs proteinMid, no ceiling; fat/carb band-relative, 25% of the band MIDPOINT outside [lo,hi]; keto carb overshoot allowance = 0."
+    },
+    "startDayOfWeek": 0,
+    "startDayOfWeekNote": "PINNED to 0 for reproducibility. routes/plans.js:276 starts a SUB-WEEK horizon on TODAY's index — a deliberate, recorded fidelity deviation.",
+    "startedAt": "2026-08-01T02:01:25.578Z"
+  },
+  "treatmentHeader": {
+    "schemaRun": "fleet/W1-1/run/v1",
+    "tool": "backend/scripts/qc/dayDump.mjs",
+    "label": "route",
+    "agentId": "W1-1",
+    "pop": "personas",
+    "seed": 424242,
+    "seedName": "primary",
+    "customers": 250,
+    "brain": "off",
+    "poolShape": "route (applyFilterStack ON)",
+    "dbSha256": "d9037dce9754b4524943069fff7e0f3e396598c108426f370b0a189458b623a1",
+    "dbCopySha256": "d9037dce9754b4524943069fff7e0f3e396598c108426f370b0a189458b623a1",
+    "dbPath": "C:\\Users\\<account>\\Desktop\\cut-protocol\\fleet\\scratch\\W1-1\\dev.db",
+    "foodFingerprint": "b961ac3afbdf3f53905ead1353ffb05a9a2b94b7f1e0cd7fa87bbf975291f26b",
+    "foodRows": 14151,
+    "recipeRows": 910,
+    "personasPath": "docs/surgery/CAMPAIGN/qa/qa-fleet-20260729-2032/personas.jsonl",
+    "personasSha256": "e564b1ddcc36b95249b51819e03762a30da61f29f2a254312699290fae57704e",
+    "gitSha": "750e2ae6c21802b8a07cb9c1bf68f2c46c6e13b9",
+    "gitBranch": "fleet/measure-2026-08",
+    "gitDiffStat": "clean",
+    "gitDiffStatFiles": 0,
+    "gitPorcelainEntries": 2,
+    "gitDirty": true,
+    "ruler": {
+      "id": "product/dayTolerance+dayInTolerance",
+      "source": "backend/src/lib/mealSolver.js::dayTolerance / ::dayInTolerance",
+      "macros": 4,
+      "kcalTolerancePct": 0.15,
+      "proteinTolerancePct": 0.15,
+      "fatTolerancePct": 0.25,
+      "carbTolerancePct": 0.25,
+      "note": "kcal +/-15% symmetric on target; protein one-sided shortfall vs proteinMid, no ceiling; fat/carb band-relative, 25% of the band MIDPOINT outside [lo,hi]; keto carb overshoot allowance = 0."
+    },
+    "startDayOfWeek": 0,
+    "startDayOfWeekNote": "PINNED to 0 for reproducibility. routes/plans.js:276 starts a SUB-WEEK horizon on TODAY's index — a deliberate, recorded fidelity deviation.",
+    "startedAt": "2026-08-01T02:00:45.791Z"
+  },
+  "problems": [
+    "POOL SHAPE MISMATCH (rig (no applyFilterStack) vs route (applyFilterStack ON)) — route and rig pool shapes are not comparable"
+  ],
+  "reconciliation": {
+    "baseline": {
+      "checked": 639,
+      "andMismatch": 0,
+      "recomputeMismatch": 0
+    },
+    "treatment": {
+      "checked": 639,
+      "andMismatch": 0,
+      "recomputeMismatch": 0
+    }
+  },
+  "instrument": {
+    "baseline": {
+      "dis": 0,
+      "drift": 0,
+      "crash": 0,
+      "silent": 0,
+      "missingFood": 0
+    },
+    "treatment": {
+      "dis": 0,
+      "drift": 0,
+      "crash": 0,
+      "silent": 0,
+      "missingFood": 0
+    }
+  },
+  "results": {
+    "baselineLevel": {
+      "planned": {
+        "k": 437,
+        "n": 639,
+        "unjudged": 16,
+        "unjudgedSat": 16,
+        "p": 0.6838810641627543,
+        "lo": 0.6468226616984296,
+        "hi": 0.7187418126417264
+      },
+      "satisfiable": {
+        "k": 417,
+        "n": 537,
+        "unjudged": 0,
+        "unjudgedSat": 0,
+        "p": 0.776536312849162,
+        "lo": 0.7394099404510492,
+        "hi": 0.8097343515089825
+      },
+      "all": {
+        "k": 437,
+        "n": 623,
+        "unjudged": 0,
+        "unjudgedSat": 0,
+        "p": 0.7014446227929374,
+        "lo": 0.6643644946156374,
+        "hi": 0.7360557335676606
+      }
+    },
+    "treatmentLevel": {
+      "planned": {
+        "k": 435,
+        "n": 639,
+        "unjudged": 16,
+        "unjudgedSat": 16,
+        "p": 0.6807511737089202,
+        "lo": 0.6436173375751095,
+        "hi": 0.7157247627337249
+      },
+      "satisfiable": {
+        "k": 415,
+        "n": 537,
+        "unjudged": 0,
+        "unjudgedSat": 0,
+        "p": 0.7728119180633147,
+        "lo": 0.7355074176264188,
+        "hi": 0.8062409916136127
+      },
+      "all": {
+        "k": 435,
+        "n": 623,
+        "unjudged": 0,
+        "unjudgedSat": 0,
+        "p": 0.6982343499197432,
+        "lo": 0.6610650530346739,
+        "hi": 0.7329739762931134
+      }
+    },
+    "planned": {
+      "base": {
+        "k": 437,
+        "n": 639,
+        "p": 0.6838810641627543,
+        "lo": 0.6468226616984296,
+        "hi": 0.7187418126417264
+      },
+      "treat": {
+        "k": 435,
+        "n": 639,
+        "p": 0.6807511737089202,
+        "lo": 0.6436173375751095,
+        "hi": 0.7157247627337249
+      },
+      "deltaUnpaired": {
+        "d": -0.00312989045383405,
+        "lo": -0.05406311704048242,
+        "hi": 0.04782574831641198
+      },
+      "deltaPaired": {
+        "n": 639,
+        "b": 9,
+        "c": 7,
+        "unpaired": 0,
+        "d": -0.003129890453834116,
+        "lo": -0.015396435417551658,
+        "hi": 0.009136654509883426,
+        "thin": false,
+        "chi": 0.0625,
+        "mde": 7.839856,
+        "clearsMde": false
+      },
+      "unjudged": {
+        "base": 16,
+        "treat": 16,
+        "baseSat": 16,
+        "treatSat": 16
+      }
+    },
+    "satisfiable": {
+      "base": {
+        "k": 417,
+        "n": 537,
+        "p": 0.776536312849162,
+        "lo": 0.7394099404510492,
+        "hi": 0.8097343515089825
+      },
+      "treat": {
+        "k": 415,
+        "n": 537,
+        "p": 0.7728119180633147,
+        "lo": 0.7355074176264188,
+        "hi": 0.8062409916136127
+      },
+      "deltaUnpaired": {
+        "d": -0.003724394785847296,
+        "lo": -0.05366171072999177,
+        "hi": 0.04623429300591305
+      },
+      "deltaPaired": {
+        "n": 537,
+        "b": 9,
+        "c": 7,
+        "unpaired": 0,
+        "d": -0.0037243947858473,
+        "lo": -0.018320355433198255,
+        "hi": 0.010871565861503655,
+        "thin": false,
+        "chi": 0.0625,
+        "mde": 7.839856,
+        "clearsMde": false
+      },
+      "unjudged": {
+        "base": 0,
+        "treat": 0,
+        "baseSat": 0,
+        "treatSat": 0
+      }
+    },
+    "all": {
+      "base": {
+        "k": 437,
+        "n": 623,
+        "p": 0.7014446227929374,
+        "lo": 0.6643644946156374,
+        "hi": 0.7360557335676606
+      },
+      "treat": {
+        "k": 435,
+        "n": 623,
+        "p": 0.6982343499197432,
+        "lo": 0.6610650530346739,
+        "hi": 0.7329739762931134
+      },
+      "deltaUnpaired": {
+        "d": -0.0032102728731941976,
+        "lo": -0.053998909594320965,
+        "hi": 0.047600922214171726
+      },
+      "deltaPaired": {
+        "n": 623,
+        "b": 9,
+        "c": 7,
+        "unpaired": 0,
+        "d": -0.0032102728731942215,
+        "lo": -0.015791786255774414,
+        "hi": 0.009371240509385972,
+        "thin": false,
+        "chi": 0.0625,
+        "mde": 7.839856,
+        "clearsMde": false
+      },
+      "unjudged": {
+        "base": 0,
+        "treat": 0,
+        "baseSat": 0,
+        "treatSat": 0
+      }
+    }
+  },
+  "generatedAt": "2026-08-01T02:03:45.846Z"
+}
