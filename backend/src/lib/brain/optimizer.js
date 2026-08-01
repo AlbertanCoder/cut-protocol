@@ -37,7 +37,22 @@ function mix(candidates, scales) {
 }
 
 // Weighted L2 deviation of the mixed macros from target (kcal + protein are the
-// load-bearing axes the 2-var solver constrains; fat/carb included at low weight).
+// load-bearing axes the 2-var solver constrains).
+//
+// ⚠️ The default weights are applied to RAW SQUARED errors in each axis's own
+// units, so "fat/carb at low weight" understates what they do by four orders of
+// magnitude. A 10% kcal miss on 2,000 kcal contributes 1×200² = 40,000; a 10%
+// fat miss on 60 g contributes 0.1×6² = 3.6. That is not low weight, it is
+// structural invisibility — and it is the same mistake as the solver's wls2
+// arm, arriving here in a second transcription.
+//
+// Deliberately NOT re-weighted here. Nothing reads solvePortions().residual
+// today (verified repo-wide), and in solveGeneral these weights steer a gradient
+// that no production caller reaches — brain/create.js always passes k=2, which
+// routes to solve2. Choosing the right normalisation is a live design decision
+// for whoever wires the brain up, not a silent change to make while it is dark.
+// See fleet/WORK-PLAN.md 2.6. The test suite pins the current magnitude so this
+// cannot go live unnoticed.
 function residualOf(macros, target, weights) {
   const w = weights || { kcal: 1, protein: 1, fat: 0.1, carb: 0.1 };
   let sum = 0;
@@ -88,7 +103,15 @@ function solveGeneral(candidates, target, bounds, weights) {
     for (const k of axes) e += (w[k] || 0) * (c[k] || 0) ** 2;
     if (e > maxCol) maxCol = e;
   }
-  const lr = 1 / (2 * maxCol);
+  // maxCol is the largest COLUMN energy — the largest diagonal of AᵀWA. The
+  // gradient's Lipschitz constant is L = 2·λ_max(AᵀWA), and λ_max is bounded by
+  // n·maxDiag, not by maxDiag: for a stable step the divisor has to carry that n.
+  // Meal-recipe columns are strongly correlated — every recipe has a large
+  // positive kcal — so this is the bad case, not the pathological one, and at
+  // k=7 the old step ran up to ~3.5x over the stability limit. It never blew up
+  // because the box clamp below catches it; it oscillated between the bounds and
+  // returned a bad point silently after its fixed 200 iterations.
+  const lr = 1 / (2 * n * maxCol);
   const x = new Array(n).fill(1);
   for (let iter = 0; iter < 200; iter++) {
     const m = mix(candidates, x);
