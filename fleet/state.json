@@ -6,7 +6,7 @@
     "branch": "fleet/measure-2026-08",
     "rescueBranch": "campaign-2026-07",
     "agentCap": 50,
-    "agentsSpawned": 1,
+    "agentsSpawned": 5,
     "currentWave": "W1+W2",
     "notes": "Resume protocol: read this ledger, skip every agent with status=done, continue from the first unfinished agent.",
     "dbSha256": "d9037dce9754b4524943069fff7e0f3e396598c108426f370b0a189458b623a1",
@@ -30,9 +30,17 @@
     "W1-1": {
       "wave": "W1",
       "name": "harness-truth",
-      "status": "pending",
-      "artifacts": [],
-      "headline": ""
+      "status": "done",
+      "artifacts": [
+        "fleet/out/W1-1/FINDINGS.md",
+        "fleet/out/W1-1/daydump-route-s424242.jsonl",
+        "fleet/out/W1-1/daydump-route-s20260730.jsonl",
+        "fleet/out/W1-1/daydump-route-s8675309.jsonl",
+        "fleet/out/W1-1/daydump-rigshape-s424242.jsonl",
+        "backend/scripts/qc/dayDump.mjs",
+        "backend/scripts/qc/scoreDays.mjs"
+      ],
+      "headline": "Built dayDump.mjs + scoreDays.mjs (per-day JSONL, re-scorable with NO re-solve, 3 denominators mandatory). Baseline route 77.3%% sat / 68.0%% all-planned; --nostack reproduces brief 437/623=70.1%% BYTE-EXACT. A6 CONFIRMED exact (16 days, p005/p018/p115). NEW A6+: 0-slot persona p233 emits NO record (n=639 not 640) and returns diagnosis:null. NEW K2c: rig+runSolve drop applyFilterStack (32/250 personas, -69.9%% worst pool, level-inert but day-pairing-fatal). A1 ADJUSTED: 623 is JUDGED not all-planned. Oracle mislabel found+fixed. Fat-widen re-grade +5.0 vs brief cap +4.0."
     },
     "W1-2": {
       "wave": "W1",
@@ -58,30 +66,47 @@
     "W1-5": {
       "wave": "W1",
       "name": "pool-census",
-      "status": "pending",
-      "artifacts": [],
-      "headline": ""
+      "status": "done",
+      "artifacts": [
+        "fleet/out/W1-5/FINDINGS.md",
+        "fleet/out/W1-5/wrong-records.json",
+        "fleet/out/W1-5/census.json",
+        "fleet/out/W1-5/seedgap.json",
+        "fleet/out/W1-5/h3-gluten.json",
+        "fleet/out/W1-5/h4-laundering.json",
+        "fleet/out/W1-5/f12-unservable.json",
+        "fleet/out/W1-5/targets.json",
+        "fleet/out/W1-5/b7-shortlist.json"
+      ],
+      "headline": "SNACK = AUTHORING not search: 18 snack recipes library-wide, budget>=candidates 9/9 diets, no meal fallback => exhaustive; 141/191 empty slots are snacks, 135 (95.7%%) ARITHMETICALLY UNFILLABLE a priori. VEGAN GAP STILL OPEN: 17/30 vegan personas have 15 meals/0 snacks/0 clearing own gate; seedGapRecipes authored INTO the exclusion set. F2 REFUTES density thesis on satisfiable arm (r=-0.001 = zero). B7 strengthened: pool ceiling 57.26%% vs solver 6.2%%. H3 CONFIRMED: 57/57 GF pasta recipes hidden from celiacs, 53 carry no gluten. I2 29->0 (name the ruler). 167 wrong records, 86 used, 167 recipes. I5 REFUTED on 59/250 (measured 0)."
     },
     "W1-6": {
       "wave": "W1",
       "name": "closer-audit",
-      "status": "pending",
-      "artifacts": [],
-      "headline": ""
+      "status": "done",
+      "artifacts": [
+        "fleet/out/W1-6/FINDINGS.md",
+        "fleet/scratch/W1-6/"
+      ],
+      "headline": "Closer worth +2.79 pts (sat, s424242), +2.86 pooled, b=26 c=72, REAL at all 3 seeds (chi2 4.78-7.84), cost <0.5ms/day. G1-G9 ALL CONFIRMED. Add-only verbatim: 0 reductions in 4000-day fuzz; STRICT NO-OP on 94.2%% of failing days. Chases its OWN ruler (raw bands + protein MIDPOINT), tighter than the app grades on. G6: 250/250 adjusters land on slot 0, worst 123->685 kcal (x5.56), 375g on one plate. E4 ADJUSTED 15/250 (rate 6.0%% vs 5.3%%), worst 701 kcal and SIGN WRONG. TRIM VERDICT: 94.2%% of failing days PURE OVER, only 1 of 120 add-fixable => prompt block 74.2%% is an UNDERSTATEMENT."
     },
     "W2-1": {
       "wave": "W2",
       "name": "repartition-practice",
-      "status": "pending",
-      "artifacts": [],
-      "headline": ""
+      "status": "done",
+      "artifacts": [
+        "fleet/out/W2-1/FINDINGS.md"
+      ],
+      "headline": "KEY INSIGHT: dayTolerance() IS ALREADY a Chebyshev norm on tolerance-normalised deviations -- the ruler is one Math.max from being the objective. Recommends augmented Chebyshev goal program (L-inf + rho*mean), NOT L2 -- and identifies L2-vs-Linf as the mechanism behind wls2 +14.74-with-more-warnings. Add NO runtime dep (no JS BVLS exists; glpk.js is GPL-3.0+WASM; NNLS cannot express the 2.0 ceiling); hand-roll ~120 lines scoring on ROUNDED grams; YALPS as test-only oracle. Guard = Fletcher-Leyffer filter acceptance on the violation VECTOR (fixes G4 by comparing LEVELS not band membership). Found 2 new bugs in brain/optimizer.js (:91 step size can exceed Lipschitz limit n-fold; :42 down-weights fat ~10000x = B3 in the second transcription). Says DO NOT move the 0.5x floor yet."
     },
     "W2-2": {
       "wave": "W2",
       "name": "selection-precedents",
-      "status": "pending",
-      "artifacts": [],
-      "headline": ""
+      "status": "done",
+      "artifacts": [
+        "fleet/out/W2-2/FINDINGS.md"
+      ],
+      "headline": "Frame CONFIRMED as set-partitioning/column-generation (crew pairing) BUT its precondition FAILS: candidate days are not columns -- usageCount is mutated through the sequential solve, so days are path-dependent. Recommends LNS/ruin-and-recreate instead. EXACT safety rule: objective is MODULAR (scoreWeek is a sum) => cherry-pick, check the repeat cap, and if it passes the result ATTAINS the oracle bound (provably optimal); 6 of 7 preconditions hold today. DERIVED CENTREPIECE: 20 attempts are worth m~2.46 independent ones (independent best-of-20 would be 89.8%%, observed 24.5%%) -- explains C6, C12 and 20->40 simultaneously. Predicts realised +0 to +3 pts (C7 already measured +0.00). Variety: replace the 0.35x multiplier with a CATEGORY QUOTA (a quota costs zero until it binds)."
     },
     "W2-3": {
       "wave": "W2",
