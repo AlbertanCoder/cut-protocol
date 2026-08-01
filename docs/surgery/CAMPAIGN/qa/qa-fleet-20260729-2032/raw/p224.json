@@ -1,0 +1,605 @@
+{
+ "persona": {
+  "idx": 224,
+  "id": "p224",
+  "tier": "EASY",
+  "displayName": "miner, 51",
+  "story": "miner, 51, male, 185 cm / 101.7 kg (BMI 29.7), maintain, none diet, avoiding shellfish, nightshade, high-protein, 4 meals + 1 snacks, wants a single day",
+  "profile": {
+   "sex": "M",
+   "age": 51,
+   "heightCm": 185,
+   "startWeightKg": 101.7,
+   "goalWeightKg": 101.6,
+   "occupationKey": "mining",
+   "trainingStyle": "weights",
+   "minutesPerSession": 40,
+   "sessionsPerWeek": 3,
+   "rateLbPerWeek": 0.25,
+   "dietaryStyle": "none",
+   "excludedFoods": [
+    "shellfish",
+    "nightshades"
+   ],
+   "mealsPerDay": 4,
+   "snacksPerDay": 1,
+   "unitPref": "imperial"
+  },
+  "filters": {
+   "proteinPriority": true,
+   "budget": "moderate"
+  },
+  "horizon": "day",
+  "walls": [
+   "shellfish",
+   "nightshade"
+  ],
+  "freeTextExclusions": [
+   "nightshades"
+  ],
+  "dietaryStyle": "none",
+  "bmi": 29.7,
+  "goalKind": "maintain",
+  "macroStyle": "high-protein",
+  "requestedButUnsupported": [
+   "wanted protein set explicitly in g/lb; the API derives the protein band from LBM (1.14-1.25 g/lb) and accepts no client protein target — only the per-request proteinPriority filter"
+  ],
+  "tupleKey": "[\"EASY\",\"M\",51,185,101.7,101.6,\"mining\",\"weights\",0.25,\"none\",[\"nightshades\",\"shellfish\"],4,1,\"high-protein\",\"day\",null,\"moderate\",true,null,null]"
+ },
+ "request": {
+  "horizon": "day",
+  "filters": {
+   "proteinPriority": true,
+   "budget": "moderate"
+  }
+ },
+ "profileResponse": {
+  "id": "cms6x1stl05hbwlw0g7u7ryz2",
+  "userId": "cms6x1so10062wl2od5985mek",
+  "sex": "M",
+  "age": 51,
+  "heightCm": 185,
+  "bodyFatPct": 0,
+  "bodyFatSource": null,
+  "occupationKey": "mining",
+  "activityOverride": null,
+  "sessionsPerWeek": 3,
+  "trainingStyle": "weights",
+  "minutesPerSession": 40,
+  "startWeightKg": 101.7,
+  "goalWeightKg": 101.6,
+  "startDate": "2026-07-29",
+  "unitPref": "imperial",
+  "rateLbPerWeek": 0.25,
+  "rateAcknowledged": false,
+  "floorKcal": null,
+  "excludedFormulas": [],
+  "targetKcal": 3403,
+  "mealsPerDay": 4,
+  "snacksPerDay": 1,
+  "excludedFoods": [
+   "shellfish",
+   "nightshades"
+  ],
+  "dietaryStyle": "none",
+  "cuisinePreferences": [],
+  "mealPreferencesNote": null,
+  "maxPrepMin": null,
+  "budgetTier": null,
+  "allowBatch": null,
+  "maxComplexity": null,
+  "adaptiveTdee": true,
+  "proteinPriorityMode": false,
+  "updatedAt": "2026-07-30T20:34:10.906Z"
+ },
+ "generate": {
+  "status": 200,
+  "ms": 327,
+  "body": {
+   "id": "cms7z1uiv04m7wlgw7lin7g09",
+   "userId": "cms6x1so10062wl2od5985mek",
+   "startDate": "2026-07-27",
+   "createdAt": "2026-07-30T20:34:11.527Z",
+   "slots": [
+    {
+     "id": "cms7z1uiw04m9wlgw73o5nfv1",
+     "planId": "cms7z1uiv04m7wlgw7lin7g09",
+     "dayOfWeek": 3,
+     "slotType": "meal",
+     "slotIndex": 0,
+     "recipeId": "cmrujkwtr008iwl9oka15usv5",
+     "proteinScale": 0.66,
+     "sidesScale": 0.78,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t7w3006lwlws4zdhow4d",
+       "name": "Chicken Breast",
+       "role": "protein",
+       "grams": 110
+      },
+      {
+       "foodId": "cmrj2t80e0074wlws89ldq9y0",
+       "name": "bowtie pasta",
+       "role": "carb",
+       "grams": 120
+      },
+      {
+       "foodId": "cmrj2t6na000ywlws9jek4w4z",
+       "name": "Broccoli",
+       "role": "veg",
+       "grams": 85
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 10
+      }
+     ],
+     "kcal": 693.5500000000001,
+     "protein": 42.5345,
+     "fat": 14.983,
+     "carb": 94.9695,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrujkwtr008iwl9oka15usv5",
+      "name": "Rustic Chicken & Broccoli with Pasta",
+      "description": null,
+      "steps": [
+       "Cook the chicken.",
+       "Serve with pasta and broccoli."
+      ],
+      "slotType": "meal",
+      "cuisine": "italian",
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 884.6,
+      "protein": 60.577,
+      "fat": 17.093,
+      "carb": 118.947,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 6.46,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:00:06.832Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z1uix04mbwlgwtetimjc0",
+     "planId": "cms7z1uiv04m7wlgw7lin7g09",
+     "dayOfWeek": 3,
+     "slotType": "meal",
+     "slotIndex": 1,
+     "recipeId": "cmrujkwto008cwl9ohw2jffir",
+     "proteinScale": 0.78,
+     "sidesScale": 0.89,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t7w3006lwlws4zdhow4d",
+       "name": "Chicken Breast",
+       "role": "protein",
+       "grams": 130
+      },
+      {
+       "foodId": "cmrj2t80e0074wlws89ldq9y0",
+       "name": "bowtie pasta",
+       "role": "carb",
+       "grams": 135
+      },
+      {
+       "foodId": "cmrg8zxar000lwli0qy2ovmx4",
+       "name": "Onion",
+       "role": "veg",
+       "grams": 55
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 10
+      }
+     ],
+     "kcal": 768.85,
+     "protein": 47.40499999999999,
+     "fat": 15.4995,
+     "carb": 105.982,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrujkwto008cwl9ohw2jffir",
+      "name": "Rustic Chicken & Onions with Pasta",
+      "description": null,
+      "steps": [
+       "Cook the chicken.",
+       "Serve with pasta and onions."
+      ],
+      "slotType": "meal",
+      "cuisine": "italian",
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 874.5,
+      "protein": 58.41,
+      "fat": 16.779,
+      "carb": 117.654,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 6,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:00:06.828Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z1uix04mdwlgwo0nqofhp",
+     "planId": "cms7z1uiv04m7wlgw7lin7g09",
+     "dayOfWeek": 3,
+     "slotType": "meal",
+     "slotIndex": 2,
+     "recipeId": "cmrujkwop0000wl9o721kc10j",
+     "proteinScale": 0.85,
+     "sidesScale": 2,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t7w3006lwlws4zdhow4d",
+       "name": "Chicken Breast",
+       "role": "protein",
+       "grams": 145
+      },
+      {
+       "foodId": "cmrevpcn2000ewl5gmlyzu0vd",
+       "name": "White rice, cooked",
+       "role": "carb",
+       "grams": 320
+      },
+      {
+       "foodId": "cmrj2t6na000ywlws9jek4w4z",
+       "name": "Broccoli",
+       "role": "veg",
+       "grams": 220
+      },
+      {
+       "foodId": "cmrj2t6xc0028wlwszh51pa6i",
+       "name": "Sesame Seed Oil",
+       "role": "fat",
+       "grams": 8
+      }
+     ],
+     "kcal": 728.9200000000001,
+     "protein": 46.919,
+     "fat": 13.507,
+     "carb": 103.394,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrujkwop0000wl9o721kc10j",
+      "name": "Stir-Fried Chicken & Broccoli with Rice",
+      "description": null,
+      "steps": [
+       "Cook the chicken.",
+       "Serve with white rice and broccoli."
+      ],
+      "slotType": "meal",
+      "cuisine": "asian",
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 516.8199999999999,
+      "protein": 45.397,
+      "fat": 13.308,
+      "carb": 51.697,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 6.36,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:00:06.650Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z1uiy04mfwlgwvyflhcw3",
+     "planId": "cms7z1uiv04m7wlgw7lin7g09",
+     "dayOfWeek": 3,
+     "slotType": "meal",
+     "slotIndex": 3,
+     "recipeId": "cmrujhgy6001awlboe1tjrllj",
+     "proteinScale": 1.06,
+     "sidesScale": 1.15,
+     "ingredients": [
+      {
+       "foodId": "cmrj2tbgn00kqwlwsij0gf7e5",
+       "name": "Tuna",
+       "role": "protein",
+       "grams": 125
+      },
+      {
+       "foodId": "cmrj2t80e0074wlws89ldq9y0",
+       "name": "bowtie pasta",
+       "role": "carb",
+       "grams": 170
+      },
+      {
+       "foodId": "cmrevpcnl000jwl5gnqnk630b",
+       "name": "Cucumber",
+       "role": "veg",
+       "grams": 90
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 11
+      }
+     ],
+     "kcal": 883.6999999999999,
+     "protein": 54.50599999999999,
+     "fat": 14.736,
+     "carb": 128.934,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrujhgy6001awlboe1tjrllj",
+      "name": "Tuna & Pasta Salad",
+      "description": null,
+      "steps": [
+       "Toss cooked pasta with tuna.",
+       "Add cucumber and dress."
+      ],
+      "slotType": "meal",
+      "cuisine": "mediterranean",
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 793.7,
+      "protein": 50.572,
+      "fat": 13.377,
+      "carb": 113.778,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 5.87,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T10:57:26.287Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z1uiz04mhwlgw3egi82uq",
+     "planId": "cms7z1uiv04m7wlgw7lin7g09",
+     "dayOfWeek": 3,
+     "slotType": "snack",
+     "slotIndex": 0,
+     "recipeId": "cmrujhgxz000zwlbon488ewmg",
+     "proteinScale": 1.49,
+     "sidesScale": 1.49,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t7p5005pwlws4acmktnt",
+       "name": "Greek Yogurt",
+       "role": "dairy",
+       "grams": 255
+      },
+      {
+       "foodId": "cmrevpco3000nwl5g1d51b3it",
+       "name": "Almonds",
+       "role": "fat",
+       "grams": 20
+      },
+      {
+       "foodId": "cmrfoyp7m0002wl0851se2p2b",
+       "name": "Honey",
+       "role": "other",
+       "grams": 15
+      }
+     ],
+     "kcal": 315.65,
+     "protein": 30.51,
+     "fat": 11.4945,
+     "carb": 25.74,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrujhgxz000zwlbon488ewmg",
+      "name": "Greek Yogurt, Honey & Almonds",
+      "description": null,
+      "steps": [
+       "Stir together."
+      ],
+      "slotType": "snack",
+      "cuisine": "american",
+      "prepTimeMin": 10,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 220.4,
+      "protein": 20.69,
+      "fat": 8.538,
+      "carb": 17.51,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 1.58,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T10:57:26.280Z",
+      "createdByUserId": null
+     }
+    }
+   ],
+   "groceryList": null,
+   "meta": {
+    "matchPct": 100,
+    "attempts": 1,
+    "score": {
+     "daysInTolerance": 1,
+     "avgMatch": 100,
+     "days": [
+      {
+       "dayOfWeek": 3,
+       "dayName": "Thursday",
+       "matchPct": 100,
+       "totals": {
+        "kcal": 3391,
+        "protein": 222,
+        "fat": 70,
+        "carb": 459
+       },
+       "kcalDeltaPct": -0.4,
+       "proteinShortPct": 0,
+       "fatOk": true,
+       "carbOk": true,
+       "inTolerance": true,
+       "miss": null,
+       "unfilledSlots": 0,
+       "warnedSlots": 0,
+       "proteinFloor": {
+        "met": true,
+        "floorG": 202,
+        "achievedG": 221.9,
+        "shortG": 0,
+        "shortPct": 0,
+        "reason": null
+       },
+       "windowIndex": 0,
+       "dayIndex": 0,
+       "key": "0:3"
+      }
+     ],
+     "totalDays": 1,
+     "floorDaysMet": 1,
+     "floorDaysTotal": 1
+    },
+    "days": [
+     {
+      "dayOfWeek": 3,
+      "dayName": "Thursday",
+      "matchPct": 100,
+      "totals": {
+       "kcal": 3391,
+       "protein": 222,
+       "fat": 70,
+       "carb": 459
+      },
+      "kcalDeltaPct": -0.4,
+      "proteinShortPct": 0,
+      "fatOk": true,
+      "carbOk": true,
+      "inTolerance": true,
+      "miss": null,
+      "unfilledSlots": 0,
+      "warnedSlots": 0,
+      "proteinFloor": {
+       "met": true,
+       "floorG": 202,
+       "achievedG": 221.9,
+       "shortG": 0,
+       "shortPct": 0,
+       "reason": null
+      },
+      "windowIndex": 0,
+      "dayIndex": 0,
+      "key": "0:3"
+     }
+    ],
+    "diagnosis": null,
+    "poolCounts": {
+     "raw": 910,
+     "afterDiet": 426,
+     "afterPrep": 426,
+     "afterStack": 426,
+     "stackExplain": null
+    },
+    "variety": {
+     "mealEligible": 270,
+     "usableForSlot": 166,
+     "slotKcal": 774,
+     "snackEligible": 14,
+     "weeklyMealSlots": 28,
+     "weeklySnackSlots": 7,
+     "repeatCap": 2,
+     "distinctWeeks": 5.9,
+     "horizonWeeks": 1,
+     "sustainsHorizon": true,
+     "notes": [
+      "1 day: 5 distinct dish(es) across 5 filled slot(s); most-repeated dish appears 1x against a 2x cap for this horizon (2x per week)."
+     ],
+     "horizon": {
+      "weeks": 1,
+      "days": 1,
+      "perWeekCap": 2,
+      "horizonRepeatCap": 2,
+      "mealSlots": 4,
+      "snackSlots": 1,
+      "totalSlots": 5,
+      "distinctFloor": 3,
+      "distinctRecipes": 5,
+      "maxRepeat": 1,
+      "maxRepeatRecipeId": "cmrujkwtr008iwl9oka15usv5",
+      "lockedRepeatsOfMax": 0,
+      "filledSlots": 5,
+      "unfilledSlots": 0,
+      "requiredDistinct": 3,
+      "capHeld": true,
+      "floorHeld": true
+     }
+    },
+    "priorWeeksConsidered": 0,
+    "horizon": {
+     "key": "day",
+     "label": "1 day",
+     "days": 1,
+     "kind": "days",
+     "weeks": 1,
+     "custom": false,
+     "startDate": "2026-07-30",
+     "endDate": "2026-07-30",
+     "startDayOfWeek": 3,
+     "weeksWritten": 1,
+     "solveMs": 1,
+     "weekPlans": [
+      {
+       "startDate": "2026-07-27",
+       "dayIndices": [
+        3
+       ],
+       "days": 1,
+       "daysInTolerance": 1,
+       "avgMatch": 100,
+       "unfilledSlots": 0,
+       "poolSize": 426
+      }
+     ]
+    }
+   }
+  }
+ }
+}

@@ -1,0 +1,2743 @@
+{
+ "persona": {
+  "idx": 67,
+  "id": "p067",
+  "tier": "EASY",
+  "displayName": "long-haul trucker, 53",
+  "story": "long-haul trucker, 53, male, 188 cm / 135.5 kg (BMI 38.3), cut at 0.5 lb/wk, keto diet, no exclusions, high-protein, 3 meals + 0 snacks, wants a full week",
+  "profile": {
+   "sex": "M",
+   "age": 53,
+   "heightCm": 188,
+   "startWeightKg": 135.5,
+   "goalWeightKg": 110.7,
+   "occupationKey": "driver-truck",
+   "trainingStyle": "weights",
+   "minutesPerSession": 30,
+   "sessionsPerWeek": 2,
+   "rateLbPerWeek": 0.5,
+   "dietaryStyle": "keto",
+   "excludedFoods": [],
+   "mealsPerDay": 3,
+   "snacksPerDay": 0,
+   "unitPref": "metric",
+   "cuisinePreferences": [
+    "indian",
+    "mexican"
+   ]
+  },
+  "filters": {
+   "proteinPriority": true,
+   "cuisines": [
+    "indian",
+    "mexican"
+   ]
+  },
+  "horizon": "week",
+  "walls": [],
+  "freeTextExclusions": [],
+  "dietaryStyle": "keto",
+  "bmi": 38.3,
+  "goalKind": "cut",
+  "macroStyle": "high-protein",
+  "requestedButUnsupported": [
+   "wanted protein set explicitly in g/lb; the API derives the protein band from LBM (1.14-1.25 g/lb) and accepts no client protein target — only the per-request proteinPriority filter"
+  ],
+  "tupleKey": "[\"EASY\",\"M\",53,188,135.5,110.7,\"driver-truck\",\"weights\",0.5,\"keto\",[],3,0,\"high-protein\",\"week\",null,null,true,null,null]"
+ },
+ "request": {
+  "horizon": "week",
+  "filters": {
+   "proteinPriority": true,
+   "cuisines": [
+    "indian",
+    "mexican"
+   ]
+  }
+ },
+ "profileResponse": {
+  "id": "cms6x0o4o020xwlw091r8dfqd",
+  "userId": "cms6x0nzd001pwl2oo2ht0m8f",
+  "sex": "M",
+  "age": 53,
+  "heightCm": 188,
+  "bodyFatPct": 0,
+  "bodyFatSource": null,
+  "occupationKey": "driver-truck",
+  "activityOverride": null,
+  "sessionsPerWeek": 2,
+  "trainingStyle": "weights",
+  "minutesPerSession": 30,
+  "startWeightKg": 135.5,
+  "goalWeightKg": 110.7,
+  "startDate": "2026-07-29",
+  "unitPref": "metric",
+  "rateLbPerWeek": 0.5,
+  "rateAcknowledged": false,
+  "floorKcal": null,
+  "excludedFormulas": [],
+  "targetKcal": 2858,
+  "mealsPerDay": 3,
+  "snacksPerDay": 0,
+  "excludedFoods": [],
+  "dietaryStyle": "keto",
+  "cuisinePreferences": [
+   "indian",
+   "mexican"
+  ],
+  "mealPreferencesNote": null,
+  "maxPrepMin": null,
+  "budgetTier": null,
+  "allowBatch": null,
+  "maxComplexity": null,
+  "adaptiveTdee": true,
+  "proteinPriorityMode": false,
+  "updatedAt": "2026-07-30T02:49:31.564Z"
+ },
+ "generate": {
+  "status": 200,
+  "ms": 66,
+  "body": {
+   "id": "cms6x0og80217wlw0gti4pi9b",
+   "userId": "cms6x0nzd001pwl2oo2ht0m8f",
+   "startDate": "2026-07-27",
+   "createdAt": "2026-07-30T02:49:31.593Z",
+   "slots": [
+    {
+     "id": "cms6x0og90219wlw0dsywwske",
+     "planId": "cms6x0og80217wlw0gti4pi9b",
+     "dayOfWeek": 0,
+     "slotType": "meal",
+     "slotIndex": 0,
+     "recipeId": "cmrj2thrp01ukwlwsyjd1nnsi",
+     "proteinScale": 1.15,
+     "sidesScale": 2,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t6is000ewlwsmzadlvxo",
+       "name": "Beef",
+       "role": "protein",
+       "grams": 290
+      },
+      {
+       "foodId": "cmrg8zxar000lwli0qy2ovmx4",
+       "name": "Onion",
+       "role": "veg",
+       "grams": 55
+      },
+      {
+       "foodId": "cmrj2t6qh001dwlws2ramsws8",
+       "name": "Bay Leaf",
+       "role": null,
+       "grams": 1
+      },
+      {
+       "foodId": "cmrj2t6gd0003wlwss7jf3wzf",
+       "name": "Salt",
+       "role": null,
+       "grams": 1
+      },
+      {
+       "foodId": "cmrj2t6mf000uwlwsne5kc5wl",
+       "name": "Black Pepper",
+       "role": null,
+       "grams": 1
+      },
+      {
+       "foodId": "cmrj2t6hb0007wlwsh6l6ynal",
+       "name": "Water",
+       "role": null,
+       "grams": 500
+      }
+     ],
+     "kcal": 697.54,
+     "protein": 79.375,
+     "fat": 37.8716,
+     "carb": 6.527,
+     "warning": "Tried 5 recipe(s) for this slot, none fit within tolerance — closest was \"Seswaa\" (landed 698 kcal vs a 843 target).",
+     "locked": false,
+     "recipe": {
+      "id": "cmrj2thrp01ukwlwsyjd1nnsi",
+      "name": "Seswaa",
+      "description": null,
+      "steps": [
+       "Pre heat the oven to 160 degrees Celsius. Cut the meat into large chunks then brown in a dish suitable for slow cooking in the oven such as a cast iron casserole dish.",
+       "Add the whole peeled onion, salt, cracked black pepper, water and bay leaves. Bring to the boil then cover and place into the oven for 4 hours.",
+       "After 4 hours, remove from oven and place onto the stove burner in order to cook off most of the remaining liquid. Use a wooden spoon to pound or mash up the meat, the meat should fall apart quite easily. and will appear shredded. You may brown the meat further if desired.",
+       "Check seasoning then serve with polenta or the more traditional thick cornmeal porridge known as pap or sadza, and a side of green vegetables."
+      ],
+      "slotType": "meal",
+      "cuisine": "western-comfort",
+      "prepTimeMin": 22,
+      "source": "themealdb-import",
+      "mealCategory": null,
+      "kcal": 590.5,
+      "protein": 68.1,
+      "fat": 32.6,
+      "carb": 3.1,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 11.34,
+      "difficulty": 3,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-13T10:25:25.814Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x0oga021bwlw0v3d6sq14",
+     "planId": "cms6x0og80217wlw0gti4pi9b",
+     "dayOfWeek": 0,
+     "slotType": "meal",
+     "slotIndex": 1,
+     "recipeId": "cmrj2u3i806oawlwsrvqxe0y5",
+     "proteinScale": 0.82,
+     "sidesScale": 2,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t6ft0001wlwstiofk9on",
+       "name": "Garlic",
+       "role": "veg",
+       "grams": 8
+      },
+      {
+       "foodId": "cmrj2t6qp001ewlwsds5bbm29",
+       "name": "Lemon",
+       "role": "veg",
+       "grams": 30
+      },
+      {
+       "foodId": "cmrj2t6gd0003wlwss7jf3wzf",
+       "name": "Salt",
+       "role": null,
+       "grams": 8
+      },
+      {
+       "foodId": "cmrj2t6mf000uwlwsne5kc5wl",
+       "name": "Black Pepper",
+       "role": null,
+       "grams": 5
+      },
+      {
+       "foodId": "cmrj2t7hg004pwlwsioxvv8bh",
+       "name": "Vegetable Oil",
+       "role": "carb",
+       "grams": 25
+      },
+      {
+       "foodId": "cmrj2t7a7003rwlwsqp9i2kfd",
+       "name": "Pork Shoulder",
+       "role": "protein",
+       "grams": 410
+      },
+      {
+       "foodId": "cmrj2tabp00gcwlwspk69j20a",
+       "name": "Dry White Wine",
+       "role": null,
+       "grams": 250
+      }
+     ],
+     "kcal": 979.79,
+     "protein": 93.69059999999999,
+     "fat": 39.1544,
+     "carb": 13.654,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrj2u3i806oawlwsrvqxe0y5",
+      "name": "Slow-roasted ham with lemon, garlic & sage",
+      "description": null,
+      "steps": [
+       "step 1",
+       "Heat the oven to 200C/180C fan/gas 6. Bash the garlic, sage, lemon zest, salt and pepper together using a pestle and mortar until the mixture becomes a paste. Stir in the oil, then spread the mixture over the pork shoulder, avoiding the skin on top. Score the skin using a sharp knife, then rub a large pinch of salt into the skin. Tie the pork together using kitchen string.",
+       "step 2",
+       "Line a large baking tray with a double layer of foil and put the pork on top, skin-side up. Bring the sides of the foil up around the pork to create a parcel, then pour the wine into the tray around the sides. Transfer to the oven and reduce the temperature to 140C/120C fan/gas 1. Roast for 4-5 hrs, or until a meat thermometer inserted into the thickest part of the pork reads 70C.",
+       "step 3",
+       "Turn the oven up to 240C/220C fan/gas 9. Carefully spoon the pork roasting juices from the pan into a saucepan and cook over a medium heat for 10-15 mins, or until reduced by a third. Season to taste.",
+       "step 4",
+       "Meanwhile, arrange the foil around the meat so only the skin is exposed, then return to the oven for 10-15 mins until the skin is puffed up and browned all over. Leave to rest for 20 mins before slicing. Serve with the sauce drizzled over."
+      ],
+      "slotType": "meal",
+      "cuisine": "western-comfort",
+      "prepTimeMin": 34,
+      "source": "themealdb-import",
+      "mealCategory": null,
+      "kcal": 854.6,
+      "protein": 113.2,
+      "fat": 28.6,
+      "carb": 6.7,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 15.78,
+      "difficulty": 5,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-13T10:25:53.984Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x0ogb021dwlw058ofc0yw",
+     "planId": "cms6x0og80217wlw0gti4pi9b",
+     "dayOfWeek": 0,
+     "slotType": "meal",
+     "slotIndex": 2,
+     "recipeId": "cmrj2tmq402y9wlwsqahfcq5y",
+     "proteinScale": 1.95,
+     "sidesScale": 2,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t84f007mwlws3l8rub2z",
+       "name": "Chicken Thighs",
+       "role": "protein",
+       "grams": 380
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "carb",
+       "grams": 14
+      },
+      {
+       "foodId": "cmrj2t8mc009xwlwsr3pkoeyr",
+       "name": "Fennel Seeds",
+       "role": "carb",
+       "grams": 2
+      },
+      {
+       "foodId": "cmrj2t7ch0042wlwsj8arrl7o",
+       "name": "Ground Cumin",
+       "role": null,
+       "grams": 2
+      },
+      {
+       "foodId": "cmrj2t8ml009ywlws2onx58gi",
+       "name": "sweet smoked paprika",
+       "role": null,
+       "grams": 2
+      },
+      {
+       "foodId": "cmrj2t6ft0001wlwstiofk9on",
+       "name": "Garlic",
+       "role": "veg",
+       "grams": 2
+      },
+      {
+       "foodId": "cmrj2t8it009hwlwsyj9qzgjo",
+       "name": "Red Wine Vinegar",
+       "role": "carb",
+       "grams": 2
+      },
+      {
+       "foodId": "cmrj2t8mt009zwlws7kbtuv4l",
+       "name": "Smoky Aïoli",
+       "role": null,
+       "grams": 50
+      }
+     ],
+     "kcal": 1107.48,
+     "protein": 106.9372,
+     "fat": 70.9296,
+     "carb": 4.3344,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrj2tmq402y9wlwsqahfcq5y",
+      "name": "Smoky chicken skewers",
+      "description": null,
+      "steps": [
+       "step 1",
+       "You need 15 skewers: if wooden, soak in water for 10 mins. Cut chicken into 3cm pieces and place in a bowl. Add 1 tbsp olive oil, the spices, garlic and vinegar, toss well and season. You can do this up to a day before and refrigerate.",
+       "step 2",
+       "Thread 2-3 pieces on each skewer. Pour remaining oil in a frying pan or rub onto a griddle pan. Get the pan hot and sear the chicken for 3-4 mins on each side – you may have to do this in batches, keeping the cooked skewers warm in a low oven. Serve with smoky aïoli if you like."
+      ],
+      "slotType": "meal",
+      "cuisine": "western-comfort",
+      "prepTimeMin": 24,
+      "source": "themealdb-import",
+      "mealCategory": null,
+      "kcal": 560,
+      "protein": 54.6,
+      "fat": 35.7,
+      "carb": 1.8,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 5.59,
+      "difficulty": 4,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-13T10:25:32.237Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x0ogc021fwlw081g3k92a",
+     "planId": "cms6x0og80217wlw0gti4pi9b",
+     "dayOfWeek": 1,
+     "slotType": "meal",
+     "slotIndex": 0,
+     "recipeId": "cmrj2twow055vwlws2m6xj8rm",
+     "proteinScale": 1.2,
+     "sidesScale": 0.7,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t9z700f1wlwsb36u0abl",
+       "name": "Lamb",
+       "role": "protein",
+       "grams": 410
+      },
+      {
+       "foodId": "cmrj2t788003iwlwsdtufusv7",
+       "name": "White Cabbage",
+       "role": "veg",
+       "grams": 18
+      },
+      {
+       "foodId": "cmrj2t9zg00f2wlwsl23mool5",
+       "name": "Whole black peppercorns",
+       "role": null,
+       "grams": 5
+      },
+      {
+       "foodId": "cmrj2t6gd0003wlwss7jf3wzf",
+       "name": "Salt",
+       "role": null,
+       "grams": 2
+      },
+      {
+       "foodId": "cmrj2t6hb0007wlwsh6l6ynal",
+       "name": "Water",
+       "role": null,
+       "grams": 60
+      },
+      {
+       "foodId": "cmrj2t7ho004qwlws8t7qsudo",
+       "name": "Flour",
+       "role": "carb",
+       "grams": 7
+      }
+     ],
+     "kcal": 847.19,
+     "protein": 83.50899999999999,
+     "fat": 54.007,
+     "carb": 6.781000000000001,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrj2twow055vwlws2m6xj8rm",
+      "name": "Fårikål (Norwegian National Dish)",
+      "description": null,
+      "steps": [
+       "▢",
+       "Cut the lamb into large pieces.",
+       "▢",
+       "Slice the cabbage into large wedges, keeping the core attached.",
+       "▢",
+       "Add a layer of lamb pieces to the bottom of a large pot, fatty side down. Sprinkle with peppercorns and salt. Add a layer of cabbage wedges on top. Repeat with more layers of lamb, peppercorns, and cabbage, ending with cabbage on top.",
+       "▢",
+       "Optional: Sprinkle a couple of tablespoons on top of the lamb for a thicker stew.",
+       "▢",
+       "Add water to the pot and bring to a boil. Cover and reduce heat. Cook on low heat for 2 – 3 hours, until the lamb gently falls away from the bone.",
+       "▢",
+       "Serve with boiled potatoes and fresh parsley, covering generously with the fårikål broth."
+      ],
+      "slotType": "meal",
+      "cuisine": "western-comfort",
+      "prepTimeMin": 45,
+      "source": "themealdb-import",
+      "mealCategory": null,
+      "kcal": 734.9,
+      "protein": 69.4,
+      "fat": 46.6,
+      "carb": 9.5,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 16.63,
+      "difficulty": 5,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-13T10:25:45.152Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x0ogd021hwlw0s321c5gg",
+     "planId": "cms6x0og80217wlw0gti4pi9b",
+     "dayOfWeek": 1,
+     "slotType": "meal",
+     "slotIndex": 1,
+     "recipeId": "cmrj2tmq402y9wlwsqahfcq5y",
+     "proteinScale": 1.7,
+     "sidesScale": 1.6,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t84f007mwlws3l8rub2z",
+       "name": "Chicken Thighs",
+       "role": "protein",
+       "grams": 330
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "carb",
+       "grams": 11
+      },
+      {
+       "foodId": "cmrj2t8mc009xwlwsr3pkoeyr",
+       "name": "Fennel Seeds",
+       "role": "carb",
+       "grams": 1
+      },
+      {
+       "foodId": "cmrj2t7ch0042wlwsj8arrl7o",
+       "name": "Ground Cumin",
+       "role": null,
+       "grams": 1
+      },
+      {
+       "foodId": "cmrj2t8ml009ywlws2onx58gi",
+       "name": "sweet smoked paprika",
+       "role": null,
+       "grams": 1
+      },
+      {
+       "foodId": "cmrj2t6ft0001wlwstiofk9on",
+       "name": "Garlic",
+       "role": "veg",
+       "grams": 1
+      },
+      {
+       "foodId": "cmrj2t8it009hwlwsyj9qzgjo",
+       "name": "Red Wine Vinegar",
+       "role": "carb",
+       "grams": 2
+      },
+      {
+       "foodId": "cmrj2t8mt009zwlws7kbtuv4l",
+       "name": "Smoky Aïoli",
+       "role": null,
+       "grams": 40
+      }
+     ],
+     "kcal": 931.73,
+     "protein": 91.984,
+     "fat": 59.0748,
+     "carb": 2.3964,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrj2tmq402y9wlwsqahfcq5y",
+      "name": "Smoky chicken skewers",
+      "description": null,
+      "steps": [
+       "step 1",
+       "You need 15 skewers: if wooden, soak in water for 10 mins. Cut chicken into 3cm pieces and place in a bowl. Add 1 tbsp olive oil, the spices, garlic and vinegar, toss well and season. You can do this up to a day before and refrigerate.",
+       "step 2",
+       "Thread 2-3 pieces on each skewer. Pour remaining oil in a frying pan or rub onto a griddle pan. Get the pan hot and sear the chicken for 3-4 mins on each side – you may have to do this in batches, keeping the cooked skewers warm in a low oven. Serve with smoky aïoli if you like."
+      ],
+      "slotType": "meal",
+      "cuisine": "western-comfort",
+      "prepTimeMin": 24,
+      "source": "themealdb-import",
+      "mealCategory": null,
+      "kcal": 560,
+      "protein": 54.6,
+      "fat": 35.7,
+      "carb": 1.8,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 5.59,
+      "difficulty": 4,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-13T10:25:32.237Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x0oge021jwlw0hphe7ch9",
+     "planId": "cms6x0og80217wlw0gti4pi9b",
+     "dayOfWeek": 1,
+     "slotType": "meal",
+     "slotIndex": 2,
+     "recipeId": "cmrj2tgq601m0wlwsywpofgzn",
+     "proteinScale": 1.31,
+     "sidesScale": 1.31,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t7n0005fwlwsmb1ow0r4",
+       "name": "Beef Flank Steak",
+       "role": "protein",
+       "grams": 325
+      },
+      {
+       "foodId": "cmrj2t6qw001fwlwszwir0gt7",
+       "name": "Tomato Sauce",
+       "role": "veg",
+       "grams": 65
+      },
+      {
+       "foodId": "cmrj2t7e10049wlwse3bj6y2k",
+       "name": "Mozzarella",
+       "role": null,
+       "grams": 65
+      },
+      {
+       "foodId": "cmrj2t6jh000hwlwsev33v7zd",
+       "name": "Oregano",
+       "role": null,
+       "grams": 3
+      },
+      {
+       "foodId": "cmrj2t7js0050wlws9y6aup2b",
+       "name": "Green Olives",
+       "role": null,
+       "grams": 35
+      },
+      {
+       "foodId": "cmrj2t6gd0003wlwss7jf3wzf",
+       "name": "Salt",
+       "role": null,
+       "grams": 1
+      },
+      {
+       "foodId": "cmrj2t6gl0004wlws73buybhw",
+       "name": "Pepper",
+       "role": null,
+       "grams": 1
+      }
+     ],
+     "kcal": 1074.92,
+     "protein": 105.7651,
+     "fat": 63.5264,
+     "carb": 22.958,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrj2tgq601m0wlwsywpofgzn",
+      "name": "Matambre a la Pizza",
+      "description": null,
+      "steps": [
+       "Prepare the Steak: Season the steak with salt and pepper. Grill one side until half-cooked.",
+       "Add Toppings: Spread tomato sauce over the cooked side, then add cheese, oregano, and olives.",
+       "Finish Grilling: Grill until the cheese is melted and bubbly.",
+       "Serve: Slice and serve hot.",
+       "Pro Tips:",
+       "Tenderize the matambre by scoring it lightly on both sides. This helps it cook more evenly and absorb the flavors.",
+       "Precook the matambre on the grill before adding the toppings to ensure it's fully cooked without burning the cheese."
+      ],
+      "slotType": "meal",
+      "cuisine": "italian",
+      "prepTimeMin": 31,
+      "source": "themealdb-import",
+      "mealCategory": null,
+      "kcal": 824,
+      "protein": 81.3,
+      "fat": 48.6,
+      "carb": 17.6,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 14.52,
+      "difficulty": 4,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-13T10:25:24.463Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x0ogf021lwlw0kb1rvl1g",
+     "planId": "cms6x0og80217wlw0gti4pi9b",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 0,
+     "recipeId": "cmrj2tz0q05oowlwsip3w8e0p",
+     "proteinScale": 2,
+     "sidesScale": 2,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t6zx002jwlws9murdlky",
+       "name": "Sea Salt",
+       "role": null,
+       "grams": 15
+      },
+      {
+       "foodId": "cmrj2t6qh001dwlws2ramsws8",
+       "name": "Bay Leaf",
+       "role": null,
+       "grams": 1
+      },
+      {
+       "foodId": "cmrj2t6ft0001wlwstiofk9on",
+       "name": "Garlic",
+       "role": "veg",
+       "grams": 6
+      },
+      {
+       "foodId": "cmrj2t6oj0014wlwsaw8ffg0k",
+       "name": "Thyme",
+       "role": null,
+       "grams": 15
+      },
+      {
+       "foodId": "cmrj2ta8j00g0wlwsip7fcxb7",
+       "name": "Duck Legs",
+       "role": "protein",
+       "grams": 200
+      },
+      {
+       "foodId": "cmrj2t705002kwlwsxtdzqdki",
+       "name": "White Wine",
+       "role": null,
+       "grams": 50
+      }
+     ],
+     "kcal": 501.86,
+     "protein": 54.9422,
+     "fat": 23.1588,
+     "carb": 7.402,
+     "warning": "Tried 5 recipe(s) for this slot, none fit within tolerance — closest was \"Duck Confit\" (landed 502 kcal vs a 843 target; delivered 55g protein vs a 83g target).",
+     "locked": false,
+     "recipe": {
+      "id": "cmrj2tz0q05oowlwsip3w8e0p",
+      "name": "Duck Confit",
+      "description": null,
+      "steps": [
+       "The day before you want to make the dish, scatter half the salt, half the garlic and half of the herbs over the base of a small shallow dish. Lay the duck legs, skin-side up, on top, then scatter over the remaining salt, garlic and herbs. Cover the duck and refrigerate overnight. This can be done up to 2 days ahead.",
+       "Pour the wine into a saucepan that will snugly fit the duck legs in a single layer. Brush the salt off the duck legs and place them, skin-side down, in the wine. Cover the pan with a lid and place over a medium heat. As soon as the wine starts to bubble, turn the heat down to the lowest setting and cook for 2 hours, checking occasionally that the liquid is just barely simmering. (If you own a heat diffuser, it would be good to use it here.) After 2 hours, the duck legs should be submerged in their own fat and the meat should feel incredibly tender when prodded. Leave to cool.",
+       "The duck legs are now cooked and can be eaten immediately – or you can follow the next step if you like them crisp. If you are preparing ahead, pack the duck legs tightly into a plastic container or jar and pour over the fat, but not the liquid at the bottom of the pan. Cover and leave in the fridge for up to a month, or freeze for up to 3 months. The liquid you are left with makes a tasty gravy, which can be chilled or frozen until needed.",
+       "To reheat and crisp up the duck legs, heat oven to 220C/fan 200C/gas 7. Remove the legs from the fat and place them, skin-side down, in an ovenproof frying pan. Roast for 30-40 mins, turning halfway through, until brown and crisp. Serve with the reheated gravy, a crisp salad and some crisp golden ptoatoes."
+      ],
+      "slotType": "meal",
+      "cuisine": "western-comfort",
+      "prepTimeMin": 22,
+      "source": "themealdb-import",
+      "mealCategory": null,
+      "kcal": 250.2,
+      "protein": 27.5,
+      "fat": 11.6,
+      "carb": 3.5,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 5.76,
+      "difficulty": 3,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-13T10:25:48.171Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x0ogf021nwlw0zrxj9ag3",
+     "planId": "cms6x0og80217wlw0gti4pi9b",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 1,
+     "recipeId": "cmrj2u6bh07anwlws4athcnb2",
+     "proteinScale": 1.7,
+     "sidesScale": 2,
+     "ingredients": [
+      {
+       "foodId": "cmrj2taw400ikwlwsh1obe0tn",
+       "name": "Raw King Prawns",
+       "role": "protein",
+       "grams": 510
+      },
+      {
+       "foodId": "cmrj2t6rr001jwlwsqfi60fyj",
+       "name": "Garlic Clove",
+       "role": null,
+       "grams": 5
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "carb",
+       "grams": 45
+      },
+      {
+       "foodId": "cmrj2t7pt005swlwszhtld1bv",
+       "name": "Cayenne Pepper",
+       "role": null,
+       "grams": 3
+      },
+      {
+       "foodId": "cmrj2t6h10006wlwslufza94y",
+       "name": "Parsley",
+       "role": null,
+       "grams": 50
+      }
+     ],
+     "kcal": 873.4899999999999,
+     "protein": 104.675,
+     "fat": 48.489,
+     "carb": 11.108,
+     "warning": "Tried 5 recipe(s) for this slot, none fit within tolerance — closest was \"Gambas al ajillo\" (landed 873 kcal vs a 1096 target).",
+     "locked": false,
+     "recipe": {
+      "id": "cmrj2u6bh07anwlws4athcnb2",
+      "name": "Gambas al ajillo",
+      "description": null,
+      "steps": [
+       "step 1",
+       "Peel the prawns, leaving the tails intact, and, using a cocktail stick, remove the digestive tracts. Or, if you are using a frying pan rather than a terracotta pot, you can cook the prawns in their shells. Season with a little sea salt.",
+       "step 2",
+       "Put the garlic, olive oil and chillies in a flameproof terracotta pot or frying pan and set over a high heat. When the garlic starts to turn golden, add the prawns and cook for 1-2 mins on each side until just pink. Sprinkle over the chopped parsley and some freshly cracked black pepper, and serve immediately. If using a terracotta pot, you can take that straight to the table, but be careful with it as the oil and terracotta will remain hot for several minutes."
+      ],
+      "slotType": "meal",
+      "cuisine": "western-comfort",
+      "prepTimeMin": 22,
+      "source": "themealdb-import",
+      "mealCategory": null,
+      "kcal": 479.3,
+      "protein": 61.4,
+      "fat": 25,
+      "carb": 5.9,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 18.21,
+      "difficulty": 2,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-13T10:25:57.630Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x0ogg021pwlw0mvpf0ds3",
+     "planId": "cms6x0og80217wlw0gti4pi9b",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 2,
+     "recipeId": "cmrj2thoz01txwlwstiv1k3j4",
+     "proteinScale": 0.98,
+     "sidesScale": 0.5,
+     "ingredients": [
+      {
+       "foodId": "cmrg8zxar000lwli0qy2ovmx4",
+       "name": "Onion",
+       "role": "veg",
+       "grams": 14
+      },
+      {
+       "foodId": "cmrj2t6ft0001wlwstiofk9on",
+       "name": "Garlic",
+       "role": "veg",
+       "grams": 1
+      },
+      {
+       "foodId": "cmrj2t6qp001ewlwsds5bbm29",
+       "name": "Lemon",
+       "role": "veg",
+       "grams": 7
+      },
+      {
+       "foodId": "cmrj2t6z2002gwlwsjklhz848",
+       "name": "Sugar",
+       "role": "carb",
+       "grams": 3
+      },
+      {
+       "foodId": "cmrj2t6ls000rwlwsf7bu3ffs",
+       "name": "Soy Sauce",
+       "role": "carb",
+       "grams": 20
+      },
+      {
+       "foodId": "cmrj2t6gd0003wlwss7jf3wzf",
+       "name": "Salt",
+       "role": null,
+       "grams": 1
+      },
+      {
+       "foodId": "cmrj2t7rz0062wlwsqhxkw8q5",
+       "name": "Ground Coriander",
+       "role": null,
+       "grams": 1
+      },
+      {
+       "foodId": "cmrj2t6xs002awlwsfwq9grns",
+       "name": "Oil",
+       "role": "carb",
+       "grams": 55
+      },
+      {
+       "foodId": "cmrj2t6is000ewlwsmzadlvxo",
+       "name": "Beef",
+       "role": "protein",
+       "grams": 445
+      }
+     ],
+     "kcal": 1547.98,
+     "protein": 122.6001,
+     "fat": 113.1743,
+     "carb": 6.509799999999999,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrj2thoz01txwlwstiv1k3j4",
+      "name": "Satee",
+      "description": null,
+      "steps": [
+       "To make the marinade for the satee put in the container of an electric blender:",
+       "1 large onion, coarsely chopped 2 cloves of garlic",
+       "Juice of 2 lemons",
+       "2Tbs. of sugar 1 cup of soy sauce",
+       "1 tsp. salt 1 tsp. ground coriander for beef (or chicken) or 1 tsp. ground ginger for pork",
+       "1 cup of oil",
+       "Blend thoroughly and pour over:",
+       "5 lbs. of beef or pork tenderloin, cubed",
+       "DO NOT marinate overnight, but only for a few hours.",
+       "Place the meat on: 36 skewers",
+       "Blend well:",
+       "1 cup of oil",
+       "2 Tbs. Soy sauce",
+       "Pour into a large shallow dish.",
+       "To keep meat from becoming dry, roll each skewer in seasoned oil before frying.",
+       "Satee is also excellent when barbecued."
+      ],
+      "slotType": "meal",
+      "cuisine": "western-comfort",
+      "prepTimeMin": 59,
+      "source": "themealdb-import",
+      "mealCategory": null,
+      "kcal": 2076.7,
+      "protein": 126.9,
+      "fat": 168.4,
+      "carb": 12.5,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 21.72,
+      "difficulty": 7,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-13T10:25:25.716Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x0ogh021rwlw0u9ii69rw",
+     "planId": "cms6x0og80217wlw0gti4pi9b",
+     "dayOfWeek": 3,
+     "slotType": "meal",
+     "slotIndex": 0,
+     "recipeId": "cmrj2tgdz01jawlwsk5gx66m5",
+     "proteinScale": 2,
+     "sidesScale": 0.5,
+     "ingredients": [
+      {
+       "foodId": "cmrg8zxar000lwli0qy2ovmx4",
+       "name": "Onion",
+       "role": "veg",
+       "grams": 30
+      },
+      {
+       "foodId": "cmrevpcnz000mwl5g62fmfzqk",
+       "name": "Butter",
+       "role": null,
+       "grams": 25
+      },
+      {
+       "foodId": "cmrj2t6fj0000wlwsdedjzth2",
+       "name": "Ground Beef",
+       "role": "protein",
+       "grams": 225
+      },
+      {
+       "foodId": "cmrj2t6gd0003wlwss7jf3wzf",
+       "name": "Salt",
+       "role": null,
+       "grams": 1
+      },
+      {
+       "foodId": "cmrj2t6gl0004wlws73buybhw",
+       "name": "Pepper",
+       "role": null,
+       "grams": 1
+      },
+      {
+       "foodId": "cmrj2t7ko0054wlws30ku5e0c",
+       "name": "Nutmeg",
+       "role": null,
+       "grams": 1
+      },
+      {
+       "foodId": "cmrj2t6m8000twlwshm9tioqm",
+       "name": "Cornstarch",
+       "role": "carb",
+       "grams": 1
+      },
+      {
+       "foodId": "cmrj2t6hb0007wlwsh6l6ynal",
+       "name": "Water",
+       "role": null,
+       "grams": 6
+      }
+     ],
+     "kcal": 787.8299999999999,
+     "protein": 58.2322,
+     "fat": 58.44800000000001,
+     "carb": 4.2865,
+     "warning": "Tried 5 recipe(s) for this slot, none fit within tolerance — closest was \"Karbonader (Lean Beef Patties) with Caramelized Onions\" (delivered 58g protein vs a 83g target).",
+     "locked": false,
+     "recipe": {
+      "id": "cmrj2tgdz01jawlwsk5gx66m5",
+      "name": "Karbonader (Lean Beef Patties) with Caramelized Onions",
+      "description": null,
+      "steps": [
+       "Grate half an onion and set aside. Slice the rest of the onions and fry in butter on low/medium heat until caramelized.",
+       "▢",
+       "In a bowl, mix together ground beef, grated onion, salt, pepper, nutmeg, potato/corn starch, and water.",
+       "▢",
+       "Form into a sausage and cut 6 patties. Using a knife make a light grid pattern in each patty.",
+       "▢",
+       "Brown both sides of the karbonader in butter on high heat, then turn down to low heat and fry for another 2 – 3 minutes.",
+       "▢",
+       "Serve the karbonader and onions with potatoes, stewed peas, and brown sauce for dinner, or on a slice of bread for lunch or a snack."
+      ],
+      "slotType": "meal",
+      "cuisine": "western-comfort",
+      "prepTimeMin": 39,
+      "source": "themealdb-import",
+      "mealCategory": null,
+      "kcal": 707.9,
+      "protein": 30.1,
+      "fat": 62.6,
+      "carb": 6.3,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 4.78,
+      "difficulty": 6,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-13T10:25:24.024Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x0ogi021twlw0h1rf6f31",
+     "planId": "cms6x0og80217wlw0gti4pi9b",
+     "dayOfWeek": 3,
+     "slotType": "meal",
+     "slotIndex": 1,
+     "recipeId": "cmrj2thrp01ukwlwsyjd1nnsi",
+     "proteinScale": 1.49,
+     "sidesScale": 2,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t6is000ewlwsmzadlvxo",
+       "name": "Beef",
+       "role": "protein",
+       "grams": 375
+      },
+      {
+       "foodId": "cmrg8zxar000lwli0qy2ovmx4",
+       "name": "Onion",
+       "role": "veg",
+       "grams": 55
+      },
+      {
+       "foodId": "cmrj2t6qh001dwlws2ramsws8",
+       "name": "Bay Leaf",
+       "role": null,
+       "grams": 1
+      },
+      {
+       "foodId": "cmrj2t6gd0003wlwss7jf3wzf",
+       "name": "Salt",
+       "role": null,
+       "grams": 1
+      },
+      {
+       "foodId": "cmrj2t6mf000uwlwsne5kc5wl",
+       "name": "Black Pepper",
+       "role": null,
+       "grams": 1
+      },
+      {
+       "foodId": "cmrj2t6hb0007wlwsh6l6ynal",
+       "name": "Water",
+       "role": null,
+       "grams": 500
+      }
+     ],
+     "kcal": 893.89,
+     "protein": 102.41,
+     "fat": 48.92160000000001,
+     "carb": 6.527,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrj2thrp01ukwlwsyjd1nnsi",
+      "name": "Seswaa",
+      "description": null,
+      "steps": [
+       "Pre heat the oven to 160 degrees Celsius. Cut the meat into large chunks then brown in a dish suitable for slow cooking in the oven such as a cast iron casserole dish.",
+       "Add the whole peeled onion, salt, cracked black pepper, water and bay leaves. Bring to the boil then cover and place into the oven for 4 hours.",
+       "After 4 hours, remove from oven and place onto the stove burner in order to cook off most of the remaining liquid. Use a wooden spoon to pound or mash up the meat, the meat should fall apart quite easily. and will appear shredded. You may brown the meat further if desired.",
+       "Check seasoning then serve with polenta or the more traditional thick cornmeal porridge known as pap or sadza, and a side of green vegetables."
+      ],
+      "slotType": "meal",
+      "cuisine": "western-comfort",
+      "prepTimeMin": 22,
+      "source": "themealdb-import",
+      "mealCategory": null,
+      "kcal": 590.5,
+      "protein": 68.1,
+      "fat": 32.6,
+      "carb": 3.1,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 11.34,
+      "difficulty": 3,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-13T10:25:25.814Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x0ogi021vwlw0i1rde897",
+     "planId": "cms6x0og80217wlw0gti4pi9b",
+     "dayOfWeek": 3,
+     "slotType": "meal",
+     "slotIndex": 2,
+     "recipeId": "cmrj2tmuv02zbwlws3pg3b96r",
+     "proteinScale": 1.72,
+     "sidesScale": 2,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t84f007mwlws3l8rub2z",
+       "name": "Chicken Thighs",
+       "role": "protein",
+       "grams": 445
+      },
+      {
+       "foodId": "cmrg8zxar000lwli0qy2ovmx4",
+       "name": "Onion",
+       "role": "veg",
+       "grams": 45
+      },
+      {
+       "foodId": "cmrj2t6jp000iwlwsli2ckg55",
+       "name": "Paprika",
+       "role": null,
+       "grams": 3
+      },
+      {
+       "foodId": "cmrj2t6qp001ewlwsds5bbm29",
+       "name": "Lemon",
+       "role": "veg",
+       "grams": 30
+      },
+      {
+       "foodId": "cmrj2t6h10006wlwslufza94y",
+       "name": "Parsley",
+       "role": null,
+       "grams": 15
+      },
+      {
+       "foodId": "cmrj2t6n2000xwlwsqltep2pn",
+       "name": "Chicken Stock",
+       "role": "protein",
+       "grams": 65
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "carb",
+       "grams": 7
+      }
+     ],
+     "kcal": 1053.41,
+     "protein": 118.8425,
+     "fat": 56.8565,
+     "carb": 10.765,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrj2tmuv02zbwlws3pg3b96r",
+      "name": "Spanish Chicken",
+      "description": null,
+      "steps": [
+       "step 1",
+       "Heat oven to 190C/170C fan/gas 5. Put all the ingredients into a large, wide ovenproof dish. Mix everything together with your hands and season.",
+       "step 2",
+       "Bake for 45 mins, stirring the onions after 20 mins, until the chicken is golden and the onions tender. Serve with rice."
+      ],
+      "slotType": "meal",
+      "cuisine": "mediterranean",
+      "prepTimeMin": 23,
+      "source": "themealdb-import",
+      "mealCategory": null,
+      "kcal": 606.3,
+      "protein": 69.3,
+      "fat": 32.5,
+      "carb": 5.6,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 7.22,
+      "difficulty": 3,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-13T10:25:32.407Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x0ogj021xwlw0irvirkgz",
+     "planId": "cms6x0og80217wlw0gti4pi9b",
+     "dayOfWeek": 4,
+     "slotType": "meal",
+     "slotIndex": 0,
+     "recipeId": "cmrj2tmuv02zbwlws3pg3b96r",
+     "proteinScale": 1.17,
+     "sidesScale": 2,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t84f007mwlws3l8rub2z",
+       "name": "Chicken Thighs",
+       "role": "protein",
+       "grams": 305
+      },
+      {
+       "foodId": "cmrg8zxar000lwli0qy2ovmx4",
+       "name": "Onion",
+       "role": "veg",
+       "grams": 45
+      },
+      {
+       "foodId": "cmrj2t6jp000iwlwsli2ckg55",
+       "name": "Paprika",
+       "role": null,
+       "grams": 3
+      },
+      {
+       "foodId": "cmrj2t6qp001ewlwsds5bbm29",
+       "name": "Lemon",
+       "role": "veg",
+       "grams": 30
+      },
+      {
+       "foodId": "cmrj2t6h10006wlwslufza94y",
+       "name": "Parsley",
+       "role": null,
+       "grams": 15
+      },
+      {
+       "foodId": "cmrj2t6n2000xwlwsqltep2pn",
+       "name": "Chicken Stock",
+       "role": "protein",
+       "grams": 45
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "carb",
+       "grams": 7
+      }
+     ],
+     "kcal": 753.61,
+     "protein": 81.9385,
+     "fat": 41.3565,
+     "carb": 10.059,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrj2tmuv02zbwlws3pg3b96r",
+      "name": "Spanish Chicken",
+      "description": null,
+      "steps": [
+       "step 1",
+       "Heat oven to 190C/170C fan/gas 5. Put all the ingredients into a large, wide ovenproof dish. Mix everything together with your hands and season.",
+       "step 2",
+       "Bake for 45 mins, stirring the onions after 20 mins, until the chicken is golden and the onions tender. Serve with rice."
+      ],
+      "slotType": "meal",
+      "cuisine": "mediterranean",
+      "prepTimeMin": 23,
+      "source": "themealdb-import",
+      "mealCategory": null,
+      "kcal": 606.3,
+      "protein": 69.3,
+      "fat": 32.5,
+      "carb": 5.6,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 7.22,
+      "difficulty": 3,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-13T10:25:32.407Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x0ogk021zwlw0o1riirjw",
+     "planId": "cms6x0og80217wlw0gti4pi9b",
+     "dayOfWeek": 4,
+     "slotType": "meal",
+     "slotIndex": 1,
+     "recipeId": "cmrj2tkaz02evwlws246fya47",
+     "proteinScale": 1.68,
+     "sidesScale": 1.51,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t89e0089wlwsennkaqet",
+       "name": "Chicken Wings",
+       "role": "protein",
+       "grams": 505
+      },
+      {
+       "foodId": "cmrj2t6ft0001wlwstiofk9on",
+       "name": "Garlic",
+       "role": "veg",
+       "grams": 2
+      },
+      {
+       "foodId": "cmrj2t6qp001ewlwsds5bbm29",
+       "name": "Lemon",
+       "role": "veg",
+       "grams": 20
+      },
+      {
+       "foodId": "cmrj2t89n008awlwskkkc8vj3",
+       "name": "Cumin Seeds",
+       "role": null,
+       "grams": 1
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "carb",
+       "grams": 10
+      },
+      {
+       "foodId": "cmrfoyp7m0002wl0851se2p2b",
+       "name": "Honey",
+       "role": "carb",
+       "grams": 8
+      }
+     ],
+     "kcal": 977.78,
+     "protein": 93.34839999999998,
+     "fat": 63.77459999999999,
+     "carb": 8.73,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrj2tkaz02evwlws246fya47",
+      "name": "Chicken wings with cumin, lemon & garlic",
+      "description": null,
+      "steps": [
+       "step 1",
+       "Using a pair of sharp kitchen scissors, cut each wing at the knuckle into two pieces. Mix the garlic, lemon zest and juice, cumin and oil with plenty of seasoning, then tip into a dish with the chicken wings and toss to coat. Cover and put in the fridge to marinate for at least 1 hr, or overnight if you have time.",
+       "step 2",
+       "Heat oven to 200C/180C fan/gas 6, or heat an outdoor barbecue. Bake the chicken wings on an oven tray for 45-50 mins until crisp, or barbecue for 20 mins, drizzling over the honey for the final 10 mins of each method. Serve on a platter with plenty of paper napkins. Fill small bowls with olives, pistachios or almonds, dates and pickled chillies and flatbreads to serve alongside, along with the dishes below."
+      ],
+      "slotType": "meal",
+      "cuisine": "western-comfort",
+      "prepTimeMin": 22,
+      "source": "themealdb-import",
+      "mealCategory": null,
+      "kcal": 592.1,
+      "protein": 55.5,
+      "fat": 38.8,
+      "carb": 6,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 7.48,
+      "difficulty": 3,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-13T10:25:29.099Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x0ogk0221wlw0hqeib6b5",
+     "planId": "cms6x0og80217wlw0gti4pi9b",
+     "dayOfWeek": 4,
+     "slotType": "meal",
+     "slotIndex": 2,
+     "recipeId": "cmrj2tctf00r5wlwshnmjtoqv",
+     "proteinScale": 2,
+     "sidesScale": 2,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t6is000ewlwsmzadlvxo",
+       "name": "Beef",
+       "role": "protein",
+       "grams": 250
+      },
+      {
+       "foodId": "cmrg8zxar000lwli0qy2ovmx4",
+       "name": "Onion",
+       "role": "veg",
+       "grams": 55
+      },
+      {
+       "foodId": "cmrj2t6j0000fwlwsog8rz1h6",
+       "name": "Red Pepper",
+       "role": null,
+       "grams": 3
+      },
+      {
+       "foodId": "cmrj2t6ft0001wlwstiofk9on",
+       "name": "Garlic",
+       "role": "veg",
+       "grams": 3
+      },
+      {
+       "foodId": "cmrj2t6j9000gwlwstmjp6mv2",
+       "name": "Cumin",
+       "role": null,
+       "grams": 2
+      },
+      {
+       "foodId": "cmrj2t6jh000hwlwsev33v7zd",
+       "name": "Oregano",
+       "role": null,
+       "grams": 2
+      },
+      {
+       "foodId": "cmrj2t6jp000iwlwsli2ckg55",
+       "name": "Paprika",
+       "role": null,
+       "grams": 2
+      },
+      {
+       "foodId": "cmrj2t6jx000jwlws245wvtmm",
+       "name": "Beef Stock",
+       "role": "protein",
+       "grams": 505
+      },
+      {
+       "foodId": "cmrj2t6hb0007wlwsh6l6ynal",
+       "name": "Water",
+       "role": null,
+       "grams": 295
+      },
+      {
+       "foodId": "cmrj2t6gd0003wlwss7jf3wzf",
+       "name": "Salt",
+       "role": null,
+       "grams": 1
+      },
+      {
+       "foodId": "cmrj2t6k6000kwlws6nnvgyhz",
+       "name": "Cheese",
+       "role": null,
+       "grams": 100
+      },
+      {
+       "foodId": "cmrj2t6kg000lwlwsgcajfryi",
+       "name": "Extra Virgin Olive Oil",
+       "role": "carb",
+       "grams": 1
+      }
+     ],
+     "kcal": 1078.59,
+     "protein": 100.04698,
+     "fat": 66.11428000000001,
+     "carb": 19.9145,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrj2tctf00r5wlwshnmjtoqv",
+      "name": "Arepa pelua",
+      "description": null,
+      "steps": [
+       "Cook the meat: Place the flank steak in a pot with broth or water and salt. Cook over low heat for about 2 hours, until tender and easy to shred.",
+       "Shred the meat: Once cooked, drain and shred the meat using two forks.",
+       "Prepare the vegetables: Sauté chopped onion, bell pepper, and garlic in a little oil. Add cumin, oregano, paprika, and salt. Stir in the meat and cook for a few minutes until the flavors are well combined.",
+       "Make the dough: In a bowl, mix the cornmeal with warm water and salt until a soft dough forms. Let it rest for 5 minutes.",
+       "Form the arepas: Divide the dough into 6 portions, shape into balls, and flatten into thick discs.",
+       "Cook: Cook the arepas on a griddle or skillet over medium heat for 2–3 minutes on each side until golden. You can then bake them for a few minutes if you prefer them crispier.",
+       "Fill: Slice the arepas open on one side, fill with the hot shredded beef, and top with grated cheese."
+      ],
+      "slotType": "meal",
+      "cuisine": "western-comfort",
+      "prepTimeMin": 35,
+      "source": "themealdb-import",
+      "mealCategory": null,
+      "kcal": 534,
+      "protein": 50,
+      "fat": 32.6,
+      "carb": 9.6,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 7.33,
+      "difficulty": 5,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-13T10:25:19.395Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x0ogl0223wlw0n8s3m6qs",
+     "planId": "cms6x0og80217wlw0gti4pi9b",
+     "dayOfWeek": 5,
+     "slotType": "meal",
+     "slotIndex": 0,
+     "recipeId": "cmrj2tkaz02evwlws246fya47",
+     "proteinScale": 1.5,
+     "sidesScale": 0.96,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t89e0089wlwsennkaqet",
+       "name": "Chicken Wings",
+       "role": "protein",
+       "grams": 450
+      },
+      {
+       "foodId": "cmrj2t6ft0001wlwstiofk9on",
+       "name": "Garlic",
+       "role": "veg",
+       "grams": 1
+      },
+      {
+       "foodId": "cmrj2t6qp001ewlwsds5bbm29",
+       "name": "Lemon",
+       "role": "veg",
+       "grams": 14
+      },
+      {
+       "foodId": "cmrj2t89n008awlwskkkc8vj3",
+       "name": "Cumin Seeds",
+       "role": null,
+       "grams": 1
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "carb",
+       "grams": 7
+      },
+      {
+       "foodId": "cmrfoyp7m0002wl0851se2p2b",
+       "name": "Honey",
+       "role": "carb",
+       "grams": 5
+      }
+     ],
+     "kcal": 846.26,
+     "protein": 83.12499999999999,
+     "fat": 54.93659999999999,
+     "carb": 5.6364,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrj2tkaz02evwlws246fya47",
+      "name": "Chicken wings with cumin, lemon & garlic",
+      "description": null,
+      "steps": [
+       "step 1",
+       "Using a pair of sharp kitchen scissors, cut each wing at the knuckle into two pieces. Mix the garlic, lemon zest and juice, cumin and oil with plenty of seasoning, then tip into a dish with the chicken wings and toss to coat. Cover and put in the fridge to marinate for at least 1 hr, or overnight if you have time.",
+       "step 2",
+       "Heat oven to 200C/180C fan/gas 6, or heat an outdoor barbecue. Bake the chicken wings on an oven tray for 45-50 mins until crisp, or barbecue for 20 mins, drizzling over the honey for the final 10 mins of each method. Serve on a platter with plenty of paper napkins. Fill small bowls with olives, pistachios or almonds, dates and pickled chillies and flatbreads to serve alongside, along with the dishes below."
+      ],
+      "slotType": "meal",
+      "cuisine": "western-comfort",
+      "prepTimeMin": 22,
+      "source": "themealdb-import",
+      "mealCategory": null,
+      "kcal": 592.1,
+      "protein": 55.5,
+      "fat": 38.8,
+      "carb": 6,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 7.48,
+      "difficulty": 3,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-13T10:25:29.099Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x0ogm0225wlw06cip76u5",
+     "planId": "cms6x0og80217wlw0gti4pi9b",
+     "dayOfWeek": 5,
+     "slotType": "meal",
+     "slotIndex": 1,
+     "recipeId": "cmrj2td5300ttwlwszao8ubba",
+     "proteinScale": 0.86,
+     "sidesScale": 0.5,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t6is000ewlwsmzadlvxo",
+       "name": "Beef",
+       "role": "protein",
+       "grams": 325
+      },
+      {
+       "foodId": "cmrj2t6ps001awlws98yh350y",
+       "name": "Beef Stock Concentrate",
+       "role": "protein",
+       "grams": 20
+      },
+      {
+       "foodId": "cmrj2t6pz001bwlwsbarwpyy1",
+       "name": "Tomato Puree",
+       "role": "veg",
+       "grams": 30
+      },
+      {
+       "foodId": "cmrj2t6hb0007wlwsh6l6ynal",
+       "name": "Water",
+       "role": null,
+       "grams": 90
+      },
+      {
+       "foodId": "cmrj2t6ls000rwlwsf7bu3ffs",
+       "name": "Soy Sauce",
+       "role": "carb",
+       "grams": 7
+      },
+      {
+       "foodId": "cmrj2t6q7001cwlws8jhsso6r",
+       "name": "White Wine Vinegar",
+       "role": "carb",
+       "grams": 2
+      },
+      {
+       "foodId": "cmrj2t6gl0004wlws73buybhw",
+       "name": "Pepper",
+       "role": null,
+       "grams": 2
+      },
+      {
+       "foodId": "cmrj2t6qh001dwlws2ramsws8",
+       "name": "Bay Leaf",
+       "role": null,
+       "grams": 1
+      },
+      {
+       "foodId": "cmrj2t6qp001ewlwsds5bbm29",
+       "name": "Lemon",
+       "role": "veg",
+       "grams": 4
+      },
+      {
+       "foodId": "cmrj2t6qw001fwlwszwir0gt7",
+       "name": "Tomato Sauce",
+       "role": "veg",
+       "grams": 3
+      },
+      {
+       "foodId": "cmrevpcnz000mwl5g62fmfzqk",
+       "name": "Butter",
+       "role": null,
+       "grams": 5
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "carb",
+       "grams": 14
+      },
+      {
+       "foodId": "cmrg8zxar000lwli0qy2ovmx4",
+       "name": "Onion",
+       "role": "veg",
+       "grams": 14
+      },
+      {
+       "foodId": "cmrj2t6ft0001wlwstiofk9on",
+       "name": "Garlic",
+       "role": "veg",
+       "grams": 2
+      }
+     ],
+     "kcal": 975.5600000000001,
+     "protein": 93.07859999999998,
+     "fat": 61.3485,
+     "carb": 9.1552,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrj2td5300ttwlwszao8ubba",
+      "name": "Beef Asado",
+      "description": null,
+      "steps": [
+       "Combine beef, crushed peppercorn, soy sauce, vinegar, dried bay leaves, lemon, and tomato sauce. Mix well. Marinate beef for at least 30 minutes.",
+       "Put the marinated beef in a cooking pot along with remaining marinade. Add water. Let boil.",
+       "Add Knorr Beef Cube. Stir. Cover the pot and cook for 40 minutes in low heat.",
+       "Turn the beef over. Add tomato paste. Continue cooking until beef tenderizes. Set aside.",
+       "Heat oil in a pan. Fry the potato until it browns. Turn over and continue frying the opposite side. Remove from the pan and place on a clean plate. Do the same with the carrots.",
+       "Save 3 tablespoons of cooking oil from the pan where the potato was fried. Saute onion and garlic until onion softens.",
+       "Pour-in the sauce from the beef stew. Let boil. Add the beef. Cook for 2 minutes.",
+       "Add butter and let it melt. Continue cooking until the sauce reduces to half."
+      ],
+      "slotType": "meal",
+      "cuisine": "western-comfort",
+      "prepTimeMin": 39,
+      "source": "themealdb-import",
+      "mealCategory": null,
+      "kcal": 1280,
+      "protein": 108.8,
+      "fat": 86,
+      "carb": 14,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 18.41,
+      "difficulty": 7,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-13T10:25:19.816Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x0ogn0227wlw08kbydht2",
+     "planId": "cms6x0og80217wlw0gti4pi9b",
+     "dayOfWeek": 5,
+     "slotType": "meal",
+     "slotIndex": 2,
+     "recipeId": "cmrj2tctf00r5wlwshnmjtoqv",
+     "proteinScale": 2,
+     "sidesScale": 1.33,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t6is000ewlwsmzadlvxo",
+       "name": "Beef",
+       "role": "protein",
+       "grams": 250
+      },
+      {
+       "foodId": "cmrg8zxar000lwli0qy2ovmx4",
+       "name": "Onion",
+       "role": "veg",
+       "grams": 35
+      },
+      {
+       "foodId": "cmrj2t6j0000fwlwsog8rz1h6",
+       "name": "Red Pepper",
+       "role": null,
+       "grams": 2
+      },
+      {
+       "foodId": "cmrj2t6ft0001wlwstiofk9on",
+       "name": "Garlic",
+       "role": "veg",
+       "grams": 2
+      },
+      {
+       "foodId": "cmrj2t6j9000gwlwstmjp6mv2",
+       "name": "Cumin",
+       "role": null,
+       "grams": 1
+      },
+      {
+       "foodId": "cmrj2t6jh000hwlwsev33v7zd",
+       "name": "Oregano",
+       "role": null,
+       "grams": 1
+      },
+      {
+       "foodId": "cmrj2t6jp000iwlwsli2ckg55",
+       "name": "Paprika",
+       "role": null,
+       "grams": 1
+      },
+      {
+       "foodId": "cmrj2t6jx000jwlws245wvtmm",
+       "name": "Beef Stock",
+       "role": "protein",
+       "grams": 505
+      },
+      {
+       "foodId": "cmrj2t6hb0007wlwsh6l6ynal",
+       "name": "Water",
+       "role": null,
+       "grams": 195
+      },
+      {
+       "foodId": "cmrj2t6gd0003wlwss7jf3wzf",
+       "name": "Salt",
+       "role": null,
+       "grams": 1
+      },
+      {
+       "foodId": "cmrj2t6k6000kwlws6nnvgyhz",
+       "name": "Cheese",
+       "role": null,
+       "grams": 65
+      },
+      {
+       "foodId": "cmrj2t6kg000lwlwsgcajfryi",
+       "name": "Extra Virgin Olive Oil",
+       "role": "carb",
+       "grams": 1
+      }
+     ],
+     "kcal": 926.3000000000001,
+     "protein": 92.09782000000001,
+     "fat": 54.73942,
+     "carb": 14.5115,
+     "warning": "Tried 5 recipe(s) for this slot, none fit within tolerance — closest was \"Arepa pelua\" (delivered 92g protein vs a 106g target).",
+     "locked": false,
+     "recipe": {
+      "id": "cmrj2tctf00r5wlwshnmjtoqv",
+      "name": "Arepa pelua",
+      "description": null,
+      "steps": [
+       "Cook the meat: Place the flank steak in a pot with broth or water and salt. Cook over low heat for about 2 hours, until tender and easy to shred.",
+       "Shred the meat: Once cooked, drain and shred the meat using two forks.",
+       "Prepare the vegetables: Sauté chopped onion, bell pepper, and garlic in a little oil. Add cumin, oregano, paprika, and salt. Stir in the meat and cook for a few minutes until the flavors are well combined.",
+       "Make the dough: In a bowl, mix the cornmeal with warm water and salt until a soft dough forms. Let it rest for 5 minutes.",
+       "Form the arepas: Divide the dough into 6 portions, shape into balls, and flatten into thick discs.",
+       "Cook: Cook the arepas on a griddle or skillet over medium heat for 2–3 minutes on each side until golden. You can then bake them for a few minutes if you prefer them crispier.",
+       "Fill: Slice the arepas open on one side, fill with the hot shredded beef, and top with grated cheese."
+      ],
+      "slotType": "meal",
+      "cuisine": "western-comfort",
+      "prepTimeMin": 35,
+      "source": "themealdb-import",
+      "mealCategory": null,
+      "kcal": 534,
+      "protein": 50,
+      "fat": 32.6,
+      "carb": 9.6,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 7.33,
+      "difficulty": 5,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-13T10:25:19.395Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x0ogo0229wlw0db63suzp",
+     "planId": "cms6x0og80217wlw0gti4pi9b",
+     "dayOfWeek": 6,
+     "slotType": "meal",
+     "slotIndex": 0,
+     "recipeId": "cmrj2twow055vwlws2m6xj8rm",
+     "proteinScale": 1.2,
+     "sidesScale": 0.7,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t9z700f1wlwsb36u0abl",
+       "name": "Lamb",
+       "role": "protein",
+       "grams": 410
+      },
+      {
+       "foodId": "cmrj2t788003iwlwsdtufusv7",
+       "name": "White Cabbage",
+       "role": "veg",
+       "grams": 18
+      },
+      {
+       "foodId": "cmrj2t9zg00f2wlwsl23mool5",
+       "name": "Whole black peppercorns",
+       "role": null,
+       "grams": 5
+      },
+      {
+       "foodId": "cmrj2t6gd0003wlwss7jf3wzf",
+       "name": "Salt",
+       "role": null,
+       "grams": 2
+      },
+      {
+       "foodId": "cmrj2t6hb0007wlwsh6l6ynal",
+       "name": "Water",
+       "role": null,
+       "grams": 60
+      },
+      {
+       "foodId": "cmrj2t7ho004qwlws8t7qsudo",
+       "name": "Flour",
+       "role": "carb",
+       "grams": 7
+      }
+     ],
+     "kcal": 847.19,
+     "protein": 83.50899999999999,
+     "fat": 54.007,
+     "carb": 6.781000000000001,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrj2twow055vwlws2m6xj8rm",
+      "name": "Fårikål (Norwegian National Dish)",
+      "description": null,
+      "steps": [
+       "▢",
+       "Cut the lamb into large pieces.",
+       "▢",
+       "Slice the cabbage into large wedges, keeping the core attached.",
+       "▢",
+       "Add a layer of lamb pieces to the bottom of a large pot, fatty side down. Sprinkle with peppercorns and salt. Add a layer of cabbage wedges on top. Repeat with more layers of lamb, peppercorns, and cabbage, ending with cabbage on top.",
+       "▢",
+       "Optional: Sprinkle a couple of tablespoons on top of the lamb for a thicker stew.",
+       "▢",
+       "Add water to the pot and bring to a boil. Cover and reduce heat. Cook on low heat for 2 – 3 hours, until the lamb gently falls away from the bone.",
+       "▢",
+       "Serve with boiled potatoes and fresh parsley, covering generously with the fårikål broth."
+      ],
+      "slotType": "meal",
+      "cuisine": "western-comfort",
+      "prepTimeMin": 45,
+      "source": "themealdb-import",
+      "mealCategory": null,
+      "kcal": 734.9,
+      "protein": 69.4,
+      "fat": 46.6,
+      "carb": 9.5,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 16.63,
+      "difficulty": 5,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-13T10:25:45.152Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x0ogo022bwlw0iuldhzkt",
+     "planId": "cms6x0og80217wlw0gti4pi9b",
+     "dayOfWeek": 6,
+     "slotType": "meal",
+     "slotIndex": 1,
+     "recipeId": "cmrj2td5300ttwlwszao8ubba",
+     "proteinScale": 0.86,
+     "sidesScale": 0.5,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t6is000ewlwsmzadlvxo",
+       "name": "Beef",
+       "role": "protein",
+       "grams": 325
+      },
+      {
+       "foodId": "cmrj2t6ps001awlws98yh350y",
+       "name": "Beef Stock Concentrate",
+       "role": "protein",
+       "grams": 20
+      },
+      {
+       "foodId": "cmrj2t6pz001bwlwsbarwpyy1",
+       "name": "Tomato Puree",
+       "role": "veg",
+       "grams": 30
+      },
+      {
+       "foodId": "cmrj2t6hb0007wlwsh6l6ynal",
+       "name": "Water",
+       "role": null,
+       "grams": 90
+      },
+      {
+       "foodId": "cmrj2t6ls000rwlwsf7bu3ffs",
+       "name": "Soy Sauce",
+       "role": "carb",
+       "grams": 7
+      },
+      {
+       "foodId": "cmrj2t6q7001cwlws8jhsso6r",
+       "name": "White Wine Vinegar",
+       "role": "carb",
+       "grams": 2
+      },
+      {
+       "foodId": "cmrj2t6gl0004wlws73buybhw",
+       "name": "Pepper",
+       "role": null,
+       "grams": 2
+      },
+      {
+       "foodId": "cmrj2t6qh001dwlws2ramsws8",
+       "name": "Bay Leaf",
+       "role": null,
+       "grams": 1
+      },
+      {
+       "foodId": "cmrj2t6qp001ewlwsds5bbm29",
+       "name": "Lemon",
+       "role": "veg",
+       "grams": 4
+      },
+      {
+       "foodId": "cmrj2t6qw001fwlwszwir0gt7",
+       "name": "Tomato Sauce",
+       "role": "veg",
+       "grams": 3
+      },
+      {
+       "foodId": "cmrevpcnz000mwl5g62fmfzqk",
+       "name": "Butter",
+       "role": null,
+       "grams": 5
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "carb",
+       "grams": 14
+      },
+      {
+       "foodId": "cmrg8zxar000lwli0qy2ovmx4",
+       "name": "Onion",
+       "role": "veg",
+       "grams": 14
+      },
+      {
+       "foodId": "cmrj2t6ft0001wlwstiofk9on",
+       "name": "Garlic",
+       "role": "veg",
+       "grams": 2
+      }
+     ],
+     "kcal": 975.5600000000001,
+     "protein": 93.07859999999998,
+     "fat": 61.3485,
+     "carb": 9.1552,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrj2td5300ttwlwszao8ubba",
+      "name": "Beef Asado",
+      "description": null,
+      "steps": [
+       "Combine beef, crushed peppercorn, soy sauce, vinegar, dried bay leaves, lemon, and tomato sauce. Mix well. Marinate beef for at least 30 minutes.",
+       "Put the marinated beef in a cooking pot along with remaining marinade. Add water. Let boil.",
+       "Add Knorr Beef Cube. Stir. Cover the pot and cook for 40 minutes in low heat.",
+       "Turn the beef over. Add tomato paste. Continue cooking until beef tenderizes. Set aside.",
+       "Heat oil in a pan. Fry the potato until it browns. Turn over and continue frying the opposite side. Remove from the pan and place on a clean plate. Do the same with the carrots.",
+       "Save 3 tablespoons of cooking oil from the pan where the potato was fried. Saute onion and garlic until onion softens.",
+       "Pour-in the sauce from the beef stew. Let boil. Add the beef. Cook for 2 minutes.",
+       "Add butter and let it melt. Continue cooking until the sauce reduces to half."
+      ],
+      "slotType": "meal",
+      "cuisine": "western-comfort",
+      "prepTimeMin": 39,
+      "source": "themealdb-import",
+      "mealCategory": null,
+      "kcal": 1280,
+      "protein": 108.8,
+      "fat": 86,
+      "carb": 14,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 18.41,
+      "difficulty": 7,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-13T10:25:19.816Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x0ogp022dwlw02qzar4si",
+     "planId": "cms6x0og80217wlw0gti4pi9b",
+     "dayOfWeek": 6,
+     "slotType": "meal",
+     "slotIndex": 2,
+     "recipeId": "cmrj2tgq601m0wlwsywpofgzn",
+     "proteinScale": 1.32,
+     "sidesScale": 1.07,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t7n0005fwlwsmb1ow0r4",
+       "name": "Beef Flank Steak",
+       "role": "protein",
+       "grams": 330
+      },
+      {
+       "foodId": "cmrj2t6qw001fwlwszwir0gt7",
+       "name": "Tomato Sauce",
+       "role": "veg",
+       "grams": 55
+      },
+      {
+       "foodId": "cmrj2t7e10049wlwse3bj6y2k",
+       "name": "Mozzarella",
+       "role": null,
+       "grams": 55
+      },
+      {
+       "foodId": "cmrj2t6jh000hwlwsev33v7zd",
+       "name": "Oregano",
+       "role": null,
+       "grams": 3
+      },
+      {
+       "foodId": "cmrj2t7js0050wlws9y6aup2b",
+       "name": "Green Olives",
+       "role": null,
+       "grams": 25
+      },
+      {
+       "foodId": "cmrj2t6gd0003wlwss7jf3wzf",
+       "name": "Salt",
+       "role": null,
+       "grams": 1
+      },
+      {
+       "foodId": "cmrj2t6gl0004wlws73buybhw",
+       "name": "Pepper",
+       "role": null,
+       "grams": 1
+      }
+     ],
+     "kcal": 1037.77,
+     "protein": 105.4951,
+     "fat": 60.82239999999999,
+     "carb": 19.575,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrj2tgq601m0wlwsywpofgzn",
+      "name": "Matambre a la Pizza",
+      "description": null,
+      "steps": [
+       "Prepare the Steak: Season the steak with salt and pepper. Grill one side until half-cooked.",
+       "Add Toppings: Spread tomato sauce over the cooked side, then add cheese, oregano, and olives.",
+       "Finish Grilling: Grill until the cheese is melted and bubbly.",
+       "Serve: Slice and serve hot.",
+       "Pro Tips:",
+       "Tenderize the matambre by scoring it lightly on both sides. This helps it cook more evenly and absorb the flavors.",
+       "Precook the matambre on the grill before adding the toppings to ensure it's fully cooked without burning the cheese."
+      ],
+      "slotType": "meal",
+      "cuisine": "italian",
+      "prepTimeMin": 31,
+      "source": "themealdb-import",
+      "mealCategory": null,
+      "kcal": 824,
+      "protein": 81.3,
+      "fat": 48.6,
+      "carb": 17.6,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 14.52,
+      "difficulty": 4,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-13T10:25:24.463Z",
+      "createdByUserId": null
+     }
+    }
+   ],
+   "groceryList": null,
+   "meta": {
+    "matchPct": 93,
+    "attempts": 5,
+    "score": {
+     "daysInTolerance": 4,
+     "avgMatch": 93,
+     "days": [
+      {
+       "dayOfWeek": 0,
+       "dayName": "Monday",
+       "matchPct": 95,
+       "totals": {
+        "kcal": 2785,
+        "protein": 280,
+        "fat": 148,
+        "carb": 25
+       },
+       "kcalDeltaPct": -2.6,
+       "proteinShortPct": 0.7,
+       "fatOk": true,
+       "carbOk": true,
+       "inTolerance": true,
+       "miss": null,
+       "unfilledSlots": 0,
+       "warnedSlots": 1,
+       "proteinFloor": {
+        "met": true,
+        "floorG": 269,
+        "achievedG": 280,
+        "shortG": 0,
+        "shortPct": 0,
+        "reason": null
+       },
+       "windowIndex": 0,
+       "dayIndex": 0,
+       "key": "0:0"
+      },
+      {
+       "dayOfWeek": 1,
+       "dayName": "Tuesday",
+       "matchPct": 88,
+       "totals": {
+        "kcal": 2854,
+        "protein": 281,
+        "fat": 177,
+        "carb": 32
+       },
+       "kcalDeltaPct": -0.1,
+       "proteinShortPct": 0.3,
+       "fatOk": true,
+       "carbOk": false,
+       "inTolerance": false,
+       "miss": "32 g carbs vs a 10–30 g range — 2 g over",
+       "unfilledSlots": 0,
+       "warnedSlots": 0,
+       "proteinFloor": {
+        "met": true,
+        "floorG": 269,
+        "achievedG": 281.3,
+        "shortG": 0,
+        "shortPct": 0,
+        "reason": null
+       },
+       "windowIndex": 0,
+       "dayIndex": 1,
+       "key": "0:1"
+      },
+      {
+       "dayOfWeek": 2,
+       "dayName": "Wednesday",
+       "matchPct": 99,
+       "totals": {
+        "kcal": 2923,
+        "protein": 282,
+        "fat": 185,
+        "carb": 25
+       },
+       "kcalDeltaPct": 2.3,
+       "proteinShortPct": 0,
+       "fatOk": true,
+       "carbOk": true,
+       "inTolerance": true,
+       "miss": null,
+       "unfilledSlots": 0,
+       "warnedSlots": 2,
+       "proteinFloor": {
+        "met": true,
+        "floorG": 269,
+        "achievedG": 282.2,
+        "shortG": 0,
+        "shortPct": 0,
+        "reason": null
+       },
+       "windowIndex": 0,
+       "dayIndex": 2,
+       "key": "0:2"
+      },
+      {
+       "dayOfWeek": 3,
+       "dayName": "Thursday",
+       "matchPct": 98,
+       "totals": {
+        "kcal": 2735,
+        "protein": 279,
+        "fat": 164,
+        "carb": 22
+       },
+       "kcalDeltaPct": -4.3,
+       "proteinShortPct": 0.9,
+       "fatOk": true,
+       "carbOk": true,
+       "inTolerance": true,
+       "miss": null,
+       "unfilledSlots": 0,
+       "warnedSlots": 1,
+       "proteinFloor": {
+        "met": true,
+        "floorG": 269,
+        "achievedG": 279.5,
+        "shortG": 0,
+        "shortPct": 0,
+        "reason": null
+       },
+       "windowIndex": 0,
+       "dayIndex": 3,
+       "key": "0:3"
+      },
+      {
+       "dayOfWeek": 4,
+       "dayName": "Friday",
+       "matchPct": 86,
+       "totals": {
+        "kcal": 2810,
+        "protein": 275,
+        "fat": 171,
+        "carb": 39
+       },
+       "kcalDeltaPct": -1.7,
+       "proteinShortPct": 2.4,
+       "fatOk": true,
+       "carbOk": false,
+       "inTolerance": false,
+       "miss": "39 g carbs vs a 10–30 g range — 9 g over",
+       "unfilledSlots": 0,
+       "warnedSlots": 0,
+       "proteinFloor": {
+        "met": true,
+        "floorG": 269,
+        "achievedG": 275.3,
+        "shortG": 0,
+        "shortPct": 0,
+        "reason": null
+       },
+       "windowIndex": 0,
+       "dayIndex": 4,
+       "key": "0:4"
+      },
+      {
+       "dayOfWeek": 5,
+       "dayName": "Saturday",
+       "matchPct": 97,
+       "totals": {
+        "kcal": 2748,
+        "protein": 268,
+        "fat": 171,
+        "carb": 29
+       },
+       "kcalDeltaPct": -3.8,
+       "proteinShortPct": 4.9,
+       "fatOk": true,
+       "carbOk": true,
+       "inTolerance": true,
+       "miss": null,
+       "unfilledSlots": 0,
+       "warnedSlots": 1,
+       "proteinFloor": {
+        "met": true,
+        "floorG": 269,
+        "achievedG": 268.3,
+        "shortG": 0.7,
+        "shortPct": 0.3,
+        "reason": null
+       },
+       "windowIndex": 0,
+       "dayIndex": 5,
+       "key": "0:5"
+      },
+      {
+       "dayOfWeek": 6,
+       "dayName": "Sunday",
+       "matchPct": 88,
+       "totals": {
+        "kcal": 2861,
+        "protein": 282,
+        "fat": 176,
+        "carb": 36
+       },
+       "kcalDeltaPct": 0.1,
+       "proteinShortPct": 0,
+       "fatOk": true,
+       "carbOk": false,
+       "inTolerance": false,
+       "miss": "36 g carbs vs a 10–30 g range — 6 g over",
+       "unfilledSlots": 0,
+       "warnedSlots": 0,
+       "proteinFloor": {
+        "met": true,
+        "floorG": 269,
+        "achievedG": 282.1,
+        "shortG": 0,
+        "shortPct": 0,
+        "reason": null
+       },
+       "windowIndex": 0,
+       "dayIndex": 6,
+       "key": "0:6"
+      }
+     ],
+     "totalDays": 7,
+     "floorDaysMet": 7,
+     "floorDaysTotal": 7
+    },
+    "days": [
+     {
+      "dayOfWeek": 0,
+      "dayName": "Monday",
+      "matchPct": 95,
+      "totals": {
+       "kcal": 2785,
+       "protein": 280,
+       "fat": 148,
+       "carb": 25
+      },
+      "kcalDeltaPct": -2.6,
+      "proteinShortPct": 0.7,
+      "fatOk": true,
+      "carbOk": true,
+      "inTolerance": true,
+      "miss": null,
+      "unfilledSlots": 0,
+      "warnedSlots": 1,
+      "proteinFloor": {
+       "met": true,
+       "floorG": 269,
+       "achievedG": 280,
+       "shortG": 0,
+       "shortPct": 0,
+       "reason": null
+      },
+      "windowIndex": 0,
+      "dayIndex": 0,
+      "key": "0:0"
+     },
+     {
+      "dayOfWeek": 1,
+      "dayName": "Tuesday",
+      "matchPct": 88,
+      "totals": {
+       "kcal": 2854,
+       "protein": 281,
+       "fat": 177,
+       "carb": 32
+      },
+      "kcalDeltaPct": -0.1,
+      "proteinShortPct": 0.3,
+      "fatOk": true,
+      "carbOk": false,
+      "inTolerance": false,
+      "miss": "32 g carbs vs a 10–30 g range — 2 g over",
+      "unfilledSlots": 0,
+      "warnedSlots": 0,
+      "proteinFloor": {
+       "met": true,
+       "floorG": 269,
+       "achievedG": 281.3,
+       "shortG": 0,
+       "shortPct": 0,
+       "reason": null
+      },
+      "windowIndex": 0,
+      "dayIndex": 1,
+      "key": "0:1"
+     },
+     {
+      "dayOfWeek": 2,
+      "dayName": "Wednesday",
+      "matchPct": 99,
+      "totals": {
+       "kcal": 2923,
+       "protein": 282,
+       "fat": 185,
+       "carb": 25
+      },
+      "kcalDeltaPct": 2.3,
+      "proteinShortPct": 0,
+      "fatOk": true,
+      "carbOk": true,
+      "inTolerance": true,
+      "miss": null,
+      "unfilledSlots": 0,
+      "warnedSlots": 2,
+      "proteinFloor": {
+       "met": true,
+       "floorG": 269,
+       "achievedG": 282.2,
+       "shortG": 0,
+       "shortPct": 0,
+       "reason": null
+      },
+      "windowIndex": 0,
+      "dayIndex": 2,
+      "key": "0:2"
+     },
+     {
+      "dayOfWeek": 3,
+      "dayName": "Thursday",
+      "matchPct": 98,
+      "totals": {
+       "kcal": 2735,
+       "protein": 279,
+       "fat": 164,
+       "carb": 22
+      },
+      "kcalDeltaPct": -4.3,
+      "proteinShortPct": 0.9,
+      "fatOk": true,
+      "carbOk": true,
+      "inTolerance": true,
+      "miss": null,
+      "unfilledSlots": 0,
+      "warnedSlots": 1,
+      "proteinFloor": {
+       "met": true,
+       "floorG": 269,
+       "achievedG": 279.5,
+       "shortG": 0,
+       "shortPct": 0,
+       "reason": null
+      },
+      "windowIndex": 0,
+      "dayIndex": 3,
+      "key": "0:3"
+     },
+     {
+      "dayOfWeek": 4,
+      "dayName": "Friday",
+      "matchPct": 86,
+      "totals": {
+       "kcal": 2810,
+       "protein": 275,
+       "fat": 171,
+       "carb": 39
+      },
+      "kcalDeltaPct": -1.7,
+      "proteinShortPct": 2.4,
+      "fatOk": true,
+      "carbOk": false,
+      "inTolerance": false,
+      "miss": "39 g carbs vs a 10–30 g range — 9 g over",
+      "unfilledSlots": 0,
+      "warnedSlots": 0,
+      "proteinFloor": {
+       "met": true,
+       "floorG": 269,
+       "achievedG": 275.3,
+       "shortG": 0,
+       "shortPct": 0,
+       "reason": null
+      },
+      "windowIndex": 0,
+      "dayIndex": 4,
+      "key": "0:4"
+     },
+     {
+      "dayOfWeek": 5,
+      "dayName": "Saturday",
+      "matchPct": 97,
+      "totals": {
+       "kcal": 2748,
+       "protein": 268,
+       "fat": 171,
+       "carb": 29
+      },
+      "kcalDeltaPct": -3.8,
+      "proteinShortPct": 4.9,
+      "fatOk": true,
+      "carbOk": true,
+      "inTolerance": true,
+      "miss": null,
+      "unfilledSlots": 0,
+      "warnedSlots": 1,
+      "proteinFloor": {
+       "met": true,
+       "floorG": 269,
+       "achievedG": 268.3,
+       "shortG": 0.7,
+       "shortPct": 0.3,
+       "reason": null
+      },
+      "windowIndex": 0,
+      "dayIndex": 5,
+      "key": "0:5"
+     },
+     {
+      "dayOfWeek": 6,
+      "dayName": "Sunday",
+      "matchPct": 88,
+      "totals": {
+       "kcal": 2861,
+       "protein": 282,
+       "fat": 176,
+       "carb": 36
+      },
+      "kcalDeltaPct": 0.1,
+      "proteinShortPct": 0,
+      "fatOk": true,
+      "carbOk": false,
+      "inTolerance": false,
+      "miss": "36 g carbs vs a 10–30 g range — 6 g over",
+      "unfilledSlots": 0,
+      "warnedSlots": 0,
+      "proteinFloor": {
+       "met": true,
+       "floorG": 269,
+       "achievedG": 282.1,
+       "shortG": 0,
+       "shortPct": 0,
+       "reason": null
+      },
+      "windowIndex": 0,
+      "dayIndex": 6,
+      "key": "0:6"
+     }
+    ],
+    "diagnosis": {
+     "feasible": false,
+     "reasons": [
+      "3 day(s) landed outside your 10–30 g carb range — portion scaling moves a dish's calories, not its fat/carb ratio, so the pool's composition is what binds here."
+     ],
+     "suggestions": [
+      "Add (or AI-generate) a few recipes built around the macro you keep missing, or drop the cuisine/protein preference so the solver can reach dishes that carry it."
+     ],
+     "binding": {
+      "key": "macro-composition",
+      "label": "carbs in your recipe pool",
+      "detail": "3 of 7 day(s) landed outside your 10-30 g carb range. Portion scaling moves a dish's calories, not its fat/carb ratio, so what binds here is which dishes your rules leave in the pool. Calories and protein landed on target on every day — it is composition, not portion size, that is short."
+     }
+    },
+    "poolCounts": {
+     "raw": 889,
+     "afterDiet": 37,
+     "afterPrep": 37,
+     "afterStack": 37,
+     "stackExplain": null
+    },
+    "variety": {
+     "mealEligible": 36,
+     "usableForSlot": 14,
+     "slotKcal": 953,
+     "snackEligible": 2,
+     "weeklyMealSlots": 21,
+     "weeklySnackSlots": 0,
+     "repeatCap": 2,
+     "distinctWeeks": 0.7,
+     "horizonWeeks": 1,
+     "sustainsHorizon": false,
+     "notes": [
+      "14 of your 36 compliant recipes can be portioned to a 953 kcal meal — about 0.6 week(s) of 21 meals before dishes start repeating, so over 1 weeks you will see favourites come back.",
+      "1 week: 13 distinct dish(es) across 21 filled slot(s); most-repeated dish appears 2x against a 2x cap for this horizon (2x per week)."
+     ],
+     "horizon": {
+      "weeks": 1,
+      "days": 7,
+      "perWeekCap": 2,
+      "horizonRepeatCap": 2,
+      "mealSlots": 21,
+      "snackSlots": 0,
+      "totalSlots": 21,
+      "distinctFloor": 11,
+      "distinctRecipes": 13,
+      "maxRepeat": 2,
+      "maxRepeatRecipeId": "cmrj2thrp01ukwlwsyjd1nnsi",
+      "lockedRepeatsOfMax": 0,
+      "filledSlots": 21,
+      "unfilledSlots": 0,
+      "requiredDistinct": 11,
+      "capHeld": true,
+      "floorHeld": true
+     }
+    },
+    "priorWeeksConsidered": 0,
+    "horizon": {
+     "key": "week",
+     "label": "1 week",
+     "days": 7,
+     "kind": "days",
+     "weeks": 1,
+     "custom": false,
+     "startDate": "2026-07-27",
+     "endDate": "2026-08-02",
+     "startDayOfWeek": 0,
+     "weeksWritten": 1,
+     "solveMs": 3,
+     "weekPlans": [
+      {
+       "startDate": "2026-07-27",
+       "dayIndices": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+       ],
+       "days": 7,
+       "daysInTolerance": 4,
+       "avgMatch": 93,
+       "unfilledSlots": 0,
+       "poolSize": 37
+      }
+     ]
+    }
+   }
+  }
+ }
+}

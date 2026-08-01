@@ -1,0 +1,523 @@
+{
+ "persona": {
+  "idx": 82,
+  "id": "p082",
+  "tier": "ROBUSTNESS",
+  "displayName": "restaurant chef, 78",
+  "story": "restaurant chef, 78, female, 170 cm / 97.4 kg (BMI 33.7), recomp, vegetarian diet, no exclusions, low-carb, 3 meals + 1 snacks, wants a single day",
+  "profile": {
+   "sex": "F",
+   "age": 78,
+   "heightCm": 170,
+   "startWeightKg": 97.4,
+   "goalWeightKg": 97.4,
+   "occupationKey": "chef-kitchen",
+   "trainingStyle": "mixed",
+   "minutesPerSession": 30,
+   "sessionsPerWeek": 2,
+   "rateLbPerWeek": 0.25,
+   "dietaryStyle": "vegetarian",
+   "excludedFoods": [],
+   "mealsPerDay": 3,
+   "snacksPerDay": 1,
+   "unitPref": "metric",
+   "bodyFatPct": 35,
+   "bodyFatSource": "measured",
+   "cuisinePreferences": [
+    "indian",
+    "mediterranean"
+   ],
+   "mealPreferencesNote": "Ólafur Þórðarson — no 🥜 please"
+  },
+  "filters": {
+   "maxPrepMin": 15,
+   "cuisines": [
+    "indian",
+    "mediterranean"
+   ]
+  },
+  "horizon": "day",
+  "walls": [],
+  "freeTextExclusions": [],
+  "dietaryStyle": "vegetarian",
+  "bmi": 33.7,
+  "goalKind": "recomp",
+  "macroStyle": "low-carb",
+  "requestedButUnsupported": [
+   "wanted a low-carb split without full keto; carbs are the leftover after LBM-derived protein and fat, and only dietaryStyle:\"keto\" changes that"
+  ],
+  "robustKind": "unicode-name",
+  "unicodeName": "Ólafur Þórðarson",
+  "tupleKey": "[\"ROBUSTNESS\",\"F\",78,170,97.4,97.4,\"chef-kitchen\",\"mixed\",0.25,\"vegetarian\",[],3,1,\"low-carb\",\"day\",15,null,null,\"unicode-name\",null]"
+ },
+ "request": {
+  "horizon": "day",
+  "filters": {
+   "maxPrepMin": 15,
+   "cuisines": [
+    "indian",
+    "mediterranean"
+   ]
+  }
+ },
+ "profileResponse": {
+  "id": "cms6x0s4402c3wlw0fejos85c",
+  "userId": "cms6x0rom0024wl2onrm2az1s",
+  "sex": "F",
+  "age": 78,
+  "heightCm": 170,
+  "bodyFatPct": 35,
+  "bodyFatSource": "measured",
+  "occupationKey": "chef-kitchen",
+  "activityOverride": null,
+  "sessionsPerWeek": 2,
+  "trainingStyle": "mixed",
+  "minutesPerSession": 30,
+  "startWeightKg": 97.4,
+  "goalWeightKg": 97.4,
+  "startDate": "2026-07-29",
+  "unitPref": "metric",
+  "rateLbPerWeek": 0.25,
+  "rateAcknowledged": false,
+  "floorKcal": null,
+  "excludedFormulas": [],
+  "targetKcal": 2278,
+  "mealsPerDay": 3,
+  "snacksPerDay": 1,
+  "excludedFoods": [],
+  "dietaryStyle": "vegetarian",
+  "cuisinePreferences": [
+   "indian",
+   "mediterranean"
+  ],
+  "mealPreferencesNote": "Ólafur Þórðarson — no 🥜 please",
+  "maxPrepMin": null,
+  "budgetTier": null,
+  "allowBatch": null,
+  "maxComplexity": null,
+  "adaptiveTdee": true,
+  "proteinPriorityMode": false,
+  "updatedAt": "2026-07-30T02:49:36.755Z"
+ },
+ "generate": {
+  "status": 200,
+  "ms": 607,
+  "body": {
+   "id": "cms6x0swf02cpwlw0sjex4nx9",
+   "userId": "cms6x0rom0024wl2onrm2az1s",
+   "startDate": "2026-07-27",
+   "createdAt": "2026-07-30T02:49:37.359Z",
+   "slots": [
+    {
+     "id": "cms6x0swg02crwlw0v2k5xlg6",
+     "planId": "cms6x0swf02cpwlw0sjex4nx9",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 0,
+     "recipeId": "cmrul79tv003iwl803qmc3v3s",
+     "proteinScale": 0.85,
+     "sidesScale": 0.97,
+     "ingredients": [
+      {
+       "foodId": "cmrukzae50002wlbwr9bq9oa7",
+       "name": "Edamame, shelled, cooked",
+       "role": "protein",
+       "grams": 155
+      },
+      {
+       "foodId": "cmrukzaed0004wlbwdxnybljb",
+       "name": "Lentil pasta, dry",
+       "role": "carb",
+       "grams": 95
+      },
+      {
+       "foodId": "cmrevpcnh000iwl5gh2zjhyqe",
+       "name": "Bell peppers",
+       "role": "veg",
+       "grams": 80
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 589.8499999999999,
+     "protein": 43.15,
+     "fat": 14.89,
+     "carb": 71,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrul79tv003iwl803qmc3v3s",
+      "name": "High-Protein Edamame & Bell Peppers with Lentil Pasta",
+      "description": null,
+      "steps": [
+       "Cook the edamame.",
+       "Serve over lentil pasta with bell peppers."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 637.6,
+      "protein": 47.4,
+      "fat": 16.2,
+      "carb": 76,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 4.38,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:45:29.732Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x0swh02ctwlw0yy2r0ei8",
+     "planId": "cms6x0swf02cpwlw0sjex4nx9",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 1,
+     "recipeId": "cmrul79yl00b6wl80qnqg2nlo",
+     "proteinScale": 0.5,
+     "sidesScale": 1.52,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t7t00067wlwsj23ngikm",
+       "name": "Egg White",
+       "role": "protein",
+       "grams": 130
+      },
+      {
+       "foodId": "cmrukzaed0004wlbwdxnybljb",
+       "name": "Lentil pasta, dry",
+       "role": "carb",
+       "grams": 150
+      },
+      {
+       "foodId": "cmrevpcnh000iwl5gh2zjhyqe",
+       "name": "Bell peppers",
+       "role": "veg",
+       "grams": 120
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 678.7,
+     "protein": 52.61,
+     "fat": 8.36,
+     "carb": 92.768,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrul79yl00b6wl80qnqg2nlo",
+      "name": "High-Protein Egg White & Bell Peppers with Lentil Pasta",
+      "description": null,
+      "steps": [
+       "Cook the egg white.",
+       "Serve over lentil pasta with bell peppers."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 562.8,
+      "protein": 53.6,
+      "fat": 7.2,
+      "carb": 65.9,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 3.58,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:45:29.902Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x0swi02cvwlw0uuo61426",
+     "planId": "cms6x0swf02cpwlw0sjex4nx9",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 2,
+     "recipeId": "cmrul4e7d007iwl68jd6y2spq",
+     "proteinScale": 1.49,
+     "sidesScale": 2,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t7t00067wlwsj23ngikm",
+       "name": "Egg White",
+       "role": "protein",
+       "grams": 385
+      },
+      {
+       "foodId": "cmrevpcn2000ewl5gmlyzu0vd",
+       "name": "White rice, cooked",
+       "role": "carb",
+       "grams": 220
+      },
+      {
+       "foodId": "cmrevpcnh000iwl5gh2zjhyqe",
+       "name": "Bell peppers",
+       "role": "veg",
+       "grams": 160
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 592.35,
+     "protein": 48.73500000000001,
+     "fat": 6.140000000000001,
+     "carb": 80.286,
+     "warning": "Tried 5 recipe(s) for this slot, none fit within tolerance — closest was \"High-Protein Egg White & Bell Peppers with Rice\" (landed 592 kcal vs a 749 target).",
+     "locked": false,
+     "recipe": {
+      "id": "cmrul4e7d007iwl68jd6y2spq",
+      "name": "High-Protein Egg White & Bell Peppers with Rice",
+      "description": null,
+      "steps": [
+       "Cook the egg white.",
+       "Serve over white rice with bell peppers."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 355.8,
+      "protein": 31.6,
+      "fat": 5.6,
+      "carb": 41.7,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 3.01,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:43:15.434Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x0swi02czwlw0gz8epdqx",
+     "planId": "cms6x0swf02cpwlw0sjex4nx9",
+     "dayOfWeek": 2,
+     "slotType": "snack",
+     "slotIndex": 0,
+     "recipeId": "cmrevpcz5004qwl5gt3aso51q",
+     "proteinScale": 0.5,
+     "sidesScale": 0.88,
+     "ingredients": [
+      {
+       "foodId": "cmrevpcoi000qwl5ghkc51bf4",
+       "name": "Greek yogurt, 0%",
+       "role": "protein",
+       "grams": 175
+      },
+      {
+       "foodId": "cmrevpco3000nwl5g1d51b3it",
+       "name": "Almonds",
+       "role": "fat",
+       "grams": 35
+      },
+      {
+       "foodId": "cmrevpcnv000lwl5go8mxze0i",
+       "name": "Mixed berries",
+       "role": "veg",
+       "grams": 90
+      }
+     ],
+     "kcal": 363.85,
+     "protein": 25.48,
+     "fat": 19.345,
+     "carb": 26.25,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrevpcz5004qwl5gt3aso51q",
+      "name": "Greek Yogurt, Almonds & Berries",
+      "description": "The Closer from the day template.",
+      "steps": [
+       "Stir almonds and berries into the yogurt."
+      ],
+      "slotType": "snack",
+      "cuisine": "mediterranean",
+      "prepTimeMin": 5,
+      "source": "curated",
+      "mealCategory": null,
+      "kcal": 502.7,
+      "protein": 44.1,
+      "fat": 22.7,
+      "carb": 35,
+      "tasteTier": "really_good",
+      "tasteTierSource": "curated",
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 4.37,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-10T11:55:10.962Z",
+      "createdByUserId": null
+     }
+    }
+   ],
+   "groceryList": null,
+   "meta": {
+    "matchPct": 99,
+    "attempts": 3,
+    "score": {
+     "daysInTolerance": 1,
+     "avgMatch": 99,
+     "days": [
+      {
+       "dayOfWeek": 2,
+       "dayName": "Wednesday",
+       "matchPct": 99,
+       "totals": {
+        "kcal": 2225,
+        "protein": 170,
+        "fat": 49,
+        "carb": 270
+       },
+       "kcalDeltaPct": -2.3,
+       "proteinShortPct": 0,
+       "fatOk": true,
+       "carbOk": true,
+       "inTolerance": true,
+       "miss": null,
+       "unfilledSlots": 0,
+       "warnedSlots": 1,
+       "windowIndex": 0,
+       "dayIndex": 0,
+       "key": "0:2"
+      }
+     ],
+     "totalDays": 1
+    },
+    "days": [
+     {
+      "dayOfWeek": 2,
+      "dayName": "Wednesday",
+      "matchPct": 99,
+      "totals": {
+       "kcal": 2225,
+       "protein": 170,
+       "fat": 49,
+       "carb": 270
+      },
+      "kcalDeltaPct": -2.3,
+      "proteinShortPct": 0,
+      "fatOk": true,
+      "carbOk": true,
+      "inTolerance": true,
+      "miss": null,
+      "unfilledSlots": 0,
+      "warnedSlots": 1,
+      "windowIndex": 0,
+      "dayIndex": 0,
+      "key": "0:2"
+     }
+    ],
+    "diagnosis": null,
+    "poolCounts": {
+     "raw": 889,
+     "afterDiet": 387,
+     "afterPrep": 139,
+     "afterStack": 139,
+     "stackExplain": null
+    },
+    "variety": {
+     "mealEligible": 136,
+     "usableForSlot": 95,
+     "slotKcal": 671,
+     "snackEligible": 2,
+     "weeklyMealSlots": 21,
+     "weeklySnackSlots": 7,
+     "repeatCap": 2,
+     "distinctWeeks": 4.5,
+     "horizonWeeks": 1,
+     "sustainsHorizon": false,
+     "notes": [
+      "Only 2 snack recipe(s) fit your rules, so the same snacks come back every week.",
+      "1 day: 4 distinct dish(es) across 4 filled slot(s); most-repeated dish appears 1x against a 2x cap for this horizon (2x per week)."
+     ],
+     "horizon": {
+      "weeks": 1,
+      "days": 1,
+      "perWeekCap": 2,
+      "horizonRepeatCap": 2,
+      "mealSlots": 3,
+      "snackSlots": 1,
+      "totalSlots": 4,
+      "distinctFloor": 2,
+      "distinctRecipes": 4,
+      "maxRepeat": 1,
+      "maxRepeatRecipeId": "cmrul79tv003iwl803qmc3v3s",
+      "lockedRepeatsOfMax": 0,
+      "filledSlots": 4,
+      "unfilledSlots": 0,
+      "requiredDistinct": 2,
+      "capHeld": true,
+      "floorHeld": true
+     }
+    },
+    "priorWeeksConsidered": 0,
+    "horizon": {
+     "key": "day",
+     "label": "1 day",
+     "days": 1,
+     "kind": "days",
+     "weeks": 1,
+     "custom": false,
+     "startDate": "2026-07-29",
+     "endDate": "2026-07-29",
+     "startDayOfWeek": 2,
+     "weeksWritten": 1,
+     "solveMs": 1,
+     "weekPlans": [
+      {
+       "startDate": "2026-07-27",
+       "dayIndices": [
+        2
+       ],
+       "days": 1,
+       "daysInTolerance": 1,
+       "avgMatch": 99,
+       "unfilledSlots": 0,
+       "poolSize": 139
+      }
+     ]
+    }
+   }
+  }
+ }
+}

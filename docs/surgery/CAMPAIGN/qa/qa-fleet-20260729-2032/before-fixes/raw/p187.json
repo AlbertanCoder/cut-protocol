@@ -1,0 +1,453 @@
+{
+ "persona": {
+  "idx": 187,
+  "id": "p187",
+  "tier": "HARD",
+  "displayName": "postpartum, 45",
+  "story": "postpartum, 45, male, 167 cm / 96.3 kg (BMI 34.5), cut at 1.5 lb/wk, vegetarian diet, avoiding tree nut, beef, dairy, low-fat, 2 meals + 2 snacks, wants a single day",
+  "profile": {
+   "sex": "M",
+   "age": 45,
+   "heightCm": 167,
+   "startWeightKg": 96.3,
+   "goalWeightKg": 79.6,
+   "occupationKey": "unemployed-home",
+   "trainingStyle": "mixed",
+   "minutesPerSession": 25,
+   "sessionsPerWeek": 3,
+   "rateLbPerWeek": 1.5,
+   "dietaryStyle": "vegetarian",
+   "excludedFoods": [
+    "tree nuts",
+    "beef",
+    "dairy"
+   ],
+   "mealsPerDay": 2,
+   "snacksPerDay": 2,
+   "unitPref": "imperial",
+   "rateAcknowledged": true
+  },
+  "filters": {
+   "maxPrepMin": 20,
+   "proteinPriority": true
+  },
+  "horizon": "day",
+  "walls": [
+   "tree nut",
+   "beef",
+   "dairy"
+  ],
+  "freeTextExclusions": [
+   "beef"
+  ],
+  "dietaryStyle": "vegetarian",
+  "bmi": 34.5,
+  "goalKind": "cut",
+  "macroStyle": "low-fat",
+  "requestedButUnsupported": [
+   "wanted a low-fat split; the fat band is fixed at LBM x0.34-0.40 and is not client-settable"
+  ],
+  "tupleKey": "[\"HARD\",\"M\",45,167,96.3,79.6,\"unemployed-home\",\"mixed\",1.5,\"vegetarian\",[\"beef\",\"dairy\",\"tree nuts\"],2,2,\"low-fat\",\"day\",20,null,true,null,null]"
+ },
+ "request": {
+  "horizon": "day",
+  "filters": {
+   "maxPrepMin": 20,
+   "proteinPriority": true
+  }
+ },
+ "profileResponse": {
+  "id": "cms6x1jc804q3wlw001jsp75e",
+  "userId": "cms6x1j2x0051wl2o1zmpru3w",
+  "sex": "M",
+  "age": 45,
+  "heightCm": 167,
+  "bodyFatPct": 0,
+  "bodyFatSource": null,
+  "occupationKey": "unemployed-home",
+  "activityOverride": null,
+  "sessionsPerWeek": 3,
+  "trainingStyle": "mixed",
+  "minutesPerSession": 25,
+  "startWeightKg": 96.3,
+  "goalWeightKg": 79.6,
+  "startDate": "2026-07-29",
+  "unitPref": "imperial",
+  "rateLbPerWeek": 1.5,
+  "rateAcknowledged": true,
+  "floorKcal": null,
+  "excludedFormulas": [],
+  "targetKcal": 1816,
+  "mealsPerDay": 2,
+  "snacksPerDay": 2,
+  "excludedFoods": [
+   "tree nuts",
+   "beef",
+   "dairy"
+  ],
+  "dietaryStyle": "vegetarian",
+  "cuisinePreferences": [],
+  "mealPreferencesNote": null,
+  "maxPrepMin": null,
+  "budgetTier": null,
+  "allowBatch": null,
+  "maxComplexity": null,
+  "adaptiveTdee": true,
+  "proteinPriorityMode": false,
+  "updatedAt": "2026-07-30T02:50:11.829Z"
+ },
+ "generate": {
+  "status": 200,
+  "ms": 283,
+  "body": {
+   "id": "cms6x1jpn04qfwlw0f0e9ooqm",
+   "userId": "cms6x1j2x0051wl2o1zmpru3w",
+   "startDate": "2026-07-27",
+   "createdAt": "2026-07-30T02:50:12.108Z",
+   "slots": [
+    {
+     "id": "cms6x1jpp04qhwlw0wsdlie2a",
+     "planId": "cms6x1jpn04qfwlw0f0e9ooqm",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 0,
+     "recipeId": "cmrul79rz000iwl80771jcpsc",
+     "proteinScale": 1.24,
+     "sidesScale": 1.95,
+     "ingredients": [
+      {
+       "foodId": "cmrukzadw0000wlbwara3md10",
+       "name": "Seitan",
+       "role": "protein",
+       "grams": 210
+      },
+      {
+       "foodId": "cmrj2t88z0087wlwsmsmchxzb",
+       "name": "Quinoa",
+       "role": "carb",
+       "grams": 215
+      },
+      {
+       "foodId": "cmrevpcnl000jwl5gnqnk630b",
+       "name": "Cucumber",
+       "role": "veg",
+       "grams": 175
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 572.5,
+     "protein": 62.9925,
+     "fat": 13.608,
+     "carb": 57.975,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrul79rz000iwl80771jcpsc",
+      "name": "High-Protein Seitan & Cucumber with Quinoa",
+      "description": null,
+      "steps": [
+       "Cook the seitan.",
+       "Serve over quinoa with cucumber."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 390,
+      "protein": 47.9,
+      "fat": 10.7,
+      "carb": 32.2,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 4.77,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:45:29.663Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x1jpq04qjwlw0miqtu0he",
+     "planId": "cms6x1jpn04qfwlw0f0e9ooqm",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 1,
+     "recipeId": "cmrul4e3o001cwl68205vx6s7",
+     "proteinScale": 2,
+     "sidesScale": 0.5,
+     "ingredients": [
+      {
+       "foodId": "cmrj2tclc00pqwlws0vlepf5r",
+       "name": "Tempeh, cooked",
+       "role": "protein",
+       "grams": 320
+      },
+      {
+       "foodId": "cmrukzaeh0005wlbwrbkygio0",
+       "name": "Chickpea pasta, dry",
+       "role": "carb",
+       "grams": 50
+      },
+      {
+       "foodId": "cmrg8zxar000lwli0qy2ovmx4",
+       "name": "Onion",
+       "role": "veg",
+       "grams": 30
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 841.4000000000001,
+     "protein": 75.29,
+     "fat": 42.09,
+     "carb": 54.622,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrul4e3o001cwl68205vx6s7",
+      "name": "High-Protein Tempeh & Onions with Chickpea Pasta",
+      "description": null,
+      "steps": [
+       "Cook the tempeh.",
+       "Serve over chickpea pasta with onions."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 716.2,
+      "protein": 53.1,
+      "fat": 27.3,
+      "carb": 72.8,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 4.01,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:43:15.300Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x1jpq04qlwlw0kntd1w69",
+     "planId": "cms6x1jpn04qfwlw0f0e9ooqm",
+     "dayOfWeek": 2,
+     "slotType": "snack",
+     "slotIndex": 0,
+     "recipeId": null,
+     "proteinScale": 1,
+     "sidesScale": 1,
+     "ingredients": [],
+     "kcal": 0,
+     "protein": 0,
+     "fat": 0,
+     "carb": 0,
+     "warning": "No eligible snack recipe left for this slot.",
+     "locked": false,
+     "recipe": null
+    },
+    {
+     "id": "cms6x1jpr04qnwlw0k8v087iu",
+     "planId": "cms6x1jpn04qfwlw0f0e9ooqm",
+     "dayOfWeek": 2,
+     "slotType": "snack",
+     "slotIndex": 1,
+     "recipeId": null,
+     "proteinScale": 1,
+     "sidesScale": 1,
+     "ingredients": [],
+     "kcal": 0,
+     "protein": 0,
+     "fat": 0,
+     "carb": 0,
+     "warning": "No eligible snack recipe left for this slot.",
+     "locked": false,
+     "recipe": null
+    }
+   ],
+   "groceryList": null,
+   "meta": {
+    "matchPct": 72,
+    "attempts": 5,
+    "score": {
+     "daysInTolerance": 0,
+     "avgMatch": 72,
+     "days": [
+      {
+       "dayOfWeek": 2,
+       "dayName": "Wednesday",
+       "matchPct": 72,
+       "totals": {
+        "kcal": 1414,
+        "protein": 138,
+        "fat": 56,
+        "carb": 113
+       },
+       "kcalDeltaPct": -22.1,
+       "proteinShortPct": 31,
+       "fatOk": true,
+       "carbOk": true,
+       "inTolerance": false,
+       "miss": "1,414 kcal vs a 1,816 target — 402 under; 138 g protein vs 201 g — 62 g short",
+       "unfilledSlots": 2,
+       "warnedSlots": 2,
+       "proteinFloor": {
+        "met": false,
+        "floorG": 191,
+        "achievedG": 138.3,
+        "shortG": 52.7,
+        "shortPct": 27.6,
+        "reason": "52.7 g short of the 191 g protein floor (28% under) — the compliant pool couldn't scale up to close the gap within the 0.5-2x portion limit."
+       },
+       "windowIndex": 0,
+       "dayIndex": 0,
+       "key": "0:2"
+      }
+     ],
+     "totalDays": 1,
+     "floorDaysMet": 0,
+     "floorDaysTotal": 1
+    },
+    "days": [
+     {
+      "dayOfWeek": 2,
+      "dayName": "Wednesday",
+      "matchPct": 72,
+      "totals": {
+       "kcal": 1414,
+       "protein": 138,
+       "fat": 56,
+       "carb": 113
+      },
+      "kcalDeltaPct": -22.1,
+      "proteinShortPct": 31,
+      "fatOk": true,
+      "carbOk": true,
+      "inTolerance": false,
+      "miss": "1,414 kcal vs a 1,816 target — 402 under; 138 g protein vs 201 g — 62 g short",
+      "unfilledSlots": 2,
+      "warnedSlots": 2,
+      "proteinFloor": {
+       "met": false,
+       "floorG": 191,
+       "achievedG": 138.3,
+       "shortG": 52.7,
+       "shortPct": 27.6,
+       "reason": "52.7 g short of the 191 g protein floor (28% under) — the compliant pool couldn't scale up to close the gap within the 0.5-2x portion limit."
+      },
+      "windowIndex": 0,
+      "dayIndex": 0,
+      "key": "0:2"
+     }
+    ],
+    "diagnosis": {
+     "feasible": false,
+     "reasons": [
+      "2 of 4 slots over 1 days came back empty — no compliant recipe was left that could fill them.",
+      "Protein-priority mode: the 191g/day floor wasn't met on 1 day(s) — only 42 of 134 compliant recipes carry enough protein density to close the gap within the 0.5-2x portion limit.",
+      "Your library has no snack-sized recipe that fits your rules — all 2 snack slots this week come back empty."
+     ],
+     "suggestions": [
+      "AI-generate a few high-protein compliant recipes, set the protein-preference filter, or allow batch-cooking repeats of the densest dishes.",
+      "Set snacks per day to 0 and fold those calories into your meals, or AI-generate a few compliant snacks on the Recipes tab."
+     ],
+     "binding": {
+      "key": "snack-pool",
+      "label": "your snack-eligible recipe pool",
+      "detail": "no snack-sized recipe fits your rules, so all 2 snack slot(s) come back empty."
+     }
+    },
+    "poolCounts": {
+     "raw": 889,
+     "afterDiet": 187,
+     "afterPrep": 134,
+     "afterStack": 134,
+     "stackExplain": null
+    },
+    "variety": {
+     "mealEligible": 131,
+     "usableForSlot": 63,
+     "slotKcal": 653,
+     "snackEligible": 0,
+     "weeklyMealSlots": 14,
+     "weeklySnackSlots": 14,
+     "repeatCap": 2,
+     "distinctWeeks": 4.5,
+     "horizonWeeks": 1,
+     "sustainsHorizon": false,
+     "notes": [
+      "Your library has no snack-sized recipe that fits your rules — snack slots stay empty until you add one.",
+      "1 day: 2 distinct dish(es) across 2 filled slot(s); most-repeated dish appears 1x against a 2x cap for this horizon (2x per week)."
+     ],
+     "horizon": {
+      "weeks": 1,
+      "days": 1,
+      "perWeekCap": 2,
+      "horizonRepeatCap": 2,
+      "mealSlots": 2,
+      "snackSlots": 2,
+      "totalSlots": 4,
+      "distinctFloor": 2,
+      "distinctRecipes": 2,
+      "maxRepeat": 1,
+      "maxRepeatRecipeId": "cmrul79rz000iwl80771jcpsc",
+      "lockedRepeatsOfMax": 0,
+      "filledSlots": 2,
+      "unfilledSlots": 2,
+      "requiredDistinct": 1,
+      "capHeld": true,
+      "floorHeld": true
+     }
+    },
+    "priorWeeksConsidered": 0,
+    "horizon": {
+     "key": "day",
+     "label": "1 day",
+     "days": 1,
+     "kind": "days",
+     "weeks": 1,
+     "custom": false,
+     "startDate": "2026-07-29",
+     "endDate": "2026-07-29",
+     "startDayOfWeek": 2,
+     "weeksWritten": 1,
+     "solveMs": 1,
+     "weekPlans": [
+      {
+       "startDate": "2026-07-27",
+       "dayIndices": [
+        2
+       ],
+       "days": 1,
+       "daysInTolerance": 0,
+       "avgMatch": 72,
+       "unfilledSlots": 2,
+       "poolSize": 134
+      }
+     ]
+    }
+   }
+  }
+ }
+}

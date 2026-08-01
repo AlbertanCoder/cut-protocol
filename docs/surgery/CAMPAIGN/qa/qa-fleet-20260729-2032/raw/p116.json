@@ -1,0 +1,566 @@
+{
+ "persona": {
+  "idx": 116,
+  "id": "p116",
+  "tier": "EASY",
+  "displayName": "restaurant chef, 49",
+  "story": "restaurant chef, 49, male, 185 cm / 136.7 kg (BMI 39.9), cut at 0.5 lb/wk, low-FODMAP diet, avoiding fish, low-carb, 3 meals + 2 snacks, wants a single day",
+  "profile": {
+   "sex": "M",
+   "age": 49,
+   "heightCm": 185,
+   "startWeightKg": 136.7,
+   "goalWeightKg": 122.4,
+   "occupationKey": "chef-kitchen",
+   "trainingStyle": "mixed",
+   "minutesPerSession": 30,
+   "sessionsPerWeek": 2,
+   "rateLbPerWeek": 0.5,
+   "dietaryStyle": null,
+   "excludedFoods": [
+    "fish"
+   ],
+   "mealsPerDay": 3,
+   "snacksPerDay": 2,
+   "unitPref": "imperial"
+  },
+  "filters": {
+   "maxPrepMin": 20,
+   "budget": "cheap"
+  },
+  "horizon": "day",
+  "walls": [
+   "fish"
+  ],
+  "freeTextExclusions": [],
+  "dietaryStyle": null,
+  "bmi": 39.9,
+  "goalKind": "cut",
+  "macroStyle": "low-carb",
+  "requestedButUnsupported": [
+   "low-FODMAP is not a dietary style; expressed instead as free-text exclusions (onion, garlic, wheat)",
+   "wanted a low-carb split without full keto; carbs are the leftover after LBM-derived protein and fat, and only dietaryStyle:\"keto\" changes that"
+  ],
+  "tupleKey": "[\"EASY\",\"M\",49,185,136.7,122.4,\"chef-kitchen\",\"mixed\",0.5,null,[\"fish\"],3,2,\"low-carb\",\"day\",20,\"cheap\",null,null,null]"
+ },
+ "request": {
+  "horizon": "day",
+  "filters": {
+   "maxPrepMin": 20,
+   "budget": "cheap"
+  }
+ },
+ "profileResponse": {
+  "id": "cms6x10s702xdwlw0qeopwmxc",
+  "userId": "cms6x10m20032wl2ozzldemef",
+  "sex": "M",
+  "age": 49,
+  "heightCm": 185,
+  "bodyFatPct": 0,
+  "bodyFatSource": null,
+  "occupationKey": "chef-kitchen",
+  "activityOverride": null,
+  "sessionsPerWeek": 2,
+  "trainingStyle": "mixed",
+  "minutesPerSession": 30,
+  "startWeightKg": 136.7,
+  "goalWeightKg": 122.4,
+  "startDate": "2026-07-29",
+  "unitPref": "imperial",
+  "rateLbPerWeek": 0.5,
+  "rateAcknowledged": false,
+  "floorKcal": null,
+  "excludedFormulas": [],
+  "targetKcal": 3328,
+  "mealsPerDay": 3,
+  "snacksPerDay": 2,
+  "excludedFoods": [
+   "fish"
+  ],
+  "dietaryStyle": null,
+  "cuisinePreferences": [],
+  "mealPreferencesNote": null,
+  "maxPrepMin": null,
+  "budgetTier": null,
+  "allowBatch": null,
+  "maxComplexity": null,
+  "adaptiveTdee": true,
+  "proteinPriorityMode": false,
+  "updatedAt": "2026-07-30T20:33:36.580Z"
+ },
+ "generate": {
+  "status": 200,
+  "ms": 304,
+  "body": {
+   "id": "cms7z13ye028bwlgwtxj9j635",
+   "userId": "cms6x10m20032wl2ozzldemef",
+   "startDate": "2026-07-27",
+   "createdAt": "2026-07-30T20:33:37.094Z",
+   "slots": [
+    {
+     "id": "cms7z13yg028dwlgw3izlhpkl",
+     "planId": "cms7z13ye028bwlgwtxj9j635",
+     "dayOfWeek": 3,
+     "slotType": "meal",
+     "slotIndex": 0,
+     "recipeId": "cmrul4e7p0080wl68qri7g8q9",
+     "proteinScale": 1.96,
+     "sidesScale": 1.13,
+     "ingredients": [
+      {
+       "foodId": "cmrj2tbym00mowlwszf3qi0d8",
+       "name": "Cottage Cheese",
+       "role": "protein",
+       "grams": 390
+      },
+      {
+       "foodId": "cmrukzaeh0005wlbwrbkygio0",
+       "name": "Chickpea pasta, dry",
+       "role": "carb",
+       "grams": 115
+      },
+      {
+       "foodId": "cmrg8zxar000lwli0qy2ovmx4",
+       "name": "Onion",
+       "role": "veg",
+       "grams": 70
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 783.8,
+     "protein": 66.67,
+     "fat": 19.79,
+     "carb": 86.597,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrul4e7p0080wl68qri7g8q9",
+      "name": "High-Protein Cottage Cheese & Onions with Chickpea Pasta",
+      "description": null,
+      "steps": [
+       "Cook the cottage cheese.",
+       "Serve over chickpea pasta with onions."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 573,
+      "protein": 42.7,
+      "fat": 14.7,
+      "carb": 69.2,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 2.93,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:43:15.445Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z13yh028fwlgw1gbw4akh",
+     "planId": "cms7z13ye028bwlgwtxj9j635",
+     "dayOfWeek": 3,
+     "slotType": "meal",
+     "slotIndex": 1,
+     "recipeId": "cmrujkwqi002uwl9ob1bgrck4",
+     "proteinScale": 1.69,
+     "sidesScale": 1.84,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t7w3006lwlws4zdhow4d",
+       "name": "Chicken Breast",
+       "role": "protein",
+       "grams": 285
+      },
+      {
+       "foodId": "cmrevpcn2000ewl5gmlyzu0vd",
+       "name": "White rice, cooked",
+       "role": "carb",
+       "grams": 295
+      },
+      {
+       "foodId": "cmrg8zxar000lwli0qy2ovmx4",
+       "name": "Onion",
+       "role": "veg",
+       "grams": 110
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 10
+      }
+     ],
+     "kcal": 859.5,
+     "protein": 73.3,
+     "fat": 18.462,
+     "carb": 92.87400000000001,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrujkwqi002uwl9ob1bgrck4",
+      "name": "Fiesta Chicken & Onions with Rice",
+      "description": null,
+      "steps": [
+       "Cook the chicken.",
+       "Serve with white rice and onions."
+      ],
+      "slotType": "meal",
+      "cuisine": "mexican",
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 526,
+      "protein": 43.23,
+      "fat": 14.994,
+      "carb": 50.404,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 5.88,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:00:06.715Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z13yi028jwlgwp3pc18xx",
+     "planId": "cms7z13ye028bwlgwtxj9j635",
+     "dayOfWeek": 3,
+     "slotType": "meal",
+     "slotIndex": 2,
+     "recipeId": "cmrujkwqf002owl9o35jjgcvq",
+     "proteinScale": 1.94,
+     "sidesScale": 2,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t7w3006lwlws4zdhow4d",
+       "name": "Chicken Breast",
+       "role": "protein",
+       "grams": 330
+      },
+      {
+       "foodId": "cmrevpcn2000ewl5gmlyzu0vd",
+       "name": "White rice, cooked",
+       "role": "carb",
+       "grams": 320
+      },
+      {
+       "foodId": "cmrevpcnh000iwl5gh2zjhyqe",
+       "name": "Bell peppers",
+       "role": "veg",
+       "grams": 160
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 10
+      }
+     ],
+     "kcal": 951.6,
+     "protein": 84.49,
+     "fat": 20.086,
+     "carb": 99.20000000000002,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrujkwqf002owl9o35jjgcvq",
+      "name": "Fiesta Chicken & Bell Peppers with Rice",
+      "description": null,
+      "steps": [
+       "Cook the chicken.",
+       "Serve with white rice and bell peppers."
+      ],
+      "slotType": "meal",
+      "cuisine": "mexican",
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 526.8,
+      "protein": 43.37,
+      "fat": 15.174,
+      "carb": 49.60000000000001,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 6.25,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:00:06.711Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z13yj028lwlgw3ozgzuwl",
+     "planId": "cms7z13ye028bwlgwtxj9j635",
+     "dayOfWeek": 3,
+     "slotType": "snack",
+     "slotIndex": 0,
+     "recipeId": "cms7pjmju002swlbktsksba9r",
+     "proteinScale": 2,
+     "sidesScale": 2,
+     "ingredients": [
+      {
+       "foodId": "cmrukzae50002wlbwr9bq9oa7",
+       "name": "Edamame, shelled, cooked",
+       "role": "protein",
+       "grams": 300
+      },
+      {
+       "foodId": "cmrj2t6gd0003wlwss7jf3wzf",
+       "name": "Salt",
+       "role": "other",
+       "grams": 1
+      }
+     ],
+     "kcal": 363,
+     "protein": 36,
+     "fat": 15,
+     "carb": 27,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cms7pjmju002swlbktsksba9r",
+      "name": "Edamame with Sea Salt",
+      "description": null,
+      "steps": [
+       "Boil the pods 4 minutes in well-salted water.",
+       "Drain and salt again while hot. Eat from the pod."
+      ],
+      "slotType": "snack",
+      "cuisine": "japanese",
+      "prepTimeMin": 6,
+      "source": "curated",
+      "mealCategory": null,
+      "kcal": 181.5,
+      "protein": 18,
+      "fat": 7.5,
+      "carb": 13.5,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": null,
+      "difficulty": 1,
+      "filterProvenance": null,
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-30T16:08:04.843Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z13yk028nwlgwqmz6dasl",
+     "planId": "cms7z13ye028bwlgwtxj9j635",
+     "dayOfWeek": 3,
+     "slotType": "snack",
+     "slotIndex": 1,
+     "recipeId": "cms7pjmju002swlbktsksba9r",
+     "proteinScale": 2,
+     "sidesScale": 2,
+     "ingredients": [
+      {
+       "foodId": "cmrukzae50002wlbwr9bq9oa7",
+       "name": "Edamame, shelled, cooked",
+       "role": "protein",
+       "grams": 300
+      },
+      {
+       "foodId": "cmrj2t6gd0003wlwss7jf3wzf",
+       "name": "Salt",
+       "role": "other",
+       "grams": 1
+      }
+     ],
+     "kcal": 363,
+     "protein": 36,
+     "fat": 15,
+     "carb": 27,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cms7pjmju002swlbktsksba9r",
+      "name": "Edamame with Sea Salt",
+      "description": null,
+      "steps": [
+       "Boil the pods 4 minutes in well-salted water.",
+       "Drain and salt again while hot. Eat from the pod."
+      ],
+      "slotType": "snack",
+      "cuisine": "japanese",
+      "prepTimeMin": 6,
+      "source": "curated",
+      "mealCategory": null,
+      "kcal": 181.5,
+      "protein": 18,
+      "fat": 7.5,
+      "carb": 13.5,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": null,
+      "difficulty": 1,
+      "filterProvenance": null,
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-30T16:08:04.843Z",
+      "createdByUserId": null
+     }
+    }
+   ],
+   "groceryList": null,
+   "meta": {
+    "matchPct": 100,
+    "attempts": 1,
+    "score": {
+     "daysInTolerance": 1,
+     "avgMatch": 100,
+     "days": [
+      {
+       "dayOfWeek": 3,
+       "dayName": "Thursday",
+       "matchPct": 100,
+       "totals": {
+        "kcal": 3321,
+        "protein": 296,
+        "fat": 88,
+        "carb": 333
+       },
+       "kcalDeltaPct": -0.2,
+       "proteinShortPct": 0,
+       "fatOk": true,
+       "carbOk": true,
+       "inTolerance": true,
+       "miss": null,
+       "unfilledSlots": 0,
+       "warnedSlots": 0,
+       "windowIndex": 0,
+       "dayIndex": 0,
+       "key": "0:3"
+      }
+     ],
+     "totalDays": 1
+    },
+    "days": [
+     {
+      "dayOfWeek": 3,
+      "dayName": "Thursday",
+      "matchPct": 100,
+      "totals": {
+       "kcal": 3321,
+       "protein": 296,
+       "fat": 88,
+       "carb": 333
+      },
+      "kcalDeltaPct": -0.2,
+      "proteinShortPct": 0,
+      "fatOk": true,
+      "carbOk": true,
+      "inTolerance": true,
+      "miss": null,
+      "unfilledSlots": 0,
+      "warnedSlots": 0,
+      "windowIndex": 0,
+      "dayIndex": 0,
+      "key": "0:3"
+     }
+    ],
+    "diagnosis": null,
+    "poolCounts": {
+     "raw": 910,
+     "afterDiet": 752,
+     "afterPrep": 288,
+     "afterStack": 288,
+     "stackExplain": null
+    },
+    "variety": {
+     "mealEligible": 259,
+     "usableForSlot": 141,
+     "slotKcal": 879,
+     "snackEligible": 16,
+     "weeklyMealSlots": 21,
+     "weeklySnackSlots": 14,
+     "repeatCap": 2,
+     "distinctWeeks": 6.7,
+     "horizonWeeks": 1,
+     "sustainsHorizon": true,
+     "notes": [
+      "1 day: 4 distinct dish(es) across 5 filled slot(s); most-repeated dish appears 2x against a 2x cap for this horizon (2x per week)."
+     ],
+     "horizon": {
+      "weeks": 1,
+      "days": 1,
+      "perWeekCap": 2,
+      "horizonRepeatCap": 2,
+      "mealSlots": 3,
+      "snackSlots": 2,
+      "totalSlots": 5,
+      "distinctFloor": 3,
+      "distinctRecipes": 4,
+      "maxRepeat": 2,
+      "maxRepeatRecipeId": "cms7pjmju002swlbktsksba9r",
+      "lockedRepeatsOfMax": 0,
+      "filledSlots": 5,
+      "unfilledSlots": 0,
+      "requiredDistinct": 3,
+      "capHeld": true,
+      "floorHeld": true
+     }
+    },
+    "priorWeeksConsidered": 0,
+    "horizon": {
+     "key": "day",
+     "label": "1 day",
+     "days": 1,
+     "kind": "days",
+     "weeks": 1,
+     "custom": false,
+     "startDate": "2026-07-30",
+     "endDate": "2026-07-30",
+     "startDayOfWeek": 3,
+     "weeksWritten": 1,
+     "solveMs": 2,
+     "weekPlans": [
+      {
+       "startDate": "2026-07-27",
+       "dayIndices": [
+        3
+       ],
+       "days": 1,
+       "daysInTolerance": 1,
+       "avgMatch": 100,
+       "unfilledSlots": 0,
+       "poolSize": 288
+      }
+     ]
+    }
+   }
+  }
+ }
+}

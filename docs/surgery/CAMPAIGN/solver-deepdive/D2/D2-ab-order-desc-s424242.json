@@ -1,0 +1,155 @@
+{
+  "tool": "compare.v2.mjs",
+  "baselineFile": "C:\\Users\\<account>\\Desktop\\cut-protocol\\docs\\surgery\\CAMPAIGN\\solver-deepdive\\D2\\D2-base-s424242.jsonl",
+  "treatmentFile": "C:\\Users\\<account>\\Desktop\\cut-protocol\\docs\\surgery\\CAMPAIGN\\solver-deepdive\\D2\\D2-order-desc-s424242.jsonl",
+  "baselineHeader": {
+    "schemaRun": "solver-brain/run/v1",
+    "label": "base",
+    "agentId": "D2",
+    "pop": "personas",
+    "seed": 424242,
+    "seedName": "primary",
+    "treatment": "none",
+    "customers": 250,
+    "brain": "off",
+    "startDayOfWeek": 0,
+    "foodFingerprint": "423e7279ed6af641",
+    "poolRaw": 910,
+    "foodRows": 14151,
+    "dbPath": "C:\\Users\\<account>\\Desktop\\cut-protocol\\docs\\surgery\\CAMPAIGN\\solver-brain\\D2\\dev.db",
+    "dbHash": "e55f52e53658a086"
+  },
+  "treatmentHeader": {
+    "schemaRun": "solver-brain/run/v1",
+    "label": "order-desc",
+    "agentId": "D2",
+    "pop": "personas",
+    "seed": 424242,
+    "seedName": "primary",
+    "treatment": "none",
+    "customers": 250,
+    "brain": "off",
+    "startDayOfWeek": 0,
+    "foodFingerprint": "423e7279ed6af641",
+    "poolRaw": 910,
+    "foodRows": 14151,
+    "dbPath": "C:\\Users\\<account>\\Desktop\\cut-protocol\\docs\\surgery\\CAMPAIGN\\solver-brain\\D2\\dev.db",
+    "dbHash": "e55f52e53658a086"
+  },
+  "problems": [],
+  "instrument": {
+    "baseline": {
+      "dis": 0,
+      "drift": 0,
+      "crash": 0,
+      "silent": 0
+    },
+    "treatment": {
+      "dis": 0,
+      "drift": 0,
+      "crash": 0,
+      "silent": 0
+    }
+  },
+  "results": {
+    "satisfiable": {
+      "base": {
+        "k": 413,
+        "n": 536,
+        "p": 0.7705223880597015,
+        "lo": 0.7330738268392512,
+        "hi": 0.8041209277113941
+      },
+      "treat": {
+        "k": 418,
+        "n": 536,
+        "p": 0.7798507462686567,
+        "lo": 0.7428500854398312,
+        "hi": 0.8128686261642843
+      },
+      "deltaUnpaired": {
+        "d": 0.009328358208955168,
+        "lo": -0.040650745109293125,
+        "hi": 0.059254054301087045
+      },
+      "deltaPaired": {
+        "n": 536,
+        "b": 30,
+        "c": 35,
+        "unpaired": 0,
+        "d": 0.009328358208955223,
+        "lo": -0.020141911444000255,
+        "hi": 0.0387986278619107,
+        "thin": false,
+        "chi": 0.24615384615384617
+      }
+    },
+    "all": {
+      "base": {
+        "k": 434,
+        "n": 622,
+        "p": 0.6977491961414791,
+        "lo": 0.6605359085930758,
+        "hi": 0.7325348867481756
+      },
+      "treat": {
+        "k": 438,
+        "n": 622,
+        "p": 0.7041800643086816,
+        "lo": 0.66714697725521,
+        "hi": 0.7387066081784396
+      },
+      "deltaUnpaired": {
+        "d": 0.006430868167202508,
+        "lo": -0.044377534756869196,
+        "hi": 0.057194152160168064
+      },
+      "deltaPaired": {
+        "n": 622,
+        "b": 33,
+        "c": 37,
+        "unpaired": 0,
+        "d": 0.006430868167202572,
+        "lo": -0.019928009724696126,
+        "hi": 0.032789746059101274,
+        "thin": false,
+        "chi": 0.12857142857142856
+      }
+    },
+    "planned": {
+      "base": {
+        "k": 434,
+        "n": 639,
+        "p": 0.6791862284820032,
+        "lo": 0.6420153720254128,
+        "hi": 0.7142155412677605
+      },
+      "treat": {
+        "k": 438,
+        "n": 639,
+        "p": 0.6854460093896714,
+        "lo": 0.6484260239236445,
+        "hi": 0.7202496374321726
+      },
+      "deltaUnpaired": {
+        "d": 0.006259780907668211,
+        "lo": -0.04470620851809757,
+        "hi": 0.05718094639548108
+      },
+      "deltaPaired": {
+        "n": 639,
+        "b": 33,
+        "c": 37,
+        "unpaired": 0,
+        "d": 0.006259780907668232,
+        "lo": -0.019397969047375098,
+        "hi": 0.03191753086271156,
+        "thin": false,
+        "chi": 0.12857142857142856
+      }
+    }
+  },
+  "byteIdentical": 17,
+  "total": 639,
+  "generatedAt": "2026-08-01T00:37:34.554Z"
+}

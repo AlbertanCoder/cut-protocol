@@ -1,0 +1,593 @@
+{
+ "persona": {
+  "idx": 139,
+  "id": "p139",
+  "tier": "HARD",
+  "displayName": "miner, 47",
+  "story": "miner, 47 (managing meals for a 12-year-old), female, 166 cm / 68.1 kg (BMI 24.7), cut at 1.5 lb/wk, vegan diet, avoiding fish, dairy, gluten, low-carb, 4 meals + 1 snacks, wants a single day",
+  "profile": {
+   "sex": "F",
+   "age": 47,
+   "heightCm": 166,
+   "startWeightKg": 68.1,
+   "goalWeightKg": 58.2,
+   "occupationKey": "mining",
+   "trainingStyle": "weights",
+   "minutesPerSession": 40,
+   "sessionsPerWeek": 3,
+   "rateLbPerWeek": 1.5,
+   "dietaryStyle": "vegan",
+   "excludedFoods": [
+    "fish",
+    "dairy",
+    "gluten"
+   ],
+   "mealsPerDay": 4,
+   "snacksPerDay": 1,
+   "unitPref": "metric",
+   "cuisinePreferences": [
+    "thai",
+    "japanese"
+   ],
+   "rateAcknowledged": true
+  },
+  "filters": {
+   "cuisines": [
+    "thai",
+    "japanese"
+   ],
+   "proteinPriority": true
+  },
+  "horizon": "day",
+  "walls": [
+   "fish",
+   "dairy",
+   "gluten"
+  ],
+  "freeTextExclusions": [],
+  "dietaryStyle": "vegan",
+  "bmi": 24.7,
+  "goalKind": "cut",
+  "macroStyle": "low-carb",
+  "requestedButUnsupported": [
+   "managing meals for a 12-year-old; the app has no parent-managed or dependent flag (adultGate refuses under-18 outright), so only the adult's own plan can be built",
+   "wanted a low-carb split without full keto; carbs are the leftover after LBM-derived protein and fat, and only dietaryStyle:\"keto\" changes that"
+  ],
+  "parentManaged": {
+   "kidAge": 12,
+   "note": "managing meals for a 12-year-old"
+  },
+  "tupleKey": "[\"HARD\",\"F\",47,166,68.1,58.2,\"mining\",\"weights\",1.5,\"vegan\",[\"dairy\",\"fish\",\"gluten\"],4,1,\"low-carb\",\"day\",null,null,true,null,null]"
+ },
+ "request": {
+  "horizon": "day",
+  "filters": {
+   "cuisines": [
+    "thai",
+    "japanese"
+   ],
+   "proteinPriority": true
+  }
+ },
+ "profileResponse": {
+  "id": "cms6x171d03n5wlw0xds02zx5",
+  "userId": "cms6x16qa003pwl2oxcpi1lts",
+  "sex": "F",
+  "age": 47,
+  "heightCm": 166,
+  "bodyFatPct": 0,
+  "bodyFatSource": null,
+  "occupationKey": "mining",
+  "activityOverride": null,
+  "sessionsPerWeek": 3,
+  "trainingStyle": "weights",
+  "minutesPerSession": 40,
+  "startWeightKg": 68.1,
+  "goalWeightKg": 58.2,
+  "startDate": "2026-07-29",
+  "unitPref": "metric",
+  "rateLbPerWeek": 1.5,
+  "rateAcknowledged": false,
+  "floorKcal": null,
+  "excludedFormulas": [],
+  "targetKcal": 1645,
+  "mealsPerDay": 4,
+  "snacksPerDay": 1,
+  "excludedFoods": [
+   "fish",
+   "dairy",
+   "gluten"
+  ],
+  "dietaryStyle": "vegan",
+  "cuisinePreferences": [
+   "thai",
+   "japanese"
+  ],
+  "mealPreferencesNote": null,
+  "maxPrepMin": null,
+  "budgetTier": null,
+  "allowBatch": null,
+  "maxComplexity": null,
+  "adaptiveTdee": true,
+  "proteinPriorityMode": false,
+  "updatedAt": "2026-07-30T02:49:56.050Z"
+ },
+ "generate": {
+  "status": 200,
+  "ms": 225,
+  "body": {
+   "id": "cms6x17ou03tpwlw0o8hjvr63",
+   "userId": "cms6x16qa003pwl2oxcpi1lts",
+   "startDate": "2026-07-27",
+   "createdAt": "2026-07-30T02:49:56.526Z",
+   "slots": [
+    {
+     "id": "cms6x17ov03trwlw0rmn3h3nn",
+     "planId": "cms6x17ou03tpwlw0o8hjvr63",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 0,
+     "recipeId": "cmrul4e3s001iwl68yfvjptrs",
+     "proteinScale": 0.74,
+     "sidesScale": 0.5,
+     "ingredients": [
+      {
+       "foodId": "cmrj2tclc00pqwlws0vlepf5r",
+       "name": "Tempeh, cooked",
+       "role": "protein",
+       "grams": 120
+      },
+      {
+       "foodId": "cmrevpcn2000ewl5gmlyzu0vd",
+       "name": "White rice, cooked",
+       "role": "carb",
+       "grams": 55
+      },
+      {
+       "foodId": "cmrj2t6na000ywlws9jek4w4z",
+       "name": "Broccoli",
+       "role": "veg",
+       "grams": 55
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 363.95,
+     "protein": 27.2585,
+     "fat": 18.312,
+     "carb": 27.9685,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrul4e3s001iwl68yfvjptrs",
+      "name": "High-Protein Tempeh & Broccoli with Rice",
+      "description": null,
+      "steps": [
+       "Cook the tempeh.",
+       "Serve over white rice with broccoli."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 529.3,
+      "protein": 38.3,
+      "fat": 23,
+      "carb": 49.9,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 3.89,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:43:15.305Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x17ow03ttwlw0piddlcry",
+     "planId": "cms6x17ou03tpwlw0o8hjvr63",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 1,
+     "recipeId": "cmrul79so001iwl80gh84rze6",
+     "proteinScale": 0.88,
+     "sidesScale": 0.93,
+     "ingredients": [
+      {
+       "foodId": "cmrukzae20001wlbwgdjqlh3f",
+       "name": "Textured vegetable protein, dry",
+       "role": "protein",
+       "grams": 50
+      },
+      {
+       "foodId": "cmrevpcn2000ewl5gmlyzu0vd",
+       "name": "White rice, cooked",
+       "role": "carb",
+       "grams": 100
+      },
+      {
+       "foodId": "cmrg8zxar000lwli0qy2ovmx4",
+       "name": "Onion",
+       "role": "veg",
+       "grams": 55
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 362,
+     "protein": 29.305,
+     "fat": 5.855,
+     "carb": 48.137,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrul79so001iwl80gh84rze6",
+      "name": "High-Protein TVP & Onions with Rice",
+      "description": null,
+      "steps": [
+       "Cook the tvp.",
+       "Serve over white rice with onions."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 393.5,
+      "protein": 32.2,
+      "fat": 5.9,
+      "carb": 52.9,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 1.33,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:45:29.688Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x17ow03txwlw0l72bipun",
+     "planId": "cms6x17ou03tpwlw0o8hjvr63",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 2,
+     "recipeId": "cmrul79ua0046wl8072er41ze",
+     "proteinScale": 1.23,
+     "sidesScale": 0.5,
+     "ingredients": [
+      {
+       "foodId": "cmrukzae50002wlbwr9bq9oa7",
+       "name": "Edamame, shelled, cooked",
+       "role": "protein",
+       "grams": 220
+      },
+      {
+       "foodId": "cmrj2t7fb004fwlws8ezof2dp",
+       "name": "Russet Potato",
+       "role": "carb",
+       "grams": 75
+      },
+      {
+       "foodId": "cmrj2t6na000ywlws9jek4w4z",
+       "name": "Broccoli",
+       "role": "veg",
+       "grams": 55
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 399.5000000000001,
+     "protein": 29.786,
+     "fat": 16.2845,
+     "carb": 39.2985,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrul79ua0046wl8072er41ze",
+      "name": "High-Protein Edamame & Broccoli with Potato",
+      "description": null,
+      "steps": [
+       "Cook the edamame.",
+       "Serve over potato with broccoli."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 439.4,
+      "protein": 28.4,
+      "fat": 14.6,
+      "carb": 55.2,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 4.01,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:45:29.746Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x17ox03tzwlw0l4hkve29",
+     "planId": "cms6x17ou03tpwlw0o8hjvr63",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 3,
+     "recipeId": "cmrul79sr001owl80dqc054hi",
+     "proteinScale": 0.97,
+     "sidesScale": 1.08,
+     "ingredients": [
+      {
+       "foodId": "cmrukzae20001wlbwgdjqlh3f",
+       "name": "Textured vegetable protein, dry",
+       "role": "protein",
+       "grams": 55
+      },
+      {
+       "foodId": "cmrevpcn2000ewl5gmlyzu0vd",
+       "name": "White rice, cooked",
+       "role": "carb",
+       "grams": 120
+      },
+      {
+       "foodId": "cmrevpcnl000jwl5gnqnk630b",
+       "name": "Cucumber",
+       "role": "veg",
+       "grams": 95
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 392,
+     "protein": 32.4005,
+     "fat": 6.062,
+     "carb": 52.152,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrul79sr001owl80dqc054hi",
+      "name": "High-Protein TVP & Cucumber with Rice",
+      "description": null,
+      "steps": [
+       "Cook the tvp.",
+       "Serve over white rice with cucumber."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 378.5,
+      "protein": 32.1,
+      "fat": 6,
+      "carb": 49.2,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 1.54,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:45:29.692Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x17oy03u1wlw0ybid0qgw",
+     "planId": "cms6x17ou03tpwlw0o8hjvr63",
+     "dayOfWeek": 2,
+     "slotType": "snack",
+     "slotIndex": 0,
+     "recipeId": null,
+     "proteinScale": 1,
+     "sidesScale": 1,
+     "ingredients": [],
+     "kcal": 0,
+     "protein": 0,
+     "fat": 0,
+     "carb": 0,
+     "warning": "No eligible snack recipe left for this slot.",
+     "locked": false,
+     "recipe": null
+    }
+   ],
+   "groceryList": null,
+   "meta": {
+    "matchPct": 90,
+    "attempts": 5,
+    "score": {
+     "daysInTolerance": 1,
+     "avgMatch": 90,
+     "days": [
+      {
+       "dayOfWeek": 2,
+       "dayName": "Wednesday",
+       "matchPct": 90,
+       "totals": {
+        "kcal": 1517,
+        "protein": 119,
+        "fat": 47,
+        "carb": 168
+       },
+       "kcalDeltaPct": -7.8,
+       "proteinShortPct": 7.9,
+       "fatOk": true,
+       "carbOk": true,
+       "inTolerance": true,
+       "miss": null,
+       "unfilledSlots": 1,
+       "warnedSlots": 1,
+       "proteinFloor": {
+        "met": true,
+        "floorG": 123,
+        "achievedG": 118.8,
+        "shortG": 4.3,
+        "shortPct": 3.5,
+        "reason": null
+       },
+       "windowIndex": 0,
+       "dayIndex": 0,
+       "key": "0:2"
+      }
+     ],
+     "totalDays": 1,
+     "floorDaysMet": 1,
+     "floorDaysTotal": 1
+    },
+    "days": [
+     {
+      "dayOfWeek": 2,
+      "dayName": "Wednesday",
+      "matchPct": 90,
+      "totals": {
+       "kcal": 1517,
+       "protein": 119,
+       "fat": 47,
+       "carb": 168
+      },
+      "kcalDeltaPct": -7.8,
+      "proteinShortPct": 7.9,
+      "fatOk": true,
+      "carbOk": true,
+      "inTolerance": true,
+      "miss": null,
+      "unfilledSlots": 1,
+      "warnedSlots": 1,
+      "proteinFloor": {
+       "met": true,
+       "floorG": 123,
+       "achievedG": 118.8,
+       "shortG": 4.3,
+       "shortPct": 3.5,
+       "reason": null
+      },
+      "windowIndex": 0,
+      "dayIndex": 0,
+      "key": "0:2"
+     }
+    ],
+    "diagnosis": {
+     "feasible": false,
+     "reasons": [
+      "1 of 5 slots over 1 days came back empty — no compliant recipe was left that could fill them.",
+      "Your library has no snack-sized recipe that fits your rules — all 1 snack slots this week come back empty."
+     ],
+     "suggestions": [
+      "Set snacks per day to 0 and fold those calories into your meals, or AI-generate a few compliant snacks on the Recipes tab."
+     ],
+     "binding": {
+      "key": "snack-pool",
+      "label": "your snack-eligible recipe pool",
+      "detail": "no snack-sized recipe fits your rules, so all 1 snack slot(s) come back empty."
+     }
+    },
+    "poolCounts": {
+     "raw": 889,
+     "afterDiet": 83,
+     "afterPrep": 83,
+     "afterStack": 83,
+     "stackExplain": null
+    },
+    "variety": {
+     "mealEligible": 77,
+     "usableForSlot": 49,
+     "slotKcal": 374,
+     "snackEligible": 0,
+     "weeklyMealSlots": 28,
+     "weeklySnackSlots": 7,
+     "repeatCap": 2,
+     "distinctWeeks": 1.8,
+     "horizonWeeks": 1,
+     "sustainsHorizon": false,
+     "notes": [
+      "Your library has no snack-sized recipe that fits your rules — snack slots stay empty until you add one.",
+      "1 day: 4 distinct dish(es) across 4 filled slot(s); most-repeated dish appears 1x against a 2x cap for this horizon (2x per week)."
+     ],
+     "horizon": {
+      "weeks": 1,
+      "days": 1,
+      "perWeekCap": 2,
+      "horizonRepeatCap": 2,
+      "mealSlots": 4,
+      "snackSlots": 1,
+      "totalSlots": 5,
+      "distinctFloor": 3,
+      "distinctRecipes": 4,
+      "maxRepeat": 1,
+      "maxRepeatRecipeId": "cmrul4e3s001iwl68yfvjptrs",
+      "lockedRepeatsOfMax": 0,
+      "filledSlots": 4,
+      "unfilledSlots": 1,
+      "requiredDistinct": 2,
+      "capHeld": true,
+      "floorHeld": true
+     }
+    },
+    "priorWeeksConsidered": 0,
+    "horizon": {
+     "key": "day",
+     "label": "1 day",
+     "days": 1,
+     "kind": "days",
+     "weeks": 1,
+     "custom": false,
+     "startDate": "2026-07-29",
+     "endDate": "2026-07-29",
+     "startDayOfWeek": 2,
+     "weeksWritten": 1,
+     "solveMs": 1,
+     "weekPlans": [
+      {
+       "startDate": "2026-07-27",
+       "dayIndices": [
+        2
+       ],
+       "days": 1,
+       "daysInTolerance": 1,
+       "avgMatch": 90,
+       "unfilledSlots": 1,
+       "poolSize": 83
+      }
+     ]
+    }
+   }
+  }
+ }
+}

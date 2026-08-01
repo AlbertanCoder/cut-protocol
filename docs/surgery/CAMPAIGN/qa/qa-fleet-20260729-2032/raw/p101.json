@@ -1,0 +1,582 @@
+{
+ "persona": {
+  "idx": 101,
+  "id": "p101",
+  "tier": "ROBUSTNESS",
+  "displayName": "security guard, 48",
+  "story": "security guard, 48 (managing meals for a 17-year-old), female, 164 cm / 117.6 kg (BMI 43.7), cut at 2 lb/wk, none diet, no exclusions, low-carb, 3 meals + 1 snacks, wants a single day",
+  "profile": {
+   "sex": "F",
+   "age": 48,
+   "heightCm": 164,
+   "startWeightKg": 117.6,
+   "goalWeightKg": 106.7,
+   "occupationKey": "security-guard",
+   "trainingStyle": "weights",
+   "minutesPerSession": 40,
+   "sessionsPerWeek": 3,
+   "rateLbPerWeek": 2,
+   "dietaryStyle": "none",
+   "excludedFoods": [
+    "no cow dairy but sheep and goat cheese are completely fine"
+   ],
+   "mealsPerDay": 3,
+   "snacksPerDay": 1,
+   "unitPref": "metric",
+   "mealPreferencesNote": "I react badly to a long list of things and my dietitian told me to write it all out so here it is: no onion, no garlic, no leek, no shallot, no wheat, no barley, no rye, no cow dairy but sheep is fine, no lentils, no chickpeas, and absolutely nothing with cilantro because it tastes like dish soap to me.",
+   "rateAcknowledged": true
+  },
+  "filters": {},
+  "horizon": "day",
+  "walls": [],
+  "freeTextExclusions": [],
+  "dietaryStyle": "none",
+  "bmi": 43.7,
+  "goalKind": "cut",
+  "macroStyle": "low-carb",
+  "requestedButUnsupported": [
+   "managing meals for a 17-year-old; the app has no parent-managed or dependent flag (adultGate refuses under-18 outright), so only the adult's own plan can be built",
+   "wanted a low-carb split without full keto; carbs are the leftover after LBM-derived protein and fat, and only dietaryStyle:\"keto\" changes that",
+   "typed a 300-character allergy narrative; mealPreferencesNote is freeform text that no filter reads, so none of it constrains the plan"
+  ],
+  "parentManaged": {
+   "kidAge": 17,
+   "note": "managing meals for a 17-year-old"
+  },
+  "robustKind": "long-allergy-note",
+  "longExclusion": "no cow dairy but sheep and goat cheese are completely fine",
+  "tupleKey": "[\"ROBUSTNESS\",\"F\",48,164,117.6,106.7,\"security-guard\",\"weights\",2,\"none\",[\"no cow dairy but sheep and goat cheese are completely fine\"],3,1,\"low-carb\",\"day\",null,null,null,\"long-allergy-note\",null]"
+ },
+ "request": {
+  "horizon": "day",
+  "filters": {}
+ },
+ "profileResponse": {
+  "id": "cms6x0x9502o7wlw0jth44jra",
+  "userId": "cms6x0x3r002nwl2oliv6v63c",
+  "sex": "F",
+  "age": 48,
+  "heightCm": 164,
+  "bodyFatPct": 0,
+  "bodyFatSource": null,
+  "occupationKey": "security-guard",
+  "activityOverride": null,
+  "sessionsPerWeek": 3,
+  "trainingStyle": "weights",
+  "minutesPerSession": 40,
+  "startWeightKg": 117.6,
+  "goalWeightKg": 106.7,
+  "startDate": "2026-07-29",
+  "unitPref": "metric",
+  "rateLbPerWeek": 2,
+  "rateAcknowledged": true,
+  "floorKcal": null,
+  "excludedFormulas": [],
+  "targetKcal": 1728,
+  "mealsPerDay": 3,
+  "snacksPerDay": 1,
+  "excludedFoods": [
+   "no cow dairy but sheep and goat cheese are completely fine"
+  ],
+  "dietaryStyle": "none",
+  "cuisinePreferences": [],
+  "mealPreferencesNote": "I react badly to a long list of things and my dietitian told me to write it all out so here it is: no onion, no garlic, no leek, no shallot, no wheat, no barley, no rye, no cow dairy but sheep is fine, no lentils, no chickpeas, and absolutely nothing with cilantro because it tastes like dish soap to me.",
+  "maxPrepMin": null,
+  "budgetTier": null,
+  "allowBatch": null,
+  "maxComplexity": null,
+  "adaptiveTdee": true,
+  "proteinPriorityMode": false,
+  "updatedAt": "2026-07-30T20:33:32.163Z"
+ },
+ "generate": {
+  "status": 200,
+  "ms": 284,
+  "body": {
+   "id": "cms7z10ik01y5wlgwde3hkgxm",
+   "userId": "cms6x0x3r002nwl2oliv6v63c",
+   "startDate": "2026-07-27",
+   "createdAt": "2026-07-30T20:33:32.636Z",
+   "slots": [
+    {
+     "id": "cms7z10il01y9wlgwwucmpqw8",
+     "planId": "cms7z10ik01y5wlgwde3hkgxm",
+     "dayOfWeek": 3,
+     "slotType": "meal",
+     "slotIndex": 0,
+     "recipeId": "cmrj2tcxw00s5wlwsnxal50uf",
+     "proteinScale": 1.67,
+     "sidesScale": 0.92,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t6ls000rwlwsf7bu3ffs",
+       "name": "Soy Sauce",
+       "role": "carb",
+       "grams": 3
+      },
+      {
+       "foodId": "cmrj2t6m0000swlws689kgktw",
+       "name": "Dry sherry",
+       "role": null,
+       "grams": 1
+      },
+      {
+       "foodId": "cmrj2t6m8000twlwshm9tioqm",
+       "name": "Cornstarch",
+       "role": "carb",
+       "grams": 1
+      },
+      {
+       "foodId": "cmrj2t6mf000uwlwsne5kc5wl",
+       "name": "Black Pepper",
+       "role": null,
+       "grams": 1
+      },
+      {
+       "foodId": "cmrj2t6mo000vwlws2107zlap",
+       "name": "Sirloin steak",
+       "role": "protein",
+       "grams": 190
+      },
+      {
+       "foodId": "cmrj2t6mv000wwlwshajphmy6",
+       "name": "Oyster Sauce",
+       "role": "carb",
+       "grams": 4
+      },
+      {
+       "foodId": "cmrj2t6n2000xwlwsqltep2pn",
+       "name": "Chicken Stock",
+       "role": "other",
+       "grams": 14
+      },
+      {
+       "foodId": "cmrj2t6na000ywlws9jek4w4z",
+       "name": "Broccoli",
+       "role": "veg",
+       "grams": 105
+      },
+      {
+       "foodId": "cmrj2t6nh000zwlwskv8t9g0p",
+       "name": "High Heat Cooking Oil",
+       "role": "fat",
+       "grams": 6
+      },
+      {
+       "foodId": "cmrj2t6ft0001wlwstiofk9on",
+       "name": "Garlic",
+       "role": "veg",
+       "grams": 1
+      },
+      {
+       "foodId": "cmrj2t6hb0007wlwsh6l6ynal",
+       "name": "Water",
+       "role": null,
+       "grams": 3
+      }
+     ],
+     "kcal": 451.2300000000001,
+     "protein": 58.5553,
+     "fat": 20.5483,
+     "carb": 10.5216,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrj2tcxw00s5wlwsnxal50uf",
+      "name": "Beef and Broccoli Stir-Fry",
+      "description": null,
+      "steps": [
+       "Marinate the beef:",
+       "Stir together the beef marinade ingredients (1 teaspoon soy sauce, 1 teaspoon Chinese rice wine, 1/2 teaspoon cornstarch, 1/8 teaspoon black pepper) in a medium bowl.",
+       "Add the beef slices and stir until coated. Let stand for 10 minutes.",
+       "Prepare the sauce:",
+       "Stir together the sauce ingredients (2 tablespoons oyster sauce, 1 teaspoon Chinese rice wine, 1 teaspoon soy sauce, 1/4 cup chicken broth) in a small bowl. Set aside.",
+       "Blanch or steam the broccoli:",
+       "Bring a pot of water to a boil. Add the broccoli and cook until crisp-tender, about 2 minutes. Drain thoroughly.",
+       "Stir-fry the beef:",
+       "Heat a large frying pan or wok over high heat until a bead of water sizzles and instantly evaporates upon contact. Add the cooking oil and swirl to coat.",
+       "Add the beef and immediately spread it out all over the surface of the wok or pan in a single layer (preferably not touching).",
+       "Let the beef fry undisturbed for 1 minute. Flip the beef slices over, add the garlic to the pan, and fry for an additional 30 seconds to 1 minute until no longer pink.",
+       "Add the sauce, cornstarch, and broccoli:",
+       "Pour in the sauce and the cornstarch slurry (1 teaspoon cornstarch dissolved in 1 tablespoon of water). Stir until the sauce boils and thickens, about 30 seconds. Stir in the broccoli.",
+       "Serve immediately, with steamed rice or on its own."
+      ],
+      "slotType": "meal",
+      "cuisine": "asian",
+      "prepTimeMin": 56,
+      "source": "themealdb-import",
+      "mealCategory": null,
+      "kcal": 322.8,
+      "protein": 36.7,
+      "fat": 15.8,
+      "carb": 11,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 7.07,
+      "difficulty": 9,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-13T10:25:19.556Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z10il01ybwlgwz15pixzq",
+     "planId": "cms7z10ik01y5wlgwde3hkgxm",
+     "dayOfWeek": 3,
+     "slotType": "meal",
+     "slotIndex": 1,
+     "recipeId": "cmrujkwqf002owl9o35jjgcvq",
+     "proteinScale": 1.64,
+     "sidesScale": 0.5,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t7w3006lwlws4zdhow4d",
+       "name": "Chicken Breast",
+       "role": "protein",
+       "grams": 280
+      },
+      {
+       "foodId": "cmrevpcn2000ewl5gmlyzu0vd",
+       "name": "White rice, cooked",
+       "role": "carb",
+       "grams": 80
+      },
+      {
+       "foodId": "cmrevpcnh000iwl5gh2zjhyqe",
+       "name": "Bell peppers",
+       "role": "veg",
+       "grams": 40
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 10
+      }
+     ],
+     "kcal": 542.4,
+     "protein": 65.56,
+     "fat": 17.696,
+     "carb": 24.8,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrujkwqf002owl9o35jjgcvq",
+      "name": "Fiesta Chicken & Bell Peppers with Rice",
+      "description": null,
+      "steps": [
+       "Cook the chicken.",
+       "Serve with white rice and bell peppers."
+      ],
+      "slotType": "meal",
+      "cuisine": "mexican",
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 526.8,
+      "protein": 43.37,
+      "fat": 15.174,
+      "carb": 49.60000000000001,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 6.25,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:00:06.711Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z10im01ydwlgww22txnb0",
+     "planId": "cms7z10ik01y5wlgwde3hkgxm",
+     "dayOfWeek": 3,
+     "slotType": "meal",
+     "slotIndex": 2,
+     "recipeId": "cms7pjmig001bwlbksrghymuq",
+     "proteinScale": 1.37,
+     "sidesScale": 0.5,
+     "ingredients": [
+      {
+       "foodId": "cmrevpcln0002wl5gainaw8kr",
+       "name": "Sirloin steak, cooked, lean",
+       "role": "protein",
+       "grams": 245
+      },
+      {
+       "foodId": "cmrj2t6yu002fwlws5705402h",
+       "name": "Mushrooms",
+       "role": "veg",
+       "grams": 75
+      },
+      {
+       "foodId": "cmrevpcnz000mwl5g62fmfzqk",
+       "name": "Butter",
+       "role": "fat",
+       "grams": 8
+      },
+      {
+       "foodId": "cmrj2t6ft0001wlwstiofk9on",
+       "name": "Garlic",
+       "role": "veg",
+       "grams": 5
+      },
+      {
+       "foodId": "cmrj2t6h10006wlwslufza94y",
+       "name": "Parsley",
+       "role": "other",
+       "grams": 3
+      }
+     ],
+     "kcal": 574.5400000000001,
+     "protein": 73.85960000000001,
+     "fat": 28.0927,
+     "carb": 4.0529,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cms7pjmig001bwlbksrghymuq",
+      "name": "Steak with Garlic Mushrooms",
+      "description": null,
+      "steps": [
+       "Get the pan smoking. Sear the steak 3 minutes a side for medium-rare, then REST it 5 minutes.",
+       "In the same pan, fry the mushrooms hard in butter until they colour, adding the garlic at the end.",
+       "Spoon over the rested steak with parsley."
+      ],
+      "slotType": "meal",
+      "cuisine": "western-comfort",
+      "prepTimeMin": 20,
+      "source": "curated",
+      "mealCategory": null,
+      "kcal": 517.75,
+      "protein": 57.3991,
+      "fat": 29.1727,
+      "carb": 6.5059,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": null,
+      "difficulty": 2,
+      "filterProvenance": null,
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-30T16:08:04.792Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z10in01yfwlgwn9a91lh3",
+     "planId": "cms7z10ik01y5wlgwde3hkgxm",
+     "dayOfWeek": 3,
+     "slotType": "snack",
+     "slotIndex": 0,
+     "recipeId": "cmrg91na2000mwli0w2pcl3e2",
+     "proteinScale": 0.5,
+     "sidesScale": 2,
+     "ingredients": [
+      {
+       "foodId": "cmrfoyrjh0009wl08cmcid51m",
+       "name": "Turkey breast, low salt, prepackaged or deli, luncheon meat",
+       "role": "protein",
+       "grams": 55
+      },
+      {
+       "foodId": "cmrg8us5k0002wli07r50svzc",
+       "name": "Cheese, swiss, low fat",
+       "role": "dairy",
+       "grams": 50
+      },
+      {
+       "foodId": "cmrevpcnl000jwl5gnqnk630b",
+       "name": "Cucumber",
+       "role": "veg",
+       "grams": 160
+      },
+      {
+       "foodId": "cmrj2t6mf000uwlwsne5kc5wl",
+       "name": "Black Pepper",
+       "role": "other",
+       "grams": 1
+      }
+     ],
+     "kcal": 167.96,
+     "protein": 27.238,
+     "fat": 3.2951,
+     "carb": 7.726500000000001,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrg91na2000mwli0w2pcl3e2",
+      "name": "Turkey & Swiss Roll-Ups",
+      "description": "Lean deli turkey rolled around reduced-fat Swiss with crisp cucumber spears — no bread, all protein.",
+      "steps": [
+       "Lay turkey slices flat.",
+       "Place a strip of Swiss and a cucumber spear on each.",
+       "Roll tightly.",
+       "Season with black pepper and serve."
+      ],
+      "slotType": "snack",
+      "cuisine": "western-comfort",
+      "prepTimeMin": 6,
+      "source": "ai-generated",
+      "mealCategory": "bread_or_pastry_side",
+      "kcal": 175.16,
+      "protein": 31.65600000000001,
+      "fat": 2.3486,
+      "carb": 7.079,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 4.49,
+      "difficulty": 2,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-11T10:56:25.371Z",
+      "createdByUserId": null
+     }
+    }
+   ],
+   "groceryList": null,
+   "meta": {
+    "matchPct": 100,
+    "attempts": 2,
+    "score": {
+     "daysInTolerance": 1,
+     "avgMatch": 100,
+     "days": [
+      {
+       "dayOfWeek": 3,
+       "dayName": "Thursday",
+       "matchPct": 100,
+       "totals": {
+        "kcal": 1736,
+        "protein": 225,
+        "fat": 70,
+        "carb": 47
+       },
+       "kcalDeltaPct": 0.5,
+       "proteinShortPct": 0,
+       "fatOk": true,
+       "carbOk": true,
+       "inTolerance": true,
+       "miss": null,
+       "unfilledSlots": 0,
+       "warnedSlots": 0,
+       "windowIndex": 0,
+       "dayIndex": 0,
+       "key": "0:3"
+      }
+     ],
+     "totalDays": 1
+    },
+    "days": [
+     {
+      "dayOfWeek": 3,
+      "dayName": "Thursday",
+      "matchPct": 100,
+      "totals": {
+       "kcal": 1736,
+       "protein": 225,
+       "fat": 70,
+       "carb": 47
+      },
+      "kcalDeltaPct": 0.5,
+      "proteinShortPct": 0,
+      "fatOk": true,
+      "carbOk": true,
+      "inTolerance": true,
+      "miss": null,
+      "unfilledSlots": 0,
+      "warnedSlots": 0,
+      "windowIndex": 0,
+      "dayIndex": 0,
+      "key": "0:3"
+     }
+    ],
+    "diagnosis": null,
+    "poolCounts": {
+     "raw": 910,
+     "afterDiet": 910,
+     "afterPrep": 910,
+     "afterStack": 910,
+     "stackExplain": null
+    },
+    "variety": {
+     "mealEligible": 730,
+     "usableForSlot": 361,
+     "slotKcal": 509,
+     "snackEligible": 18,
+     "weeklyMealSlots": 21,
+     "weeklySnackSlots": 7,
+     "repeatCap": 2,
+     "distinctWeeks": 17.2,
+     "horizonWeeks": 1,
+     "sustainsHorizon": true,
+     "notes": [
+      "1 day: 4 distinct dish(es) across 4 filled slot(s); most-repeated dish appears 1x against a 2x cap for this horizon (2x per week)."
+     ],
+     "horizon": {
+      "weeks": 1,
+      "days": 1,
+      "perWeekCap": 2,
+      "horizonRepeatCap": 2,
+      "mealSlots": 3,
+      "snackSlots": 1,
+      "totalSlots": 4,
+      "distinctFloor": 2,
+      "distinctRecipes": 4,
+      "maxRepeat": 1,
+      "maxRepeatRecipeId": "cmrj2tcxw00s5wlwsnxal50uf",
+      "lockedRepeatsOfMax": 0,
+      "filledSlots": 4,
+      "unfilledSlots": 0,
+      "requiredDistinct": 2,
+      "capHeld": true,
+      "floorHeld": true
+     }
+    },
+    "priorWeeksConsidered": 0,
+    "horizon": {
+     "key": "day",
+     "label": "1 day",
+     "days": 1,
+     "kind": "days",
+     "weeks": 1,
+     "custom": false,
+     "startDate": "2026-07-30",
+     "endDate": "2026-07-30",
+     "startDayOfWeek": 3,
+     "weeksWritten": 1,
+     "solveMs": 6,
+     "weekPlans": [
+      {
+       "startDate": "2026-07-27",
+       "dayIndices": [
+        3
+       ],
+       "days": 1,
+       "daysInTolerance": 1,
+       "avgMatch": 100,
+       "unfilledSlots": 0,
+       "poolSize": 910
+      }
+     ]
+    }
+   }
+  }
+ }
+}

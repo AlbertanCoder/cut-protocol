@@ -1,0 +1,497 @@
+{
+ "persona": {
+  "idx": 71,
+  "id": "p071",
+  "tier": "HARD",
+  "displayName": "finish carpenter, 59",
+  "story": "finish carpenter, 59, female, 176 cm / 83.5 kg (BMI 27), cut at 2 lb/wk, vegetarian diet, avoiding dairy, fish, sesame, shellfish, gluten, soy, low-carb, 3 meals + 0 snacks, wants a single day",
+  "profile": {
+   "sex": "F",
+   "age": 59,
+   "heightCm": 176,
+   "startWeightKg": 83.5,
+   "goalWeightKg": 69.1,
+   "occupationKey": "carpenter-finish",
+   "trainingStyle": "weights",
+   "minutesPerSession": 50,
+   "sessionsPerWeek": 3,
+   "rateLbPerWeek": 2,
+   "dietaryStyle": "vegetarian",
+   "excludedFoods": [
+    "dairy",
+    "fish",
+    "sesame",
+    "shellfish",
+    "gluten",
+    "soy"
+   ],
+   "mealsPerDay": 3,
+   "snacksPerDay": 0,
+   "unitPref": "imperial",
+   "rateAcknowledged": true
+  },
+  "filters": {
+   "budget": "moderate",
+   "proteinPriority": true,
+   "maxPrepMin": 15
+  },
+  "horizon": "day",
+  "walls": [
+   "dairy",
+   "fish",
+   "sesame",
+   "shellfish",
+   "gluten",
+   "soy"
+  ],
+  "freeTextExclusions": [],
+  "dietaryStyle": "vegetarian",
+  "bmi": 27,
+  "goalKind": "cut",
+  "macroStyle": "low-carb",
+  "requestedButUnsupported": [
+   "wanted a low-carb split without full keto; carbs are the leftover after LBM-derived protein and fat, and only dietaryStyle:\"keto\" changes that"
+  ],
+  "tupleKey": "[\"HARD\",\"F\",59,176,83.5,69.1,\"carpenter-finish\",\"weights\",2,\"vegetarian\",[\"dairy\",\"fish\",\"gluten\",\"sesame\",\"shellfish\",\"soy\"],3,0,\"low-carb\",\"day\",15,\"moderate\",true,null,null]"
+ },
+ "request": {
+  "horizon": "day",
+  "filters": {
+   "budget": "moderate",
+   "proteinPriority": true,
+   "maxPrepMin": 15
+  }
+ },
+ "profileResponse": {
+  "id": "cms6x0pdj0243wlw0zetpd8i2",
+  "userId": "cms6x0p24001twl2o3rp9n6pb",
+  "sex": "F",
+  "age": 59,
+  "heightCm": 176,
+  "bodyFatPct": 0,
+  "bodyFatSource": null,
+  "occupationKey": "carpenter-finish",
+  "activityOverride": null,
+  "sessionsPerWeek": 3,
+  "trainingStyle": "weights",
+  "minutesPerSession": 50,
+  "startWeightKg": 83.5,
+  "goalWeightKg": 69.1,
+  "startDate": "2026-07-29",
+  "unitPref": "imperial",
+  "rateLbPerWeek": 2,
+  "rateAcknowledged": true,
+  "floorKcal": null,
+  "excludedFormulas": [],
+  "targetKcal": 1430,
+  "mealsPerDay": 3,
+  "snacksPerDay": 0,
+  "excludedFoods": [
+   "dairy",
+   "fish",
+   "sesame",
+   "shellfish",
+   "gluten",
+   "soy"
+  ],
+  "dietaryStyle": "vegetarian",
+  "cuisinePreferences": [],
+  "mealPreferencesNote": null,
+  "maxPrepMin": null,
+  "budgetTier": null,
+  "allowBatch": null,
+  "maxComplexity": null,
+  "adaptiveTdee": true,
+  "proteinPriorityMode": false,
+  "updatedAt": "2026-07-30T02:49:33.020Z"
+ },
+ "generate": {
+  "status": 200,
+  "ms": 762,
+  "body": {
+   "id": "cms6x0q5h028xwlw0oyhaeetq",
+   "userId": "cms6x0p24001twl2o3rp9n6pb",
+   "startDate": "2026-07-27",
+   "createdAt": "2026-07-30T02:49:33.798Z",
+   "slots": [
+    {
+     "id": "cms6x0q5i028zwlw0ugs53an3",
+     "planId": "cms6x0q5h028xwlw0oyhaeetq",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 0,
+     "recipeId": "cmrul4e7l007uwl68g96btgat",
+     "proteinScale": 1.45,
+     "sidesScale": 0.96,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t7t00067wlwsj23ngikm",
+       "name": "Egg White",
+       "role": "protein",
+       "grams": 375
+      },
+      {
+       "foodId": "cmrj2t7fb004fwlws8ezof2dp",
+       "name": "Russet Potato",
+       "role": "carb",
+       "grams": 145
+      },
+      {
+       "foodId": "cmrj2t6na000ywlws9jek4w4z",
+       "name": "Broccoli",
+       "role": "veg",
+       "grams": 105
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 421.55,
+     "protein": 46.637,
+     "fat": 5.545500000000001,
+     "carb": 46.4635,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrul4e7l007uwl68g96btgat",
+      "name": "High-Protein Egg White & Broccoli with Potato",
+      "description": null,
+      "steps": [
+       "Cook the egg white.",
+       "Serve over potato with broccoli."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 364.6,
+      "protein": 34.6,
+      "fat": 5.6,
+      "carb": 45.1,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 3.21,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:43:15.441Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x0q5k0291wlw08a3b0jr4",
+     "planId": "cms6x0q5h028xwlw0oyhaeetq",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 1,
+     "recipeId": "cmrul79z400c0wl8064gi62w8",
+     "proteinScale": 1.53,
+     "sidesScale": 1.24,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t7t00067wlwsj23ngikm",
+       "name": "Egg White",
+       "role": "protein",
+       "grams": 400
+      },
+      {
+       "foodId": "cmrj2t88z0087wlwsmsmchxzb",
+       "name": "Quinoa",
+       "role": "carb",
+       "grams": 135
+      },
+      {
+       "foodId": "cmrj2t6na000ywlws9jek4w4z",
+       "name": "Broccoli",
+       "role": "veg",
+       "grams": 135
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 468.85,
+     "protein": 52.20949999999999,
+     "fat": 8.051,
+     "carb": 46.6595,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrul79z400c0wl8064gi62w8",
+      "name": "High-Protein Egg White & Broccoli with Quinoa",
+      "description": null,
+      "steps": [
+       "Cook the egg white.",
+       "Serve over quinoa with broccoli."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 354.1,
+      "protein": 35.5,
+      "fat": 7.5,
+      "carb": 36.5,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 3.86,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:45:29.920Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x0q5k0293wlw02cesowy9",
+     "planId": "cms6x0q5h028xwlw0oyhaeetq",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 2,
+     "recipeId": "cmrul4e7h007owl68wk6sgpum",
+     "proteinScale": 1.85,
+     "sidesScale": 1.47,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t7t00067wlwsj23ngikm",
+       "name": "Egg White",
+       "role": "protein",
+       "grams": 480
+      },
+      {
+       "foodId": "cmrj2t88z0087wlwsmsmchxzb",
+       "name": "Quinoa",
+       "role": "carb",
+       "grams": 160
+      },
+      {
+       "foodId": "cmrg8zxar000lwli0qy2ovmx4",
+       "name": "Onion",
+       "role": "veg",
+       "grams": 90
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 537,
+     "protein": 59.38999999999999,
+     "fat": 8.161999999999999,
+     "carb": 53.814,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrul4e7h007owl68wk6sgpum",
+      "name": "High-Protein Egg White & Onions with Quinoa",
+      "description": null,
+      "steps": [
+       "Cook the egg white.",
+       "Serve over quinoa with onions."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 344,
+      "protein": 33.3,
+      "fat": 7.2,
+      "carb": 35.2,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 3.41,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:43:15.438Z",
+      "createdByUserId": null
+     }
+    }
+   ],
+   "groceryList": null,
+   "meta": {
+    "matchPct": 76,
+    "attempts": 5,
+    "score": {
+     "daysInTolerance": 0,
+     "avgMatch": 76,
+     "days": [
+      {
+       "dayOfWeek": 2,
+       "dayName": "Wednesday",
+       "matchPct": 76,
+       "totals": {
+        "kcal": 1427,
+        "protein": 158,
+        "fat": 22,
+        "carb": 147
+       },
+       "kcalDeltaPct": -0.2,
+       "proteinShortPct": 0.2,
+       "fatOk": false,
+       "carbOk": false,
+       "inTolerance": false,
+       "miss": "22 g fat vs a 45–53 g range — 23 g short; 147 g carbs vs a 52–76 g range — 71 g over",
+       "unfilledSlots": 0,
+       "warnedSlots": 0,
+       "proteinFloor": {
+        "met": true,
+        "floorG": 151,
+        "achievedG": 158.2,
+        "shortG": 0,
+        "shortPct": 0,
+        "reason": null
+       },
+       "windowIndex": 0,
+       "dayIndex": 0,
+       "key": "0:2"
+      }
+     ],
+     "totalDays": 1,
+     "floorDaysMet": 1,
+     "floorDaysTotal": 1
+    },
+    "days": [
+     {
+      "dayOfWeek": 2,
+      "dayName": "Wednesday",
+      "matchPct": 76,
+      "totals": {
+       "kcal": 1427,
+       "protein": 158,
+       "fat": 22,
+       "carb": 147
+      },
+      "kcalDeltaPct": -0.2,
+      "proteinShortPct": 0.2,
+      "fatOk": false,
+      "carbOk": false,
+      "inTolerance": false,
+      "miss": "22 g fat vs a 45–53 g range — 23 g short; 147 g carbs vs a 52–76 g range — 71 g over",
+      "unfilledSlots": 0,
+      "warnedSlots": 0,
+      "proteinFloor": {
+       "met": true,
+       "floorG": 151,
+       "achievedG": 158.2,
+       "shortG": 0,
+       "shortPct": 0,
+       "reason": null
+      },
+      "windowIndex": 0,
+      "dayIndex": 0,
+      "key": "0:2"
+     }
+    ],
+    "diagnosis": {
+     "feasible": false,
+     "reasons": [
+      "Your targets need ~11.1g protein per 100 kcal; only 8 of 30 eligible recipes come close (12+ needed for a full varied week).",
+      "1 day(s) landed outside your 45–53 g fat range, and 1 day(s) landed outside your 52–76 g carb range — portion scaling moves a dish's calories, not its fat/carb ratio, so the pool's composition is what binds here."
+     ],
+     "suggestions": [
+      "Set the protein-preference filter, or AI-generate a few high-protein recipes to deepen the pool.",
+      "Add (or AI-generate) a few recipes built around the macro you keep missing, or drop the cuisine/protein preference so the solver can reach dishes that carry it."
+     ],
+     "binding": {
+      "key": "protein-density",
+      "label": "protein density in your recipe pool",
+      "detail": "your targets need ~11.1 g protein per 100 kcal and only 8 of 30 compliant recipes come close."
+     }
+    },
+    "poolCounts": {
+     "raw": 889,
+     "afterDiet": 62,
+     "afterPrep": 30,
+     "afterStack": 30,
+     "stackExplain": null
+    },
+    "variety": {
+     "mealEligible": 30,
+     "usableForSlot": 10,
+     "slotKcal": 477,
+     "snackEligible": 0,
+     "weeklyMealSlots": 21,
+     "weeklySnackSlots": 0,
+     "repeatCap": 2,
+     "distinctWeeks": 0.5,
+     "horizonWeeks": 1,
+     "sustainsHorizon": false,
+     "notes": [
+      "10 of your 30 compliant recipes can be portioned to a 477 kcal meal — about 0.4 week(s) of 21 meals before dishes start repeating, so over 1 weeks you will see favourites come back.",
+      "1 day: 3 distinct dish(es) across 3 filled slot(s); most-repeated dish appears 1x against a 2x cap for this horizon (2x per week)."
+     ],
+     "horizon": {
+      "weeks": 1,
+      "days": 1,
+      "perWeekCap": 2,
+      "horizonRepeatCap": 2,
+      "mealSlots": 3,
+      "snackSlots": 0,
+      "totalSlots": 3,
+      "distinctFloor": 2,
+      "distinctRecipes": 3,
+      "maxRepeat": 1,
+      "maxRepeatRecipeId": "cmrul4e7l007uwl68g96btgat",
+      "lockedRepeatsOfMax": 0,
+      "filledSlots": 3,
+      "unfilledSlots": 0,
+      "requiredDistinct": 2,
+      "capHeld": true,
+      "floorHeld": true
+     }
+    },
+    "priorWeeksConsidered": 0,
+    "horizon": {
+     "key": "day",
+     "label": "1 day",
+     "days": 1,
+     "kind": "days",
+     "weeks": 1,
+     "custom": false,
+     "startDate": "2026-07-29",
+     "endDate": "2026-07-29",
+     "startDayOfWeek": 2,
+     "weeksWritten": 1,
+     "solveMs": 1,
+     "weekPlans": [
+      {
+       "startDate": "2026-07-27",
+       "dayIndices": [
+        2
+       ],
+       "days": 1,
+       "daysInTolerance": 0,
+       "avgMatch": 76,
+       "unfilledSlots": 0,
+       "poolSize": 30
+      }
+     ]
+    }
+   }
+  }
+ }
+}

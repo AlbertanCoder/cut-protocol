@@ -1,0 +1,653 @@
+{
+ "persona": {
+  "idx": 215,
+  "id": "p215",
+  "tier": "HARD",
+  "displayName": "cyclist, 66",
+  "story": "cyclist, 66, female, 178 cm / 141 kg (BMI 44.5), cut at 1.5 lb/wk, vegetarian diet, avoiding gluten, nightshade, peanut, egg, low-fat, 3 meals + 2 snacks, wants a single day",
+  "profile": {
+   "sex": "F",
+   "age": 66,
+   "heightCm": 178,
+   "startWeightKg": 141,
+   "goalWeightKg": 130,
+   "occupationKey": "desk-office",
+   "trainingStyle": "cardio",
+   "minutesPerSession": 120,
+   "sessionsPerWeek": 6,
+   "rateLbPerWeek": 1.5,
+   "dietaryStyle": "vegetarian",
+   "excludedFoods": [
+    "gluten",
+    "nightshades",
+    "peanuts",
+    "eggs"
+   ],
+   "mealsPerDay": 3,
+   "snacksPerDay": 2,
+   "unitPref": "metric",
+   "bodyFatPct": 30,
+   "bodyFatSource": "measured",
+   "cuisinePreferences": [
+    "mediterranean",
+    "italian"
+   ],
+   "rateAcknowledged": true
+  },
+  "filters": {
+   "cuisines": [
+    "mediterranean",
+    "italian"
+   ],
+   "proteinPriority": true
+  },
+  "horizon": "day",
+  "walls": [
+   "gluten",
+   "nightshade",
+   "peanut",
+   "egg"
+  ],
+  "freeTextExclusions": [
+   "nightshades"
+  ],
+  "dietaryStyle": "vegetarian",
+  "bmi": 44.5,
+  "goalKind": "cut",
+  "macroStyle": "low-fat",
+  "requestedButUnsupported": [
+   "wanted a low-fat split; the fat band is fixed at LBM x0.34-0.40 and is not client-settable"
+  ],
+  "tupleKey": "[\"HARD\",\"F\",66,178,141,130,\"desk-office\",\"cardio\",1.5,\"vegetarian\",[\"eggs\",\"gluten\",\"nightshades\",\"peanuts\"],3,2,\"low-fat\",\"day\",null,null,true,null,null]"
+ },
+ "request": {
+  "horizon": "day",
+  "filters": {
+   "cuisines": [
+    "mediterranean",
+    "italian"
+   ],
+   "proteinPriority": true
+  }
+ },
+ "profileResponse": {
+  "id": "cms6x1qmq05drwlw0tsq5mwi3",
+  "userId": "cms6x1qa8005twl2odq5aws8g",
+  "sex": "F",
+  "age": 66,
+  "heightCm": 178,
+  "bodyFatPct": 30,
+  "bodyFatSource": "measured",
+  "occupationKey": "desk-office",
+  "activityOverride": null,
+  "sessionsPerWeek": 6,
+  "trainingStyle": "cardio",
+  "minutesPerSession": 120,
+  "startWeightKg": 141,
+  "goalWeightKg": 130,
+  "startDate": "2026-07-29",
+  "unitPref": "metric",
+  "rateLbPerWeek": 1.5,
+  "rateAcknowledged": false,
+  "floorKcal": null,
+  "excludedFormulas": [],
+  "targetKcal": 3723,
+  "mealsPerDay": 3,
+  "snacksPerDay": 2,
+  "excludedFoods": [
+   "gluten",
+   "nightshades",
+   "peanuts",
+   "eggs"
+  ],
+  "dietaryStyle": "vegetarian",
+  "cuisinePreferences": [
+   "mediterranean",
+   "italian"
+  ],
+  "mealPreferencesNote": null,
+  "maxPrepMin": null,
+  "budgetTier": null,
+  "allowBatch": null,
+  "maxComplexity": null,
+  "adaptiveTdee": true,
+  "proteinPriorityMode": false,
+  "updatedAt": "2026-07-30T02:50:21.089Z"
+ },
+ "generate": {
+  "status": 200,
+  "ms": 479,
+  "body": {
+   "id": "cms6x1r0a05ebwlw0y95crcmn",
+   "userId": "cms6x1qa8005twl2odq5aws8g",
+   "startDate": "2026-07-27",
+   "createdAt": "2026-07-30T02:50:21.562Z",
+   "slots": [
+    {
+     "id": "cms6x1r0b05edwlw0ly6yfgv5",
+     "planId": "cms6x1r0a05ebwlw0y95crcmn",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 0,
+     "recipeId": "cmrul79tg002uwl80f5k10o5u",
+     "proteinScale": 1.41,
+     "sidesScale": 2,
+     "ingredients": [
+      {
+       "foodId": "cmrj2tclc00pqwlws0vlepf5r",
+       "name": "Tempeh, cooked",
+       "role": "protein",
+       "grams": 225
+      },
+      {
+       "foodId": "cmrj2t88z0087wlwsmsmchxzb",
+       "name": "Quinoa",
+       "role": "carb",
+       "grams": 220
+      },
+      {
+       "foodId": "cmrevpcnl000jwl5gnqnk630b",
+       "name": "Cucumber",
+       "role": "veg",
+       "grams": 180
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 759,
+     "protein": 56.417,
+     "fat": 33.812,
+     "carb": 67.84800000000001,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrul79tg002uwl80f5k10o5u",
+      "name": "High-Protein Tempeh & Cucumber with Quinoa",
+      "description": null,
+      "steps": [
+       "Cook the tempeh.",
+       "Serve over quinoa with cucumber."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 493.2,
+      "protein": 37.9,
+      "fat": 24.5,
+      "carb": 37.5,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 4.42,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:45:29.716Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x1r0b05efwlw09rj41e8i",
+     "planId": "cms6x1r0a05ebwlw0y95crcmn",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 1,
+     "recipeId": "cmrul79t9002iwl805r57umr4",
+     "proteinScale": 1.87,
+     "sidesScale": 2,
+     "ingredients": [
+      {
+       "foodId": "cmrj2tclc00pqwlws0vlepf5r",
+       "name": "Tempeh, cooked",
+       "role": "protein",
+       "grams": 300
+      },
+      {
+       "foodId": "cmrevpcn2000ewl5gmlyzu0vd",
+       "name": "White rice, cooked",
+       "role": "carb",
+       "grams": 220
+      },
+      {
+       "foodId": "cmrg8zxar000lwli0qy2ovmx4",
+       "name": "Onion",
+       "role": "veg",
+       "grams": 120
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 955,
+     "protein": 68.16,
+     "fat": 38.18,
+     "carb": 95.608,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrul79t9002iwl805r57umr4",
+      "name": "High-Protein Tempeh & Onions with Rice",
+      "description": null,
+      "steps": [
+       "Cook the tempeh.",
+       "Serve over white rice with onions."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 519.2,
+      "protein": 36.1,
+      "fat": 22.7,
+      "carb": 48.6,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 3.44,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:45:29.709Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x1r0c05ehwlw0aud3dcho",
+     "planId": "cms6x1r0a05ebwlw0y95crcmn",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 2,
+     "recipeId": "cmrj2uauc089vwlwsuogmt93e",
+     "proteinScale": 2,
+     "sidesScale": 2,
+     "ingredients": [
+      {
+       "foodId": "cmrj2ta5e00fowlwsjb90p1xm",
+       "name": "Natural Yoghurt",
+       "role": null,
+       "grams": 500
+      },
+      {
+       "foodId": "cmrj2t7ve006iwlwsr3tyleyw",
+       "name": "Lemon Juice",
+       "role": "veg",
+       "grams": 10
+      },
+      {
+       "foodId": "cmrj2t6kg000lwlwsgcajfryi",
+       "name": "Extra Virgin Olive Oil",
+       "role": "carb",
+       "grams": 14
+      },
+      {
+       "foodId": "cmrj2t7qo005wwlwst23r0zi3",
+       "name": "Dried Mint",
+       "role": null,
+       "grams": 4
+      },
+      {
+       "foodId": "cmrevpcnl000jwl5gnqnk630b",
+       "name": "Cucumber",
+       "role": "veg",
+       "grams": 100
+      },
+      {
+       "foodId": "cmrj2t6ft0001wlwstiofk9on",
+       "name": "Garlic",
+       "role": "veg",
+       "grams": 6
+      }
+     ],
+     "kcal": 1055.94,
+     "protein": 83.3182,
+     "fat": 70.44800000000001,
+     "carb": 24.872,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrj2uauc089vwlwsuogmt93e",
+      "name": "Cacik",
+      "description": null,
+      "steps": [
+       "step 1",
+       "Put a sieve over a large bowl, line it with a thick sheet of non-dyed kitchen paper or a clean muslin cloth, and spoon in the yogurt. Cover with another sheet of kitchen paper and leave to strain in the fridge for a minimum of 12 hrs.",
+       "step 2",
+       "Add the lemon juice, most of the olive oil and the dried mint to a bowl and stir well for the dried mint to soften and soak up the juices. Mix in the strained yogurt, then pour away the strained yogurt liquid and leave that bowl to one side.",
+       "step 3",
+       "Halve the cucumber(s) lengthways and remove the seeds by running a teaspoon from the top to the bottom of the flesh, halve the cucumbers widthways to make them shorter and easier to handle, then coarsely grate each one into the bowl the yogurt was straining over. Using clean hands (or a clean muslin cloth), squeeze as much of the liquid out of the cucumber as possible.",
+       "step 4",
+       "Add the strained, grated cucumber, garlic and ¾ tsp flaky salt to the rest of the ingredients and mix well. Garnish with a drizzle of extra virgin olive oil and a sprinkling of dried mint."
+      ],
+      "slotType": "meal",
+      "cuisine": "western-comfort",
+      "prepTimeMin": 34,
+      "source": "themealdb-import",
+      "mealCategory": null,
+      "kcal": 525.939,
+      "protein": 41.63955000000001,
+      "fat": 35.01821,
+      "carb": 12.3909,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 1.82,
+      "difficulty": 4,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-13T10:26:03.492Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x1r0d05ejwlw00uul6zeb",
+     "planId": "cms6x1r0a05ebwlw0y95crcmn",
+     "dayOfWeek": 2,
+     "slotType": "snack",
+     "slotIndex": 0,
+     "recipeId": "cmrujhgxz000zwlbon488ewmg",
+     "proteinScale": 1.84,
+     "sidesScale": 1.84,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t7p5005pwlws4acmktnt",
+       "name": "Greek Yogurt",
+       "role": "dairy",
+       "grams": 310
+      },
+      {
+       "foodId": "cmrevpco3000nwl5g1d51b3it",
+       "name": "Almonds",
+       "role": "fat",
+       "grams": 30
+      },
+      {
+       "foodId": "cmrfoyp7m0002wl0851se2p2b",
+       "name": "Honey",
+       "role": "other",
+       "grams": 18
+      }
+     ],
+     "kcal": 488.3200000000001,
+     "protein": 28.767,
+     "fat": 16.494,
+     "carb": 60.812,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrujhgxz000zwlbon488ewmg",
+      "name": "Greek Yogurt, Honey & Almonds",
+      "description": null,
+      "steps": [
+       "Stir together."
+      ],
+      "slotType": "snack",
+      "cuisine": "american",
+      "prepTimeMin": 10,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 259.5,
+      "protein": 15.5,
+      "fat": 8.3,
+      "carb": 33.2,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 1.58,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T10:57:26.280Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x1r0d05elwlw06vqmxv0c",
+     "planId": "cms6x1r0a05ebwlw0y95crcmn",
+     "dayOfWeek": 2,
+     "slotType": "snack",
+     "slotIndex": 1,
+     "recipeId": "cmrujhgxz000zwlbon488ewmg",
+     "proteinScale": 1.79,
+     "sidesScale": 1.79,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t7p5005pwlws4acmktnt",
+       "name": "Greek Yogurt",
+       "role": "dairy",
+       "grams": 305
+      },
+      {
+       "foodId": "cmrevpco3000nwl5g1d51b3it",
+       "name": "Almonds",
+       "role": "fat",
+       "grams": 25
+      },
+      {
+       "foodId": "cmrfoyp7m0002wl0851se2p2b",
+       "name": "Honey",
+       "role": "other",
+       "grams": 18
+      }
+     ],
+     "kcal": 454.3200000000001,
+     "protein": 27.3555,
+     "fat": 13.857,
+     "carb": 59.122,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrujhgxz000zwlbon488ewmg",
+      "name": "Greek Yogurt, Honey & Almonds",
+      "description": null,
+      "steps": [
+       "Stir together."
+      ],
+      "slotType": "snack",
+      "cuisine": "american",
+      "prepTimeMin": 10,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 259.5,
+      "protein": 15.5,
+      "fat": 8.3,
+      "carb": 33.2,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 1.58,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T10:57:26.280Z",
+      "createdByUserId": null
+     }
+    }
+   ],
+   "groceryList": null,
+   "meta": {
+    "matchPct": 76,
+    "attempts": 5,
+    "score": {
+     "daysInTolerance": 0,
+     "avgMatch": 76,
+     "days": [
+      {
+       "dayOfWeek": 2,
+       "dayName": "Wednesday",
+       "matchPct": 76,
+       "totals": {
+        "kcal": 3713,
+        "protein": 264,
+        "fat": 173,
+        "carb": 308
+       },
+       "kcalDeltaPct": -0.3,
+       "proteinShortPct": 0,
+       "fatOk": false,
+       "carbOk": false,
+       "inTolerance": false,
+       "miss": "173 g fat vs a 74–87 g range — 86 g over; 308 g carbs vs a 453–477 g range — 145 g short",
+       "unfilledSlots": 0,
+       "warnedSlots": 0,
+       "proteinFloor": {
+        "met": true,
+        "floorG": 248,
+        "achievedG": 264,
+        "shortG": 0,
+        "shortPct": 0,
+        "reason": null
+       },
+       "windowIndex": 0,
+       "dayIndex": 0,
+       "key": "0:2"
+      }
+     ],
+     "totalDays": 1,
+     "floorDaysMet": 1,
+     "floorDaysTotal": 1
+    },
+    "days": [
+     {
+      "dayOfWeek": 2,
+      "dayName": "Wednesday",
+      "matchPct": 76,
+      "totals": {
+       "kcal": 3713,
+       "protein": 264,
+       "fat": 173,
+       "carb": 308
+      },
+      "kcalDeltaPct": -0.3,
+      "proteinShortPct": 0,
+      "fatOk": false,
+      "carbOk": false,
+      "inTolerance": false,
+      "miss": "173 g fat vs a 74–87 g range — 86 g over; 308 g carbs vs a 453–477 g range — 145 g short",
+      "unfilledSlots": 0,
+      "warnedSlots": 0,
+      "proteinFloor": {
+       "met": true,
+       "floorG": 248,
+       "achievedG": 264,
+       "shortG": 0,
+       "shortPct": 0,
+       "reason": null
+      },
+      "windowIndex": 0,
+      "dayIndex": 0,
+      "key": "0:2"
+     }
+    ],
+    "diagnosis": {
+     "feasible": false,
+     "reasons": [
+      "1 day(s) landed outside your 74–87 g fat range, and 1 day(s) landed outside your 453–477 g carb range — portion scaling moves a dish's calories, not its fat/carb ratio, so the pool's composition is what binds here."
+     ],
+     "suggestions": [
+      "Add (or AI-generate) a few recipes built around the macro you keep missing, or drop the cuisine/protein preference so the solver can reach dishes that carry it."
+     ],
+     "binding": {
+      "key": "macro-composition",
+      "label": "fat in your recipe pool",
+      "detail": "1 of 1 day(s) landed outside your 74-87 g fat range, and 1 of 1 day(s) landed outside your 453-477 g carb range. Portion scaling moves a dish's calories, not its fat/carb ratio, so what binds here is which dishes your rules leave in the pool. Calories and protein landed on target on every day — it is composition, not portion size, that is short."
+     }
+    },
+    "poolCounts": {
+     "raw": 889,
+     "afterDiet": 63,
+     "afterPrep": 63,
+     "afterStack": 63,
+     "stackExplain": null
+    },
+    "variety": {
+     "mealEligible": 50,
+     "usableForSlot": 8,
+     "slotKcal": 983,
+     "snackEligible": 2,
+     "weeklyMealSlots": 21,
+     "weeklySnackSlots": 14,
+     "repeatCap": 2,
+     "distinctWeeks": 0.4,
+     "horizonWeeks": 1,
+     "sustainsHorizon": false,
+     "notes": [
+      "8 of your 50 compliant recipes can be portioned to a 983 kcal meal — about 0.3 week(s) of 21 meals before dishes start repeating, so over 1 weeks you will see favourites come back.",
+      "Only 2 snack recipe(s) fit your rules, so the same snacks come back every week.",
+      "1 day: 4 distinct dish(es) across 5 filled slot(s); most-repeated dish appears 2x against a 2x cap for this horizon (2x per week)."
+     ],
+     "horizon": {
+      "weeks": 1,
+      "days": 1,
+      "perWeekCap": 2,
+      "horizonRepeatCap": 2,
+      "mealSlots": 3,
+      "snackSlots": 2,
+      "totalSlots": 5,
+      "distinctFloor": 3,
+      "distinctRecipes": 4,
+      "maxRepeat": 2,
+      "maxRepeatRecipeId": "cmrujhgxz000zwlbon488ewmg",
+      "lockedRepeatsOfMax": 0,
+      "filledSlots": 5,
+      "unfilledSlots": 0,
+      "requiredDistinct": 3,
+      "capHeld": true,
+      "floorHeld": true
+     }
+    },
+    "priorWeeksConsidered": 0,
+    "horizon": {
+     "key": "day",
+     "label": "1 day",
+     "days": 1,
+     "kind": "days",
+     "weeks": 1,
+     "custom": false,
+     "startDate": "2026-07-29",
+     "endDate": "2026-07-29",
+     "startDayOfWeek": 2,
+     "weeksWritten": 1,
+     "solveMs": 1,
+     "weekPlans": [
+      {
+       "startDate": "2026-07-27",
+       "dayIndices": [
+        2
+       ],
+       "days": 1,
+       "daysInTolerance": 0,
+       "avgMatch": 76,
+       "unfilledSlots": 0,
+       "poolSize": 63
+      }
+     ]
+    }
+   }
+  }
+ }
+}

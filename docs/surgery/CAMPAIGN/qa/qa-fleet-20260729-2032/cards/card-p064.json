@@ -1,0 +1,78 @@
+{
+  "personaId": "p064",
+  "satisfaction": 6,
+  "wouldRecommend": true,
+  "criteria": {
+    "macrosInRange": 6,
+    "worksEndToEnd": 7,
+    "mealsAreGood": 4,
+    "affordableAdjustable": 6,
+    "tasty": 4
+  },
+  "allergenRespect": {
+    "ok": true,
+    "leaks": []
+  },
+  "delights": [
+    "The day lands on my number: 3,694 kcal against a 3,688 target, and after I swapped a meal it re-landed at 3,677 (-11). Nobody had to re-solve anything for me.",
+    "Every slot is protein-dense - 'Classic Ground Beef & Broccoli with Potato' 67.3 g, 'Turkey Sausage & Potato' 73.7 g, 'Bacon & Eggs' 83.4 g, 'Jerky & Pork Rinds Snack Plate' 50.8 g - 275 g total, 2.22 g per kg of me. That is exactly how I think about food.",
+    "It shows its homework on protein instead of asserting it: 'Helms, Aragon & Fitschen (2014)' with the real citation 'J Int Soc Sports Nutr 11:20 - 2.3-3.1 g/kg fat-free mass/day' and a working URL."
+  ],
+  "defects": [
+    {
+      "what": "Two of my three meals are the same dish - same beef, same potato, same oil, same 15 min, same steps. Only the vegetable changes.",
+      "snippet": "'Classic Ground Beef & Broccoli with Potato' (Ground Beef 220g, Russet Potato 260g, Olive Oil 10g) and 'Classic Ground Beef & Bell Peppers with Potato' (Ground Beef 260g, Russet Potato 280g, Olive Oil 10g) - both steps: 'Cook the ground beef.'"
+    },
+    {
+      "what": "I asked for alternates specifically to get away from ground beef, and one of the three it offered me was ground beef again.",
+      "snippet": "alternate 1 of 3: 'Ground Beef' 225 g, Onion 55g, Carrots 60g"
+    },
+    {
+      "what": "The alternates arrive with no dish name at all - no name, cuisine, prep time or cost. I had to guess what I was being offered from a raw ingredient list.",
+      "snippet": "{\"recipeId\":\"cmrj2u27w06dxwlwspgv7jpbx\",\"warning\":null,\"proteinScale\":2,\"ingredients\":[{\"name\":\"Pork Chops\",...},{\"name\":\"Mustard\",\"grams\":50}]} - no name field anywhere"
+    },
+    {
+      "what": "Accepting an alternate by its id is rejected. I had to paste the entire ingredient list the server had just handed me back into the request before it would take the swap.",
+      "snippet": "PUT /api/plans/<id>/slots/<id>/apply with {recipeId, proteinScale, sidesScale} -> 400 {\"error\":\"a slot needs at least one ingredient\"}"
+    },
+    {
+      "what": "I am trying to gain weight and the app has no way to say so. My goal weight is 10.2 kg above my current weight, but every rate it offers is a loss rate.",
+      "snippet": "profile: startWeightKg 124.1, goalWeightKg 134.3, rateLbPerWeek 0.25 - and meta rateOptions: [0.25, 0.5, 0.75, 1, 1.25, 1.5, 2] with no negative or surplus option"
+    },
+    {
+      "what": "My profile records my body fat as zero percent, which is not a thing that exists, and body fat feeds the BMR maths.",
+      "snippet": "\"bodyFatPct\": 0, \"bodyFatSource\": null"
+    },
+    {
+      "what": "Fat is over half the day's calories and carbs are low for a man doing formwork all day plus four 60-minute weights sessions. One meal is nearly pure fat.",
+      "snippet": "day total F=213.1 g (52% of kcal) vs C=163.3 g (18%); 'Bacon & Eggs' alone = 83.4 g fat, 5.0 g carb"
+    },
+    {
+      "what": "Nothing tells me which meal is breakfast, lunch or dinner - every recipe's meal category is empty - so 120 g of bacon and roughly six eggs sits in the third slot of my day.",
+      "snippet": "'Bacon & Eggs' at slotIndex 2, \"mealCategory\": null on all four slots (Bacon, cooked 120g + Eggs, whole, cooked 300g)"
+    },
+    {
+      "what": "The salt load is heavy and the day has no fruit at all; the snack is also the single most expensive item on it.",
+      "snippet": "'Jerky & Pork Rinds Snack Plate' - Beef jerky 80g + Pork rinds 40g, costPerServing 6.75, alongside Bacon, cooked 120g"
+    },
+    {
+      "what": "Ingredient roles in the alternates are wrong, and one offer puts seed oil in a paleo plan - vegetable oil is the thing paleo is most known for cutting.",
+      "snippet": "{\"name\":\"Vegetable Oil\",\"role\":\"carb\",\"grams\":14} and {\"name\":\"Olive Oil\",\"role\":\"carb\",\"grams\":13}; also {\"name\":\"Parsley\",\"grams\":100} as a garnish"
+    },
+    {
+      "what": "The listed cost is the unscaled per-serving price, but my portions run 1.32x to 2x, so the day looks cheaper than it is.",
+      "snippet": "listed cost/day $23.68 while proteinScale runs 1.57, 2, 2, 1.32"
+    },
+    {
+      "what": "My plan carries no shopping list and is dated three days before today.",
+      "snippet": "\"groceryList\": null; \"startDate\": \"2026-07-27\""
+    }
+  ],
+  "followUp": {
+    "action": "I did not want ground beef twice in one day, so I asked for alternates on the second beef meal and swapped one in - I picked the turkey sausage option over the pork chops because the pork chop dish contained vegetable oil, which is not paleo.",
+    "endpoint": "POST /api/plans/cms6x0nwu020fwlw02slc1yqq/slots/cms6x0nww020jwlw0winp6sar/alternates then PUT /api/plans/cms6x0nwu020fwlw02slc1yqq/slots/cms6x0nww020jwlw0winp6sar/apply",
+    "status": 200,
+    "howItWent": "Alternates came back instantly and all three were clean of fish and dairy, but they had no dish names and the first apply failed with 400 'a slot needs at least one ingredient' until I echoed the full ingredient list back. Once it went through it was genuinely good: the slot became 'Turkey Sausage & Potato' (400g sausages, 340g baked potato, 205g cucumber), the server recomputed the macros itself, and the day stayed on target at 3,677 vs 3,688 while my carbs went up 84 g and the beef repeat was gone."
+  },
+  "verdict": "It kept fish and dairy off my plate completely and nailed my calories and protein, but it served me the same ground beef dinner twice, has no way to express that I am trying to gain weight, and the good day I ended up with is one I had to fix myself."
+}

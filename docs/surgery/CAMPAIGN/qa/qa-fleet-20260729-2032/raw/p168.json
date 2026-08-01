@@ -1,0 +1,584 @@
+{
+ "persona": {
+  "idx": 168,
+  "id": "p168",
+  "tier": "EASY",
+  "displayName": "retail cashier, 67",
+  "story": "retail cashier, 67, male, 191 cm / 111.8 kg (BMI 30.6), cut at 0.5 lb/wk, paleo diet, avoiding pork, balanced, 4 meals + 1 snacks, wants a single day",
+  "profile": {
+   "sex": "M",
+   "age": 67,
+   "heightCm": 191,
+   "startWeightKg": 111.8,
+   "goalWeightKg": 84.3,
+   "occupationKey": "cashier",
+   "trainingStyle": "cardio",
+   "minutesPerSession": 25,
+   "sessionsPerWeek": 2,
+   "rateLbPerWeek": 0.5,
+   "dietaryStyle": "paleo",
+   "excludedFoods": [
+    "pork"
+   ],
+   "mealsPerDay": 4,
+   "snacksPerDay": 1,
+   "unitPref": "imperial",
+   "bodyFatPct": 34,
+   "bodyFatSource": "visual-estimate",
+   "cuisinePreferences": [
+    "japanese",
+    "italian"
+   ]
+  },
+  "filters": {
+   "cuisines": [
+    "japanese",
+    "italian"
+   ]
+  },
+  "horizon": "day",
+  "walls": [
+   "pork"
+  ],
+  "freeTextExclusions": [
+   "pork"
+  ],
+  "dietaryStyle": "paleo",
+  "bmi": 30.6,
+  "goalKind": "cut",
+  "macroStyle": "balanced",
+  "requestedButUnsupported": [],
+  "tupleKey": "[\"EASY\",\"M\",67,191,111.8,84.3,\"cashier\",\"cardio\",0.5,\"paleo\",[\"pork\"],4,1,\"balanced\",\"day\",null,null,null,null,null]"
+ },
+ "request": {
+  "horizon": "day",
+  "filters": {
+   "cuisines": [
+    "japanese",
+    "italian"
+   ]
+  }
+ },
+ "profileResponse": {
+  "id": "cms6x1e22048nwlw0dzj4ueo2",
+  "userId": "cms6x1drp004iwl2om06q5eoj",
+  "sex": "M",
+  "age": 67,
+  "heightCm": 191,
+  "bodyFatPct": 34,
+  "bodyFatSource": "visual-estimate",
+  "occupationKey": "cashier",
+  "activityOverride": null,
+  "sessionsPerWeek": 2,
+  "trainingStyle": "cardio",
+  "minutesPerSession": 25,
+  "startWeightKg": 111.8,
+  "goalWeightKg": 84.3,
+  "startDate": "2026-07-29",
+  "unitPref": "imperial",
+  "rateLbPerWeek": 0.5,
+  "rateAcknowledged": false,
+  "floorKcal": null,
+  "excludedFormulas": [],
+  "targetKcal": 2503,
+  "mealsPerDay": 4,
+  "snacksPerDay": 1,
+  "excludedFoods": [
+   "pork"
+  ],
+  "dietaryStyle": "paleo",
+  "cuisinePreferences": [
+   "japanese",
+   "italian"
+  ],
+  "mealPreferencesNote": null,
+  "maxPrepMin": null,
+  "budgetTier": null,
+  "allowBatch": null,
+  "maxComplexity": null,
+  "adaptiveTdee": true,
+  "proteinPriorityMode": false,
+  "updatedAt": "2026-07-30T20:33:52.261Z"
+ },
+ "generate": {
+  "status": 200,
+  "ms": 729,
+  "body": {
+   "id": "cms7z1g7q03e5wlgwlsu5lmw0",
+   "userId": "cms6x1drp004iwl2om06q5eoj",
+   "startDate": "2026-07-27",
+   "createdAt": "2026-07-30T20:33:52.983Z",
+   "slots": [
+    {
+     "id": "cms7z1g7r03e7wlgwi9b036p1",
+     "planId": "cms7z1g7q03e5wlgwlsu5lmw0",
+     "dayOfWeek": 3,
+     "slotType": "meal",
+     "slotIndex": 0,
+     "recipeId": "cmrfn2w780030wlg49qus3ftp",
+     "proteinScale": 0.5,
+     "sidesScale": 0.57,
+     "ingredients": [
+      {
+       "foodId": "cmrevpclb0000wl5ghnno9i5f",
+       "name": "Chicken breast, cooked, skinless",
+       "role": "protein",
+       "grams": 100
+      },
+      {
+       "foodId": "cmrevpcn9000gwl5gw6adqo4o",
+       "name": "Perogies, boiled",
+       "role": "carb",
+       "grams": 170
+      }
+     ],
+     "kcal": 505,
+     "protein": 39.5,
+     "fat": 12.1,
+     "carb": 56.1,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrfn2w780030wlg49qus3ftp",
+      "name": "Grilled Chicken Breast & Perogies",
+      "description": null,
+      "steps": [
+       "Grill or pan-sear chicken breast.",
+       "Boil perogies 4-5 min until they float, or pan-fry in a little butter for crisp edges."
+      ],
+      "slotType": "meal",
+      "cuisine": "western-comfort",
+      "prepTimeMin": 15,
+      "source": "curated",
+      "mealCategory": null,
+      "kcal": 930,
+      "protein": 77,
+      "fat": 22.2,
+      "carb": 99,
+      "tasteTier": "really_good",
+      "tasteTierSource": "curated",
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 8.7,
+      "difficulty": 2,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-11T00:41:32.037Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z1g7u03e9wlgwp6ysevp8",
+     "planId": "cms7z1g7q03e5wlgwlsu5lmw0",
+     "dayOfWeek": 3,
+     "slotType": "meal",
+     "slotIndex": 1,
+     "recipeId": "cmrujkwuh009uwl9ohi26dm66",
+     "proteinScale": 0.93,
+     "sidesScale": 1.45,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t7w3006lwlws4zdhow4d",
+       "name": "Chicken Breast",
+       "role": "protein",
+       "grams": 160
+      },
+      {
+       "foodId": "cmrj2t7fb004fwlws8ezof2dp",
+       "name": "Russet Potato",
+       "role": "carb",
+       "grams": 260
+      },
+      {
+       "foodId": "cmrevpcnh000iwl5gh2zjhyqe",
+       "name": "Bell peppers",
+       "role": "veg",
+       "grams": 115
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 10
+      }
+     ],
+     "kcal": 564.65,
+     "protein": 43.988,
+     "fat": 14.875,
+     "carb": 62.54,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrujkwuh009uwl9ohi26dm66",
+      "name": "Classic Chicken & Bell Peppers with Potato",
+      "description": null,
+      "steps": [
+       "Cook the chicken.",
+       "Serve with potato and bell peppers."
+      ],
+      "slotType": "meal",
+      "cuisine": "american",
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 489.8,
+      "protein": 43.784,
+      "fat": 14.928,
+      "carb": 43.31999999999999,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 6.31,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:00:06.858Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z1g7v03ebwlgwekkh9obr",
+     "planId": "cms7z1g7q03e5wlgwlsu5lmw0",
+     "dayOfWeek": 3,
+     "slotType": "meal",
+     "slotIndex": 2,
+     "recipeId": "cmrujkwvk00buwl9o5qzvdm2i",
+     "proteinScale": 2,
+     "sidesScale": 1.49,
+     "ingredients": [
+      {
+       "foodId": "cmrj2tbsj00m1wlwsfeuh3jsf",
+       "name": "flax eggs",
+       "role": "protein",
+       "grams": 300
+      },
+      {
+       "foodId": "cmrj2t7fb004fwlws8ezof2dp",
+       "name": "Russet Potato",
+       "role": "carb",
+       "grams": 270
+      },
+      {
+       "foodId": "cmrevpcnh000iwl5gh2zjhyqe",
+       "name": "Bell peppers",
+       "role": "veg",
+       "grams": 120
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 10
+      }
+     ],
+     "kcal": 548.7,
+     "protein": 40.401,
+     "fat": 10.711,
+     "carb": 72.06,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrujkwvk00buwl9o5qzvdm2i",
+      "name": "Classic Eggs & Bell Peppers with Potato",
+      "description": null,
+      "steps": [
+       "Cook the eggs.",
+       "Serve with potato and bell peppers."
+      ],
+      "slotType": "meal",
+      "cuisine": "american",
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 368.3,
+      "protein": 21.584,
+      "fat": 10.474,
+      "carb": 46.85999999999999,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 3.01,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:00:06.897Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z1g7v03efwlgwr7ls65yb",
+     "planId": "cms7z1g7q03e5wlgwlsu5lmw0",
+     "dayOfWeek": 3,
+     "slotType": "meal",
+     "slotIndex": 3,
+     "recipeId": "cmrul79vp006iwl808lg7km1w",
+     "proteinScale": 0.8,
+     "sidesScale": 2,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t7w3006lwlws4zdhow4d",
+       "name": "Chicken Breast",
+       "role": "protein",
+       "grams": 160
+      },
+      {
+       "foodId": "cmrj2t7fb004fwlws8ezof2dp",
+       "name": "Russet Potato",
+       "role": "carb",
+       "grams": 300
+      },
+      {
+       "foodId": "cmrj2t6na000ywlws9jek4w4z",
+       "name": "Broccoli",
+       "role": "veg",
+       "grams": 220
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 590.2,
+     "protein": 49.544,
+     "fat": 10.33,
+     "carb": 77.99399999999999,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrul79vp006iwl808lg7km1w",
+      "name": "High-Protein Chicken & Broccoli with Potato",
+      "description": null,
+      "steps": [
+       "Cook the chicken.",
+       "Serve over potato with broccoli."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 461.6,
+      "protein": 51.772,
+      "fat": 10.809,
+      "carb": 38.99699999999999,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 7.13,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:45:29.798Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z1g7x03ehwlgwr8rc1atx",
+     "planId": "cms7z1g7q03e5wlgwlsu5lmw0",
+     "dayOfWeek": 3,
+     "slotType": "snack",
+     "slotIndex": 0,
+     "recipeId": "cms7pjmks003ewlbkbzjiva2m",
+     "proteinScale": 1.55,
+     "sidesScale": 1.55,
+     "ingredients": [
+      {
+       "foodId": "cmrevpcm50006wl5g2u2bcspd",
+       "name": "Eggs, whole, cooked",
+       "role": "protein",
+       "grams": 185
+      },
+      {
+       "foodId": "cmrj2t6gd0003wlwss7jf3wzf",
+       "name": "Salt",
+       "role": "other",
+       "grams": 1
+      },
+      {
+       "foodId": "cmrj2t6tr001swlwsgjm8tehu",
+       "name": "Chilli Powder",
+       "role": "other",
+       "grams": 1
+      }
+     ],
+     "kcal": 289.57,
+     "protein": 24.185,
+     "fat": 20.493,
+     "carb": 2.532,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cms7pjmks003ewlbkbzjiva2m",
+      "name": "Hard-Boiled Eggs with Chilli Salt",
+      "description": null,
+      "steps": [
+       "Boil 8 minutes for a set yolk, then straight into cold water.",
+       "Peel and dip in chilli salt."
+      ],
+      "slotType": "snack",
+      "cuisine": "american",
+      "prepTimeMin": 12,
+      "source": "curated",
+      "mealCategory": null,
+      "kcal": 188.82,
+      "protein": 15.735,
+      "fat": 13.343,
+      "carb": 1.817,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": null,
+      "difficulty": 1,
+      "filterProvenance": null,
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-30T16:08:04.877Z",
+      "createdByUserId": null
+     }
+    }
+   ],
+   "groceryList": null,
+   "meta": {
+    "matchPct": 97,
+    "attempts": 1,
+    "score": {
+     "daysInTolerance": 1,
+     "avgMatch": 97,
+     "days": [
+      {
+       "dayOfWeek": 3,
+       "dayName": "Thursday",
+       "matchPct": 97,
+       "totals": {
+        "kcal": 2498,
+        "protein": 198,
+        "fat": 69,
+        "carb": 271
+       },
+       "kcalDeltaPct": -0.2,
+       "proteinShortPct": 0,
+       "fatOk": true,
+       "carbOk": true,
+       "inTolerance": true,
+       "miss": null,
+       "unfilledSlots": 0,
+       "warnedSlots": 0,
+       "windowIndex": 0,
+       "dayIndex": 0,
+       "key": "0:3"
+      }
+     ],
+     "totalDays": 1
+    },
+    "days": [
+     {
+      "dayOfWeek": 3,
+      "dayName": "Thursday",
+      "matchPct": 97,
+      "totals": {
+       "kcal": 2498,
+       "protein": 198,
+       "fat": 69,
+       "carb": 271
+      },
+      "kcalDeltaPct": -0.2,
+      "proteinShortPct": 0,
+      "fatOk": true,
+      "carbOk": true,
+      "inTolerance": true,
+      "miss": null,
+      "unfilledSlots": 0,
+      "warnedSlots": 0,
+      "windowIndex": 0,
+      "dayIndex": 0,
+      "key": "0:3"
+     }
+    ],
+    "diagnosis": null,
+    "poolCounts": {
+     "raw": 910,
+     "afterDiet": 148,
+     "afterPrep": 148,
+     "afterStack": 148,
+     "stackExplain": null
+    },
+    "variety": {
+     "mealEligible": 127,
+     "usableForSlot": 81,
+     "slotKcal": 570,
+     "snackEligible": 5,
+     "weeklyMealSlots": 28,
+     "weeklySnackSlots": 7,
+     "repeatCap": 2,
+     "distinctWeeks": 2.9,
+     "horizonWeeks": 1,
+     "sustainsHorizon": true,
+     "notes": [
+      "1 day: 5 distinct dish(es) across 5 filled slot(s); most-repeated dish appears 1x against a 2x cap for this horizon (2x per week)."
+     ],
+     "horizon": {
+      "weeks": 1,
+      "days": 1,
+      "perWeekCap": 2,
+      "horizonRepeatCap": 2,
+      "mealSlots": 4,
+      "snackSlots": 1,
+      "totalSlots": 5,
+      "distinctFloor": 3,
+      "distinctRecipes": 5,
+      "maxRepeat": 1,
+      "maxRepeatRecipeId": "cmrfn2w780030wlg49qus3ftp",
+      "lockedRepeatsOfMax": 0,
+      "filledSlots": 5,
+      "unfilledSlots": 0,
+      "requiredDistinct": 3,
+      "capHeld": true,
+      "floorHeld": true
+     }
+    },
+    "priorWeeksConsidered": 0,
+    "horizon": {
+     "key": "day",
+     "label": "1 day",
+     "days": 1,
+     "kind": "days",
+     "weeks": 1,
+     "custom": false,
+     "startDate": "2026-07-30",
+     "endDate": "2026-07-30",
+     "startDayOfWeek": 3,
+     "weeksWritten": 1,
+     "solveMs": 1,
+     "weekPlans": [
+      {
+       "startDate": "2026-07-27",
+       "dayIndices": [
+        3
+       ],
+       "days": 1,
+       "daysInTolerance": 1,
+       "avgMatch": 97,
+       "unfilledSlots": 0,
+       "poolSize": 148
+      }
+     ]
+    }
+   }
+  }
+ }
+}

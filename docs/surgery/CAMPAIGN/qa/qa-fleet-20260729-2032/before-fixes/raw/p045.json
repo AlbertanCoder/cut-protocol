@@ -1,0 +1,2552 @@
+{
+ "persona": {
+  "idx": 45,
+  "id": "p045",
+  "tier": "IMPOSSIBLE",
+  "displayName": "landscaper, 19",
+  "story": "wants 2 lb/wk off a small frame at the calorie floor, with gluten, dairy and soy all walled off and nothing over 15 minutes to cook",
+  "profile": {
+   "sex": "M",
+   "age": 19,
+   "heightCm": 174,
+   "startWeightKg": 92.7,
+   "goalWeightKg": 92.6,
+   "occupationKey": "landscaper",
+   "trainingStyle": "weights",
+   "minutesPerSession": 45,
+   "sessionsPerWeek": 3,
+   "rateLbPerWeek": 2,
+   "dietaryStyle": "vegetarian",
+   "excludedFoods": [
+    "shellfish",
+    "gluten",
+    "dairy",
+    "soy"
+   ],
+   "mealsPerDay": 3,
+   "snacksPerDay": 3,
+   "unitPref": "metric",
+   "cuisinePreferences": [
+    "japanese",
+    "american"
+   ],
+   "rateAcknowledged": true,
+   "floorKcal": 1500
+  },
+  "filters": {
+   "proteinPriority": true,
+   "cuisines": [
+    "japanese",
+    "american"
+   ],
+   "maxPrepMin": 15
+  },
+  "horizon": "week",
+  "walls": [
+   "shellfish",
+   "gluten",
+   "dairy",
+   "soy"
+  ],
+  "freeTextExclusions": [],
+  "dietaryStyle": "vegetarian",
+  "bmi": 30.6,
+  "goalKind": "recomp",
+  "macroStyle": "high-protein",
+  "requestedButUnsupported": [
+   "wanted protein set explicitly in g/lb; the API derives the protein band from LBM (1.14-1.25 g/lb) and accepts no client protein target — only the per-request proteinPriority filter",
+   "this request is mathematically unsatisfiable by design — a clear, fast, honest refusal is the pass condition, and a confident plan is a critical honesty defect"
+  ],
+  "impossibleKind": "floor-vs-rate",
+  "tupleKey": "[\"IMPOSSIBLE\",\"M\",19,174,92.7,92.6,\"landscaper\",\"weights\",2,\"vegetarian\",[\"dairy\",\"gluten\",\"shellfish\",\"soy\"],3,3,\"high-protein\",\"week\",15,null,true,null,\"floor-vs-rate\"]"
+ },
+ "request": {
+  "horizon": "week",
+  "filters": {
+   "proteinPriority": true,
+   "cuisines": [
+    "japanese",
+    "american"
+   ],
+   "maxPrepMin": 15
+  }
+ },
+ "profileResponse": {
+  "id": "cms6x0iwu01erwlw0rv9bc6di",
+  "userId": "cms6x0im50013wl2oc40p7hwt",
+  "sex": "M",
+  "age": 19,
+  "heightCm": 174,
+  "bodyFatPct": 0,
+  "bodyFatSource": null,
+  "occupationKey": "landscaper",
+  "activityOverride": null,
+  "sessionsPerWeek": 3,
+  "trainingStyle": "weights",
+  "minutesPerSession": 45,
+  "startWeightKg": 92.7,
+  "goalWeightKg": 92.6,
+  "startDate": "2026-07-29",
+  "unitPref": "metric",
+  "rateLbPerWeek": 2,
+  "rateAcknowledged": false,
+  "floorKcal": 1500,
+  "excludedFormulas": [],
+  "targetKcal": 2147,
+  "mealsPerDay": 3,
+  "snacksPerDay": 3,
+  "excludedFoods": [
+   "shellfish",
+   "gluten",
+   "dairy",
+   "soy"
+  ],
+  "dietaryStyle": "vegetarian",
+  "cuisinePreferences": [
+   "japanese",
+   "american"
+  ],
+  "mealPreferencesNote": null,
+  "maxPrepMin": null,
+  "budgetTier": null,
+  "allowBatch": null,
+  "maxComplexity": null,
+  "adaptiveTdee": true,
+  "proteinPriorityMode": false,
+  "updatedAt": "2026-07-30T02:49:24.641Z"
+ },
+ "generate": {
+  "status": 200,
+  "ms": 684,
+  "body": {
+   "id": "cms6x0ji901gtwlw0vpwkk46o",
+   "userId": "cms6x0im50013wl2oc40p7hwt",
+   "startDate": "2026-07-27",
+   "createdAt": "2026-07-30T02:49:25.186Z",
+   "slots": [
+    {
+     "id": "cms6x0jia01gvwlw0dfyggbae",
+     "planId": "cms6x0ji901gtwlw0vpwkk46o",
+     "dayOfWeek": 0,
+     "slotType": "meal",
+     "slotIndex": 0,
+     "recipeId": "cmrujkwvg00bowl9om7w4rqwf",
+     "proteinScale": 2,
+     "sidesScale": 0.93,
+     "ingredients": [
+      {
+       "foodId": "cmrj2tbsj00m1wlwsfeuh3jsf",
+       "name": "flax eggs",
+       "role": "protein",
+       "grams": 300
+      },
+      {
+       "foodId": "cmrj2t7fb004fwlws8ezof2dp",
+       "name": "Russet Potato",
+       "role": "carb",
+       "grams": 165
+      },
+      {
+       "foodId": "cmrj2t6na000ywlws9jek4w4z",
+       "name": "Broccoli",
+       "role": "veg",
+       "grams": 100
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 10
+      }
+     ],
+     "kcal": 442.75,
+     "protein": 39.0095,
+     "fat": 10.5545,
+     "carb": 48.66,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrujkwvg00bowl9om7w4rqwf",
+      "name": "Classic Eggs & Broccoli with Potato",
+      "description": null,
+      "steps": [
+       "Cook the eggs.",
+       "Serve with potato and broccoli."
+      ],
+      "slotType": "meal",
+      "cuisine": "american",
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 377.6,
+      "protein": 23.6,
+      "fat": 10.6,
+      "carb": 49,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 3.1,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:00:06.893Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x0jib01gxwlw0nmzierzs",
+     "planId": "cms6x0ji901gtwlw0vpwkk46o",
+     "dayOfWeek": 0,
+     "slotType": "meal",
+     "slotIndex": 1,
+     "recipeId": "cmrul79yw00bowl809ubij1m5",
+     "proteinScale": 1.44,
+     "sidesScale": 1.7,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t7t00067wlwsj23ngikm",
+       "name": "Egg White",
+       "role": "protein",
+       "grams": 375
+      },
+      {
+       "foodId": "cmrevpcn2000ewl5gmlyzu0vd",
+       "name": "White rice, cooked",
+       "role": "carb",
+       "grams": 185
+      },
+      {
+       "foodId": "cmrevpcnl000jwl5gnqnk630b",
+       "name": "Cucumber",
+       "role": "veg",
+       "grams": 155
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 507.25,
+     "protein": 46.0345,
+     "fat": 5.803,
+     "carb": 63.998,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrul79yw00bowl809ubij1m5",
+      "name": "High-Protein Egg White & Cucumber with Rice",
+      "description": null,
+      "steps": [
+       "Cook the egg white.",
+       "Serve over white rice with cucumber."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 340,
+      "protein": 31.3,
+      "fat": 5.5,
+      "carb": 38.9,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 2.85,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:45:29.912Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x0jid01gzwlw0xgz389wu",
+     "planId": "cms6x0ji901gtwlw0vpwkk46o",
+     "dayOfWeek": 0,
+     "slotType": "meal",
+     "slotIndex": 2,
+     "recipeId": "cmrul4e7d007iwl68jd6y2spq",
+     "proteinScale": 1.65,
+     "sidesScale": 1.81,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t7t00067wlwsj23ngikm",
+       "name": "Egg White",
+       "role": "protein",
+       "grams": 430
+      },
+      {
+       "foodId": "cmrevpcn2000ewl5gmlyzu0vd",
+       "name": "White rice, cooked",
+       "role": "carb",
+       "grams": 200
+      },
+      {
+       "foodId": "cmrevpcnh000iwl5gh2zjhyqe",
+       "name": "Bell peppers",
+       "role": "veg",
+       "grams": 145
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 586.45,
+     "protein": 52.86,
+     "fat": 6.035,
+     "carb": 74.848,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrul4e7d007iwl68jd6y2spq",
+      "name": "High-Protein Egg White & Bell Peppers with Rice",
+      "description": null,
+      "steps": [
+       "Cook the egg white.",
+       "Serve over white rice with bell peppers."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 355.8,
+      "protein": 31.6,
+      "fat": 5.6,
+      "carb": 41.7,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 3.01,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:43:15.434Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x0jie01h2wlw0hofqkujk",
+     "planId": "cms6x0ji901gtwlw0vpwkk46o",
+     "dayOfWeek": 0,
+     "slotType": "snack",
+     "slotIndex": 0,
+     "recipeId": null,
+     "proteinScale": 1,
+     "sidesScale": 1,
+     "ingredients": [],
+     "kcal": 0,
+     "protein": 0,
+     "fat": 0,
+     "carb": 0,
+     "warning": "No eligible snack recipe left for this slot.",
+     "locked": false,
+     "recipe": null
+    },
+    {
+     "id": "cms6x0jie01h5wlw05ezjfaon",
+     "planId": "cms6x0ji901gtwlw0vpwkk46o",
+     "dayOfWeek": 0,
+     "slotType": "snack",
+     "slotIndex": 1,
+     "recipeId": null,
+     "proteinScale": 1,
+     "sidesScale": 1,
+     "ingredients": [],
+     "kcal": 0,
+     "protein": 0,
+     "fat": 0,
+     "carb": 0,
+     "warning": "No eligible snack recipe left for this slot.",
+     "locked": false,
+     "recipe": null
+    },
+    {
+     "id": "cms6x0jif01h7wlw0pbm716vu",
+     "planId": "cms6x0ji901gtwlw0vpwkk46o",
+     "dayOfWeek": 0,
+     "slotType": "snack",
+     "slotIndex": 2,
+     "recipeId": null,
+     "proteinScale": 1,
+     "sidesScale": 1,
+     "ingredients": [],
+     "kcal": 0,
+     "protein": 0,
+     "fat": 0,
+     "carb": 0,
+     "warning": "No eligible snack recipe left for this slot.",
+     "locked": false,
+     "recipe": null
+    },
+    {
+     "id": "cms6x0jig01h9wlw0ky0ik4uj",
+     "planId": "cms6x0ji901gtwlw0vpwkk46o",
+     "dayOfWeek": 1,
+     "slotType": "meal",
+     "slotIndex": 0,
+     "recipeId": "cmrujkwvk00buwl9o5qzvdm2i",
+     "proteinScale": 2,
+     "sidesScale": 0.92,
+     "ingredients": [
+      {
+       "foodId": "cmrj2tbsj00m1wlwsfeuh3jsf",
+       "name": "flax eggs",
+       "role": "protein",
+       "grams": 300
+      },
+      {
+       "foodId": "cmrj2t7fb004fwlws8ezof2dp",
+       "name": "Russet Potato",
+       "role": "carb",
+       "grams": 165
+      },
+      {
+       "foodId": "cmrevpcnh000iwl5gh2zjhyqe",
+       "name": "Bell peppers",
+       "role": "veg",
+       "grams": 75
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 10
+      }
+     ],
+     "kcal": 435,
+     "protein": 37.1895,
+     "fat": 10.4395,
+     "carb": 46.88999999999999,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrujkwvk00buwl9o5qzvdm2i",
+      "name": "Classic Eggs & Bell Peppers with Potato",
+      "description": null,
+      "steps": [
+       "Cook the eggs.",
+       "Serve with potato and bell peppers."
+      ],
+      "slotType": "meal",
+      "cuisine": "american",
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 368.3,
+      "protein": 21.6,
+      "fat": 10.5,
+      "carb": 46.9,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 3.01,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:00:06.897Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x0jig01hbwlw0pmnnlceq",
+     "planId": "cms6x0ji901gtwlw0vpwkk46o",
+     "dayOfWeek": 1,
+     "slotType": "meal",
+     "slotIndex": 1,
+     "recipeId": "cmrul1drn003uwlk4s3twppva",
+     "proteinScale": 1.47,
+     "sidesScale": 1.53,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t7t00067wlwsj23ngikm",
+       "name": "Egg White",
+       "role": "protein",
+       "grams": 385
+      },
+      {
+       "foodId": "cmrevpcn2000ewl5gmlyzu0vd",
+       "name": "White rice, cooked",
+       "role": "carb",
+       "grams": 170
+      },
+      {
+       "foodId": "cmrg8zxar000lwli0qy2ovmx4",
+       "name": "Onion",
+       "role": "veg",
+       "grams": 90
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 513.75,
+     "protein": 46.775,
+     "fat": 5.6,
+     "carb": 65.092,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrul1drn003uwlk4s3twppva",
+      "name": "High-Protein Egg White & Onions with Rice",
+      "description": null,
+      "steps": [
+       "Cook the egg white.",
+       "Serve over white rice with onions."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 355,
+      "protein": 31.5,
+      "fat": 5.4,
+      "carb": 42.5,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 2.64,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:40:54.899Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x0jih01hdwlw0rriln0di",
+     "planId": "cms6x0ji901gtwlw0vpwkk46o",
+     "dayOfWeek": 1,
+     "slotType": "meal",
+     "slotIndex": 2,
+     "recipeId": "cmrul4e7h007owl68wk6sgpum",
+     "proteinScale": 1.5,
+     "sidesScale": 2,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t7t00067wlwsj23ngikm",
+       "name": "Egg White",
+       "role": "protein",
+       "grams": 390
+      },
+      {
+       "foodId": "cmrj2t88z0087wlwsmsmchxzb",
+       "name": "Quinoa",
+       "role": "carb",
+       "grams": 220
+      },
+      {
+       "foodId": "cmrg8zxar000lwli0qy2ovmx4",
+       "name": "Onion",
+       "role": "veg",
+       "grams": 120
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 571.5,
+     "protein": 52.73,
+     "fat": 9.344000000000001,
+     "carb": 67.272,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrul4e7h007owl68wk6sgpum",
+      "name": "High-Protein Egg White & Onions with Quinoa",
+      "description": null,
+      "steps": [
+       "Cook the egg white.",
+       "Serve over quinoa with onions."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 344,
+      "protein": 33.3,
+      "fat": 7.2,
+      "carb": 35.2,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 3.41,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:43:15.438Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x0jih01hfwlw0mfvwxo7n",
+     "planId": "cms6x0ji901gtwlw0vpwkk46o",
+     "dayOfWeek": 1,
+     "slotType": "snack",
+     "slotIndex": 0,
+     "recipeId": null,
+     "proteinScale": 1,
+     "sidesScale": 1,
+     "ingredients": [],
+     "kcal": 0,
+     "protein": 0,
+     "fat": 0,
+     "carb": 0,
+     "warning": "No eligible snack recipe left for this slot.",
+     "locked": false,
+     "recipe": null
+    },
+    {
+     "id": "cms6x0jii01hhwlw0ivieis6y",
+     "planId": "cms6x0ji901gtwlw0vpwkk46o",
+     "dayOfWeek": 1,
+     "slotType": "snack",
+     "slotIndex": 1,
+     "recipeId": null,
+     "proteinScale": 1,
+     "sidesScale": 1,
+     "ingredients": [],
+     "kcal": 0,
+     "protein": 0,
+     "fat": 0,
+     "carb": 0,
+     "warning": "No eligible snack recipe left for this slot.",
+     "locked": false,
+     "recipe": null
+    },
+    {
+     "id": "cms6x0jij01hjwlw0pso16p14",
+     "planId": "cms6x0ji901gtwlw0vpwkk46o",
+     "dayOfWeek": 1,
+     "slotType": "snack",
+     "slotIndex": 2,
+     "recipeId": null,
+     "proteinScale": 1,
+     "sidesScale": 1,
+     "ingredients": [],
+     "kcal": 0,
+     "protein": 0,
+     "fat": 0,
+     "carb": 0,
+     "warning": "No eligible snack recipe left for this slot.",
+     "locked": false,
+     "recipe": null
+    },
+    {
+     "id": "cms6x0jij01hlwlw0w58qtbuo",
+     "planId": "cms6x0ji901gtwlw0vpwkk46o",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 0,
+     "recipeId": "cmrujkwva00bcwl9o5zlcp7uy",
+     "proteinScale": 2,
+     "sidesScale": 0.75,
+     "ingredients": [
+      {
+       "foodId": "cmrj2tbsj00m1wlwsfeuh3jsf",
+       "name": "flax eggs",
+       "role": "protein",
+       "grams": 300
+      },
+      {
+       "foodId": "cmrevpcn2000ewl5gmlyzu0vd",
+       "name": "White rice, cooked",
+       "role": "carb",
+       "grams": 120
+      },
+      {
+       "foodId": "cmrj2t6na000ywlws9jek4w4z",
+       "name": "Broccoli",
+       "role": "veg",
+       "grams": 85
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 10
+      }
+     ],
+     "kcal": 437.35,
+     "protein": 37.5245,
+     "fat": 10.649,
+     "carb": 46.0095,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrujkwva00bcwl9o5zlcp7uy",
+      "name": "Classic Eggs & Broccoli with Rice",
+      "description": null,
+      "steps": [
+       "Cook the eggs.",
+       "Serve with white rice and broccoli."
+      ],
+      "slotType": "meal",
+      "cuisine": "american",
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 414.6,
+      "protein": 23.2,
+      "fat": 10.9,
+      "carb": 55.2,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 3.03,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:00:06.887Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x0jik01hnwlw0tn3n4hdr",
+     "planId": "cms6x0ji901gtwlw0vpwkk46o",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 1,
+     "recipeId": "cmrul79z000buwl80q9shge3z",
+     "proteinScale": 1.28,
+     "sidesScale": 2,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t7t00067wlwsj23ngikm",
+       "name": "Egg White",
+       "role": "protein",
+       "grams": 335
+      },
+      {
+       "foodId": "cmrj2t88z0087wlwsmsmchxzb",
+       "name": "Quinoa",
+       "role": "carb",
+       "grams": 220
+      },
+      {
+       "foodId": "cmrevpcnl000jwl5gnqnk630b",
+       "name": "Cucumber",
+       "role": "veg",
+       "grams": 180
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 511.25,
+     "protein": 46.587,
+     "fat": 9.512,
+     "carb": 58.654,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrul79z000buwl80q9shge3z",
+      "name": "High-Protein Egg White & Cucumber with Quinoa",
+      "description": null,
+      "steps": [
+       "Cook the egg white.",
+       "Serve over quinoa with cucumber."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 329,
+      "protein": 33.2,
+      "fat": 7.3,
+      "carb": 31.5,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 3.62,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:45:29.916Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x0jik01hpwlw082hz4kkd",
+     "planId": "cms6x0ji901gtwlw0vpwkk46o",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 2,
+     "recipeId": "cmrujkwvg00bowl9om7w4rqwf",
+     "proteinScale": 2,
+     "sidesScale": 1.34,
+     "ingredients": [
+      {
+       "foodId": "cmrj2tbsj00m1wlwsfeuh3jsf",
+       "name": "flax eggs",
+       "role": "protein",
+       "grams": 300
+      },
+      {
+       "foodId": "cmrj2t7fb004fwlws8ezof2dp",
+       "name": "Russet Potato",
+       "role": "carb",
+       "grams": 240
+      },
+      {
+       "foodId": "cmrj2t6na000ywlws9jek4w4z",
+       "name": "Broccoli",
+       "role": "veg",
+       "grams": 145
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 10
+      }
+     ],
+     "kcal": 527.95,
+     "protein": 42.13849999999999,
+     "fat": 10.805,
+     "carb": 67.5315,
+     "warning": "Tried 5 recipe(s) for this slot, none fit within tolerance — closest was \"Classic Eggs & Broccoli with Potato\" (delivered 42g protein vs a 53g target).",
+     "locked": false,
+     "recipe": {
+      "id": "cmrujkwvg00bowl9om7w4rqwf",
+      "name": "Classic Eggs & Broccoli with Potato",
+      "description": null,
+      "steps": [
+       "Cook the eggs.",
+       "Serve with potato and broccoli."
+      ],
+      "slotType": "meal",
+      "cuisine": "american",
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 377.6,
+      "protein": 23.6,
+      "fat": 10.6,
+      "carb": 49,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 3.1,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:00:06.893Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x0jil01hrwlw05skduhr9",
+     "planId": "cms6x0ji901gtwlw0vpwkk46o",
+     "dayOfWeek": 2,
+     "slotType": "snack",
+     "slotIndex": 0,
+     "recipeId": null,
+     "proteinScale": 1,
+     "sidesScale": 1,
+     "ingredients": [],
+     "kcal": 0,
+     "protein": 0,
+     "fat": 0,
+     "carb": 0,
+     "warning": "No eligible snack recipe left for this slot.",
+     "locked": false,
+     "recipe": null
+    },
+    {
+     "id": "cms6x0jil01htwlw0l8e77bob",
+     "planId": "cms6x0ji901gtwlw0vpwkk46o",
+     "dayOfWeek": 2,
+     "slotType": "snack",
+     "slotIndex": 1,
+     "recipeId": null,
+     "proteinScale": 1,
+     "sidesScale": 1,
+     "ingredients": [],
+     "kcal": 0,
+     "protein": 0,
+     "fat": 0,
+     "carb": 0,
+     "warning": "No eligible snack recipe left for this slot.",
+     "locked": false,
+     "recipe": null
+    },
+    {
+     "id": "cms6x0jim01hvwlw0g8dlr2mx",
+     "planId": "cms6x0ji901gtwlw0vpwkk46o",
+     "dayOfWeek": 2,
+     "slotType": "snack",
+     "slotIndex": 2,
+     "recipeId": null,
+     "proteinScale": 1,
+     "sidesScale": 1,
+     "ingredients": [],
+     "kcal": 0,
+     "protein": 0,
+     "fat": 0,
+     "carb": 0,
+     "warning": "No eligible snack recipe left for this slot.",
+     "locked": false,
+     "recipe": null
+    },
+    {
+     "id": "cms6x0jim01hxwlw087krqcbv",
+     "planId": "cms6x0ji901gtwlw0vpwkk46o",
+     "dayOfWeek": 3,
+     "slotType": "meal",
+     "slotIndex": 0,
+     "recipeId": "cmrujhgyd001mwlbo1yhlk5mq",
+     "proteinScale": 2,
+     "sidesScale": 1.08,
+     "ingredients": [
+      {
+       "foodId": "cmrj2tbsj00m1wlwsfeuh3jsf",
+       "name": "flax eggs",
+       "role": "protein",
+       "grams": 300
+      },
+      {
+       "foodId": "cmrj2t6na000ywlws9jek4w4z",
+       "name": "Broccoli",
+       "role": "veg",
+       "grams": 85
+      },
+      {
+       "foodId": "cmrevpcn2000ewl5gmlyzu0vd",
+       "name": "White rice, cooked",
+       "role": "carb",
+       "grams": 130
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 9
+      }
+     ],
+     "kcal": 441.35,
+     "protein": 37.79449999999999,
+     "fat": 9.679,
+     "carb": 48.8095,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrujhgyd001mwlbo1yhlk5mq",
+      "name": "Egg & Spinach Scramble",
+      "description": null,
+      "steps": [
+       "Scramble eggs with greens.",
+       "Serve with rice."
+      ],
+      "slotType": "meal",
+      "cuisine": "american",
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 335.3,
+      "protein": 21.3,
+      "fat": 8.6,
+      "carb": 42.2,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 2.72,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T10:57:26.294Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x0jin01hzwlw0gb2cmros",
+     "planId": "cms6x0ji901gtwlw0vpwkk46o",
+     "dayOfWeek": 3,
+     "slotType": "meal",
+     "slotIndex": 1,
+     "recipeId": "cmrul1drj003owlk4da3a1214",
+     "proteinScale": 1.4,
+     "sidesScale": 1.58,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t7t00067wlwsj23ngikm",
+       "name": "Egg White",
+       "role": "protein",
+       "grams": 365
+      },
+      {
+       "foodId": "cmrj2t7fb004fwlws8ezof2dp",
+       "name": "Russet Potato",
+       "role": "carb",
+       "grams": 235
+      },
+      {
+       "foodId": "cmrevpcnh000iwl5gh2zjhyqe",
+       "name": "Bell peppers",
+       "role": "veg",
+       "grams": 125
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 507.75,
+     "protein": 46.4855,
+     "fat": 5.6805,
+     "carb": 66.404,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrul1drj003owlk4da3a1214",
+      "name": "High-Protein Egg White & Bell Peppers with Potato",
+      "description": null,
+      "steps": [
+       "Cook the egg white.",
+       "Serve over potato with bell peppers."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 355.3,
+      "protein": 32.6,
+      "fat": 5.4,
+      "carb": 43,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 3.13,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:40:54.896Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x0jm301i1wlw01vo830sw",
+     "planId": "cms6x0ji901gtwlw0vpwkk46o",
+     "dayOfWeek": 3,
+     "slotType": "meal",
+     "slotIndex": 2,
+     "recipeId": "cmrul79z400c0wl8064gi62w8",
+     "proteinScale": 1.33,
+     "sidesScale": 2,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t7t00067wlwsj23ngikm",
+       "name": "Egg White",
+       "role": "protein",
+       "grams": 345
+      },
+      {
+       "foodId": "cmrj2t88z0087wlwsmsmchxzb",
+       "name": "Quinoa",
+       "role": "carb",
+       "grams": 220
+      },
+      {
+       "foodId": "cmrj2t6na000ywlws9jek4w4z",
+       "name": "Broccoli",
+       "role": "veg",
+       "grams": 220
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 566.95,
+     "protein": 52.249,
+     "fat": 9.972000000000001,
+     "carb": 68.796,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrul79z400c0wl8064gi62w8",
+      "name": "High-Protein Egg White & Broccoli with Quinoa",
+      "description": null,
+      "steps": [
+       "Cook the egg white.",
+       "Serve over quinoa with broccoli."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 354.1,
+      "protein": 35.5,
+      "fat": 7.5,
+      "carb": 36.5,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 3.86,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:45:29.920Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x0jm401i3wlw03lzlmbbz",
+     "planId": "cms6x0ji901gtwlw0vpwkk46o",
+     "dayOfWeek": 3,
+     "slotType": "snack",
+     "slotIndex": 0,
+     "recipeId": null,
+     "proteinScale": 1,
+     "sidesScale": 1,
+     "ingredients": [],
+     "kcal": 0,
+     "protein": 0,
+     "fat": 0,
+     "carb": 0,
+     "warning": "No eligible snack recipe left for this slot.",
+     "locked": false,
+     "recipe": null
+    },
+    {
+     "id": "cms6x0jm401i5wlw01x5m81ak",
+     "planId": "cms6x0ji901gtwlw0vpwkk46o",
+     "dayOfWeek": 3,
+     "slotType": "snack",
+     "slotIndex": 1,
+     "recipeId": null,
+     "proteinScale": 1,
+     "sidesScale": 1,
+     "ingredients": [],
+     "kcal": 0,
+     "protein": 0,
+     "fat": 0,
+     "carb": 0,
+     "warning": "No eligible snack recipe left for this slot.",
+     "locked": false,
+     "recipe": null
+    },
+    {
+     "id": "cms6x0jmp01i7wlw0mtdyceic",
+     "planId": "cms6x0ji901gtwlw0vpwkk46o",
+     "dayOfWeek": 3,
+     "slotType": "snack",
+     "slotIndex": 2,
+     "recipeId": null,
+     "proteinScale": 1,
+     "sidesScale": 1,
+     "ingredients": [],
+     "kcal": 0,
+     "protein": 0,
+     "fat": 0,
+     "carb": 0,
+     "warning": "No eligible snack recipe left for this slot.",
+     "locked": false,
+     "recipe": null
+    },
+    {
+     "id": "cms6x0jmq01i9wlw02741sajn",
+     "planId": "cms6x0ji901gtwlw0vpwkk46o",
+     "dayOfWeek": 4,
+     "slotType": "meal",
+     "slotIndex": 0,
+     "recipeId": "cmrujhgyd001mwlbo1yhlk5mq",
+     "proteinScale": 2,
+     "sidesScale": 1.08,
+     "ingredients": [
+      {
+       "foodId": "cmrj2tbsj00m1wlwsfeuh3jsf",
+       "name": "flax eggs",
+       "role": "protein",
+       "grams": 300
+      },
+      {
+       "foodId": "cmrj2t6na000ywlws9jek4w4z",
+       "name": "Broccoli",
+       "role": "veg",
+       "grams": 85
+      },
+      {
+       "foodId": "cmrevpcn2000ewl5gmlyzu0vd",
+       "name": "White rice, cooked",
+       "role": "carb",
+       "grams": 130
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 9
+      }
+     ],
+     "kcal": 441.35,
+     "protein": 37.79449999999999,
+     "fat": 9.679,
+     "carb": 48.8095,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrujhgyd001mwlbo1yhlk5mq",
+      "name": "Egg & Spinach Scramble",
+      "description": null,
+      "steps": [
+       "Scramble eggs with greens.",
+       "Serve with rice."
+      ],
+      "slotType": "meal",
+      "cuisine": "american",
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 335.3,
+      "protein": 21.3,
+      "fat": 8.6,
+      "carb": 42.2,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 2.72,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T10:57:26.294Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x0jmr01ibwlw07m2btppb",
+     "planId": "cms6x0ji901gtwlw0vpwkk46o",
+     "dayOfWeek": 4,
+     "slotType": "meal",
+     "slotIndex": 1,
+     "recipeId": "cmrul4e7d007iwl68jd6y2spq",
+     "proteinScale": 1.46,
+     "sidesScale": 1.52,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t7t00067wlwsj23ngikm",
+       "name": "Egg White",
+       "role": "protein",
+       "grams": 380
+      },
+      {
+       "foodId": "cmrevpcn2000ewl5gmlyzu0vd",
+       "name": "White rice, cooked",
+       "role": "carb",
+       "grams": 165
+      },
+      {
+       "foodId": "cmrevpcnh000iwl5gh2zjhyqe",
+       "name": "Bell peppers",
+       "role": "veg",
+       "grams": 120
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 505.7,
+     "protein": 46.315,
+     "fat": 5.855,
+     "carb": 62.36799999999999,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrul4e7d007iwl68jd6y2spq",
+      "name": "High-Protein Egg White & Bell Peppers with Rice",
+      "description": null,
+      "steps": [
+       "Cook the egg white.",
+       "Serve over white rice with bell peppers."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 355.8,
+      "protein": 31.6,
+      "fat": 5.6,
+      "carb": 41.7,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 3.01,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:43:15.434Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x0jms01idwlw0dhptnafz",
+     "planId": "cms6x0ji901gtwlw0vpwkk46o",
+     "dayOfWeek": 4,
+     "slotType": "meal",
+     "slotIndex": 2,
+     "recipeId": "cmrul1drn003uwlk4s3twppva",
+     "proteinScale": 1.68,
+     "sidesScale": 1.81,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t7t00067wlwsj23ngikm",
+       "name": "Egg White",
+       "role": "protein",
+       "grams": 435
+      },
+      {
+       "foodId": "cmrevpcn2000ewl5gmlyzu0vd",
+       "name": "White rice, cooked",
+       "role": "carb",
+       "grams": 200
+      },
+      {
+       "foodId": "cmrg8zxar000lwli0qy2ovmx4",
+       "name": "Onion",
+       "role": "veg",
+       "grams": 110
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 588.25,
+     "protein": 53.15499999999999,
+     "fat": 5.71,
+     "carb": 76.53999999999999,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrul1drn003uwlk4s3twppva",
+      "name": "High-Protein Egg White & Onions with Rice",
+      "description": null,
+      "steps": [
+       "Cook the egg white.",
+       "Serve over white rice with onions."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 355,
+      "protein": 31.5,
+      "fat": 5.4,
+      "carb": 42.5,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 2.64,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:40:54.899Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x0jms01ifwlw0t13xke5k",
+     "planId": "cms6x0ji901gtwlw0vpwkk46o",
+     "dayOfWeek": 4,
+     "slotType": "snack",
+     "slotIndex": 0,
+     "recipeId": null,
+     "proteinScale": 1,
+     "sidesScale": 1,
+     "ingredients": [],
+     "kcal": 0,
+     "protein": 0,
+     "fat": 0,
+     "carb": 0,
+     "warning": "No eligible snack recipe left for this slot.",
+     "locked": false,
+     "recipe": null
+    },
+    {
+     "id": "cms6x0jmt01ihwlw0sllrfais",
+     "planId": "cms6x0ji901gtwlw0vpwkk46o",
+     "dayOfWeek": 4,
+     "slotType": "snack",
+     "slotIndex": 1,
+     "recipeId": null,
+     "proteinScale": 1,
+     "sidesScale": 1,
+     "ingredients": [],
+     "kcal": 0,
+     "protein": 0,
+     "fat": 0,
+     "carb": 0,
+     "warning": "No eligible snack recipe left for this slot.",
+     "locked": false,
+     "recipe": null
+    },
+    {
+     "id": "cms6x0jmt01ijwlw0509c2vlc",
+     "planId": "cms6x0ji901gtwlw0vpwkk46o",
+     "dayOfWeek": 4,
+     "slotType": "snack",
+     "slotIndex": 2,
+     "recipeId": null,
+     "proteinScale": 1,
+     "sidesScale": 1,
+     "ingredients": [],
+     "kcal": 0,
+     "protein": 0,
+     "fat": 0,
+     "carb": 0,
+     "warning": "No eligible snack recipe left for this slot.",
+     "locked": false,
+     "recipe": null
+    },
+    {
+     "id": "cms6x0jmu01ilwlw0bjurxkw2",
+     "planId": "cms6x0ji901gtwlw0vpwkk46o",
+     "dayOfWeek": 5,
+     "slotType": "meal",
+     "slotIndex": 0,
+     "recipeId": "cmrujkwvk00buwl9o5qzvdm2i",
+     "proteinScale": 2,
+     "sidesScale": 0.92,
+     "ingredients": [
+      {
+       "foodId": "cmrj2tbsj00m1wlwsfeuh3jsf",
+       "name": "flax eggs",
+       "role": "protein",
+       "grams": 300
+      },
+      {
+       "foodId": "cmrj2t7fb004fwlws8ezof2dp",
+       "name": "Russet Potato",
+       "role": "carb",
+       "grams": 165
+      },
+      {
+       "foodId": "cmrevpcnh000iwl5gh2zjhyqe",
+       "name": "Bell peppers",
+       "role": "veg",
+       "grams": 75
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 10
+      }
+     ],
+     "kcal": 435,
+     "protein": 37.1895,
+     "fat": 10.4395,
+     "carb": 46.88999999999999,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrujkwvk00buwl9o5qzvdm2i",
+      "name": "Classic Eggs & Bell Peppers with Potato",
+      "description": null,
+      "steps": [
+       "Cook the eggs.",
+       "Serve with potato and bell peppers."
+      ],
+      "slotType": "meal",
+      "cuisine": "american",
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 368.3,
+      "protein": 21.6,
+      "fat": 10.5,
+      "carb": 46.9,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 3.01,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:00:06.897Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x0jmv01inwlw0pkhtpb4u",
+     "planId": "cms6x0ji901gtwlw0vpwkk46o",
+     "dayOfWeek": 5,
+     "slotType": "meal",
+     "slotIndex": 1,
+     "recipeId": "cmrul79yw00bowl809ubij1m5",
+     "proteinScale": 1.46,
+     "sidesScale": 1.69,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t7t00067wlwsj23ngikm",
+       "name": "Egg White",
+       "role": "protein",
+       "grams": 380
+      },
+      {
+       "foodId": "cmrevpcn2000ewl5gmlyzu0vd",
+       "name": "White rice, cooked",
+       "role": "carb",
+       "grams": 185
+      },
+      {
+       "foodId": "cmrevpcnl000jwl5gnqnk630b",
+       "name": "Cucumber",
+       "role": "veg",
+       "grams": 150
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 509.5,
+     "protein": 46.54,
+     "fat": 5.795,
+     "carb": 64.008,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrul79yw00bowl809ubij1m5",
+      "name": "High-Protein Egg White & Cucumber with Rice",
+      "description": null,
+      "steps": [
+       "Cook the egg white.",
+       "Serve over white rice with cucumber."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 340,
+      "protein": 31.3,
+      "fat": 5.5,
+      "carb": 38.9,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 2.85,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:45:29.912Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x0jmw01ipwlw0xu5inhud",
+     "planId": "cms6x0ji901gtwlw0vpwkk46o",
+     "dayOfWeek": 5,
+     "slotType": "meal",
+     "slotIndex": 2,
+     "recipeId": "cmrul4e7h007owl68wk6sgpum",
+     "proteinScale": 1.51,
+     "sidesScale": 2,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t7t00067wlwsj23ngikm",
+       "name": "Egg White",
+       "role": "protein",
+       "grams": 390
+      },
+      {
+       "foodId": "cmrj2t88z0087wlwsmsmchxzb",
+       "name": "Quinoa",
+       "role": "carb",
+       "grams": 220
+      },
+      {
+       "foodId": "cmrg8zxar000lwli0qy2ovmx4",
+       "name": "Onion",
+       "role": "veg",
+       "grams": 120
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 571.5,
+     "protein": 52.73,
+     "fat": 9.344000000000001,
+     "carb": 67.272,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrul4e7h007owl68wk6sgpum",
+      "name": "High-Protein Egg White & Onions with Quinoa",
+      "description": null,
+      "steps": [
+       "Cook the egg white.",
+       "Serve over quinoa with onions."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 344,
+      "protein": 33.3,
+      "fat": 7.2,
+      "carb": 35.2,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 3.41,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:43:15.438Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x0jmx01irwlw0ebkm6bga",
+     "planId": "cms6x0ji901gtwlw0vpwkk46o",
+     "dayOfWeek": 5,
+     "slotType": "snack",
+     "slotIndex": 0,
+     "recipeId": null,
+     "proteinScale": 1,
+     "sidesScale": 1,
+     "ingredients": [],
+     "kcal": 0,
+     "protein": 0,
+     "fat": 0,
+     "carb": 0,
+     "warning": "No eligible snack recipe left for this slot.",
+     "locked": false,
+     "recipe": null
+    },
+    {
+     "id": "cms6x0jmx01itwlw05h8frtn5",
+     "planId": "cms6x0ji901gtwlw0vpwkk46o",
+     "dayOfWeek": 5,
+     "slotType": "snack",
+     "slotIndex": 1,
+     "recipeId": null,
+     "proteinScale": 1,
+     "sidesScale": 1,
+     "ingredients": [],
+     "kcal": 0,
+     "protein": 0,
+     "fat": 0,
+     "carb": 0,
+     "warning": "No eligible snack recipe left for this slot.",
+     "locked": false,
+     "recipe": null
+    },
+    {
+     "id": "cms6x0jmy01ivwlw0dh3nia88",
+     "planId": "cms6x0ji901gtwlw0vpwkk46o",
+     "dayOfWeek": 5,
+     "slotType": "snack",
+     "slotIndex": 2,
+     "recipeId": null,
+     "proteinScale": 1,
+     "sidesScale": 1,
+     "ingredients": [],
+     "kcal": 0,
+     "protein": 0,
+     "fat": 0,
+     "carb": 0,
+     "warning": "No eligible snack recipe left for this slot.",
+     "locked": false,
+     "recipe": null
+    },
+    {
+     "id": "cms6x0jmy01ixwlw0gbf1s4yk",
+     "planId": "cms6x0ji901gtwlw0vpwkk46o",
+     "dayOfWeek": 6,
+     "slotType": "meal",
+     "slotIndex": 0,
+     "recipeId": "cmrujkwva00bcwl9o5zlcp7uy",
+     "proteinScale": 2,
+     "sidesScale": 0.75,
+     "ingredients": [
+      {
+       "foodId": "cmrj2tbsj00m1wlwsfeuh3jsf",
+       "name": "flax eggs",
+       "role": "protein",
+       "grams": 300
+      },
+      {
+       "foodId": "cmrevpcn2000ewl5gmlyzu0vd",
+       "name": "White rice, cooked",
+       "role": "carb",
+       "grams": 120
+      },
+      {
+       "foodId": "cmrj2t6na000ywlws9jek4w4z",
+       "name": "Broccoli",
+       "role": "veg",
+       "grams": 85
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 10
+      }
+     ],
+     "kcal": 437.35,
+     "protein": 37.5245,
+     "fat": 10.649,
+     "carb": 46.0095,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrujkwva00bcwl9o5zlcp7uy",
+      "name": "Classic Eggs & Broccoli with Rice",
+      "description": null,
+      "steps": [
+       "Cook the eggs.",
+       "Serve with white rice and broccoli."
+      ],
+      "slotType": "meal",
+      "cuisine": "american",
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 414.6,
+      "protein": 23.2,
+      "fat": 10.9,
+      "carb": 55.2,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 3.03,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:00:06.887Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x0jmz01izwlw0qpwki0re",
+     "planId": "cms6x0ji901gtwlw0vpwkk46o",
+     "dayOfWeek": 6,
+     "slotType": "meal",
+     "slotIndex": 1,
+     "recipeId": "cmrul1drj003owlk4da3a1214",
+     "proteinScale": 1.4,
+     "sidesScale": 1.59,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t7t00067wlwsj23ngikm",
+       "name": "Egg White",
+       "role": "protein",
+       "grams": 365
+      },
+      {
+       "foodId": "cmrj2t7fb004fwlws8ezof2dp",
+       "name": "Russet Potato",
+       "role": "carb",
+       "grams": 240
+      },
+      {
+       "foodId": "cmrevpcnh000iwl5gh2zjhyqe",
+       "name": "Bell peppers",
+       "role": "veg",
+       "grams": 125
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 512.5,
+     "protein": 46.617,
+     "fat": 5.687,
+     "carb": 67.47399999999999,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrul1drj003owlk4da3a1214",
+      "name": "High-Protein Egg White & Bell Peppers with Potato",
+      "description": null,
+      "steps": [
+       "Cook the egg white.",
+       "Serve over potato with bell peppers."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 355.3,
+      "protein": 32.6,
+      "fat": 5.4,
+      "carb": 43,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 3.13,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:40:54.896Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x0jn001j1wlw00ufx0kwq",
+     "planId": "cms6x0ji901gtwlw0vpwkk46o",
+     "dayOfWeek": 6,
+     "slotType": "meal",
+     "slotIndex": 2,
+     "recipeId": "cmrul79z400c0wl8064gi62w8",
+     "proteinScale": 1.33,
+     "sidesScale": 2,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t7t00067wlwsj23ngikm",
+       "name": "Egg White",
+       "role": "protein",
+       "grams": 345
+      },
+      {
+       "foodId": "cmrj2t88z0087wlwsmsmchxzb",
+       "name": "Quinoa",
+       "role": "carb",
+       "grams": 220
+      },
+      {
+       "foodId": "cmrj2t6na000ywlws9jek4w4z",
+       "name": "Broccoli",
+       "role": "veg",
+       "grams": 220
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 566.95,
+     "protein": 52.249,
+     "fat": 9.972000000000001,
+     "carb": 68.796,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrul79z400c0wl8064gi62w8",
+      "name": "High-Protein Egg White & Broccoli with Quinoa",
+      "description": null,
+      "steps": [
+       "Cook the egg white.",
+       "Serve over quinoa with broccoli."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 354.1,
+      "protein": 35.5,
+      "fat": 7.5,
+      "carb": 36.5,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 3.86,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:45:29.920Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x0jn001j3wlw092sp5hfv",
+     "planId": "cms6x0ji901gtwlw0vpwkk46o",
+     "dayOfWeek": 6,
+     "slotType": "snack",
+     "slotIndex": 0,
+     "recipeId": null,
+     "proteinScale": 1,
+     "sidesScale": 1,
+     "ingredients": [],
+     "kcal": 0,
+     "protein": 0,
+     "fat": 0,
+     "carb": 0,
+     "warning": "No eligible snack recipe left for this slot.",
+     "locked": false,
+     "recipe": null
+    },
+    {
+     "id": "cms6x0jn101j5wlw0m4qi31ya",
+     "planId": "cms6x0ji901gtwlw0vpwkk46o",
+     "dayOfWeek": 6,
+     "slotType": "snack",
+     "slotIndex": 1,
+     "recipeId": null,
+     "proteinScale": 1,
+     "sidesScale": 1,
+     "ingredients": [],
+     "kcal": 0,
+     "protein": 0,
+     "fat": 0,
+     "carb": 0,
+     "warning": "No eligible snack recipe left for this slot.",
+     "locked": false,
+     "recipe": null
+    },
+    {
+     "id": "cms6x0jn101j7wlw0fbaom5wf",
+     "planId": "cms6x0ji901gtwlw0vpwkk46o",
+     "dayOfWeek": 6,
+     "slotType": "snack",
+     "slotIndex": 2,
+     "recipeId": null,
+     "proteinScale": 1,
+     "sidesScale": 1,
+     "ingredients": [],
+     "kcal": 0,
+     "protein": 0,
+     "fat": 0,
+     "carb": 0,
+     "warning": "No eligible snack recipe left for this slot.",
+     "locked": false,
+     "recipe": null
+    }
+   ],
+   "groceryList": null,
+   "meta": {
+    "matchPct": 66,
+    "attempts": 5,
+    "score": {
+     "daysInTolerance": 0,
+     "avgMatch": 66,
+     "days": [
+      {
+       "dayOfWeek": 0,
+       "dayName": "Monday",
+       "matchPct": 66,
+       "totals": {
+        "kcal": 1536,
+        "protein": 138,
+        "fat": 22,
+        "carb": 188
+       },
+       "kcalDeltaPct": -28.4,
+       "proteinShortPct": 28.5,
+       "fatOk": false,
+       "carbOk": true,
+       "inTolerance": false,
+       "miss": "1,536 kcal vs a 2,147 target — 611 under; 138 g protein vs 193 g — 55 g short; 22 g fat vs a 55–65 g range — 33 g short",
+       "unfilledSlots": 3,
+       "warnedSlots": 3,
+       "proteinFloor": {
+        "met": false,
+        "floorG": 184,
+        "achievedG": 137.9,
+        "shortG": 46.1,
+        "shortPct": 25.1,
+        "reason": "46.1 g short of the 184 g protein floor (25% under) — the compliant pool couldn't scale up to close the gap within the 0.5-2x portion limit."
+       },
+       "windowIndex": 0,
+       "dayIndex": 0,
+       "key": "0:0"
+      },
+      {
+       "dayOfWeek": 1,
+       "dayName": "Tuesday",
+       "matchPct": 66,
+       "totals": {
+        "kcal": 1520,
+        "protein": 137,
+        "fat": 25,
+        "carb": 179
+       },
+       "kcalDeltaPct": -29.2,
+       "proteinShortPct": 29.2,
+       "fatOk": false,
+       "carbOk": true,
+       "inTolerance": false,
+       "miss": "1,520 kcal vs a 2,147 target — 627 under; 137 g protein vs 193 g — 56 g short; 25 g fat vs a 55–65 g range — 30 g short",
+       "unfilledSlots": 3,
+       "warnedSlots": 3,
+       "proteinFloor": {
+        "met": false,
+        "floorG": 184,
+        "achievedG": 136.7,
+        "shortG": 47.3,
+        "shortPct": 25.7,
+        "reason": "47.3 g short of the 184 g protein floor (26% under) — the compliant pool couldn't scale up to close the gap within the 0.5-2x portion limit."
+       },
+       "windowIndex": 0,
+       "dayIndex": 1,
+       "key": "0:1"
+      },
+      {
+       "dayOfWeek": 2,
+       "dayName": "Wednesday",
+       "matchPct": 63,
+       "totals": {
+        "kcal": 1477,
+        "protein": 126,
+        "fat": 31,
+        "carb": 172
+       },
+       "kcalDeltaPct": -31.2,
+       "proteinShortPct": 34.6,
+       "fatOk": false,
+       "carbOk": true,
+       "inTolerance": false,
+       "miss": "1,477 kcal vs a 2,147 target — 670 under; 126 g protein vs 193 g — 67 g short; 31 g fat vs a 55–65 g range — 24 g short",
+       "unfilledSlots": 3,
+       "warnedSlots": 4,
+       "proteinFloor": {
+        "met": false,
+        "floorG": 184,
+        "achievedG": 126.2,
+        "shortG": 57.8,
+        "shortPct": 31.4,
+        "reason": "57.8 g short of the 184 g protein floor (31% under) — the compliant pool couldn't scale up to close the gap within the 0.5-2x portion limit."
+       },
+       "windowIndex": 0,
+       "dayIndex": 2,
+       "key": "0:2"
+      },
+      {
+       "dayOfWeek": 3,
+       "dayName": "Thursday",
+       "matchPct": 66,
+       "totals": {
+        "kcal": 1516,
+        "protein": 137,
+        "fat": 25,
+        "carb": 184
+       },
+       "kcalDeltaPct": -29.4,
+       "proteinShortPct": 29.3,
+       "fatOk": false,
+       "carbOk": true,
+       "inTolerance": false,
+       "miss": "1,516 kcal vs a 2,147 target — 631 under; 137 g protein vs 193 g — 56 g short; 25 g fat vs a 55–65 g range — 30 g short",
+       "unfilledSlots": 3,
+       "warnedSlots": 3,
+       "proteinFloor": {
+        "met": false,
+        "floorG": 184,
+        "achievedG": 136.5,
+        "shortG": 47.5,
+        "shortPct": 25.8,
+        "reason": "47.5 g short of the 184 g protein floor (26% under) — the compliant pool couldn't scale up to close the gap within the 0.5-2x portion limit."
+       },
+       "windowIndex": 0,
+       "dayIndex": 3,
+       "key": "0:3"
+      },
+      {
+       "dayOfWeek": 4,
+       "dayName": "Friday",
+       "matchPct": 66,
+       "totals": {
+        "kcal": 1535,
+        "protein": 137,
+        "fat": 21,
+        "carb": 188
+       },
+       "kcalDeltaPct": -28.5,
+       "proteinShortPct": 28.9,
+       "fatOk": false,
+       "carbOk": true,
+       "inTolerance": false,
+       "miss": "1,535 kcal vs a 2,147 target — 612 under; 137 g protein vs 193 g — 56 g short; 21 g fat vs a 55–65 g range — 34 g short",
+       "unfilledSlots": 3,
+       "warnedSlots": 3,
+       "proteinFloor": {
+        "met": false,
+        "floorG": 184,
+        "achievedG": 137.3,
+        "shortG": 46.7,
+        "shortPct": 25.4,
+        "reason": "46.7 g short of the 184 g protein floor (25% under) — the compliant pool couldn't scale up to close the gap within the 0.5-2x portion limit."
+       },
+       "windowIndex": 0,
+       "dayIndex": 4,
+       "key": "0:4"
+      },
+      {
+       "dayOfWeek": 5,
+       "dayName": "Saturday",
+       "matchPct": 66,
+       "totals": {
+        "kcal": 1516,
+        "protein": 136,
+        "fat": 26,
+        "carb": 178
+       },
+       "kcalDeltaPct": -29.4,
+       "proteinShortPct": 29.3,
+       "fatOk": false,
+       "carbOk": true,
+       "inTolerance": false,
+       "miss": "1,516 kcal vs a 2,147 target — 631 under; 136 g protein vs 193 g — 57 g short; 26 g fat vs a 55–65 g range — 29 g short",
+       "unfilledSlots": 3,
+       "warnedSlots": 3,
+       "proteinFloor": {
+        "met": false,
+        "floorG": 184,
+        "achievedG": 136.5,
+        "shortG": 47.5,
+        "shortPct": 25.8,
+        "reason": "47.5 g short of the 184 g protein floor (26% under) — the compliant pool couldn't scale up to close the gap within the 0.5-2x portion limit."
+       },
+       "windowIndex": 0,
+       "dayIndex": 5,
+       "key": "0:5"
+      },
+      {
+       "dayOfWeek": 6,
+       "dayName": "Sunday",
+       "matchPct": 66,
+       "totals": {
+        "kcal": 1517,
+        "protein": 136,
+        "fat": 26,
+        "carb": 182
+       },
+       "kcalDeltaPct": -29.4,
+       "proteinShortPct": 29.3,
+       "fatOk": false,
+       "carbOk": true,
+       "inTolerance": false,
+       "miss": "1,517 kcal vs a 2,147 target — 630 under; 136 g protein vs 193 g — 57 g short; 26 g fat vs a 55–65 g range — 29 g short",
+       "unfilledSlots": 3,
+       "warnedSlots": 3,
+       "proteinFloor": {
+        "met": false,
+        "floorG": 184,
+        "achievedG": 136.4,
+        "shortG": 47.6,
+        "shortPct": 25.9,
+        "reason": "47.6 g short of the 184 g protein floor (26% under) — the compliant pool couldn't scale up to close the gap within the 0.5-2x portion limit."
+       },
+       "windowIndex": 0,
+       "dayIndex": 6,
+       "key": "0:6"
+      }
+     ],
+     "totalDays": 7,
+     "floorDaysMet": 0,
+     "floorDaysTotal": 7
+    },
+    "days": [
+     {
+      "dayOfWeek": 0,
+      "dayName": "Monday",
+      "matchPct": 66,
+      "totals": {
+       "kcal": 1536,
+       "protein": 138,
+       "fat": 22,
+       "carb": 188
+      },
+      "kcalDeltaPct": -28.4,
+      "proteinShortPct": 28.5,
+      "fatOk": false,
+      "carbOk": true,
+      "inTolerance": false,
+      "miss": "1,536 kcal vs a 2,147 target — 611 under; 138 g protein vs 193 g — 55 g short; 22 g fat vs a 55–65 g range — 33 g short",
+      "unfilledSlots": 3,
+      "warnedSlots": 3,
+      "proteinFloor": {
+       "met": false,
+       "floorG": 184,
+       "achievedG": 137.9,
+       "shortG": 46.1,
+       "shortPct": 25.1,
+       "reason": "46.1 g short of the 184 g protein floor (25% under) — the compliant pool couldn't scale up to close the gap within the 0.5-2x portion limit."
+      },
+      "windowIndex": 0,
+      "dayIndex": 0,
+      "key": "0:0"
+     },
+     {
+      "dayOfWeek": 1,
+      "dayName": "Tuesday",
+      "matchPct": 66,
+      "totals": {
+       "kcal": 1520,
+       "protein": 137,
+       "fat": 25,
+       "carb": 179
+      },
+      "kcalDeltaPct": -29.2,
+      "proteinShortPct": 29.2,
+      "fatOk": false,
+      "carbOk": true,
+      "inTolerance": false,
+      "miss": "1,520 kcal vs a 2,147 target — 627 under; 137 g protein vs 193 g — 56 g short; 25 g fat vs a 55–65 g range — 30 g short",
+      "unfilledSlots": 3,
+      "warnedSlots": 3,
+      "proteinFloor": {
+       "met": false,
+       "floorG": 184,
+       "achievedG": 136.7,
+       "shortG": 47.3,
+       "shortPct": 25.7,
+       "reason": "47.3 g short of the 184 g protein floor (26% under) — the compliant pool couldn't scale up to close the gap within the 0.5-2x portion limit."
+      },
+      "windowIndex": 0,
+      "dayIndex": 1,
+      "key": "0:1"
+     },
+     {
+      "dayOfWeek": 2,
+      "dayName": "Wednesday",
+      "matchPct": 63,
+      "totals": {
+       "kcal": 1477,
+       "protein": 126,
+       "fat": 31,
+       "carb": 172
+      },
+      "kcalDeltaPct": -31.2,
+      "proteinShortPct": 34.6,
+      "fatOk": false,
+      "carbOk": true,
+      "inTolerance": false,
+      "miss": "1,477 kcal vs a 2,147 target — 670 under; 126 g protein vs 193 g — 67 g short; 31 g fat vs a 55–65 g range — 24 g short",
+      "unfilledSlots": 3,
+      "warnedSlots": 4,
+      "proteinFloor": {
+       "met": false,
+       "floorG": 184,
+       "achievedG": 126.2,
+       "shortG": 57.8,
+       "shortPct": 31.4,
+       "reason": "57.8 g short of the 184 g protein floor (31% under) — the compliant pool couldn't scale up to close the gap within the 0.5-2x portion limit."
+      },
+      "windowIndex": 0,
+      "dayIndex": 2,
+      "key": "0:2"
+     },
+     {
+      "dayOfWeek": 3,
+      "dayName": "Thursday",
+      "matchPct": 66,
+      "totals": {
+       "kcal": 1516,
+       "protein": 137,
+       "fat": 25,
+       "carb": 184
+      },
+      "kcalDeltaPct": -29.4,
+      "proteinShortPct": 29.3,
+      "fatOk": false,
+      "carbOk": true,
+      "inTolerance": false,
+      "miss": "1,516 kcal vs a 2,147 target — 631 under; 137 g protein vs 193 g — 56 g short; 25 g fat vs a 55–65 g range — 30 g short",
+      "unfilledSlots": 3,
+      "warnedSlots": 3,
+      "proteinFloor": {
+       "met": false,
+       "floorG": 184,
+       "achievedG": 136.5,
+       "shortG": 47.5,
+       "shortPct": 25.8,
+       "reason": "47.5 g short of the 184 g protein floor (26% under) — the compliant pool couldn't scale up to close the gap within the 0.5-2x portion limit."
+      },
+      "windowIndex": 0,
+      "dayIndex": 3,
+      "key": "0:3"
+     },
+     {
+      "dayOfWeek": 4,
+      "dayName": "Friday",
+      "matchPct": 66,
+      "totals": {
+       "kcal": 1535,
+       "protein": 137,
+       "fat": 21,
+       "carb": 188
+      },
+      "kcalDeltaPct": -28.5,
+      "proteinShortPct": 28.9,
+      "fatOk": false,
+      "carbOk": true,
+      "inTolerance": false,
+      "miss": "1,535 kcal vs a 2,147 target — 612 under; 137 g protein vs 193 g — 56 g short; 21 g fat vs a 55–65 g range — 34 g short",
+      "unfilledSlots": 3,
+      "warnedSlots": 3,
+      "proteinFloor": {
+       "met": false,
+       "floorG": 184,
+       "achievedG": 137.3,
+       "shortG": 46.7,
+       "shortPct": 25.4,
+       "reason": "46.7 g short of the 184 g protein floor (25% under) — the compliant pool couldn't scale up to close the gap within the 0.5-2x portion limit."
+      },
+      "windowIndex": 0,
+      "dayIndex": 4,
+      "key": "0:4"
+     },
+     {
+      "dayOfWeek": 5,
+      "dayName": "Saturday",
+      "matchPct": 66,
+      "totals": {
+       "kcal": 1516,
+       "protein": 136,
+       "fat": 26,
+       "carb": 178
+      },
+      "kcalDeltaPct": -29.4,
+      "proteinShortPct": 29.3,
+      "fatOk": false,
+      "carbOk": true,
+      "inTolerance": false,
+      "miss": "1,516 kcal vs a 2,147 target — 631 under; 136 g protein vs 193 g — 57 g short; 26 g fat vs a 55–65 g range — 29 g short",
+      "unfilledSlots": 3,
+      "warnedSlots": 3,
+      "proteinFloor": {
+       "met": false,
+       "floorG": 184,
+       "achievedG": 136.5,
+       "shortG": 47.5,
+       "shortPct": 25.8,
+       "reason": "47.5 g short of the 184 g protein floor (26% under) — the compliant pool couldn't scale up to close the gap within the 0.5-2x portion limit."
+      },
+      "windowIndex": 0,
+      "dayIndex": 5,
+      "key": "0:5"
+     },
+     {
+      "dayOfWeek": 6,
+      "dayName": "Sunday",
+      "matchPct": 66,
+      "totals": {
+       "kcal": 1517,
+       "protein": 136,
+       "fat": 26,
+       "carb": 182
+      },
+      "kcalDeltaPct": -29.4,
+      "proteinShortPct": 29.3,
+      "fatOk": false,
+      "carbOk": true,
+      "inTolerance": false,
+      "miss": "1,517 kcal vs a 2,147 target — 630 under; 136 g protein vs 193 g — 57 g short; 26 g fat vs a 55–65 g range — 29 g short",
+      "unfilledSlots": 3,
+      "warnedSlots": 3,
+      "proteinFloor": {
+       "met": false,
+       "floorG": 184,
+       "achievedG": 136.4,
+       "shortG": 47.6,
+       "shortPct": 25.9,
+       "reason": "47.6 g short of the 184 g protein floor (26% under) — the compliant pool couldn't scale up to close the gap within the 0.5-2x portion limit."
+      },
+      "windowIndex": 0,
+      "dayIndex": 6,
+      "key": "0:6"
+     }
+    ],
+    "diagnosis": {
+     "feasible": false,
+     "reasons": [
+      "21 of 42 slots over 7 days came back empty — no compliant recipe was left that could fill them.",
+      "Protein-priority mode: the 184g/day floor wasn't met on 7 day(s) — only 8 of 31 compliant recipes carry enough protein density to close the gap within the 0.5-2x portion limit.",
+      "Your library has no snack-sized recipe that fits your rules — all 21 snack slots this week come back empty.",
+      "Your targets need ~9g protein per 100 kcal; only 8 of 31 eligible recipes come close (12+ needed for a full varied week).",
+      "7 day(s) landed outside your 55–65 g fat range — portion scaling moves a dish's calories, not its fat/carb ratio, so the pool's composition is what binds here."
+     ],
+     "suggestions": [
+      "AI-generate a few high-protein compliant recipes, set the protein-preference filter, or allow batch-cooking repeats of the densest dishes.",
+      "Set snacks per day to 0 and fold those calories into your meals, or AI-generate a few compliant snacks on the Recipes tab.",
+      "Set the protein-preference filter, or AI-generate a few high-protein recipes to deepen the pool.",
+      "Add (or AI-generate) a few recipes built around the macro you keep missing, or drop the cuisine/protein preference so the solver can reach dishes that carry it."
+     ],
+     "binding": {
+      "key": "snack-pool",
+      "label": "your snack-eligible recipe pool",
+      "detail": "no snack-sized recipe fits your rules, so all 21 snack slot(s) come back empty."
+     }
+    },
+    "poolCounts": {
+     "raw": 889,
+     "afterDiet": 66,
+     "afterPrep": 31,
+     "afterStack": 31,
+     "stackExplain": null
+    },
+    "variety": {
+     "mealEligible": 31,
+     "usableForSlot": 25,
+     "slotKcal": 514,
+     "snackEligible": 0,
+     "weeklyMealSlots": 21,
+     "weeklySnackSlots": 21,
+     "repeatCap": 2,
+     "distinctWeeks": 1.2,
+     "horizonWeeks": 1,
+     "sustainsHorizon": false,
+     "notes": [
+      "Your library has no snack-sized recipe that fits your rules — snack slots stay empty until you add one.",
+      "1 week: 11 distinct dish(es) across 21 filled slot(s); most-repeated dish appears 2x against a 2x cap for this horizon (2x per week)."
+     ],
+     "horizon": {
+      "weeks": 1,
+      "days": 7,
+      "perWeekCap": 2,
+      "horizonRepeatCap": 2,
+      "mealSlots": 21,
+      "snackSlots": 21,
+      "totalSlots": 42,
+      "distinctFloor": 21,
+      "distinctRecipes": 11,
+      "maxRepeat": 2,
+      "maxRepeatRecipeId": "cmrujkwvg00bowl9om7w4rqwf",
+      "lockedRepeatsOfMax": 0,
+      "filledSlots": 21,
+      "unfilledSlots": 21,
+      "requiredDistinct": 11,
+      "capHeld": true,
+      "floorHeld": true
+     }
+    },
+    "priorWeeksConsidered": 0,
+    "horizon": {
+     "key": "week",
+     "label": "1 week",
+     "days": 7,
+     "kind": "days",
+     "weeks": 1,
+     "custom": false,
+     "startDate": "2026-07-27",
+     "endDate": "2026-08-02",
+     "startDayOfWeek": 0,
+     "weeksWritten": 1,
+     "solveMs": 4,
+     "weekPlans": [
+      {
+       "startDate": "2026-07-27",
+       "dayIndices": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+       ],
+       "days": 7,
+       "daysInTolerance": 0,
+       "avgMatch": 66,
+       "unfilledSlots": 21,
+       "poolSize": 31
+      }
+     ]
+    }
+   }
+  }
+ }
+}

@@ -1,0 +1,36 @@
+E-V3 — THE CLOCK + PURITY (verifier's own runs)
+
+### node --test tests/brain/generateWallClock.test.js
+✔ M3: a SLOW brain cannot run the pass past its wall-clock budget (81.6936ms)
+✔ M3: the pass reports the slots the clock left behind, and they keep their warnings (77.9336ms)
+✔ M3: with NO budget the pass is unbounded exactly as before — the legacy swap path is untouched (96.3721ms)
+✔ M3: a fast library-only pass is unaffected by the clock (0.5708ms)
+✔ M3: the per-design bound is handed to the router on every request (0.5165ms)
+✔ M3: the clock is INJECTED — a budget with no clock arms no deadline, and the solver stays pure (96.1969ms)
+✔ M3: generateRecipeDrafts honours a caller's shorter deadline (4.5127ms)
+✔ M3: a caller may SHORTEN the transport's leash but never lengthen it (0.6581ms)
+✔ M3: with no caller deadline the drafting route keeps its own default — /generate-drafts is unchanged (0.3422ms)
+ℹ tests 9
+ℹ pass 9
+ℹ fail 0
+
+### MY OWN PURITY GREP (not the repo test): Math.random( | Date.now( | new Date(
+  src/lib/mealSolver.js : 0 hit(s)
+  src/lib/weeklyPlanner.js : 0 hit(s)
+
+### repo 1C purity invariant, by name
+✔ 1C purity: mealSolver + weeklyPlanner use no Math.random / Date.now / new Date (0.7966ms)
+ℹ tests 9
+ℹ pass 9
+ℹ fail 0
+
+### does routes/plans.js inject now + budgetMs?
+339:              budgetMs: BRAIN_GENERATE_BUDGET_MS,
+340:              slotTimeoutMs: BRAIN_SLOT_TIMEOUT_MS,
+346:              now: () => Date.now(),
+
+### aiRecipeClient clamp — git show f489264
+
+### client tier — git show f489264 -- api.js
+-  generatePlan: (filters, opts) => request("/plans/generate", { method: "POST", body: JSON.stringify({ filters }), timeoutMs: TIMEOUT.SOLVER, ...opts }),
++  generatePlan: (filters, opts) => request("/plans/generate", { method: "POST", body: JSON.stringify({ filters }), timeoutMs: TIMEOUT.LLM, ...opts }),

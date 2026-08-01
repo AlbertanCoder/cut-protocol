@@ -1,0 +1,516 @@
+{
+ "persona": {
+  "idx": 107,
+  "id": "p107",
+  "tier": "EASY",
+  "displayName": "finish carpenter, 32",
+  "story": "finish carpenter, 32, male, 174 cm / 85.2 kg (BMI 28.1), cut at 1.5 lb/wk, none diet, avoiding shellfish, high-protein, 3 meals + 0 snacks, wants a single day",
+  "profile": {
+   "sex": "M",
+   "age": 32,
+   "heightCm": 174,
+   "startWeightKg": 85.2,
+   "goalWeightKg": 61.1,
+   "occupationKey": "carpenter-finish",
+   "trainingStyle": "weights",
+   "minutesPerSession": 50,
+   "sessionsPerWeek": 3,
+   "rateLbPerWeek": 1.5,
+   "dietaryStyle": "none",
+   "excludedFoods": [
+    "shellfish"
+   ],
+   "mealsPerDay": 3,
+   "snacksPerDay": 0,
+   "unitPref": "imperial",
+   "bodyFatPct": 10,
+   "bodyFatSource": "measured",
+   "rateAcknowledged": true
+  },
+  "filters": {
+   "proteinPriority": true
+  },
+  "horizon": "day",
+  "walls": [
+   "shellfish"
+  ],
+  "freeTextExclusions": [],
+  "dietaryStyle": "none",
+  "bmi": 28.1,
+  "goalKind": "cut",
+  "macroStyle": "high-protein",
+  "requestedButUnsupported": [
+   "wanted protein set explicitly in g/lb; the API derives the protein band from LBM (1.14-1.25 g/lb) and accepts no client protein target — only the per-request proteinPriority filter"
+  ],
+  "tupleKey": "[\"EASY\",\"M\",32,174,85.2,61.1,\"carpenter-finish\",\"weights\",1.5,\"none\",[\"shellfish\"],3,0,\"high-protein\",\"day\",null,null,true,null,null]"
+ },
+ "request": {
+  "horizon": "day",
+  "filters": {
+   "proteinPriority": true
+  }
+ },
+ "profileResponse": {
+  "id": "cms6x0yln02rvwlw0j95gqylw",
+  "userId": "cms6x0yb6002twl2oeeinay3l",
+  "sex": "M",
+  "age": 32,
+  "heightCm": 174,
+  "bodyFatPct": 10,
+  "bodyFatSource": "measured",
+  "occupationKey": "carpenter-finish",
+  "activityOverride": null,
+  "sessionsPerWeek": 3,
+  "trainingStyle": "weights",
+  "minutesPerSession": 50,
+  "startWeightKg": 85.2,
+  "goalWeightKg": 61.1,
+  "startDate": "2026-07-29",
+  "unitPref": "imperial",
+  "rateLbPerWeek": 1.5,
+  "rateAcknowledged": false,
+  "floorKcal": null,
+  "excludedFormulas": [],
+  "targetKcal": 2149,
+  "mealsPerDay": 3,
+  "snacksPerDay": 0,
+  "excludedFoods": [
+   "shellfish"
+  ],
+  "dietaryStyle": "none",
+  "cuisinePreferences": [],
+  "mealPreferencesNote": null,
+  "maxPrepMin": null,
+  "budgetTier": null,
+  "allowBatch": null,
+  "maxComplexity": null,
+  "adaptiveTdee": true,
+  "proteinPriorityMode": false,
+  "updatedAt": "2026-07-30T02:49:44.778Z"
+ },
+ "generate": {
+  "status": 200,
+  "ms": 189,
+  "body": {
+   "id": "cms6x0yom02s3wlw0adppauxs",
+   "userId": "cms6x0yb6002twl2oeeinay3l",
+   "startDate": "2026-07-27",
+   "createdAt": "2026-07-30T02:49:44.855Z",
+   "slots": [
+    {
+     "id": "cms6x0yon02s5wlw03bjmf1r4",
+     "planId": "cms6x0yom02s3wlw0adppauxs",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 0,
+     "recipeId": "cmrul79sr001owl80dqc054hi",
+     "proteinScale": 1.89,
+     "sidesScale": 1.62,
+     "ingredients": [
+      {
+       "foodId": "cmrukzae20001wlbwgdjqlh3f",
+       "name": "Textured vegetable protein, dry",
+       "role": "protein",
+       "grams": 105
+      },
+      {
+       "foodId": "cmrevpcn2000ewl5gmlyzu0vd",
+       "name": "White rice, cooked",
+       "role": "carb",
+       "grams": 180
+      },
+      {
+       "foodId": "cmrevpcnl000jwl5gnqnk630b",
+       "name": "Cucumber",
+       "role": "veg",
+       "grams": 145
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 640,
+     "protein": 60.3155,
+     "fat": 6.822,
+     "carb": 85.03200000000001,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrul79sr001owl80dqc054hi",
+      "name": "High-Protein TVP & Cucumber with Rice",
+      "description": null,
+      "steps": [
+       "Cook the tvp.",
+       "Serve over white rice with cucumber."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 378.5,
+      "protein": 32.1,
+      "fat": 6,
+      "carb": 49.2,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 1.54,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:45:29.692Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x0yoo02s7wlw06uhrqffo",
+     "planId": "cms6x0yom02s3wlw0adppauxs",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 1,
+     "recipeId": "cmrj2u86807plwlwspv6x2fih",
+     "proteinScale": 2,
+     "sidesScale": 2,
+     "ingredients": [
+      {
+       "foodId": "cmrj2tbb700k6wlwsfrn8lfhq",
+       "name": "Sea Bass Fillets",
+       "role": null,
+       "grams": 300
+      },
+      {
+       "foodId": "cmrj2t7ng005hwlwsm31zcv8k",
+       "name": "Sunflower Oil",
+       "role": "carb",
+       "grams": 20
+      },
+      {
+       "foodId": "cmrj2t6ye002dwlwssjv94yyn",
+       "name": "Ginger",
+       "role": "veg",
+       "grams": 50
+      },
+      {
+       "foodId": "cmrj2t6rr001jwlwsqfi60fyj",
+       "name": "Garlic Clove",
+       "role": null,
+       "grams": 45
+      },
+      {
+       "foodId": "cmrj2t7me005cwlwssmv2um0d",
+       "name": "Red Chilli",
+       "role": null,
+       "grams": 25
+      },
+      {
+       "foodId": "cmrj2t6w20022wlws8tukrt3u",
+       "name": "Spring Onions",
+       "role": "veg",
+       "grams": 55
+      },
+      {
+       "foodId": "cmrj2t6ls000rwlwsf7bu3ffs",
+       "name": "Soy Sauce",
+       "role": "carb",
+       "grams": 5
+      }
+     ],
+     "kcal": 606.05,
+     "protein": 60.761,
+     "fat": 26.773,
+     "carb": 29.921,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrj2u86807plwlwspv6x2fih",
+      "name": "Sea bass with sizzled ginger, chilli & spring onions",
+      "description": null,
+      "steps": [
+       "step 1",
+       "Season 6 sea bass fillets with salt and pepper, then slash the skin 3 times.",
+       "step 2",
+       "Heat a heavy-based frying pan and add 1 tbsp sunflower oil.",
+       "step 3",
+       "Once hot, fry the sea bass fillets, skin-side down, for 5 mins or until the skin is very crisp and golden. The fish will be almost cooked through.",
+       "step 4",
+       "Turn over, cook for another 30 seconds - 1 minute, then transfer to a serving plate and keep warm. You’ll need to fry the sea bass fillets in 2 batches.",
+       "step 5",
+       "Heat 2 tbsp sunflower oil, then fry the large knob of peeled ginger, cut into matchsticks, 3 thinly sliced garlic cloves and 3 thinly shredded red chillies for about 2 mins until golden.",
+       "step 6",
+       "Take off the heat and toss in the bunch of shredded spring onions. Splash the fish with 1 tbsp soy sauce and spoon over the contents of the pan."
+      ],
+      "slotType": "meal",
+      "cuisine": "western-comfort",
+      "prepTimeMin": 46,
+      "source": "themealdb-import",
+      "mealCategory": null,
+      "kcal": 305.3,
+      "protein": 30.4,
+      "fat": 13.6,
+      "carb": 15,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 10.82,
+      "difficulty": 6,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-13T10:26:00.032Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x0yop02s9wlw01ilysawz",
+     "planId": "cms6x0yom02s3wlw0adppauxs",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 2,
+     "recipeId": "cmrj2th2101oowlwsp7untu4c",
+     "proteinScale": 1.82,
+     "sidesScale": 0.58,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t6is000ewlwsmzadlvxo",
+       "name": "Beef",
+       "role": "protein",
+       "grams": 230
+      },
+      {
+       "foodId": "cmrj2t7gt004mwlwsi9ouzdgd",
+       "name": "Aubergine",
+       "role": null,
+       "grams": 14
+      },
+      {
+       "foodId": "cmrj2t7p5005pwlws4acmktnt",
+       "name": "Greek Yogurt",
+       "role": null,
+       "grams": 20
+      },
+      {
+       "foodId": "cmrj2t6wp0025wlwsvl5esd2h",
+       "name": "Egg",
+       "role": "protein",
+       "grams": 25
+      },
+      {
+       "foodId": "cmrj2t7pc005qwlws0b3s9ri3",
+       "name": "Parmesan",
+       "role": null,
+       "grams": 3
+      },
+      {
+       "foodId": "cmrj2t6ik000dwlwsj8e736h1",
+       "name": "Tomato",
+       "role": "veg",
+       "grams": 60
+      },
+      {
+       "foodId": "cmrj2t6pz001bwlwsbarwpyy1",
+       "name": "Tomato Puree",
+       "role": "veg",
+       "grams": 7
+      },
+      {
+       "foodId": "cmrj2t6t4001pwlwsxeja9565",
+       "name": "Potatoes",
+       "role": "veg",
+       "grams": 50
+      }
+     ],
+     "kcal": 916.34,
+     "protein": 82.0158,
+     "fat": 35.02975,
+     "carb": 72.908,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrj2th2101oowlwsp7untu4c",
+      "name": "Moussaka",
+      "description": null,
+      "steps": [
+       "Heat the grill to high. Brown the beef in a deep ovenproof frying pan over a high heat for 5 mins. Meanwhile, prick the aubergine with a fork, then microwave on High for 3-5 mins until soft. Mix the yogurt, egg and parmesan together, then add a little seasoning.",
+       "Stir the tomatoes, purée and potatoes in with the beef with some seasoning and heat through. Smooth the surface of the beef mixture with the back of a spoon, then slice the cooked aubergine and arrange on top. Pour the yogurt mixture over the aubergines, smooth out evenly, then grill until the topping has set and turned golden."
+      ],
+      "slotType": "meal",
+      "cuisine": "mediterranean",
+      "prepTimeMin": 18,
+      "source": "themealdb-import",
+      "mealCategory": null,
+      "kcal": 902.3,
+      "protein": 63.8,
+      "fat": 22.1,
+      "carb": 123.8,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 7.06,
+      "difficulty": 2,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-13T10:25:24.890Z",
+      "createdByUserId": null
+     }
+    }
+   ],
+   "groceryList": null,
+   "meta": {
+    "matchPct": 98,
+    "attempts": 2,
+    "score": {
+     "daysInTolerance": 1,
+     "avgMatch": 98,
+     "days": [
+      {
+       "dayOfWeek": 2,
+       "dayName": "Wednesday",
+       "matchPct": 98,
+       "totals": {
+        "kcal": 2162,
+        "protein": 203,
+        "fat": 69,
+        "carb": 188
+       },
+       "kcalDeltaPct": 0.6,
+       "proteinShortPct": 0,
+       "fatOk": true,
+       "carbOk": true,
+       "inTolerance": true,
+       "miss": null,
+       "unfilledSlots": 0,
+       "warnedSlots": 0,
+       "proteinFloor": {
+        "met": true,
+        "floorG": 193,
+        "achievedG": 203.1,
+        "shortG": 0,
+        "shortPct": 0,
+        "reason": null
+       },
+       "windowIndex": 0,
+       "dayIndex": 0,
+       "key": "0:2"
+      }
+     ],
+     "totalDays": 1,
+     "floorDaysMet": 1,
+     "floorDaysTotal": 1
+    },
+    "days": [
+     {
+      "dayOfWeek": 2,
+      "dayName": "Wednesday",
+      "matchPct": 98,
+      "totals": {
+       "kcal": 2162,
+       "protein": 203,
+       "fat": 69,
+       "carb": 188
+      },
+      "kcalDeltaPct": 0.6,
+      "proteinShortPct": 0,
+      "fatOk": true,
+      "carbOk": true,
+      "inTolerance": true,
+      "miss": null,
+      "unfilledSlots": 0,
+      "warnedSlots": 0,
+      "proteinFloor": {
+       "met": true,
+       "floorG": 193,
+       "achievedG": 203.1,
+       "shortG": 0,
+       "shortPct": 0,
+       "reason": null
+      },
+      "windowIndex": 0,
+      "dayIndex": 0,
+      "key": "0:2"
+     }
+    ],
+    "diagnosis": null,
+    "poolCounts": {
+     "raw": 889,
+     "afterDiet": 806,
+     "afterPrep": 806,
+     "afterStack": 806,
+     "stackExplain": null
+    },
+    "variety": {
+     "mealEligible": 655,
+     "usableForSlot": 330,
+     "slotKcal": 716,
+     "snackEligible": 8,
+     "weeklyMealSlots": 21,
+     "weeklySnackSlots": 0,
+     "repeatCap": 2,
+     "distinctWeeks": 15.7,
+     "horizonWeeks": 1,
+     "sustainsHorizon": true,
+     "notes": [
+      "1 day: 3 distinct dish(es) across 3 filled slot(s); most-repeated dish appears 1x against a 2x cap for this horizon (2x per week)."
+     ],
+     "horizon": {
+      "weeks": 1,
+      "days": 1,
+      "perWeekCap": 2,
+      "horizonRepeatCap": 2,
+      "mealSlots": 3,
+      "snackSlots": 0,
+      "totalSlots": 3,
+      "distinctFloor": 2,
+      "distinctRecipes": 3,
+      "maxRepeat": 1,
+      "maxRepeatRecipeId": "cmrul79sr001owl80dqc054hi",
+      "lockedRepeatsOfMax": 0,
+      "filledSlots": 3,
+      "unfilledSlots": 0,
+      "requiredDistinct": 2,
+      "capHeld": true,
+      "floorHeld": true
+     }
+    },
+    "priorWeeksConsidered": 0,
+    "horizon": {
+     "key": "day",
+     "label": "1 day",
+     "days": 1,
+     "kind": "days",
+     "weeks": 1,
+     "custom": false,
+     "startDate": "2026-07-29",
+     "endDate": "2026-07-29",
+     "startDayOfWeek": 2,
+     "weeksWritten": 1,
+     "solveMs": 3,
+     "weekPlans": [
+      {
+       "startDate": "2026-07-27",
+       "dayIndices": [
+        2
+       ],
+       "days": 1,
+       "daysInTolerance": 1,
+       "avgMatch": 98,
+       "unfilledSlots": 0,
+       "poolSize": 806
+      }
+     ]
+    }
+   }
+  }
+ }
+}

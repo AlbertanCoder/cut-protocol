@@ -1,0 +1,482 @@
+{
+ "persona": {
+  "idx": 14,
+  "id": "p014",
+  "tier": "HARD",
+  "displayName": "personal trainer, 25",
+  "story": "personal trainer, 25, female, 183 cm / 82.7 kg (BMI 24.7), cut at 2 lb/wk, none diet, avoiding pork, shellfish, sesame, gluten, high-protein, 3 meals + 0 snacks, wants a single day",
+  "profile": {
+   "sex": "F",
+   "age": 25,
+   "heightCm": 183,
+   "startWeightKg": 82.7,
+   "goalWeightKg": 59,
+   "occupationKey": "personal-trainer",
+   "trainingStyle": "weights",
+   "minutesPerSession": 75,
+   "sessionsPerWeek": 5,
+   "rateLbPerWeek": 2,
+   "dietaryStyle": "none",
+   "excludedFoods": [
+    "pork",
+    "shellfish",
+    "sesame",
+    "gluten"
+   ],
+   "mealsPerDay": 3,
+   "snacksPerDay": 0,
+   "unitPref": "metric",
+   "rateAcknowledged": true,
+   "goalWeightAcknowledged": true
+  },
+  "filters": {
+   "proteinPriority": true,
+   "budget": "cheap",
+   "maxPrepMin": 20
+  },
+  "horizon": "day",
+  "walls": [
+   "pork",
+   "shellfish",
+   "sesame",
+   "gluten"
+  ],
+  "freeTextExclusions": [
+   "pork"
+  ],
+  "dietaryStyle": "none",
+  "bmi": 24.7,
+  "goalKind": "cut",
+  "macroStyle": "high-protein",
+  "requestedButUnsupported": [
+   "wanted protein set explicitly in g/lb; the API derives the protein band from LBM (1.14-1.25 g/lb) and accepts no client protein target — only the per-request proteinPriority filter"
+  ],
+  "goalBmi": 17.6,
+  "tupleKey": "[\"HARD\",\"F\",25,183,82.7,59,\"personal-trainer\",\"weights\",2,\"none\",[\"gluten\",\"pork\",\"sesame\",\"shellfish\"],3,0,\"high-protein\",\"day\",20,\"cheap\",true,null,null]"
+ },
+ "request": {
+  "horizon": "day",
+  "filters": {
+   "proteinPriority": true,
+   "budget": "cheap",
+   "maxPrepMin": 20
+  }
+ },
+ "profileResponse": {
+  "id": "cms6x0arh00rdwlw01wgvl3yr",
+  "userId": "cms6x0alp0008wl2o8ebk23yp",
+  "sex": "F",
+  "age": 25,
+  "heightCm": 183,
+  "bodyFatPct": 0,
+  "bodyFatSource": null,
+  "occupationKey": "personal-trainer",
+  "activityOverride": null,
+  "sessionsPerWeek": 5,
+  "trainingStyle": "weights",
+  "minutesPerSession": 75,
+  "startWeightKg": 82.7,
+  "goalWeightKg": 59,
+  "startDate": "2026-07-29",
+  "unitPref": "metric",
+  "rateLbPerWeek": 2,
+  "rateAcknowledged": true,
+  "floorKcal": null,
+  "excludedFormulas": [],
+  "targetKcal": 1703,
+  "mealsPerDay": 3,
+  "snacksPerDay": 0,
+  "excludedFoods": [
+   "pork",
+   "shellfish",
+   "sesame",
+   "gluten"
+  ],
+  "dietaryStyle": "none",
+  "cuisinePreferences": [],
+  "mealPreferencesNote": null,
+  "maxPrepMin": null,
+  "budgetTier": null,
+  "allowBatch": null,
+  "maxComplexity": null,
+  "adaptiveTdee": true,
+  "proteinPriorityMode": false,
+  "updatedAt": "2026-07-30T02:49:14.229Z"
+ },
+ "generate": {
+  "status": 200,
+  "ms": 490,
+  "body": {
+   "id": "cms6x0bes00sbwlw0hby0qgxc",
+   "userId": "cms6x0alp0008wl2o8ebk23yp",
+   "startDate": "2026-07-27",
+   "createdAt": "2026-07-30T02:49:14.693Z",
+   "slots": [
+    {
+     "id": "cms6x0bff00sdwlw0jttv1jvh",
+     "planId": "cms6x0bes00sbwlw0hby0qgxc",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 0,
+     "recipeId": "cmrujkwvk00buwl9o5qzvdm2i",
+     "proteinScale": 2,
+     "sidesScale": 1.04,
+     "ingredients": [
+      {
+       "foodId": "cmrj2tbsj00m1wlwsfeuh3jsf",
+       "name": "flax eggs",
+       "role": "protein",
+       "grams": 300
+      },
+      {
+       "foodId": "cmrj2t7fb004fwlws8ezof2dp",
+       "name": "Russet Potato",
+       "role": "carb",
+       "grams": 190
+      },
+      {
+       "foodId": "cmrevpcnh000iwl5gh2zjhyqe",
+       "name": "Bell peppers",
+       "role": "veg",
+       "grams": 85
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 10
+      }
+     ],
+     "kcal": 461.85,
+     "protein": 37.947,
+     "fat": 10.502,
+     "carb": 52.84,
+     "warning": "Tried 5 recipe(s) for this slot, none fit within tolerance — closest was \"Classic Eggs & Bell Peppers with Potato\" (delivered 38g protein vs a 46g target).",
+     "locked": false,
+     "recipe": {
+      "id": "cmrujkwvk00buwl9o5qzvdm2i",
+      "name": "Classic Eggs & Bell Peppers with Potato",
+      "description": null,
+      "steps": [
+       "Cook the eggs.",
+       "Serve with potato and bell peppers."
+      ],
+      "slotType": "meal",
+      "cuisine": "american",
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 368.3,
+      "protein": 21.6,
+      "fat": 10.5,
+      "carb": 46.9,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 3.01,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:00:06.897Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x0bfi00sfwlw02ace2knb",
+     "planId": "cms6x0bes00sbwlw0hby0qgxc",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 1,
+     "recipeId": "cmrujkwva00bcwl9o5zlcp7uy",
+     "proteinScale": 2,
+     "sidesScale": 0.99,
+     "ingredients": [
+      {
+       "foodId": "cmrj2tbsj00m1wlwsfeuh3jsf",
+       "name": "flax eggs",
+       "role": "protein",
+       "grams": 300
+      },
+      {
+       "foodId": "cmrevpcn2000ewl5gmlyzu0vd",
+       "name": "White rice, cooked",
+       "role": "carb",
+       "grams": 160
+      },
+      {
+       "foodId": "cmrj2t6na000ywlws9jek4w4z",
+       "name": "Broccoli",
+       "role": "veg",
+       "grams": 110
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 10
+      }
+     ],
+     "kcal": 497.1,
+     "protein": 39.24699999999999,
+     "fat": 10.854,
+     "carb": 58.777,
+     "warning": "Tried 5 recipe(s) for this slot, none fit within tolerance — closest was \"Classic Eggs & Broccoli with Rice\" (delivered 39g protein vs a 55g target).",
+     "locked": false,
+     "recipe": {
+      "id": "cmrujkwva00bcwl9o5zlcp7uy",
+      "name": "Classic Eggs & Broccoli with Rice",
+      "description": null,
+      "steps": [
+       "Cook the eggs.",
+       "Serve with white rice and broccoli."
+      ],
+      "slotType": "meal",
+      "cuisine": "american",
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 414.6,
+      "protein": 23.2,
+      "fat": 10.9,
+      "carb": 55.2,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 3.03,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:00:06.887Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x0bfj00shwlw0ctyw2hiw",
+     "planId": "cms6x0bes00sbwlw0hby0qgxc",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 2,
+     "recipeId": "cmrevpcor000swl5g1h40af1g",
+     "proteinScale": 1,
+     "sidesScale": 0.64,
+     "ingredients": [
+      {
+       "foodId": "cmrevpcln0002wl5gainaw8kr",
+       "name": "Sirloin steak, cooked, lean",
+       "role": "protein",
+       "grams": 250
+      },
+      {
+       "foodId": "cmrevpcn2000ewl5gmlyzu0vd",
+       "name": "White rice, cooked",
+       "role": "carb",
+       "grams": 130
+      },
+      {
+       "foodId": "cmrevpcnh000iwl5gh2zjhyqe",
+       "name": "Bell peppers",
+       "role": "veg",
+       "grams": 95
+      },
+      {
+       "foodId": "cmrevpcnz000mwl5g62fmfzqk",
+       "name": "Butter",
+       "role": "fat",
+       "grams": 6
+      }
+     ],
+     "kcal": 743.97,
+     "protein": 77.01400000000001,
+     "fat": 27.285,
+     "carb": 42.10599999999999,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrevpcor000swl5g1h40af1g",
+      "name": "Cast-Iron Sirloin, Rice & Peppers",
+      "description": "His rotation sirloin main, seared hard and sliced.",
+      "steps": [
+       "Pat the sirloin dry and season heavy with salt and pepper.",
+       "Get a cast iron pan smoking hot, sear 3-4 min per side for medium-rare.",
+       "Rest 5 minutes, then slice against the grain.",
+       "Toss sliced peppers in the same pan 2-3 min until blistered.",
+       "Plate over rice, melt the butter over the steak."
+      ],
+      "slotType": "meal",
+      "cuisine": "western-comfort",
+      "prepTimeMin": 20,
+      "source": "curated",
+      "mealCategory": null,
+      "kcal": 880.7,
+      "protein": 79.49000000000001,
+      "fat": 30.9,
+      "carb": 65.01,
+      "tasteTier": "really_good",
+      "tasteTierSource": "curated",
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 15.44,
+      "difficulty": 3,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-10T11:55:10.587Z",
+      "createdByUserId": null
+     }
+    }
+   ],
+   "groceryList": null,
+   "meta": {
+    "matchPct": 96,
+    "attempts": 4,
+    "score": {
+     "daysInTolerance": 1,
+     "avgMatch": 96,
+     "days": [
+      {
+       "dayOfWeek": 2,
+       "dayName": "Wednesday",
+       "matchPct": 96,
+       "totals": {
+        "kcal": 1703,
+        "protein": 154,
+        "fat": 49,
+        "carb": 154
+       },
+       "kcalDeltaPct": 0,
+       "proteinShortPct": 1.8,
+       "fatOk": true,
+       "carbOk": true,
+       "inTolerance": true,
+       "miss": null,
+       "unfilledSlots": 0,
+       "warnedSlots": 2,
+       "proteinFloor": {
+        "met": true,
+        "floorG": 150,
+        "achievedG": 154.2,
+        "shortG": 0,
+        "shortPct": 0,
+        "reason": null
+       },
+       "windowIndex": 0,
+       "dayIndex": 0,
+       "key": "0:2"
+      }
+     ],
+     "totalDays": 1,
+     "floorDaysMet": 1,
+     "floorDaysTotal": 1
+    },
+    "days": [
+     {
+      "dayOfWeek": 2,
+      "dayName": "Wednesday",
+      "matchPct": 96,
+      "totals": {
+       "kcal": 1703,
+       "protein": 154,
+       "fat": 49,
+       "carb": 154
+      },
+      "kcalDeltaPct": 0,
+      "proteinShortPct": 1.8,
+      "fatOk": true,
+      "carbOk": true,
+      "inTolerance": true,
+      "miss": null,
+      "unfilledSlots": 0,
+      "warnedSlots": 2,
+      "proteinFloor": {
+       "met": true,
+       "floorG": 150,
+       "achievedG": 154.2,
+       "shortG": 0,
+       "shortPct": 0,
+       "reason": null
+      },
+      "windowIndex": 0,
+      "dayIndex": 0,
+      "key": "0:2"
+     }
+    ],
+    "diagnosis": null,
+    "poolCounts": {
+     "raw": 889,
+     "afterDiet": 329,
+     "afterPrep": 183,
+     "afterStack": 183,
+     "stackExplain": null
+    },
+    "variety": {
+     "mealEligible": 170,
+     "usableForSlot": 123,
+     "slotKcal": 568,
+     "snackEligible": 7,
+     "weeklyMealSlots": 21,
+     "weeklySnackSlots": 0,
+     "repeatCap": 2,
+     "distinctWeeks": 5.9,
+     "horizonWeeks": 1,
+     "sustainsHorizon": true,
+     "notes": [
+      "1 day: 3 distinct dish(es) across 3 filled slot(s); most-repeated dish appears 1x against a 2x cap for this horizon (2x per week)."
+     ],
+     "horizon": {
+      "weeks": 1,
+      "days": 1,
+      "perWeekCap": 2,
+      "horizonRepeatCap": 2,
+      "mealSlots": 3,
+      "snackSlots": 0,
+      "totalSlots": 3,
+      "distinctFloor": 2,
+      "distinctRecipes": 3,
+      "maxRepeat": 1,
+      "maxRepeatRecipeId": "cmrujkwvk00buwl9o5qzvdm2i",
+      "lockedRepeatsOfMax": 0,
+      "filledSlots": 3,
+      "unfilledSlots": 0,
+      "requiredDistinct": 2,
+      "capHeld": true,
+      "floorHeld": true
+     }
+    },
+    "priorWeeksConsidered": 0,
+    "horizon": {
+     "key": "day",
+     "label": "1 day",
+     "days": 1,
+     "kind": "days",
+     "weeks": 1,
+     "custom": false,
+     "startDate": "2026-07-29",
+     "endDate": "2026-07-29",
+     "startDayOfWeek": 2,
+     "weeksWritten": 1,
+     "solveMs": 2,
+     "weekPlans": [
+      {
+       "startDate": "2026-07-27",
+       "dayIndices": [
+        2
+       ],
+       "days": 1,
+       "daysInTolerance": 1,
+       "avgMatch": 96,
+       "unfilledSlots": 0,
+       "poolSize": 183
+      }
+     ]
+    }
+   }
+  }
+ }
+}

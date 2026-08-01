@@ -1,0 +1,171 @@
+
+=== 1. NAME RESOLUTION (planContext.loadAdjusterFoods, exact `name in [...]`) ===
+rows returned by the `in` query: 10 | distinct lowercased keys: 10
+  ok       fat     "Olive Oil" -> id=cmrj2t6r4001gwlws4txccjsf dupes=1 kcal=900 P=0 F=100 C=0 src=usda-verified trust=OK
+  ok       fat     "Butter" -> id=cmrevpcnz000mwl5g62fmfzqk dupes=1 kcal=717 P=0.9 F=81 C=0.1 src=manual trust=OK
+  ok       fat     "Avocado" -> id=cmrj2t8cs008pwlwsflz8ux04 dupes=1 kcal=160 P=2 F=14.7 C=8.5 src=manual trust=OK
+  ok       carb    "White rice, cooked" -> id=cmrevpcn2000ewl5gmlyzu0vd dupes=1 kcal=130 P=2.7 F=0.3 C=28 src=manual trust=OK
+  ok       carb    "Potatoes" -> id=cmrj2t6t4001pwlwsxeja9565 dupes=1 kcal=77 P=2.05 F=0.09 C=17.5 src=manual trust=OK
+  ok       carb    "Oats" -> id=cmrj2t9dj00cswlwsn2mrylyl dupes=1 kcal=379 P=13.2 F=6.5 C=67.7 src=manual trust=OK
+  ok       protein "Chicken breast, cooked, skinless" -> id=cmrevpclb0000wl5ghnno9i5f dupes=1 kcal=165 P=31 F=3.6 C=0 src=manual trust=OK
+  ok       protein "Greek Yogurt" -> id=cmrj2t7p5005pwlws4acmktnt dupes=1 kcal=59 P=10.3 F=0.39 C=3.6 src=manual trust=OK
+  ok       protein "Tofu" -> id=cmrj2tapd00htwlwsd6ggixb6 dupes=1 kcal=144 P=17.3 F=8.72 C=2.78 src=manual trust=OK
+  ok       protein "Lentils" -> id=cmrj2tblh00l9wlws3etotpfc dupes=1 kcal=166 P=8.38 F=6.86 C=18.7 src=usda-verified trust=OK
+
+=== 2. SURVIVORS PER PERSONA (loadAdjusters: name-hit && !macroTrustIssue && !isExcluded) ===
+style           wall                                     fat carb prot  names
+none            no walls                                   3    3    4   Olive Oil, Butter, Avocado, White rice, cooked, Potatoes, Oats, Chicken breast, cooked, skinless, Greek Yogurt, Tofu, Lentils
+none            dairy                                      2    3    3   Olive Oil, Avocado, White rice, cooked, Potatoes, Oats, Chicken breast, cooked, skinless, Tofu, Lentils
+none            vegan+soy+legumes                          3    3    2   Olive Oil, Butter, Avocado, White rice, cooked, Potatoes, Oats, Chicken breast, cooked, skinless, Greek Yogurt
+none            vegan+soy+legumes+gluten+nuts+sesame       3    3    2   Olive Oil, Butter, Avocado, White rice, cooked, Potatoes, Oats, Chicken breast, cooked, skinless, Greek Yogurt
+mediterranean   no walls                                   3    3    4   Olive Oil, Butter, Avocado, White rice, cooked, Potatoes, Oats, Chicken breast, cooked, skinless, Greek Yogurt, Tofu, Lentils
+mediterranean   dairy                                      2    3    3   Olive Oil, Avocado, White rice, cooked, Potatoes, Oats, Chicken breast, cooked, skinless, Tofu, Lentils
+mediterranean   vegan+soy+legumes                          3    3    2   Olive Oil, Butter, Avocado, White rice, cooked, Potatoes, Oats, Chicken breast, cooked, skinless, Greek Yogurt
+mediterranean   vegan+soy+legumes+gluten+nuts+sesame       3    3    2   Olive Oil, Butter, Avocado, White rice, cooked, Potatoes, Oats, Chicken breast, cooked, skinless, Greek Yogurt
+vegetarian      no walls                                   3    3    3   Olive Oil, Butter, Avocado, White rice, cooked, Potatoes, Oats, Greek Yogurt, Tofu, Lentils
+vegetarian      dairy                                      2    3    2   Olive Oil, Avocado, White rice, cooked, Potatoes, Oats, Tofu, Lentils
+vegetarian      vegan+soy+legumes                          3    3    1   Olive Oil, Butter, Avocado, White rice, cooked, Potatoes, Oats, Greek Yogurt
+vegetarian      vegan+soy+legumes+gluten+nuts+sesame       3    3    1   Olive Oil, Butter, Avocado, White rice, cooked, Potatoes, Oats, Greek Yogurt
+vegan           no walls                                   2    3    2   Olive Oil, Avocado, White rice, cooked, Potatoes, Oats, Tofu, Lentils
+vegan           dairy                                      2    3    2   Olive Oil, Avocado, White rice, cooked, Potatoes, Oats, Tofu, Lentils
+vegan           vegan+soy+legumes                          2    3    0   Olive Oil, Avocado, White rice, cooked, Potatoes, Oats
+vegan           vegan+soy+legumes+gluten+nuts+sesame       2    3    0   Olive Oil, Avocado, White rice, cooked, Potatoes, Oats
+paleo           no walls                                   3    1    1   Olive Oil, Butter, Avocado, Potatoes, Chicken breast, cooked, skinless
+paleo           dairy                                      2    1    1   Olive Oil, Avocado, Potatoes, Chicken breast, cooked, skinless
+paleo           vegan+soy+legumes                          3    1    1   Olive Oil, Butter, Avocado, Potatoes, Chicken breast, cooked, skinless
+paleo           vegan+soy+legumes+gluten+nuts+sesame       3    1    1   Olive Oil, Butter, Avocado, Potatoes, Chicken breast, cooked, skinless
+keto            no walls                                   3    0    3   Olive Oil, Butter, Avocado, Chicken breast, cooked, skinless, Greek Yogurt, Tofu
+keto            dairy                                      2    0    2   Olive Oil, Avocado, Chicken breast, cooked, skinless, Tofu
+keto            vegan+soy+legumes                          3    0    2   Olive Oil, Butter, Avocado, Chicken breast, cooked, skinless, Greek Yogurt
+keto            vegan+soy+legumes+gluten+nuts+sesame       3    0    2   Olive Oil, Butter, Avocado, Chicken breast, cooked, skinless, Greek Yogurt
+carnivore       no walls                                   1    0    2   Butter, Chicken breast, cooked, skinless, Greek Yogurt
+carnivore       dairy                                      0    0    1   Chicken breast, cooked, skinless
+carnivore       vegan+soy+legumes                          1    0    2   Butter, Chicken breast, cooked, skinless, Greek Yogurt
+carnivore       vegan+soy+legumes+gluten+nuts+sesame       1    0    2   Butter, Chicken breast, cooked, skinless, Greek Yogurt
+halal           no walls                                   3    3    4   Olive Oil, Butter, Avocado, White rice, cooked, Potatoes, Oats, Chicken breast, cooked, skinless, Greek Yogurt, Tofu, Lentils
+halal           dairy                                      2    3    3   Olive Oil, Avocado, White rice, cooked, Potatoes, Oats, Chicken breast, cooked, skinless, Tofu, Lentils
+halal           vegan+soy+legumes                          3    3    2   Olive Oil, Butter, Avocado, White rice, cooked, Potatoes, Oats, Chicken breast, cooked, skinless, Greek Yogurt
+halal           vegan+soy+legumes+gluten+nuts+sesame       3    3    2   Olive Oil, Butter, Avocado, White rice, cooked, Potatoes, Oats, Chicken breast, cooked, skinless, Greek Yogurt
+kosher          no walls                                   3    3    4   Olive Oil, Butter, Avocado, White rice, cooked, Potatoes, Oats, Chicken breast, cooked, skinless, Greek Yogurt, Tofu, Lentils
+kosher          dairy                                      2    3    3   Olive Oil, Avocado, White rice, cooked, Potatoes, Oats, Chicken breast, cooked, skinless, Tofu, Lentils
+kosher          vegan+soy+legumes                          3    3    2   Olive Oil, Butter, Avocado, White rice, cooked, Potatoes, Oats, Chicken breast, cooked, skinless, Greek Yogurt
+kosher          vegan+soy+legumes+gluten+nuts+sesame       3    3    2   Olive Oil, Butter, Avocado, White rice, cooked, Potatoes, Oats, Chicken breast, cooked, skinless, Greek Yogurt
+
+=== 3. MAX CLOSER DELIVERY per persona (best single food x MAX_GRAMS) ===
+  vegan          no walls                                 maxProteinG=31.1  maxFatG=25.0  maxCarbG=108.3
+  vegan          dairy                                    maxProteinG=31.1  maxFatG=25.0  maxCarbG=108.3
+  vegan          vegan+soy+legumes                        maxProteinG=0.0  maxFatG=25.0  maxCarbG=108.3
+  vegan          vegan+soy+legumes+gluten+nuts+sesame     maxProteinG=0.0  maxFatG=25.0  maxCarbG=108.3
+  vegetarian     no walls                                 maxProteinG=31.1  maxFatG=25.0  maxCarbG=108.3
+  vegetarian     dairy                                    maxProteinG=31.1  maxFatG=25.0  maxCarbG=108.3
+  vegetarian     vegan+soy+legumes                        maxProteinG=18.5  maxFatG=25.0  maxCarbG=108.3
+  vegetarian     vegan+soy+legumes+gluten+nuts+sesame     maxProteinG=18.5  maxFatG=25.0  maxCarbG=108.3
+  none           no walls                                 maxProteinG=55.8  maxFatG=25.0  maxCarbG=108.3
+  none           dairy                                    maxProteinG=55.8  maxFatG=25.0  maxCarbG=108.3
+  none           vegan+soy+legumes                        maxProteinG=55.8  maxFatG=25.0  maxCarbG=108.3
+  none           vegan+soy+legumes+gluten+nuts+sesame     maxProteinG=55.8  maxFatG=25.0  maxCarbG=108.3
+  keto           no walls                                 maxProteinG=55.8  maxFatG=25.0  maxCarbG=0.0
+  keto           dairy                                    maxProteinG=55.8  maxFatG=25.0  maxCarbG=0.0
+  keto           vegan+soy+legumes                        maxProteinG=55.8  maxFatG=25.0  maxCarbG=0.0
+  keto           vegan+soy+legumes+gluten+nuts+sesame     maxProteinG=55.8  maxFatG=25.0  maxCarbG=0.0
+  carnivore      no walls                                 maxProteinG=55.8  maxFatG=20.3  maxCarbG=0.0
+  carnivore      dairy                                    maxProteinG=55.8  maxFatG=0.0  maxCarbG=0.0
+  carnivore      vegan+soy+legumes                        maxProteinG=55.8  maxFatG=20.3  maxCarbG=0.0
+  carnivore      vegan+soy+legumes+gluten+nuts+sesame     maxProteinG=55.8  maxFatG=20.3  maxCarbG=0.0
+
+=== 4. REACHABILITY BY NUMERIC PROPERTY (never by name) ===
+Food rows total: 14151
+
+bucket                                       rows  reachable-today
+protein >= 60 g/100g                             32        0
+protein >= 40 g/100g                             87        0
+protein >= 25 g/100g                           1417        1
+protein >= 25 AND fat <= 5 (lean protein)       277        1
+fat >= 50 g/100g                                398        2
+fat >= 80 g/100g (near-pure fat)                171        2
+carb >= 60 AND fat <= 3 (lean carb)             628        0
+carb >= 70 g/100g                              1047        0
+
+=== 5. HIGH-PROTEIN ROWS THAT PASS TRUST + THE HARSHEST PERSONA GATE ===
+protein >= 60                total=  32 trusted=  32 vegan-clean=   7 harshest-persona-clean=   1
+protein >= 40                total=  87 trusted=  87 vegan-clean=  37 harshest-persona-clean=  11
+protein >= 25 && fat <= 5    total= 277 trusted= 277 vegan-clean=  34 harshest-persona-clean=  13
+
+=== 6. TOP 30 BY PROTEIN/100g THAT PASS TRUST AND THE HARSHEST VEGAN PERSONA ===
+  P= 78.1 F= 1.56 C= 6.25 kcal=  352 | src=usda-verified  fdcId=2710745 | Nutritional powder mix, protein, NFS
+        dataQuality="pass — fiber-adjusted Atwater within tolerance; fdcId 2710745 (Survey (FNDDS))"
+  P= 58.1 F= 1.16 C= 29.1 kcal=  359 | src=usda-verified  fdcId=2710734 | Nutritional powder mix (Isopure)
+        dataQuality="pass — fiber-adjusted Atwater within tolerance; fdcId 2710734 (Survey (FNDDS))"
+  P= 57.5 F= 7.72 C= 23.9 kcal=  290 | src=usda-verified  fdcId= 170495 | Seaweed, spirulina, dried
+        dataQuality="exception:usda-source-model — USDA computed this record's energy with food-specific Atwater factors P2.44/C3.5"
+  P= 53.6 F= 10.7 C= 20.4 kcal=  392 | src=usda-verified  fdcId= 174181 | Beverages, nutritional shake mix, high protein, powder
+        dataQuality="pass — fiber-adjusted Atwater within tolerance; fdcId 174181 (SR Legacy)"
+  P= 53.6 F= 10.7 C= 20.4 kcal=  392 | src=usda-verified  fdcId=2710733 | Nutritional powder mix, high protein (Herbalife)
+        dataQuality="pass — fiber-adjusted Atwater within tolerance; fdcId 2710733 (Survey (FNDDS))"
+  P= 53.6 F= 10.7 C= 20.4 kcal=  392 | src=usda-verified  fdcId=2710741 | Nutritional powder mix, high protein, NFS
+        dataQuality="pass — fiber-adjusted Atwater within tolerance; fdcId 2710741 (Survey (FNDDS))"
+  P= 50.0 F=   12 C=   22 kcal=  396 | src=usda-verified  fdcId=2710744 | Nutritional powder mix, protein, light, NFS
+        dataQuality="pass — fiber-adjusted Atwater within tolerance; fdcId 2710744 (Survey (FNDDS))"
+  P= 49.1 F= 4.77 C= 38.4 kcal=  367 | src=usda-verified  fdcId= 170147 | Seeds, cottonseed meal, partially defatted (glandless)
+        dataQuality="pass — fiber-adjusted Atwater within tolerance; fdcId 170147 (SR Legacy)"
+  P= 40.4 F= 7.61 C= 41.2 kcal=  325 | src=manual         fdcId=   null | Fast action yeast
+        dataQuality="provenance-restored — provenance-restored 2026-07-31: re-derived from FDC 175043 \"Leavening agents, yeast, bak"
+  P= 40.4 F= 7.61 C= 41.2 kcal=  325 | src=usda-verified  fdcId=2710005 | Yeast
+        dataQuality="pass — re-derived; fdcId 2710005 \"Yeast\" (Survey (FNDDS)); replaced mismatched fdcId 167717 \"Yeast extract spr"
+  P= 40.4 F= 7.61 C= 41.2 kcal=  325 | src=manual         fdcId=   null | Instant Yeast
+        dataQuality="provenance-restored — provenance-restored 2026-07-31: re-derived from FDC 175043 \"Leavening agents, yeast, bak"
+
+=== 7. TOP 15 BY PROTEIN PASSING THE HARSHEST GATE BUT FAILING macroTrustIssue ===
+
+=== 8. TOP 12 LEAN-CARB (carb>=60, fat<=3) AND TOP 12 FAT (fat>=80) UNDER HARSHEST GATE + TRUST ===
+ -- LEAN CARB
+    count passing all three: 324
+    carb=  100 kcal=  387 src=usda-verified | Sugars, granulated
+    carb=  100 kcal=  368 src=usda-verified | Sweeteners, tabletop, fructose, dry, powder
+    carb= 99.8 kcal=  389 src=manual        | Icing Sugar
+    carb= 99.8 kcal=  399 src=manual        | Caster Sugar
+    carb= 99.8 kcal=  389 src=usda-verified | Powdered Sugar
+    carb= 99.8 kcal=  399 src=manual        | Demerara Sugar
+    carb= 99.8 kcal=  399 src=manual        | Ground Sugar
+    carb= 99.8 kcal=  399 src=manual        | Muscovado Sugar
+    carb= 99.8 kcal=  399 src=usda-verified | Sugar, turbinado
+    carb= 99.8 kcal=  389 src=usda-verified | Sugar, white, confectioner's, powdered
+    carb= 99.6 kcal=  401 src=usda-verified | Sugar
+    carb= 99.6 kcal=  385 src=usda-verified | Granulated Sugar
+ -- FAT
+    count passing all three: 94
+    fat=  100 kcal=  884 src=usda-verified | Oil, mustard
+    fat=  100 kcal=  884 src=manual        | Extra Virgin Olive Oil
+    fat=  100 kcal=  884 src=manual        | High Heat Cooking Oil
+    fat=  100 kcal=  884 src=manual        | Rapeseed Oil
+    fat=  100 kcal=  900 src=usda-verified | Olive Oil
+    fat=  100 kcal=  884 src=manual        | Oil
+    fat=  100 kcal=  884 src=usda-verified | Canola Oil
+    fat=  100 kcal=  900 src=usda-verified | Vegetable Oil
+    fat=  100 kcal=  900 src=usda-verified | Sunflower Oil
+    fat=  100 kcal=  884 src=manual        | Shortening
+    fat=  100 kcal=  884 src=manual        | Vegetable Shortening
+    fat=  100 kcal=  884 src=usda-verified | Oil, flaxseed, cold pressed
+
+=== 9. PROVENANCE (source) DISTRIBUTION ===
+  whole table: usda-verified=13516  manual=528  quarantined=77  manual-placeholder=29  usda=1
+  protein>=40: usda-verified=79  manual=8
+
+=== 10. PROTEIN DELIVERED AT MAX_GRAMS.protein = 180 g, top rows under harshest gate ===
+   140.6 g protein  (+  634 kcal, +2.8 g fat, +11.3 g carb) | Nutritional powder mix, protein, NFS
+   104.6 g protein  (+  646 kcal, +2.1 g fat, +52.4 g carb) | Nutritional powder mix (Isopure)
+   103.5 g protein  (+  522 kcal, +13.9 g fat, +43.0 g carb) | Seaweed, spirulina, dried
+    96.5 g protein  (+  706 kcal, +19.3 g fat, +36.7 g carb) | Beverages, nutritional shake mix, high protein, powder
+    96.5 g protein  (+  706 kcal, +19.3 g fat, +36.7 g carb) | Nutritional powder mix, high protein (Herbalife)
+    96.5 g protein  (+  706 kcal, +19.3 g fat, +36.7 g carb) | Nutritional powder mix, high protein, NFS
+    90.0 g protein  (+  713 kcal, +21.6 g fat, +39.6 g carb) | Nutritional powder mix, protein, light, NFS
+    88.4 g protein  (+  661 kcal, +8.6 g fat, +69.1 g carb) | Seeds, cottonseed meal, partially defatted (glandless)
+    72.7 g protein  (+  585 kcal, +13.7 g fat, +74.2 g carb) | Fast action yeast
+    72.7 g protein  (+  585 kcal, +13.7 g fat, +74.2 g carb) | Yeast
+    72.7 g protein  (+  585 kcal, +13.7 g fat, +74.2 g carb) | Instant Yeast
+
+=== 11. ALLERGEN METADATA COVERAGE (what a widened gate would be relying on) ===
+  rows with allergenTags: 0/14151 (0.0%)
+  rows with mayContain:   0/14151 (0.0%)
+  rows with fdcCategory:  13516/14151 (95.5%)
+  protein>=40 with allergenTags: 0/87   with fdcCategory: 79/87

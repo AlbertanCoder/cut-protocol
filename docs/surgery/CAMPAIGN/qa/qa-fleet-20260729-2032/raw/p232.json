@@ -1,0 +1,2717 @@
+{
+ "persona": {
+  "idx": 232,
+  "id": "p232",
+  "tier": "EASY",
+  "displayName": "finish carpenter, 59",
+  "story": "finish carpenter, 59, female, 153 cm / 45 kg (BMI 19.2), maintain, halal diet, no exclusions, high-protein, 3 meals + 1 snacks, wants a full week",
+  "profile": {
+   "sex": "F",
+   "age": 59,
+   "heightCm": 153,
+   "startWeightKg": 45,
+   "goalWeightKg": 44.9,
+   "occupationKey": "carpenter-finish",
+   "trainingStyle": "weights",
+   "minutesPerSession": 50,
+   "sessionsPerWeek": 3,
+   "rateLbPerWeek": 0.25,
+   "dietaryStyle": "halal",
+   "excludedFoods": [],
+   "mealsPerDay": 3,
+   "snacksPerDay": 1,
+   "unitPref": "metric",
+   "bodyFatPct": 30,
+   "bodyFatSource": "visual-estimate"
+  },
+  "filters": {
+   "proteinPriority": true
+  },
+  "horizon": "week",
+  "walls": [],
+  "freeTextExclusions": [],
+  "dietaryStyle": "halal",
+  "bmi": 19.2,
+  "goalKind": "maintain",
+  "macroStyle": "high-protein",
+  "requestedButUnsupported": [
+   "wanted protein set explicitly in g/lb; the API derives the protein band from LBM (1.14-1.25 g/lb) and accepts no client protein target — only the per-request proteinPriority filter"
+  ],
+  "tupleKey": "[\"EASY\",\"F\",59,153,45,44.9,\"carpenter-finish\",\"weights\",0.25,\"halal\",[],3,1,\"high-protein\",\"week\",null,null,true,null,null]"
+ },
+ "request": {
+  "horizon": "week",
+  "filters": {
+   "proteinPriority": true
+  }
+ },
+ "profileResponse": {
+  "id": "cms6x1usr05prwlw0cuib3ex9",
+  "userId": "cms6x1ung006awl2onolhxxp7",
+  "sex": "F",
+  "age": 59,
+  "heightCm": 153,
+  "bodyFatPct": 30,
+  "bodyFatSource": "visual-estimate",
+  "occupationKey": "carpenter-finish",
+  "activityOverride": null,
+  "sessionsPerWeek": 3,
+  "trainingStyle": "weights",
+  "minutesPerSession": 50,
+  "startWeightKg": 45,
+  "goalWeightKg": 44.9,
+  "startDate": "2026-07-29",
+  "unitPref": "metric",
+  "rateLbPerWeek": 0.25,
+  "rateAcknowledged": false,
+  "floorKcal": null,
+  "excludedFormulas": [],
+  "targetKcal": 1534,
+  "mealsPerDay": 3,
+  "snacksPerDay": 1,
+  "excludedFoods": [],
+  "dietaryStyle": "halal",
+  "cuisinePreferences": [],
+  "mealPreferencesNote": null,
+  "maxPrepMin": null,
+  "budgetTier": null,
+  "allowBatch": null,
+  "maxComplexity": null,
+  "adaptiveTdee": true,
+  "proteinPriorityMode": false,
+  "updatedAt": "2026-07-30T20:34:13.239Z"
+ },
+ "generate": {
+  "status": 200,
+  "ms": 488,
+  "body": {
+   "id": "cms7z1w3304upwlgwylnrbs0v",
+   "userId": "cms6x1ung006awl2onolhxxp7",
+   "startDate": "2026-07-27",
+   "createdAt": "2026-07-30T20:34:13.551Z",
+   "slots": [
+    {
+     "id": "cms7z1w8904urwlgwm615koys",
+     "planId": "cms7z1w3304upwlgwylnrbs0v",
+     "dayOfWeek": 0,
+     "slotType": "meal",
+     "slotIndex": 0,
+     "recipeId": "cmrujhgy6001awlboe1tjrllj",
+     "proteinScale": 0.5,
+     "sidesScale": 0.54,
+     "ingredients": [
+      {
+       "foodId": "cmrj2tbgn00kqwlwsij0gf7e5",
+       "name": "Tuna",
+       "role": "protein",
+       "grams": 60
+      },
+      {
+       "foodId": "cmrj2t80e0074wlws89ldq9y0",
+       "name": "bowtie pasta",
+       "role": "carb",
+       "grams": 80
+      },
+      {
+       "foodId": "cmrevpcnl000jwl5gnqnk630b",
+       "name": "Cucumber",
+       "role": "veg",
+       "grams": 45
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 415.9,
+     "protein": 25.9655,
+     "fat": 6.772,
+     "carb": 60.73200000000001,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrujhgy6001awlboe1tjrllj",
+      "name": "Tuna & Pasta Salad",
+      "description": null,
+      "steps": [
+       "Toss cooked pasta with tuna.",
+       "Add cucumber and dress."
+      ],
+      "slotType": "meal",
+      "cuisine": "mediterranean",
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 793.7,
+      "protein": 50.572,
+      "fat": 13.377,
+      "carb": 113.778,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 5.87,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T10:57:26.287Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z1w8b04utwlgwu8zf1n79",
+     "planId": "cms7z1w3304upwlgwylnrbs0v",
+     "dayOfWeek": 0,
+     "slotType": "meal",
+     "slotIndex": 1,
+     "recipeId": "cmrujkwve00biwl9o18s39qzv",
+     "proteinScale": 1.03,
+     "sidesScale": 1.13,
+     "ingredients": [
+      {
+       "foodId": "cmrj2tbsj00m1wlwsfeuh3jsf",
+       "name": "flax eggs",
+       "role": "protein",
+       "grams": 155
+      },
+      {
+       "foodId": "cmrevpcn2000ewl5gmlyzu0vd",
+       "name": "White rice, cooked",
+       "role": "carb",
+       "grams": 180
+      },
+      {
+       "foodId": "cmrevpcnh000iwl5gh2zjhyqe",
+       "name": "Bell peppers",
+       "role": "veg",
+       "grams": 90
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 10
+      }
+     ],
+     "kcal": 437.15,
+     "protein": 22.345,
+     "fat": 10.81,
+     "carb": 59.458,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrujkwve00biwl9o18s39qzv",
+      "name": "Classic Eggs & Bell Peppers with Rice",
+      "description": null,
+      "steps": [
+       "Cook the eggs.",
+       "Serve with white rice and bell peppers."
+      ],
+      "slotType": "meal",
+      "cuisine": "american",
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 405.3,
+      "protein": 21.2,
+      "fat": 10.7,
+      "carb": 53.1,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 2.95,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:00:06.890Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z1w8b04uvwlgwtbgzvkux",
+     "planId": "cms7z1w3304upwlgwylnrbs0v",
+     "dayOfWeek": 0,
+     "slotType": "meal",
+     "slotIndex": 2,
+     "recipeId": "cmrj2u9ra081lwlws844dgis7",
+     "proteinScale": 1.66,
+     "sidesScale": 2,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t99j00cdwlws6vv6cwsz",
+       "name": "Golden Caster Sugar",
+       "role": "carb",
+       "grams": 25
+      },
+      {
+       "foodId": "cmrj2t73d002xwlwsmcicl8l0",
+       "name": "Fish Sauce",
+       "role": "protein",
+       "grams": 4
+      },
+      {
+       "foodId": "cmrj2t7me005cwlwssmv2um0d",
+       "name": "Red Chilli",
+       "role": null,
+       "grams": 15
+      },
+      {
+       "foodId": "cmrj2t6ye002dwlwssjv94yyn",
+       "name": "Ginger",
+       "role": "veg",
+       "grams": 50
+      },
+      {
+       "foodId": "cmrj2tbgx00krwlwsyhpvjhnn",
+       "name": "Rainbow Trout",
+       "role": "protein",
+       "grams": 85
+      },
+      {
+       "foodId": "cmrj2tbh700kswlwsjq6eecsg",
+       "name": "Bok Choi",
+       "role": null,
+       "grams": 100
+      },
+      {
+       "foodId": "cmrj2t6qp001ewlwsds5bbm29",
+       "name": "Lemon",
+       "role": "veg",
+       "grams": 30
+      },
+      {
+       "foodId": "cmrj2t74b0031wlwsgf5ra3ry",
+       "name": "Coriander",
+       "role": null,
+       "grams": 50
+      },
+      {
+       "foodId": "cmrj2t6rc001hwlwsjpk7hg92",
+       "name": "Rice",
+       "role": "carb",
+       "grams": 50
+      }
+     ],
+     "kcal": 463.2,
+     "protein": 25.0929,
+     "fat": 6.648399999999999,
+     "carb": 78.5231,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrj2u9ra081lwlws844dgis7",
+      "name": "Vietnamese caramel trout",
+      "description": null,
+      "steps": [
+       "step 1",
+       "Put the sugar in a large shallow pan, along with a small splash of water. Heat gently, swirling the pan, until the sugar has dissolved. Increase the heat and bubble the syrup until it turns a dark amber colour. Add the fish sauce, most of the chilli and ginger, then splash in 1 tbsp water to dilute. Boil again until syrupy, then add the fish fillets, skin-side down, and the bok choi, cut-side down.",
+       "step 2",
+       "Cover the pan with a lid and simmer for 4-5 mins until the fish is cooked and the bok choi has wilted. Turn off the heat, squeeze over the lemon and scatter with the remaining chilli, ginger and the coriander sprigs. Serve with rice."
+      ],
+      "slotType": "meal",
+      "cuisine": "asian",
+      "prepTimeMin": 25,
+      "source": "themealdb-import",
+      "mealCategory": null,
+      "kcal": 242.1525,
+      "protein": 14.05116,
+      "fat": 3.786235,
+      "carb": 39.22769,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 3.58,
+      "difficulty": 3,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-13T10:26:02.086Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z1w8c04uzwlgw6szw6eq5",
+     "planId": "cms7z1w3304upwlgwylnrbs0v",
+     "dayOfWeek": 0,
+     "slotType": "snack",
+     "slotIndex": 0,
+     "recipeId": "cmrujhgxz000zwlbon488ewmg",
+     "proteinScale": 0.99,
+     "sidesScale": 0.99,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t7p5005pwlws4acmktnt",
+       "name": "Greek Yogurt",
+       "role": "dairy",
+       "grams": 170
+      },
+      {
+       "foodId": "cmrevpco3000nwl5g1d51b3it",
+       "name": "Almonds",
+       "role": "fat",
+       "grams": 15
+      },
+      {
+       "foodId": "cmrfoyp7m0002wl0851se2p2b",
+       "name": "Honey",
+       "role": "other",
+       "grams": 10
+      }
+     ],
+     "kcal": 220.4,
+     "protein": 20.69,
+     "fat": 8.538,
+     "carb": 17.51,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrujhgxz000zwlbon488ewmg",
+      "name": "Greek Yogurt, Honey & Almonds",
+      "description": null,
+      "steps": [
+       "Stir together."
+      ],
+      "slotType": "snack",
+      "cuisine": "american",
+      "prepTimeMin": 10,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 220.4,
+      "protein": 20.69,
+      "fat": 8.538,
+      "carb": 17.51,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 1.58,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T10:57:26.280Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z1w8d04v1wlgwfs4dhmza",
+     "planId": "cms7z1w3304upwlgwylnrbs0v",
+     "dayOfWeek": 1,
+     "slotType": "meal",
+     "slotIndex": 0,
+     "recipeId": "cmrujkwva00bcwl9o5zlcp7uy",
+     "proteinScale": 0.92,
+     "sidesScale": 0.97,
+     "ingredients": [
+      {
+       "foodId": "cmrj2tbsj00m1wlwsfeuh3jsf",
+       "name": "flax eggs",
+       "role": "protein",
+       "grams": 140
+      },
+      {
+       "foodId": "cmrevpcn2000ewl5gmlyzu0vd",
+       "name": "White rice, cooked",
+       "role": "carb",
+       "grams": 155
+      },
+      {
+       "foodId": "cmrj2t6na000ywlws9jek4w4z",
+       "name": "Broccoli",
+       "role": "veg",
+       "grams": 105
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 10
+      }
+     ],
+     "kcal": 401.05,
+     "protein": 21.8635,
+     "fat": 10.822,
+     "carb": 53.2875,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrujkwva00bcwl9o5zlcp7uy",
+      "name": "Classic Eggs & Broccoli with Rice",
+      "description": null,
+      "steps": [
+       "Cook the eggs.",
+       "Serve with white rice and broccoli."
+      ],
+      "slotType": "meal",
+      "cuisine": "american",
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 414.6,
+      "protein": 23.2,
+      "fat": 10.9,
+      "carb": 55.2,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 3.03,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:00:06.887Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z1w8d04v3wlgwnak98ht2",
+     "planId": "cms7z1w3304upwlgwylnrbs0v",
+     "dayOfWeek": 1,
+     "slotType": "meal",
+     "slotIndex": 1,
+     "recipeId": "cmrj2u9ra081lwlws844dgis7",
+     "proteinScale": 1.62,
+     "sidesScale": 1.92,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t99j00cdwlws6vv6cwsz",
+       "name": "Golden Caster Sugar",
+       "role": "carb",
+       "grams": 25
+      },
+      {
+       "foodId": "cmrj2t73d002xwlwsmcicl8l0",
+       "name": "Fish Sauce",
+       "role": "protein",
+       "grams": 4
+      },
+      {
+       "foodId": "cmrj2t7me005cwlwssmv2um0d",
+       "name": "Red Chilli",
+       "role": null,
+       "grams": 14
+      },
+      {
+       "foodId": "cmrj2t6ye002dwlwssjv94yyn",
+       "name": "Ginger",
+       "role": "veg",
+       "grams": 50
+      },
+      {
+       "foodId": "cmrj2tbgx00krwlwsyhpvjhnn",
+       "name": "Rainbow Trout",
+       "role": "protein",
+       "grams": 80
+      },
+      {
+       "foodId": "cmrj2tbh700kswlwsjq6eecsg",
+       "name": "Bok Choi",
+       "role": null,
+       "grams": 95
+      },
+      {
+       "foodId": "cmrj2t6qp001ewlwsds5bbm29",
+       "name": "Lemon",
+       "role": "veg",
+       "grams": 30
+      },
+      {
+       "foodId": "cmrj2t74b0031wlwsgf5ra3ry",
+       "name": "Coriander",
+       "role": null,
+       "grams": 50
+      },
+      {
+       "foodId": "cmrj2t6rc001hwlwsjpk7hg92",
+       "name": "Rice",
+       "role": "carb",
+       "grams": 50
+      }
+     ],
+     "kcal": 454.85,
+     "protein": 24.0282,
+     "fat": 6.3233,
+     "carb": 78.2595,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrj2u9ra081lwlws844dgis7",
+      "name": "Vietnamese caramel trout",
+      "description": null,
+      "steps": [
+       "step 1",
+       "Put the sugar in a large shallow pan, along with a small splash of water. Heat gently, swirling the pan, until the sugar has dissolved. Increase the heat and bubble the syrup until it turns a dark amber colour. Add the fish sauce, most of the chilli and ginger, then splash in 1 tbsp water to dilute. Boil again until syrupy, then add the fish fillets, skin-side down, and the bok choi, cut-side down.",
+       "step 2",
+       "Cover the pan with a lid and simmer for 4-5 mins until the fish is cooked and the bok choi has wilted. Turn off the heat, squeeze over the lemon and scatter with the remaining chilli, ginger and the coriander sprigs. Serve with rice."
+      ],
+      "slotType": "meal",
+      "cuisine": "asian",
+      "prepTimeMin": 25,
+      "source": "themealdb-import",
+      "mealCategory": null,
+      "kcal": 242.1525,
+      "protein": 14.05116,
+      "fat": 3.786235,
+      "carb": 39.22769,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 3.58,
+      "difficulty": 3,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-13T10:26:02.086Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z1w8e04v5wlgwhwii3lnx",
+     "planId": "cms7z1w3304upwlgwylnrbs0v",
+     "dayOfWeek": 1,
+     "slotType": "meal",
+     "slotIndex": 2,
+     "recipeId": "cmrujkwoy0006wl9o9c3pptnn",
+     "proteinScale": 0.5,
+     "sidesScale": 1.35,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t7w3006lwlws4zdhow4d",
+       "name": "Chicken Breast",
+       "role": "protein",
+       "grams": 85
+      },
+      {
+       "foodId": "cmrevpcn2000ewl5gmlyzu0vd",
+       "name": "White rice, cooked",
+       "role": "carb",
+       "grams": 215
+      },
+      {
+       "foodId": "cmrevpcnh000iwl5gh2zjhyqe",
+       "name": "Bell peppers",
+       "role": "veg",
+       "grams": 110
+      },
+      {
+       "foodId": "cmrj2t95b00bxwlwsoefzd8s1",
+       "name": "Cashew Nuts",
+       "role": "fat",
+       "grams": 18
+      }
+     ],
+     "kcal": 511.54,
+     "protein": 29.162,
+     "fat": 10.204,
+     "carb": 73.334,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrujkwoy0006wl9o9c3pptnn",
+      "name": "Stir-Fried Chicken & Bell Peppers with Rice",
+      "description": null,
+      "steps": [
+       "Cook the chicken.",
+       "Serve with white rice and bell peppers."
+      ],
+      "slotType": "meal",
+      "cuisine": "asian",
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 532.74,
+      "protein": 46.502,
+      "fat": 12.176,
+      "carb": 56.13400000000001,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 6.5,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:00:06.658Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z1w8f04v7wlgwus3qubw1",
+     "planId": "cms7z1w3304upwlgwylnrbs0v",
+     "dayOfWeek": 1,
+     "slotType": "snack",
+     "slotIndex": 0,
+     "recipeId": "cmrujhgxz000zwlbon488ewmg",
+     "proteinScale": 0.76,
+     "sidesScale": 0.76,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t7p5005pwlws4acmktnt",
+       "name": "Greek Yogurt",
+       "role": "dairy",
+       "grams": 130
+      },
+      {
+       "foodId": "cmrevpco3000nwl5g1d51b3it",
+       "name": "Almonds",
+       "role": "fat",
+       "grams": 11
+      },
+      {
+       "foodId": "cmrfoyp7m0002wl0851se2p2b",
+       "name": "Honey",
+       "role": "other",
+       "grams": 8
+      }
+     ],
+     "kcal": 166.8,
+     "protein": 15.724,
+     "fat": 6.282,
+     "carb": 13.582,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrujhgxz000zwlbon488ewmg",
+      "name": "Greek Yogurt, Honey & Almonds",
+      "description": null,
+      "steps": [
+       "Stir together."
+      ],
+      "slotType": "snack",
+      "cuisine": "american",
+      "prepTimeMin": 10,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 220.4,
+      "protein": 20.69,
+      "fat": 8.538,
+      "carb": 17.51,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 1.58,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T10:57:26.280Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z1w8f04v9wlgwhdnlrh0z",
+     "planId": "cms7z1w3304upwlgwylnrbs0v",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 0,
+     "recipeId": "cmrul79wr0086wl809z2b475h",
+     "proteinScale": 0.5,
+     "sidesScale": 1.66,
+     "ingredients": [
+      {
+       "foodId": "cmrfoyrjh0009wl08cmcid51m",
+       "name": "Turkey breast, low salt, prepackaged or deli, luncheon meat",
+       "role": "protein",
+       "grams": 85
+      },
+      {
+       "foodId": "cmrevpcn2000ewl5gmlyzu0vd",
+       "name": "White rice, cooked",
+       "role": "carb",
+       "grams": 180
+      },
+      {
+       "foodId": "cmrg8zxar000lwli0qy2ovmx4",
+       "name": "Onion",
+       "role": "veg",
+       "grams": 100
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 411.65,
+     "protein": 24.49,
+     "fat": 6.345499999999999,
+     "carb": 62.7235,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrul79wr0086wl809z2b475h",
+      "name": "High-Protein Turkey & Onions with Rice",
+      "description": null,
+      "steps": [
+       "Cook the turkey.",
+       "Serve over white rice with onions."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 397.3,
+      "protein": 40.7,
+      "fat": 6.8,
+      "carb": 42.4,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 6.34,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:45:29.835Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z1w8g04vbwlgwgra23jgp",
+     "planId": "cms7z1w3304upwlgwylnrbs0v",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 1,
+     "recipeId": "cmrujkwqc002iwl9os4fqncbh",
+     "proteinScale": 0.92,
+     "sidesScale": 1.44,
+     "ingredients": [
+      {
+       "foodId": "cmrj2tbsj00m1wlwsfeuh3jsf",
+       "name": "flax eggs",
+       "role": "protein",
+       "grams": 140
+      },
+      {
+       "foodId": "cmrj2t6xy002bwlwstg6a0xsf",
+       "name": "Noodles",
+       "role": "carb",
+       "grams": 215
+      },
+      {
+       "foodId": "cmrevpcnh000iwl5gh2zjhyqe",
+       "name": "Bell peppers",
+       "role": "veg",
+       "grams": 115
+      },
+      {
+       "foodId": "cmrj2t95b00bxwlwsoefzd8s1",
+       "name": "Cashew Nuts",
+       "role": "fat",
+       "grams": 18
+      }
+     ],
+     "kcal": 440.79,
+     "protein": 23.11049999999999,
+     "fat": 7.776999999999999,
+     "carb": 70.273,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrujkwqc002iwl9os4fqncbh",
+      "name": "Stir-Fried Eggs & Bell Peppers with Noodles",
+      "description": null,
+      "steps": [
+       "Cook the eggs.",
+       "Serve with noodles and bell peppers."
+      ],
+      "slotType": "meal",
+      "cuisine": "asian",
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 365.24,
+      "protein": 22.667,
+      "fat": 7.542,
+      "carb": 52.22399999999999,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 3.32,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:00:06.708Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z1w8g04vdwlgwpi8il035",
+     "planId": "cms7z1w3304upwlgwylnrbs0v",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 2,
+     "recipeId": "cmrujkwt6007iwl9oliyzc1o8",
+     "proteinScale": 0.5,
+     "sidesScale": 1.81,
+     "ingredients": [
+      {
+       "foodId": "cmrj2tbgn00kqwlwsij0gf7e5",
+       "name": "Tuna",
+       "role": "protein",
+       "grams": 60
+      },
+      {
+       "foodId": "cmrj2t8190078wlws1rc1yrxl",
+       "name": "Couscous",
+       "role": "carb",
+       "grams": 270
+      },
+      {
+       "foodId": "cmrg8zxar000lwli0qy2ovmx4",
+       "name": "Onion",
+       "role": "veg",
+       "grams": 110
+      },
+      {
+       "foodId": "cmrevpco3000nwl5g1d51b3it",
+       "name": "Almonds",
+       "role": "fat",
+       "grams": 18
+      }
+     ],
+     "kcal": 523.64,
+     "protein": 30.523,
+     "fat": 10.484,
+     "carb": 76.694,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrujkwt6007iwl9oliyzc1o8",
+      "name": "Mediterranean Tuna & Onions with Couscous",
+      "description": null,
+      "steps": [
+       "Cook the tuna.",
+       "Serve with couscous and onions."
+      ],
+      "slotType": "meal",
+      "cuisine": "mediterranean",
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 438.84,
+      "protein": 40.72499999999999,
+      "fat": 10.734,
+      "carb": 44.184,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 6.17,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:00:06.810Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z1w8h04vfwlgwbi3mtm2p",
+     "planId": "cms7z1w3304upwlgwylnrbs0v",
+     "dayOfWeek": 2,
+     "slotType": "snack",
+     "slotIndex": 0,
+     "recipeId": "cmrg91na2000mwli0w2pcl3e2",
+     "proteinScale": 0.5,
+     "sidesScale": 2,
+     "ingredients": [
+      {
+       "foodId": "cmrfoyrjh0009wl08cmcid51m",
+       "name": "Turkey breast, low salt, prepackaged or deli, luncheon meat",
+       "role": "protein",
+       "grams": 55
+      },
+      {
+       "foodId": "cmrg8us5k0002wli07r50svzc",
+       "name": "Cheese, swiss, low fat",
+       "role": "dairy",
+       "grams": 50
+      },
+      {
+       "foodId": "cmrevpcnl000jwl5gnqnk630b",
+       "name": "Cucumber",
+       "role": "veg",
+       "grams": 160
+      },
+      {
+       "foodId": "cmrj2t6mf000uwlwsne5kc5wl",
+       "name": "Black Pepper",
+       "role": "other",
+       "grams": 1
+      }
+     ],
+     "kcal": 167.96,
+     "protein": 27.238,
+     "fat": 3.2951,
+     "carb": 7.726500000000001,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrg91na2000mwli0w2pcl3e2",
+      "name": "Turkey & Swiss Roll-Ups",
+      "description": "Lean deli turkey rolled around reduced-fat Swiss with crisp cucumber spears — no bread, all protein.",
+      "steps": [
+       "Lay turkey slices flat.",
+       "Place a strip of Swiss and a cucumber spear on each.",
+       "Roll tightly.",
+       "Season with black pepper and serve."
+      ],
+      "slotType": "snack",
+      "cuisine": "western-comfort",
+      "prepTimeMin": 6,
+      "source": "ai-generated",
+      "mealCategory": "bread_or_pastry_side",
+      "kcal": 175.16,
+      "protein": 31.65600000000001,
+      "fat": 2.3486,
+      "carb": 7.079,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 4.49,
+      "difficulty": 2,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-11T10:56:25.371Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z1w8i04vhwlgwsznhhc5x",
+     "planId": "cms7z1w3304upwlgwylnrbs0v",
+     "dayOfWeek": 3,
+     "slotType": "meal",
+     "slotIndex": 0,
+     "recipeId": "cmrul79yw00bowl809ubij1m5",
+     "proteinScale": 0.55,
+     "sidesScale": 1.82,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t7t00067wlwsj23ngikm",
+       "name": "Egg White",
+       "role": "protein",
+       "grams": 145
+      },
+      {
+       "foodId": "cmrevpcn2000ewl5gmlyzu0vd",
+       "name": "White rice, cooked",
+       "role": "carb",
+       "grams": 200
+      },
+      {
+       "foodId": "cmrevpcnl000jwl5gnqnk630b",
+       "name": "Cucumber",
+       "role": "veg",
+       "grams": 165
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 401.25,
+     "protein": 21.8885,
+     "fat": 5.864,
+     "carb": 62.986,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrul79yw00bowl809ubij1m5",
+      "name": "High-Protein Egg White & Cucumber with Rice",
+      "description": null,
+      "steps": [
+       "Cook the egg white.",
+       "Serve over white rice with cucumber."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 340,
+      "protein": 31.321,
+      "fat": 5.474,
+      "carb": 38.88000000000001,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 2.85,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:45:29.912Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z1w8i04vjwlgwh3q4arsv",
+     "planId": "cms7z1w3304upwlgwylnrbs0v",
+     "dayOfWeek": 3,
+     "slotType": "meal",
+     "slotIndex": 1,
+     "recipeId": "cmrj2tku402j5wlws1zhfqftr",
+     "proteinScale": 0.94,
+     "sidesScale": 0.94,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t6t4001pwlwsxeja9565",
+       "name": "Potatoes",
+       "role": "veg",
+       "grams": 205
+      },
+      {
+       "foodId": "cmrj2t6na000ywlws9jek4w4z",
+       "name": "Broccoli",
+       "role": "veg",
+       "grams": 25
+      },
+      {
+       "foodId": "cmrj2t6ft0001wlwstiofk9on",
+       "name": "Garlic",
+       "role": "veg",
+       "grams": 1
+      },
+      {
+       "foodId": "cmrj2t7w3006lwlws4zdhow4d",
+       "name": "Chicken Breast",
+       "role": "protein",
+       "grams": 80
+      },
+      {
+       "foodId": "cmrj2t7bg003xwlwsftxacfll",
+       "name": "Balsamic Vinegar",
+       "role": "carb",
+       "grams": 25
+      },
+      {
+       "foodId": "cmrfoyp7m0002wl0851se2p2b",
+       "name": "Honey",
+       "role": "carb",
+       "grams": 25
+      },
+      {
+       "foodId": "cmrj2t6n2000xwlwsqltep2pn",
+       "name": "Chicken Stock",
+       "role": "other",
+       "grams": 25
+      },
+      {
+       "foodId": "cmrevpcnz000mwl5g62fmfzqk",
+       "name": "Butter",
+       "role": "fat",
+       "grams": 3
+      },
+      {
+       "foodId": "cmrj2t7hg004pwlwsioxvv8bh",
+       "name": "Vegetable Oil",
+       "role": "fat",
+       "grams": 3
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 3
+      }
+     ],
+     "kcal": 445.54,
+     "protein": 23.7657,
+     "fat": 11.0993,
+     "carb": 63.46,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrj2tku402j5wlws1zhfqftr",
+      "name": "Honey Balsamic Chicken with Crispy Broccoli & Potatoes",
+      "description": null,
+      "steps": [
+       "2 Servings",
+       "Preheat oven to 425 degrees. Wash and dry all produce. Cut potatoes into 1/2-inch-thick wedges. Toss on one side of a baking sheet with a drizzle of oil, salt, and pepper. (For 4 servings, spread potatoes out across entire sheet.) Roast on top rack for 5 minutes (we'll add the broccoli then).",
+       "Meanwhile, cut broccoli florets into bite-size pieces, if necessary. Peel and finely chop garlic. In a small microwave-safe bowl, combine 1 TBSP olive oil (2 TBSP for 4 servings) and half the garlic. Microwave until garlic sizzles, 30 seconds.",
+       "Once potatoes have roasted 5 minutes, remove sheet from oven and add broccoli to empty side; carefully toss with garlic oil, salt, and pepper. (For 4 servings, add broccoli to a second sheet.) Continue roasting until potatoes and broccoli are browned and crispy, 15-20 minutes more.",
+       "While veggies roast, pat chicken dry with paper towels; season all over with salt and pepper. Heat a drizzle of oil in a large pan over medium-high heat. Add chicken and cook until browned and cooked through, 5-6 minutes per side. (If chicken browns too quickly, reduce heat to medium.) Turn off heat; set chicken aside to rest. Wash out pan.",
+       "Heat pan used for chicken over medium-high heat. Add a drizzle of oil and remaining garlic; cook until fragrant, 30 seconds. Stir in vinegar, honey, stock concentrate, and 1/4 cup water (1/3 cup for 4 servings). Simmer until thick and glossy, 2-3 minutes. Remove from heat and stir in 1 TBSP butter (2 TBSP for 4). Season with salt and pepper.",
+       "Return chicken to pan and turn to coat in glaze. Divide chicken, broccoli, and potatoes between plates. Spoon any remaining glaze over chicken and serve."
+      ],
+      "slotType": "meal",
+      "cuisine": "western-comfort",
+      "prepTimeMin": 34,
+      "source": "themealdb-import",
+      "mealCategory": null,
+      "kcal": 474.461,
+      "protein": 25.609375,
+      "fat": 12.540225,
+      "carb": 65.5703,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 4.21,
+      "difficulty": 5,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-13T10:25:29.789Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z1w8j04vlwlgwp8c6j0gf",
+     "planId": "cms7z1w3304upwlgwylnrbs0v",
+     "dayOfWeek": 3,
+     "slotType": "meal",
+     "slotIndex": 2,
+     "recipeId": "cmrul79sr001owl80dqc054hi",
+     "proteinScale": 0.7,
+     "sidesScale": 2,
+     "ingredients": [
+      {
+       "foodId": "cmrukzae20001wlbwgdjqlh3f",
+       "name": "Textured vegetable protein, dry",
+       "role": "protein",
+       "grams": 40
+      },
+      {
+       "foodId": "cmrevpcn2000ewl5gmlyzu0vd",
+       "name": "White rice, cooked",
+       "role": "carb",
+       "grams": 220
+      },
+      {
+       "foodId": "cmrevpcnl000jwl5gnqnk630b",
+       "name": "Cucumber",
+       "role": "veg",
+       "grams": 180
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 481,
+     "protein": 27.802,
+     "fat": 6.348,
+     "carb": 77.48800000000001,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrul79sr001owl80dqc054hi",
+      "name": "High-Protein TVP & Cucumber with Rice",
+      "description": null,
+      "steps": [
+       "Cook the tvp.",
+       "Serve over white rice with cucumber."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 378.5,
+      "protein": 32.101,
+      "fat": 6.024,
+      "carb": 49.24400000000001,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 1.54,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:45:29.692Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z1w8j04vnwlgwd7brhf97",
+     "planId": "cms7z1w3304upwlgwylnrbs0v",
+     "dayOfWeek": 3,
+     "slotType": "snack",
+     "slotIndex": 0,
+     "recipeId": "cms7pjmkm003awlbk8b9zzoqo",
+     "proteinScale": 0.5,
+     "sidesScale": 2,
+     "ingredients": [
+      {
+       "foodId": "cmrj2tbym00mowlwszf3qi0d8",
+       "name": "Cottage Cheese",
+       "role": "protein",
+       "grams": 90
+      },
+      {
+       "foodId": "cmrg8urje0000wli0g52uqcdi",
+       "name": "Pineapple, raw",
+       "role": "carb",
+       "grams": 200
+      }
+     ],
+     "kcal": 181.8,
+     "protein": 10.82,
+     "fat": 2.49,
+     "carb": 32.079,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cms7pjmkm003awlbk8b9zzoqo",
+      "name": "Cottage Cheese with Pineapple",
+      "description": null,
+      "steps": [
+       "Spoon the cottage cheese into a bowl.",
+       "Top with diced pineapple."
+      ],
+      "slotType": "snack",
+      "cuisine": "american",
+      "prepTimeMin": 3,
+      "source": "curated",
+      "mealCategory": null,
+      "kcal": 201.6,
+      "protein": 20.26,
+      "fat": 4.35,
+      "carb": 21.858,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": null,
+      "difficulty": 1,
+      "filterProvenance": null,
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-30T16:08:04.870Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z1w8k04vpwlgw6nv0i7xr",
+     "planId": "cms7z1w3304upwlgwylnrbs0v",
+     "dayOfWeek": 4,
+     "slotType": "meal",
+     "slotIndex": 0,
+     "recipeId": "cms7pjmhf0009wlbka81epe7z",
+     "proteinScale": 0.5,
+     "sidesScale": 1.37,
+     "ingredients": [
+      {
+       "foodId": "cmrj2tb1x00j6wlwsic6sx9a2",
+       "name": "Cod",
+       "role": "protein",
+       "grams": 100
+      },
+      {
+       "foodId": "cmrj2t6t4001pwlwsxeja9565",
+       "name": "Potatoes",
+       "role": "carb",
+       "grams": 300
+      },
+      {
+       "foodId": "cmrj2t6na000ywlws9jek4w4z",
+       "name": "Broccoli",
+       "role": "veg",
+       "grams": 150
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 7
+      },
+      {
+       "foodId": "cmrj2t6qp001ewlwsds5bbm29",
+       "name": "Lemon",
+       "role": "veg",
+       "grams": 20
+      },
+      {
+       "foodId": "cmrj2t7or005nwlwspa00qdkh",
+       "name": "Dill",
+       "role": "other",
+       "grams": 2
+      }
+     ],
+     "kcal": 429.16,
+     "protein": 28.0942,
+     "fat": 8.5624,
+     "carb": 63.9094,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cms7pjmhf0009wlbka81epe7z",
+      "name": "Steamed Cod with New Potatoes and Dill",
+      "description": null,
+      "steps": [
+       "Boil the potatoes until a knife slides in, about 15 minutes.",
+       "Set the cod over the pan on a steamer rack for the last 8 minutes.",
+       "Steam the broccoli alongside for 4 minutes.",
+       "Dress with olive oil, lemon and chopped dill."
+      ],
+      "slotType": "meal",
+      "cuisine": "nordic",
+      "prepTimeMin": 25,
+      "source": "curated",
+      "mealCategory": null,
+      "kcal": 417.71,
+      "protein": 43.1712,
+      "fat": 7.0394,
+      "carb": 46.9354,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": null,
+      "difficulty": 2,
+      "filterProvenance": null,
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-30T16:08:04.755Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z1w8l04vrwlgwecqni0n7",
+     "planId": "cms7z1w3304upwlgwylnrbs0v",
+     "dayOfWeek": 4,
+     "slotType": "meal",
+     "slotIndex": 1,
+     "recipeId": "cmrul4e3g0010wl68z63se003",
+     "proteinScale": 0.5,
+     "sidesScale": 1.88,
+     "ingredients": [
+      {
+       "foodId": "cmrukzae20001wlbwgdjqlh3f",
+       "name": "Textured vegetable protein, dry",
+       "role": "protein",
+       "grams": 30
+      },
+      {
+       "foodId": "cmrj2t7fb004fwlws8ezof2dp",
+       "name": "Russet Potato",
+       "role": "carb",
+       "grams": 280
+      },
+      {
+       "foodId": "cmrj2t6na000ywlws9jek4w4z",
+       "name": "Broccoli",
+       "role": "veg",
+       "grams": 205
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 473.55,
+     "protein": 28.2325,
+     "fat": 6.361,
+     "carb": 81.77349999999998,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrul4e3g0010wl68z63se003",
+      "name": "High-Protein TVP & Broccoli with Potato",
+      "description": null,
+      "steps": [
+       "Cook the tvp.",
+       "Serve over potato with broccoli."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 403.1,
+      "protein": 35.372,
+      "fat": 6.119,
+      "carb": 55.49699999999999,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 1.9,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:43:15.292Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z1w8l04vtwlgwy73cywfp",
+     "planId": "cms7z1w3304upwlgwylnrbs0v",
+     "dayOfWeek": 4,
+     "slotType": "meal",
+     "slotIndex": 2,
+     "recipeId": "cmrujkwsy0076wl9ouycfmtwn",
+     "proteinScale": 0.5,
+     "sidesScale": 2,
+     "ingredients": [
+      {
+       "foodId": "cmrj2tbgn00kqwlwsij0gf7e5",
+       "name": "Tuna",
+       "role": "protein",
+       "grams": 60
+      },
+      {
+       "foodId": "cmrg8zuft0008wli0etz5grtf",
+       "name": "Bulgur, cooked",
+       "role": "carb",
+       "grams": 260
+      },
+      {
+       "foodId": "cmrg8zxar000lwli0qy2ovmx4",
+       "name": "Onion",
+       "role": "veg",
+       "grams": 120
+      },
+      {
+       "foodId": "cmrevpco3000nwl5g1d51b3it",
+       "name": "Almonds",
+       "role": "fat",
+       "grams": 18
+      }
+     ],
+     "kcal": 441.04,
+     "protein": 28.408,
+     "fat": 10.686,
+     "carb": 63.34800000000001,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrujkwsy0076wl9ouycfmtwn",
+      "name": "Mediterranean Tuna & Onions with Bulgur",
+      "description": null,
+      "steps": [
+       "Cook the tuna.",
+       "Serve with bulgur and onions."
+      ],
+      "slotType": "meal",
+      "cuisine": "mediterranean",
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 378.74,
+      "protein": 39.044,
+      "fat": 10.806,
+      "carb": 33.56400000000001,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 5.86,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:00:06.803Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z1w8m04vvwlgw5bza6y62",
+     "planId": "cms7z1w3304upwlgwylnrbs0v",
+     "dayOfWeek": 4,
+     "slotType": "snack",
+     "slotIndex": 0,
+     "recipeId": "cms7pjmkm003awlbk8b9zzoqo",
+     "proteinScale": 0.5,
+     "sidesScale": 2,
+     "ingredients": [
+      {
+       "foodId": "cmrj2tbym00mowlwszf3qi0d8",
+       "name": "Cottage Cheese",
+       "role": "protein",
+       "grams": 90
+      },
+      {
+       "foodId": "cmrg8urje0000wli0g52uqcdi",
+       "name": "Pineapple, raw",
+       "role": "carb",
+       "grams": 200
+      }
+     ],
+     "kcal": 181.8,
+     "protein": 10.82,
+     "fat": 2.49,
+     "carb": 32.079,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cms7pjmkm003awlbk8b9zzoqo",
+      "name": "Cottage Cheese with Pineapple",
+      "description": null,
+      "steps": [
+       "Spoon the cottage cheese into a bowl.",
+       "Top with diced pineapple."
+      ],
+      "slotType": "snack",
+      "cuisine": "american",
+      "prepTimeMin": 3,
+      "source": "curated",
+      "mealCategory": null,
+      "kcal": 201.6,
+      "protein": 20.26,
+      "fat": 4.35,
+      "carb": 21.858,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": null,
+      "difficulty": 1,
+      "filterProvenance": null,
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-30T16:08:04.870Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z1w8m04vxwlgw55x2jfql",
+     "planId": "cms7z1w3304upwlgwylnrbs0v",
+     "dayOfWeek": 5,
+     "slotType": "meal",
+     "slotIndex": 0,
+     "recipeId": "cmrujhgy6001awlboe1tjrllj",
+     "proteinScale": 0.5,
+     "sidesScale": 0.54,
+     "ingredients": [
+      {
+       "foodId": "cmrj2tbgn00kqwlwsij0gf7e5",
+       "name": "Tuna",
+       "role": "protein",
+       "grams": 60
+      },
+      {
+       "foodId": "cmrj2t80e0074wlws89ldq9y0",
+       "name": "bowtie pasta",
+       "role": "carb",
+       "grams": 80
+      },
+      {
+       "foodId": "cmrevpcnl000jwl5gnqnk630b",
+       "name": "Cucumber",
+       "role": "veg",
+       "grams": 45
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 415.9,
+     "protein": 25.9655,
+     "fat": 6.772,
+     "carb": 60.73200000000001,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrujhgy6001awlboe1tjrllj",
+      "name": "Tuna & Pasta Salad",
+      "description": null,
+      "steps": [
+       "Toss cooked pasta with tuna.",
+       "Add cucumber and dress."
+      ],
+      "slotType": "meal",
+      "cuisine": "mediterranean",
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 793.7,
+      "protein": 50.572,
+      "fat": 13.377,
+      "carb": 113.778,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 5.87,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T10:57:26.287Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z1w8n04vzwlgw0ne3txxj",
+     "planId": "cms7z1w3304upwlgwylnrbs0v",
+     "dayOfWeek": 5,
+     "slotType": "meal",
+     "slotIndex": 1,
+     "recipeId": "cmrul79w8007cwl80rx3fv1w7",
+     "proteinScale": 0.5,
+     "sidesScale": 2,
+     "ingredients": [
+      {
+       "foodId": "cmrj2tbgn00kqwlwsij0gf7e5",
+       "name": "Tuna",
+       "role": "protein",
+       "grams": 75
+      },
+      {
+       "foodId": "cmrj2t7fb004fwlws8ezof2dp",
+       "name": "Russet Potato",
+       "role": "carb",
+       "grams": 300
+      },
+      {
+       "foodId": "cmrj2t6na000ywlws9jek4w4z",
+       "name": "Broccoli",
+       "role": "veg",
+       "grams": 220
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 485.2,
+     "protein": 32.669,
+     "fat": 6.753,
+     "carb": 77.99399999999999,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrul79w8007cwl80rx3fv1w7",
+      "name": "High-Protein Tuna & Broccoli with Potato",
+      "description": null,
+      "steps": [
+       "Cook the tuna.",
+       "Serve over potato with broccoli."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 395.6,
+      "protein": 45.022,
+      "fat": 6.798999999999999,
+      "carb": 38.99699999999999,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 7.13,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:45:29.817Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z1w8n04w1wlgwqrp17u5j",
+     "planId": "cms7z1w3304upwlgwylnrbs0v",
+     "dayOfWeek": 5,
+     "slotType": "meal",
+     "slotIndex": 2,
+     "recipeId": "cmrul79xr009uwl80trvev40l",
+     "proteinScale": 0.5,
+     "sidesScale": 2,
+     "ingredients": [
+      {
+       "foodId": "cmrj2tb0x00j2wlwsjzrofelh",
+       "name": "Shrimp",
+       "role": "protein",
+       "grams": 85
+      },
+      {
+       "foodId": "cmrj2t7fb004fwlws8ezof2dp",
+       "name": "Russet Potato",
+       "role": "carb",
+       "grams": 300
+      },
+      {
+       "foodId": "cmrj2t6na000ywlws9jek4w4z",
+       "name": "Broccoli",
+       "role": "veg",
+       "grams": 220
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 482.35,
+     "protein": 33.944,
+     "fat": 6.376,
+     "carb": 78.16399999999999,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrul79xr009uwl80trvev40l",
+      "name": "High-Protein Shrimp & Broccoli with Potato",
+      "description": null,
+      "steps": [
+       "Cook the shrimp.",
+       "Serve over potato with broccoli."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 389.9,
+      "protein": 47.572,
+      "fat": 6.045,
+      "carb": 39.337,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 10.48,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:45:29.871Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z1w8o04w3wlgwf806ns4y",
+     "planId": "cms7z1w3304upwlgwylnrbs0v",
+     "dayOfWeek": 5,
+     "slotType": "snack",
+     "slotIndex": 0,
+     "recipeId": "cms7pjmju002swlbktsksba9r",
+     "proteinScale": 0.83,
+     "sidesScale": 0.83,
+     "ingredients": [
+      {
+       "foodId": "cmrukzae50002wlbwr9bq9oa7",
+       "name": "Edamame, shelled, cooked",
+       "role": "protein",
+       "grams": 125
+      },
+      {
+       "foodId": "cmrj2t6gd0003wlwss7jf3wzf",
+       "name": "Salt",
+       "role": "other",
+       "grams": 1
+      }
+     ],
+     "kcal": 151.25,
+     "protein": 15,
+     "fat": 6.25,
+     "carb": 11.25,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cms7pjmju002swlbktsksba9r",
+      "name": "Edamame with Sea Salt",
+      "description": null,
+      "steps": [
+       "Boil the pods 4 minutes in well-salted water.",
+       "Drain and salt again while hot. Eat from the pod."
+      ],
+      "slotType": "snack",
+      "cuisine": "japanese",
+      "prepTimeMin": 6,
+      "source": "curated",
+      "mealCategory": null,
+      "kcal": 181.5,
+      "protein": 18,
+      "fat": 7.5,
+      "carb": 13.5,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": null,
+      "difficulty": 1,
+      "filterProvenance": null,
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-30T16:08:04.843Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z1w8o04w5wlgwqx2oo5kj",
+     "planId": "cms7z1w3304upwlgwylnrbs0v",
+     "dayOfWeek": 6,
+     "slotType": "meal",
+     "slotIndex": 0,
+     "recipeId": "cms7pjmhu000pwlbkj68lki4w",
+     "proteinScale": 0.5,
+     "sidesScale": 1.42,
+     "ingredients": [
+      {
+       "foodId": "cmrj2tbym00mowlwszf3qi0d8",
+       "name": "Cottage Cheese",
+       "role": "protein",
+       "grams": 100
+      },
+      {
+       "foodId": "cmrviin3907x1wl1kfu5v3wy1",
+       "name": "Bread, rye",
+       "role": "carb",
+       "grams": 115
+      },
+      {
+       "foodId": "cmrj2t7jf004ywlwsm5ob5a0u",
+       "name": "Tomatoes",
+       "role": "veg",
+       "grams": 130
+      },
+      {
+       "foodId": "cmrj2ta9b00g3wlwsl47mn5ja",
+       "name": "Chives",
+       "role": "other",
+       "grams": 3
+      },
+      {
+       "foodId": "cmrj2t6mf000uwlwsne5kc5wl",
+       "name": "Black Pepper",
+       "role": "other",
+       "grams": 1
+      }
+     ],
+     "kcal": 406.6599999999999,
+     "protein": 22.12109999999999,
+     "fat": 6.409499999999999,
+     "carb": 65.68249999999999,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cms7pjmhu000pwlbkj68lki4w",
+      "name": "Cottage Cheese and Tomato Rye Toast",
+      "description": null,
+      "steps": [
+       "Toast the rye until it holds its shape under a load.",
+       "Spoon over the cottage cheese.",
+       "Top with sliced tomato, chives and a good grind of black pepper."
+      ],
+      "slotType": "meal",
+      "cuisine": "nordic",
+      "prepTimeMin": 8,
+      "source": "curated",
+      "mealCategory": null,
+      "kcal": 390.81,
+      "protein": 29.7941,
+      "fat": 7.4745,
+      "carb": 51.53149999999999,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": null,
+      "difficulty": 1,
+      "filterProvenance": null,
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-30T16:08:04.770Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z1w8p04w7wlgwde3lbzyp",
+     "planId": "cms7z1w3304upwlgwylnrbs0v",
+     "dayOfWeek": 6,
+     "slotType": "meal",
+     "slotIndex": 1,
+     "recipeId": "cmrul79zv00d6wl80nei2na03",
+     "proteinScale": 0.73,
+     "sidesScale": 1.66,
+     "ingredients": [
+      {
+       "foodId": "cmrj2tbym00mowlwszf3qi0d8",
+       "name": "Cottage Cheese",
+       "role": "protein",
+       "grams": 145
+      },
+      {
+       "foodId": "cmrj2t7fb004fwlws8ezof2dp",
+       "name": "Russet Potato",
+       "role": "carb",
+       "grams": 250
+      },
+      {
+       "foodId": "cmrevpcnh000iwl5gh2zjhyqe",
+       "name": "Bell peppers",
+       "role": "veg",
+       "grams": 135
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 443.25,
+     "protein": 23.875,
+     "fat": 9.065,
+     "carb": 67.8495,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrul79zv00d6wl80nei2na03",
+      "name": "High-Protein Cottage Cheese & Bell Peppers with Potato",
+      "description": null,
+      "steps": [
+       "Cook the cottage cheese.",
+       "Serve over potato with bell peppers."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 376.3,
+      "protein": 26.745,
+      "fat": 10.035,
+      "carb": 45.51999999999999,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 2.85,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:45:29.947Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z1w8p04w9wlgwkvoig6qa",
+     "planId": "cms7z1w3304upwlgwylnrbs0v",
+     "dayOfWeek": 6,
+     "slotType": "meal",
+     "slotIndex": 2,
+     "recipeId": "cms7pjmhn000hwlbkl6ec3o0x",
+     "proteinScale": 0.5,
+     "sidesScale": 1.32,
+     "ingredients": [
+      {
+       "foodId": "cmrj2tb0x00j2wlwsjzrofelh",
+       "name": "Shrimp",
+       "role": "protein",
+       "grams": 90
+      },
+      {
+       "foodId": "cmrevpcn2000ewl5gmlyzu0vd",
+       "name": "White rice, cooked",
+       "role": "carb",
+       "grams": 250
+      },
+      {
+       "foodId": "cmrj2tc1g00mzwlwsx2odpgsn",
+       "name": "Asparagus",
+       "role": "veg",
+       "grams": 160
+      },
+      {
+       "foodId": "cmrj2t6ft0001wlwstiofk9on",
+       "name": "Garlic",
+       "role": "veg",
+       "grams": 6
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 8
+      },
+      {
+       "foodId": "cmrj2t7ve006iwlwsr3tyleyw",
+       "name": "Lemon Juice",
+       "role": "other",
+       "grams": 8
+      }
+     ],
+     "kcal": 528.44,
+     "protein": 32.2952,
+     "fat": 9.235999999999999,
+     "carb": 78.632,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cms7pjmhn000hwlbkl6ec3o0x",
+      "name": "Garlic Prawn and Asparagus Rice Bowl",
+      "description": null,
+      "steps": [
+       "Get a pan very hot.",
+       "Sear the prawns 90 seconds a side with the garlic — they are done the moment they turn opaque.",
+       "Add the asparagus and toss for 2 minutes so it keeps its bite.",
+       "Pile onto the rice and finish with lemon juice."
+      ],
+      "slotType": "meal",
+      "cuisine": "asian",
+      "prepTimeMin": 20,
+      "source": "curated",
+      "mealCategory": null,
+      "kcal": 513.5400000000001,
+      "protein": 51.3952,
+      "fat": 7.26,
+      "carb": 60.45999999999999,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": null,
+      "difficulty": 2,
+      "filterProvenance": null,
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-30T16:08:04.763Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z1w8q04wbwlgw1a3um508",
+     "planId": "cms7z1w3304upwlgwylnrbs0v",
+     "dayOfWeek": 6,
+     "slotType": "snack",
+     "slotIndex": 0,
+     "recipeId": "cmrg91na2000mwli0w2pcl3e2",
+     "proteinScale": 0.5,
+     "sidesScale": 2,
+     "ingredients": [
+      {
+       "foodId": "cmrfoyrjh0009wl08cmcid51m",
+       "name": "Turkey breast, low salt, prepackaged or deli, luncheon meat",
+       "role": "protein",
+       "grams": 55
+      },
+      {
+       "foodId": "cmrg8us5k0002wli07r50svzc",
+       "name": "Cheese, swiss, low fat",
+       "role": "dairy",
+       "grams": 50
+      },
+      {
+       "foodId": "cmrevpcnl000jwl5gnqnk630b",
+       "name": "Cucumber",
+       "role": "veg",
+       "grams": 160
+      },
+      {
+       "foodId": "cmrj2t6mf000uwlwsne5kc5wl",
+       "name": "Black Pepper",
+       "role": "other",
+       "grams": 1
+      }
+     ],
+     "kcal": 167.96,
+     "protein": 27.238,
+     "fat": 3.2951,
+     "carb": 7.726500000000001,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrg91na2000mwli0w2pcl3e2",
+      "name": "Turkey & Swiss Roll-Ups",
+      "description": "Lean deli turkey rolled around reduced-fat Swiss with crisp cucumber spears — no bread, all protein.",
+      "steps": [
+       "Lay turkey slices flat.",
+       "Place a strip of Swiss and a cucumber spear on each.",
+       "Roll tightly.",
+       "Season with black pepper and serve."
+      ],
+      "slotType": "snack",
+      "cuisine": "western-comfort",
+      "prepTimeMin": 6,
+      "source": "ai-generated",
+      "mealCategory": "bread_or_pastry_side",
+      "kcal": 175.16,
+      "protein": 31.65600000000001,
+      "fat": 2.3486,
+      "carb": 7.079,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 4.49,
+      "difficulty": 2,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-11T10:56:25.371Z",
+      "createdByUserId": null
+     }
+    }
+   ],
+   "groceryList": null,
+   "meta": {
+    "matchPct": 97,
+    "attempts": 1,
+    "score": {
+     "daysInTolerance": 7,
+     "avgMatch": 97,
+     "days": [
+      {
+       "dayOfWeek": 0,
+       "dayName": "Monday",
+       "matchPct": 91,
+       "totals": {
+        "kcal": 1537,
+        "protein": 94,
+        "fat": 33,
+        "carb": 216
+       },
+       "kcalDeltaPct": 0.2,
+       "proteinShortPct": 0,
+       "fatOk": true,
+       "carbOk": true,
+       "inTolerance": true,
+       "miss": null,
+       "unfilledSlots": 0,
+       "warnedSlots": 0,
+       "proteinFloor": {
+        "met": true,
+        "floorG": 79,
+        "achievedG": 94.1,
+        "shortG": 0,
+        "shortPct": 0,
+        "reason": null
+       },
+       "windowIndex": 0,
+       "dayIndex": 0,
+       "key": "0:0"
+      },
+      {
+       "dayOfWeek": 1,
+       "dayName": "Tuesday",
+       "matchPct": 90,
+       "totals": {
+        "kcal": 1534,
+        "protein": 91,
+        "fat": 34,
+        "carb": 218
+       },
+       "kcalDeltaPct": 0,
+       "proteinShortPct": 0,
+       "fatOk": true,
+       "carbOk": true,
+       "inTolerance": true,
+       "miss": null,
+       "unfilledSlots": 0,
+       "warnedSlots": 0,
+       "proteinFloor": {
+        "met": true,
+        "floorG": 79,
+        "achievedG": 90.8,
+        "shortG": 0,
+        "shortPct": 0,
+        "reason": null
+       },
+       "windowIndex": 0,
+       "dayIndex": 1,
+       "key": "0:1"
+      },
+      {
+       "dayOfWeek": 2,
+       "dayName": "Wednesday",
+       "matchPct": 100,
+       "totals": {
+        "kcal": 1544,
+        "protein": 105,
+        "fat": 28,
+        "carb": 217
+       },
+       "kcalDeltaPct": 0.7,
+       "proteinShortPct": 0,
+       "fatOk": true,
+       "carbOk": true,
+       "inTolerance": true,
+       "miss": null,
+       "unfilledSlots": 0,
+       "warnedSlots": 0,
+       "proteinFloor": {
+        "met": true,
+        "floorG": 79,
+        "achievedG": 105.4,
+        "shortG": 0,
+        "shortPct": 0,
+        "reason": null
+       },
+       "windowIndex": 0,
+       "dayIndex": 2,
+       "key": "0:2"
+      },
+      {
+       "dayOfWeek": 3,
+       "dayName": "Thursday",
+       "matchPct": 98,
+       "totals": {
+        "kcal": 1510,
+        "protein": 84,
+        "fat": 26,
+        "carb": 236
+       },
+       "kcalDeltaPct": -1.6,
+       "proteinShortPct": 0,
+       "fatOk": true,
+       "carbOk": true,
+       "inTolerance": true,
+       "miss": null,
+       "unfilledSlots": 0,
+       "warnedSlots": 0,
+       "proteinFloor": {
+        "met": true,
+        "floorG": 79,
+        "achievedG": 84.3,
+        "shortG": 0,
+        "shortPct": 0,
+        "reason": null
+       },
+       "windowIndex": 0,
+       "dayIndex": 3,
+       "key": "0:3"
+      },
+      {
+       "dayOfWeek": 4,
+       "dayName": "Friday",
+       "matchPct": 97,
+       "totals": {
+        "kcal": 1526,
+        "protein": 96,
+        "fat": 28,
+        "carb": 241
+       },
+       "kcalDeltaPct": -0.6,
+       "proteinShortPct": 0,
+       "fatOk": true,
+       "carbOk": true,
+       "inTolerance": true,
+       "miss": null,
+       "unfilledSlots": 0,
+       "warnedSlots": 0,
+       "proteinFloor": {
+        "met": true,
+        "floorG": 79,
+        "achievedG": 95.6,
+        "shortG": 0,
+        "shortPct": 0,
+        "reason": null
+       },
+       "windowIndex": 0,
+       "dayIndex": 4,
+       "key": "0:4"
+      },
+      {
+       "dayOfWeek": 5,
+       "dayName": "Saturday",
+       "matchPct": 100,
+       "totals": {
+        "kcal": 1535,
+        "protein": 108,
+        "fat": 26,
+        "carb": 228
+       },
+       "kcalDeltaPct": 0,
+       "proteinShortPct": 0,
+       "fatOk": true,
+       "carbOk": true,
+       "inTolerance": true,
+       "miss": null,
+       "unfilledSlots": 0,
+       "warnedSlots": 0,
+       "proteinFloor": {
+        "met": true,
+        "floorG": 79,
+        "achievedG": 107.6,
+        "shortG": 0,
+        "shortPct": 0,
+        "reason": null
+       },
+       "windowIndex": 0,
+       "dayIndex": 5,
+       "key": "0:5"
+      },
+      {
+       "dayOfWeek": 6,
+       "dayName": "Sunday",
+       "matchPct": 100,
+       "totals": {
+        "kcal": 1546,
+        "protein": 106,
+        "fat": 28,
+        "carb": 220
+       },
+       "kcalDeltaPct": 0.8,
+       "proteinShortPct": 0,
+       "fatOk": true,
+       "carbOk": true,
+       "inTolerance": true,
+       "miss": null,
+       "unfilledSlots": 0,
+       "warnedSlots": 0,
+       "proteinFloor": {
+        "met": true,
+        "floorG": 79,
+        "achievedG": 105.5,
+        "shortG": 0,
+        "shortPct": 0,
+        "reason": null
+       },
+       "windowIndex": 0,
+       "dayIndex": 6,
+       "key": "0:6"
+      }
+     ],
+     "totalDays": 7,
+     "floorDaysMet": 7,
+     "floorDaysTotal": 7
+    },
+    "days": [
+     {
+      "dayOfWeek": 0,
+      "dayName": "Monday",
+      "matchPct": 91,
+      "totals": {
+       "kcal": 1537,
+       "protein": 94,
+       "fat": 33,
+       "carb": 216
+      },
+      "kcalDeltaPct": 0.2,
+      "proteinShortPct": 0,
+      "fatOk": true,
+      "carbOk": true,
+      "inTolerance": true,
+      "miss": null,
+      "unfilledSlots": 0,
+      "warnedSlots": 0,
+      "proteinFloor": {
+       "met": true,
+       "floorG": 79,
+       "achievedG": 94.1,
+       "shortG": 0,
+       "shortPct": 0,
+       "reason": null
+      },
+      "windowIndex": 0,
+      "dayIndex": 0,
+      "key": "0:0"
+     },
+     {
+      "dayOfWeek": 1,
+      "dayName": "Tuesday",
+      "matchPct": 90,
+      "totals": {
+       "kcal": 1534,
+       "protein": 91,
+       "fat": 34,
+       "carb": 218
+      },
+      "kcalDeltaPct": 0,
+      "proteinShortPct": 0,
+      "fatOk": true,
+      "carbOk": true,
+      "inTolerance": true,
+      "miss": null,
+      "unfilledSlots": 0,
+      "warnedSlots": 0,
+      "proteinFloor": {
+       "met": true,
+       "floorG": 79,
+       "achievedG": 90.8,
+       "shortG": 0,
+       "shortPct": 0,
+       "reason": null
+      },
+      "windowIndex": 0,
+      "dayIndex": 1,
+      "key": "0:1"
+     },
+     {
+      "dayOfWeek": 2,
+      "dayName": "Wednesday",
+      "matchPct": 100,
+      "totals": {
+       "kcal": 1544,
+       "protein": 105,
+       "fat": 28,
+       "carb": 217
+      },
+      "kcalDeltaPct": 0.7,
+      "proteinShortPct": 0,
+      "fatOk": true,
+      "carbOk": true,
+      "inTolerance": true,
+      "miss": null,
+      "unfilledSlots": 0,
+      "warnedSlots": 0,
+      "proteinFloor": {
+       "met": true,
+       "floorG": 79,
+       "achievedG": 105.4,
+       "shortG": 0,
+       "shortPct": 0,
+       "reason": null
+      },
+      "windowIndex": 0,
+      "dayIndex": 2,
+      "key": "0:2"
+     },
+     {
+      "dayOfWeek": 3,
+      "dayName": "Thursday",
+      "matchPct": 98,
+      "totals": {
+       "kcal": 1510,
+       "protein": 84,
+       "fat": 26,
+       "carb": 236
+      },
+      "kcalDeltaPct": -1.6,
+      "proteinShortPct": 0,
+      "fatOk": true,
+      "carbOk": true,
+      "inTolerance": true,
+      "miss": null,
+      "unfilledSlots": 0,
+      "warnedSlots": 0,
+      "proteinFloor": {
+       "met": true,
+       "floorG": 79,
+       "achievedG": 84.3,
+       "shortG": 0,
+       "shortPct": 0,
+       "reason": null
+      },
+      "windowIndex": 0,
+      "dayIndex": 3,
+      "key": "0:3"
+     },
+     {
+      "dayOfWeek": 4,
+      "dayName": "Friday",
+      "matchPct": 97,
+      "totals": {
+       "kcal": 1526,
+       "protein": 96,
+       "fat": 28,
+       "carb": 241
+      },
+      "kcalDeltaPct": -0.6,
+      "proteinShortPct": 0,
+      "fatOk": true,
+      "carbOk": true,
+      "inTolerance": true,
+      "miss": null,
+      "unfilledSlots": 0,
+      "warnedSlots": 0,
+      "proteinFloor": {
+       "met": true,
+       "floorG": 79,
+       "achievedG": 95.6,
+       "shortG": 0,
+       "shortPct": 0,
+       "reason": null
+      },
+      "windowIndex": 0,
+      "dayIndex": 4,
+      "key": "0:4"
+     },
+     {
+      "dayOfWeek": 5,
+      "dayName": "Saturday",
+      "matchPct": 100,
+      "totals": {
+       "kcal": 1535,
+       "protein": 108,
+       "fat": 26,
+       "carb": 228
+      },
+      "kcalDeltaPct": 0,
+      "proteinShortPct": 0,
+      "fatOk": true,
+      "carbOk": true,
+      "inTolerance": true,
+      "miss": null,
+      "unfilledSlots": 0,
+      "warnedSlots": 0,
+      "proteinFloor": {
+       "met": true,
+       "floorG": 79,
+       "achievedG": 107.6,
+       "shortG": 0,
+       "shortPct": 0,
+       "reason": null
+      },
+      "windowIndex": 0,
+      "dayIndex": 5,
+      "key": "0:5"
+     },
+     {
+      "dayOfWeek": 6,
+      "dayName": "Sunday",
+      "matchPct": 100,
+      "totals": {
+       "kcal": 1546,
+       "protein": 106,
+       "fat": 28,
+       "carb": 220
+      },
+      "kcalDeltaPct": 0.8,
+      "proteinShortPct": 0,
+      "fatOk": true,
+      "carbOk": true,
+      "inTolerance": true,
+      "miss": null,
+      "unfilledSlots": 0,
+      "warnedSlots": 0,
+      "proteinFloor": {
+       "met": true,
+       "floorG": 79,
+       "achievedG": 105.5,
+       "shortG": 0,
+       "shortPct": 0,
+       "reason": null
+      },
+      "windowIndex": 0,
+      "dayIndex": 6,
+      "key": "0:6"
+     }
+    ],
+    "diagnosis": null,
+    "poolCounts": {
+     "raw": 910,
+     "afterDiet": 758,
+     "afterPrep": 758,
+     "afterStack": 758,
+     "stackExplain": null
+    },
+    "variety": {
+     "mealEligible": 598,
+     "usableForSlot": 440,
+     "slotKcal": 452,
+     "snackEligible": 15,
+     "weeklyMealSlots": 21,
+     "weeklySnackSlots": 7,
+     "repeatCap": 2,
+     "distinctWeeks": 21,
+     "horizonWeeks": 1,
+     "sustainsHorizon": true,
+     "notes": [
+      "1 week: 23 distinct dish(es) across 28 filled slot(s); most-repeated dish appears 2x against a 2x cap for this horizon (2x per week)."
+     ],
+     "horizon": {
+      "weeks": 1,
+      "days": 7,
+      "perWeekCap": 2,
+      "horizonRepeatCap": 2,
+      "mealSlots": 21,
+      "snackSlots": 7,
+      "totalSlots": 28,
+      "distinctFloor": 14,
+      "distinctRecipes": 23,
+      "maxRepeat": 2,
+      "maxRepeatRecipeId": "cmrujhgy6001awlboe1tjrllj",
+      "lockedRepeatsOfMax": 0,
+      "filledSlots": 28,
+      "unfilledSlots": 0,
+      "requiredDistinct": 14,
+      "capHeld": true,
+      "floorHeld": true
+     }
+    },
+    "priorWeeksConsidered": 0,
+    "horizon": {
+     "key": "week",
+     "label": "1 week",
+     "days": 7,
+     "kind": "days",
+     "weeks": 1,
+     "custom": false,
+     "startDate": "2026-07-27",
+     "endDate": "2026-08-02",
+     "startDayOfWeek": 0,
+     "weeksWritten": 1,
+     "solveMs": 22,
+     "weekPlans": [
+      {
+       "startDate": "2026-07-27",
+       "dayIndices": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+       ],
+       "days": 7,
+       "daysInTolerance": 7,
+       "avgMatch": 97,
+       "unfilledSlots": 0,
+       "poolSize": 758
+      }
+     ]
+    }
+   }
+  }
+ }
+}

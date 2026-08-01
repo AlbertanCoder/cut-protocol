@@ -1,0 +1,74 @@
+{
+  "personaId": "p004",
+  "satisfaction": 4,
+  "wouldRecommend": false,
+  "criteria": {
+    "macrosInRange": 6,
+    "worksEndToEnd": 5,
+    "mealsAreGood": 4,
+    "affordableAdjustable": 3,
+    "tasty": 5
+  },
+  "allergenRespect": {
+    "ok": true,
+    "leaks": []
+  },
+  "delights": [
+    "My four medical walls held across all 28 slots — not one named dairy, egg, gluten or soy ingredient anywhere — and it showed me the price of that honestly instead of hiding it: \"poolCounts\": {\"raw\": 889, \"afterDiet\": 202}. All four of dairy/eggs/gluten/soy are first-class options in /api/profile/meta allergyOptions, not a free-text box I have to trust.",
+    "It admits when it fails instead of quietly fudging a number: \"Tried 4 recipe(s) for this slot, none fit within tolerance — closest was \\\"Jerky & Pork Rinds Snack Plate\\\" (delivered 23g protein vs a 31g target).\" I would rather be told than be lied to.",
+    "The protein target cites real research rather than asserting itself — \"Helms, Aragon & Fitschen (2014)\", \"J Int Soc Sports Nutr 11:20 — 2.3-3.1 g/kg fat-free mass/day preserves lean mass in a caloric deficit\" — and the regenerated day landed 2218 kcal against my 2221 target (\"kcalDeltaPct\": -0.1, \"matchPct\": 99) in \"solveMs\": 7."
+  ],
+  "defects": [
+    {
+      "what": "I told it my hard 15-minute cook limit and it said OK and threw it away — 200 response, field still null on a fresh re-read, and its own solver report confirms no prep filter ever ran.",
+      "snippet": "PUT /api/profile {\"maxPrepMin\":15} -> STATUS:200, response \"maxPrepMin\": null; GET /api/profile again -> \"maxPrepMin\": null; solver meta \"poolCounts\": {\"raw\": 889, \"afterDiet\": 202, \"afterPrep\": 202}"
+    },
+    {
+      "what": "Because that limit is discarded, 11 of my 21 dishes are longer than I can cook — the times ARE recorded on every recipe, so nothing was missing but the filter.",
+      "snippet": "Jamaican Curry Goat prepTimeMin=42, Lakra me Mish Cabbage and Meat Stew prepTimeMin=37, Slow-roasted ham with lemon, garlic & sage prepTimeMin=34, Spanish beans with chicken & chorizo prepTimeMin=31"
+    },
+    {
+      "what": "I asked for 15-minute food and the fresh day it built me was a 22-minute boiled-beef dish and a 34-minute roast.",
+      "snippet": "new Thursday after my request: Slow-roasted ham with lemon, garlic & sage (34 min) + Seswaa (22 min) + Ground Elk, Rice & Peppers (20 min)"
+    },
+    {
+      "what": "Herb and vegetable weights are wildly wrong — 105 g of rosemary would make the fish inedible, and a dish named for cabbage contains one leaf of it.",
+      "snippet": "Grilled Portuguese sardines: \"Rosemary 105g\"; grocery list \"Thyme -> 168g\"; \"Lakra me Mish Cabbage and Meat Stew\" ingredient list: \"Cabbage 13g\""
+    },
+    {
+      "what": "My shopping list tells me to buy water, and prints a developer instruction at me where a price should be.",
+      "snippet": "grocery items \"Water -> 275g (3 uses), section=other\" and \"Boiling Water -> 115g\"; cost note on 40 items: \"rough manually-entered CAD estimate, not sourced pricing data — edit src/lib/groceryPrices.js to correct\""
+    },
+    {
+      "what": "There are only four snack recipes in my whole filtered pool for seven snack slots, so almost every snack misses and four of seven are beef jerky. The app computes this and never tells me in plain words — diagnosis came back null despite six warned slots.",
+      "snippet": "\"variety\": {\"snackEligible\": 4, \"weeklySnackSlots\": 7}; \"diagnosis\": null; e.g. Pepperoni & Pistachios Plate \"landed 386 kcal vs a 180 target; delivered 16g protein vs a 27g target\""
+    },
+    {
+      "what": "I cannot budget this week: 16 of 57 grocery lines have no price at all, including the two biggest exotic meats, and the priced remainder is already $248.57 for one person for one week.",
+      "snippet": "unpriced: \"Goat Meat | other | 695g\", \"Ground pack (elk/game), cooked | protein | 745g\", \"Sardines | other | 210g\", \"Dry White Wine | other | 120g\"; priced items 40, sum CAD 248.57; Jamaican Curry Goat costPerServing=21.62, Ground Elk Rice & Peppers=16.58"
+    },
+    {
+      "what": "Portions are enormous because the protein target is built off my total 144.2 kg with body fat unrecorded — a 74-year-old woman is not eating 380 g of fish at breakfast or 405 g of elk at dinner.",
+      "snippet": "profile \"bodyFatPct\": 0, day totals ~265 g protein/day; \"White Fish 380g\", \"Ground pack (elk/game), cooked 405g\", \"Shrimp 325g\", and slot targets of \"a 79g\" protein per meal"
+    },
+    {
+      "what": "I asked for a single day and I am holding a 28-slot week I never requested; the plan also opens on 2026-07-27, three days before today.",
+      "snippet": "GET /api/plans/current -> slots 28 (7 days x 4), \"startDate\": \"2026-07-27\" with today 2026-07-30"
+    },
+    {
+      "what": "As a coeliac I have to say it: no ingredient NAME broke a wall, but jerky, pepperoni and chorizo are exactly the products whose marinades and fillers carry wheat and soy, and nothing in the plan flags them for checking. Four of my seven snacks are jerky.",
+      "snippet": "\"Beef jerky 80g\" (4 snacks), \"Pepperoni 60g\", \"Chorizo 30g\", \"Pork rinds 18g\" — all passed the gluten/soy filter with no verify-the-label note"
+    },
+    {
+      "what": "Same ingredient duplicated as two shopping lines in two different sections, and meats filed under 'other' rather than protein.",
+      "snippet": "\"Bay Leaf | spices | 1g\" and \"Bay Leaves | other | 1g\"; \"Goat Meat | other\", \"Sardines | other\", \"Chorizo | other\""
+    }
+  ],
+  "followUp": {
+    "action": "Told it the one thing it had never recorded — my hard 15-minute cook limit — and then asked for a fresh single day, which is exactly what I would do after seeing a 42-minute curry goat on my plan.",
+    "endpoint": "PUT /api/profile {\"maxPrepMin\":15} then POST /api/plans/generate {\"horizon\":\"day\"}",
+    "status": 200,
+    "howItWent": "Both calls returned 200 and the regenerate itself was genuinely impressive — it rebuilt today only, in 7 ms, landing 2218 kcal against my 2221 target at 99% match with fat and carbs in tolerance. But the profile save silently dropped maxPrepMin (still null on re-read, and the solver reported \"afterDiet\": 202, \"afterPrep\": 202 — the prep filter removed nothing), so the fresh day it handed me was a 34-minute roasted ham and a 22-minute boiled beef. It said yes and did nothing."
+  },
+  "verdict": "It kept every one of my medical walls clean and it is honest to a fault about its own misses, but it accepted my 15-minute cook limit with a 200 and silently discarded it, so I am left with 42-minute curry goat, 105 g of rosemary, four jerky snacks and a $250-plus week I cannot fully price — good engine, and I still cannot cook from it."
+}

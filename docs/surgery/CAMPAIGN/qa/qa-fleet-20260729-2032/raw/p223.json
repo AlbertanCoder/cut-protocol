@@ -1,0 +1,514 @@
+{
+ "persona": {
+  "idx": 223,
+  "id": "p223",
+  "tier": "EASY",
+  "displayName": "office worker, 55",
+  "story": "office worker, 55, female, 183 cm / 123.7 kg (BMI 36.9), cut at 1 lb/wk, kosher diet, avoiding cilantro, high-protein, 3 meals + 0 snacks, wants a single day",
+  "profile": {
+   "sex": "F",
+   "age": 55,
+   "heightCm": 183,
+   "startWeightKg": 123.7,
+   "goalWeightKg": 104.7,
+   "occupationKey": "desk-office",
+   "trainingStyle": "weights",
+   "minutesPerSession": 45,
+   "sessionsPerWeek": 3,
+   "rateLbPerWeek": 1,
+   "dietaryStyle": "kosher",
+   "excludedFoods": [
+    "cilantro"
+   ],
+   "mealsPerDay": 3,
+   "snacksPerDay": 0,
+   "unitPref": "metric"
+  },
+  "filters": {
+   "proteinPriority": true
+  },
+  "horizon": "day",
+  "walls": [
+   "cilantro"
+  ],
+  "freeTextExclusions": [
+   "cilantro"
+  ],
+  "dietaryStyle": "kosher",
+  "bmi": 36.9,
+  "goalKind": "cut",
+  "macroStyle": "high-protein",
+  "requestedButUnsupported": [
+   "wanted protein set explicitly in g/lb; the API derives the protein band from LBM (1.14-1.25 g/lb) and accepts no client protein target — only the per-request proteinPriority filter"
+  ],
+  "tupleKey": "[\"EASY\",\"F\",55,183,123.7,104.7,\"desk-office\",\"weights\",1,\"kosher\",[\"cilantro\"],3,0,\"high-protein\",\"day\",null,null,true,null,null]"
+ },
+ "request": {
+  "horizon": "day",
+  "filters": {
+   "proteinPriority": true
+  }
+ },
+ "profileResponse": {
+  "id": "cms6x1sez05gtwlw0k2mvvx3g",
+  "userId": "cms6x1s9k0061wl2o5prlp365",
+  "sex": "F",
+  "age": 55,
+  "heightCm": 183,
+  "bodyFatPct": 0,
+  "bodyFatSource": null,
+  "occupationKey": "desk-office",
+  "activityOverride": null,
+  "sessionsPerWeek": 3,
+  "trainingStyle": "weights",
+  "minutesPerSession": 45,
+  "startWeightKg": 123.7,
+  "goalWeightKg": 104.7,
+  "startDate": "2026-07-29",
+  "unitPref": "metric",
+  "rateLbPerWeek": 1,
+  "rateAcknowledged": false,
+  "floorKcal": null,
+  "excludedFormulas": [],
+  "targetKcal": 1930,
+  "mealsPerDay": 3,
+  "snacksPerDay": 0,
+  "excludedFoods": [
+   "cilantro"
+  ],
+  "dietaryStyle": "kosher",
+  "cuisinePreferences": [],
+  "mealPreferencesNote": null,
+  "maxPrepMin": null,
+  "budgetTier": null,
+  "allowBatch": null,
+  "maxComplexity": null,
+  "adaptiveTdee": true,
+  "proteinPriorityMode": false,
+  "updatedAt": "2026-07-30T20:34:10.518Z"
+ },
+ "generate": {
+  "status": 200,
+  "ms": 376,
+  "body": {
+   "id": "cms7z1tw204kzwlgwqf11chfe",
+   "userId": "cms6x1s9k0061wl2o5prlp365",
+   "startDate": "2026-07-27",
+   "createdAt": "2026-07-30T20:34:10.706Z",
+   "slots": [
+    {
+     "id": "cms7z1tw304l1wlgwra1zkoln",
+     "planId": "cms7z1tw204kzwlgwqf11chfe",
+     "dayOfWeek": 3,
+     "slotType": "meal",
+     "slotIndex": 0,
+     "recipeId": "cmrj2ti7a01y5wlws2z7h786o",
+     "proteinScale": 0.62,
+     "sidesScale": 0.5,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t6s6001lwlwsz4y2aot3",
+       "name": "Beef Brisket",
+       "role": "protein",
+       "grams": 235
+      },
+      {
+       "foodId": "cmrj2t6oc0013wlwsjzlwoln2",
+       "name": "Carrots",
+       "role": "veg",
+       "grams": 8
+      },
+      {
+       "foodId": "cmrj2t7tx006bwlws8yjor4pp",
+       "name": "Celeriac",
+       "role": null,
+       "grams": 13
+      },
+      {
+       "foodId": "cmrj2t7u4006cwlws5bx9wk8h",
+       "name": "Parsnips",
+       "role": null,
+       "grams": 25
+      },
+      {
+       "foodId": "cmrj2t6h10006wlwslufza94y",
+       "name": "Parsley",
+       "role": null,
+       "grams": 13
+      },
+      {
+       "foodId": "cmrj2t6ug001vwlwssesfsb74",
+       "name": "Leek",
+       "role": null,
+       "grams": 6
+      },
+      {
+       "foodId": "cmrg8zxar000lwli0qy2ovmx4",
+       "name": "Onion",
+       "role": "veg",
+       "grams": 14
+      },
+      {
+       "foodId": "cmrj2t6qh001dwlws2ramsws8",
+       "name": "Bay Leaf",
+       "role": null,
+       "grams": 1
+      },
+      {
+       "foodId": "cmrj2t798003mwlwschws9doc",
+       "name": "Peppercorns",
+       "role": null,
+       "grams": 3
+      },
+      {
+       "foodId": "cmrj2t6gd0003wlwss7jf3wzf",
+       "name": "Salt",
+       "role": null,
+       "grams": 1
+      },
+      {
+       "foodId": "cmrevpclb0000wl5ghnno9i5f",
+       "name": "Chicken breast, cooked, skinless",
+       "role": "protein",
+       "grams": 16,
+       "adjuster": true
+      }
+     ],
+     "kcal": 632.3499999999999,
+     "protein": 75.36569999999998,
+     "fat": 31.1349,
+     "carb": 10.3299,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrj2ti7a01y5wlws2z7h786o",
+      "name": "Tafelspitz",
+      "description": null,
+      "steps": [
+       "Step 1",
+       "Slice the unpeeled onion in half widthways and fry off the cut surfaces without fat until fairly well browned.",
+       "Step 2",
+       "Put around 3 litres of water into a large saucepan. Add the root vegetables, leek, halves of onion, bay leaves, and peppercorns and bring to a boil. Add the washed meat and bones and, depending on the type of meat, allow to cook until softened in gently simmering water, which will take around 2 1⁄2 – 3 hours. Add more water as required and skim off any foam from the surface.",
+       "Step 3",
+       "Season well with salt, but only after a good 2 hours.",
+       "Step 4",
+       "Once the meat has softened, remove it from the pan and keep it warm in some of the liquid from the soup. Season the remainder of the soup again with salt to taste, and strain it (optional). Serve with semolina dumplings or \"Frittaten\" (sliced pancakes - a traditional Austrian soup garnish) and freshly chopped chives as a starter. Afterwards, slice the boiled beef by cutting on the bias and arrange it on pre-heated plates, or serve in the hot soup in a decorative soup tureen.",
+       "Step 5",
+       "Serve with roast potatoes, a bread and horseradish mix, green beans in a dill sauce, or creamed spinach and chive sauce. If the root vegetables are to be served at the same time, cook some of them separately to be served al dente."
+      ],
+      "slotType": "meal",
+      "cuisine": "western-comfort",
+      "prepTimeMin": 42,
+      "source": "themealdb-import",
+      "mealCategory": null,
+      "kcal": 987.222,
+      "protein": 112.694475,
+      "fat": 49.71795,
+      "carb": 19.0807,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 16.93,
+      "difficulty": 6,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-13T10:25:26.375Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z1tw404l3wlgwqalhm5ji",
+     "planId": "cms7z1tw204kzwlgwqf11chfe",
+     "dayOfWeek": 3,
+     "slotType": "meal",
+     "slotIndex": 1,
+     "recipeId": "cmrujkwr4003uwl9or0xver7i",
+     "proteinScale": 1.92,
+     "sidesScale": 0.58,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t7w3006lwlws4zdhow4d",
+       "name": "Chicken Breast",
+       "role": "protein",
+       "grams": 325
+      },
+      {
+       "foodId": "cmrevpcn2000ewl5gmlyzu0vd",
+       "name": "White rice, cooked",
+       "role": "carb",
+       "grams": 90
+      },
+      {
+       "foodId": "cmrevpcnh000iwl5gh2zjhyqe",
+       "name": "Bell peppers",
+       "role": "veg",
+       "grams": 45
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 10
+      }
+     ],
+     "kcal": 610.95,
+     "protein": 76.00500000000001,
+     "fat": 18.92,
+     "carb": 27.9,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrujkwr4003uwl9or0xver7i",
+      "name": "Spiced Chicken & Bell Peppers with Rice",
+      "description": null,
+      "steps": [
+       "Cook the chicken.",
+       "Serve with white rice and bell peppers."
+      ],
+      "slotType": "meal",
+      "cuisine": "indian",
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 526.8,
+      "protein": 43.37,
+      "fat": 15.174,
+      "carb": 49.60000000000001,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 6.25,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:00:06.737Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z1tw504l5wlgwvg7t9z5w",
+     "planId": "cms7z1tw204kzwlgwqf11chfe",
+     "dayOfWeek": 3,
+     "slotType": "meal",
+     "slotIndex": 2,
+     "recipeId": "cmrujkwsa0060wl9osorbvtkl",
+     "proteinScale": 2,
+     "sidesScale": 1.07,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t7w3006lwlws4zdhow4d",
+       "name": "Chicken Breast",
+       "role": "protein",
+       "grams": 340
+      },
+      {
+       "foodId": "cmrj2t8190078wlws1rc1yrxl",
+       "name": "Couscous",
+       "role": "carb",
+       "grams": 160
+      },
+      {
+       "foodId": "cmrevpcnl000jwl5gnqnk630b",
+       "name": "Cucumber",
+       "role": "veg",
+       "grams": 85
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 10
+      }
+     ],
+     "kcal": 685.7,
+     "protein": 83.06549999999999,
+     "fat": 19.3,
+     "carb": 38.956,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrujkwsa0060wl9osorbvtkl",
+      "name": "Mediterranean Chicken & Cucumber with Couscous",
+      "description": null,
+      "steps": [
+       "Cook the chicken.",
+       "Serve with couscous and cucumber."
+      ],
+      "slotType": "meal",
+      "cuisine": "mediterranean",
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 470,
+      "protein": 44.407,
+      "fat": 14.822,
+      "carb": 36.528,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 6.47,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:00:06.779Z",
+      "createdByUserId": null
+     }
+    }
+   ],
+   "groceryList": null,
+   "meta": {
+    "matchPct": 95,
+    "attempts": 1,
+    "score": {
+     "daysInTolerance": 1,
+     "avgMatch": 95,
+     "days": [
+      {
+       "dayOfWeek": 3,
+       "dayName": "Thursday",
+       "matchPct": 95,
+       "totals": {
+        "kcal": 1929,
+        "protein": 234,
+        "fat": 69,
+        "carb": 77
+       },
+       "kcalDeltaPct": -0.1,
+       "proteinShortPct": 0,
+       "fatOk": true,
+       "carbOk": true,
+       "inTolerance": true,
+       "miss": null,
+       "unfilledSlots": 0,
+       "warnedSlots": 0,
+       "proteinFloor": {
+        "met": true,
+        "floorG": 224,
+        "achievedG": 234.4,
+        "shortG": 0,
+        "shortPct": 0,
+        "reason": null
+       },
+       "windowIndex": 0,
+       "dayIndex": 0,
+       "key": "0:3"
+      }
+     ],
+     "totalDays": 1,
+     "floorDaysMet": 1,
+     "floorDaysTotal": 1
+    },
+    "days": [
+     {
+      "dayOfWeek": 3,
+      "dayName": "Thursday",
+      "matchPct": 95,
+      "totals": {
+       "kcal": 1929,
+       "protein": 234,
+       "fat": 69,
+       "carb": 77
+      },
+      "kcalDeltaPct": -0.1,
+      "proteinShortPct": 0,
+      "fatOk": true,
+      "carbOk": true,
+      "inTolerance": true,
+      "miss": null,
+      "unfilledSlots": 0,
+      "warnedSlots": 0,
+      "proteinFloor": {
+       "met": true,
+       "floorG": 224,
+       "achievedG": 234.4,
+       "shortG": 0,
+       "shortPct": 0,
+       "reason": null
+      },
+      "windowIndex": 0,
+      "dayIndex": 0,
+      "key": "0:3"
+     }
+    ],
+    "diagnosis": null,
+    "poolCounts": {
+     "raw": 910,
+     "afterDiet": 657,
+     "afterPrep": 657,
+     "afterStack": 657,
+     "stackExplain": null
+    },
+    "variety": {
+     "mealEligible": 493,
+     "usableForSlot": 246,
+     "slotKcal": 643,
+     "snackEligible": 14,
+     "weeklyMealSlots": 21,
+     "weeklySnackSlots": 0,
+     "repeatCap": 2,
+     "distinctWeeks": 11.7,
+     "horizonWeeks": 1,
+     "sustainsHorizon": true,
+     "notes": [
+      "1 day: 3 distinct dish(es) across 3 filled slot(s); most-repeated dish appears 1x against a 2x cap for this horizon (2x per week)."
+     ],
+     "horizon": {
+      "weeks": 1,
+      "days": 1,
+      "perWeekCap": 2,
+      "horizonRepeatCap": 2,
+      "mealSlots": 3,
+      "snackSlots": 0,
+      "totalSlots": 3,
+      "distinctFloor": 2,
+      "distinctRecipes": 3,
+      "maxRepeat": 1,
+      "maxRepeatRecipeId": "cmrj2ti7a01y5wlws2z7h786o",
+      "lockedRepeatsOfMax": 0,
+      "filledSlots": 3,
+      "unfilledSlots": 0,
+      "requiredDistinct": 2,
+      "capHeld": true,
+      "floorHeld": true
+     }
+    },
+    "priorWeeksConsidered": 0,
+    "horizon": {
+     "key": "day",
+     "label": "1 day",
+     "days": 1,
+     "kind": "days",
+     "weeks": 1,
+     "custom": false,
+     "startDate": "2026-07-30",
+     "endDate": "2026-07-30",
+     "startDayOfWeek": 3,
+     "weeksWritten": 1,
+     "solveMs": 2,
+     "weekPlans": [
+      {
+       "startDate": "2026-07-27",
+       "dayIndices": [
+        3
+       ],
+       "days": 1,
+       "daysInTolerance": 1,
+       "avgMatch": 95,
+       "unfilledSlots": 0,
+       "poolSize": 657
+      }
+     ]
+    }
+   }
+  }
+ }
+}

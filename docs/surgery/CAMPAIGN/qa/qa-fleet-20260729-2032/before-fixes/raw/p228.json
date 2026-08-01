@@ -1,0 +1,681 @@
+{
+ "persona": {
+  "idx": 228,
+  "id": "p228",
+  "tier": "ROBUSTNESS",
+  "displayName": "finish carpenter, 22",
+  "story": "finish carpenter, 22, male, 190 cm / 159 kg (BMI 44), cut at 0.5 lb/wk, vegetarian diet, no exclusions, high-protein, 5 meals + 0 snacks, wants a single day",
+  "profile": {
+   "sex": "M",
+   "age": 22,
+   "heightCm": 190,
+   "startWeightKg": 159,
+   "goalWeightKg": 136.6,
+   "occupationKey": "carpenter-finish",
+   "trainingStyle": "weights",
+   "minutesPerSession": 50,
+   "sessionsPerWeek": 3,
+   "rateLbPerWeek": 0.5,
+   "dietaryStyle": "keto",
+   "excludedFoods": [],
+   "mealsPerDay": 5,
+   "snacksPerDay": 0,
+   "unitPref": "imperial",
+   "cuisinePreferences": [
+    "mediterranean",
+    "italian"
+   ]
+  },
+  "filters": {
+   "proteinPriority": true,
+   "cuisines": [
+    "mediterranean",
+    "italian"
+   ]
+  },
+  "horizon": "day",
+  "walls": [],
+  "freeTextExclusions": [],
+  "dietaryStyle": "keto",
+  "bmi": 44,
+  "goalKind": "cut",
+  "macroStyle": "high-protein",
+  "requestedButUnsupported": [
+   "wanted protein set explicitly in g/lb; the API derives the protein band from LBM (1.14-1.25 g/lb) and accepts no client protein target — only the per-request proteinPriority filter"
+  ],
+  "robustKind": "keto-with-carb-target",
+  "contradictionNote": "keto flag set while asking for a high-carb day",
+  "tupleKey": "[\"ROBUSTNESS\",\"M\",22,190,159,136.6,\"carpenter-finish\",\"weights\",0.5,\"keto\",[],5,0,\"high-protein\",\"day\",null,null,true,\"keto-with-carb-target\",null]"
+ },
+ "request": {
+  "horizon": "day",
+  "filters": {
+   "proteinPriority": true,
+   "cuisines": [
+    "mediterranean",
+    "italian"
+   ]
+  }
+ },
+ "profileResponse": {
+  "id": "cms6x1tpw05lfwlw05vunie4k",
+  "userId": "cms6x1tkl0066wl2o84eq4k4w",
+  "sex": "M",
+  "age": 22,
+  "heightCm": 190,
+  "bodyFatPct": 0,
+  "bodyFatSource": null,
+  "occupationKey": "carpenter-finish",
+  "activityOverride": null,
+  "sessionsPerWeek": 3,
+  "trainingStyle": "weights",
+  "minutesPerSession": 50,
+  "startWeightKg": 159,
+  "goalWeightKg": 136.6,
+  "startDate": "2026-07-29",
+  "unitPref": "imperial",
+  "rateLbPerWeek": 0.5,
+  "rateAcknowledged": false,
+  "floorKcal": null,
+  "excludedFormulas": [],
+  "targetKcal": 4256,
+  "mealsPerDay": 5,
+  "snacksPerDay": 0,
+  "excludedFoods": [],
+  "dietaryStyle": "keto",
+  "cuisinePreferences": [
+   "mediterranean",
+   "italian"
+  ],
+  "mealPreferencesNote": null,
+  "maxPrepMin": null,
+  "budgetTier": null,
+  "allowBatch": null,
+  "maxComplexity": null,
+  "adaptiveTdee": true,
+  "proteinPriorityMode": false,
+  "updatedAt": "2026-07-30T02:50:25.089Z"
+ },
+ "generate": {
+  "status": 200,
+  "ms": 475,
+  "body": {
+   "id": "cms6x1u3605n3wlw0wo4r92pv",
+   "userId": "cms6x1tkl0066wl2o84eq4k4w",
+   "startDate": "2026-07-27",
+   "createdAt": "2026-07-30T02:50:25.554Z",
+   "slots": [
+    {
+     "id": "cms6x1u3805n5wlw058it640e",
+     "planId": "cms6x1u3605n3wlw0wo4r92pv",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 0,
+     "recipeId": "cmrj2u6ia07c5wlwsz8afzi19",
+     "proteinScale": 2,
+     "sidesScale": 2,
+     "ingredients": [
+      {
+       "foodId": "cmrj2tawx00inwlwszmjkw5hv",
+       "name": "Salmon",
+       "role": "protein",
+       "grams": 225
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "carb",
+       "grams": 7
+      },
+      {
+       "foodId": "cmrj2t6ls000rwlwsf7bu3ffs",
+       "name": "Soy Sauce",
+       "role": "carb",
+       "grams": 9
+      },
+      {
+       "foodId": "cmrj2t8g80095wlwszrsb39dj",
+       "name": "Sake",
+       "role": null,
+       "grams": 9
+      },
+      {
+       "foodId": "cmrj2t8b2008hwlws22k4btzf",
+       "name": "Sesame Seed",
+       "role": "carb",
+       "grams": 19
+      }
+     ],
+     "kcal": 667.7199999999999,
+     "protein": 50.5536,
+     "fat": 48.8293,
+     "carb": 3.1167,
+     "warning": "Tried 5 recipe(s) for this slot, none fit within tolerance — closest was \"Honey Teriyaki Salmon\" (delivered 51g protein vs a 59g target).",
+     "locked": false,
+     "recipe": {
+      "id": "cmrj2u6ia07c5wlwsz8afzi19",
+      "name": "Honey Teriyaki Salmon",
+      "description": null,
+      "steps": [
+       "Mix all the ingredients in the Honey Teriyaki Glaze together. Whisk to blend well. Combine the salmon and the Glaze together.",
+       "Heat up a skillet on medium-low heat. Add the oil, Pan-fry the salmon on both sides until it’s completely cooked inside and the glaze thickens.",
+       "Garnish with sesame and serve immediately."
+      ],
+      "slotType": "meal",
+      "cuisine": "asian",
+      "prepTimeMin": 19,
+      "source": "themealdb-import",
+      "mealCategory": null,
+      "kcal": 334.4,
+      "protein": 25.5,
+      "fat": 24.4,
+      "carb": 1.6,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 6.56,
+      "difficulty": 2,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-13T10:25:57.875Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x1u3905n7wlw0fpgqfvf3",
+     "planId": "cms6x1u3605n3wlw0wo4r92pv",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 1,
+     "recipeId": "cmrj2uauc089vwlwsuogmt93e",
+     "proteinScale": 1.64,
+     "sidesScale": 1.64,
+     "ingredients": [
+      {
+       "foodId": "cmrj2ta5e00fowlwsjb90p1xm",
+       "name": "Natural Yoghurt",
+       "role": null,
+       "grams": 410
+      },
+      {
+       "foodId": "cmrj2t7ve006iwlwsr3tyleyw",
+       "name": "Lemon Juice",
+       "role": "veg",
+       "grams": 8
+      },
+      {
+       "foodId": "cmrj2t6kg000lwlwsgcajfryi",
+       "name": "Extra Virgin Olive Oil",
+       "role": "carb",
+       "grams": 11
+      },
+      {
+       "foodId": "cmrj2t7qo005wwlwst23r0zi3",
+       "name": "Dried Mint",
+       "role": null,
+       "grams": 3
+      },
+      {
+       "foodId": "cmrevpcnl000jwl5gnqnk630b",
+       "name": "Cucumber",
+       "role": "veg",
+       "grams": 80
+      },
+      {
+       "foodId": "cmrj2t6ft0001wlwstiofk9on",
+       "name": "Garlic",
+       "role": "veg",
+       "grams": 5
+      }
+     ],
+     "kcal": 860.6999999999998,
+     "protein": 68.258,
+     "fat": 57.26709999999999,
+     "carb": 20.215,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrj2uauc089vwlwsuogmt93e",
+      "name": "Cacik",
+      "description": null,
+      "steps": [
+       "step 1",
+       "Put a sieve over a large bowl, line it with a thick sheet of non-dyed kitchen paper or a clean muslin cloth, and spoon in the yogurt. Cover with another sheet of kitchen paper and leave to strain in the fridge for a minimum of 12 hrs.",
+       "step 2",
+       "Add the lemon juice, most of the olive oil and the dried mint to a bowl and stir well for the dried mint to soften and soak up the juices. Mix in the strained yogurt, then pour away the strained yogurt liquid and leave that bowl to one side.",
+       "step 3",
+       "Halve the cucumber(s) lengthways and remove the seeds by running a teaspoon from the top to the bottom of the flesh, halve the cucumbers widthways to make them shorter and easier to handle, then coarsely grate each one into the bowl the yogurt was straining over. Using clean hands (or a clean muslin cloth), squeeze as much of the liquid out of the cucumber as possible.",
+       "step 4",
+       "Add the strained, grated cucumber, garlic and ¾ tsp flaky salt to the rest of the ingredients and mix well. Garnish with a drizzle of extra virgin olive oil and a sprinkling of dried mint."
+      ],
+      "slotType": "meal",
+      "cuisine": "western-comfort",
+      "prepTimeMin": 34,
+      "source": "themealdb-import",
+      "mealCategory": null,
+      "kcal": 525.939,
+      "protein": 41.63955000000001,
+      "fat": 35.01821,
+      "carb": 12.3909,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 1.82,
+      "difficulty": 4,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-13T10:26:03.492Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x1u3a05nbwlw02fgu28il",
+     "planId": "cms6x1u3605n3wlw0wo4r92pv",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 2,
+     "recipeId": "cmrevpcyh004gwl5gnni3al5q",
+     "proteinScale": 1.55,
+     "sidesScale": 1.55,
+     "ingredients": [
+      {
+       "foodId": "cmrevpcmu000cwl5gfljr1l1o",
+       "name": "Bacon, cooked",
+       "role": "protein",
+       "grams": 95
+      },
+      {
+       "foodId": "cmrevpcm50006wl5g2u2bcspd",
+       "name": "Eggs, whole, cooked",
+       "role": "protein",
+       "grams": 235
+      }
+     ],
+     "kcal": 878.1999999999999,
+     "protein": 65.7,
+     "fat": 65.75,
+     "carb": 3.915,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrevpcyh004gwl5gnni3al5q",
+      "name": "Bacon & Eggs",
+      "description": "Weekend breakfast-style plate.",
+      "steps": [
+       "Cook bacon until crisp, set aside.",
+       "Fry or scramble eggs in the bacon fat."
+      ],
+      "slotType": "either",
+      "cuisine": "western-comfort",
+      "prepTimeMin": 15,
+      "source": "curated",
+      "mealCategory": null,
+      "kcal": 557.0999999999999,
+      "protein": 41.7,
+      "fat": 41.7,
+      "carb": 2.49,
+      "tasteTier": "really_good",
+      "tasteTierSource": "curated",
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 3.38,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-10T11:55:10.938Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x1u3b05ndwlw0n9tpcsti",
+     "planId": "cms6x1u3605n3wlw0wo4r92pv",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 3,
+     "recipeId": "cmrj2tkaz02evwlws246fya47",
+     "proteinScale": 1.22,
+     "sidesScale": 2,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t89e0089wlwsennkaqet",
+       "name": "Chicken Wings",
+       "role": "protein",
+       "grams": 365
+      },
+      {
+       "foodId": "cmrj2t6ft0001wlwstiofk9on",
+       "name": "Garlic",
+       "role": "veg",
+       "grams": 3
+      },
+      {
+       "foodId": "cmrj2t6qp001ewlwsds5bbm29",
+       "name": "Lemon",
+       "role": "veg",
+       "grams": 30
+      },
+      {
+       "foodId": "cmrj2t89n008awlwskkkc8vj3",
+       "name": "Cumin Seeds",
+       "role": null,
+       "grams": 2
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "carb",
+       "grams": 14
+      },
+      {
+       "foodId": "cmrfoyp7m0002wl0851se2p2b",
+       "name": "Honey",
+       "role": "carb",
+       "grams": 11
+      }
+     ],
+     "kcal": 793.1800000000001,
+     "protein": 67.8886,
+     "fat": 53.1684,
+     "carb": 12.492,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrj2tkaz02evwlws246fya47",
+      "name": "Chicken wings with cumin, lemon & garlic",
+      "description": null,
+      "steps": [
+       "step 1",
+       "Using a pair of sharp kitchen scissors, cut each wing at the knuckle into two pieces. Mix the garlic, lemon zest and juice, cumin and oil with plenty of seasoning, then tip into a dish with the chicken wings and toss to coat. Cover and put in the fridge to marinate for at least 1 hr, or overnight if you have time.",
+       "step 2",
+       "Heat oven to 200C/180C fan/gas 6, or heat an outdoor barbecue. Bake the chicken wings on an oven tray for 45-50 mins until crisp, or barbecue for 20 mins, drizzling over the honey for the final 10 mins of each method. Serve on a platter with plenty of paper napkins. Fill small bowls with olives, pistachios or almonds, dates and pickled chillies and flatbreads to serve alongside, along with the dishes below."
+      ],
+      "slotType": "meal",
+      "cuisine": "western-comfort",
+      "prepTimeMin": 22,
+      "source": "themealdb-import",
+      "mealCategory": null,
+      "kcal": 592.1,
+      "protein": 55.5,
+      "fat": 38.8,
+      "carb": 6,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 7.48,
+      "difficulty": 3,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-13T10:25:29.099Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x1u3b05nfwlw0o7pu2l1v",
+     "planId": "cms6x1u3605n3wlw0wo4r92pv",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 4,
+     "recipeId": "cmrj2tx2k058wwlwsds8g2gmc",
+     "proteinScale": 2,
+     "sidesScale": 1.92,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "carb",
+       "grams": 25
+      },
+      {
+       "foodId": "cmrj2t9z700f1wlwsb36u0abl",
+       "name": "Lamb",
+       "role": "protein",
+       "grams": 375
+      },
+      {
+       "foodId": "cmrj2t8a2008cwlws8ncn9t5x",
+       "name": "Saffron",
+       "role": null,
+       "grams": 2
+      },
+      {
+       "foodId": "cmrg8zxar000lwli0qy2ovmx4",
+       "name": "Onion",
+       "role": "veg",
+       "grams": 55
+      },
+      {
+       "foodId": "cmrj2t6hb0007wlwsh6l6ynal",
+       "name": "Water",
+       "role": null,
+       "grams": 12
+      },
+      {
+       "foodId": "cmrj2t6h10006wlwslufza94y",
+       "name": "Parsley",
+       "role": null,
+       "grams": 14
+      },
+      {
+       "foodId": "cmrevpcnz000mwl5g62fmfzqk",
+       "name": "Butter",
+       "role": null,
+       "grams": 7
+      },
+      {
+       "foodId": "cmrj2t6qp001ewlwsds5bbm29",
+       "name": "Lemon",
+       "role": "veg",
+       "grams": 30
+      }
+     ],
+     "kcal": 1037.28,
+     "protein": 77.57780000000001,
+     "fat": 77.47360000000002,
+     "carb": 9.036200000000001,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrj2tx2k058wwlwsds8g2gmc",
+      "name": "Keleya Zaara",
+      "description": null,
+      "steps": [
+       "Heat the vegetable oil in a large frying pan over medium-high heat. Add the lamb and cook until browned on all sides, about 5 minutes. Season with saffron, salt and pepper to taste; stir in all but 4 tablespoons of the onion, and pour in the water. Bring to the boil, then cover, reduce heat to medium-low, and simmer until the lamb is tender, about 15 minutes.",
+       "Uncover the pan, stir in the butter and allow the sauce reduce 5 to 10 minutes to desired consistency. Season to taste with salt and pepper, then pour into a serving dish. Sprinkle with the remaining chopped onions and parsley. Garnish with lemon wedges to serve."
+      ],
+      "slotType": "meal",
+      "cuisine": "western-comfort",
+      "prepTimeMin": 18,
+      "source": "themealdb-import",
+      "mealCategory": null,
+      "kcal": 529.8,
+      "protein": 38.8,
+      "fat": 39.9,
+      "carb": 4.6,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 12.46,
+      "difficulty": 2,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-13T10:25:45.644Z",
+      "createdByUserId": null
+     }
+    }
+   ],
+   "groceryList": null,
+   "meta": {
+    "matchPct": 88,
+    "attempts": 5,
+    "score": {
+     "daysInTolerance": 0,
+     "avgMatch": 88,
+     "days": [
+      {
+       "dayOfWeek": 2,
+       "dayName": "Wednesday",
+       "matchPct": 88,
+       "totals": {
+        "kcal": 4237,
+        "protein": 330,
+        "fat": 302,
+        "carb": 49
+       },
+       "kcalDeltaPct": -0.4,
+       "proteinShortPct": 0.3,
+       "fatOk": true,
+       "carbOk": false,
+       "inTolerance": false,
+       "miss": "49 g carbs vs a 10–30 g range — 19 g over",
+       "unfilledSlots": 0,
+       "warnedSlots": 1,
+       "proteinFloor": {
+        "met": true,
+        "floorG": 316,
+        "achievedG": 330,
+        "shortG": 0,
+        "shortPct": 0,
+        "reason": null
+       },
+       "windowIndex": 0,
+       "dayIndex": 0,
+       "key": "0:2"
+      }
+     ],
+     "totalDays": 1,
+     "floorDaysMet": 1,
+     "floorDaysTotal": 1
+    },
+    "days": [
+     {
+      "dayOfWeek": 2,
+      "dayName": "Wednesday",
+      "matchPct": 88,
+      "totals": {
+       "kcal": 4237,
+       "protein": 330,
+       "fat": 302,
+       "carb": 49
+      },
+      "kcalDeltaPct": -0.4,
+      "proteinShortPct": 0.3,
+      "fatOk": true,
+      "carbOk": false,
+      "inTolerance": false,
+      "miss": "49 g carbs vs a 10–30 g range — 19 g over",
+      "unfilledSlots": 0,
+      "warnedSlots": 1,
+      "proteinFloor": {
+       "met": true,
+       "floorG": 316,
+       "achievedG": 330,
+       "shortG": 0,
+       "shortPct": 0,
+       "reason": null
+      },
+      "windowIndex": 0,
+      "dayIndex": 0,
+      "key": "0:2"
+     }
+    ],
+    "diagnosis": {
+     "feasible": false,
+     "reasons": [
+      "1 day(s) landed outside your 10–30 g carb range — portion scaling moves a dish's calories, not its fat/carb ratio, so the pool's composition is what binds here."
+     ],
+     "suggestions": [
+      "Add (or AI-generate) a few recipes built around the macro you keep missing, or drop the cuisine/protein preference so the solver can reach dishes that carry it."
+     ],
+     "binding": {
+      "key": "macro-composition",
+      "label": "carbs in your recipe pool",
+      "detail": "1 of 1 day(s) landed outside your 10-30 g carb range. Portion scaling moves a dish's calories, not its fat/carb ratio, so what binds here is which dishes your rules leave in the pool. Calories and protein landed on target on every day — it is composition, not portion size, that is short."
+     }
+    },
+    "poolCounts": {
+     "raw": 889,
+     "afterDiet": 37,
+     "afterPrep": 37,
+     "afterStack": 37,
+     "stackExplain": null
+    },
+    "variety": {
+     "mealEligible": 36,
+     "usableForSlot": 21,
+     "slotKcal": 851,
+     "snackEligible": 2,
+     "weeklyMealSlots": 35,
+     "weeklySnackSlots": 0,
+     "repeatCap": 2,
+     "distinctWeeks": 0.6,
+     "horizonWeeks": 1,
+     "sustainsHorizon": false,
+     "notes": [
+      "21 of your 36 compliant recipes can be portioned to a 851 kcal meal — about 0.6 week(s) of 35 meals before dishes start repeating, so over 1 weeks you will see favourites come back.",
+      "1 day: 5 distinct dish(es) across 5 filled slot(s); most-repeated dish appears 1x against a 2x cap for this horizon (2x per week)."
+     ],
+     "horizon": {
+      "weeks": 1,
+      "days": 1,
+      "perWeekCap": 2,
+      "horizonRepeatCap": 2,
+      "mealSlots": 5,
+      "snackSlots": 0,
+      "totalSlots": 5,
+      "distinctFloor": 3,
+      "distinctRecipes": 5,
+      "maxRepeat": 1,
+      "maxRepeatRecipeId": "cmrj2u6ia07c5wlwsz8afzi19",
+      "lockedRepeatsOfMax": 0,
+      "filledSlots": 5,
+      "unfilledSlots": 0,
+      "requiredDistinct": 3,
+      "capHeld": true,
+      "floorHeld": true
+     }
+    },
+    "priorWeeksConsidered": 0,
+    "horizon": {
+     "key": "day",
+     "label": "1 day",
+     "days": 1,
+     "kind": "days",
+     "weeks": 1,
+     "custom": false,
+     "startDate": "2026-07-29",
+     "endDate": "2026-07-29",
+     "startDayOfWeek": 2,
+     "weeksWritten": 1,
+     "solveMs": 1,
+     "weekPlans": [
+      {
+       "startDate": "2026-07-27",
+       "dayIndices": [
+        2
+       ],
+       "days": 1,
+       "daysInTolerance": 0,
+       "avgMatch": 88,
+       "unfilledSlots": 0,
+       "poolSize": 37
+      }
+     ]
+    }
+   }
+  }
+ }
+}

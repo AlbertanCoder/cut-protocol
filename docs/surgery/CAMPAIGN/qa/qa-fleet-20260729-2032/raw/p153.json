@@ -1,0 +1,517 @@
+{
+ "persona": {
+  "idx": 153,
+  "id": "p153",
+  "tier": "EASY",
+  "displayName": "personal trainer, 49",
+  "story": "personal trainer, 49, male, 198 cm / 138.7 kg (BMI 35.4), lean bulk at 0.25 lb/wk, mediterranean diet, avoiding soy, dairy, high-protein, 2 meals + 0 snacks, wants a single day",
+  "profile": {
+   "sex": "M",
+   "age": 49,
+   "heightCm": 198,
+   "startWeightKg": 138.7,
+   "goalWeightKg": 150.7,
+   "occupationKey": "personal-trainer",
+   "trainingStyle": "weights",
+   "minutesPerSession": 75,
+   "sessionsPerWeek": 5,
+   "rateLbPerWeek": 0.25,
+   "dietaryStyle": "mediterranean",
+   "excludedFoods": [
+    "soy",
+    "dairy"
+   ],
+   "mealsPerDay": 2,
+   "snacksPerDay": 0,
+   "unitPref": "metric",
+   "bodyFatPct": 15,
+   "bodyFatSource": "measured"
+  },
+  "filters": {
+   "proteinPriority": true
+  },
+  "horizon": "day",
+  "walls": [
+   "soy",
+   "dairy"
+  ],
+  "freeTextExclusions": [],
+  "dietaryStyle": "mediterranean",
+  "bmi": 35.4,
+  "goalKind": "lean bulk",
+  "macroStyle": "high-protein",
+  "requestedButUnsupported": [
+   "wanted protein set explicitly in g/lb; the API derives the protein band from LBM (1.14-1.25 g/lb) and accepts no client protein target — only the per-request proteinPriority filter"
+  ],
+  "tupleKey": "[\"EASY\",\"M\",49,198,138.7,150.7,\"personal-trainer\",\"weights\",0.25,\"mediterranean\",[\"dairy\",\"soy\"],2,0,\"high-protein\",\"day\",null,null,true,null,null]"
+ },
+ "request": {
+  "horizon": "day",
+  "filters": {
+   "proteinPriority": true
+  }
+ },
+ "profileResponse": {
+  "id": "cms6x1ae2040xwlw0xd7cm4wj",
+  "userId": "cms6x1a8o0043wl2ogj7n33ht",
+  "sex": "M",
+  "age": 49,
+  "heightCm": 198,
+  "bodyFatPct": 15,
+  "bodyFatSource": "measured",
+  "occupationKey": "personal-trainer",
+  "activityOverride": null,
+  "sessionsPerWeek": 5,
+  "trainingStyle": "weights",
+  "minutesPerSession": 75,
+  "startWeightKg": 138.7,
+  "goalWeightKg": 150.7,
+  "startDate": "2026-07-29",
+  "unitPref": "metric",
+  "rateLbPerWeek": 0.25,
+  "rateAcknowledged": false,
+  "floorKcal": null,
+  "excludedFormulas": [],
+  "targetKcal": 4206,
+  "mealsPerDay": 2,
+  "snacksPerDay": 0,
+  "excludedFoods": [
+   "soy",
+   "dairy"
+  ],
+  "dietaryStyle": "mediterranean",
+  "cuisinePreferences": [],
+  "mealPreferencesNote": null,
+  "maxPrepMin": null,
+  "budgetTier": null,
+  "allowBatch": null,
+  "maxComplexity": null,
+  "adaptiveTdee": true,
+  "proteinPriorityMode": false,
+  "updatedAt": "2026-07-30T02:50:00.410Z"
+ },
+ "generate": {
+  "status": 200,
+  "ms": 127,
+  "body": {
+   "id": "cms6x1as60419wlw0kgdgzcfm",
+   "userId": "cms6x1a8o0043wl2ogj7n33ht",
+   "startDate": "2026-07-27",
+   "createdAt": "2026-07-30T02:50:00.534Z",
+   "slots": [
+    {
+     "id": "cms6x1as7041bwlw0d6vent66",
+     "planId": "cms6x1as60419wlw0kgdgzcfm",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 0,
+     "recipeId": "cmrj2tf18018iwlwsofai8vzs",
+     "proteinScale": 1.8,
+     "sidesScale": 0.84,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "carb",
+       "grams": 40
+      },
+      {
+       "foodId": "cmrj2t6is000ewlwsmzadlvxo",
+       "name": "Beef",
+       "role": "protein",
+       "grams": 410
+      },
+      {
+       "foodId": "cmrg8zxar000lwli0qy2ovmx4",
+       "name": "Onion",
+       "role": "veg",
+       "grams": 25
+      },
+      {
+       "foodId": "cmrj2t6jx000jwlws245wvtmm",
+       "name": "Beef Stock",
+       "role": "protein",
+       "grams": 325
+      },
+      {
+       "foodId": "cmrj2t6uo001wwlwsjm3ptpzx",
+       "name": "Swede",
+       "role": null,
+       "grams": 20
+      },
+      {
+       "foodId": "cmrj2t6u6001uwlwsseysgkv2",
+       "name": "Celery",
+       "role": "veg",
+       "grams": 8
+      },
+      {
+       "foodId": "cmrj2t6oc0013wlwsjzlwoln2",
+       "name": "Carrots",
+       "role": "veg",
+       "grams": 50
+      },
+      {
+       "foodId": "cmrj2t6h10006wlwslufza94y",
+       "name": "Parsley",
+       "role": null,
+       "grams": 85
+      },
+      {
+       "foodId": "cmrj2t6t4001pwlwsxeja9565",
+       "name": "Potatoes",
+       "role": "veg",
+       "grams": 95
+      },
+      {
+       "foodId": "cmrj2t6ug001vwlwssesfsb74",
+       "name": "Leek",
+       "role": null,
+       "grams": 10
+      }
+     ],
+     "kcal": 1830.534,
+     "protein": 136.6492,
+     "fat": 98.35730000000001,
+     "carb": 99.62009999999998,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrj2tf18018iwlwsofai8vzs",
+      "name": "Brun Lapskaus (Norwegian Beef Vegetable Stew)",
+      "description": null,
+      "steps": [
+       "▢",
+       "Heat olive oil in a large pot. Cut beef into 1 inch (2.5 cm) cubes and brown in oil.",
+       "▢",
+       "Dice the onion and add to browning beef. Add the stock and bring to a boil, then lower the heat, cover, and let simmer for about 30 minutes.",
+       "▢",
+       "Peel and cut the rutabaga and celery root into 1 inch (2.5 cm) cubes. Add to the pot, cover, and continue simmering for another 30 minutes.",
+       "▢",
+       "Peel and chop the rest of the vegetables into 1 inch (2.5 cm) cubes and add to the pot. Slice the leek into rings. Cover and continue simmering for about 20 minutes. Stir as little as possible.",
+       "▢",
+       "Top with fresh parsley."
+      ],
+      "slotType": "meal",
+      "cuisine": "western-comfort",
+      "prepTimeMin": 43,
+      "source": "themealdb-import",
+      "mealCategory": null,
+      "kcal": 1575.9,
+      "protein": 87.9,
+      "fat": 85.4,
+      "carb": 117.4,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 13.85,
+      "difficulty": 6,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-13T10:25:22.268Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x1as8041dwlw0izkkvfpp",
+     "planId": "cms6x1as60419wlw0kgdgzcfm",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 1,
+     "recipeId": "cmrj2tggn01jtwlwsfpr46mf4",
+     "proteinScale": 2,
+     "sidesScale": 1.69,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t6hb0007wlwsh6l6ynal",
+       "name": "Water",
+       "role": null,
+       "grams": 400
+      },
+      {
+       "foodId": "cmrj2t7kx0055wlwsdnc87tsf",
+       "name": "Sirloin Steak tips",
+       "role": "protein",
+       "grams": 455
+      },
+      {
+       "foodId": "cmrj2t6rr001jwlwsqfi60fyj",
+       "name": "Garlic Clove",
+       "role": null,
+       "grams": 5
+      },
+      {
+       "foodId": "cmrj2t7l40056wlws69opouvc",
+       "name": "Ground Ginger",
+       "role": "veg",
+       "grams": 3
+      },
+      {
+       "foodId": "cmrj2t6xs002awlwsfwq9grns",
+       "name": "Oil",
+       "role": "carb",
+       "grams": 85
+      },
+      {
+       "foodId": "cmrj2t6vv0021wlwsx5wv83r4",
+       "name": "Red Onions",
+       "role": "veg",
+       "grams": 95
+      },
+      {
+       "foodId": "cmrj2t6ik000dwlwsj8e736h1",
+       "name": "Tomato",
+       "role": "veg",
+       "grams": 210
+      },
+      {
+       "foodId": "cmrj2t6jp000iwlwsli2ckg55",
+       "name": "Paprika",
+       "role": null,
+       "grams": 2
+      },
+      {
+       "foodId": "cmrj2t6mf000uwlwsne5kc5wl",
+       "name": "Black Pepper",
+       "role": null,
+       "grams": 1
+      },
+      {
+       "foodId": "cmrj2t7k10051wlwsghd1hb86",
+       "name": "Curry Powder",
+       "role": null,
+       "grams": 3
+      },
+      {
+       "foodId": "cmrj2t6pz001bwlwsbarwpyy1",
+       "name": "Tomato Puree",
+       "role": "veg",
+       "grams": 19
+      },
+      {
+       "foodId": "cmrj2t6gd0003wlwss7jf3wzf",
+       "name": "Salt",
+       "role": null,
+       "grams": 1
+      },
+      {
+       "foodId": "cmrj2t7lb0057wlws13ompczm",
+       "name": "Chilli",
+       "role": null,
+       "grams": 8
+      },
+      {
+       "foodId": "cmrj2t7lj0058wlwsk4i51m8h",
+       "name": "Cilantro",
+       "role": null,
+       "grams": 40
+      }
+     ],
+     "kcal": 2316.57,
+     "protein": 162.8192,
+     "fat": 120.88235,
+     "carb": 177.9491,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrj2tggn01jtwlwsfpr46mf4",
+      "name": "Kenyan Beef Curry",
+      "description": null,
+      "steps": [
+       "Bring the 4 cups of water to a boil in a Dutch oven or soup pot. Add the beef, garlic, and ginger, and stir well. Bring to a gentle simmer, cover, and cook, stirring occasionally, for 20 minutes. If you get any foamy scum on the top, not to worry, simply spoon it away or stir it back in.",
+       "Remove from the heat, and drain, but reserve the excess water for later.",
+       "Return the pot or Dutch oven to medium heat with the 2 tablespoons of cooking oil. Once the oil is shimmering, add the onions and cook, stirring occasionally, until softened, 5 to 7 minutes.",
+       "Add the tomatoes to the onions, and continue cooking, stirring occasionally, until the tomatoes are falling apart, 3 to 5 minutes.",
+       "Add the drained beef to the tomato and onion mixture, and stir well. Continue cooking over medium heat for 5 minutes, stirring occasionally.",
+       "Add the paprika, pepper, curry powder, tomato paste, and salt to taste, and stir well.",
+       "Add back the excess water that was used for cooking the beef, along with enough extra water to cover. Bring to a boil, reduce heat, and simmer, uncovered, stirring occasionally, for about 1 hour, or until the meat is tender and the sauce is thickened. Add additional water if your beef curry begins to dry and stick, or if would like your curry to have more of a soupy consistency.",
+       "When the beef curry is ready, remove from the heat, give it a taste, and adjust the seasonings as desired. Garnish with fresh chilis and cilantro."
+      ],
+      "slotType": "meal",
+      "cuisine": "indian",
+      "prepTimeMin": 39,
+      "source": "themealdb-import",
+      "mealCategory": null,
+      "kcal": 1284.3,
+      "protein": 83.8,
+      "fat": 68,
+      "carb": 103.7,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 14.27,
+      "difficulty": 6,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-13T10:25:24.119Z",
+      "createdByUserId": null
+     }
+    }
+   ],
+   "groceryList": null,
+   "meta": {
+    "matchPct": 74,
+    "attempts": 5,
+    "score": {
+     "daysInTolerance": 0,
+     "avgMatch": 74,
+     "days": [
+      {
+       "dayOfWeek": 2,
+       "dayName": "Wednesday",
+       "matchPct": 74,
+       "totals": {
+        "kcal": 4147,
+        "protein": 299,
+        "fat": 219,
+        "carb": 278
+       },
+       "kcalDeltaPct": -1.4,
+       "proteinShortPct": 3.6,
+       "fatOk": false,
+       "carbOk": false,
+       "inTolerance": false,
+       "miss": "219 g fat vs a 88–104 g range — 115 g over; 278 g carbs vs a 488–512 g range — 210 g short",
+       "unfilledSlots": 0,
+       "warnedSlots": 0,
+       "proteinFloor": {
+        "met": true,
+        "floorG": 296,
+        "achievedG": 299.5,
+        "shortG": 0,
+        "shortPct": 0,
+        "reason": null
+       },
+       "windowIndex": 0,
+       "dayIndex": 0,
+       "key": "0:2"
+      }
+     ],
+     "totalDays": 1,
+     "floorDaysMet": 1,
+     "floorDaysTotal": 1
+    },
+    "days": [
+     {
+      "dayOfWeek": 2,
+      "dayName": "Wednesday",
+      "matchPct": 74,
+      "totals": {
+       "kcal": 4147,
+       "protein": 299,
+       "fat": 219,
+       "carb": 278
+      },
+      "kcalDeltaPct": -1.4,
+      "proteinShortPct": 3.6,
+      "fatOk": false,
+      "carbOk": false,
+      "inTolerance": false,
+      "miss": "219 g fat vs a 88–104 g range — 115 g over; 278 g carbs vs a 488–512 g range — 210 g short",
+      "unfilledSlots": 0,
+      "warnedSlots": 0,
+      "proteinFloor": {
+       "met": true,
+       "floorG": 296,
+       "achievedG": 299.5,
+       "shortG": 0,
+       "shortPct": 0,
+       "reason": null
+      },
+      "windowIndex": 0,
+      "dayIndex": 0,
+      "key": "0:2"
+     }
+    ],
+    "diagnosis": {
+     "feasible": false,
+     "reasons": [
+      "1 day(s) landed outside your 88–104 g fat range, and 1 day(s) landed outside your 488–512 g carb range — portion scaling moves a dish's calories, not its fat/carb ratio, so the pool's composition is what binds here."
+     ],
+     "suggestions": [
+      "Add (or AI-generate) a few recipes built around the macro you keep missing, or drop the cuisine/protein preference so the solver can reach dishes that carry it."
+     ],
+     "binding": {
+      "key": "macro-composition",
+      "label": "fat in your recipe pool",
+      "detail": "1 of 1 day(s) landed outside your 88-104 g fat range, and 1 of 1 day(s) landed outside your 488-512 g carb range. Portion scaling moves a dish's calories, not its fat/carb ratio, so what binds here is which dishes your rules leave in the pool. Calories and protein landed on target on every day — it is composition, not portion size, that is short."
+     }
+    },
+    "poolCounts": {
+     "raw": 889,
+     "afterDiet": 356,
+     "afterPrep": 356,
+     "afterStack": 356,
+     "stackExplain": null
+    },
+    "variety": {
+     "mealEligible": 331,
+     "usableForSlot": 19,
+     "slotKcal": 2103,
+     "snackEligible": 3,
+     "weeklyMealSlots": 14,
+     "weeklySnackSlots": 0,
+     "repeatCap": 2,
+     "distinctWeeks": 1.4,
+     "horizonWeeks": 1,
+     "sustainsHorizon": true,
+     "notes": [
+      "1 day: 2 distinct dish(es) across 2 filled slot(s); most-repeated dish appears 1x against a 2x cap for this horizon (2x per week)."
+     ],
+     "horizon": {
+      "weeks": 1,
+      "days": 1,
+      "perWeekCap": 2,
+      "horizonRepeatCap": 2,
+      "mealSlots": 2,
+      "snackSlots": 0,
+      "totalSlots": 2,
+      "distinctFloor": 1,
+      "distinctRecipes": 2,
+      "maxRepeat": 1,
+      "maxRepeatRecipeId": "cmrj2tf18018iwlwsofai8vzs",
+      "lockedRepeatsOfMax": 0,
+      "filledSlots": 2,
+      "unfilledSlots": 0,
+      "requiredDistinct": 1,
+      "capHeld": true,
+      "floorHeld": true
+     }
+    },
+    "priorWeeksConsidered": 0,
+    "horizon": {
+     "key": "day",
+     "label": "1 day",
+     "days": 1,
+     "kind": "days",
+     "weeks": 1,
+     "custom": false,
+     "startDate": "2026-07-29",
+     "endDate": "2026-07-29",
+     "startDayOfWeek": 2,
+     "weeksWritten": 1,
+     "solveMs": 1,
+     "weekPlans": [
+      {
+       "startDate": "2026-07-27",
+       "dayIndices": [
+        2
+       ],
+       "days": 1,
+       "daysInTolerance": 0,
+       "avgMatch": 74,
+       "unfilledSlots": 0,
+       "poolSize": 356
+      }
+     ]
+    }
+   }
+  }
+ }
+}

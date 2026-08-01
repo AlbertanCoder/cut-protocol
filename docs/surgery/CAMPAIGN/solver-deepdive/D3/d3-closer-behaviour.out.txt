@@ -1,0 +1,68 @@
+=== CONSTANTS ===
+MAX_GRAMS={"fat":25,"carb":160,"protein":180} MIN_GRAMS=4
+
+=== 1. CAN THE CLOSER EVER REDUCE A MACRO? (fuzz: 4000 random days) ===
+  ran 4000 random days; days where something was added: 3364; max additions on any day: 3
+  macro-reduction events across all four macros: 0   <-- 0 means add-only holds empirically
+
+=== 2. THE DOMINANT FAILURE MODE: DAY OVER BAND ===
+
+── 2a. fat OVER band, everything else fine
+    before    kcal= 2000 P= 155.0 F=  95.0 C= 195.0
+    after     kcal= 2000 P= 155.0 F=  95.0 C= 195.0
+    added: (nothing)
+    delta: kcal=0 P=0.0 F=0.0 C=0.0
+
+── 2b. kcal 25% OVER target
+    before    kcal= 2500 P= 120.0 F=  90.0 C= 250.0
+    after     kcal= 2500 P= 120.0 F=  90.0 C= 250.0
+    added: (nothing)
+    delta: kcal=0 P=0.0 F=0.0 C=0.0
+
+── 2c. carb OVER band
+    before    kcal= 2000 P= 155.0 F=  62.0 C= 300.0
+    after     kcal= 2000 P= 155.0 F=  62.0 C= 300.0
+    added: (nothing)
+    delta: kcal=0 P=0.0 F=0.0 C=0.0
+
+=== 3. CAN THE CLOSER PUSH AN ALREADY-OVER MACRO FURTHER OVER? ===
+  wouldHarm()'s check() returns `isOver && !wasOver` (macroCloser.js:90) — a macro
+  ALREADY outside its band is not protected. Test: protein short, fat already over.
+
+── 3a. protein short 40 g, fat already 25 g over its band
+    before    kcal= 1500 P= 110.0 F=  95.0 C= 195.0
+    after     kcal= 1739 P= 154.9 F= 100.2 C= 195.0
+    added: 145g Chicken breast, cooked, skinless [protein]
+    delta: kcal=239 P=44.9 F=5.2 C=0.0
+    fat before=95.0  after=100.2  -> FAT PUSHED FURTHER OVER
+
+=== 4. THE HOST SLOT — where do the adjusters land? ===
+    slot 0 (breakfast): kcal=922 ingredients=4 adjusters=180g Chicken breast, cooked, skinless, 160g White rice, cooked, 13g Olive Oil
+    slot 1 (lunch): kcal=500 ingredients=1 adjusters=-
+    slot 2 (dinner): kcal=400 ingredients=1 adjusters=-
+
+=== 5. STALE SLOT WARNING (honesty ordering) ===
+    slot kcal BEFORE closer: 900
+    slot kcal AFTER  closer: 1630
+    slot.warning AFTER closer: "Tried 20 recipe(s) for this slot, none fit within tolerance — closest was \"X\" (landed 900 kcal vs a 1200 target)."
+    -> the warning still names 900 kcal. It is carried verbatim by the {...host} spread (macroCloser.js:121) and never recomputed.
+
+=== 6. LOCKED / EMPTY SLOT HANDLING ===
+    all-locked day -> added 0 (expect 0)
+    all-empty day  -> added 0 (expect 0)
+    no adjusters   -> added 0 (expect 0, and slots array identity preserved: true)
+
+=== 7. KETO CARB CEILING ===
+
+── 7a. keto day, protein short — does the closer respect the carb ceiling?
+    before    kcal= 1500 P=  90.0 F= 115.0 C=  28.0
+    after     kcal= 1793 P= 145.0 F= 121.3 C=  28.3
+    added: 175g Chicken breast, cooked, skinless [protein] + 7g Greek Yogurt [protein]
+    delta: kcal=293 P=55.0 F=6.3 C=0.3
+
+=== 8. GRAM CEILING vs A REAL GAP — how big a protein gap can chicken close? ===
+    gap 10 g -> added 30g Chicken breast, cooked, skinless + 7g Greek Yogurt -> +10.0 g protein (CLOSED)
+    gap 20 g -> added 65g Chicken breast, cooked, skinless -> +20.2 g protein (CLOSED)
+    gap 40 g -> added 130g Chicken breast, cooked, skinless -> +40.3 g protein (CLOSED)
+    gap 60 g -> added 180g Chicken breast, cooked, skinless + 40g Greek Yogurt -> +59.9 g protein (CLOSED)
+    gap 80 g -> added 180g Chicken breast, cooked, skinless + 180g Greek Yogurt -> +74.3 g protein (STILL SHORT)

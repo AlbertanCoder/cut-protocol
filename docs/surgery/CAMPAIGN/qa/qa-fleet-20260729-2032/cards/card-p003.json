@@ -1,0 +1,80 @@
+{
+  "personaId": "p003",
+  "sessionCrossed": false,
+  "satisfaction": 4,
+  "wouldRecommend": false,
+  "criteria": {
+    "macrosInRange": 9,
+    "worksEndToEnd": 6,
+    "mealsAreGood": 3,
+    "affordableAdjustable": 4,
+    "tasty": 5
+  },
+  "allergenRespect": { "ok": true, "leaks": [] },
+  "delights": [
+    "The arithmetic is genuinely tight: my five slots summed to 2,095 kcal against my 2,092 target, with 204 g protein - that is a 3 kcal miss and it tells me the engine is real.",
+    "The snack, 'Tuna Cucumber Cracker Plate', is the one thing on here I would eat happily and repeatedly: 174 kcal, 18 g protein, $0.83 a serving, 8 minutes, and actual instructions - 'Drain tuna and flake into a bowl.', 'Mix in Greek yogurt, olive oil, lemon juice, and dill.'",
+    "When the swap engine could not hit my numbers it said so out loud instead of quietly handing me something wrong: 'Tried 5 recipe(s) for this slot, none fit within tolerance - closest was \"Torta de fiambre\" (delivered 36g protein vs a 46g target).'"
+  ],
+  "defects": [
+    {
+      "what": "Every single one of my five slots is seafood - I would be eating fish or shellfish five times in one day, which no real person does",
+      "snippet": "White Fish 170g / White Fish 220g / Salmon, cooked 200g / Shrimp 190g / Fish, tuna, light, canned in water, drained solids 75g"
+    },
+    {
+      "what": "The same protein appeared twice back to back in the original plan - white fish for meal 1 and again for meal 2",
+      "snippet": "High-Protein White Fish & Bell Peppers with Chickpea Pasta -> High-Protein White Fish & Cucumber with Quinoa"
+    },
+    {
+      "what": "I asked for mediterranean and only 1 of 5 dishes is even tagged mediterranean; one is tagged western-comfort and three carry no cuisine at all",
+      "snippet": "\"name\": \"Pan-Seared Salmon & Potato\", \"cuisine\": \"western-comfort\""
+    },
+    {
+      "what": "The swap menu ignored my mediterranean diet completely - all three alternates offered were Argentinian or Thai, and two of the three were over half fat by calories on a profile I framed as low-fat",
+      "snippet": "Torta de fiambre (Ham 100g, Cheddar Cheese 19g, 31.7g fat) / Matambre a la Pizza (Beef Flank Steak 140g, Mozzarella 30g, 27.7g fat) / Thai fried rice with prawns & peas"
+    },
+    {
+      "what": "Two vegetables in the entire day - bell peppers and cucumber, nothing else. No tomato, no greens, no legumes, no onion or garlic. Calling that a mediterranean day is not credible",
+      "snippet": "Bell peppers 50g, Cucumber 140g, Cucumber 75g, Bell peppers 125g, Cucumber 55g"
+    },
+    {
+      "what": "Three of five dishes have stub instructions that do not tell me how to cook anything - no heat, no time, no seasoning, not even salt",
+      "snippet": "[\"Cook the white fish.\", \"Serve over chickpea pasta with bell peppers.\"]"
+    },
+    {
+      "what": "A recipe step refers to instructions that do not exist anywhere - there is no 'above' in this recipe",
+      "snippet": "\"Sear salmon as above.\""
+    },
+    {
+      "what": "A pan-seared dish ships with no cooking fat in its ingredient list at all - you cannot sear salmon in a dry pan",
+      "snippet": "Pan-Seared Salmon & Potato: Salmon, cooked 200g / Potato, baked with skin 125g / Cucumber 75g"
+    },
+    {
+      "what": "Ingredient roles are visibly wrong where I can read them - oil is labelled a carb, soy sauce a carb, fish sauce a protein",
+      "snippet": "{ \"name\": \"Vegetable Oil\", \"role\": \"carb\", \"grams\": 5 }"
+    },
+    {
+      "what": "The alternates list contradicts itself - the warning says nothing fit within tolerance while the option listed right beside it is a 100% match",
+      "snippet": "warning: \"none fit within tolerance\" (matchPct 88) alongside \"Matambre a la Pizza\", \"matchPct\": 100, \"warning\": null"
+    },
+    {
+      "what": "$38.64 of food for one day, about $1,160 a month, and the app knows my job is 'unemployed-home'. One salmon serving is $14 of that. Nothing ever asked me about a budget",
+      "snippet": "\"costPerServing\": 14 (Pan-Seared Salmon & Potato); day total $38.64; profile \"occupationKey\": \"unemployed-home\", \"budgetTier\": null"
+    },
+    {
+      "what": "Applying an alternate the app itself had just offered me was rejected outright when I sent the dish and its scales; it only worked after I echoed the full ingredient array back",
+      "snippet": "HTTP 400 {\"error\":\"a slot needs at least one ingredient\"}"
+    },
+    {
+      "what": "Cold cucumber is used as the vegetable next to seared salmon and a baked potato - those do not go together on a plate",
+      "snippet": "\"Serve with baked potato and cold cucumber.\""
+    }
+  ],
+  "followUp": {
+    "action": "Asked for alternates on my second white-fish meal because I refuse to eat the same fish twice in a row, then swapped the lowest-fat option (Thai fried rice with prawns & peas) into that slot",
+    "endpoint": "POST /api/plans/cms6wyf74008bwlw0ogzpzfmv/slots/cms6wyf7u008fwlw0oh95qxp1/alternates then PUT /api/plans/cms6wyf74008bwlw0ogzpzfmv/slots/cms6wyf7u008fwlw0oh95qxp1/apply",
+    "status": 200,
+    "howItWent": "Half-satisfying. The alternates came back instantly with match percentages and an honest tolerance warning, but the first apply attempt failed with 400 'a slot needs at least one ingredient' on a dish that plainly had twelve, and only went through when I resent the whole ingredient list. Once it landed the server recomputed everything correctly - day moved to 2,062 kcal against my 2,092 target and cost dropped $3.21 - but none of the three options offered was mediterranean, so I fixed the repetition and still lost the diet I asked for."
+  },
+  "verdict": "The numbers are excellent and the food is not: a mathematically perfect 2,092-kcal day made of fish five times, two vegetables, and recipes that just say 'Cook the white fish.'"
+}

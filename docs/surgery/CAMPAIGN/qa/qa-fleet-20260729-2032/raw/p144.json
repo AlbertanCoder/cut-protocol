@@ -1,0 +1,581 @@
+{
+ "persona": {
+  "idx": 144,
+  "id": "p144",
+  "tier": "EASY",
+  "displayName": "electrician, 66",
+  "story": "electrician, 66, male, 177 cm / 65 kg (BMI 20.7), cut at 0.5 lb/wk, kosher diet, no exclusions, high-protein, 3 meals + 2 snacks, wants a single day",
+  "profile": {
+   "sex": "M",
+   "age": 66,
+   "heightCm": 177,
+   "startWeightKg": 65,
+   "goalWeightKg": 53.7,
+   "occupationKey": "electrician",
+   "trainingStyle": "weights",
+   "minutesPerSession": 45,
+   "sessionsPerWeek": 3,
+   "rateLbPerWeek": 0.5,
+   "dietaryStyle": "kosher",
+   "excludedFoods": [],
+   "mealsPerDay": 3,
+   "snacksPerDay": 2,
+   "unitPref": "imperial",
+   "bodyFatPct": 22,
+   "bodyFatSource": "measured",
+   "goalWeightAcknowledged": true
+  },
+  "filters": {
+   "proteinPriority": true,
+   "maxPrepMin": 20
+  },
+  "horizon": "day",
+  "walls": [],
+  "freeTextExclusions": [],
+  "dietaryStyle": "kosher",
+  "bmi": 20.7,
+  "goalKind": "cut",
+  "macroStyle": "high-protein",
+  "requestedButUnsupported": [
+   "wanted protein set explicitly in g/lb; the API derives the protein band from LBM (1.14-1.25 g/lb) and accepts no client protein target — only the per-request proteinPriority filter"
+  ],
+  "goalBmi": 17.1,
+  "tupleKey": "[\"EASY\",\"M\",66,177,65,53.7,\"electrician\",\"weights\",0.5,\"kosher\",[],3,2,\"high-protein\",\"day\",20,null,true,null,null]"
+ },
+ "request": {
+  "horizon": "day",
+  "filters": {
+   "proteinPriority": true,
+   "maxPrepMin": 20
+  }
+ },
+ "profileResponse": {
+  "id": "cms6x18d103upwlw0haoo1t5t",
+  "userId": "cms6x187a003uwl2oh2u5pibi",
+  "sex": "M",
+  "age": 66,
+  "heightCm": 177,
+  "bodyFatPct": 22,
+  "bodyFatSource": "measured",
+  "occupationKey": "electrician",
+  "activityOverride": null,
+  "sessionsPerWeek": 3,
+  "trainingStyle": "weights",
+  "minutesPerSession": 45,
+  "startWeightKg": 65,
+  "goalWeightKg": 53.7,
+  "startDate": "2026-07-29",
+  "unitPref": "imperial",
+  "rateLbPerWeek": 0.5,
+  "rateAcknowledged": false,
+  "floorKcal": null,
+  "excludedFormulas": [],
+  "targetKcal": 1917,
+  "mealsPerDay": 3,
+  "snacksPerDay": 2,
+  "excludedFoods": [],
+  "dietaryStyle": "kosher",
+  "cuisinePreferences": [],
+  "mealPreferencesNote": null,
+  "maxPrepMin": null,
+  "budgetTier": null,
+  "allowBatch": null,
+  "maxComplexity": null,
+  "adaptiveTdee": true,
+  "proteinPriorityMode": false,
+  "updatedAt": "2026-07-30T20:33:45.308Z"
+ },
+ "generate": {
+  "status": 200,
+  "ms": 725,
+  "body": {
+   "id": "cms7z1aul033lwlgwu6lkc11n",
+   "userId": "cms6x187a003uwl2oh2u5pibi",
+   "startDate": "2026-07-27",
+   "createdAt": "2026-07-30T20:33:46.030Z",
+   "slots": [
+    {
+     "id": "cms7z1aun033nwlgwnoevfa2p",
+     "planId": "cms7z1aul033lwlgwu6lkc11n",
+     "dayOfWeek": 3,
+     "slotType": "meal",
+     "slotIndex": 0,
+     "recipeId": "cmrujkwp5000iwl9oabgsvokt",
+     "proteinScale": 0.62,
+     "sidesScale": 1.2,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t7w3006lwlws4zdhow4d",
+       "name": "Chicken Breast",
+       "role": "protein",
+       "grams": 105
+      },
+      {
+       "foodId": "cmrj2t6xy002bwlwstg6a0xsf",
+       "name": "Noodles",
+       "role": "carb",
+       "grams": 180
+      },
+      {
+       "foodId": "cmrevpcnh000iwl5gh2zjhyqe",
+       "name": "Bell peppers",
+       "role": "veg",
+       "grams": 95
+      },
+      {
+       "foodId": "cmrj2t95b00bxwlwsoefzd8s1",
+       "name": "Cashew Nuts",
+       "role": "fat",
+       "grams": 18
+      }
+     ],
+     "kcal": 445.79,
+     "protein": 30.929,
+     "fat": 10.398,
+     "carb": 57.05399999999999,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrujkwp5000iwl9oabgsvokt",
+      "name": "Stir-Fried Chicken & Bell Peppers with Noodles",
+      "description": null,
+      "steps": [
+       "Cook the chicken.",
+       "Serve with noodles and bell peppers."
+      ],
+      "slotType": "meal",
+      "cuisine": "asian",
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 486.74,
+      "protein": 44.867,
+      "fat": 11.996,
+      "carb": 48.68399999999999,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 6.62,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:00:06.665Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z1auo033pwlgwybyesl97",
+     "planId": "cms7z1aul033lwlgwu6lkc11n",
+     "dayOfWeek": 3,
+     "slotType": "meal",
+     "slotIndex": 1,
+     "recipeId": "cmrujhgyd001mwlbo1yhlk5mq",
+     "proteinScale": 1.7,
+     "sidesScale": 1.42,
+     "ingredients": [
+      {
+       "foodId": "cmrj2tbsj00m1wlwsfeuh3jsf",
+       "name": "flax eggs",
+       "role": "protein",
+       "grams": 255
+      },
+      {
+       "foodId": "cmrj2t6na000ywlws9jek4w4z",
+       "name": "Broccoli",
+       "role": "veg",
+       "grams": 115
+      },
+      {
+       "foodId": "cmrevpcn2000ewl5gmlyzu0vd",
+       "name": "White rice, cooked",
+       "role": "carb",
+       "grams": 170
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 11
+      }
+     ],
+     "kcal": 495.9,
+     "protein": 34.8305,
+     "fat": 11.901,
+     "carb": 60.8285,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrujhgyd001mwlbo1yhlk5mq",
+      "name": "Egg & Spinach Scramble",
+      "description": null,
+      "steps": [
+       "Scramble eggs with greens.",
+       "Serve with rice."
+      ],
+      "slotType": "meal",
+      "cuisine": "american",
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 335.3,
+      "protein": 21.3,
+      "fat": 8.6,
+      "carb": 42.2,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 2.72,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T10:57:26.294Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z1aup033twlgwisxo772t",
+     "planId": "cms7z1aul033lwlgwu6lkc11n",
+     "dayOfWeek": 3,
+     "slotType": "meal",
+     "slotIndex": 2,
+     "recipeId": "cmrul79zg00ciwl8019a4j4ql",
+     "proteinScale": 1.54,
+     "sidesScale": 1.66,
+     "ingredients": [
+      {
+       "foodId": "cmrj2tbym00mowlwszf3qi0d8",
+       "name": "Cottage Cheese",
+       "role": "protein",
+       "grams": 310
+      },
+      {
+       "foodId": "cmrevpcn2000ewl5gmlyzu0vd",
+       "name": "White rice, cooked",
+       "role": "carb",
+       "grams": 185
+      },
+      {
+       "foodId": "cmrg8zxar000lwli0qy2ovmx4",
+       "name": "Onion",
+       "role": "veg",
+       "grams": 100
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 579.7,
+     "protein": 40.195,
+     "fat": 12.785,
+     "carb": 74.501,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrul79zg00ciwl8019a4j4ql",
+      "name": "High-Protein Cottage Cheese & Onions with Rice",
+      "description": null,
+      "steps": [
+       "Cook the cottage cheese.",
+       "Serve over white rice with onions."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 376,
+      "protein": 25.6,
+      "fat": 10,
+      "carb": 45,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 2.36,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:45:29.932Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z1auq033vwlgw9xsu0c49",
+     "planId": "cms7z1aul033lwlgwu6lkc11n",
+     "dayOfWeek": 3,
+     "slotType": "snack",
+     "slotIndex": 0,
+     "recipeId": "cms7pjmkm003awlbk8b9zzoqo",
+     "proteinScale": 0.65,
+     "sidesScale": 1.88,
+     "ingredients": [
+      {
+       "foodId": "cmrj2tbym00mowlwszf3qi0d8",
+       "name": "Cottage Cheese",
+       "role": "protein",
+       "grams": 115
+      },
+      {
+       "foodId": "cmrg8urje0000wli0g52uqcdi",
+       "name": "Pineapple, raw",
+       "role": "carb",
+       "grams": 190
+      }
+     ],
+     "kcal": 196.9,
+     "protein": 13.524,
+     "fat": 3.044,
+     "carb": 31.7465,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cms7pjmkm003awlbk8b9zzoqo",
+      "name": "Cottage Cheese with Pineapple",
+      "description": null,
+      "steps": [
+       "Spoon the cottage cheese into a bowl.",
+       "Top with diced pineapple."
+      ],
+      "slotType": "snack",
+      "cuisine": "american",
+      "prepTimeMin": 3,
+      "source": "curated",
+      "mealCategory": null,
+      "kcal": 201.6,
+      "protein": 20.26,
+      "fat": 4.35,
+      "carb": 21.858,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": null,
+      "difficulty": 1,
+      "filterProvenance": null,
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-30T16:08:04.870Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z1aur033xwlgw7ixhv1g4",
+     "planId": "cms7z1aul033lwlgwu6lkc11n",
+     "dayOfWeek": 3,
+     "slotType": "snack",
+     "slotIndex": 1,
+     "recipeId": "cms7pjmkm003awlbk8b9zzoqo",
+     "proteinScale": 0.66,
+     "sidesScale": 1.86,
+     "ingredients": [
+      {
+       "foodId": "cmrj2tbym00mowlwszf3qi0d8",
+       "name": "Cottage Cheese",
+       "role": "protein",
+       "grams": 120
+      },
+      {
+       "foodId": "cmrg8urje0000wli0g52uqcdi",
+       "name": "Pineapple, raw",
+       "role": "carb",
+       "grams": 185
+      }
+     ],
+     "kcal": 198.3,
+     "protein": 14.051,
+     "fat": 3.1485,
+     "carb": 31.257,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cms7pjmkm003awlbk8b9zzoqo",
+      "name": "Cottage Cheese with Pineapple",
+      "description": null,
+      "steps": [
+       "Spoon the cottage cheese into a bowl.",
+       "Top with diced pineapple."
+      ],
+      "slotType": "snack",
+      "cuisine": "american",
+      "prepTimeMin": 3,
+      "source": "curated",
+      "mealCategory": null,
+      "kcal": 201.6,
+      "protein": 20.26,
+      "fat": 4.35,
+      "carb": 21.858,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": null,
+      "difficulty": 1,
+      "filterProvenance": null,
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-30T16:08:04.870Z",
+      "createdByUserId": null
+     }
+    }
+   ],
+   "groceryList": null,
+   "meta": {
+    "matchPct": 97,
+    "attempts": 1,
+    "score": {
+     "daysInTolerance": 1,
+     "avgMatch": 97,
+     "days": [
+      {
+       "dayOfWeek": 3,
+       "dayName": "Thursday",
+       "matchPct": 97,
+       "totals": {
+        "kcal": 1917,
+        "protein": 134,
+        "fat": 41,
+        "carb": 255
+       },
+       "kcalDeltaPct": 0,
+       "proteinShortPct": 0,
+       "fatOk": true,
+       "carbOk": true,
+       "inTolerance": true,
+       "miss": null,
+       "unfilledSlots": 0,
+       "warnedSlots": 0,
+       "proteinFloor": {
+        "met": true,
+        "floorG": 127,
+        "achievedG": 133.5,
+        "shortG": 0,
+        "shortPct": 0,
+        "reason": null
+       },
+       "windowIndex": 0,
+       "dayIndex": 0,
+       "key": "0:3"
+      }
+     ],
+     "totalDays": 1,
+     "floorDaysMet": 1,
+     "floorDaysTotal": 1
+    },
+    "days": [
+     {
+      "dayOfWeek": 3,
+      "dayName": "Thursday",
+      "matchPct": 97,
+      "totals": {
+       "kcal": 1917,
+       "protein": 134,
+       "fat": 41,
+       "carb": 255
+      },
+      "kcalDeltaPct": 0,
+      "proteinShortPct": 0,
+      "fatOk": true,
+      "carbOk": true,
+      "inTolerance": true,
+      "miss": null,
+      "unfilledSlots": 0,
+      "warnedSlots": 0,
+      "proteinFloor": {
+       "met": true,
+       "floorG": 127,
+       "achievedG": 133.5,
+       "shortG": 0,
+       "shortPct": 0,
+       "reason": null
+      },
+      "windowIndex": 0,
+      "dayIndex": 0,
+      "key": "0:3"
+     }
+    ],
+    "diagnosis": null,
+    "poolCounts": {
+     "raw": 910,
+     "afterDiet": 680,
+     "afterPrep": 317,
+     "afterStack": 317,
+     "stackExplain": null
+    },
+    "variety": {
+     "mealEligible": 290,
+     "usableForSlot": 263,
+     "slotKcal": 506,
+     "snackEligible": 13,
+     "weeklyMealSlots": 21,
+     "weeklySnackSlots": 14,
+     "repeatCap": 2,
+     "distinctWeeks": 12.5,
+     "horizonWeeks": 1,
+     "sustainsHorizon": true,
+     "notes": [
+      "1 day: 4 distinct dish(es) across 5 filled slot(s); most-repeated dish appears 2x against a 2x cap for this horizon (2x per week)."
+     ],
+     "horizon": {
+      "weeks": 1,
+      "days": 1,
+      "perWeekCap": 2,
+      "horizonRepeatCap": 2,
+      "mealSlots": 3,
+      "snackSlots": 2,
+      "totalSlots": 5,
+      "distinctFloor": 3,
+      "distinctRecipes": 4,
+      "maxRepeat": 2,
+      "maxRepeatRecipeId": "cms7pjmkm003awlbk8b9zzoqo",
+      "lockedRepeatsOfMax": 0,
+      "filledSlots": 5,
+      "unfilledSlots": 0,
+      "requiredDistinct": 3,
+      "capHeld": true,
+      "floorHeld": true
+     }
+    },
+    "priorWeeksConsidered": 0,
+    "horizon": {
+     "key": "day",
+     "label": "1 day",
+     "days": 1,
+     "kind": "days",
+     "weeks": 1,
+     "custom": false,
+     "startDate": "2026-07-30",
+     "endDate": "2026-07-30",
+     "startDayOfWeek": 3,
+     "weeksWritten": 1,
+     "solveMs": 2,
+     "weekPlans": [
+      {
+       "startDate": "2026-07-27",
+       "dayIndices": [
+        3
+       ],
+       "days": 1,
+       "daysInTolerance": 1,
+       "avgMatch": 97,
+       "unfilledSlots": 0,
+       "poolSize": 317
+      }
+     ]
+    }
+   }
+  }
+ }
+}

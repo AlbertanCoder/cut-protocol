@@ -1,0 +1,563 @@
+{
+ "persona": {
+  "idx": 123,
+  "id": "p123",
+  "tier": "EASY",
+  "displayName": "shift worker, 2 a.m. meals, 24",
+  "story": "shift worker, 2 a.m. meals, 24, male, 189 cm / 128.9 kg (BMI 36.1), cut at 2 lb/wk, none diet, avoiding soy, shellfish, balanced, 3 meals + 1 snacks, wants a single day",
+  "profile": {
+   "sex": "M",
+   "age": 24,
+   "heightCm": 189,
+   "startWeightKg": 128.9,
+   "goalWeightKg": 118.2,
+   "occupationKey": "warehouse",
+   "trainingStyle": "weights",
+   "minutesPerSession": 45,
+   "sessionsPerWeek": 3,
+   "rateLbPerWeek": 2,
+   "dietaryStyle": "none",
+   "excludedFoods": [
+    "soy",
+    "shellfish"
+   ],
+   "mealsPerDay": 3,
+   "snacksPerDay": 1,
+   "unitPref": "metric",
+   "rateAcknowledged": true
+  },
+  "filters": {},
+  "horizon": "day",
+  "walls": [
+   "soy",
+   "shellfish"
+  ],
+  "freeTextExclusions": [],
+  "dietaryStyle": "none",
+  "bmi": 36.1,
+  "goalKind": "cut",
+  "macroStyle": "balanced",
+  "requestedButUnsupported": [],
+  "tupleKey": "[\"EASY\",\"M\",24,189,128.9,118.2,\"warehouse\",\"weights\",2,\"none\",[\"shellfish\",\"soy\"],3,1,\"balanced\",\"day\",null,null,null,null,null]"
+ },
+ "request": {
+  "horizon": "day",
+  "filters": {}
+ },
+ "profileResponse": {
+  "id": "cms6x12m40347wlw0i91h5npo",
+  "userId": "cms6x12bq0039wl2og37932d3",
+  "sex": "M",
+  "age": 24,
+  "heightCm": 189,
+  "bodyFatPct": 0,
+  "bodyFatSource": null,
+  "occupationKey": "warehouse",
+  "activityOverride": null,
+  "sessionsPerWeek": 3,
+  "trainingStyle": "weights",
+  "minutesPerSession": 45,
+  "startWeightKg": 128.9,
+  "goalWeightKg": 118.2,
+  "startDate": "2026-07-29",
+  "unitPref": "metric",
+  "rateLbPerWeek": 2,
+  "rateAcknowledged": false,
+  "floorKcal": null,
+  "excludedFormulas": [],
+  "targetKcal": 2843,
+  "mealsPerDay": 3,
+  "snacksPerDay": 1,
+  "excludedFoods": [
+   "soy",
+   "shellfish"
+  ],
+  "dietaryStyle": "none",
+  "cuisinePreferences": [],
+  "mealPreferencesNote": null,
+  "maxPrepMin": null,
+  "budgetTier": null,
+  "allowBatch": null,
+  "maxComplexity": null,
+  "adaptiveTdee": true,
+  "proteinPriorityMode": false,
+  "updatedAt": "2026-07-30T02:49:49.968Z"
+ },
+ "generate": {
+  "status": 200,
+  "ms": 109,
+  "body": {
+   "id": "cms6x12pk034dwlw0urj82vkc",
+   "userId": "cms6x12bq0039wl2og37932d3",
+   "startDate": "2026-07-27",
+   "createdAt": "2026-07-30T02:49:50.072Z",
+   "slots": [
+    {
+     "id": "cms6x12pl034fwlw00qnw4a07",
+     "planId": "cms6x12pk034dwlw0urj82vkc",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 0,
+     "recipeId": "cmrj2tkwo02jqwlwsbk01c600",
+     "proteinScale": 1.06,
+     "sidesScale": 0.84,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t84f007mwlws3l8rub2z",
+       "name": "Chicken Thighs",
+       "role": "protein",
+       "grams": 240
+      },
+      {
+       "foodId": "cmrj2t7k10051wlwsghd1hb86",
+       "name": "Curry Powder",
+       "role": null,
+       "grams": 5
+      },
+      {
+       "foodId": "cmrj2t8d8008rwlws51a28g0q",
+       "name": "All-purpose Seasoning",
+       "role": null,
+       "grams": 1
+      },
+      {
+       "foodId": "cmrg8zxar000lwli0qy2ovmx4",
+       "name": "Onion",
+       "role": "veg",
+       "grams": 25
+      },
+      {
+       "foodId": "cmrj2t6w20022wlws8tukrt3u",
+       "name": "Spring Onions",
+       "role": "veg",
+       "grams": 70
+      },
+      {
+       "foodId": "cmrj2t6tb001qwlwsb78om24m",
+       "name": "Green Pepper",
+       "role": null,
+       "grams": 1
+      },
+      {
+       "foodId": "cmrj2t6ft0001wlwstiofk9on",
+       "name": "Garlic",
+       "role": "veg",
+       "grams": 3
+      },
+      {
+       "foodId": "cmrj2t7rb005zwlws4bfn6rn7",
+       "name": "Scotch Bonnet",
+       "role": null,
+       "grams": 20
+      },
+      {
+       "foodId": "cmrj2t6oj0014wlwsaw8ffg0k",
+       "name": "Thyme",
+       "role": null,
+       "grams": 65
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "carb",
+       "grams": 9
+      },
+      {
+       "foodId": "cmrj2t6hb0007wlwsh6l6ynal",
+       "name": "Water",
+       "role": null,
+       "grams": 12
+      },
+      {
+       "foodId": "cmrj2t7fb004fwlws8ezof2dp",
+       "name": "Russet Potato",
+       "role": "veg",
+       "grams": 35
+      },
+      {
+       "foodId": "cmrj2t6gd0003wlwss7jf3wzf",
+       "name": "Salt",
+       "role": null,
+       "grams": 1
+      },
+      {
+       "foodId": "cmrj2t6gl0004wlws73buybhw",
+       "name": "Pepper",
+       "role": null,
+       "grams": 1
+      }
+     ],
+     "kcal": 746.5799999999998,
+     "protein": 69.93685,
+     "fat": 37.22725999999999,
+     "carb": 37.2253,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrj2tkwo02jqwlwsbk01c600",
+      "name": "Jamaican Curry Chicken Recipe",
+      "description": null,
+      "steps": [
+       "Equipment",
+       "Dutch Oven",
+       "Instructions",
+       "Add chicken thighs, all-purpose seasoning, 1 tablespoon of curry powder, onion, green onions, green pepper, garlic cloves, scotch bonnet pepper (if using), and thyme to a large bowl and combine, making sure all chicken pieces are covered with the seasoning. Cover and refrigerate for at least 1 hour or up to overnight.",
+       "One the chicken is done marinating, remove onions, peppers, and garlic cloves from chicken and set aside.",
+       "Heat olive oil in a large heavy bottom pot over medium heat. Add remaining curry powder and stir, cooking for about 20-30 seconds. Add onions, green pepper, garlic cloves, thyme, and scotch bonnet pepper (if using) to pot and stir until onions have softened, about 3-5 minutes. If your onions and peppers are looking dry, add about 1 tablespoon of water.",
+       "Add chicken and ¼ cup of water to the pot. Cover and reduce heat to medium low. Cook, stirring occasionally, for 30-35 minutes.",
+       "When there is about 15 minutes remaining, stir in potato and continue to cook covered.",
+       "Once chicken is cooked and potatoes are softened, remove from heat. Salt and pepper to taste."
+      ],
+      "slotType": "meal",
+      "cuisine": "indian",
+      "prepTimeMin": 42,
+      "source": "themealdb-import",
+      "mealCategory": null,
+      "kcal": 756.6,
+      "protein": 67.7,
+      "fat": 37.3,
+      "carb": 43.3,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 9.62,
+      "difficulty": 7,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-13T10:25:29.881Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x12pm034hwlw0w7b9un85",
+     "planId": "cms6x12pk034dwlw0urj82vkc",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 1,
+     "recipeId": "cmrevpcvo003jwl5guvnw6zs7",
+     "proteinScale": 1.05,
+     "sidesScale": 1.4,
+     "ingredients": [
+      {
+       "foodId": "cmrevpclw0004wl5gzdq3m2ge",
+       "name": "Ground pack (elk/game), cooked",
+       "role": "protein",
+       "grams": 260
+      },
+      {
+       "foodId": "cmrevpcn2000ewl5gmlyzu0vd",
+       "name": "White rice, cooked",
+       "role": "carb",
+       "grams": 280
+      },
+      {
+       "foodId": "cmrevpcnh000iwl5gh2zjhyqe",
+       "name": "Bell peppers",
+       "role": "veg",
+       "grams": 210
+      }
+     ],
+     "kcal": 819.1,
+     "protein": 77.26,
+     "fat": 11.87,
+     "carb": 91,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrevpcvo003jwl5guvnw6zs7",
+      "name": "Ground Elk, Rice & Peppers",
+      "description": null,
+      "steps": [
+       "Elk is very lean — cook hot and fast, don't overdo it or it dries out.",
+       "Brown with peppers, season well.",
+       "Serve over rice."
+      ],
+      "slotType": "meal",
+      "cuisine": "western-comfort",
+      "prepTimeMin": 20,
+      "source": "curated",
+      "mealCategory": null,
+      "kcal": 681.5,
+      "protein": 71.9,
+      "fat": 11.05,
+      "carb": 65,
+      "tasteTier": "really_good",
+      "tasteTierSource": "curated",
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 16.58,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-10T11:55:10.836Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x12pn034jwlw0ezwqzdzz",
+     "planId": "cms6x12pk034dwlw0urj82vkc",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 2,
+     "recipeId": "cmrevpcrq0021wl5gyq2peags",
+     "proteinScale": 1.2,
+     "sidesScale": 1.55,
+     "ingredients": [
+      {
+       "foodId": "cmrevpcls0003wl5g6uhs17yp",
+       "name": "Extra-lean ground beef, cooked",
+       "role": "protein",
+       "grams": 300
+      },
+      {
+       "foodId": "cmrevpcn5000fwl5g0j42i9os",
+       "name": "Potato, baked with skin",
+       "role": "carb",
+       "grams": 385
+      },
+      {
+       "foodId": "cmrevpcnh000iwl5gh2zjhyqe",
+       "name": "Bell peppers",
+       "role": "veg",
+       "grams": 230
+      }
+     ],
+     "kcal": 945.3499999999999,
+     "protein": 89.925,
+     "fat": 22.075,
+     "carb": 94.65,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrevpcrq0021wl5gyq2peags",
+      "name": "Ground Beef & Potato Hash",
+      "description": null,
+      "steps": [
+       "Dice and pan-crisp the potato first, set aside.",
+       "Brown the beef with peppers in the same pan.",
+       "Fold the potato back in, crisp another 2-3 minutes."
+      ],
+      "slotType": "meal",
+      "cuisine": "western-comfort",
+      "prepTimeMin": 25,
+      "source": "curated",
+      "mealCategory": null,
+      "kcal": 709,
+      "protein": 72.75,
+      "fat": 18.2,
+      "carb": 61.5,
+      "tasteTier": "really_good",
+      "tasteTierSource": "curated",
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 10.48,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-10T11:55:10.694Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x12pn034lwlw0mb7s80pr",
+     "planId": "cms6x12pk034dwlw0urj82vkc",
+     "dayOfWeek": 2,
+     "slotType": "snack",
+     "slotIndex": 0,
+     "recipeId": "cmrevpcz5004qwl5gt3aso51q",
+     "proteinScale": 0.74,
+     "sidesScale": 0.61,
+     "ingredients": [
+      {
+       "foodId": "cmrevpcoi000qwl5ghkc51bf4",
+       "name": "Greek yogurt, 0%",
+       "role": "protein",
+       "grams": 260
+      },
+      {
+       "foodId": "cmrevpco3000nwl5g1d51b3it",
+       "name": "Almonds",
+       "role": "fat",
+       "grams": 25
+      },
+      {
+       "foodId": "cmrevpcnv000lwl5go8mxze0i",
+       "name": "Mixed berries",
+       "role": "veg",
+       "grams": 60
+      }
+     ],
+     "kcal": 337.1,
+     "protein": 31.67,
+     "fat": 14.345,
+     "carb": 23.01,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrevpcz5004qwl5gt3aso51q",
+      "name": "Greek Yogurt, Almonds & Berries",
+      "description": "The Closer from the day template.",
+      "steps": [
+       "Stir almonds and berries into the yogurt."
+      ],
+      "slotType": "snack",
+      "cuisine": "mediterranean",
+      "prepTimeMin": 5,
+      "source": "curated",
+      "mealCategory": null,
+      "kcal": 502.7,
+      "protein": 44.1,
+      "fat": 22.7,
+      "carb": 35,
+      "tasteTier": "really_good",
+      "tasteTierSource": "curated",
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 4.37,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-10T11:55:10.962Z",
+      "createdByUserId": null
+     }
+    }
+   ],
+   "groceryList": null,
+   "meta": {
+    "matchPct": 99,
+    "attempts": 3,
+    "score": {
+     "daysInTolerance": 1,
+     "avgMatch": 99,
+     "days": [
+      {
+       "dayOfWeek": 2,
+       "dayName": "Wednesday",
+       "matchPct": 99,
+       "totals": {
+        "kcal": 2848,
+        "protein": 269,
+        "fat": 86,
+        "carb": 246
+       },
+       "kcalDeltaPct": 0.2,
+       "proteinShortPct": 0,
+       "fatOk": true,
+       "carbOk": true,
+       "inTolerance": true,
+       "miss": null,
+       "unfilledSlots": 0,
+       "warnedSlots": 0,
+       "windowIndex": 0,
+       "dayIndex": 0,
+       "key": "0:2"
+      }
+     ],
+     "totalDays": 1
+    },
+    "days": [
+     {
+      "dayOfWeek": 2,
+      "dayName": "Wednesday",
+      "matchPct": 99,
+      "totals": {
+       "kcal": 2848,
+       "protein": 269,
+       "fat": 86,
+       "carb": 246
+      },
+      "kcalDeltaPct": 0.2,
+      "proteinShortPct": 0,
+      "fatOk": true,
+      "carbOk": true,
+      "inTolerance": true,
+      "miss": null,
+      "unfilledSlots": 0,
+      "warnedSlots": 0,
+      "windowIndex": 0,
+      "dayIndex": 0,
+      "key": "0:2"
+     }
+    ],
+    "diagnosis": null,
+    "poolCounts": {
+     "raw": 889,
+     "afterDiet": 669,
+     "afterPrep": 669,
+     "afterStack": 669,
+     "stackExplain": null
+    },
+    "variety": {
+     "mealEligible": 518,
+     "usableForSlot": 210,
+     "slotKcal": 838,
+     "snackEligible": 8,
+     "weeklyMealSlots": 21,
+     "weeklySnackSlots": 7,
+     "repeatCap": 2,
+     "distinctWeeks": 10,
+     "horizonWeeks": 1,
+     "sustainsHorizon": true,
+     "notes": [
+      "1 day: 4 distinct dish(es) across 4 filled slot(s); most-repeated dish appears 1x against a 2x cap for this horizon (2x per week)."
+     ],
+     "horizon": {
+      "weeks": 1,
+      "days": 1,
+      "perWeekCap": 2,
+      "horizonRepeatCap": 2,
+      "mealSlots": 3,
+      "snackSlots": 1,
+      "totalSlots": 4,
+      "distinctFloor": 2,
+      "distinctRecipes": 4,
+      "maxRepeat": 1,
+      "maxRepeatRecipeId": "cmrj2tkwo02jqwlwsbk01c600",
+      "lockedRepeatsOfMax": 0,
+      "filledSlots": 4,
+      "unfilledSlots": 0,
+      "requiredDistinct": 2,
+      "capHeld": true,
+      "floorHeld": true
+     }
+    },
+    "priorWeeksConsidered": 0,
+    "horizon": {
+     "key": "day",
+     "label": "1 day",
+     "days": 1,
+     "kind": "days",
+     "weeks": 1,
+     "custom": false,
+     "startDate": "2026-07-29",
+     "endDate": "2026-07-29",
+     "startDayOfWeek": 2,
+     "weeksWritten": 1,
+     "solveMs": 3,
+     "weekPlans": [
+      {
+       "startDate": "2026-07-27",
+       "dayIndices": [
+        2
+       ],
+       "days": 1,
+       "daysInTolerance": 1,
+       "avgMatch": 99,
+       "unfilledSlots": 0,
+       "poolSize": 669
+      }
+     ]
+    }
+   }
+  }
+ }
+}

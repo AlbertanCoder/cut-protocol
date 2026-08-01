@@ -1,0 +1,562 @@
+{
+ "persona": {
+  "idx": 26,
+  "id": "p026",
+  "tier": "HARD",
+  "displayName": "software developer, 55",
+  "story": "software developer, 55, female, 179 cm / 119.7 kg (BMI 37.4), cut at 2 lb/wk, mediterranean diet, avoiding nightshade, dairy, peanut, soy, low-fat, 4 meals + 0 snacks, wants a single day",
+  "profile": {
+   "sex": "F",
+   "age": 55,
+   "heightCm": 179,
+   "startWeightKg": 119.7,
+   "goalWeightKg": 112.2,
+   "occupationKey": "software-tech",
+   "trainingStyle": "mixed",
+   "minutesPerSession": 40,
+   "sessionsPerWeek": 3,
+   "rateLbPerWeek": 2,
+   "dietaryStyle": "mediterranean",
+   "excludedFoods": [
+    "nightshades",
+    "dairy",
+    "peanuts",
+    "soy"
+   ],
+   "mealsPerDay": 4,
+   "snacksPerDay": 0,
+   "unitPref": "metric",
+   "rateAcknowledged": true
+  },
+  "filters": {
+   "budget": "premium",
+   "proteinPriority": true
+  },
+  "horizon": "day",
+  "walls": [
+   "nightshade",
+   "dairy",
+   "peanut",
+   "soy"
+  ],
+  "freeTextExclusions": [
+   "nightshades"
+  ],
+  "dietaryStyle": "mediterranean",
+  "bmi": 37.4,
+  "goalKind": "cut",
+  "macroStyle": "low-fat",
+  "requestedButUnsupported": [
+   "wanted a low-fat split; the fat band is fixed at LBM x0.34-0.40 and is not client-settable"
+  ],
+  "tupleKey": "[\"HARD\",\"F\",55,179,119.7,112.2,\"software-tech\",\"mixed\",2,\"mediterranean\",[\"dairy\",\"nightshades\",\"peanuts\",\"soy\"],4,0,\"low-fat\",\"day\",null,\"premium\",true,null,null]"
+ },
+ "request": {
+  "horizon": "day",
+  "filters": {
+   "budget": "premium",
+   "proteinPriority": true
+  }
+ },
+ "profileResponse": {
+  "id": "cms6x0dr1010xwlw0g5jxxgya",
+  "userId": "cms6x0dln000kwl2ow8go5nti",
+  "sex": "F",
+  "age": 55,
+  "heightCm": 179,
+  "bodyFatPct": 0,
+  "bodyFatSource": null,
+  "occupationKey": "software-tech",
+  "activityOverride": null,
+  "sessionsPerWeek": 3,
+  "trainingStyle": "mixed",
+  "minutesPerSession": 40,
+  "startWeightKg": 119.7,
+  "goalWeightKg": 112.2,
+  "startDate": "2026-07-29",
+  "unitPref": "metric",
+  "rateLbPerWeek": 2,
+  "rateAcknowledged": true,
+  "floorKcal": null,
+  "excludedFormulas": [],
+  "targetKcal": 1764,
+  "mealsPerDay": 4,
+  "snacksPerDay": 0,
+  "excludedFoods": [
+   "nightshades",
+   "dairy",
+   "peanuts",
+   "soy"
+  ],
+  "dietaryStyle": "mediterranean",
+  "cuisinePreferences": [],
+  "mealPreferencesNote": null,
+  "maxPrepMin": null,
+  "budgetTier": null,
+  "allowBatch": null,
+  "maxComplexity": null,
+  "adaptiveTdee": true,
+  "proteinPriorityMode": false,
+  "updatedAt": "2026-07-30T20:33:07.900Z"
+ },
+ "generate": {
+  "status": 200,
+  "ms": 467,
+  "body": {
+   "id": "cms7z0hy800khwlgw2h06dvy2",
+   "userId": "cms6x0dln000kwl2ow8go5nti",
+   "startDate": "2026-07-27",
+   "createdAt": "2026-07-30T20:33:08.576Z",
+   "slots": [
+    {
+     "id": "cms7z0hy900kjwlgw9rl5e5yy",
+     "planId": "cms7z0hy800khwlgw2h06dvy2",
+     "dayOfWeek": 3,
+     "slotType": "meal",
+     "slotIndex": 0,
+     "recipeId": "cmrj2u6f107bfwlwsp1jkx0rh",
+     "proteinScale": 2,
+     "sidesScale": 1.68,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 17
+      },
+      {
+       "foodId": "cmrj2t6ft0001wlwstiofk9on",
+       "name": "Garlic",
+       "role": "veg",
+       "grams": 4
+      },
+      {
+       "foodId": "cmrj2tb0x00j2wlwsjzrofelh",
+       "name": "Shrimp",
+       "role": "protein",
+       "grams": 200
+      },
+      {
+       "foodId": "cmrj2t6m0000swlws689kgktw",
+       "name": "Dry sherry",
+       "role": null,
+       "grams": 8
+      },
+      {
+       "foodId": "cmrj2t6h10006wlwslufza94y",
+       "name": "Parsley",
+       "role": null,
+       "grams": 8
+      },
+      {
+       "foodId": "cmrj2t8cs008pwlwsflz8ux04",
+       "name": "Avocado",
+       "role": "fat",
+       "grams": 19,
+       "adjuster": true
+      }
+     ],
+     "kcal": 417.36,
+     "protein": 49.86640000000001,
+     "fat": 20.5378,
+     "carb": 9.721400000000001,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrj2u6f107bfwlwsp1jkx0rh",
+      "name": "Garlicky prawns with sherry",
+      "description": null,
+      "steps": [
+       "step 1",
+       "Heat the olive oil in a large frying pan. Tip in the garlic slices and cook for a few secs. Then stir through the prawns and cook for a couple of mins until they start to turn pink.",
+       "step 2",
+       "Pour over the sherry and cook for a few mins more, just until the prawns are cooked through. Sprinkle with parsley before serving."
+      ],
+      "slotType": "meal",
+      "cuisine": "western-comfort",
+      "prepTimeMin": 22,
+      "source": "themealdb-import",
+      "mealCategory": null,
+      "kcal": 213.0165,
+      "protein": 24.9498,
+      "fat": 10.63531,
+      "carb": 4.876550000000001,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 5.87,
+      "difficulty": 2,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-13T10:25:57.758Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z0hy900klwlgwrmu75v9e",
+     "planId": "cms7z0hy800khwlgw2h06dvy2",
+     "dayOfWeek": 3,
+     "slotType": "meal",
+     "slotIndex": 1,
+     "recipeId": "cmrujkwsa0060wl9osorbvtkl",
+     "proteinScale": 1.43,
+     "sidesScale": 0.5,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t7w3006lwlws4zdhow4d",
+       "name": "Chicken Breast",
+       "role": "protein",
+       "grams": 240
+      },
+      {
+       "foodId": "cmrj2t8190078wlws1rc1yrxl",
+       "name": "Couscous",
+       "role": "carb",
+       "grams": 75
+      },
+      {
+       "foodId": "cmrevpcnl000jwl5gnqnk630b",
+       "name": "Cucumber",
+       "role": "veg",
+       "grams": 40
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 10
+      }
+     ],
+     "kcal": 466,
+     "protein": 57.0785,
+     "fat": 16.472,
+     "carb": 18.264,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrujkwsa0060wl9osorbvtkl",
+      "name": "Mediterranean Chicken & Cucumber with Couscous",
+      "description": null,
+      "steps": [
+       "Cook the chicken.",
+       "Serve with couscous and cucumber."
+      ],
+      "slotType": "meal",
+      "cuisine": "mediterranean",
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 470,
+      "protein": 44.407,
+      "fat": 14.822,
+      "carb": 36.528,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 6.47,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:00:06.779Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z0hya00knwlgwoq1287nx",
+     "planId": "cms7z0hy800khwlgw2h06dvy2",
+     "dayOfWeek": 3,
+     "slotType": "meal",
+     "slotIndex": 2,
+     "recipeId": "cmrujkws4005owl9o5ilc9tvd",
+     "proteinScale": 1.43,
+     "sidesScale": 0.5,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t7w3006lwlws4zdhow4d",
+       "name": "Chicken Breast",
+       "role": "protein",
+       "grams": 245
+      },
+      {
+       "foodId": "cmrg8zuft0008wli0etz5grtf",
+       "name": "Bulgur, cooked",
+       "role": "carb",
+       "grams": 65
+      },
+      {
+       "foodId": "cmrevpcnl000jwl5gnqnk630b",
+       "name": "Cucumber",
+       "role": "veg",
+       "grams": 40
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 10
+      }
+     ],
+     "kcal": 441.95,
+     "protein": 57.36300000000001,
+     "fat": 16.639,
+     "carb": 12.954,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrujkws4005owl9o5ilc9tvd",
+      "name": "Mediterranean Chicken & Cucumber with Bulgur",
+      "description": null,
+      "steps": [
+       "Cook the chicken.",
+       "Serve with bulgur and cucumber."
+      ],
+      "slotType": "meal",
+      "cuisine": "mediterranean",
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 409.9,
+      "protein": 42.726,
+      "fat": 14.894,
+      "carb": 25.908,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 6.16,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:00:06.772Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z0hyb00kpwlgw47cqu5gz",
+     "planId": "cms7z0hy800khwlgw2h06dvy2",
+     "dayOfWeek": 3,
+     "slotType": "meal",
+     "slotIndex": 3,
+     "recipeId": "cmrujkwsv0070wl9o45sq626p",
+     "proteinScale": 1.94,
+     "sidesScale": 0.94,
+     "ingredients": [
+      {
+       "foodId": "cmrj2tbgn00kqwlwsij0gf7e5",
+       "name": "Tuna",
+       "role": "protein",
+       "grams": 235
+      },
+      {
+       "foodId": "cmrg8zuft0008wli0etz5grtf",
+       "name": "Bulgur, cooked",
+       "role": "carb",
+       "grams": 120
+      },
+      {
+       "foodId": "cmrevpcnl000jwl5gnqnk630b",
+       "name": "Cucumber",
+       "role": "veg",
+       "grams": 75
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 10
+      }
+     ],
+     "kcal": 469.7,
+     "protein": 64.0635,
+     "fat": 12.335,
+     "carb": 23.94,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrujkwsv0070wl9o45sq626p",
+      "name": "Mediterranean Tuna & Cucumber with Bulgur",
+      "description": null,
+      "steps": [
+       "Cook the tuna.",
+       "Serve with bulgur and cucumber."
+      ],
+      "slotType": "meal",
+      "cuisine": "mediterranean",
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 345.1,
+      "protein": 35.076,
+      "fat": 11.424,
+      "carb": 25.908,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 5.86,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:00:06.800Z",
+      "createdByUserId": null
+     }
+    }
+   ],
+   "groceryList": null,
+   "meta": {
+    "matchPct": 96,
+    "attempts": 1,
+    "score": {
+     "daysInTolerance": 1,
+     "avgMatch": 96,
+     "days": [
+      {
+       "dayOfWeek": 3,
+       "dayName": "Thursday",
+       "matchPct": 96,
+       "totals": {
+        "kcal": 1795,
+        "protein": 228,
+        "fat": 66,
+        "carb": 65
+       },
+       "kcalDeltaPct": 1.8,
+       "proteinShortPct": 0,
+       "fatOk": true,
+       "carbOk": true,
+       "inTolerance": true,
+       "miss": null,
+       "unfilledSlots": 0,
+       "warnedSlots": 0,
+       "proteinFloor": {
+        "met": true,
+        "floorG": 217,
+        "achievedG": 228.4,
+        "shortG": 0,
+        "shortPct": 0,
+        "reason": null
+       },
+       "windowIndex": 0,
+       "dayIndex": 0,
+       "key": "0:3"
+      }
+     ],
+     "totalDays": 1,
+     "floorDaysMet": 1,
+     "floorDaysTotal": 1
+    },
+    "days": [
+     {
+      "dayOfWeek": 3,
+      "dayName": "Thursday",
+      "matchPct": 96,
+      "totals": {
+       "kcal": 1795,
+       "protein": 228,
+       "fat": 66,
+       "carb": 65
+      },
+      "kcalDeltaPct": 1.8,
+      "proteinShortPct": 0,
+      "fatOk": true,
+      "carbOk": true,
+      "inTolerance": true,
+      "miss": null,
+      "unfilledSlots": 0,
+      "warnedSlots": 0,
+      "proteinFloor": {
+       "met": true,
+       "floorG": 217,
+       "achievedG": 228.4,
+       "shortG": 0,
+       "shortPct": 0,
+       "reason": null
+      },
+      "windowIndex": 0,
+      "dayIndex": 0,
+      "key": "0:3"
+     }
+    ],
+    "diagnosis": null,
+    "poolCounts": {
+     "raw": 910,
+     "afterDiet": 172,
+     "afterPrep": 172,
+     "afterStack": 172,
+     "stackExplain": null
+    },
+    "variety": {
+     "mealEligible": 146,
+     "usableForSlot": 86,
+     "slotKcal": 441,
+     "snackEligible": 5,
+     "weeklyMealSlots": 28,
+     "weeklySnackSlots": 0,
+     "repeatCap": 2,
+     "distinctWeeks": 3.1,
+     "horizonWeeks": 1,
+     "sustainsHorizon": true,
+     "notes": [
+      "1 day: 4 distinct dish(es) across 4 filled slot(s); most-repeated dish appears 1x against a 2x cap for this horizon (2x per week)."
+     ],
+     "horizon": {
+      "weeks": 1,
+      "days": 1,
+      "perWeekCap": 2,
+      "horizonRepeatCap": 2,
+      "mealSlots": 4,
+      "snackSlots": 0,
+      "totalSlots": 4,
+      "distinctFloor": 2,
+      "distinctRecipes": 4,
+      "maxRepeat": 1,
+      "maxRepeatRecipeId": "cmrj2u6f107bfwlwsp1jkx0rh",
+      "lockedRepeatsOfMax": 0,
+      "filledSlots": 4,
+      "unfilledSlots": 0,
+      "requiredDistinct": 2,
+      "capHeld": true,
+      "floorHeld": true
+     }
+    },
+    "priorWeeksConsidered": 0,
+    "horizon": {
+     "key": "day",
+     "label": "1 day",
+     "days": 1,
+     "kind": "days",
+     "weeks": 1,
+     "custom": false,
+     "startDate": "2026-07-30",
+     "endDate": "2026-07-30",
+     "startDayOfWeek": 3,
+     "weeksWritten": 1,
+     "solveMs": 1,
+     "weekPlans": [
+      {
+       "startDate": "2026-07-27",
+       "dayIndices": [
+        3
+       ],
+       "days": 1,
+       "daysInTolerance": 1,
+       "avgMatch": 96,
+       "unfilledSlots": 0,
+       "poolSize": 172
+      }
+     ]
+    }
+   }
+  }
+ }
+}

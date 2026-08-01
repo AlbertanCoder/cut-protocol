@@ -1,0 +1,543 @@
+{
+ "persona": {
+  "idx": 223,
+  "id": "p223",
+  "tier": "EASY",
+  "displayName": "office worker, 55",
+  "story": "office worker, 55, female, 183 cm / 123.7 kg (BMI 36.9), cut at 1 lb/wk, kosher diet, avoiding cilantro, high-protein, 3 meals + 0 snacks, wants a single day",
+  "profile": {
+   "sex": "F",
+   "age": 55,
+   "heightCm": 183,
+   "startWeightKg": 123.7,
+   "goalWeightKg": 104.7,
+   "occupationKey": "desk-office",
+   "trainingStyle": "weights",
+   "minutesPerSession": 45,
+   "sessionsPerWeek": 3,
+   "rateLbPerWeek": 1,
+   "dietaryStyle": "kosher",
+   "excludedFoods": [
+    "cilantro"
+   ],
+   "mealsPerDay": 3,
+   "snacksPerDay": 0,
+   "unitPref": "metric"
+  },
+  "filters": {
+   "proteinPriority": true
+  },
+  "horizon": "day",
+  "walls": [
+   "cilantro"
+  ],
+  "freeTextExclusions": [
+   "cilantro"
+  ],
+  "dietaryStyle": "kosher",
+  "bmi": 36.9,
+  "goalKind": "cut",
+  "macroStyle": "high-protein",
+  "requestedButUnsupported": [
+   "wanted protein set explicitly in g/lb; the API derives the protein band from LBM (1.14-1.25 g/lb) and accepts no client protein target — only the per-request proteinPriority filter"
+  ],
+  "tupleKey": "[\"EASY\",\"F\",55,183,123.7,104.7,\"desk-office\",\"weights\",1,\"kosher\",[\"cilantro\"],3,0,\"high-protein\",\"day\",null,null,true,null,null]"
+ },
+ "request": {
+  "horizon": "day",
+  "filters": {
+   "proteinPriority": true
+  }
+ },
+ "profileResponse": {
+  "id": "cms6x1sez05gtwlw0k2mvvx3g",
+  "userId": "cms6x1s9k0061wl2o5prlp365",
+  "sex": "F",
+  "age": 55,
+  "heightCm": 183,
+  "bodyFatPct": 0,
+  "bodyFatSource": null,
+  "occupationKey": "desk-office",
+  "activityOverride": null,
+  "sessionsPerWeek": 3,
+  "trainingStyle": "weights",
+  "minutesPerSession": 45,
+  "startWeightKg": 123.7,
+  "goalWeightKg": 104.7,
+  "startDate": "2026-07-29",
+  "unitPref": "metric",
+  "rateLbPerWeek": 1,
+  "rateAcknowledged": false,
+  "floorKcal": null,
+  "excludedFormulas": [],
+  "targetKcal": 1930,
+  "mealsPerDay": 3,
+  "snacksPerDay": 0,
+  "excludedFoods": [
+   "cilantro"
+  ],
+  "dietaryStyle": "kosher",
+  "cuisinePreferences": [],
+  "mealPreferencesNote": null,
+  "maxPrepMin": null,
+  "budgetTier": null,
+  "allowBatch": null,
+  "maxComplexity": null,
+  "adaptiveTdee": true,
+  "proteinPriorityMode": false,
+  "updatedAt": "2026-07-30T02:50:23.407Z"
+ },
+ "generate": {
+  "status": 200,
+  "ms": 298,
+  "body": {
+   "id": "cms6x1snl05gvwlw0u6t6fxjn",
+   "userId": "cms6x1s9k0061wl2o5prlp365",
+   "startDate": "2026-07-27",
+   "createdAt": "2026-07-30T02:50:23.698Z",
+   "slots": [
+    {
+     "id": "cms6x1snn05gywlw04ifgn4sj",
+     "planId": "cms6x1snl05gvwlw0u6t6fxjn",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 0,
+     "recipeId": "cmrj2ul7s0aktwlwshcyhl6ke",
+     "proteinScale": 0.95,
+     "sidesScale": 0.95,
+     "ingredients": [
+      {
+       "foodId": "cmrj2tcd000o6wlws0tqp873k",
+       "name": "Goat Meat",
+       "role": null,
+       "grams": 325
+      },
+      {
+       "foodId": "cmrj2tb5a00jjwlws3mfl8w2q",
+       "name": "Jamaican Curry Powder",
+       "role": null,
+       "grams": 6
+      },
+      {
+       "foodId": "cmrj2t7l40056wlws69opouvc",
+       "name": "Ground Ginger",
+       "role": "veg",
+       "grams": 1
+      },
+      {
+       "foodId": "cmrj2t8d8008rwlws51a28g0q",
+       "name": "All-purpose Seasoning",
+       "role": null,
+       "grams": 1
+      },
+      {
+       "foodId": "cmrj2t7at003uwlwsq3e1ii9n",
+       "name": "Allspice",
+       "role": null,
+       "grams": 1
+      },
+      {
+       "foodId": "cmrg8zxar000lwli0qy2ovmx4",
+       "name": "Onion",
+       "role": "veg",
+       "grams": 25
+      },
+      {
+       "foodId": "cmrj2t6ft0001wlwstiofk9on",
+       "name": "Garlic",
+       "role": "veg",
+       "grams": 4
+      },
+      {
+       "foodId": "cmrj2t6oj0014wlwsaw8ffg0k",
+       "name": "Thyme",
+       "role": null,
+       "grams": 70
+      },
+      {
+       "foodId": "cmrj2t6xs002awlwsfwq9grns",
+       "name": "Oil",
+       "role": "carb",
+       "grams": 7
+      },
+      {
+       "foodId": "cmrj2t6hb0007wlwsh6l6ynal",
+       "name": "Water",
+       "role": null,
+       "grams": 70
+      },
+      {
+       "foodId": "cmrj2t7rb005zwlws4bfn6rn7",
+       "name": "Scotch Bonnet",
+       "role": null,
+       "grams": 25
+      },
+      {
+       "foodId": "cmrj2t7fb004fwlws8ezof2dp",
+       "name": "Russet Potato",
+       "role": "veg",
+       "grams": 40
+      },
+      {
+       "foodId": "cmrj2t6gd0003wlwss7jf3wzf",
+       "name": "Salt",
+       "role": null,
+       "grams": 1
+      },
+      {
+       "foodId": "cmrj2t6gl0004wlws73buybhw",
+       "name": "Pepper",
+       "role": null,
+       "grams": 1
+      }
+     ],
+     "kcal": 579.96,
+     "protein": 74.06830000000001,
+     "fat": 16.8139,
+     "carb": 37.0795,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrj2ul7s0aktwlwshcyhl6ke",
+      "name": "Jamaican Curry Goat",
+      "description": null,
+      "steps": [
+       "Equipment",
+       "6QT Pressure cooker",
+       "Instructions",
+       "Rinse goat meat with vinegar and water.",
+       "Season goat meat with 1 ½ tablespoon curry powder, all-purpose seasoning, ground ginger, allspice, onion, garlic cloves, and thyme. Marinate for at least 4 hours or up to overnight.",
+       "Remove onion and garlic from goat and set aside.",
+       "Set an electric pressure cooker, like an Instant Pot, on high sauté and add oil. Add goat meat and brown, about 2-3 minutes per side. Remove goat from insert and add 1 tablespoon oil and remaining curry powder and sauté for about 10 seconds. Then add onions and garlic and sauté until softened. About 4 minutes. If the onions look dry, add a little water and continue to sauté.",
+       "Add goat and water to the pressure cooker and cover the pressure cooker. Cook for 40 minutes on high pressure. Allow to naturally release for 10 minutes, then release the remaining pressure.",
+       "Once all the pressure has been released, open the pressure cooker. Place on sauté for 10-15 minutes, add potatoes and a whole scotch bonnet pepper. Cook until potatoes have softened. Remove scotch bonnet pepper."
+      ],
+      "slotType": "meal",
+      "cuisine": "indian",
+      "prepTimeMin": 42,
+      "source": "themealdb-import",
+      "mealCategory": null,
+      "kcal": 597.8,
+      "protein": 77.4,
+      "fat": 17,
+      "carb": 37.8,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 21.62,
+      "difficulty": 7,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-13T10:26:16.936Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x1sno05h1wlw0ltsamnld",
+     "planId": "cms6x1snl05gvwlw0u6t6fxjn",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 1,
+     "recipeId": "cmrul79z000buwl80q9shge3z",
+     "proteinScale": 2,
+     "sidesScale": 1.76,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t7t00067wlwsj23ngikm",
+       "name": "Egg White",
+       "role": "protein",
+       "grams": 520
+      },
+      {
+       "foodId": "cmrj2t88z0087wlwsmsmchxzb",
+       "name": "Quinoa",
+       "role": "carb",
+       "grams": 195
+      },
+      {
+       "foodId": "cmrevpcnl000jwl5gnqnk630b",
+       "name": "Cucumber",
+       "role": "veg",
+       "grams": 160
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 581,
+     "protein": 65.164,
+     "fat": 9,
+     "carb": 57.26300000000001,
+     "warning": "Tried 5 recipe(s) for this slot, none fit within tolerance — closest was \"High-Protein Egg White & Cucumber with Quinoa\" (delivered 65g protein vs a 75g target).",
+     "locked": false,
+     "recipe": {
+      "id": "cmrul79z000buwl80q9shge3z",
+      "name": "High-Protein Egg White & Cucumber with Quinoa",
+      "description": null,
+      "steps": [
+       "Cook the egg white.",
+       "Serve over quinoa with cucumber."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 329,
+      "protein": 33.2,
+      "fat": 7.3,
+      "carb": 31.5,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 3.62,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:45:29.916Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x1sno05h3wlw0ptbi962z",
+     "planId": "cms6x1snl05gvwlw0u6t6fxjn",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 2,
+     "recipeId": "cmrujkwuv00aiwl9ojjf66d82",
+     "proteinScale": 2,
+     "sidesScale": 0.5,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t6fj0000wlwsdedjzth2",
+       "name": "Ground Beef",
+       "role": "protein",
+       "grams": 280
+      },
+      {
+       "foodId": "cmrj2t7fb004fwlws8ezof2dp",
+       "name": "Russet Potato",
+       "role": "carb",
+       "grams": 90
+      },
+      {
+       "foodId": "cmrevpcnh000iwl5gh2zjhyqe",
+       "name": "Bell peppers",
+       "role": "veg",
+       "grams": 40
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 10
+      }
+     ],
+     "kcal": 918.6999999999999,
+     "protein": 74.447,
+     "fat": 57.27699999999999,
+     "carb": 21.66,
+     "warning": "Tried 5 recipe(s) for this slot, none fit within tolerance — closest was \"Classic Ground Beef & Bell Peppers with Potato\" (landed 919 kcal vs a 769 target; delivered 74g protein vs a 95g target).",
+     "locked": false,
+     "recipe": {
+      "id": "cmrujkwuv00aiwl9ojjf66d82",
+      "name": "Classic Ground Beef & Bell Peppers with Potato",
+      "description": null,
+      "steps": [
+       "Cook the ground beef.",
+       "Serve with potato and bell peppers."
+      ],
+      "slotType": "meal",
+      "cuisine": "american",
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 651.2,
+      "protein": 41.4,
+      "fat": 34,
+      "carb": 43.3,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 6.11,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:00:06.871Z",
+      "createdByUserId": null
+     }
+    }
+   ],
+   "groceryList": null,
+   "meta": {
+    "matchPct": 79,
+    "attempts": 5,
+    "score": {
+     "daysInTolerance": 0,
+     "avgMatch": 79,
+     "days": [
+      {
+       "dayOfWeek": 2,
+       "dayName": "Wednesday",
+       "matchPct": 79,
+       "totals": {
+        "kcal": 2080,
+        "protein": 214,
+        "fat": 83,
+        "carb": 116
+       },
+       "kcalDeltaPct": 7.8,
+       "proteinShortPct": 8.9,
+       "fatOk": true,
+       "carbOk": false,
+       "inTolerance": false,
+       "miss": "116 g carbs vs a 47–71 g range — 45 g over",
+       "unfilledSlots": 0,
+       "warnedSlots": 2,
+       "proteinFloor": {
+        "met": true,
+        "floorG": 224,
+        "achievedG": 213.7,
+        "shortG": 10.3,
+        "shortPct": 4.6,
+        "reason": null
+       },
+       "windowIndex": 0,
+       "dayIndex": 0,
+       "key": "0:2"
+      }
+     ],
+     "totalDays": 1,
+     "floorDaysMet": 1,
+     "floorDaysTotal": 1
+    },
+    "days": [
+     {
+      "dayOfWeek": 2,
+      "dayName": "Wednesday",
+      "matchPct": 79,
+      "totals": {
+       "kcal": 2080,
+       "protein": 214,
+       "fat": 83,
+       "carb": 116
+      },
+      "kcalDeltaPct": 7.8,
+      "proteinShortPct": 8.9,
+      "fatOk": true,
+      "carbOk": false,
+      "inTolerance": false,
+      "miss": "116 g carbs vs a 47–71 g range — 45 g over",
+      "unfilledSlots": 0,
+      "warnedSlots": 2,
+      "proteinFloor": {
+       "met": true,
+       "floorG": 224,
+       "achievedG": 213.7,
+       "shortG": 10.3,
+       "shortPct": 4.6,
+       "reason": null
+      },
+      "windowIndex": 0,
+      "dayIndex": 0,
+      "key": "0:2"
+     }
+    ],
+    "diagnosis": {
+     "feasible": false,
+     "reasons": [
+      "1 day(s) landed outside your 47–71 g carb range — portion scaling moves a dish's calories, not its fat/carb ratio, so the pool's composition is what binds here."
+     ],
+     "suggestions": [
+      "Add (or AI-generate) a few recipes built around the macro you keep missing, or drop the cuisine/protein preference so the solver can reach dishes that carry it."
+     ],
+     "binding": {
+      "key": "macro-composition",
+      "label": "carbs in your recipe pool",
+      "detail": "1 of 1 day(s) landed outside your 47-71 g carb range. Portion scaling moves a dish's calories, not its fat/carb ratio, so what binds here is which dishes your rules leave in the pool. Calories and protein landed on target on every day — it is composition, not portion size, that is short."
+     }
+    },
+    "poolCounts": {
+     "raw": 889,
+     "afterDiet": 648,
+     "afterPrep": 648,
+     "afterStack": 648,
+     "stackExplain": null
+    },
+    "variety": {
+     "mealEligible": 504,
+     "usableForSlot": 193,
+     "slotKcal": 643,
+     "snackEligible": 5,
+     "weeklyMealSlots": 21,
+     "weeklySnackSlots": 0,
+     "repeatCap": 2,
+     "distinctWeeks": 9.2,
+     "horizonWeeks": 1,
+     "sustainsHorizon": true,
+     "notes": [
+      "1 day: 3 distinct dish(es) across 3 filled slot(s); most-repeated dish appears 1x against a 2x cap for this horizon (2x per week)."
+     ],
+     "horizon": {
+      "weeks": 1,
+      "days": 1,
+      "perWeekCap": 2,
+      "horizonRepeatCap": 2,
+      "mealSlots": 3,
+      "snackSlots": 0,
+      "totalSlots": 3,
+      "distinctFloor": 2,
+      "distinctRecipes": 3,
+      "maxRepeat": 1,
+      "maxRepeatRecipeId": "cmrj2ul7s0aktwlwshcyhl6ke",
+      "lockedRepeatsOfMax": 0,
+      "filledSlots": 3,
+      "unfilledSlots": 0,
+      "requiredDistinct": 2,
+      "capHeld": true,
+      "floorHeld": true
+     }
+    },
+    "priorWeeksConsidered": 0,
+    "horizon": {
+     "key": "day",
+     "label": "1 day",
+     "days": 1,
+     "kind": "days",
+     "weeks": 1,
+     "custom": false,
+     "startDate": "2026-07-29",
+     "endDate": "2026-07-29",
+     "startDayOfWeek": 2,
+     "weeksWritten": 1,
+     "solveMs": 4,
+     "weekPlans": [
+      {
+       "startDate": "2026-07-27",
+       "dayIndices": [
+        2
+       ],
+       "days": 1,
+       "daysInTolerance": 0,
+       "avgMatch": 79,
+       "unfilledSlots": 0,
+       "poolSize": 648
+      }
+     ]
+    }
+   }
+  }
+ }
+}

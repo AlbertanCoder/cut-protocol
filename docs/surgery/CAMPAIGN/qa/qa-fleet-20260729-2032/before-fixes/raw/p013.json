@@ -1,0 +1,730 @@
+{
+ "persona": {
+  "idx": 13,
+  "id": "p013",
+  "tier": "HARD",
+  "displayName": "retail cashier, 47",
+  "story": "retail cashier, 47 (managing meals for a 12-year-old), male, 171 cm / 79.1 kg (BMI 27.1), cut at 1.5 lb/wk, none diet, avoiding pork, peanut, egg, sesame, gluten, high-protein, 4 meals + 2 snacks, wants a single day",
+  "profile": {
+   "sex": "M",
+   "age": 47,
+   "heightCm": 171,
+   "startWeightKg": 79.1,
+   "goalWeightKg": 71.9,
+   "occupationKey": "cashier",
+   "trainingStyle": "cardio",
+   "minutesPerSession": 25,
+   "sessionsPerWeek": 2,
+   "rateLbPerWeek": 1.5,
+   "dietaryStyle": "none",
+   "excludedFoods": [
+    "pork",
+    "peanuts",
+    "eggs",
+    "sesame",
+    "gluten"
+   ],
+   "mealsPerDay": 4,
+   "snacksPerDay": 2,
+   "unitPref": "metric",
+   "rateAcknowledged": true
+  },
+  "filters": {
+   "proteinPriority": true,
+   "budget": "cheap"
+  },
+  "horizon": "day",
+  "walls": [
+   "pork",
+   "peanut",
+   "egg",
+   "sesame",
+   "gluten"
+  ],
+  "freeTextExclusions": [
+   "pork"
+  ],
+  "dietaryStyle": "none",
+  "bmi": 27.1,
+  "goalKind": "cut",
+  "macroStyle": "high-protein",
+  "requestedButUnsupported": [
+   "managing meals for a 12-year-old; the app has no parent-managed or dependent flag (adultGate refuses under-18 outright), so only the adult's own plan can be built",
+   "wanted protein set explicitly in g/lb; the API derives the protein band from LBM (1.14-1.25 g/lb) and accepts no client protein target — only the per-request proteinPriority filter"
+  ],
+  "parentManaged": {
+   "kidAge": 12,
+   "note": "managing meals for a 12-year-old"
+  },
+  "tupleKey": "[\"HARD\",\"M\",47,171,79.1,71.9,\"cashier\",\"cardio\",1.5,\"none\",[\"eggs\",\"gluten\",\"peanuts\",\"pork\",\"sesame\"],4,2,\"high-protein\",\"day\",null,\"cheap\",true,null,null]"
+ },
+ "request": {
+  "horizon": "day",
+  "filters": {
+   "proteinPriority": true,
+   "budget": "cheap"
+  }
+ },
+ "profileResponse": {
+  "id": "cms6x0aks00qzwlw0ncm1qzo0",
+  "userId": "cms6x0acg0007wl2o6i3og9kn",
+  "sex": "M",
+  "age": 47,
+  "heightCm": 171,
+  "bodyFatPct": 0,
+  "bodyFatSource": null,
+  "occupationKey": "cashier",
+  "activityOverride": null,
+  "sessionsPerWeek": 2,
+  "trainingStyle": "cardio",
+  "minutesPerSession": 25,
+  "startWeightKg": 79.1,
+  "goalWeightKg": 71.9,
+  "startDate": "2026-07-29",
+  "unitPref": "metric",
+  "rateLbPerWeek": 1.5,
+  "rateAcknowledged": true,
+  "floorKcal": null,
+  "excludedFormulas": [],
+  "targetKcal": 1622,
+  "mealsPerDay": 4,
+  "snacksPerDay": 2,
+  "excludedFoods": [
+   "pork",
+   "peanuts",
+   "eggs",
+   "sesame",
+   "gluten"
+  ],
+  "dietaryStyle": "none",
+  "cuisinePreferences": [],
+  "mealPreferencesNote": null,
+  "maxPrepMin": null,
+  "budgetTier": null,
+  "allowBatch": null,
+  "maxComplexity": null,
+  "adaptiveTdee": true,
+  "proteinPriorityMode": false,
+  "updatedAt": "2026-07-30T02:49:13.839Z"
+ },
+ "generate": {
+  "status": 200,
+  "ms": 384,
+  "body": {
+   "id": "cms6x0b2200rtwlw0bzxu06g2",
+   "userId": "cms6x0acg0007wl2o6i3og9kn",
+   "startDate": "2026-07-27",
+   "createdAt": "2026-07-30T02:49:14.235Z",
+   "slots": [
+    {
+     "id": "cms6x0b2300rxwlw0hkwaapbb",
+     "planId": "cms6x0b2200rtwlw0bzxu06g2",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 0,
+     "recipeId": "cmrj2tcp800q7wlwsmsa16xqz",
+     "proteinScale": 1.06,
+     "sidesScale": 0.5,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t6fj0000wlwsdedjzth2",
+       "name": "Ground Beef",
+       "role": "protein",
+       "grams": 120
+      },
+      {
+       "foodId": "cmrj2t6ft0001wlwstiofk9on",
+       "name": "Garlic",
+       "role": "veg",
+       "grams": 2
+      },
+      {
+       "foodId": "cmrg8zxar000lwli0qy2ovmx4",
+       "name": "Onion",
+       "role": "veg",
+       "grams": 10
+      },
+      {
+       "foodId": "cmrj2t6gd0003wlwss7jf3wzf",
+       "name": "Salt",
+       "role": null,
+       "grams": 1
+      },
+      {
+       "foodId": "cmrj2t6gl0004wlws73buybhw",
+       "name": "Pepper",
+       "role": null,
+       "grams": 1
+      },
+      {
+       "foodId": "cmrj2t6gt0005wlws09ulwjp7",
+       "name": "Plum Tomatoes",
+       "role": "veg",
+       "grams": 45
+      },
+      {
+       "foodId": "cmrj2t6h10006wlwslufza94y",
+       "name": "Parsley",
+       "role": null,
+       "grams": 1
+      },
+      {
+       "foodId": "cmrj2t6hb0007wlwsh6l6ynal",
+       "name": "Water",
+       "role": null,
+       "grams": 15
+      }
+     ],
+     "kcal": 341.39,
+     "protein": 31.3237,
+     "fat": 20.316,
+     "carb": 6.7448,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrj2tcp800q7wlwsmsa16xqz",
+      "name": "Algerian Kefta (Meatballs)",
+      "description": null,
+      "steps": [
+       "Combine ground beef with 1/2 of the minced garlic and 1 tablespoon chopped onion in a large bowl. Mix with your hands until fully incorporated. Shape meat mixture into 1 1/2-inch oblong patties; you should have 12 to 14 meatballs.",
+       "Heat a large skillet over medium-high heat. Brown patties in batches in the hot skillet until crispy on both sides and no longer pink in the center, about 10 minutes. Set meatballs aside in a rimmed serving dish.",
+       "Reduce heat to medium and stir remaining chopped onion into drippings in the skillet. Season with salt and pepper. Cook, stirring constantly, until onion has softened and turned translucent, about 5 minutes. Stir in remaining garlic and cook for 30 seconds. Stir in Roma tomatoes, dried parsley, and ras el hanout. Pour in water. Cook until tomatoes are soft, about 5 minutes.",
+       "Pour tomato sauce over meatballs to serve."
+      ],
+      "slotType": "meal",
+      "cuisine": "middle-eastern",
+      "prepTimeMin": 24,
+      "source": "themealdb-import",
+      "mealCategory": null,
+      "kcal": 350.9,
+      "protein": 30.1,
+      "fat": 19.3,
+      "carb": 13.3,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 4.56,
+      "difficulty": 3,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-13T10:25:19.245Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x0b2400rzwlw0x2gnah9a",
+     "planId": "cms6x0b2200rtwlw0bzxu06g2",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 1,
+     "recipeId": "cmrul79wu008cwl80utfd5mza",
+     "proteinScale": 0.83,
+     "sidesScale": 0.82,
+     "ingredients": [
+      {
+       "foodId": "cmrfoyrjh0009wl08cmcid51m",
+       "name": "Turkey breast, low salt, prepackaged or deli, luncheon meat",
+       "role": "protein",
+       "grams": 140
+      },
+      {
+       "foodId": "cmrevpcn2000ewl5gmlyzu0vd",
+       "name": "White rice, cooked",
+       "role": "carb",
+       "grams": 90
+      },
+      {
+       "foodId": "cmrevpcnl000jwl5gnqnk630b",
+       "name": "Cucumber",
+       "role": "veg",
+       "grams": 75
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 322.1,
+     "protein": 33.39250000000001,
+     "fat": 6.552,
+     "carb": 31.734,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrul79wu008cwl80utfd5mza",
+      "name": "High-Protein Turkey & Cucumber with Rice",
+      "description": null,
+      "steps": [
+       "Cook the turkey.",
+       "Serve over white rice with cucumber."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 382.3,
+      "protein": 40.6,
+      "fat": 6.9,
+      "carb": 38.7,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 6.55,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:45:29.839Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x0b2500s1wlw0rebghwwx",
+     "planId": "cms6x0b2200rtwlw0bzxu06g2",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 2,
+     "recipeId": "cmrevpcvo003jwl5guvnw6zs7",
+     "proteinScale": 0.5,
+     "sidesScale": 0.5,
+     "ingredients": [
+      {
+       "foodId": "cmrevpclw0004wl5gzdq3m2ge",
+       "name": "Ground pack (elk/game), cooked",
+       "role": "protein",
+       "grams": 125
+      },
+      {
+       "foodId": "cmrevpcn2000ewl5gmlyzu0vd",
+       "name": "White rice, cooked",
+       "role": "carb",
+       "grams": 100
+      },
+      {
+       "foodId": "cmrevpcnh000iwl5gh2zjhyqe",
+       "name": "Bell peppers",
+       "role": "veg",
+       "grams": 75
+      }
+     ],
+     "kcal": 340.75,
+     "protein": 35.95,
+     "fat": 5.524999999999999,
+     "carb": 32.5,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrevpcvo003jwl5guvnw6zs7",
+      "name": "Ground Elk, Rice & Peppers",
+      "description": null,
+      "steps": [
+       "Elk is very lean — cook hot and fast, don't overdo it or it dries out.",
+       "Brown with peppers, season well.",
+       "Serve over rice."
+      ],
+      "slotType": "meal",
+      "cuisine": "western-comfort",
+      "prepTimeMin": 20,
+      "source": "curated",
+      "mealCategory": null,
+      "kcal": 681.5,
+      "protein": 71.9,
+      "fat": 11.05,
+      "carb": 65,
+      "tasteTier": "really_good",
+      "tasteTierSource": "curated",
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 16.58,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-10T11:55:10.836Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x0b2600s3wlw0qhzhz7l2",
+     "planId": "cms6x0b2200rtwlw0bzxu06g2",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 3,
+     "recipeId": "cmrj2tgq601m0wlwsywpofgzn",
+     "proteinScale": 0.5,
+     "sidesScale": 0.5,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t7n0005fwlwsmb1ow0r4",
+       "name": "Beef Flank Steak",
+       "role": "protein",
+       "grams": 125
+      },
+      {
+       "foodId": "cmrj2t6qw001fwlwszwir0gt7",
+       "name": "Tomato Sauce",
+       "role": "veg",
+       "grams": 25
+      },
+      {
+       "foodId": "cmrj2t7e10049wlwse3bj6y2k",
+       "name": "Mozzarella",
+       "role": null,
+       "grams": 25
+      },
+      {
+       "foodId": "cmrj2t6jh000hwlwsev33v7zd",
+       "name": "Oregano",
+       "role": null,
+       "grams": 1
+      },
+      {
+       "foodId": "cmrj2t7js0050wlws9y6aup2b",
+       "name": "Green Olives",
+       "role": null,
+       "grams": 13
+      },
+      {
+       "foodId": "cmrj2t6gd0003wlwss7jf3wzf",
+       "name": "Salt",
+       "role": null,
+       "grams": 1
+      },
+      {
+       "foodId": "cmrj2t6gl0004wlws73buybhw",
+       "name": "Pepper",
+       "role": null,
+       "grams": 1
+      }
+     ],
+     "kcal": 412.52,
+     "protein": 40.6705,
+     "fat": 24.3588,
+     "carb": 8.739199999999999,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrj2tgq601m0wlwsywpofgzn",
+      "name": "Matambre a la Pizza",
+      "description": null,
+      "steps": [
+       "Prepare the Steak: Season the steak with salt and pepper. Grill one side until half-cooked.",
+       "Add Toppings: Spread tomato sauce over the cooked side, then add cheese, oregano, and olives.",
+       "Finish Grilling: Grill until the cheese is melted and bubbly.",
+       "Serve: Slice and serve hot.",
+       "Pro Tips:",
+       "Tenderize the matambre by scoring it lightly on both sides. This helps it cook more evenly and absorb the flavors.",
+       "Precook the matambre on the grill before adding the toppings to ensure it's fully cooked without burning the cheese."
+      ],
+      "slotType": "meal",
+      "cuisine": "italian",
+      "prepTimeMin": 31,
+      "source": "themealdb-import",
+      "mealCategory": null,
+      "kcal": 824,
+      "protein": 81.3,
+      "fat": 48.6,
+      "carb": 17.6,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 14.52,
+      "difficulty": 4,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-13T10:25:24.463Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x0b2700s5wlw03d3gl50x",
+     "planId": "cms6x0b2200rtwlw0bzxu06g2",
+     "dayOfWeek": 2,
+     "slotType": "snack",
+     "slotIndex": 0,
+     "recipeId": "cmrujhgxz000zwlbon488ewmg",
+     "proteinScale": 0.5,
+     "sidesScale": 0.5,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t7p5005pwlws4acmktnt",
+       "name": "Greek Yogurt",
+       "role": "dairy",
+       "grams": 85
+      },
+      {
+       "foodId": "cmrevpco3000nwl5g1d51b3it",
+       "name": "Almonds",
+       "role": "fat",
+       "grams": 8
+      },
+      {
+       "foodId": "cmrfoyp7m0002wl0851se2p2b",
+       "name": "Honey",
+       "role": "other",
+       "grams": 5
+      }
+     ],
+     "kcal": 132.74,
+     "protein": 7.8405,
+     "fat": 4.404,
+     "carb": 16.68,
+     "warning": "Tried 5 recipe(s) for this slot, none fit within tolerance — closest was \"Greek Yogurt, Honey & Almonds\" (landed 133 kcal vs a 103 target; delivered 8g protein vs a 12g target).",
+     "locked": false,
+     "recipe": {
+      "id": "cmrujhgxz000zwlbon488ewmg",
+      "name": "Greek Yogurt, Honey & Almonds",
+      "description": null,
+      "steps": [
+       "Stir together."
+      ],
+      "slotType": "snack",
+      "cuisine": "american",
+      "prepTimeMin": 10,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 259.5,
+      "protein": 15.5,
+      "fat": 8.3,
+      "carb": 33.2,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 1.58,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T10:57:26.280Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x0b2800s7wlw0m5dljcz5",
+     "planId": "cms6x0b2200rtwlw0bzxu06g2",
+     "dayOfWeek": 2,
+     "slotType": "snack",
+     "slotIndex": 1,
+     "recipeId": "cmrujhgxz000zwlbon488ewmg",
+     "proteinScale": 0.5,
+     "sidesScale": 0.5,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t7p5005pwlws4acmktnt",
+       "name": "Greek Yogurt",
+       "role": "dairy",
+       "grams": 85
+      },
+      {
+       "foodId": "cmrevpco3000nwl5g1d51b3it",
+       "name": "Almonds",
+       "role": "fat",
+       "grams": 8
+      },
+      {
+       "foodId": "cmrfoyp7m0002wl0851se2p2b",
+       "name": "Honey",
+       "role": "other",
+       "grams": 5
+      }
+     ],
+     "kcal": 132.74,
+     "protein": 7.8405,
+     "fat": 4.404,
+     "carb": 16.68,
+     "warning": "Tried 5 recipe(s) for this slot, none fit within tolerance — closest was \"Greek Yogurt, Honey & Almonds\" (landed 133 kcal vs a 94 target; delivered 8g protein vs a 15g target).",
+     "locked": false,
+     "recipe": {
+      "id": "cmrujhgxz000zwlbon488ewmg",
+      "name": "Greek Yogurt, Honey & Almonds",
+      "description": null,
+      "steps": [
+       "Stir together."
+      ],
+      "slotType": "snack",
+      "cuisine": "american",
+      "prepTimeMin": 10,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 259.5,
+      "protein": 15.5,
+      "fat": 8.3,
+      "carb": 33.2,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 1.58,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T10:57:26.280Z",
+      "createdByUserId": null
+     }
+    }
+   ],
+   "groceryList": null,
+   "meta": {
+    "matchPct": 87,
+    "attempts": 5,
+    "score": {
+     "daysInTolerance": 1,
+     "avgMatch": 87,
+     "days": [
+      {
+       "dayOfWeek": 2,
+       "dayName": "Wednesday",
+       "matchPct": 87,
+       "totals": {
+        "kcal": 1682,
+        "protein": 157,
+        "fat": 66,
+        "carb": 113
+       },
+       "kcalDeltaPct": 3.7,
+       "proteinShortPct": 4.5,
+       "fatOk": true,
+       "carbOk": true,
+       "inTolerance": true,
+       "miss": null,
+       "unfilledSlots": 0,
+       "warnedSlots": 2,
+       "proteinFloor": {
+        "met": true,
+        "floorG": 157,
+        "achievedG": 157,
+        "shortG": 0,
+        "shortPct": 0,
+        "reason": null
+       },
+       "windowIndex": 0,
+       "dayIndex": 0,
+       "key": "0:2"
+      }
+     ],
+     "totalDays": 1,
+     "floorDaysMet": 1,
+     "floorDaysTotal": 1
+    },
+    "days": [
+     {
+      "dayOfWeek": 2,
+      "dayName": "Wednesday",
+      "matchPct": 87,
+      "totals": {
+       "kcal": 1682,
+       "protein": 157,
+       "fat": 66,
+       "carb": 113
+      },
+      "kcalDeltaPct": 3.7,
+      "proteinShortPct": 4.5,
+      "fatOk": true,
+      "carbOk": true,
+      "inTolerance": true,
+      "miss": null,
+      "unfilledSlots": 0,
+      "warnedSlots": 2,
+      "proteinFloor": {
+       "met": true,
+       "floorG": 157,
+       "achievedG": 157,
+       "shortG": 0,
+       "shortPct": 0,
+       "reason": null
+      },
+      "windowIndex": 0,
+      "dayIndex": 0,
+      "key": "0:2"
+     }
+    ],
+    "diagnosis": null,
+    "poolCounts": {
+     "raw": 889,
+     "afterDiet": 284,
+     "afterPrep": 284,
+     "afterStack": 284,
+     "stackExplain": null
+    },
+    "variety": {
+     "mealEligible": 266,
+     "usableForSlot": 123,
+     "slotKcal": 339,
+     "snackEligible": 5,
+     "weeklyMealSlots": 28,
+     "weeklySnackSlots": 14,
+     "repeatCap": 2,
+     "distinctWeeks": 4.4,
+     "horizonWeeks": 1,
+     "sustainsHorizon": false,
+     "notes": [
+      "Only 5 snack recipe(s) fit your rules, so the same snacks come back every week.",
+      "1 day: 5 distinct dish(es) across 6 filled slot(s); most-repeated dish appears 2x against a 2x cap for this horizon (2x per week)."
+     ],
+     "horizon": {
+      "weeks": 1,
+      "days": 1,
+      "perWeekCap": 2,
+      "horizonRepeatCap": 2,
+      "mealSlots": 4,
+      "snackSlots": 2,
+      "totalSlots": 6,
+      "distinctFloor": 3,
+      "distinctRecipes": 5,
+      "maxRepeat": 2,
+      "maxRepeatRecipeId": "cmrujhgxz000zwlbon488ewmg",
+      "lockedRepeatsOfMax": 0,
+      "filledSlots": 6,
+      "unfilledSlots": 0,
+      "requiredDistinct": 3,
+      "capHeld": true,
+      "floorHeld": true
+     }
+    },
+    "priorWeeksConsidered": 0,
+    "horizon": {
+     "key": "day",
+     "label": "1 day",
+     "days": 1,
+     "kind": "days",
+     "weeks": 1,
+     "custom": false,
+     "startDate": "2026-07-29",
+     "endDate": "2026-07-29",
+     "startDayOfWeek": 2,
+     "weeksWritten": 1,
+     "solveMs": 5,
+     "weekPlans": [
+      {
+       "startDate": "2026-07-27",
+       "dayIndices": [
+        2
+       ],
+       "days": 1,
+       "daysInTolerance": 1,
+       "avgMatch": 87,
+       "unfilledSlots": 0,
+       "poolSize": 284
+      }
+     ]
+    }
+   }
+  }
+ }
+}

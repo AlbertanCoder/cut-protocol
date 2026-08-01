@@ -1,0 +1,455 @@
+{
+ "persona": {
+  "idx": 199,
+  "id": "p199",
+  "tier": "EASY",
+  "displayName": "miner, 26",
+  "story": "miner, 26, male, 180 cm / 144.7 kg (BMI 44.7), cut at 0.5 lb/wk, paleo diet, no exclusions, low-carb, 2 meals + 1 snacks, wants a single day",
+  "profile": {
+   "sex": "M",
+   "age": 26,
+   "heightCm": 180,
+   "startWeightKg": 144.7,
+   "goalWeightKg": 134.8,
+   "occupationKey": "mining",
+   "trainingStyle": "weights",
+   "minutesPerSession": 40,
+   "sessionsPerWeek": 3,
+   "rateLbPerWeek": 0.5,
+   "dietaryStyle": "paleo",
+   "excludedFoods": [],
+   "mealsPerDay": 2,
+   "snacksPerDay": 1,
+   "unitPref": "imperial",
+   "bodyFatPct": 14,
+   "bodyFatSource": "visual-estimate",
+   "cuisinePreferences": [
+    "indian",
+    "mexican"
+   ]
+  },
+  "filters": {
+   "cuisines": [
+    "indian",
+    "mexican"
+   ]
+  },
+  "horizon": "day",
+  "walls": [],
+  "freeTextExclusions": [],
+  "dietaryStyle": "paleo",
+  "bmi": 44.7,
+  "goalKind": "cut",
+  "macroStyle": "low-carb",
+  "requestedButUnsupported": [
+   "wanted a low-carb split without full keto; carbs are the leftover after LBM-derived protein and fat, and only dietaryStyle:\"keto\" changes that"
+  ],
+  "tupleKey": "[\"EASY\",\"M\",26,180,144.7,134.8,\"mining\",\"weights\",0.5,\"paleo\",[],2,1,\"low-carb\",\"day\",null,null,null,null,null]"
+ },
+ "request": {
+  "horizon": "day",
+  "filters": {
+   "cuisines": [
+    "indian",
+    "mexican"
+   ]
+  }
+ },
+ "profileResponse": {
+  "id": "cms6x1mex050twlw0ztkuiohn",
+  "userId": "cms6x1m4e005dwl2osnyb8h2z",
+  "sex": "M",
+  "age": 26,
+  "heightCm": 180,
+  "bodyFatPct": 14,
+  "bodyFatSource": "visual-estimate",
+  "occupationKey": "mining",
+  "activityOverride": null,
+  "sessionsPerWeek": 3,
+  "trainingStyle": "weights",
+  "minutesPerSession": 40,
+  "startWeightKg": 144.7,
+  "goalWeightKg": 134.8,
+  "startDate": "2026-07-29",
+  "unitPref": "imperial",
+  "rateLbPerWeek": 0.5,
+  "rateAcknowledged": false,
+  "floorKcal": null,
+  "excludedFormulas": [],
+  "targetKcal": 4780,
+  "mealsPerDay": 2,
+  "snacksPerDay": 1,
+  "excludedFoods": [],
+  "dietaryStyle": "paleo",
+  "cuisinePreferences": [
+   "indian",
+   "mexican"
+  ],
+  "mealPreferencesNote": null,
+  "maxPrepMin": null,
+  "budgetTier": null,
+  "allowBatch": null,
+  "maxComplexity": null,
+  "adaptiveTdee": true,
+  "proteinPriorityMode": false,
+  "updatedAt": "2026-07-30T02:50:15.714Z"
+ },
+ "generate": {
+  "status": 200,
+  "ms": 97,
+  "body": {
+   "id": "cms6x1mks0525wlw02hqj46s1",
+   "userId": "cms6x1m4e005dwl2osnyb8h2z",
+   "startDate": "2026-07-27",
+   "createdAt": "2026-07-30T02:50:15.821Z",
+   "slots": [
+    {
+     "id": "cms6x1mku0527wlw0knzm0j2t",
+     "planId": "cms6x1mks0525wlw02hqj46s1",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 0,
+     "recipeId": "cmrevpcql001jwl5g0ikdkucb",
+     "proteinScale": 1.25,
+     "sidesScale": 2,
+     "ingredients": [
+      {
+       "foodId": "cmrevpclj0001wl5ggs5q0b64",
+       "name": "Chicken thigh, cooked, skinless",
+       "role": "protein",
+       "grams": 375
+      },
+      {
+       "foodId": "cmrevpcn5000fwl5g0j42i9os",
+       "name": "Potato, baked with skin",
+       "role": "carb",
+       "grams": 500
+      },
+      {
+       "foodId": "cmrevpcnl000jwl5gnqnk630b",
+       "name": "Cucumber",
+       "role": "veg",
+       "grams": 300
+      },
+      {
+       "foodId": "cmrevpcnz000mwl5g62fmfzqk",
+       "name": "Butter",
+       "role": "fat",
+       "grams": 16
+      }
+     ],
+     "kcal": 1393.47,
+     "protein": 111.914,
+     "fat": 54.815,
+     "carb": 111.496,
+     "warning": "Tried 5 recipe(s) for this slot, none fit within tolerance — closest was \"Skillet Chicken Thighs, Potato & Cucumber\" (landed 1393 kcal vs a 1756 target).",
+     "locked": false,
+     "recipe": {
+      "id": "cmrevpcql001jwl5g0ikdkucb",
+      "name": "Skillet Chicken Thighs, Potato & Cucumber",
+      "description": null,
+      "steps": [
+       "Sear and finish thighs as above.",
+       "Bake or pan-crisp the potato.",
+       "Serve cucumber cold on the side."
+      ],
+      "slotType": "meal",
+      "cuisine": "western-comfort",
+      "prepTimeMin": 30,
+      "source": "curated",
+      "mealCategory": null,
+      "kcal": 931.9,
+      "protein": 85.2,
+      "fat": 39.7,
+      "carb": 55.7,
+      "tasteTier": "really_good",
+      "tasteTierSource": "curated",
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 9.25,
+      "difficulty": 2,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-10T11:55:10.653Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x1mkv0529wlw0mbrj3kd7",
+     "planId": "cms6x1mks0525wlw02hqj46s1",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 1,
+     "recipeId": "cmrj2tfgj01bzwlwsiclxnmkz",
+     "proteinScale": 0.8,
+     "sidesScale": 1.33,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t6s6001lwlwsz4y2aot3",
+       "name": "Beef Brisket",
+       "role": "protein",
+       "grams": 270
+      },
+      {
+       "foodId": "cmrj2t7fr004hwlwsrtiqsmtf",
+       "name": "Small Potatoes",
+       "role": "veg",
+       "grams": 575
+      },
+      {
+       "foodId": "cmrj2t6oc0013wlwsjzlwoln2",
+       "name": "Carrots",
+       "role": "veg",
+       "grams": 100
+      },
+      {
+       "foodId": "cmrj2t7cs0043wlws7x1anr7j",
+       "name": "Cabbage",
+       "role": "veg",
+       "grams": 35
+      }
+     ],
+     "kcal": 2499.45,
+     "protein": 159.74,
+     "fat": 52.06250000000001,
+     "carb": 351.2649999999999,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrj2tfgj01bzwlwsiclxnmkz",
+      "name": "Corned Beef and Cabbage",
+      "description": null,
+      "steps": [
+       "Place corned beef in large pot or Dutch oven and cover with water. Add the spice packet that came with the corned beef. Cover pot and bring to a boil, then reduce to a simmer. Simmer approximately 50 minutes per pound or until tender.",
+       "Add whole potatoes and peeled and cut carrots, and cook until the vegetables are almost tender. Add cabbage and cook for 15 more minutes. Remove meat and let rest 15 minutes.",
+       "Place vegetables in a bowl and cover. Add as much broth (cooking liquid reserved in the Dutch oven or large pot) as you want. Slice meat across the grain."
+      ],
+      "slotType": "meal",
+      "cuisine": "western-comfort",
+      "prepTimeMin": 18,
+      "source": "themealdb-import",
+      "mealCategory": null,
+      "kcal": 2200.1,
+      "protein": 160.5,
+      "fat": 55.6,
+      "carb": 265,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 15.85,
+      "difficulty": 2,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-13T10:25:22.820Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x1mkv052bwlw02z216fmk",
+     "planId": "cms6x1mks0525wlw02hqj46s1",
+     "dayOfWeek": 2,
+     "slotType": "snack",
+     "slotIndex": 0,
+     "recipeId": "cmrevpcyt004lwl5gx6bidm0z",
+     "proteinScale": 2,
+     "sidesScale": 2,
+     "ingredients": [
+      {
+       "foodId": "cmrevpcma0007wl5gfj59j5mk",
+       "name": "Beef jerky",
+       "role": "protein",
+       "grams": 120
+      },
+      {
+       "foodId": "cmrevpcmq000bwl5g2mbd0jsv",
+       "name": "Pork rinds",
+       "role": "protein",
+       "grams": 60
+      }
+     ],
+     "kcal": 818.4,
+     "protein": 76.2,
+     "fat": 49.8,
+     "carb": 13.2,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrevpcyt004lwl5gx6bidm0z",
+      "name": "Jerky & Pork Rinds Snack Plate",
+      "description": "Closer / site valve — his words.",
+      "steps": [
+       "No cooking — portion and eat."
+      ],
+      "slotType": "snack",
+      "cuisine": "western-comfort",
+      "prepTimeMin": 0,
+      "source": "curated",
+      "mealCategory": null,
+      "kcal": 409.2,
+      "protein": 38.1,
+      "fat": 24.9,
+      "carb": 6.6,
+      "tasteTier": "really_good",
+      "tasteTierSource": "curated",
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 6.75,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-10T11:55:10.950Z",
+      "createdByUserId": null
+     }
+    }
+   ],
+   "groceryList": null,
+   "meta": {
+    "matchPct": 77,
+    "attempts": 5,
+    "score": {
+     "daysInTolerance": 0,
+     "avgMatch": 77,
+     "days": [
+      {
+       "dayOfWeek": 2,
+       "dayName": "Wednesday",
+       "matchPct": 77,
+       "totals": {
+        "kcal": 4711,
+        "protein": 348,
+        "fat": 157,
+        "carb": 476
+       },
+       "kcalDeltaPct": -1.4,
+       "proteinShortPct": 0,
+       "fatOk": false,
+       "carbOk": true,
+       "inTolerance": false,
+       "miss": "157 g fat vs a 93–110 g range — 47 g over",
+       "unfilledSlots": 0,
+       "warnedSlots": 1,
+       "windowIndex": 0,
+       "dayIndex": 0,
+       "key": "0:2"
+      }
+     ],
+     "totalDays": 1
+    },
+    "days": [
+     {
+      "dayOfWeek": 2,
+      "dayName": "Wednesday",
+      "matchPct": 77,
+      "totals": {
+       "kcal": 4711,
+       "protein": 348,
+       "fat": 157,
+       "carb": 476
+      },
+      "kcalDeltaPct": -1.4,
+      "proteinShortPct": 0,
+      "fatOk": false,
+      "carbOk": true,
+      "inTolerance": false,
+      "miss": "157 g fat vs a 93–110 g range — 47 g over",
+      "unfilledSlots": 0,
+      "warnedSlots": 1,
+      "windowIndex": 0,
+      "dayIndex": 0,
+      "key": "0:2"
+     }
+    ],
+    "diagnosis": {
+     "feasible": false,
+     "reasons": [
+      "1 day(s) landed outside your 93–110 g fat range — portion scaling moves a dish's calories, not its fat/carb ratio, so the pool's composition is what binds here."
+     ],
+     "suggestions": [
+      "Add (or AI-generate) a few recipes built around the macro you keep missing, or drop the cuisine/protein preference so the solver can reach dishes that carry it."
+     ],
+     "binding": {
+      "key": "macro-composition",
+      "label": "fat in your recipe pool",
+      "detail": "1 of 1 day(s) landed outside your 93-110 g fat range. Portion scaling moves a dish's calories, not its fat/carb ratio, so what binds here is which dishes your rules leave in the pool. Calories and protein landed on target on every day — it is composition, not portion size, that is short."
+     }
+    },
+    "poolCounts": {
+     "raw": 889,
+     "afterDiet": 160,
+     "afterPrep": 160,
+     "afterStack": 160,
+     "stackExplain": null
+    },
+    "variety": {
+     "mealEligible": 143,
+     "usableForSlot": 11,
+     "slotKcal": 2000,
+     "snackEligible": 5,
+     "weeklyMealSlots": 14,
+     "weeklySnackSlots": 7,
+     "repeatCap": 2,
+     "distinctWeeks": 0.8,
+     "horizonWeeks": 1,
+     "sustainsHorizon": false,
+     "notes": [
+      "11 of your 143 compliant recipes can be portioned to a 2,000 kcal meal — about 0.7 week(s) of 14 meals before dishes start repeating, so over 1 weeks you will see favourites come back.",
+      "1 day: 3 distinct dish(es) across 3 filled slot(s); most-repeated dish appears 1x against a 2x cap for this horizon (2x per week)."
+     ],
+     "horizon": {
+      "weeks": 1,
+      "days": 1,
+      "perWeekCap": 2,
+      "horizonRepeatCap": 2,
+      "mealSlots": 2,
+      "snackSlots": 1,
+      "totalSlots": 3,
+      "distinctFloor": 2,
+      "distinctRecipes": 3,
+      "maxRepeat": 1,
+      "maxRepeatRecipeId": "cmrevpcql001jwl5g0ikdkucb",
+      "lockedRepeatsOfMax": 0,
+      "filledSlots": 3,
+      "unfilledSlots": 0,
+      "requiredDistinct": 2,
+      "capHeld": true,
+      "floorHeld": true
+     }
+    },
+    "priorWeeksConsidered": 0,
+    "horizon": {
+     "key": "day",
+     "label": "1 day",
+     "days": 1,
+     "kind": "days",
+     "weeks": 1,
+     "custom": false,
+     "startDate": "2026-07-29",
+     "endDate": "2026-07-29",
+     "startDayOfWeek": 2,
+     "weeksWritten": 1,
+     "solveMs": 1,
+     "weekPlans": [
+      {
+       "startDate": "2026-07-27",
+       "dayIndices": [
+        2
+       ],
+       "days": 1,
+       "daysInTolerance": 0,
+       "avgMatch": 77,
+       "unfilledSlots": 0,
+       "poolSize": 160
+      }
+     ]
+    }
+   }
+  }
+ }
+}

@@ -1,0 +1,56 @@
+E-V5 — THE RELAY (verifier's own probe)
+
+### tokenless probe (no auth header, no token — verifier's own curl)
+  GET http://127.0.0.1:8787/healthz -> HTTP 200
+  body: {"ok":true}
+
+### was userData/brain.json deleted by clearConfig?
+  -rw-r--r-- 1 <account> 197609 104 Jul 26 10:44 /c/Users/<account>/AppData/Roaming/Cut Protocol/brain.json
+  keys present: relayUrl,relayToken  (values NOT printed)
+
+### port map — 3001 (owner packaged app) must be untouched
+    TCP    127.0.0.1:3001         0.0.0.0:0              LISTENING       24548
+    TCP    127.0.0.1:8787         0.0.0.0:0              LISTENING       21668
+
+### the P1 claim: does status() probe on an ordinary poll?
+ *   incomplete-config  — a brain.json exists but is unreadable or half-filled
+ *   off                — configured, but BRAIN is not "on"
+ *   relay-unreachable  — configured, but the relay did not answer (probe only)
+ */
+function status() {
+  if (isBrainEnabled()) return { enabled: true, reason: "ok" };
+  if (relayConfig() || process.env.ANTHROPIC_API_KEY) return { enabled: false, reason: "off" };
+  if (fileExists()) return { enabled: false, reason: "incomplete-config" };
+  return { enabled: false, reason: "no-config" };
+}
+
+/**
+ * Liveness probe against the relay's /healthz.
+ *
+ * NOT run on the ordinary status poll: BrainChat asks for status on every
+ * mount, and a network round-trip there would make the chat bar's appearance
+ * depend on relay latency. This is for the Settings screen's explicit check,
+ * where the user is waiting for exactly this answer.
+ *
+ * The device token is deliberately NOT sent — /healthz is unauthenticated, and
+ * a probe is not a reason to put a credential on the wire.
+ */
+async function probeRelay({ timeoutMs = 4000 } = {}) {
+  const cfg = relayConfig();
+  if (!cfg) return { reachable: false, reason: "no-config" };
+  const ac = new AbortController();
+  const timer = setTimeout(() => ac.abort(), timeoutMs);
+  try {
+    const res = await fetch(`${cfg.baseURL}/healthz`, { signal: ac.signal });
+    return res.ok ? { reachable: true } : { reachable: false, reason: "relay-unreachable" };
+  } catch {
+    return { reachable: false, reason: "relay-unreachable" };
+  } finally {
+    clearTimeout(timer);
+  }
+
+### EMPIRICAL PROOF of the P1 latent overclaim (verifier's own run)
+    a relay configured at a port with NOTHING listening:
+      status()      : {"enabled":true,"reason":"ok"}
+      probeRelay()  : {"reachable":false,"reason":"relay-unreachable"}
+      -> status says ok while the relay is provably unreachable. P1 CONFIRMED.

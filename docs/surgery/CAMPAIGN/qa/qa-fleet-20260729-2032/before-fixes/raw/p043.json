@@ -1,0 +1,548 @@
+{
+ "persona": {
+  "idx": 43,
+  "id": "p043",
+  "tier": "EASY",
+  "displayName": "nurse on 12s, 36",
+  "story": "nurse on 12s, 36, male, 186 cm / 137.6 kg (BMI 39.8), lean bulk at 0.5 lb/wk, halal diet, avoiding beef, egg, low-carb, 4 meals + 0 snacks, wants a single day",
+  "profile": {
+   "sex": "M",
+   "age": 36,
+   "heightCm": 186,
+   "startWeightKg": 137.6,
+   "goalWeightKg": 141.5,
+   "occupationKey": "nurse-healthcare",
+   "trainingStyle": "mixed",
+   "minutesPerSession": 30,
+   "sessionsPerWeek": 2,
+   "rateLbPerWeek": 0.5,
+   "dietaryStyle": "halal",
+   "excludedFoods": [
+    "beef",
+    "eggs"
+   ],
+   "mealsPerDay": 4,
+   "snacksPerDay": 0,
+   "unitPref": "imperial",
+   "bodyFatPct": 18,
+   "bodyFatSource": "measured"
+  },
+  "filters": {
+   "maxPrepMin": 20
+  },
+  "horizon": "day",
+  "walls": [
+   "beef",
+   "egg"
+  ],
+  "freeTextExclusions": [
+   "beef"
+  ],
+  "dietaryStyle": "halal",
+  "bmi": 39.8,
+  "goalKind": "lean bulk",
+  "macroStyle": "low-carb",
+  "requestedButUnsupported": [
+   "wanted a low-carb split without full keto; carbs are the leftover after LBM-derived protein and fat, and only dietaryStyle:\"keto\" changes that"
+  ],
+  "tupleKey": "[\"EASY\",\"M\",36,186,137.6,141.5,\"nurse-healthcare\",\"mixed\",0.5,\"halal\",[\"beef\",\"eggs\"],4,0,\"low-carb\",\"day\",20,null,null,null,null]"
+ },
+ "request": {
+  "horizon": "day",
+  "filters": {
+   "maxPrepMin": 20
+  }
+ },
+ "profileResponse": {
+  "id": "cms6x0ibh01dnwlw06ib7qhrr",
+  "userId": "cms6x0i100011wl2o4n8satmy",
+  "sex": "M",
+  "age": 36,
+  "heightCm": 186,
+  "bodyFatPct": 18,
+  "bodyFatSource": "measured",
+  "occupationKey": "nurse-healthcare",
+  "activityOverride": null,
+  "sessionsPerWeek": 2,
+  "trainingStyle": "mixed",
+  "minutesPerSession": 30,
+  "startWeightKg": 137.6,
+  "goalWeightKg": 141.5,
+  "startDate": "2026-07-29",
+  "unitPref": "imperial",
+  "rateLbPerWeek": 0.5,
+  "rateAcknowledged": false,
+  "floorKcal": null,
+  "excludedFormulas": [],
+  "targetKcal": 3664,
+  "mealsPerDay": 4,
+  "snacksPerDay": 0,
+  "excludedFoods": [
+   "beef",
+   "eggs"
+  ],
+  "dietaryStyle": "halal",
+  "cuisinePreferences": [],
+  "mealPreferencesNote": null,
+  "maxPrepMin": null,
+  "budgetTier": null,
+  "allowBatch": null,
+  "maxComplexity": null,
+  "adaptiveTdee": true,
+  "proteinPriorityMode": false,
+  "updatedAt": "2026-07-30T02:49:23.853Z"
+ },
+ "generate": {
+  "status": 200,
+  "ms": 167,
+  "body": {
+   "id": "cms6x0ijv01dzwlw0vvsyrlqy",
+   "userId": "cms6x0i100011wl2o4n8satmy",
+   "startDate": "2026-07-27",
+   "createdAt": "2026-07-30T02:49:23.947Z",
+   "slots": [
+    {
+     "id": "cms6x0ijw01e1wlw07oijl8fm",
+     "planId": "cms6x0ijv01dzwlw0vvsyrlqy",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 0,
+     "recipeId": "cmrul4e3o001cwl68205vx6s7",
+     "proteinScale": 1.49,
+     "sidesScale": 0.85,
+     "ingredients": [
+      {
+       "foodId": "cmrj2tclc00pqwlws0vlepf5r",
+       "name": "Tempeh, cooked",
+       "role": "protein",
+       "grams": 240
+      },
+      {
+       "foodId": "cmrukzaeh0005wlbwrbkygio0",
+       "name": "Chickpea pasta, dry",
+       "role": "carb",
+       "grams": 85
+      },
+      {
+       "foodId": "cmrg8zxar000lwli0qy2ovmx4",
+       "name": "Onion",
+       "role": "veg",
+       "grams": 50
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 814.8,
+     "protein": 66.27,
+     "fat": 35.22,
+     "carb": 69.66,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrul4e3o001cwl68205vx6s7",
+      "name": "High-Protein Tempeh & Onions with Chickpea Pasta",
+      "description": null,
+      "steps": [
+       "Cook the tempeh.",
+       "Serve over chickpea pasta with onions."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 716.2,
+      "protein": 53.1,
+      "fat": 27.3,
+      "carb": 72.8,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 4.01,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:43:15.300Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x0ijx01e3wlw0rckpwf38",
+     "planId": "cms6x0ijv01dzwlw0vvsyrlqy",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 1,
+     "recipeId": "cmrul79x90090wl80sbt4q4uk",
+     "proteinScale": 0.5,
+     "sidesScale": 2,
+     "ingredients": [
+      {
+       "foodId": "cmrj2tb0x00j2wlwsjzrofelh",
+       "name": "Shrimp",
+       "role": "protein",
+       "grams": 85
+      },
+      {
+       "foodId": "cmrukzaed0004wlbwdxnybljb",
+       "name": "Lentil pasta, dry",
+       "role": "carb",
+       "grams": 200
+      },
+      {
+       "foodId": "cmrj2t6na000ywlws9jek4w4z",
+       "name": "Broccoli",
+       "role": "veg",
+       "grams": 220
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 897.35,
+     "protein": 76.054,
+     "fat": 9.986,
+     "carb": 123.964,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrul79x90090wl80sbt4q4uk",
+      "name": "High-Protein Shrimp & Broccoli with Lentil Pasta",
+      "description": null,
+      "steps": [
+       "Cook the shrimp.",
+       "Serve over lentil pasta with broccoli."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 597.4,
+      "protein": 68.6,
+      "fat": 7.9,
+      "carb": 62.2,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 10.93,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:45:29.853Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x0ijx01e5wlw0mj201p6n",
+     "planId": "cms6x0ijv01dzwlw0vvsyrlqy",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 2,
+     "recipeId": "cmrtz3myi004owloo1cletvwp",
+     "proteinScale": 1.25,
+     "sidesScale": 2,
+     "ingredients": [
+      {
+       "foodId": "cmrj2tb0x00j2wlwsjzrofelh",
+       "name": "Shrimp",
+       "role": "protein",
+       "grams": 225
+      },
+      {
+       "foodId": "cmrj2t88z0087wlwsmsmchxzb",
+       "name": "Quinoa",
+       "role": "carb",
+       "grams": 240
+      },
+      {
+       "foodId": "cmrj2t6gl0004wlws73buybhw",
+       "name": "Pepper",
+       "role": "veg",
+       "grams": 160
+      },
+      {
+       "foodId": "cmrevpcod000pwl5g8cou0uqo",
+       "name": "Avocado chips",
+       "role": "fat",
+       "grams": 40
+      },
+      {
+       "foodId": "cmrfoyqn10006wl080mnva73o",
+       "name": "Oil, corn, peanut, and olive",
+       "role": "fat",
+       "grams": 8
+      },
+      {
+       "foodId": "cmrj2t6ft0001wlwstiofk9on",
+       "name": "Garlic",
+       "role": "other",
+       "grams": 6
+      },
+      {
+       "foodId": "cmrj2t6jp000iwlwsli2ckg55",
+       "name": "Paprika",
+       "role": "other",
+       "grams": 1
+      },
+      {
+       "foodId": "cmrj2t70z002owlwskxmpse2z",
+       "name": "Lime juice",
+       "role": "other",
+       "grams": 10
+      }
+     ],
+     "kcal": 838.5700000000002,
+     "protein": 69.39620000000001,
+     "fat": 27.3168,
+     "carb": 81.204,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrtz3myi004owloo1cletvwp",
+      "name": "Garlic Shrimp Quinoa Bowl",
+      "description": "Seared garlic shrimp piled over fluffy quinoa with peppers and a little avocado for richness.",
+      "steps": [
+       "Cook quinoa in salted water until tender, then fluff.",
+       "Heat olive oil in a skillet, add garlic and diced pepper, cook 3 min.",
+       "Add shrimp and paprika, sear 2-3 min per side until pink.",
+       "Spoon shrimp and peppers over quinoa, top with sliced avocado and a squeeze of lime."
+      ],
+      "slotType": "meal",
+      "cuisine": "western-comfort",
+      "prepTimeMin": 20,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 628.4200000000002,
+      "protein": 51.9862,
+      "fat": 24.5058,
+      "carb": 51.27200000000001,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 13.02,
+      "difficulty": 4,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T01:26:48.570Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x0ijy01e7wlw0arbha8i8",
+     "planId": "cms6x0ijv01dzwlw0vvsyrlqy",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 3,
+     "recipeId": "cmrul79sc0010wl805v7o2aw0",
+     "proteinScale": 0.76,
+     "sidesScale": 2,
+     "ingredients": [
+      {
+       "foodId": "cmrukzae20001wlbwgdjqlh3f",
+       "name": "Textured vegetable protein, dry",
+       "role": "protein",
+       "grams": 40
+      },
+      {
+       "foodId": "cmrukzaed0004wlbwdxnybljb",
+       "name": "Lentil pasta, dry",
+       "role": "carb",
+       "grams": 200
+      },
+      {
+       "foodId": "cmrevpcnh000iwl5gh2zjhyqe",
+       "name": "Bell peppers",
+       "role": "veg",
+       "grams": 160
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 926.6,
+     "protein": 72.39999999999999,
+     "fat": 9.88,
+     "carb": 131.6,
+     "warning": "Tried 5 recipe(s) for this slot, none fit within tolerance — closest was \"High-Protein TVP & Bell Peppers with Lentil Pasta\" (landed 927 kcal vs a 1113 target; delivered 72g protein vs a 86g target).",
+     "locked": false,
+     "recipe": {
+      "id": "cmrul79sc0010wl805v7o2aw0",
+      "name": "High-Protein TVP & Bell Peppers with Lentil Pasta",
+      "description": null,
+      "steps": [
+       "Cook the tvp.",
+       "Serve over lentil pasta with bell peppers."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 601.3,
+      "protein": 54.4,
+      "fat": 7.8,
+      "carb": 76.3,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 2.27,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:45:29.676Z",
+      "createdByUserId": null
+     }
+    }
+   ],
+   "groceryList": null,
+   "meta": {
+    "matchPct": 94,
+    "attempts": 5,
+    "score": {
+     "daysInTolerance": 1,
+     "avgMatch": 94,
+     "days": [
+      {
+       "dayOfWeek": 2,
+       "dayName": "Wednesday",
+       "matchPct": 94,
+       "totals": {
+        "kcal": 3477,
+        "protein": 284,
+        "fat": 82,
+        "carb": 406
+       },
+       "kcalDeltaPct": -5.1,
+       "proteinShortPct": 4.5,
+       "fatOk": true,
+       "carbOk": true,
+       "inTolerance": true,
+       "miss": null,
+       "unfilledSlots": 0,
+       "warnedSlots": 1,
+       "windowIndex": 0,
+       "dayIndex": 0,
+       "key": "0:2"
+      }
+     ],
+     "totalDays": 1
+    },
+    "days": [
+     {
+      "dayOfWeek": 2,
+      "dayName": "Wednesday",
+      "matchPct": 94,
+      "totals": {
+       "kcal": 3477,
+       "protein": 284,
+       "fat": 82,
+       "carb": 406
+      },
+      "kcalDeltaPct": -5.1,
+      "proteinShortPct": 4.5,
+      "fatOk": true,
+      "carbOk": true,
+      "inTolerance": true,
+      "miss": null,
+      "unfilledSlots": 0,
+      "warnedSlots": 1,
+      "windowIndex": 0,
+      "dayIndex": 0,
+      "key": "0:2"
+     }
+    ],
+    "diagnosis": null,
+    "poolCounts": {
+     "raw": 889,
+     "afterDiet": 478,
+     "afterPrep": 265,
+     "afterStack": 265,
+     "stackExplain": null
+    },
+    "variety": {
+     "mealEligible": 259,
+     "usableForSlot": 106,
+     "slotKcal": 916,
+     "snackEligible": 3,
+     "weeklyMealSlots": 28,
+     "weeklySnackSlots": 0,
+     "repeatCap": 2,
+     "distinctWeeks": 3.8,
+     "horizonWeeks": 1,
+     "sustainsHorizon": true,
+     "notes": [
+      "1 day: 4 distinct dish(es) across 4 filled slot(s); most-repeated dish appears 1x against a 2x cap for this horizon (2x per week)."
+     ],
+     "horizon": {
+      "weeks": 1,
+      "days": 1,
+      "perWeekCap": 2,
+      "horizonRepeatCap": 2,
+      "mealSlots": 4,
+      "snackSlots": 0,
+      "totalSlots": 4,
+      "distinctFloor": 2,
+      "distinctRecipes": 4,
+      "maxRepeat": 1,
+      "maxRepeatRecipeId": "cmrul4e3o001cwl68205vx6s7",
+      "lockedRepeatsOfMax": 0,
+      "filledSlots": 4,
+      "unfilledSlots": 0,
+      "requiredDistinct": 2,
+      "capHeld": true,
+      "floorHeld": true
+     }
+    },
+    "priorWeeksConsidered": 0,
+    "horizon": {
+     "key": "day",
+     "label": "1 day",
+     "days": 1,
+     "kind": "days",
+     "weeks": 1,
+     "custom": false,
+     "startDate": "2026-07-29",
+     "endDate": "2026-07-29",
+     "startDayOfWeek": 2,
+     "weeksWritten": 1,
+     "solveMs": 3,
+     "weekPlans": [
+      {
+       "startDate": "2026-07-27",
+       "dayIndices": [
+        2
+       ],
+       "days": 1,
+       "daysInTolerance": 1,
+       "avgMatch": 94,
+       "unfilledSlots": 0,
+       "poolSize": 265
+      }
+     ]
+    }
+   }
+  }
+ }
+}

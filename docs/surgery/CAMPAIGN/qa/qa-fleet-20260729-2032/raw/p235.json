@@ -1,0 +1,391 @@
+{
+ "persona": {
+  "idx": 235,
+  "id": "p235",
+  "tier": "EASY",
+  "displayName": "electrician, 31",
+  "story": "electrician, 31, male, 196 cm / 141.7 kg (BMI 36.9), cut at 1 lb/wk, vegan diet, avoiding pork, low-carb, 2 meals + 0 snacks, wants a single day",
+  "profile": {
+   "sex": "M",
+   "age": 31,
+   "heightCm": 196,
+   "startWeightKg": 141.7,
+   "goalWeightKg": 118.6,
+   "occupationKey": "electrician",
+   "trainingStyle": "weights",
+   "minutesPerSession": 45,
+   "sessionsPerWeek": 3,
+   "rateLbPerWeek": 1,
+   "dietaryStyle": "vegan",
+   "excludedFoods": [
+    "pork"
+   ],
+   "mealsPerDay": 2,
+   "snacksPerDay": 0,
+   "unitPref": "imperial"
+  },
+  "filters": {},
+  "horizon": "day",
+  "walls": [
+   "pork"
+  ],
+  "freeTextExclusions": [
+   "pork"
+  ],
+  "dietaryStyle": "vegan",
+  "bmi": 36.9,
+  "goalKind": "cut",
+  "macroStyle": "low-carb",
+  "requestedButUnsupported": [
+   "wanted a low-carb split without full keto; carbs are the leftover after LBM-derived protein and fat, and only dietaryStyle:\"keto\" changes that"
+  ],
+  "tupleKey": "[\"EASY\",\"M\",31,196,141.7,118.6,\"electrician\",\"weights\",1,\"vegan\",[\"pork\"],2,0,\"low-carb\",\"day\",null,null,null,null,null]"
+ },
+ "request": {
+  "horizon": "day",
+  "filters": {}
+ },
+ "profileResponse": {
+  "id": "cms6x1vpb05ubwlw03aqsfjk0",
+  "userId": "cms6x1vk0006dwl2ovwp1x5h8",
+  "sex": "M",
+  "age": 31,
+  "heightCm": 196,
+  "bodyFatPct": 0,
+  "bodyFatSource": null,
+  "occupationKey": "electrician",
+  "activityOverride": null,
+  "sessionsPerWeek": 3,
+  "trainingStyle": "weights",
+  "minutesPerSession": 45,
+  "startWeightKg": 141.7,
+  "goalWeightKg": 118.6,
+  "startDate": "2026-07-29",
+  "unitPref": "imperial",
+  "rateLbPerWeek": 1,
+  "rateAcknowledged": false,
+  "floorKcal": null,
+  "excludedFormulas": [],
+  "targetKcal": 3340,
+  "mealsPerDay": 2,
+  "snacksPerDay": 0,
+  "excludedFoods": [
+   "pork"
+  ],
+  "dietaryStyle": "vegan",
+  "cuisinePreferences": [],
+  "mealPreferencesNote": null,
+  "maxPrepMin": null,
+  "budgetTier": null,
+  "allowBatch": null,
+  "maxComplexity": null,
+  "adaptiveTdee": true,
+  "proteinPriorityMode": false,
+  "updatedAt": "2026-07-30T20:34:13.958Z"
+ },
+ "generate": {
+  "status": 200,
+  "ms": 768,
+  "body": {
+   "id": "cms7z1wzp04wnwlgw59asghxk",
+   "userId": "cms6x1vk0006dwl2ovwp1x5h8",
+   "startDate": "2026-07-27",
+   "createdAt": "2026-07-30T20:34:14.726Z",
+   "slots": [
+    {
+     "id": "cms7z1wzr04wpwlgwmi88b3u0",
+     "planId": "cms7z1wzp04wnwlgw59asghxk",
+     "dayOfWeek": 3,
+     "slotType": "meal",
+     "slotIndex": 0,
+     "recipeId": "cmrul4e4l002uwl68xgkdhmrh",
+     "proteinScale": 2,
+     "sidesScale": 1.87,
+     "ingredients": [
+      {
+       "foodId": "cmrj2tapd00htwlwsd6ggixb6",
+       "name": "Tofu",
+       "role": "protein",
+       "grams": 400
+      },
+      {
+       "foodId": "cmrukzaeh0005wlbwrbkygio0",
+       "name": "Chickpea pasta, dry",
+       "role": "carb",
+       "grams": 185
+      },
+      {
+       "foodId": "cmrj2t6na000ywlws9jek4w4z",
+       "name": "Broccoli",
+       "role": "veg",
+       "grams": 205
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      },
+      {
+       "foodId": "cmrj2tapd00htwlwsd6ggixb6",
+       "name": "Tofu",
+       "role": "protein",
+       "grams": 180,
+       "adjuster": true
+      },
+      {
+       "foodId": "cmrevpcn2000ewl5gmlyzu0vd",
+       "name": "White rice, cooked",
+       "role": "carb",
+       "grams": 115,
+       "adjuster": true
+      },
+      {
+       "foodId": "cmrj2tblh00l9wlws3etotpfc",
+       "name": "Lentils",
+       "role": "protein",
+       "grams": 110,
+       "adjuster": true
+      }
+     ],
+     "kcal": 1904.85,
+     "protein": 154.9315,
+     "fat": 73.41400000000002,
+     "carb": 183.4975,
+     "warning": "Tried 16 recipe(s) for this slot, none fit within tolerance — closest was \"High-Protein Tofu & Broccoli with Chickpea Pasta\" (delivered 111g protein vs a 129g target).",
+     "locked": false,
+     "recipe": {
+      "id": "cmrul4e4l002uwl68xgkdhmrh",
+      "name": "High-Protein Tofu & Broccoli with Chickpea Pasta",
+      "description": null,
+      "steps": [
+       "Cook the tofu.",
+       "Serve over chickpea pasta with broccoli."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 707.1,
+      "protein": 57.427,
+      "fat": 27.814,
+      "carb": 67.457,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 3.98,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:43:15.334Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z1wzs04wrwlgwi0b299t5",
+     "planId": "cms7z1wzp04wnwlgw59asghxk",
+     "dayOfWeek": 3,
+     "slotType": "meal",
+     "slotIndex": 1,
+     "recipeId": "cmrul79rr0006wl80t78qmq8h",
+     "proteinScale": 2,
+     "sidesScale": 2,
+     "ingredients": [
+      {
+       "foodId": "cmrukzadw0000wlbwara3md10",
+       "name": "Seitan",
+       "role": "protein",
+       "grams": 340
+      },
+      {
+       "foodId": "cmrukzaeh0005wlbwrbkygio0",
+       "name": "Chickpea pasta, dry",
+       "role": "carb",
+       "grams": 200
+      },
+      {
+       "foodId": "cmrg8zxar000lwli0qy2ovmx4",
+       "name": "Onion",
+       "role": "veg",
+       "grams": 120
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 1181,
+     "protein": 126.32,
+     "fat": 21.92,
+     "carb": 134.808,
+     "warning": "Tried 16 recipe(s) for this slot, none fit within tolerance — closest was \"High-Protein Seitan & Onions with Chickpea Pasta\" (landed 1181 kcal vs a 2026 target; delivered 126g protein vs a 183g target).",
+     "locked": false,
+     "recipe": {
+      "id": "cmrul79rr0006wl80t78qmq8h",
+      "name": "High-Protein Seitan & Onions with Chickpea Pasta",
+      "description": null,
+      "steps": [
+       "Cook the seitan.",
+       "Serve over chickpea pasta with onions."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 613,
+      "protein": 63.2,
+      "fat": 13.5,
+      "carb": 67.4,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 4.36,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:45:29.655Z",
+      "createdByUserId": null
+     }
+    }
+   ],
+   "groceryList": null,
+   "meta": {
+    "matchPct": 95,
+    "attempts": 5,
+    "score": {
+     "daysInTolerance": 1,
+     "avgMatch": 95,
+     "days": [
+      {
+       "dayOfWeek": 3,
+       "dayName": "Thursday",
+       "matchPct": 95,
+       "totals": {
+        "kcal": 3086,
+        "protein": 281,
+        "fat": 95,
+        "carb": 318
+       },
+       "kcalDeltaPct": -7.6,
+       "proteinShortPct": 4.5,
+       "fatOk": true,
+       "carbOk": true,
+       "inTolerance": true,
+       "miss": null,
+       "unfilledSlots": 0,
+       "warnedSlots": 2,
+       "windowIndex": 0,
+       "dayIndex": 0,
+       "key": "0:3"
+      }
+     ],
+     "totalDays": 1
+    },
+    "days": [
+     {
+      "dayOfWeek": 3,
+      "dayName": "Thursday",
+      "matchPct": 95,
+      "totals": {
+       "kcal": 3086,
+       "protein": 281,
+       "fat": 95,
+       "carb": 318
+      },
+      "kcalDeltaPct": -7.6,
+      "proteinShortPct": 4.5,
+      "fatOk": true,
+      "carbOk": true,
+      "inTolerance": true,
+      "miss": null,
+      "unfilledSlots": 0,
+      "warnedSlots": 2,
+      "windowIndex": 0,
+      "dayIndex": 0,
+      "key": "0:3"
+     }
+    ],
+    "diagnosis": null,
+    "poolCounts": {
+     "raw": 910,
+     "afterDiet": 169,
+     "afterPrep": 169,
+     "afterStack": 169,
+     "stackExplain": null
+    },
+    "variety": {
+     "mealEligible": 145,
+     "usableForSlot": 1,
+     "slotKcal": 1670,
+     "snackEligible": 5,
+     "weeklyMealSlots": 14,
+     "weeklySnackSlots": 0,
+     "repeatCap": 2,
+     "distinctWeeks": 0.1,
+     "horizonWeeks": 1,
+     "sustainsHorizon": false,
+     "notes": [
+      "1 of your 145 compliant recipes can be portioned to a 1,670 kcal meal — about 0 week(s) of 14 meals before dishes start repeating, so over 1 weeks you will see favourites come back.",
+      "1 day: 2 distinct dish(es) across 2 filled slot(s); most-repeated dish appears 1x against a 2x cap for this horizon (2x per week)."
+     ],
+     "horizon": {
+      "weeks": 1,
+      "days": 1,
+      "perWeekCap": 2,
+      "horizonRepeatCap": 2,
+      "mealSlots": 2,
+      "snackSlots": 0,
+      "totalSlots": 2,
+      "distinctFloor": 1,
+      "distinctRecipes": 2,
+      "maxRepeat": 1,
+      "maxRepeatRecipeId": "cmrul4e4l002uwl68xgkdhmrh",
+      "lockedRepeatsOfMax": 0,
+      "filledSlots": 2,
+      "unfilledSlots": 0,
+      "requiredDistinct": 1,
+      "capHeld": true,
+      "floorHeld": true
+     }
+    },
+    "priorWeeksConsidered": 0,
+    "horizon": {
+     "key": "day",
+     "label": "1 day",
+     "days": 1,
+     "kind": "days",
+     "weeks": 1,
+     "custom": false,
+     "startDate": "2026-07-30",
+     "endDate": "2026-07-30",
+     "startDayOfWeek": 3,
+     "weeksWritten": 1,
+     "solveMs": 2,
+     "weekPlans": [
+      {
+       "startDate": "2026-07-27",
+       "dayIndices": [
+        3
+       ],
+       "days": 1,
+       "daysInTolerance": 1,
+       "avgMatch": 95,
+       "unfilledSlots": 0,
+       "poolSize": 169
+      }
+     ]
+    }
+   }
+  }
+ }
+}

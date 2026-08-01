@@ -1180,6 +1180,9 @@ async function generateHorizonPlan({
   // through to each window's generateBestWeekPlan, which spends it on the
   // winning week only.
   aiFallback = null,
+  // Small, already-allergy-filtered components the day solver may ADD when portion
+  // scaling alone cannot land the macros (macroCloser.js). Absent => no-op.
+  adjusters = null,
 }) {
   if (!horizon || horizon.kind !== "days") {
     throw Object.assign(new Error("generateHorizonPlan needs a day-kind horizon (use solveOneMeal for a single dish)"), { status: 400 });
@@ -1231,6 +1234,7 @@ async function generateHorizonPlan({
       // Cross-window memory: the weeks THIS horizon already solved come first,
       // then the user's real plan history. Same recency weighting as before.
       priorUsage: buildPriorUsage([...solvedSoFar, ...(priorPlans || [])]),
+      adjusters,
     });
     if (week.brain) {
       brainCallsLeft = Math.max(0, brainCallsLeft - (week.brain.callsUsed || 0));

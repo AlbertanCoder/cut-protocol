@@ -1,0 +1,1193 @@
+{
+  "runId": "qa-fleet-20260729-2032",
+  "head": "0d3eaa5",
+  "generatedAt": "2026-07-30T20:34:19.191Z",
+  "fleet": {
+    "personasPlanned": 250,
+    "personasRun": 250,
+    "reachedAPlan": 212,
+    "outcomes": {
+      "ok": 212,
+      "profile-blocked-400": 38
+    },
+    "httpFailures": 0,
+    "spinnerForever": 0
+  },
+  "safety": {
+    "rawHits": 0,
+    "falsePositivesSuppressed": 0,
+    "suppressionRationale": [
+      {
+        "wall": "shellfish",
+        "term": "paella",
+        "why": "fired on the ingredient row \"Paella Rice\", a short-grain rice variety, inside \"Roast fennel and aubergine paella\" — verified 15 ingredients, zero shellfish. A dish-style word is not an allergen on an ingredient surface."
+      }
+    ],
+    "confirmedLeakHits": 0,
+    "personasAffected": 0,
+    "personasAffectedRate": {
+      "n": 212,
+      "k": 0,
+      "p": 0,
+      "lo": 0,
+      "hi": 0.018
+    },
+    "cleanPersonaRate": {
+      "n": 212,
+      "k": 212,
+      "p": 1,
+      "lo": 0.982,
+      "hi": 1
+    },
+    "byWall": [],
+    "clinicalWallLeaks": 0,
+    "nameFlagsAdvisory": 12
+  },
+  "macros": {
+    "daysJudged": 578,
+    "daysInBand": 405,
+    "emptyDays": 17,
+    "daysInBandRate": {
+      "n": 578,
+      "k": 405,
+      "p": 0.701,
+      "lo": 0.662,
+      "hi": 0.737
+    },
+    "missesTotal": 173,
+    "silentMisses": 0,
+    "honestyOnMissRate": {
+      "n": 173,
+      "k": 173,
+      "p": 1,
+      "lo": 0.978,
+      "hi": 1
+    },
+    "storedVsRecomputedDrift": {
+      "daysWithDrift": 0,
+      "worst": 0
+    }
+  },
+  "impossibleTier": {
+    "tierSize": 29,
+    "mislabelledSatisfiable": 7,
+    "mislabelledIds": [
+      "p028",
+      "p066",
+      "p080",
+      "p083",
+      "p103",
+      "p160",
+      "p212"
+    ],
+    "mislabelledNote": "forge error, not an app defect: these floor-vs-rate requests WERE satisfiable and the app satisfied them — every day landed in tolerance on the fleet's own recomputation from raw Food rows. Removed from the honesty denominator and counted as the app passing.",
+    "graded": 22,
+    "honest": 22,
+    "honestRate": {
+      "n": 22,
+      "k": 22,
+      "p": 1,
+      "lo": 0.851,
+      "hi": 1
+    },
+    "confidentFakePlans": 0,
+    "verdicts": {
+      "honest-diagnosis": 22
+    },
+    "medianMs": 615,
+    "refusedOutright": 0
+  },
+  "latency": {
+    "p50": 485,
+    "p95": 963,
+    "max": 1369,
+    "byHorizon": {
+      "day": 881,
+      "week": 1021
+    },
+    "solveMsP95": 35
+  },
+  "slices": {
+    "byTier": {
+      "EASY": {
+        "personas": 118,
+        "daysInBand": {
+          "n": 298,
+          "k": 236,
+          "p": 0.792,
+          "lo": 0.742,
+          "hi": 0.834
+        },
+        "personasWithLeak": 0,
+        "personasWithWarnedSlot": 27,
+        "latencyP50": 465,
+        "latencyP95": 881
+      },
+      "HARD": {
+        "personas": 52,
+        "daysInBand": {
+          "n": 160,
+          "k": 120,
+          "p": 0.75,
+          "lo": 0.678,
+          "hi": 0.811
+        },
+        "personasWithLeak": 0,
+        "personasWithWarnedSlot": 17,
+        "latencyP50": 552,
+        "latencyP95": 1024
+      },
+      "IMPOSSIBLE": {
+        "personas": 29,
+        "daysInBand": {
+          "n": 83,
+          "k": 20,
+          "p": 0.241,
+          "lo": 0.162,
+          "hi": 0.343
+        },
+        "personasWithLeak": 0,
+        "personasWithWarnedSlot": 24,
+        "latencyP50": 566,
+        "latencyP95": 1121
+      },
+      "ROBUSTNESS": {
+        "personas": 13,
+        "daysInBand": {
+          "n": 37,
+          "k": 29,
+          "p": 0.784,
+          "lo": 0.628,
+          "hi": 0.886
+        },
+        "personasWithLeak": 0,
+        "personasWithWarnedSlot": 2,
+        "latencyP50": 473,
+        "latencyP95": 1017
+      }
+    },
+    "byWall": {
+      "gluten": {
+        "personas": 83,
+        "daysInBand": {
+          "n": 245,
+          "k": 141,
+          "p": 0.576,
+          "lo": 0.513,
+          "hi": 0.636
+        },
+        "personasWithLeak": 0,
+        "personasWithWarnedSlot": 42,
+        "latencyP50": 546,
+        "latencyP95": 1024
+      },
+      "soy": {
+        "personas": 71,
+        "daysInBand": {
+          "n": 209,
+          "k": 124,
+          "p": 0.593,
+          "lo": 0.526,
+          "hi": 0.658
+        },
+        "personasWithLeak": 0,
+        "personasWithWarnedSlot": 38,
+        "latencyP50": 566,
+        "latencyP95": 906
+      },
+      "pork": {
+        "personas": 43,
+        "daysInBand": {
+          "n": 139,
+          "k": 76,
+          "p": 0.547,
+          "lo": 0.464,
+          "hi": 0.627
+        },
+        "personasWithLeak": 0,
+        "personasWithWarnedSlot": 17,
+        "latencyP50": 485,
+        "latencyP95": 923
+      },
+      "dairy": {
+        "personas": 54,
+        "daysInBand": {
+          "n": 138,
+          "k": 86,
+          "p": 0.623,
+          "lo": 0.54,
+          "hi": 0.7
+        },
+        "personasWithLeak": 0,
+        "personasWithWarnedSlot": 24,
+        "latencyP50": 566,
+        "latencyP95": 1017
+      },
+      "peanut": {
+        "personas": 52,
+        "daysInBand": {
+          "n": 136,
+          "k": 73,
+          "p": 0.537,
+          "lo": 0.453,
+          "hi": 0.618
+        },
+        "personasWithLeak": 0,
+        "personasWithWarnedSlot": 28,
+        "latencyP50": 546,
+        "latencyP95": 1024
+      },
+      "shellfish": {
+        "personas": 51,
+        "daysInBand": {
+          "n": 129,
+          "k": 91,
+          "p": 0.705,
+          "lo": 0.622,
+          "hi": 0.777
+        },
+        "personasWithLeak": 0,
+        "personasWithWarnedSlot": 16,
+        "latencyP50": 580,
+        "latencyP95": 994
+      },
+      "no-walls": {
+        "personas": 41,
+        "daysInBand": {
+          "n": 107,
+          "k": 93,
+          "p": 0.869,
+          "lo": 0.792,
+          "hi": 0.92
+        },
+        "personasWithLeak": 0,
+        "personasWithWarnedSlot": 6,
+        "latencyP50": 415,
+        "latencyP95": 775
+      },
+      "sesame": {
+        "personas": 37,
+        "daysInBand": {
+          "n": 97,
+          "k": 30,
+          "p": 0.309,
+          "lo": 0.226,
+          "hi": 0.407
+        },
+        "personasWithLeak": 0,
+        "personasWithWarnedSlot": 22,
+        "latencyP50": 604,
+        "latencyP95": 1020
+      },
+      "beef": {
+        "personas": 32,
+        "daysInBand": {
+          "n": 86,
+          "k": 61,
+          "p": 0.709,
+          "lo": 0.606,
+          "hi": 0.795
+        },
+        "personasWithLeak": 0,
+        "personasWithWarnedSlot": 10,
+        "latencyP50": 497,
+        "latencyP95": 923
+      },
+      "tree nut": {
+        "personas": 30,
+        "daysInBand": {
+          "n": 84,
+          "k": 26,
+          "p": 0.31,
+          "lo": 0.221,
+          "hi": 0.415
+        },
+        "personasWithLeak": 0,
+        "personasWithWarnedSlot": 22,
+        "latencyP50": 400,
+        "latencyP95": 956
+      },
+      "egg": {
+        "personas": 29,
+        "daysInBand": {
+          "n": 83,
+          "k": 56,
+          "p": 0.675,
+          "lo": 0.568,
+          "hi": 0.766
+        },
+        "personasWithLeak": 0,
+        "personasWithWarnedSlot": 9,
+        "latencyP50": 538,
+        "latencyP95": 1089
+      },
+      "fish": {
+        "personas": 19,
+        "daysInBand": {
+          "n": 67,
+          "k": 48,
+          "p": 0.716,
+          "lo": 0.599,
+          "hi": 0.81
+        },
+        "personasWithLeak": 0,
+        "personasWithWarnedSlot": 6,
+        "latencyP50": 584,
+        "latencyP95": 1021
+      },
+      "nightshade": {
+        "personas": 21,
+        "daysInBand": {
+          "n": 45,
+          "k": 35,
+          "p": 0.778,
+          "lo": 0.637,
+          "hi": 0.875
+        },
+        "personasWithLeak": 0,
+        "personasWithWarnedSlot": 7,
+        "latencyP50": 466,
+        "latencyP95": 700
+      },
+      "cilantro": {
+        "personas": 11,
+        "daysInBand": {
+          "n": 35,
+          "k": 23,
+          "p": 0.657,
+          "lo": 0.492,
+          "hi": 0.792
+        },
+        "personasWithLeak": 0,
+        "personasWithWarnedSlot": 5,
+        "latencyP50": 596,
+        "latencyP95": 787
+      }
+    },
+    "byDiet": {
+      "none": {
+        "personas": 80,
+        "daysInBand": {
+          "n": 212,
+          "k": 192,
+          "p": 0.906,
+          "lo": 0.859,
+          "hi": 0.938
+        },
+        "personasWithLeak": 0,
+        "personasWithWarnedSlot": 12,
+        "latencyP50": 525,
+        "latencyP95": 1020
+      },
+      "vegan": {
+        "personas": 26,
+        "daysInBand": {
+          "n": 80,
+          "k": 16,
+          "p": 0.2,
+          "lo": 0.127,
+          "hi": 0.3
+        },
+        "personasWithLeak": 0,
+        "personasWithWarnedSlot": 24,
+        "latencyP50": 489,
+        "latencyP95": 956
+      },
+      "vegetarian": {
+        "personas": 21,
+        "daysInBand": {
+          "n": 63,
+          "k": 37,
+          "p": 0.587,
+          "lo": 0.464,
+          "hi": 0.7
+        },
+        "personasWithLeak": 0,
+        "personasWithWarnedSlot": 8,
+        "latencyP50": 608,
+        "latencyP95": 1021
+      },
+      "none/null": {
+        "personas": 24,
+        "daysInBand": {
+          "n": 60,
+          "k": 46,
+          "p": 0.767,
+          "lo": 0.646,
+          "hi": 0.856
+        },
+        "personasWithLeak": 0,
+        "personasWithWarnedSlot": 4,
+        "latencyP50": 497,
+        "latencyP95": 895
+      },
+      "keto": {
+        "personas": 14,
+        "daysInBand": {
+          "n": 50,
+          "k": 31,
+          "p": 0.62,
+          "lo": 0.482,
+          "hi": 0.741
+        },
+        "personasWithLeak": 0,
+        "personasWithWarnedSlot": 9,
+        "latencyP50": 384,
+        "latencyP95": 775
+      },
+      "mediterranean": {
+        "personas": 16,
+        "daysInBand": {
+          "n": 40,
+          "k": 34,
+          "p": 0.85,
+          "lo": 0.709,
+          "hi": 0.929
+        },
+        "personasWithLeak": 0,
+        "personasWithWarnedSlot": 1,
+        "latencyP50": 366,
+        "latencyP95": 1369
+      },
+      "kosher": {
+        "personas": 12,
+        "daysInBand": {
+          "n": 36,
+          "k": 26,
+          "p": 0.722,
+          "lo": 0.56,
+          "hi": 0.842
+        },
+        "personasWithLeak": 0,
+        "personasWithWarnedSlot": 4,
+        "latencyP50": 566,
+        "latencyP95": 822
+      },
+      "paleo": {
+        "personas": 11,
+        "daysInBand": {
+          "n": 17,
+          "k": 11,
+          "p": 0.647,
+          "lo": 0.413,
+          "hi": 0.827
+        },
+        "personasWithLeak": 0,
+        "personasWithWarnedSlot": 6,
+        "latencyP50": 466,
+        "latencyP95": 994
+      },
+      "halal": {
+        "personas": 6,
+        "daysInBand": {
+          "n": 12,
+          "k": 12,
+          "p": 1,
+          "lo": 0.758,
+          "hi": 1
+        },
+        "personasWithLeak": 0,
+        "personasWithWarnedSlot": 1,
+        "latencyP50": 488,
+        "latencyP95": 623
+      },
+      "carnivore": {
+        "personas": 2,
+        "daysInBand": {
+          "n": 8,
+          "k": 0,
+          "p": 0,
+          "lo": 0,
+          "hi": 0.324
+        },
+        "personasWithLeak": 0,
+        "personasWithWarnedSlot": 1,
+        "latencyP50": 274,
+        "latencyP95": 274
+      }
+    },
+    "byGoal": {
+      "cut": {
+        "personas": 162,
+        "daysInBand": {
+          "n": 408,
+          "k": 278,
+          "p": 0.681,
+          "lo": 0.635,
+          "hi": 0.725
+        },
+        "personasWithLeak": 0,
+        "personasWithWarnedSlot": 57,
+        "latencyP50": 489,
+        "latencyP95": 956
+      },
+      "maintain": {
+        "personas": 26,
+        "daysInBand": {
+          "n": 86,
+          "k": 60,
+          "p": 0.698,
+          "lo": 0.594,
+          "hi": 0.785
+        },
+        "personasWithLeak": 0,
+        "personasWithWarnedSlot": 7,
+        "latencyP50": 448,
+        "latencyP95": 895
+      },
+      "recomp": {
+        "personas": 24,
+        "daysInBand": {
+          "n": 84,
+          "k": 67,
+          "p": 0.798,
+          "lo": 0.7,
+          "hi": 0.87
+        },
+        "personasWithLeak": 0,
+        "personasWithWarnedSlot": 6,
+        "latencyP50": 580,
+        "latencyP95": 1021
+      }
+    },
+    "byHorizon": {
+      "week": {
+        "personas": 61,
+        "daysInBand": {
+          "n": 427,
+          "k": 285,
+          "p": 0.667,
+          "lo": 0.621,
+          "hi": 0.71
+        },
+        "personasWithLeak": 0,
+        "personasWithWarnedSlot": 35,
+        "latencyP50": 615,
+        "latencyP95": 1021
+      },
+      "day": {
+        "personas": 151,
+        "daysInBand": {
+          "n": 151,
+          "k": 120,
+          "p": 0.795,
+          "lo": 0.723,
+          "hi": 0.851
+        },
+        "personasWithLeak": 0,
+        "personasWithWarnedSlot": 35,
+        "latencyP50": 461,
+        "latencyP95": 881
+      }
+    },
+    "byWallCount": {
+      "0 walls": {
+        "personas": 41,
+        "daysInBand": {
+          "n": 107,
+          "k": 93,
+          "p": 0.869,
+          "lo": 0.792,
+          "hi": 0.92
+        },
+        "personasWithLeak": 0,
+        "personasWithWarnedSlot": 6,
+        "latencyP50": 415,
+        "latencyP95": 775
+      },
+      "3 walls": {
+        "personas": 27,
+        "daysInBand": {
+          "n": 105,
+          "k": 69,
+          "p": 0.657,
+          "lo": 0.562,
+          "hi": 0.741
+        },
+        "personasWithLeak": 0,
+        "personasWithWarnedSlot": 11,
+        "latencyP50": 535,
+        "latencyP95": 906
+      },
+      "1 walls": {
+        "personas": 41,
+        "daysInBand": {
+          "n": 95,
+          "k": 77,
+          "p": 0.811,
+          "lo": 0.72,
+          "hi": 0.877
+        },
+        "personasWithLeak": 0,
+        "personasWithWarnedSlot": 9,
+        "latencyP50": 463,
+        "latencyP95": 994
+      },
+      "4 walls": {
+        "personas": 38,
+        "daysInBand": {
+          "n": 92,
+          "k": 67,
+          "p": 0.728,
+          "lo": 0.63,
+          "hi": 0.809
+        },
+        "personasWithLeak": 0,
+        "personasWithWarnedSlot": 13,
+        "latencyP50": 574,
+        "latencyP95": 1057
+      },
+      "2 walls": {
+        "personas": 28,
+        "daysInBand": {
+          "n": 76,
+          "k": 61,
+          "p": 0.803,
+          "lo": 0.7,
+          "hi": 0.877
+        },
+        "personasWithLeak": 0,
+        "personasWithWarnedSlot": 6,
+        "latencyP50": 525,
+        "latencyP95": 882
+      },
+      "5 walls": {
+        "personas": 27,
+        "daysInBand": {
+          "n": 75,
+          "k": 33,
+          "p": 0.44,
+          "lo": 0.333,
+          "hi": 0.553
+        },
+        "personasWithLeak": 0,
+        "personasWithWarnedSlot": 17,
+        "latencyP50": 588,
+        "latencyP95": 956
+      },
+      "6 walls": {
+        "personas": 6,
+        "daysInBand": {
+          "n": 18,
+          "k": 4,
+          "p": 0.222,
+          "lo": 0.09,
+          "hi": 0.452
+        },
+        "personasWithLeak": 0,
+        "personasWithWarnedSlot": 5,
+        "latencyP50": 594,
+        "latencyP95": 689
+      },
+      "8 walls": {
+        "personas": 2,
+        "daysInBand": {
+          "n": 8,
+          "k": 0,
+          "p": 0,
+          "lo": 0,
+          "hi": 0.324
+        },
+        "personasWithLeak": 0,
+        "personasWithWarnedSlot": 2,
+        "latencyP50": 604,
+        "latencyP95": 604
+      },
+      "9 walls": {
+        "personas": 1,
+        "daysInBand": {
+          "n": 1,
+          "k": 0,
+          "p": 0,
+          "lo": 0,
+          "hi": 0.793
+        },
+        "personasWithLeak": 0,
+        "personasWithWarnedSlot": 1,
+        "latencyP50": 381,
+        "latencyP95": 381
+      },
+      "7 walls": {
+        "personas": 1,
+        "daysInBand": {
+          "n": 1,
+          "k": 1,
+          "p": 1,
+          "lo": 0.207,
+          "hi": 1
+        },
+        "personasWithLeak": 0,
+        "personasWithWarnedSlot": 0,
+        "latencyP50": 436,
+        "latencyP95": 436
+      }
+    }
+  },
+  "regeneration": {
+    "personas": 13,
+    "generationsEach": 3,
+    "complianceStable": 11,
+    "complianceUnstable": [
+      {
+        "id": "p034",
+        "tier": "HARD",
+        "daysInTolerance": [
+          4,
+          5,
+          4
+        ],
+        "daysJudged": [
+          7,
+          7,
+          7
+        ]
+      },
+      {
+        "id": "p085",
+        "tier": "ROBUSTNESS",
+        "daysInTolerance": [
+          0,
+          1,
+          0
+        ],
+        "daysJudged": [
+          1,
+          1,
+          1
+        ]
+      }
+    ],
+    "leakStability": true,
+    "varietySwings": [
+      {
+        "id": "p000",
+        "distinct": [
+          22,
+          25,
+          25
+        ],
+        "range": [
+          22,
+          25
+        ],
+        "maxRepeat": [
+          2,
+          2,
+          2
+        ]
+      },
+      {
+        "id": "p017",
+        "distinct": [
+          6,
+          6,
+          6
+        ],
+        "range": [
+          6,
+          6
+        ],
+        "maxRepeat": [
+          1,
+          1,
+          1
+        ]
+      },
+      {
+        "id": "p034",
+        "distinct": [
+          13,
+          14,
+          14
+        ],
+        "range": [
+          13,
+          14
+        ],
+        "maxRepeat": [
+          2,
+          2,
+          2
+        ]
+      },
+      {
+        "id": "p051",
+        "distinct": [
+          11,
+          11,
+          11
+        ],
+        "range": [
+          11,
+          11
+        ],
+        "maxRepeat": [
+          2,
+          2,
+          2
+        ]
+      },
+      {
+        "id": "p068",
+        "distinct": [
+          4,
+          4,
+          4
+        ],
+        "range": [
+          4,
+          4
+        ],
+        "maxRepeat": [
+          1,
+          1,
+          1
+        ]
+      },
+      {
+        "id": "p085",
+        "distinct": [
+          2,
+          2,
+          2
+        ],
+        "range": [
+          2,
+          2
+        ],
+        "maxRepeat": [
+          1,
+          1,
+          1
+        ]
+      },
+      {
+        "id": "p102",
+        "distinct": [
+          4,
+          4,
+          4
+        ],
+        "range": [
+          4,
+          4
+        ],
+        "maxRepeat": [
+          1,
+          1,
+          1
+        ]
+      },
+      {
+        "id": "p119",
+        "distinct": [
+          3,
+          3,
+          3
+        ],
+        "range": [
+          3,
+          3
+        ],
+        "maxRepeat": [
+          1,
+          1,
+          1
+        ]
+      },
+      {
+        "id": "p136",
+        "distinct": [
+          24,
+          25,
+          25
+        ],
+        "range": [
+          24,
+          25
+        ],
+        "maxRepeat": [
+          2,
+          2,
+          2
+        ]
+      },
+      {
+        "id": "p170",
+        "distinct": [
+          5,
+          5,
+          5
+        ],
+        "range": [
+          5,
+          5
+        ],
+        "maxRepeat": [
+          2,
+          2,
+          2
+        ]
+      },
+      {
+        "id": "p187",
+        "distinct": [
+          3,
+          3,
+          3
+        ],
+        "range": [
+          3,
+          3
+        ],
+        "maxRepeat": [
+          2,
+          2,
+          2
+        ]
+      },
+      {
+        "id": "p221",
+        "distinct": [
+          3,
+          3,
+          3
+        ],
+        "range": [
+          3,
+          3
+        ],
+        "maxRepeat": [
+          1,
+          1,
+          1
+        ]
+      },
+      {
+        "id": "p238",
+        "distinct": [
+          6,
+          5,
+          5
+        ],
+        "range": [
+          5,
+          6
+        ],
+        "maxRepeat": [
+          1,
+          2,
+          2
+        ]
+      }
+    ],
+    "worstComplianceSwing": 1,
+    "latencyP50": 508,
+    "latencyP95": 994
+  },
+  "convergence": {
+    "firstHalf": {
+      "n": 262,
+      "k": 166,
+      "p": 0.634,
+      "lo": 0.574,
+      "hi": 0.69
+    },
+    "secondHalf": {
+      "n": 316,
+      "k": 239,
+      "p": 0.756,
+      "lo": 0.706,
+      "hi": 0.8
+    },
+    "stable": false
+  },
+  "robustness": {
+    "illegalValueProbes": 7,
+    "namedTheField": 7,
+    "honestRejections": 7,
+    "statuses": {
+      "400": 7
+    },
+    "sampleMessage": "Enter a whole number of meals a day, from 1 to 8.",
+    "ackGatesHit": 4
+  },
+  "affordability": {
+    "groceryListProbes": 13,
+    "ok": 13,
+    "statuses": {
+      "200": 13
+    },
+    "withEstimatedTotal": 13,
+    "costSurfaceKeys": [
+      "totalEstimatedCostCad",
+      "costCoverageNote",
+      "bySection"
+    ],
+    "responseKeys": [
+      "id",
+      "planId",
+      "items",
+      "createdAt",
+      "bySection",
+      "totalEstimatedCostCad",
+      "costCoverageNote"
+    ],
+    "recipeMetadataCoverage": {
+      "shippedRecipes": 110,
+      "withCost": 92,
+      "withPrepTime": 110,
+      "withTasteTier": 6,
+      "withDifficulty": 110
+    }
+  },
+  "productGaps": [
+    {
+      "gap": "wanted protein set explicitly in g/lb",
+      "personas": 66
+    },
+    {
+      "gap": "wanted a low-fat split",
+      "personas": 59
+    },
+    {
+      "gap": "wanted a low-carb split without full keto",
+      "personas": 48
+    },
+    {
+      "gap": "this request is mathematically unsatisfiable by design — a clear, fast, honest refusal is the pass condition, and a confident plan is a critical honesty defect",
+      "personas": 32
+    },
+    {
+      "gap": "pescatarian is not one of the 9 dietary styles",
+      "personas": 16
+    },
+    {
+      "gap": "low-FODMAP is not a dietary style",
+      "personas": 14
+    },
+    {
+      "gap": "managing meals for a 12-year-old",
+      "personas": 3
+    },
+    {
+      "gap": "managing meals for a 16-year-old",
+      "personas": 2
+    },
+    {
+      "gap": "managing meals for a 13-year-old",
+      "personas": 2
+    },
+    {
+      "gap": "managing meals for a 14-year-old",
+      "personas": 2
+    },
+    {
+      "gap": "managing meals for a 17-year-old",
+      "personas": 1
+    },
+    {
+      "gap": "typed a 300-character allergy narrative",
+      "personas": 1
+    },
+    {
+      "gap": "managing meals for a 15-year-old",
+      "personas": 1
+    }
+  ],
+  "satisfaction": {
+    "cardsExpected": 25,
+    "cardsReceived": 25,
+    "malformed": 0,
+    "median": 3,
+    "mean": 3.04,
+    "min": 1,
+    "max": 6,
+    "distribution": {
+      "1": 3,
+      "2": 5,
+      "3": 7,
+      "4": 9,
+      "6": 1
+    },
+    "wouldRecommend": {
+      "n": 25,
+      "k": 1,
+      "p": 0.04,
+      "lo": 0.007,
+      "hi": 0.195
+    },
+    "criteriaMeans": {
+      "macrosInRange": 3.96,
+      "worksEndToEnd": 5.24,
+      "mealsAreGood": 2.76,
+      "affordableAdjustable": 4.44,
+      "tasty": 3.72
+    },
+    "allergenRespectFailures": [
+      {
+        "id": "p040",
+        "leaks": [
+          "Beef jerky 30 g x 2 snacks/day ('Jerky & Pork Rinds Snack Plate') - commercial beef jerky is soy-sauce marinated and standard soy sauce is wheat-brewed, so this single line item hits TWO of my four walls (soy and gluten). The food row carries allergenTags: null, mayContain: null and no gluten-free/soy-free qualifier anywhere.",
+          "Mustard 20 g in 'Chuletas de Cerdo a la Criolla' - unqualified prepared mustard routinely carries wheat flour as a bulking agent. I am coeliac; I cannot take that on trust.",
+          "The swap I was offered made it worse: 2 of 3 alternates RAISED jerky from 30 g to 45 g - 'Avocado Chips & Jerky' and 'Pistachios & Jerky'."
+        ]
+      },
+      {
+        "id": "p164",
+        "leaks": [
+          "Pepperoni 60 g in the snack slot \"Pepperoni & Pistachios Plate\" — pepperoni is cured pork AND beef, and both pork and beef are saved on my profile as excluded. One dish breaks two of my five walls.",
+          "Same \"Pepperoni & Pistachios Plate\" (Pepperoni 60 g) returned again in the freshly regenerated day — the leak is reproducible, not a one-off."
+        ]
+      },
+      {
+        "id": "p204",
+        "leaks": [
+          "\"Coconut Milk\" 200 g - the largest single ingredient in the meal-2 dish \"Grilled eggplant with coconut milk\", served against a stored exclusion list that reads [\"sesame\",\"fish\",\"tree nuts\",\"soy\",\"gluten\"]"
+        ]
+      }
+    ],
+    "byStratum": null
+  },
+  "brain": {
+    "cohortSize": 20,
+    "ledger": {
+      "c0Rows": 13,
+      "c0Cost": 0.392812,
+      "nowRows": 14,
+      "nowCost": 0.446086,
+      "phase3Rows": 1,
+      "phase3SpendUsd": 0.053274,
+      "capUsd": 5,
+      "hardStopUsd": 4.5,
+      "withinCap": true,
+      "attributionSumUsd": 0.053274
+    },
+    "headline": {
+      "personasWhereBrainEngaged": 11,
+      "personasWhereBrainBilled": 1,
+      "personasBilledIds": [
+        "p070"
+      ],
+      "wallClockBurnedSec": 703,
+      "timeoutSignatureCount": 11,
+      "budgetExhaustedCount": 9
+    },
+    "artifacts": {
+      "generatedRecipeRows": 0,
+      "generatedPlanRows": 0,
+      "brainSolveRunRows": 0,
+      "aiGeneratedRecipes": 262,
+      "recipesCreatedTonight": 0
+    }
+  },
+  "money": {
+    "phase2SpendUsd": 0,
+    "phase2Verified": true,
+    "phase3SpendUsd": 0.053274,
+    "capUsd": 5,
+    "withinCap": true,
+    "ledgerRowsBefore": 13,
+    "ledgerRowsAfter": 14
+  }
+}

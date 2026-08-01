@@ -1,0 +1,386 @@
+{
+ "persona": {
+  "idx": 235,
+  "id": "p235",
+  "tier": "EASY",
+  "displayName": "electrician, 31",
+  "story": "electrician, 31, male, 196 cm / 141.7 kg (BMI 36.9), cut at 1 lb/wk, vegan diet, avoiding pork, low-carb, 2 meals + 0 snacks, wants a single day",
+  "profile": {
+   "sex": "M",
+   "age": 31,
+   "heightCm": 196,
+   "startWeightKg": 141.7,
+   "goalWeightKg": 118.6,
+   "occupationKey": "electrician",
+   "trainingStyle": "weights",
+   "minutesPerSession": 45,
+   "sessionsPerWeek": 3,
+   "rateLbPerWeek": 1,
+   "dietaryStyle": "vegan",
+   "excludedFoods": [
+    "pork"
+   ],
+   "mealsPerDay": 2,
+   "snacksPerDay": 0,
+   "unitPref": "imperial"
+  },
+  "filters": {},
+  "horizon": "day",
+  "walls": [
+   "pork"
+  ],
+  "freeTextExclusions": [
+   "pork"
+  ],
+  "dietaryStyle": "vegan",
+  "bmi": 36.9,
+  "goalKind": "cut",
+  "macroStyle": "low-carb",
+  "requestedButUnsupported": [
+   "wanted a low-carb split without full keto; carbs are the leftover after LBM-derived protein and fat, and only dietaryStyle:\"keto\" changes that"
+  ],
+  "tupleKey": "[\"EASY\",\"M\",31,196,141.7,118.6,\"electrician\",\"weights\",1,\"vegan\",[\"pork\"],2,0,\"low-carb\",\"day\",null,null,null,null,null]"
+ },
+ "request": {
+  "horizon": "day",
+  "filters": {}
+ },
+ "profileResponse": {
+  "id": "cms6x1vpb05ubwlw03aqsfjk0",
+  "userId": "cms6x1vk0006dwl2ovwp1x5h8",
+  "sex": "M",
+  "age": 31,
+  "heightCm": 196,
+  "bodyFatPct": 0,
+  "bodyFatSource": null,
+  "occupationKey": "electrician",
+  "activityOverride": null,
+  "sessionsPerWeek": 3,
+  "trainingStyle": "weights",
+  "minutesPerSession": 45,
+  "startWeightKg": 141.7,
+  "goalWeightKg": 118.6,
+  "startDate": "2026-07-29",
+  "unitPref": "imperial",
+  "rateLbPerWeek": 1,
+  "rateAcknowledged": false,
+  "floorKcal": null,
+  "excludedFormulas": [],
+  "targetKcal": 3340,
+  "mealsPerDay": 2,
+  "snacksPerDay": 0,
+  "excludedFoods": [
+   "pork"
+  ],
+  "dietaryStyle": "vegan",
+  "cuisinePreferences": [],
+  "mealPreferencesNote": null,
+  "maxPrepMin": null,
+  "budgetTier": null,
+  "allowBatch": null,
+  "maxComplexity": null,
+  "adaptiveTdee": true,
+  "proteinPriorityMode": false,
+  "updatedAt": "2026-07-30T02:50:27.868Z"
+ },
+ "generate": {
+  "status": 200,
+  "ms": 170,
+  "body": {
+   "id": "cms6x1w5l05vrwlw0w8jnsvep",
+   "userId": "cms6x1vk0006dwl2ovwp1x5h8",
+   "startDate": "2026-07-27",
+   "createdAt": "2026-07-30T02:50:28.233Z",
+   "slots": [
+    {
+     "id": "cms6x1w5m05vtwlw0m6kurhb7",
+     "planId": "cms6x1w5l05vrwlw0w8jnsvep",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 0,
+     "recipeId": "cmrul1dpg000iwlk4gucmabph",
+     "proteinScale": 2,
+     "sidesScale": 2,
+     "ingredients": [
+      {
+       "foodId": "cmrukzae20001wlbwgdjqlh3f",
+       "name": "Textured vegetable protein, dry",
+       "role": "protein",
+       "grams": 110
+      },
+      {
+       "foodId": "cmrukzaeh0005wlbwrbkygio0",
+       "name": "Chickpea pasta, dry",
+       "role": "carb",
+       "grams": 200
+      },
+      {
+       "foodId": "cmrj2t6na000ywlws9jek4w4z",
+       "name": "Broccoli",
+       "role": "veg",
+       "grams": 220
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 1156.2,
+     "protein": 102.854,
+     "fat": 16.848,
+     "carb": 156.794,
+     "warning": "Tried 5 recipe(s) for this slot, none fit within tolerance — closest was \"High-Protein TVP & Broccoli with Chickpea Pasta\" (landed 1156 kcal vs a 1466 target; delivered 103g protein vs a 129g target).",
+     "locked": false,
+     "recipe": {
+      "id": "cmrul1dpg000iwlk4gucmabph",
+      "name": "High-Protein TVP & Broccoli with Chickpea Pasta",
+      "description": null,
+      "steps": [
+       "Cook the tvp.",
+       "Serve over chickpea pasta with broccoli."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 600.6,
+      "protein": 51.4,
+      "fat": 10.9,
+      "carb": 78.4,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 2.35,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:40:54.820Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x1w5n05vvwlw01xzfwt72",
+     "planId": "cms6x1w5l05vrwlw0w8jnsvep",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 1,
+     "recipeId": "cmrj2udt708xkwlwsal0t56cf",
+     "proteinScale": 0.89,
+     "sidesScale": 0.89,
+     "ingredients": [
+      {
+       "foodId": "cmrj2tbqj00ltwlwsgxmyxant",
+       "name": "Unsalted Peanuts",
+       "role": "carb",
+       "grams": 320
+      },
+      {
+       "foodId": "cmrj2t6z2002gwlwsjklhz848",
+       "name": "Sugar",
+       "role": "carb",
+       "grams": 90
+      },
+      {
+       "foodId": "cmrj2t6hb0007wlwsh6l6ynal",
+       "name": "Water",
+       "role": null,
+       "grams": 105
+      },
+      {
+       "foodId": "cmrj2t6gd0003wlwss7jf3wzf",
+       "name": "Salt",
+       "role": null,
+       "grams": 1
+      }
+     ],
+     "kcal": 2175.3,
+     "protein": 82.56,
+     "fat": 157.728,
+     "carb": 141.16,
+     "warning": "Tried 5 recipe(s) for this slot, none fit within tolerance — closest was \"Paracuca (Roasted Peanuts)\" (delivered 83g protein vs a 192g target).",
+     "locked": false,
+     "recipe": {
+      "id": "cmrj2udt708xkwlwsal0t56cf",
+      "name": "Paracuca (Roasted Peanuts)",
+      "description": null,
+      "steps": [
+       "In a large heavy saucepan, combine the peanuts, sugar and water. Bring to a boil; cook until syrup has evaporated, about 10 minutes.",
+       "Spread peanuts in a single layer in a greased 15x10x1-in. baking pan; sprinkle with salt.",
+       "Bake at 300° for 30-35 minutes or until dry and lightly browned. Cool completely. Store in an airtight container."
+      ],
+      "slotType": "meal",
+      "cuisine": "western-comfort",
+      "prepTimeMin": 18,
+      "source": "themealdb-import",
+      "mealCategory": null,
+      "kcal": 2456.4,
+      "protein": 93.5,
+      "fat": 178.7,
+      "carb": 158,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 3.83,
+      "difficulty": 2,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-13T10:26:07.340Z",
+      "createdByUserId": null
+     }
+    }
+   ],
+   "groceryList": null,
+   "meta": {
+    "matchPct": 77,
+    "attempts": 5,
+    "score": {
+     "daysInTolerance": 0,
+     "avgMatch": 77,
+     "days": [
+      {
+       "dayOfWeek": 2,
+       "dayName": "Wednesday",
+       "matchPct": 77,
+       "totals": {
+        "kcal": 3332,
+        "protein": 185,
+        "fat": 175,
+        "carb": 298
+       },
+       "kcalDeltaPct": -0.3,
+       "proteinShortPct": 37,
+       "fatOk": false,
+       "carbOk": true,
+       "inTolerance": false,
+       "miss": "185 g protein vs 295 g — 109 g short; 175 g fat vs a 84–99 g range — 76 g over",
+       "unfilledSlots": 0,
+       "warnedSlots": 2,
+       "windowIndex": 0,
+       "dayIndex": 0,
+       "key": "0:2"
+      }
+     ],
+     "totalDays": 1
+    },
+    "days": [
+     {
+      "dayOfWeek": 2,
+      "dayName": "Wednesday",
+      "matchPct": 77,
+      "totals": {
+       "kcal": 3332,
+       "protein": 185,
+       "fat": 175,
+       "carb": 298
+      },
+      "kcalDeltaPct": -0.3,
+      "proteinShortPct": 37,
+      "fatOk": false,
+      "carbOk": true,
+      "inTolerance": false,
+      "miss": "185 g protein vs 295 g — 109 g short; 175 g fat vs a 84–99 g range — 76 g over",
+      "unfilledSlots": 0,
+      "warnedSlots": 2,
+      "windowIndex": 0,
+      "dayIndex": 0,
+      "key": "0:2"
+     }
+    ],
+    "diagnosis": {
+     "feasible": false,
+     "reasons": [
+      "1 day(s) landed protein-short: your targets need ~8.8g protein per 100 kcal and only 48 of 161 compliant recipes come close, so the back half of the week runs out of good fits.",
+      "1 day(s) landed outside your 84–99 g fat range — portion scaling moves a dish's calories, not its fat/carb ratio, so the pool's composition is what binds here."
+     ],
+     "suggestions": [
+      "AI-generate a few high-protein compliant recipes, set the protein-preference filter, or allow batch-cooking repeats of the dense dishes.",
+      "Add (or AI-generate) a few recipes built around the macro you keep missing, or drop the cuisine/protein preference so the solver can reach dishes that carry it."
+     ],
+     "binding": {
+      "key": "macro-composition",
+      "label": "fat in your recipe pool",
+      "detail": "1 of 1 day(s) landed outside your 84-99 g fat range. Portion scaling moves a dish's calories, not its fat/carb ratio, so what binds here is which dishes your rules leave in the pool."
+     }
+    },
+    "poolCounts": {
+     "raw": 889,
+     "afterDiet": 161,
+     "afterPrep": 161,
+     "afterStack": 161,
+     "stackExplain": null
+    },
+    "variety": {
+     "mealEligible": 145,
+     "usableForSlot": 2,
+     "slotKcal": 1670,
+     "snackEligible": 0,
+     "weeklyMealSlots": 14,
+     "weeklySnackSlots": 0,
+     "repeatCap": 2,
+     "distinctWeeks": 0.1,
+     "horizonWeeks": 1,
+     "sustainsHorizon": false,
+     "notes": [
+      "2 of your 145 compliant recipes can be portioned to a 1,670 kcal meal — about 0.1 week(s) of 14 meals before dishes start repeating, so over 1 weeks you will see favourites come back.",
+      "1 day: 2 distinct dish(es) across 2 filled slot(s); most-repeated dish appears 1x against a 2x cap for this horizon (2x per week)."
+     ],
+     "horizon": {
+      "weeks": 1,
+      "days": 1,
+      "perWeekCap": 2,
+      "horizonRepeatCap": 2,
+      "mealSlots": 2,
+      "snackSlots": 0,
+      "totalSlots": 2,
+      "distinctFloor": 1,
+      "distinctRecipes": 2,
+      "maxRepeat": 1,
+      "maxRepeatRecipeId": "cmrul1dpg000iwlk4gucmabph",
+      "lockedRepeatsOfMax": 0,
+      "filledSlots": 2,
+      "unfilledSlots": 0,
+      "requiredDistinct": 1,
+      "capHeld": true,
+      "floorHeld": true
+     }
+    },
+    "priorWeeksConsidered": 0,
+    "horizon": {
+     "key": "day",
+     "label": "1 day",
+     "days": 1,
+     "kind": "days",
+     "weeks": 1,
+     "custom": false,
+     "startDate": "2026-07-29",
+     "endDate": "2026-07-29",
+     "startDayOfWeek": 2,
+     "weeksWritten": 1,
+     "solveMs": 1,
+     "weekPlans": [
+      {
+       "startDate": "2026-07-27",
+       "dayIndices": [
+        2
+       ],
+       "days": 1,
+       "daysInTolerance": 0,
+       "avgMatch": 77,
+       "unfilledSlots": 0,
+       "poolSize": 161
+      }
+     ]
+    }
+   }
+  }
+ }
+}

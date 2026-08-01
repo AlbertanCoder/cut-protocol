@@ -1,0 +1,628 @@
+{
+ "persona": {
+  "idx": 172,
+  "id": "p172",
+  "tier": "HARD",
+  "displayName": "retail cashier, 41",
+  "story": "retail cashier, 41, male, 191 cm / 131.7 kg (BMI 36.1), cut at 2 lb/wk, vegetarian diet, avoiding shellfish, peanut, dairy, sesame, low-fat, 3 meals + 2 snacks, wants a single day",
+  "profile": {
+   "sex": "M",
+   "age": 41,
+   "heightCm": 191,
+   "startWeightKg": 131.7,
+   "goalWeightKg": 122,
+   "occupationKey": "cashier",
+   "trainingStyle": "cardio",
+   "minutesPerSession": 25,
+   "sessionsPerWeek": 2,
+   "rateLbPerWeek": 2,
+   "dietaryStyle": "vegetarian",
+   "excludedFoods": [
+    "shellfish",
+    "peanuts",
+    "dairy",
+    "sesame"
+   ],
+   "mealsPerDay": 3,
+   "snacksPerDay": 2,
+   "unitPref": "imperial",
+   "rateAcknowledged": true
+  },
+  "filters": {
+   "maxPrepMin": 20,
+   "proteinPriority": true
+  },
+  "horizon": "day",
+  "walls": [
+   "shellfish",
+   "peanut",
+   "dairy",
+   "sesame"
+  ],
+  "freeTextExclusions": [],
+  "dietaryStyle": "vegetarian",
+  "bmi": 36.1,
+  "goalKind": "cut",
+  "macroStyle": "low-fat",
+  "requestedButUnsupported": [
+   "wanted a low-fat split; the fat band is fixed at LBM x0.34-0.40 and is not client-settable"
+  ],
+  "tupleKey": "[\"HARD\",\"M\",41,191,131.7,122,\"cashier\",\"cardio\",2,\"vegetarian\",[\"dairy\",\"peanuts\",\"sesame\",\"shellfish\"],3,2,\"low-fat\",\"day\",20,null,true,null,null]"
+ },
+ "request": {
+  "horizon": "day",
+  "filters": {
+   "maxPrepMin": 20,
+   "proteinPriority": true
+  }
+ },
+ "profileResponse": {
+  "id": "cms6x1fb704cxwlw0pm5445h4",
+  "userId": "cms6x1f5u004mwl2oaged7en7",
+  "sex": "M",
+  "age": 41,
+  "heightCm": 191,
+  "bodyFatPct": 0,
+  "bodyFatSource": null,
+  "occupationKey": "cashier",
+  "activityOverride": null,
+  "sessionsPerWeek": 2,
+  "trainingStyle": "cardio",
+  "minutesPerSession": 25,
+  "startWeightKg": 131.7,
+  "goalWeightKg": 122,
+  "startDate": "2026-07-29",
+  "unitPref": "imperial",
+  "rateLbPerWeek": 2,
+  "rateAcknowledged": true,
+  "floorKcal": null,
+  "excludedFormulas": [],
+  "targetKcal": 2303,
+  "mealsPerDay": 3,
+  "snacksPerDay": 2,
+  "excludedFoods": [
+   "shellfish",
+   "peanuts",
+   "dairy",
+   "sesame"
+  ],
+  "dietaryStyle": "vegetarian",
+  "cuisinePreferences": [],
+  "mealPreferencesNote": null,
+  "maxPrepMin": null,
+  "budgetTier": null,
+  "allowBatch": null,
+  "maxComplexity": null,
+  "adaptiveTdee": true,
+  "proteinPriorityMode": false,
+  "updatedAt": "2026-07-30T20:33:53.768Z"
+ },
+ "generate": {
+  "status": 200,
+  "ms": 646,
+  "body": {
+   "id": "cms7z1h6403hrwlgw2ijtk68y",
+   "userId": "cms6x1f5u004mwl2oaged7en7",
+   "startDate": "2026-07-27",
+   "createdAt": "2026-07-30T20:33:54.220Z",
+   "slots": [
+    {
+     "id": "cms7z1hbe03htwlgwcfovads3",
+     "planId": "cms7z1h6403hrwlgw2ijtk68y",
+     "dayOfWeek": 3,
+     "slotType": "meal",
+     "slotIndex": 0,
+     "recipeId": "cmrul79rz000iwl80771jcpsc",
+     "proteinScale": 1.3,
+     "sidesScale": 1.61,
+     "ingredients": [
+      {
+       "foodId": "cmrukzadw0000wlbwara3md10",
+       "name": "Seitan",
+       "role": "protein",
+       "grams": 220
+      },
+      {
+       "foodId": "cmrj2t88z0087wlwsmsmchxzb",
+       "name": "Quinoa",
+       "role": "carb",
+       "grams": 175
+      },
+      {
+       "foodId": "cmrevpcnl000jwl5gnqnk630b",
+       "name": "Cucumber",
+       "role": "veg",
+       "grams": 145
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      },
+      {
+       "foodId": "cmrj2tapd00htwlwsd6ggixb6",
+       "name": "Tofu",
+       "role": "protein",
+       "grams": 35,
+       "adjuster": true
+      }
+     ],
+     "kcal": 583.9,
+     "protein": 69.6105,
+     "fat": 16.044,
+     "carb": 50.18,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrul79rz000iwl80771jcpsc",
+      "name": "High-Protein Seitan & Cucumber with Quinoa",
+      "description": null,
+      "steps": [
+       "Cook the seitan.",
+       "Serve over quinoa with cucumber."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 390,
+      "protein": 47.871,
+      "fat": 10.656,
+      "carb": 32.174,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 4.77,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:45:29.663Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z1hbg03hvwlgw7mqysudf",
+     "planId": "cms7z1h6403hrwlgw2ijtk68y",
+     "dayOfWeek": 3,
+     "slotType": "meal",
+     "slotIndex": 1,
+     "recipeId": "cms7pjmj90025wlbke02jmm0u",
+     "proteinScale": 1.43,
+     "sidesScale": 0.76,
+     "ingredients": [
+      {
+       "foodId": "cmrukzadw0000wlbwara3md10",
+       "name": "Seitan",
+       "role": "protein",
+       "grams": 260
+      },
+      {
+       "foodId": "cmrevpcn2000ewl5gmlyzu0vd",
+       "name": "White rice, cooked",
+       "role": "carb",
+       "grams": 135
+      },
+      {
+       "foodId": "cmrj2t6na000ywlws9jek4w4z",
+       "name": "Broccoli",
+       "role": "veg",
+       "grams": 105
+      },
+      {
+       "foodId": "cmrj2t6ft0001wlwstiofk9on",
+       "name": "Garlic",
+       "role": "veg",
+       "grams": 5
+      },
+      {
+       "foodId": "cmrj2t6ye002dwlwssjv94yyn",
+       "name": "Ginger",
+       "role": "other",
+       "grams": 4
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 8
+      }
+     ],
+     "kcal": 602.4,
+     "protein": 71.7473,
+     "fat": 14.011,
+     "carb": 56.9055,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cms7pjmj90025wlbke02jmm0u",
+      "name": "Seitan Stir-Fry with Broccoli and Rice",
+      "description": null,
+      "steps": [
+       "Slice the seitan thin.",
+       "Stir-fry it in a very hot pan for 3 minutes until the edges catch.",
+       "Add the broccoli, garlic and ginger with a splash of water and cover for 2 minutes to steam through.",
+       "Serve on the rice."
+      ],
+      "slotType": "meal",
+      "cuisine": "asian",
+      "prepTimeMin": 20,
+      "source": "curated",
+      "mealCategory": null,
+      "kcal": 593.75,
+      "protein": 53.8618,
+      "fat": 14.665,
+      "carb": 68.5,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": null,
+      "difficulty": 2,
+      "filterProvenance": null,
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-30T16:08:04.821Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z1hbh03hxwlgwg3l4d2ru",
+     "planId": "cms7z1h6403hrwlgw2ijtk68y",
+     "dayOfWeek": 3,
+     "slotType": "meal",
+     "slotIndex": 2,
+     "recipeId": "cmrul79uv0056wl80evcfltva",
+     "proteinScale": 2,
+     "sidesScale": 0.5,
+     "ingredients": [
+      {
+       "foodId": "cmrj2tapd00htwlwsd6ggixb6",
+       "name": "Tofu",
+       "role": "protein",
+       "grams": 400
+      },
+      {
+       "foodId": "cmrj2t88z0087wlwsmsmchxzb",
+       "name": "Quinoa",
+       "role": "carb",
+       "grams": 55
+      },
+      {
+       "foodId": "cmrj2t6na000ywlws9jek4w4z",
+       "name": "Broccoli",
+       "role": "veg",
+       "grams": 55
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 704.05,
+     "protein": 73.0335,
+     "fat": 41.123,
+     "carb": 26.2835,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrul79uv0056wl80evcfltva",
+      "name": "High-Protein Tofu & Broccoli with Quinoa",
+      "description": null,
+      "steps": [
+       "Cook the tofu.",
+       "Serve over quinoa with broccoli."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 499.1,
+      "protein": 42.267,
+      "fat": 24.926,
+      "carb": 35.88700000000001,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 4.18,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:45:29.768Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z1hbi03i1wlgwx7cvt3fv",
+     "planId": "cms7z1h6403hrwlgw2ijtk68y",
+     "dayOfWeek": 3,
+     "slotType": "snack",
+     "slotIndex": 0,
+     "recipeId": "cms7pjmju002swlbktsksba9r",
+     "proteinScale": 1.28,
+     "sidesScale": 1.28,
+     "ingredients": [
+      {
+       "foodId": "cmrukzae50002wlbwr9bq9oa7",
+       "name": "Edamame, shelled, cooked",
+       "role": "protein",
+       "grams": 190
+      },
+      {
+       "foodId": "cmrj2t6gd0003wlwss7jf3wzf",
+       "name": "Salt",
+       "role": "other",
+       "grams": 1
+      }
+     ],
+     "kcal": 229.9,
+     "protein": 22.8,
+     "fat": 9.5,
+     "carb": 17.1,
+     "warning": "Tried 3 recipe(s) for this slot, none fit within tolerance — closest was \"Edamame with Sea Salt\" (delivered 23g protein vs a 33g target).",
+     "locked": false,
+     "recipe": {
+      "id": "cms7pjmju002swlbktsksba9r",
+      "name": "Edamame with Sea Salt",
+      "description": null,
+      "steps": [
+       "Boil the pods 4 minutes in well-salted water.",
+       "Drain and salt again while hot. Eat from the pod."
+      ],
+      "slotType": "snack",
+      "cuisine": "japanese",
+      "prepTimeMin": 6,
+      "source": "curated",
+      "mealCategory": null,
+      "kcal": 181.5,
+      "protein": 18,
+      "fat": 7.5,
+      "carb": 13.5,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": null,
+      "difficulty": 1,
+      "filterProvenance": null,
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-30T16:08:04.843Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z1hbi03i3wlgwavir6a2o",
+     "planId": "cms7z1h6403hrwlgw2ijtk68y",
+     "dayOfWeek": 3,
+     "slotType": "snack",
+     "slotIndex": 1,
+     "recipeId": "cms7pjmju002swlbktsksba9r",
+     "proteinScale": 1.28,
+     "sidesScale": 1.28,
+     "ingredients": [
+      {
+       "foodId": "cmrukzae50002wlbwr9bq9oa7",
+       "name": "Edamame, shelled, cooked",
+       "role": "protein",
+       "grams": 195
+      },
+      {
+       "foodId": "cmrj2t6gd0003wlwss7jf3wzf",
+       "name": "Salt",
+       "role": "other",
+       "grams": 1
+      }
+     ],
+     "kcal": 235.95,
+     "protein": 23.4,
+     "fat": 9.75,
+     "carb": 17.55,
+     "warning": "Tried 3 recipe(s) for this slot, none fit within tolerance — closest was \"Edamame with Sea Salt\" (delivered 23g protein vs a 37g target).",
+     "locked": false,
+     "recipe": {
+      "id": "cms7pjmju002swlbktsksba9r",
+      "name": "Edamame with Sea Salt",
+      "description": null,
+      "steps": [
+       "Boil the pods 4 minutes in well-salted water.",
+       "Drain and salt again while hot. Eat from the pod."
+      ],
+      "slotType": "snack",
+      "cuisine": "japanese",
+      "prepTimeMin": 6,
+      "source": "curated",
+      "mealCategory": null,
+      "kcal": 181.5,
+      "protein": 18,
+      "fat": 7.5,
+      "carb": 13.5,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": null,
+      "difficulty": 1,
+      "filterProvenance": null,
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-30T16:08:04.843Z",
+      "createdByUserId": null
+     }
+    }
+   ],
+   "groceryList": null,
+   "meta": {
+    "matchPct": 85,
+    "attempts": 5,
+    "score": {
+     "daysInTolerance": 0,
+     "avgMatch": 85,
+     "days": [
+      {
+       "dayOfWeek": 3,
+       "dayName": "Thursday",
+       "matchPct": 85,
+       "totals": {
+        "kcal": 2356,
+        "protein": 261,
+        "fat": 90,
+        "carb": 168
+       },
+       "kcalDeltaPct": 2.3,
+       "proteinShortPct": 4.9,
+       "fatOk": true,
+       "carbOk": false,
+       "inTolerance": false,
+       "miss": "168 g carbs vs a 74–98 g range — 70 g over",
+       "unfilledSlots": 0,
+       "warnedSlots": 2,
+       "proteinFloor": {
+        "met": true,
+        "floorG": 261,
+        "achievedG": 260.6,
+        "shortG": 0.4,
+        "shortPct": 0.2,
+        "reason": null
+       },
+       "windowIndex": 0,
+       "dayIndex": 0,
+       "key": "0:3"
+      }
+     ],
+     "totalDays": 1,
+     "floorDaysMet": 1,
+     "floorDaysTotal": 1
+    },
+    "days": [
+     {
+      "dayOfWeek": 3,
+      "dayName": "Thursday",
+      "matchPct": 85,
+      "totals": {
+       "kcal": 2356,
+       "protein": 261,
+       "fat": 90,
+       "carb": 168
+      },
+      "kcalDeltaPct": 2.3,
+      "proteinShortPct": 4.9,
+      "fatOk": true,
+      "carbOk": false,
+      "inTolerance": false,
+      "miss": "168 g carbs vs a 74–98 g range — 70 g over",
+      "unfilledSlots": 0,
+      "warnedSlots": 2,
+      "proteinFloor": {
+       "met": true,
+       "floorG": 261,
+       "achievedG": 260.6,
+       "shortG": 0.4,
+       "shortPct": 0.2,
+       "reason": null
+      },
+      "windowIndex": 0,
+      "dayIndex": 0,
+      "key": "0:3"
+     }
+    ],
+    "diagnosis": {
+     "feasible": false,
+     "reasons": [
+      "1 day(s) landed outside your 74–98 g carb range — portion scaling moves a dish's calories, not its fat/carb ratio, so the pool's composition is what binds here."
+     ],
+     "suggestions": [
+      "Add (or AI-generate) a few recipes built around the macro you keep missing, or drop the cuisine/protein preference so the solver can reach dishes that carry it."
+     ],
+     "binding": {
+      "key": "macro-composition",
+      "label": "carbs in your recipe pool",
+      "detail": "1 of 1 day(s) landed outside your 74-98 g carb range. Portion scaling moves a dish's calories, not its fat/carb ratio, so what binds here is which dishes your rules leave in the pool. Calories and protein landed on target on every day — it is composition, not portion size, that is short."
+     }
+    },
+    "poolCounts": {
+     "raw": 910,
+     "afterDiet": 196,
+     "afterPrep": 137,
+     "afterStack": 137,
+     "stackExplain": null
+    },
+    "variety": {
+     "mealEligible": 129,
+     "usableForSlot": 77,
+     "slotKcal": 608,
+     "snackEligible": 3,
+     "weeklyMealSlots": 21,
+     "weeklySnackSlots": 14,
+     "repeatCap": 2,
+     "distinctWeeks": 3.7,
+     "horizonWeeks": 1,
+     "sustainsHorizon": false,
+     "notes": [
+      "Only 3 snack recipe(s) fit your rules, so the same snacks come back every week.",
+      "1 day: 4 distinct dish(es) across 5 filled slot(s); most-repeated dish appears 2x against a 2x cap for this horizon (2x per week)."
+     ],
+     "horizon": {
+      "weeks": 1,
+      "days": 1,
+      "perWeekCap": 2,
+      "horizonRepeatCap": 2,
+      "mealSlots": 3,
+      "snackSlots": 2,
+      "totalSlots": 5,
+      "distinctFloor": 3,
+      "distinctRecipes": 4,
+      "maxRepeat": 2,
+      "maxRepeatRecipeId": "cms7pjmju002swlbktsksba9r",
+      "lockedRepeatsOfMax": 0,
+      "filledSlots": 5,
+      "unfilledSlots": 0,
+      "requiredDistinct": 3,
+      "capHeld": true,
+      "floorHeld": true
+     }
+    },
+    "priorWeeksConsidered": 0,
+    "horizon": {
+     "key": "day",
+     "label": "1 day",
+     "days": 1,
+     "kind": "days",
+     "weeks": 1,
+     "custom": false,
+     "startDate": "2026-07-30",
+     "endDate": "2026-07-30",
+     "startDayOfWeek": 3,
+     "weeksWritten": 1,
+     "solveMs": 2,
+     "weekPlans": [
+      {
+       "startDate": "2026-07-27",
+       "dayIndices": [
+        3
+       ],
+       "days": 1,
+       "daysInTolerance": 0,
+       "avgMatch": 85,
+       "unfilledSlots": 0,
+       "poolSize": 137
+      }
+     ]
+    }
+   }
+  }
+ }
+}

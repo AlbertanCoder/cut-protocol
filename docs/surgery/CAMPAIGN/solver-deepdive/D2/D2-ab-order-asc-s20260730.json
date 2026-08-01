@@ -1,0 +1,155 @@
+{
+  "tool": "compare.v2.mjs",
+  "baselineFile": "C:\\Users\\<account>\\Desktop\\cut-protocol\\docs\\surgery\\CAMPAIGN\\solver-deepdive\\D2\\D2-base-s20260730.jsonl",
+  "treatmentFile": "C:\\Users\\<account>\\Desktop\\cut-protocol\\docs\\surgery\\CAMPAIGN\\solver-deepdive\\D2\\D2-order-asc-s20260730.jsonl",
+  "baselineHeader": {
+    "schemaRun": "solver-brain/run/v1",
+    "label": "base",
+    "agentId": "D2",
+    "pop": "personas",
+    "seed": 20260730,
+    "seedName": "replicate-1",
+    "treatment": "none",
+    "customers": 250,
+    "brain": "off",
+    "startDayOfWeek": 0,
+    "foodFingerprint": "423e7279ed6af641",
+    "poolRaw": 910,
+    "foodRows": 14151,
+    "dbPath": "C:\\Users\\<account>\\Desktop\\cut-protocol\\docs\\surgery\\CAMPAIGN\\solver-brain\\D2\\dev.db",
+    "dbHash": "e55f52e53658a086"
+  },
+  "treatmentHeader": {
+    "schemaRun": "solver-brain/run/v1",
+    "label": "order-asc",
+    "agentId": "D2",
+    "pop": "personas",
+    "seed": 20260730,
+    "seedName": "replicate-1",
+    "treatment": "none",
+    "customers": 250,
+    "brain": "off",
+    "startDayOfWeek": 0,
+    "foodFingerprint": "423e7279ed6af641",
+    "poolRaw": 910,
+    "foodRows": 14151,
+    "dbPath": "C:\\Users\\<account>\\Desktop\\cut-protocol\\docs\\surgery\\CAMPAIGN\\solver-brain\\D2\\dev.db",
+    "dbHash": "e55f52e53658a086"
+  },
+  "problems": [],
+  "instrument": {
+    "baseline": {
+      "dis": 0,
+      "drift": 0,
+      "crash": 0,
+      "silent": 0
+    },
+    "treatment": {
+      "dis": 0,
+      "drift": 0,
+      "crash": 0,
+      "silent": 0
+    }
+  },
+  "results": {
+    "satisfiable": {
+      "base": {
+        "k": 417,
+        "n": 536,
+        "p": 0.7779850746268657,
+        "lo": 0.7408928303865242,
+        "hi": 0.8111210898068976
+      },
+      "treat": {
+        "k": 462,
+        "n": 536,
+        "p": 0.8619402985074627,
+        "lo": 0.8301514112379632,
+        "hi": 0.888578122436693
+      },
+      "deltaUnpaired": {
+        "d": 0.08395522388059695,
+        "lo": 0.03803650377817853,
+        "hi": 0.12962149421735453
+      },
+      "deltaPaired": {
+        "n": 536,
+        "b": 17,
+        "c": 62,
+        "unpaired": 0,
+        "d": 0.08395522388059702,
+        "lo": 0.052240875983702584,
+        "hi": 0.11566957177749146,
+        "thin": false,
+        "chi": 24.50632911392405
+      }
+    },
+    "all": {
+      "base": {
+        "k": 438,
+        "n": 622,
+        "p": 0.7041800643086816,
+        "lo": 0.66714697725521,
+        "hi": 0.7387066081784396
+      },
+      "treat": {
+        "k": 486,
+        "n": 622,
+        "p": 0.7813504823151125,
+        "lo": 0.7471948116563885,
+        "hi": 0.812052254886042
+      },
+      "deltaUnpaired": {
+        "d": 0.07717041800643087,
+        "lo": 0.028604050325312873,
+        "hi": 0.12527497471062565
+      },
+      "deltaPaired": {
+        "n": 622,
+        "b": 17,
+        "c": 65,
+        "unpaired": 0,
+        "d": 0.07717041800643087,
+        "lo": 0.04928822057873755,
+        "hi": 0.1050526154341242,
+        "thin": false,
+        "chi": 26.9390243902439
+      }
+    },
+    "planned": {
+      "base": {
+        "k": 438,
+        "n": 639,
+        "p": 0.6854460093896714,
+        "lo": 0.6484260239236445,
+        "hi": 0.7202496374321726
+      },
+      "treat": {
+        "k": 486,
+        "n": 639,
+        "p": 0.7605633802816901,
+        "lo": 0.725981352333113,
+        "hi": 0.7920312857744273
+      },
+      "deltaUnpaired": {
+        "d": 0.07511737089201875,
+        "lo": 0.026054052802462792,
+        "hi": 0.12370449264258843
+      },
+      "deltaPaired": {
+        "n": 639,
+        "b": 17,
+        "c": 65,
+        "unpaired": 0,
+        "d": 0.07511737089201878,
+        "lo": 0.04795987872619873,
+        "hi": 0.10227486305783884,
+        "thin": false,
+        "chi": 26.9390243902439
+      }
+    }
+  },
+  "byteIdentical": 139,
+  "total": 639,
+  "generatedAt": "2026-08-01T00:40:24.934Z"
+}

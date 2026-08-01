@@ -1,0 +1,596 @@
+{
+ "persona": {
+  "idx": 30,
+  "id": "p030",
+  "tier": "IMPOSSIBLE",
+  "displayName": "sedentary senior, 20",
+  "story": "vegan, celiac, and allergic to soy, peanuts, tree nuts and sesame, cutting at 2 lb/wk on a protein-priority plan",
+  "profile": {
+   "sex": "M",
+   "age": 20,
+   "heightCm": 161,
+   "startWeightKg": 49.9,
+   "goalWeightKg": 43,
+   "occupationKey": "unemployed-home",
+   "trainingStyle": "cardio",
+   "minutesPerSession": 20,
+   "sessionsPerWeek": 2,
+   "rateLbPerWeek": 2,
+   "dietaryStyle": "vegan",
+   "excludedFoods": [
+    "cilantro",
+    "shellfish",
+    "pork",
+    "beef",
+    "soy",
+    "gluten",
+    "peanuts",
+    "tree nuts",
+    "sesame",
+    "legumes"
+   ],
+   "mealsPerDay": 3,
+   "snacksPerDay": 1,
+   "unitPref": "imperial",
+   "rateAcknowledged": true,
+   "goalWeightAcknowledged": true
+  },
+  "filters": {
+   "proteinPriority": true,
+   "maxPrepMin": 30
+  },
+  "horizon": "day",
+  "walls": [
+   "cilantro",
+   "shellfish",
+   "pork",
+   "beef",
+   "soy",
+   "gluten",
+   "peanut",
+   "tree nut",
+   "sesame"
+  ],
+  "freeTextExclusions": [
+   "cilantro",
+   "pork",
+   "beef",
+   "legumes"
+  ],
+  "dietaryStyle": "vegan",
+  "bmi": 19.3,
+  "goalKind": "cut",
+  "macroStyle": "high-protein",
+  "requestedButUnsupported": [
+   "pescatarian is not one of the 9 dietary styles; expressed instead as walls on pork+beef, which is not the same promise",
+   "wanted protein set explicitly in g/lb; the API derives the protein band from LBM (1.14-1.25 g/lb) and accepts no client protein target — only the per-request proteinPriority filter",
+   "this request is mathematically unsatisfiable by design — a clear, fast, honest refusal is the pass condition, and a confident plan is a critical honesty defect"
+  ],
+  "impossibleKind": "every-protein-walled",
+  "goalBmi": 16.6,
+  "tupleKey": "[\"IMPOSSIBLE\",\"M\",20,161,49.9,43,\"unemployed-home\",\"cardio\",2,\"vegan\",[\"beef\",\"cilantro\",\"gluten\",\"legumes\",\"peanuts\",\"pork\",\"sesame\",\"shellfish\",\"soy\",\"tree nuts\"],3,1,\"high-protein\",\"day\",30,null,true,null,\"every-protein-walled\"]"
+ },
+ "request": {
+  "horizon": "day",
+  "filters": {
+   "proteinPriority": true,
+   "maxPrepMin": 30
+  }
+ },
+ "profileResponse": {
+  "id": "cms6x0f15012zwlw0f4k91krt",
+  "userId": "cms6x0epz000owl2o3hzoct8h",
+  "sex": "M",
+  "age": 20,
+  "heightCm": 161,
+  "bodyFatPct": 0,
+  "bodyFatSource": null,
+  "occupationKey": "unemployed-home",
+  "activityOverride": null,
+  "sessionsPerWeek": 2,
+  "trainingStyle": "cardio",
+  "minutesPerSession": 20,
+  "startWeightKg": 49.9,
+  "goalWeightKg": 43,
+  "startDate": "2026-07-29",
+  "unitPref": "imperial",
+  "rateLbPerWeek": 2,
+  "rateAcknowledged": true,
+  "floorKcal": null,
+  "excludedFormulas": [],
+  "targetKcal": 1500,
+  "mealsPerDay": 3,
+  "snacksPerDay": 1,
+  "excludedFoods": [
+   "cilantro",
+   "shellfish",
+   "pork",
+   "beef",
+   "soy",
+   "gluten",
+   "peanuts",
+   "tree nuts",
+   "sesame",
+   "legumes"
+  ],
+  "dietaryStyle": "vegan",
+  "cuisinePreferences": [],
+  "mealPreferencesNote": null,
+  "maxPrepMin": null,
+  "budgetTier": null,
+  "allowBatch": null,
+  "maxComplexity": null,
+  "adaptiveTdee": true,
+  "proteinPriorityMode": false,
+  "updatedAt": "2026-07-30T02:49:19.589Z"
+ },
+ "generate": {
+  "status": 200,
+  "ms": 437,
+  "body": {
+   "id": "cms6x0fjm013hwlw04ql93a6x",
+   "userId": "cms6x0epz000owl2o3hzoct8h",
+   "startDate": "2026-07-27",
+   "createdAt": "2026-07-30T02:49:20.050Z",
+   "slots": [
+    {
+     "id": "cms6x0fjn013jwlw0y4ye1blg",
+     "planId": "cms6x0fjm013hwlw04ql93a6x",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 0,
+     "recipeId": "cmrj2ul500ak9wlwskp59bqxx",
+     "proteinScale": 0.87,
+     "sidesScale": 0.87,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t6hb0007wlwsh6l6ynal",
+       "name": "Water",
+       "role": null,
+       "grams": 205
+      },
+      {
+       "foodId": "cmrj2tcch00o4wlwsy857ai4x",
+       "name": "White Cornmeal",
+       "role": null,
+       "grams": 100
+      }
+     ],
+     "kcal": 398,
+     "protein": 11,
+     "fat": 5.04,
+     "carb": 77.1,
+     "warning": "Tried 5 recipe(s) for this slot, none fit within tolerance — closest was \"Ugali – Kenyan cornmeal\" (delivered 11g protein vs a 27g target).",
+     "locked": false,
+     "recipe": {
+      "id": "cmrj2ul500ak9wlwskp59bqxx",
+      "name": "Ugali – Kenyan cornmeal",
+      "description": null,
+      "steps": [
+       "Bring the water to a boil in a medium saucepan.",
+       "Reduce the heat to low, and stirring constantly with a whisk, slowly add the cornmeal to the boiling water. The ugali will begin to thicken quite quickly.",
+       "Continue cooking on low heat, stirring constantly with a sturdy wooden spoon, until the ugali begins to pull away from the sides of the pan, hold together, and takes on the aroma of roasted corn. Turn it out immediately onto a serving plate. If you would like, using a spoon or spatula, quickly shape it into a thick disk or round.",
+       "The ugali will continue to firm as it cools and will be thick enough to cut with a knife (similar to firm polenta)."
+      ],
+      "slotType": "meal",
+      "cuisine": "western-comfort",
+      "prepTimeMin": 20,
+      "source": "themealdb-import",
+      "mealCategory": "breakfast_only",
+      "kcal": 447.8,
+      "protein": 12.4,
+      "fat": 5.7,
+      "carb": 86.7,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 0.34,
+      "difficulty": 2,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-13T10:26:16.837Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x0fjo013nwlw0sdupoxgc",
+     "planId": "cms6x0fjm013hwlw04ql93a6x",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 1,
+     "recipeId": "cmrj2uhqt09t7wlwsgyejz3ia",
+     "proteinScale": 0.74,
+     "sidesScale": 0.74,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t7gt004mwlwsi9ouzdgd",
+       "name": "Aubergine",
+       "role": null,
+       "grams": 35
+      },
+      {
+       "foodId": "cmrj2t7gl004lwlwsnq6l22ft",
+       "name": "Courgettes",
+       "role": null,
+       "grams": 75
+      },
+      {
+       "foodId": "cmrj2t8ot00a7wlws9qadeyml",
+       "name": "Yellow Pepper",
+       "role": null,
+       "grams": 2
+      },
+      {
+       "foodId": "cmrj2t6ik000dwlwsj8e736h1",
+       "name": "Tomato",
+       "role": "veg",
+       "grams": 90
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "carb",
+       "grams": 13
+      },
+      {
+       "foodId": "cmrj2t7450030wlwso0gvjl7n",
+       "name": "Basil",
+       "role": null,
+       "grams": 19
+      },
+      {
+       "foodId": "cmrg8zxar000lwli0qy2ovmx4",
+       "name": "Onion",
+       "role": "veg",
+       "grams": 20
+      },
+      {
+       "foodId": "cmrj2t6rr001jwlwsqfi60fyj",
+       "name": "Garlic Clove",
+       "role": null,
+       "grams": 2
+      },
+      {
+       "foodId": "cmrj2t8it009hwlwsyj9qzgjo",
+       "name": "Red Wine Vinegar",
+       "role": "carb",
+       "grams": 1
+      },
+      {
+       "foodId": "cmrj2t6z2002gwlwsjklhz848",
+       "name": "Sugar",
+       "role": "carb",
+       "grams": 1
+      }
+     ],
+     "kcal": 433.43,
+     "protein": 14.94878,
+     "fat": 13.91622,
+     "carb": 75.7847,
+     "warning": "Tried 5 recipe(s) for this slot, none fit within tolerance — closest was \"Ratatouille\" (delivered 15g protein vs a 36g target).",
+     "locked": false,
+     "recipe": {
+      "id": "cmrj2uhqt09t7wlwsgyejz3ia",
+      "name": "Ratatouille",
+      "description": null,
+      "steps": [
+       "Cut the aubergines in half lengthways. Place them on the board, cut side down, slice in half lengthways again and then across into 1.5cm chunks. Cut off the courgettes ends, then across into 1.5cm slices. Peel the peppers from stalk to bottom. Hold upright, cut around the stalk, then cut into 3 pieces. Cut away any membrane, then chop into bite-size chunks.",
+       "Score a small cross on the base of each tomato, then put them into a heatproof bowl. Pour boiling water over the tomatoes, leave for 20 secs, then remove. Pour the water away, replace the tomatoes and cover with cold water. Leave to cool, then peel the skin away. Quarter the tomatoes, scrape away the seeds with a spoon, then roughly chop the flesh.",
+       "Set a sauté pan over medium heat and when hot, pour in 2 tbsp olive oil. Brown the aubergines for 5 mins on each side until the pieces are soft. Set them aside and fry the courgettes in another tbsp oil for 5 mins, until golden on both sides. Repeat with the peppers. Don’t overcook the vegetables at this stage, as they have some more cooking left in the next step.",
+       "Tear up the basil leaves and set aside. Cook the onion in the pan for 5 mins. Add the garlic and fry for a further min. Stir in the vinegar and sugar, then tip in the tomatoes and half the basil. Return the vegetables to the pan with some salt and pepper and cook for 5 mins. Serve with basil."
+      ],
+      "slotType": "meal",
+      "cuisine": "western-comfort",
+      "prepTimeMin": 25,
+      "source": "themealdb-import",
+      "mealCategory": null,
+      "kcal": 583.5,
+      "protein": 20.3,
+      "fat": 18.3,
+      "carb": 103.1,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 2.33,
+      "difficulty": 4,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-13T10:26:12.437Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x0fjp013pwlw0yocrzler",
+     "planId": "cms6x0fjm013hwlw04ql93a6x",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 2,
+     "recipeId": "cmrj2ue950910wlwspp7h0swp",
+     "proteinScale": 0.56,
+     "sidesScale": 0.56,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t6t4001pwlwsxeja9565",
+       "name": "Potatoes",
+       "role": "veg",
+       "grams": 125
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "carb",
+       "grams": 6
+      },
+      {
+       "foodId": "cmrg8zxar000lwli0qy2ovmx4",
+       "name": "Onion",
+       "role": "veg",
+       "grams": 15
+      },
+      {
+       "foodId": "cmrj2t6ft0001wlwstiofk9on",
+       "name": "Garlic",
+       "role": "veg",
+       "grams": 1
+      },
+      {
+       "foodId": "cmrj2t6jp000iwlwsli2ckg55",
+       "name": "Paprika",
+       "role": null,
+       "grams": 1
+      },
+      {
+       "foodId": "cmrj2t6pz001bwlwsbarwpyy1",
+       "name": "Tomato Puree",
+       "role": "veg",
+       "grams": 17
+      },
+      {
+       "foodId": "cmrj2t8nj00a2wlwsr9mgwnlr",
+       "name": "Tinned Tomatos",
+       "role": "veg",
+       "grams": 30
+      },
+      {
+       "foodId": "cmrj2t7ix004wwlws9hj2ol5a",
+       "name": "Basil Leaves",
+       "role": null,
+       "grams": 14
+      }
+     ],
+     "kcal": 496.86,
+     "protein": 20.5838,
+     "fat": 10.32135,
+     "carb": 85.2528,
+     "warning": "Tried 5 recipe(s) for this slot, none fit within tolerance — closest was \"Air fryer patatas bravas\" (delivered 21g protein vs a 45g target).",
+     "locked": false,
+     "recipe": {
+      "id": "cmrj2ue950910wlwspp7h0swp",
+      "name": "Air fryer patatas bravas",
+      "description": null,
+      "steps": [
+       "step 1",
+       "Soak the potatoes in just-boiled water for 30 mins, then drain and leave to air-dry for 5 mins. Heat the air fryer to 200C. Tip the potatoes into a bowl and drizzle over 1 tbsp of the oil and add 1/2 tsp each of salt and freshly ground black pepper. Mix to coat the potatoes all over, then tip into the air fryer basket and cook for 20-30 mins until crisp and golden.",
+       "step 2",
+       "Meanwhile, heat the remaining oil in a small pan over a medium-low heat and fry the onion for 8-10 mins until softened but not golden. Stir in the garlic and cook for a minute before adding the paprika and cooking for 30 seconds more. Stir in the tomato purée, cook for 1 min, then tip in the chopped tomatoes. Cook for 5-10 mins over a medium heat until thickened slightly.",
+       "step 3",
+       "Once the potatoes are cooked, tip out onto a platter and pour over the tomato sauce. Sprinkle with the basil leaves, then serve."
+      ],
+      "slotType": "meal",
+      "cuisine": "western-comfort",
+      "prepTimeMin": 29,
+      "source": "themealdb-import",
+      "mealCategory": null,
+      "kcal": 891,
+      "protein": 37.1,
+      "fat": 17.8,
+      "carb": 154.2,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 1.88,
+      "difficulty": 4,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-13T10:26:07.913Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x0fjp013rwlw0zjslpdle",
+     "planId": "cms6x0fjm013hwlw04ql93a6x",
+     "dayOfWeek": 2,
+     "slotType": "snack",
+     "slotIndex": 0,
+     "recipeId": null,
+     "proteinScale": 1,
+     "sidesScale": 1,
+     "ingredients": [],
+     "kcal": 0,
+     "protein": 0,
+     "fat": 0,
+     "carb": 0,
+     "warning": "No eligible snack recipe left for this slot.",
+     "locked": false,
+     "recipe": null
+    }
+   ],
+   "groceryList": null,
+   "meta": {
+    "matchPct": 59,
+    "attempts": 5,
+    "score": {
+     "daysInTolerance": 0,
+     "avgMatch": 59,
+     "days": [
+      {
+       "dayOfWeek": 2,
+       "dayName": "Wednesday",
+       "matchPct": 59,
+       "totals": {
+        "kcal": 1328,
+        "protein": 47,
+        "fat": 29,
+        "carb": 238
+       },
+       "kcalDeltaPct": -11.4,
+       "proteinShortPct": 55.3,
+       "fatOk": true,
+       "carbOk": false,
+       "inTolerance": false,
+       "miss": "47 g protein vs 104 g — 57 g short; 238 g carbs vs a 161–185 g range — 53 g over",
+       "unfilledSlots": 1,
+       "warnedSlots": 4,
+       "proteinFloor": {
+        "met": false,
+        "floorG": 99,
+        "achievedG": 46.5,
+        "shortG": 52.5,
+        "shortPct": 53,
+        "reason": "52.5 g short of the 99 g protein floor (53% under) — the compliant pool couldn't scale up to close the gap within the 0.5-2x portion limit."
+       },
+       "windowIndex": 0,
+       "dayIndex": 0,
+       "key": "0:2"
+      }
+     ],
+     "totalDays": 1,
+     "floorDaysMet": 0,
+     "floorDaysTotal": 1
+    },
+    "days": [
+     {
+      "dayOfWeek": 2,
+      "dayName": "Wednesday",
+      "matchPct": 59,
+      "totals": {
+       "kcal": 1328,
+       "protein": 47,
+       "fat": 29,
+       "carb": 238
+      },
+      "kcalDeltaPct": -11.4,
+      "proteinShortPct": 55.3,
+      "fatOk": true,
+      "carbOk": false,
+      "inTolerance": false,
+      "miss": "47 g protein vs 104 g — 57 g short; 238 g carbs vs a 161–185 g range — 53 g over",
+      "unfilledSlots": 1,
+      "warnedSlots": 4,
+      "proteinFloor": {
+       "met": false,
+       "floorG": 99,
+       "achievedG": 46.5,
+       "shortG": 52.5,
+       "shortPct": 53,
+       "reason": "52.5 g short of the 99 g protein floor (53% under) — the compliant pool couldn't scale up to close the gap within the 0.5-2x portion limit."
+      },
+      "windowIndex": 0,
+      "dayIndex": 0,
+      "key": "0:2"
+     }
+    ],
+    "diagnosis": {
+     "feasible": false,
+     "reasons": [
+      "1 of 4 slots over 1 days came back empty — no compliant recipe was left that could fill them.",
+      "Protein-priority mode: the 99g/day floor wasn't met on 1 day(s) — only 1 of 17 compliant recipes carry enough protein density to close the gap within the 0.5-2x portion limit.",
+      "Your library has no snack-sized recipe that fits your rules — all 1 snack slots this week come back empty.",
+      "Your targets need ~6.9g protein per 100 kcal; only 1 of 17 eligible recipes come close (12+ needed for a full varied week).",
+      "1 day(s) landed outside your 161–185 g carb range — portion scaling moves a dish's calories, not its fat/carb ratio, so the pool's composition is what binds here."
+     ],
+     "suggestions": [
+      "AI-generate a few high-protein compliant recipes, set the protein-preference filter, or allow batch-cooking repeats of the densest dishes.",
+      "Set snacks per day to 0 and fold those calories into your meals, or AI-generate a few compliant snacks on the Recipes tab.",
+      "Set the protein-preference filter, or AI-generate a few high-protein recipes to deepen the pool.",
+      "Add (or AI-generate) a few recipes built around the macro you keep missing, or drop the cuisine/protein preference so the solver can reach dishes that carry it."
+     ],
+     "binding": {
+      "key": "snack-pool",
+      "label": "your snack-eligible recipe pool",
+      "detail": "no snack-sized recipe fits your rules, so all 1 snack slot(s) come back empty."
+     }
+    },
+    "poolCounts": {
+     "raw": 889,
+     "afterDiet": 20,
+     "afterPrep": 17,
+     "afterStack": 17,
+     "stackExplain": null
+    },
+    "variety": {
+     "mealEligible": 14,
+     "usableForSlot": 1,
+     "slotKcal": 442,
+     "snackEligible": 0,
+     "weeklyMealSlots": 21,
+     "weeklySnackSlots": 7,
+     "repeatCap": 2,
+     "distinctWeeks": 0,
+     "horizonWeeks": 1,
+     "sustainsHorizon": false,
+     "notes": [
+      "1 of your 14 compliant recipes can be portioned to a 442 kcal meal — about 0 week(s) of 21 meals before dishes start repeating, so over 1 weeks you will see favourites come back.",
+      "Your library has no snack-sized recipe that fits your rules — snack slots stay empty until you add one.",
+      "1 day: 3 distinct dish(es) across 3 filled slot(s); most-repeated dish appears 1x against a 2x cap for this horizon (2x per week)."
+     ],
+     "horizon": {
+      "weeks": 1,
+      "days": 1,
+      "perWeekCap": 2,
+      "horizonRepeatCap": 2,
+      "mealSlots": 3,
+      "snackSlots": 1,
+      "totalSlots": 4,
+      "distinctFloor": 2,
+      "distinctRecipes": 3,
+      "maxRepeat": 1,
+      "maxRepeatRecipeId": "cmrj2ul500ak9wlwskp59bqxx",
+      "lockedRepeatsOfMax": 0,
+      "filledSlots": 3,
+      "unfilledSlots": 1,
+      "requiredDistinct": 2,
+      "capHeld": true,
+      "floorHeld": true
+     }
+    },
+    "priorWeeksConsidered": 0,
+    "horizon": {
+     "key": "day",
+     "label": "1 day",
+     "days": 1,
+     "kind": "days",
+     "weeks": 1,
+     "custom": false,
+     "startDate": "2026-07-29",
+     "endDate": "2026-07-29",
+     "startDayOfWeek": 2,
+     "weeksWritten": 1,
+     "solveMs": 1,
+     "weekPlans": [
+      {
+       "startDate": "2026-07-27",
+       "dayIndices": [
+        2
+       ],
+       "days": 1,
+       "daysInTolerance": 0,
+       "avgMatch": 59,
+       "unfilledSlots": 1,
+       "poolSize": 17
+      }
+     ]
+    }
+   }
+  }
+ }
+}

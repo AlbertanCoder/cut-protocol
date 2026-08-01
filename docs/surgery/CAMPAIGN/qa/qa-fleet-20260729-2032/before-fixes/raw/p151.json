@@ -1,0 +1,694 @@
+{
+ "persona": {
+  "idx": 151,
+  "id": "p151",
+  "tier": "EASY",
+  "displayName": "formwork carpenter, 43",
+  "story": "formwork carpenter, 43, female, 174 cm / 90.6 kg (BMI 29.9), cut at 0.5 lb/wk, pescatarian diet, avoiding pork, beef, high-protein, 5 meals + 0 snacks, wants a single day",
+  "profile": {
+   "sex": "F",
+   "age": 43,
+   "heightCm": 174,
+   "startWeightKg": 90.6,
+   "goalWeightKg": 82.3,
+   "occupationKey": "formwork-concrete",
+   "trainingStyle": "weights",
+   "minutesPerSession": 60,
+   "sessionsPerWeek": 4,
+   "rateLbPerWeek": 0.5,
+   "dietaryStyle": null,
+   "excludedFoods": [
+    "pork",
+    "beef"
+   ],
+   "mealsPerDay": 5,
+   "snacksPerDay": 0,
+   "unitPref": "imperial",
+   "bodyFatPct": 28,
+   "bodyFatSource": "visual-estimate",
+   "cuisinePreferences": [
+    "mexican",
+    "indian"
+   ]
+  },
+  "filters": {
+   "proteinPriority": true,
+   "maxPrepMin": 30,
+   "cuisines": [
+    "mexican",
+    "indian"
+   ]
+  },
+  "horizon": "day",
+  "walls": [
+   "pork",
+   "beef"
+  ],
+  "freeTextExclusions": [
+   "pork",
+   "beef"
+  ],
+  "dietaryStyle": null,
+  "bmi": 29.9,
+  "goalKind": "cut",
+  "macroStyle": "high-protein",
+  "requestedButUnsupported": [
+   "pescatarian is not one of the 9 dietary styles; expressed instead as walls on pork+beef, which is not the same promise",
+   "wanted protein set explicitly in g/lb; the API derives the protein band from LBM (1.14-1.25 g/lb) and accepts no client protein target — only the per-request proteinPriority filter"
+  ],
+  "tupleKey": "[\"EASY\",\"F\",43,174,90.6,82.3,\"formwork-concrete\",\"weights\",0.5,null,[\"beef\",\"pork\"],5,0,\"high-protein\",\"day\",30,null,true,null,null]"
+ },
+ "request": {
+  "horizon": "day",
+  "filters": {
+   "proteinPriority": true,
+   "maxPrepMin": 30,
+   "cuisines": [
+    "mexican",
+    "indian"
+   ]
+  }
+ },
+ "profileResponse": {
+  "id": "cms6x1a5v0403wlw0wusjrqiq",
+  "userId": "cms6x19qe0041wl2o5f6i74ie",
+  "sex": "F",
+  "age": 43,
+  "heightCm": 174,
+  "bodyFatPct": 28,
+  "bodyFatSource": "visual-estimate",
+  "occupationKey": "formwork-concrete",
+  "activityOverride": null,
+  "sessionsPerWeek": 4,
+  "trainingStyle": "weights",
+  "minutesPerSession": 60,
+  "startWeightKg": 90.6,
+  "goalWeightKg": 82.3,
+  "startDate": "2026-07-29",
+  "unitPref": "imperial",
+  "rateLbPerWeek": 0.5,
+  "rateAcknowledged": false,
+  "floorKcal": null,
+  "excludedFormulas": [],
+  "targetKcal": 2556,
+  "mealsPerDay": 5,
+  "snacksPerDay": 0,
+  "excludedFoods": [
+   "pork",
+   "beef"
+  ],
+  "dietaryStyle": null,
+  "cuisinePreferences": [
+   "mexican",
+   "indian"
+  ],
+  "mealPreferencesNote": null,
+  "maxPrepMin": null,
+  "budgetTier": null,
+  "allowBatch": null,
+  "maxComplexity": null,
+  "adaptiveTdee": true,
+  "proteinPriorityMode": false,
+  "updatedAt": "2026-07-30T02:49:59.771Z"
+ },
+ "generate": {
+  "status": 200,
+  "ms": 242,
+  "body": {
+   "id": "cms6x1ady040rwlw0pptnatvw",
+   "userId": "cms6x19qe0041wl2o5f6i74ie",
+   "startDate": "2026-07-27",
+   "createdAt": "2026-07-30T02:50:00.023Z",
+   "slots": [
+    {
+     "id": "cms6x1ae0040twlw0edrchuq7",
+     "planId": "cms6x1ady040rwlw0pptnatvw",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 0,
+     "recipeId": "cmrul4e7l007uwl68g96btgat",
+     "proteinScale": 0.67,
+     "sidesScale": 1.78,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t7t00067wlwsj23ngikm",
+       "name": "Egg White",
+       "role": "protein",
+       "grams": 175
+      },
+      {
+       "foodId": "cmrj2t7fb004fwlws8ezof2dp",
+       "name": "Russet Potato",
+       "role": "carb",
+       "grams": 270
+      },
+      {
+       "foodId": "cmrj2t6na000ywlws9jek4w4z",
+       "name": "Broccoli",
+       "role": "veg",
+       "grams": 195
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 458.2,
+     "protein": 30.8375,
+     "fat": 6.014,
+     "carb": 74.1365,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrul4e7l007uwl68g96btgat",
+      "name": "High-Protein Egg White & Broccoli with Potato",
+      "description": null,
+      "steps": [
+       "Cook the egg white.",
+       "Serve over potato with broccoli."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 364.6,
+      "protein": 34.6,
+      "fat": 5.6,
+      "carb": 45.1,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 3.21,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:43:15.441Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x1ae1040vwlw0e5mnnsks",
+     "planId": "cms6x1ady040rwlw0pptnatvw",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 1,
+     "recipeId": "cmrul79td002owl80wgszagx3",
+     "proteinScale": 0.92,
+     "sidesScale": 1.17,
+     "ingredients": [
+      {
+       "foodId": "cmrj2tclc00pqwlws0vlepf5r",
+       "name": "Tempeh, cooked",
+       "role": "protein",
+       "grams": 145
+      },
+      {
+       "foodId": "cmrevpcn2000ewl5gmlyzu0vd",
+       "name": "White rice, cooked",
+       "role": "carb",
+       "grams": 130
+      },
+      {
+       "foodId": "cmrevpcnl000jwl5gnqnk630b",
+       "name": "Cucumber",
+       "role": "veg",
+       "grams": 105
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 502.9,
+     "protein": 33.5645,
+     "fat": 21.218,
+     "carb": 49.688,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrul79td002owl80wgszagx3",
+      "name": "High-Protein Tempeh & Cucumber with Rice",
+      "description": null,
+      "steps": [
+       "Cook the tempeh.",
+       "Serve over white rice with cucumber."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 504.2,
+      "protein": 36,
+      "fat": 22.8,
+      "carb": 44.9,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 3.65,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:45:29.713Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x1ae2040zwlw0tjdy5oeg",
+     "planId": "cms6x1ady040rwlw0pptnatvw",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 2,
+     "recipeId": "cmrj2tl5702lowlwsp6urvk4r",
+     "proteinScale": 1.63,
+     "sidesScale": 0.5,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t7xh006rwlwsunnq7ccf",
+       "name": "Chicken",
+       "role": "protein",
+       "grams": 165
+      },
+      {
+       "foodId": "cmrj2t6rc001hwlwsjpk7hg92",
+       "name": "Rice",
+       "role": "carb",
+       "grams": 25
+      },
+      {
+       "foodId": "cmrj2t6tb001qwlwsb78om24m",
+       "name": "Green Pepper",
+       "role": null,
+       "grams": 1
+      },
+      {
+       "foodId": "cmrj2t6j0000fwlwsog8rz1h6",
+       "name": "Red Pepper",
+       "role": null,
+       "grams": 1
+      },
+      {
+       "foodId": "cmrj2t6yu002fwlws5705402h",
+       "name": "Mushrooms",
+       "role": "veg",
+       "grams": 5
+      },
+      {
+       "foodId": "cmrj2t7ya006vwlws5a8jfkyu",
+       "name": "Sweetcorn",
+       "role": null,
+       "grams": 13
+      },
+      {
+       "foodId": "cmrj2t6oc0013wlwsjzlwoln2",
+       "name": "Carrots",
+       "role": "veg",
+       "grams": 15
+      },
+      {
+       "foodId": "cmrj2t8a9008dwlwsqq2x7f4q",
+       "name": "Raisins",
+       "role": null,
+       "grams": 4
+      },
+      {
+       "foodId": "cmrj2t8dg008swlws9uhv1fo5",
+       "name": "Turmeric",
+       "role": null,
+       "grams": 1
+      },
+      {
+       "foodId": "cmrj2t8do008twlwsjcp2b4t8",
+       "name": "Kabse Spice",
+       "role": null,
+       "grams": 1
+      },
+      {
+       "foodId": "cmrj2t6gd0003wlwss7jf3wzf",
+       "name": "Salt",
+       "role": null,
+       "grams": 1
+      },
+      {
+       "foodId": "cmrj2t6mf000uwlwsne5kc5wl",
+       "name": "Black Pepper",
+       "role": null,
+       "grams": 1
+      }
+     ],
+     "kcal": 544.29,
+     "protein": 35.34561000000001,
+     "fat": 26.78987,
+     "carb": 40.6493,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrj2tl5702lowlwsp6urvk4r",
+      "name": "kabse",
+      "description": null,
+      "steps": [
+       "Caramelize the chicken with olive oil then add a maggi cube and boil it for around 30 minutes.",
+       "In another pot, add all the veggies and caramelize them till they are soft.",
+       "Once everything is done, add the rice, raisins & spices to the veggies and add 2 and a half cups of water for the rice to cook.",
+       "Once the rice is done put everything in the oven."
+      ],
+      "slotType": "meal",
+      "cuisine": "western-comfort",
+      "prepTimeMin": 27,
+      "source": "themealdb-import",
+      "mealCategory": null,
+      "kcal": 564.7,
+      "protein": 27.1,
+      "fat": 18.4,
+      "carb": 75.1,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 3.29,
+      "difficulty": 5,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-13T10:25:30.188Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x1ae30411wlw0ygfbr5uu",
+     "planId": "cms6x1ady040rwlw0pptnatvw",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 3,
+     "recipeId": "cmrujkwqc002iwl9os4fqncbh",
+     "proteinScale": 1.6,
+     "sidesScale": 1.4,
+     "ingredients": [
+      {
+       "foodId": "cmrj2tbsj00m1wlwsfeuh3jsf",
+       "name": "flax eggs",
+       "role": "protein",
+       "grams": 240
+      },
+      {
+       "foodId": "cmrj2t6xy002bwlwstg6a0xsf",
+       "name": "Noodles",
+       "role": "carb",
+       "grams": 210
+      },
+      {
+       "foodId": "cmrevpcnh000iwl5gh2zjhyqe",
+       "name": "Bell peppers",
+       "role": "veg",
+       "grams": 110
+      },
+      {
+       "foodId": "cmrj2t95b00bxwlwsoefzd8s1",
+       "name": "Cashew Nuts",
+       "role": "fat",
+       "grams": 18
+      }
+     ],
+     "kcal": 488.84,
+     "protein": 33.671,
+     "fat": 7.752,
+     "carb": 69.19800000000001,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrujkwqc002iwl9os4fqncbh",
+      "name": "Stir-Fried Eggs & Bell Peppers with Noodles",
+      "description": null,
+      "steps": [
+       "Cook the eggs.",
+       "Serve with noodles and bell peppers."
+      ],
+      "slotType": "meal",
+      "cuisine": "asian",
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 365.2,
+      "protein": 22.7,
+      "fat": 7.5,
+      "carb": 50.9,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 3.32,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:00:06.708Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x1ae40413wlw0cyiuynno",
+     "planId": "cms6x1ady040rwlw0pptnatvw",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 4,
+     "recipeId": "cmrul79zk00cowl80j0zs7xej",
+     "proteinScale": 1.46,
+     "sidesScale": 1.82,
+     "ingredients": [
+      {
+       "foodId": "cmrj2tbym00mowlwszf3qi0d8",
+       "name": "Cottage Cheese",
+       "role": "protein",
+       "grams": 295
+      },
+      {
+       "foodId": "cmrevpcn2000ewl5gmlyzu0vd",
+       "name": "White rice, cooked",
+       "role": "carb",
+       "grams": 200
+      },
+      {
+       "foodId": "cmrevpcnl000jwl5gnqnk630b",
+       "name": "Cucumber",
+       "role": "veg",
+       "grams": 165
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 563.4,
+     "protein": 38.8235,
+     "fat": 12.649,
+     "carb": 72.27850000000001,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrul79zk00cowl80j0zs7xej",
+      "name": "High-Protein Cottage Cheese & Cucumber with Rice",
+      "description": null,
+      "steps": [
+       "Cook the cottage cheese.",
+       "Serve over white rice with cucumber."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 361,
+      "protein": 25.5,
+      "fat": 10.1,
+      "carb": 41.4,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 2.57,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:45:29.936Z",
+      "createdByUserId": null
+     }
+    }
+   ],
+   "groceryList": null,
+   "meta": {
+    "matchPct": 87,
+    "attempts": 5,
+    "score": {
+     "daysInTolerance": 0,
+     "avgMatch": 87,
+     "days": [
+      {
+       "dayOfWeek": 2,
+       "dayName": "Wednesday",
+       "matchPct": 87,
+       "totals": {
+        "kcal": 2558,
+        "protein": 172,
+        "fat": 74,
+        "carb": 306
+       },
+       "kcalDeltaPct": 0.1,
+       "proteinShortPct": 0,
+       "fatOk": false,
+       "carbOk": true,
+       "inTolerance": false,
+       "miss": "74 g fat vs a 49–58 g range — 16 g over",
+       "unfilledSlots": 0,
+       "warnedSlots": 0,
+       "proteinFloor": {
+        "met": true,
+        "floorG": 164,
+        "achievedG": 172.2,
+        "shortG": 0,
+        "shortPct": 0,
+        "reason": null
+       },
+       "windowIndex": 0,
+       "dayIndex": 0,
+       "key": "0:2"
+      }
+     ],
+     "totalDays": 1,
+     "floorDaysMet": 1,
+     "floorDaysTotal": 1
+    },
+    "days": [
+     {
+      "dayOfWeek": 2,
+      "dayName": "Wednesday",
+      "matchPct": 87,
+      "totals": {
+       "kcal": 2558,
+       "protein": 172,
+       "fat": 74,
+       "carb": 306
+      },
+      "kcalDeltaPct": 0.1,
+      "proteinShortPct": 0,
+      "fatOk": false,
+      "carbOk": true,
+      "inTolerance": false,
+      "miss": "74 g fat vs a 49–58 g range — 16 g over",
+      "unfilledSlots": 0,
+      "warnedSlots": 0,
+      "proteinFloor": {
+       "met": true,
+       "floorG": 164,
+       "achievedG": 172.2,
+       "shortG": 0,
+       "shortPct": 0,
+       "reason": null
+      },
+      "windowIndex": 0,
+      "dayIndex": 0,
+      "key": "0:2"
+     }
+    ],
+    "diagnosis": {
+     "feasible": false,
+     "reasons": [
+      "1 day(s) landed outside your 49–58 g fat range — portion scaling moves a dish's calories, not its fat/carb ratio, so the pool's composition is what binds here."
+     ],
+     "suggestions": [
+      "Add (or AI-generate) a few recipes built around the macro you keep missing, or drop the cuisine/protein preference so the solver can reach dishes that carry it."
+     ],
+     "binding": {
+      "key": "macro-composition",
+      "label": "fat in your recipe pool",
+      "detail": "1 of 1 day(s) landed outside your 49-58 g fat range. Portion scaling moves a dish's calories, not its fat/carb ratio, so what binds here is which dishes your rules leave in the pool. Calories and protein landed on target on every day — it is composition, not portion size, that is short."
+     }
+    },
+    "poolCounts": {
+     "raw": 889,
+     "afterDiet": 764,
+     "afterPrep": 540,
+     "afterStack": 540,
+     "stackExplain": null
+    },
+    "variety": {
+     "mealEligible": 464,
+     "usableForSlot": 335,
+     "slotKcal": 511,
+     "snackEligible": 6,
+     "weeklyMealSlots": 35,
+     "weeklySnackSlots": 0,
+     "repeatCap": 2,
+     "distinctWeeks": 9.6,
+     "horizonWeeks": 1,
+     "sustainsHorizon": true,
+     "notes": [
+      "1 day: 5 distinct dish(es) across 5 filled slot(s); most-repeated dish appears 1x against a 2x cap for this horizon (2x per week)."
+     ],
+     "horizon": {
+      "weeks": 1,
+      "days": 1,
+      "perWeekCap": 2,
+      "horizonRepeatCap": 2,
+      "mealSlots": 5,
+      "snackSlots": 0,
+      "totalSlots": 5,
+      "distinctFloor": 3,
+      "distinctRecipes": 5,
+      "maxRepeat": 1,
+      "maxRepeatRecipeId": "cmrul4e7l007uwl68g96btgat",
+      "lockedRepeatsOfMax": 0,
+      "filledSlots": 5,
+      "unfilledSlots": 0,
+      "requiredDistinct": 3,
+      "capHeld": true,
+      "floorHeld": true
+     }
+    },
+    "priorWeeksConsidered": 0,
+    "horizon": {
+     "key": "day",
+     "label": "1 day",
+     "days": 1,
+     "kind": "days",
+     "weeks": 1,
+     "custom": false,
+     "startDate": "2026-07-29",
+     "endDate": "2026-07-29",
+     "startDayOfWeek": 2,
+     "weeksWritten": 1,
+     "solveMs": 10,
+     "weekPlans": [
+      {
+       "startDate": "2026-07-27",
+       "dayIndices": [
+        2
+       ],
+       "days": 1,
+       "daysInTolerance": 0,
+       "avgMatch": 87,
+       "unfilledSlots": 0,
+       "poolSize": 540
+      }
+     ]
+    }
+   }
+  }
+ }
+}

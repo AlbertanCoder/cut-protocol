@@ -1,0 +1,803 @@
+{
+ "persona": {
+  "idx": 155,
+  "id": "p155",
+  "tier": "IMPOSSIBLE",
+  "displayName": "long-haul trucker, 33",
+  "story": "vegan, celiac, and allergic to soy, peanuts, tree nuts and sesame, cutting at 2 lb/wk on a protein-priority plan",
+  "profile": {
+   "sex": "F",
+   "age": 33,
+   "heightCm": 160,
+   "startWeightKg": 61.7,
+   "goalWeightKg": 66.8,
+   "occupationKey": "driver-truck",
+   "trainingStyle": "weights",
+   "minutesPerSession": 30,
+   "sessionsPerWeek": 2,
+   "rateLbPerWeek": 2,
+   "dietaryStyle": "vegan",
+   "excludedFoods": [
+    "shellfish",
+    "soy",
+    "gluten",
+    "peanuts",
+    "tree nuts",
+    "sesame",
+    "legumes"
+   ],
+   "mealsPerDay": 5,
+   "snacksPerDay": 1,
+   "unitPref": "imperial",
+   "bodyFatPct": 41,
+   "bodyFatSource": "measured",
+   "cuisinePreferences": [
+    "mediterranean"
+   ],
+   "rateAcknowledged": true
+  },
+  "filters": {
+   "proteinPriority": true,
+   "budget": "moderate",
+   "cuisines": [
+    "mediterranean"
+   ]
+  },
+  "horizon": "day",
+  "walls": [
+   "shellfish",
+   "soy",
+   "gluten",
+   "peanut",
+   "tree nut",
+   "sesame"
+  ],
+  "freeTextExclusions": [
+   "legumes"
+  ],
+  "dietaryStyle": "vegan",
+  "bmi": 24.1,
+  "goalKind": "lean bulk",
+  "macroStyle": "high-protein",
+  "requestedButUnsupported": [
+   "wanted protein set explicitly in g/lb; the API derives the protein band from LBM (1.14-1.25 g/lb) and accepts no client protein target — only the per-request proteinPriority filter",
+   "this request is mathematically unsatisfiable by design — a clear, fast, honest refusal is the pass condition, and a confident plan is a critical honesty defect"
+  ],
+  "impossibleKind": "every-protein-walled",
+  "tupleKey": "[\"IMPOSSIBLE\",\"F\",33,160,61.7,66.8,\"driver-truck\",\"weights\",2,\"vegan\",[\"gluten\",\"legumes\",\"peanuts\",\"sesame\",\"shellfish\",\"soy\",\"tree nuts\"],5,1,\"high-protein\",\"day\",null,\"moderate\",true,null,\"every-protein-walled\"]"
+ },
+ "request": {
+  "horizon": "day",
+  "filters": {
+   "proteinPriority": true,
+   "budget": "moderate",
+   "cuisines": [
+    "mediterranean"
+   ]
+  }
+ },
+ "profileResponse": {
+  "id": "cms6x1b32041xwlw0vn2e7nza",
+  "userId": "cms6x1axp0045wl2o22we4omn",
+  "sex": "F",
+  "age": 33,
+  "heightCm": 160,
+  "bodyFatPct": 41,
+  "bodyFatSource": "measured",
+  "occupationKey": "driver-truck",
+  "activityOverride": null,
+  "sessionsPerWeek": 2,
+  "trainingStyle": "weights",
+  "minutesPerSession": 30,
+  "startWeightKg": 61.7,
+  "goalWeightKg": 66.8,
+  "startDate": "2026-07-29",
+  "unitPref": "imperial",
+  "rateLbPerWeek": 2,
+  "rateAcknowledged": true,
+  "floorKcal": null,
+  "excludedFormulas": [],
+  "targetKcal": 1229,
+  "mealsPerDay": 5,
+  "snacksPerDay": 1,
+  "excludedFoods": [
+   "shellfish",
+   "soy",
+   "gluten",
+   "peanuts",
+   "tree nuts",
+   "sesame",
+   "legumes"
+  ],
+  "dietaryStyle": "vegan",
+  "cuisinePreferences": [
+   "mediterranean"
+  ],
+  "mealPreferencesNote": null,
+  "maxPrepMin": null,
+  "budgetTier": null,
+  "allowBatch": null,
+  "maxComplexity": null,
+  "adaptiveTdee": true,
+  "proteinPriorityMode": false,
+  "updatedAt": "2026-07-30T02:50:00.951Z"
+ },
+ "generate": {
+  "status": 200,
+  "ms": 412,
+  "body": {
+   "id": "cms6x1ben042fwlw0nbazcly1",
+   "userId": "cms6x1axp0045wl2o22we4omn",
+   "startDate": "2026-07-27",
+   "createdAt": "2026-07-30T02:50:01.344Z",
+   "slots": [
+    {
+     "id": "cms6x1beo042hwlw03rudaxzs",
+     "planId": "cms6x1ben042fwlw0nbazcly1",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 0,
+     "recipeId": "cmrj2ucb308ljwlwshp004cle",
+     "proteinScale": 1.11,
+     "sidesScale": 1.11,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t7cs0043wlws7x1anr7j",
+       "name": "Cabbage",
+       "role": "veg",
+       "grams": 55
+      },
+      {
+       "foodId": "cmrj2t6w20022wlws8tukrt3u",
+       "name": "Spring Onions",
+       "role": "veg",
+       "grams": 610
+      },
+      {
+       "foodId": "cmrj2t6hb0007wlwsh6l6ynal",
+       "name": "Water",
+       "role": null,
+       "grams": 250
+      },
+      {
+       "foodId": "cmrj2t6gd0003wlwss7jf3wzf",
+       "name": "Salt",
+       "role": null,
+       "grams": 10
+      }
+     ],
+     "kcal": 203.45,
+     "protein": 11.768,
+     "fat": 1.434,
+     "carb": 46.09399999999999,
+     "warning": "Tried 5 recipe(s) for this slot, none fit within tolerance — closest was \"Lao Som Pak Pickled Cabbage\" (delivered 12g protein vs a 16g target).",
+     "locked": false,
+     "recipe": {
+      "id": "cmrj2ucb308ljwlwshp004cle",
+      "name": "Lao Som Pak Pickled Cabbage",
+      "description": null,
+      "steps": [
+       "Cut the cabbage and chop it into 1 inch pieces",
+       "Put the cabbage in a large bowl and add cold water to rinse.",
+       "Wash the cabbage. Rinse and drain three times.",
+       "In a large clean bowl, pour in the bottle of water.",
+       "Put the cabbage and green onion into the salt water mixture.",
+       "Add in the salt."
+      ],
+      "slotType": "meal",
+      "cuisine": "western-comfort",
+      "prepTimeMin": 27,
+      "source": "themealdb-import",
+      "mealCategory": null,
+      "kcal": 183.5,
+      "protein": 10.6,
+      "fat": 1.3,
+      "carb": 41.6,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 5.11,
+      "difficulty": 3,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-13T10:26:05.392Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x1bep042jwlw0nc4luxm1",
+     "planId": "cms6x1ben042fwlw0nbazcly1",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 1,
+     "recipeId": "cmrj2uhqt09t7wlwsgyejz3ia",
+     "proteinScale": 0.5,
+     "sidesScale": 0.5,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t7gt004mwlwsi9ouzdgd",
+       "name": "Aubergine",
+       "role": null,
+       "grams": 25
+      },
+      {
+       "foodId": "cmrj2t7gl004lwlwsnq6l22ft",
+       "name": "Courgettes",
+       "role": null,
+       "grams": 50
+      },
+      {
+       "foodId": "cmrj2t8ot00a7wlws9qadeyml",
+       "name": "Yellow Pepper",
+       "role": null,
+       "grams": 1
+      },
+      {
+       "foodId": "cmrj2t6ik000dwlwsj8e736h1",
+       "name": "Tomato",
+       "role": "veg",
+       "grams": 60
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "carb",
+       "grams": 9
+      },
+      {
+       "foodId": "cmrj2t7450030wlwso0gvjl7n",
+       "name": "Basil",
+       "role": null,
+       "grams": 13
+      },
+      {
+       "foodId": "cmrg8zxar000lwli0qy2ovmx4",
+       "name": "Onion",
+       "role": "veg",
+       "grams": 14
+      },
+      {
+       "foodId": "cmrj2t6rr001jwlwsqfi60fyj",
+       "name": "Garlic Clove",
+       "role": null,
+       "grams": 1
+      },
+      {
+       "foodId": "cmrj2t8it009hwlwsyj9qzgjo",
+       "name": "Red Wine Vinegar",
+       "role": "carb",
+       "grams": 1
+      },
+      {
+       "foodId": "cmrj2t6z2002gwlwsjklhz848",
+       "name": "Sugar",
+       "role": "carb",
+       "grams": 1
+      }
+     ],
+     "kcal": 293.52,
+     "protein": 9.976090000000001,
+     "fat": 9.61561,
+     "carb": 50.8928,
+     "warning": "Tried 5 recipe(s) for this slot, none fit within tolerance — closest was \"Ratatouille\" (landed 294 kcal vs a 225 target; delivered 10g protein vs a 18g target).",
+     "locked": false,
+     "recipe": {
+      "id": "cmrj2uhqt09t7wlwsgyejz3ia",
+      "name": "Ratatouille",
+      "description": null,
+      "steps": [
+       "Cut the aubergines in half lengthways. Place them on the board, cut side down, slice in half lengthways again and then across into 1.5cm chunks. Cut off the courgettes ends, then across into 1.5cm slices. Peel the peppers from stalk to bottom. Hold upright, cut around the stalk, then cut into 3 pieces. Cut away any membrane, then chop into bite-size chunks.",
+       "Score a small cross on the base of each tomato, then put them into a heatproof bowl. Pour boiling water over the tomatoes, leave for 20 secs, then remove. Pour the water away, replace the tomatoes and cover with cold water. Leave to cool, then peel the skin away. Quarter the tomatoes, scrape away the seeds with a spoon, then roughly chop the flesh.",
+       "Set a sauté pan over medium heat and when hot, pour in 2 tbsp olive oil. Brown the aubergines for 5 mins on each side until the pieces are soft. Set them aside and fry the courgettes in another tbsp oil for 5 mins, until golden on both sides. Repeat with the peppers. Don’t overcook the vegetables at this stage, as they have some more cooking left in the next step.",
+       "Tear up the basil leaves and set aside. Cook the onion in the pan for 5 mins. Add the garlic and fry for a further min. Stir in the vinegar and sugar, then tip in the tomatoes and half the basil. Return the vegetables to the pan with some salt and pepper and cook for 5 mins. Serve with basil."
+      ],
+      "slotType": "meal",
+      "cuisine": "western-comfort",
+      "prepTimeMin": 25,
+      "source": "themealdb-import",
+      "mealCategory": null,
+      "kcal": 583.5,
+      "protein": 20.3,
+      "fat": 18.3,
+      "carb": 103.1,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 2.33,
+      "difficulty": 4,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-13T10:26:12.437Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x1beq042lwlw04kc3l54l",
+     "planId": "cms6x1ben042fwlw0nbazcly1",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 2,
+     "recipeId": "cmrj2ukop0aglwlwsc8i4j96l",
+     "proteinScale": 2,
+     "sidesScale": 2,
+     "ingredients": [
+      {
+       "foodId": "cmrj2tca400nvwlwsnvfgtgb6",
+       "name": "Grits",
+       "role": null,
+       "grams": 40
+      },
+      {
+       "foodId": "cmrj2t6gd0003wlwss7jf3wzf",
+       "name": "Salt",
+       "role": null,
+       "grams": 3
+      },
+      {
+       "foodId": "cmrj2t6hb0007wlwsh6l6ynal",
+       "name": "Water",
+       "role": null,
+       "grams": 235
+      }
+     ],
+     "kcal": 28.4,
+     "protein": 0.476,
+     "fat": 0.7360000000000001,
+     "carb": 4.88,
+     "warning": "Tried 5 recipe(s) for this slot, none fit within tolerance — closest was \"Grits\" (landed 28 kcal vs a 206 target; delivered 0g protein vs a 21g target).",
+     "locked": false,
+     "recipe": {
+      "id": "cmrj2ukop0aglwlwsc8i4j96l",
+      "name": "Grits",
+      "description": null,
+      "steps": [
+       "Bring water with salt to a boil then add grits; reduce heat and cover. occasionally stirring.",
+       "Cook approximately 15 minutes or until grits have desired consistency.",
+       "Cool then serve"
+      ],
+      "slotType": "meal",
+      "cuisine": "western-comfort",
+      "prepTimeMin": 18,
+      "source": "themealdb-import",
+      "mealCategory": "breakfast_only",
+      "kcal": 13.3,
+      "protein": 0.2,
+      "fat": 0.3,
+      "carb": 2.3,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 0.07,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-13T10:26:16.250Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x1ber042nwlw0tqa51h6b",
+     "planId": "cms6x1ben042fwlw0nbazcly1",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 3,
+     "recipeId": "cmrj2ue950910wlwspp7h0swp",
+     "proteinScale": 0.5,
+     "sidesScale": 0.5,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t6t4001pwlwsxeja9565",
+       "name": "Potatoes",
+       "role": "veg",
+       "grams": 115
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "carb",
+       "grams": 5
+      },
+      {
+       "foodId": "cmrg8zxar000lwli0qy2ovmx4",
+       "name": "Onion",
+       "role": "veg",
+       "grams": 14
+      },
+      {
+       "foodId": "cmrj2t6ft0001wlwstiofk9on",
+       "name": "Garlic",
+       "role": "veg",
+       "grams": 1
+      },
+      {
+       "foodId": "cmrj2t6jp000iwlwsli2ckg55",
+       "name": "Paprika",
+       "role": null,
+       "grams": 1
+      },
+      {
+       "foodId": "cmrj2t6pz001bwlwsbarwpyy1",
+       "name": "Tomato Puree",
+       "role": "veg",
+       "grams": 15
+      },
+      {
+       "foodId": "cmrj2t8nj00a2wlwsr9mgwnlr",
+       "name": "Tinned Tomatos",
+       "role": "veg",
+       "grams": 30
+      },
+      {
+       "foodId": "cmrj2t7ix004wwlws9hj2ol5a",
+       "name": "Basil Leaves",
+       "role": null,
+       "grams": 13
+      }
+     ],
+     "kcal": 459.89,
+     "protein": 19.2592,
+     "fat": 8.996049999999997,
+     "carb": 80.2616,
+     "warning": "Tried 5 recipe(s) for this slot, none fit within tolerance — closest was \"Air fryer patatas bravas\" (landed 460 kcal vs a 276 target; delivered 19g protein vs a 23g target).",
+     "locked": false,
+     "recipe": {
+      "id": "cmrj2ue950910wlwspp7h0swp",
+      "name": "Air fryer patatas bravas",
+      "description": null,
+      "steps": [
+       "step 1",
+       "Soak the potatoes in just-boiled water for 30 mins, then drain and leave to air-dry for 5 mins. Heat the air fryer to 200C. Tip the potatoes into a bowl and drizzle over 1 tbsp of the oil and add 1/2 tsp each of salt and freshly ground black pepper. Mix to coat the potatoes all over, then tip into the air fryer basket and cook for 20-30 mins until crisp and golden.",
+       "step 2",
+       "Meanwhile, heat the remaining oil in a small pan over a medium-low heat and fry the onion for 8-10 mins until softened but not golden. Stir in the garlic and cook for a minute before adding the paprika and cooking for 30 seconds more. Stir in the tomato purée, cook for 1 min, then tip in the chopped tomatoes. Cook for 5-10 mins over a medium heat until thickened slightly.",
+       "step 3",
+       "Once the potatoes are cooked, tip out onto a platter and pour over the tomato sauce. Sprinkle with the basil leaves, then serve."
+      ],
+      "slotType": "meal",
+      "cuisine": "western-comfort",
+      "prepTimeMin": 29,
+      "source": "themealdb-import",
+      "mealCategory": null,
+      "kcal": 891,
+      "protein": 37.1,
+      "fat": 17.8,
+      "carb": 154.2,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 1.88,
+      "difficulty": 4,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-13T10:26:07.913Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x1ber042pwlw009wpshjn",
+     "planId": "cms6x1ben042fwlw0nbazcly1",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 4,
+     "recipeId": "cmrj2ujji0a77wlws88rpiynu",
+     "proteinScale": 0.5,
+     "sidesScale": 0.5,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t6ug001vwlwssesfsb74",
+       "name": "Leek",
+       "role": null,
+       "grams": 65
+      },
+      {
+       "foodId": "cmrj2t6j0000fwlwsog8rz1h6",
+       "name": "Red Pepper",
+       "role": null,
+       "grams": 2
+      },
+      {
+       "foodId": "cmrj2t6rc001hwlwsjpk7hg92",
+       "name": "Rice",
+       "role": "carb",
+       "grams": 25
+      },
+      {
+       "foodId": "cmrj2t6ft0001wlwstiofk9on",
+       "name": "Garlic",
+       "role": "veg",
+       "grams": 1
+      },
+      {
+       "foodId": "cmrj2ta2r00fewlwsu3015yzh",
+       "name": "Vegetable Stock",
+       "role": "carb",
+       "grams": 125
+      },
+      {
+       "foodId": "cmrj2t6jp000iwlwsli2ckg55",
+       "name": "Paprika",
+       "role": null,
+       "grams": 1
+      },
+      {
+       "foodId": "cmrj2t6jh000hwlwsev33v7zd",
+       "name": "Oregano",
+       "role": null,
+       "grams": 1
+      },
+      {
+       "foodId": "cmrj2t6h10006wlwslufza94y",
+       "name": "Parsley",
+       "role": null,
+       "grams": 1
+      },
+      {
+       "foodId": "cmrj2t7450030wlwso0gvjl7n",
+       "name": "Basil",
+       "role": null,
+       "grams": 1
+      },
+      {
+       "foodId": "cmrj2t6gd0003wlwss7jf3wzf",
+       "name": "Salt",
+       "role": null,
+       "grams": 1
+      },
+      {
+       "foodId": "cmrj2t6gl0004wlws73buybhw",
+       "name": "Pepper",
+       "role": null,
+       "grams": 1
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "carb",
+       "grams": 1
+      }
+     ],
+     "kcal": 194.79,
+     "protein": 6.375920000000001,
+     "fat": 4.54192,
+     "carb": 33.49229999999999,
+     "warning": "Tried 5 recipe(s) for this slot, none fit within tolerance — closest was \"Tavë me Presh ska Mish Meatless Leek Bake\" (delivered 6g protein vs a 26g target).",
+     "locked": false,
+     "recipe": {
+      "id": "cmrj2ujji0a77wlws88rpiynu",
+      "name": "Tavë me Presh ska Mish Meatless Leek Bake",
+      "description": null,
+      "steps": [
+       "Prepare the dish",
+       "Fry the leeks in a small dash of olive oil for a few minutes until they start to brown.",
+       "Prepare the Dish",
+       "Add the roasted red peppers, garlic, stock, herbs, salt, pepper and paprika. Give it a good stir, add the rice and stir again.",
+       "Leave it to come to the boil. Leave to simmer for 2 minutes.",
+       "Pour the mixture into a baking tray with a depth of 2 inches or more. Mix thoroughly and ensure equally levelled out.",
+       "Cooking",
+       "Place on the bottom self of a preheated oven at 180 degrees. Leave to bake for 1 hour.",
+       "Serving",
+       "Once cooked turn off the oven and keeping the door open leave the leek bake to cool for 10 minutes before serving."
+      ],
+      "slotType": "meal",
+      "cuisine": "western-comfort",
+      "prepTimeMin": 43,
+      "source": "themealdb-import",
+      "mealCategory": null,
+      "kcal": 368.8,
+      "protein": 12.2,
+      "fat": 7.9,
+      "carb": 64.2,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 1.7,
+      "difficulty": 6,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-13T10:26:14.767Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x1bes042rwlw0m75hru74",
+     "planId": "cms6x1ben042fwlw0nbazcly1",
+     "dayOfWeek": 2,
+     "slotType": "snack",
+     "slotIndex": 0,
+     "recipeId": null,
+     "proteinScale": 1,
+     "sidesScale": 1,
+     "ingredients": [],
+     "kcal": 0,
+     "protein": 0,
+     "fat": 0,
+     "carb": 0,
+     "warning": "No eligible snack recipe left for this slot.",
+     "locked": false,
+     "recipe": null
+    }
+   ],
+   "groceryList": null,
+   "meta": {
+    "matchPct": 62,
+    "attempts": 5,
+    "score": {
+     "daysInTolerance": 0,
+     "avgMatch": 62,
+     "days": [
+      {
+       "dayOfWeek": 2,
+       "dayName": "Wednesday",
+       "matchPct": 62,
+       "totals": {
+        "kcal": 1180,
+        "protein": 48,
+        "fat": 25,
+        "carb": 216
+       },
+       "kcalDeltaPct": -4,
+       "proteinShortPct": 49.9,
+       "fatOk": true,
+       "carbOk": false,
+       "inTolerance": false,
+       "miss": "48 g protein vs 96 g — 48 g short; 216 g carbs vs a 108–132 g range — 84 g over",
+       "unfilledSlots": 1,
+       "warnedSlots": 6,
+       "proteinFloor": {
+        "met": false,
+        "floorG": 91,
+        "achievedG": 47.9,
+        "shortG": 43.1,
+        "shortPct": 47.4,
+        "reason": "43.1 g short of the 91 g protein floor (47% under) — the compliant pool couldn't scale up to close the gap within the 0.5-2x portion limit."
+       },
+       "windowIndex": 0,
+       "dayIndex": 0,
+       "key": "0:2"
+      }
+     ],
+     "totalDays": 1,
+     "floorDaysMet": 0,
+     "floorDaysTotal": 1
+    },
+    "days": [
+     {
+      "dayOfWeek": 2,
+      "dayName": "Wednesday",
+      "matchPct": 62,
+      "totals": {
+       "kcal": 1180,
+       "protein": 48,
+       "fat": 25,
+       "carb": 216
+      },
+      "kcalDeltaPct": -4,
+      "proteinShortPct": 49.9,
+      "fatOk": true,
+      "carbOk": false,
+      "inTolerance": false,
+      "miss": "48 g protein vs 96 g — 48 g short; 216 g carbs vs a 108–132 g range — 84 g over",
+      "unfilledSlots": 1,
+      "warnedSlots": 6,
+      "proteinFloor": {
+       "met": false,
+       "floorG": 91,
+       "achievedG": 47.9,
+       "shortG": 43.1,
+       "shortPct": 47.4,
+       "reason": "43.1 g short of the 91 g protein floor (47% under) — the compliant pool couldn't scale up to close the gap within the 0.5-2x portion limit."
+      },
+      "windowIndex": 0,
+      "dayIndex": 0,
+      "key": "0:2"
+     }
+    ],
+    "diagnosis": {
+     "feasible": false,
+     "reasons": [
+      "1 of 6 slots over 1 days came back empty — no compliant recipe was left that could fill them.",
+      "Protein-priority mode: the 91g/day floor wasn't met on 1 day(s) — only 1 of 20 compliant recipes carry enough protein density to close the gap within the 0.5-2x portion limit.",
+      "Your library has no snack-sized recipe that fits your rules — all 1 snack slots this week come back empty.",
+      "Your targets need ~7.8g protein per 100 kcal; only 0 of 20 eligible recipes come close (20+ needed for a full varied week).",
+      "1 day(s) landed outside your 108–132 g carb range — portion scaling moves a dish's calories, not its fat/carb ratio, so the pool's composition is what binds here."
+     ],
+     "suggestions": [
+      "AI-generate a few high-protein compliant recipes, set the protein-preference filter, or allow batch-cooking repeats of the densest dishes.",
+      "Set snacks per day to 0 and fold those calories into your meals, or AI-generate a few compliant snacks on the Recipes tab.",
+      "Set the protein-preference filter, or AI-generate a few high-protein recipes to deepen the pool.",
+      "Add (or AI-generate) a few recipes built around the macro you keep missing, or drop the cuisine/protein preference so the solver can reach dishes that carry it."
+     ],
+     "binding": {
+      "key": "snack-pool",
+      "label": "your snack-eligible recipe pool",
+      "detail": "no snack-sized recipe fits your rules, so all 1 snack slot(s) come back empty."
+     }
+    },
+    "poolCounts": {
+     "raw": 889,
+     "afterDiet": 20,
+     "afterPrep": 20,
+     "afterStack": 20,
+     "stackExplain": null
+    },
+    "variety": {
+     "mealEligible": 16,
+     "usableForSlot": 5,
+     "slotKcal": 228,
+     "snackEligible": 0,
+     "weeklyMealSlots": 35,
+     "weeklySnackSlots": 7,
+     "repeatCap": 2,
+     "distinctWeeks": 0.1,
+     "horizonWeeks": 1,
+     "sustainsHorizon": false,
+     "notes": [
+      "5 of your 16 compliant recipes can be portioned to a 228 kcal meal — about 0.1 week(s) of 35 meals before dishes start repeating, so over 1 weeks you will see favourites come back.",
+      "Your library has no snack-sized recipe that fits your rules — snack slots stay empty until you add one.",
+      "1 day: 5 distinct dish(es) across 5 filled slot(s); most-repeated dish appears 1x against a 2x cap for this horizon (2x per week)."
+     ],
+     "horizon": {
+      "weeks": 1,
+      "days": 1,
+      "perWeekCap": 2,
+      "horizonRepeatCap": 2,
+      "mealSlots": 5,
+      "snackSlots": 1,
+      "totalSlots": 6,
+      "distinctFloor": 3,
+      "distinctRecipes": 5,
+      "maxRepeat": 1,
+      "maxRepeatRecipeId": "cmrj2ucb308ljwlwshp004cle",
+      "lockedRepeatsOfMax": 0,
+      "filledSlots": 5,
+      "unfilledSlots": 1,
+      "requiredDistinct": 3,
+      "capHeld": true,
+      "floorHeld": true
+     }
+    },
+    "priorWeeksConsidered": 0,
+    "horizon": {
+     "key": "day",
+     "label": "1 day",
+     "days": 1,
+     "kind": "days",
+     "weeks": 1,
+     "custom": false,
+     "startDate": "2026-07-29",
+     "endDate": "2026-07-29",
+     "startDayOfWeek": 2,
+     "weeksWritten": 1,
+     "solveMs": 1,
+     "weekPlans": [
+      {
+       "startDate": "2026-07-27",
+       "dayIndices": [
+        2
+       ],
+       "days": 1,
+       "daysInTolerance": 0,
+       "avgMatch": 62,
+       "unfilledSlots": 1,
+       "poolSize": 20
+      }
+     ]
+    }
+   }
+  }
+ }
+}

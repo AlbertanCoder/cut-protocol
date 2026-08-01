@@ -1,0 +1,584 @@
+{
+ "persona": {
+  "idx": 32,
+  "id": "p032",
+  "tier": "EASY",
+  "displayName": "sedentary senior, 48",
+  "story": "sedentary senior, 48, male, 183 cm / 57.6 kg (BMI 17.2), maintain, none diet, avoiding dairy, low-fat, 3 meals + 1 snacks, wants a single day",
+  "profile": {
+   "sex": "M",
+   "age": 48,
+   "heightCm": 183,
+   "startWeightKg": 57.6,
+   "goalWeightKg": 57.6,
+   "occupationKey": "unemployed-home",
+   "trainingStyle": "cardio",
+   "minutesPerSession": 20,
+   "sessionsPerWeek": 2,
+   "rateLbPerWeek": 0.25,
+   "dietaryStyle": "none",
+   "excludedFoods": [
+    "dairy"
+   ],
+   "mealsPerDay": 3,
+   "snacksPerDay": 1,
+   "unitPref": "metric",
+   "bodyFatPct": 9,
+   "bodyFatSource": "measured",
+   "goalWeightAcknowledged": true
+  },
+  "filters": {},
+  "horizon": "day",
+  "walls": [
+   "dairy"
+  ],
+  "freeTextExclusions": [],
+  "dietaryStyle": "none",
+  "bmi": 17.2,
+  "goalKind": "maintain",
+  "macroStyle": "low-fat",
+  "requestedButUnsupported": [
+   "wanted a low-fat split; the fat band is fixed at LBM x0.34-0.40 and is not client-settable"
+  ],
+  "goalBmi": 17.2,
+  "tupleKey": "[\"EASY\",\"M\",48,183,57.6,57.6,\"unemployed-home\",\"cardio\",0.25,\"none\",[\"dairy\"],3,1,\"low-fat\",\"day\",null,null,null,null,null]"
+ },
+ "request": {
+  "horizon": "day",
+  "filters": {}
+ },
+ "profileResponse": {
+  "id": "cms6x0f6v0131wlw03tva37ml",
+  "userId": "cms6x0f1h000qwl2ou56m37hz",
+  "sex": "M",
+  "age": 48,
+  "heightCm": 183,
+  "bodyFatPct": 9,
+  "bodyFatSource": "measured",
+  "occupationKey": "unemployed-home",
+  "activityOverride": null,
+  "sessionsPerWeek": 2,
+  "trainingStyle": "cardio",
+  "minutesPerSession": 20,
+  "startWeightKg": 57.6,
+  "goalWeightKg": 57.6,
+  "startDate": "2026-07-29",
+  "unitPref": "metric",
+  "rateLbPerWeek": 0.25,
+  "rateAcknowledged": false,
+  "floorKcal": null,
+  "excludedFormulas": [],
+  "targetKcal": 1725,
+  "mealsPerDay": 3,
+  "snacksPerDay": 1,
+  "excludedFoods": [
+   "dairy"
+  ],
+  "dietaryStyle": "none",
+  "cuisinePreferences": [],
+  "mealPreferencesNote": null,
+  "maxPrepMin": null,
+  "budgetTier": null,
+  "allowBatch": null,
+  "maxComplexity": null,
+  "adaptiveTdee": true,
+  "proteinPriorityMode": false,
+  "updatedAt": "2026-07-30T02:49:19.605Z"
+ },
+ "generate": {
+  "status": 200,
+  "ms": 657,
+  "body": {
+   "id": "cms6x0fpa013twlw0v5dzqh7y",
+   "userId": "cms6x0f1h000qwl2ou56m37hz",
+   "startDate": "2026-07-27",
+   "createdAt": "2026-07-30T02:49:20.255Z",
+   "slots": [
+    {
+     "id": "cms6x0fpc013vwlw0cituotwb",
+     "planId": "cms6x0fpa013twlw0v5dzqh7y",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 0,
+     "recipeId": "cmrul79yh00b0wl80dhb4azvh",
+     "proteinScale": 0.5,
+     "sidesScale": 0.91,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t7t00067wlwsj23ngikm",
+       "name": "Egg White",
+       "role": "protein",
+       "grams": 130
+      },
+      {
+       "foodId": "cmrukzaed0004wlbwdxnybljb",
+       "name": "Lentil pasta, dry",
+       "role": "carb",
+       "grams": 90
+      },
+      {
+       "foodId": "cmrj2t6na000ywlws9jek4w4z",
+       "name": "Broccoli",
+       "role": "veg",
+       "grams": 100
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 462.5,
+     "protein": 38.98,
+     "fat": 7.140000000000001,
+     "carb": 58.83799999999999,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrul79yh00b0wl80dhb4azvh",
+      "name": "High-Protein Egg White & Broccoli with Lentil Pasta",
+      "description": null,
+      "steps": [
+       "Cook the egg white.",
+       "Serve over lentil pasta with broccoli."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 572.1,
+      "protein": 55.6,
+      "fat": 7.4,
+      "carb": 68,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 3.66,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:45:29.897Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x0fpd013xwlw0qqafj3ib",
+     "planId": "cms6x0fpa013twlw0v5dzqh7y",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 1,
+     "recipeId": "cmrujkwve00biwl9o18s39qzv",
+     "proteinScale": 2,
+     "sidesScale": 1,
+     "ingredients": [
+      {
+       "foodId": "cmrj2tbsj00m1wlwsfeuh3jsf",
+       "name": "flax eggs",
+       "role": "protein",
+       "grams": 300
+      },
+      {
+       "foodId": "cmrevpcn2000ewl5gmlyzu0vd",
+       "name": "White rice, cooked",
+       "role": "carb",
+       "grams": 160
+      },
+      {
+       "foodId": "cmrevpcnh000iwl5gh2zjhyqe",
+       "name": "Bell peppers",
+       "role": "veg",
+       "grams": 80
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 10
+      }
+     ],
+     "kcal": 487.8,
+     "protein": 37.21999999999999,
+     "fat": 10.72,
+     "carb": 56.68000000000001,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrujkwve00biwl9o18s39qzv",
+      "name": "Classic Eggs & Bell Peppers with Rice",
+      "description": null,
+      "steps": [
+       "Cook the eggs.",
+       "Serve with white rice and bell peppers."
+      ],
+      "slotType": "meal",
+      "cuisine": "american",
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 405.3,
+      "protein": 21.2,
+      "fat": 10.7,
+      "carb": 53.1,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 2.95,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:00:06.890Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x0fpe0141wlw0rgmoewu7",
+     "planId": "cms6x0fpa013twlw0v5dzqh7y",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 2,
+     "recipeId": "cmrj2te56011xwlwsr6h3ukje",
+     "proteinScale": 1.4,
+     "sidesScale": 1.33,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t6jx000jwlws245wvtmm",
+       "name": "Beef Stock",
+       "role": "protein",
+       "grams": 355
+      },
+      {
+       "foodId": "cmrg8zxar000lwli0qy2ovmx4",
+       "name": "Onion",
+       "role": "veg",
+       "grams": 35
+      },
+      {
+       "foodId": "cmrj2t6ye002dwlwssjv94yyn",
+       "name": "Ginger",
+       "role": "veg",
+       "grams": 35
+      },
+      {
+       "foodId": "cmrj2t72a002uwlwsg6tictrb",
+       "name": "Cinnamon Stick",
+       "role": null,
+       "grams": 1
+      },
+      {
+       "foodId": "cmrj2t72s002vwlwsw9c3ovn9",
+       "name": "Star Anise",
+       "role": null,
+       "grams": 65
+      },
+      {
+       "foodId": "cmrj2t730002wwlwslqvwp0y5",
+       "name": "Coriander Seeds",
+       "role": "carb",
+       "grams": 1
+      },
+      {
+       "foodId": "cmrj2t721002twlwsox4gqm64",
+       "name": "Cloves",
+       "role": null,
+       "grams": 1
+      },
+      {
+       "foodId": "cmrj2t6mo000vwlws2107zlap",
+       "name": "Sirloin steak",
+       "role": "protein",
+       "grams": 80
+      },
+      {
+       "foodId": "cmrj2t6zh002iwlwsg93wm039",
+       "name": "Palm Sugar",
+       "role": "carb",
+       "grams": 1
+      },
+      {
+       "foodId": "cmrj2t73d002xwlwsmcicl8l0",
+       "name": "Fish Sauce",
+       "role": "protein",
+       "grams": 3
+      },
+      {
+       "foodId": "cmrj2t6ls000rwlwsf7bu3ffs",
+       "name": "Soy Sauce",
+       "role": "carb",
+       "grams": 3
+      },
+      {
+       "foodId": "cmrj2t73m002ywlwsrp8x2000",
+       "name": "Rice Noodles",
+       "role": "carb",
+       "grams": 65
+      },
+      {
+       "foodId": "cmrj2t6w20022wlws8tukrt3u",
+       "name": "Spring Onions",
+       "role": "veg",
+       "grams": 20
+      },
+      {
+       "foodId": "cmrj2t73v002zwlwswfhsrll1",
+       "name": "Birds-eye Chillies",
+       "role": null,
+       "grams": 6
+      },
+      {
+       "foodId": "cmrj2t7450030wlwso0gvjl7n",
+       "name": "Basil",
+       "role": null,
+       "grams": 10
+      },
+      {
+       "foodId": "cmrj2t74b0031wlwsgf5ra3ry",
+       "name": "Coriander",
+       "role": null,
+       "grams": 10
+      },
+      {
+       "foodId": "cmrj2t6rj001iwlwsv6losppt",
+       "name": "Lime",
+       "role": "veg",
+       "grams": 15
+      }
+     ],
+     "kcal": 573.3999999999999,
+     "protein": 46.1117,
+     "fat": 19.5294,
+     "carb": 68.28410000000001,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrj2te56011xwlwsr6h3ukje",
+      "name": "Beef pho",
+      "description": null,
+      "steps": [
+       "step 1",
+       "Tip the beef stock along with 500ml of water into a large saucepan. Sit the onion and ginger in a frying pan over a high heat and char on all sides, around 3-5 mins (you can also do this under your grill). Once charred, add to the beef stock. In the same pan, toast the spices for 2-3 mins and once they begin to smell fragrant, add them to the beef stock as well. Bring the stock to the boil, then turn to a simmer and cook for 30mins before straining.",
+       "step 2",
+       "Meanwhile, cut the fat from the steak and wrap in cling film, then put into the freezer for 15 mins – this will make your steak really easy to slice! Slice it thinly, then cover with cling film again and pop into the fridge.",
+       "step 3",
+       "Taste the beef stock and use the palm sugar, fish sauce and soy to season. Cook the noodles according to package instructions and split between two bowls, topping each with the sliced beef. Bring the stock to the boil and then pour into the bowls (the heat will cook the beef). Top each with the spring onions, chilli slices and herbs. Serve with the lime wedges to squeeze over."
+      ],
+      "slotType": "meal",
+      "cuisine": "asian",
+      "prepTimeMin": 36,
+      "source": "themealdb-import",
+      "mealCategory": null,
+      "kcal": 426.1,
+      "protein": 33.4,
+      "fat": 14.5,
+      "carb": 51.9,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 7.12,
+      "difficulty": 6,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-13T10:25:21.114Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x0fpf0143wlw0d8elgg7v",
+     "planId": "cms6x0fpa013twlw0v5dzqh7y",
+     "dayOfWeek": 2,
+     "slotType": "snack",
+     "slotIndex": 0,
+     "recipeId": "cmrevpcyt004lwl5gx6bidm0z",
+     "proteinScale": 0.5,
+     "sidesScale": 0.5,
+     "ingredients": [
+      {
+       "foodId": "cmrevpcma0007wl5gfj59j5mk",
+       "name": "Beef jerky",
+       "role": "protein",
+       "grams": 30
+      },
+      {
+       "foodId": "cmrevpcmq000bwl5g2mbd0jsv",
+       "name": "Pork rinds",
+       "role": "protein",
+       "grams": 15
+      }
+     ],
+     "kcal": 204.6,
+     "protein": 19.05,
+     "fat": 12.45,
+     "carb": 3.3,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrevpcyt004lwl5gx6bidm0z",
+      "name": "Jerky & Pork Rinds Snack Plate",
+      "description": "Closer / site valve — his words.",
+      "steps": [
+       "No cooking — portion and eat."
+      ],
+      "slotType": "snack",
+      "cuisine": "western-comfort",
+      "prepTimeMin": 0,
+      "source": "curated",
+      "mealCategory": null,
+      "kcal": 409.2,
+      "protein": 38.1,
+      "fat": 24.9,
+      "carb": 6.6,
+      "tasteTier": "really_good",
+      "tasteTierSource": "curated",
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 6.75,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-10T11:55:10.950Z",
+      "createdByUserId": null
+     }
+    }
+   ],
+   "groceryList": null,
+   "meta": {
+    "matchPct": 95,
+    "attempts": 1,
+    "score": {
+     "daysInTolerance": 1,
+     "avgMatch": 95,
+     "days": [
+      {
+       "dayOfWeek": 2,
+       "dayName": "Wednesday",
+       "matchPct": 95,
+       "totals": {
+        "kcal": 1728,
+        "protein": 141,
+        "fat": 50,
+        "carb": 187
+       },
+       "kcalDeltaPct": 0.2,
+       "proteinShortPct": 0,
+       "fatOk": true,
+       "carbOk": true,
+       "inTolerance": true,
+       "miss": null,
+       "unfilledSlots": 0,
+       "warnedSlots": 0,
+       "windowIndex": 0,
+       "dayIndex": 0,
+       "key": "0:2"
+      }
+     ],
+     "totalDays": 1
+    },
+    "days": [
+     {
+      "dayOfWeek": 2,
+      "dayName": "Wednesday",
+      "matchPct": 95,
+      "totals": {
+       "kcal": 1728,
+       "protein": 141,
+       "fat": 50,
+       "carb": 187
+      },
+      "kcalDeltaPct": 0.2,
+      "proteinShortPct": 0,
+      "fatOk": true,
+      "carbOk": true,
+      "inTolerance": true,
+      "miss": null,
+      "unfilledSlots": 0,
+      "warnedSlots": 0,
+      "windowIndex": 0,
+      "dayIndex": 0,
+      "key": "0:2"
+     }
+    ],
+    "diagnosis": null,
+    "poolCounts": {
+     "raw": 889,
+     "afterDiet": 550,
+     "afterPrep": 550,
+     "afterStack": 550,
+     "stackExplain": null
+    },
+    "variety": {
+     "mealEligible": 521,
+     "usableForSlot": 349,
+     "slotKcal": 508,
+     "snackEligible": 5,
+     "weeklyMealSlots": 21,
+     "weeklySnackSlots": 7,
+     "repeatCap": 2,
+     "distinctWeeks": 16.6,
+     "horizonWeeks": 1,
+     "sustainsHorizon": true,
+     "notes": [
+      "1 day: 4 distinct dish(es) across 4 filled slot(s); most-repeated dish appears 1x against a 2x cap for this horizon (2x per week)."
+     ],
+     "horizon": {
+      "weeks": 1,
+      "days": 1,
+      "perWeekCap": 2,
+      "horizonRepeatCap": 2,
+      "mealSlots": 3,
+      "snackSlots": 1,
+      "totalSlots": 4,
+      "distinctFloor": 2,
+      "distinctRecipes": 4,
+      "maxRepeat": 1,
+      "maxRepeatRecipeId": "cmrul79yh00b0wl80dhb4azvh",
+      "lockedRepeatsOfMax": 0,
+      "filledSlots": 4,
+      "unfilledSlots": 0,
+      "requiredDistinct": 2,
+      "capHeld": true,
+      "floorHeld": true
+     }
+    },
+    "priorWeeksConsidered": 0,
+    "horizon": {
+     "key": "day",
+     "label": "1 day",
+     "days": 1,
+     "kind": "days",
+     "weeks": 1,
+     "custom": false,
+     "startDate": "2026-07-29",
+     "endDate": "2026-07-29",
+     "startDayOfWeek": 2,
+     "weeksWritten": 1,
+     "solveMs": 1,
+     "weekPlans": [
+      {
+       "startDate": "2026-07-27",
+       "dayIndices": [
+        2
+       ],
+       "days": 1,
+       "daysInTolerance": 1,
+       "avgMatch": 95,
+       "unfilledSlots": 0,
+       "poolSize": 550
+      }
+     ]
+    }
+   }
+  }
+ }
+}

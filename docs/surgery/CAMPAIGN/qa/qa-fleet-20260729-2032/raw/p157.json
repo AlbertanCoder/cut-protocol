@@ -1,0 +1,467 @@
+{
+ "persona": {
+  "idx": 157,
+  "id": "p157",
+  "tier": "EASY",
+  "displayName": "retail cashier, 40",
+  "story": "retail cashier, 40, female, 159 cm / 44.2 kg (BMI 17.5), recomp, vegetarian diet, avoiding soy, balanced, 3 meals + 0 snacks, wants a single day",
+  "profile": {
+   "sex": "F",
+   "age": 40,
+   "heightCm": 159,
+   "startWeightKg": 44.2,
+   "goalWeightKg": 44.2,
+   "occupationKey": "cashier",
+   "trainingStyle": "cardio",
+   "minutesPerSession": 25,
+   "sessionsPerWeek": 2,
+   "rateLbPerWeek": 0.5,
+   "dietaryStyle": "vegetarian",
+   "excludedFoods": [
+    "soy"
+   ],
+   "mealsPerDay": 3,
+   "snacksPerDay": 0,
+   "unitPref": "imperial",
+   "bodyFatPct": 18,
+   "bodyFatSource": "measured",
+   "cuisinePreferences": [
+    "japanese",
+    "mexican"
+   ],
+   "goalWeightAcknowledged": true
+  },
+  "filters": {
+   "maxPrepMin": 15,
+   "cuisines": [
+    "japanese",
+    "mexican"
+   ]
+  },
+  "horizon": "day",
+  "walls": [
+   "soy"
+  ],
+  "freeTextExclusions": [],
+  "dietaryStyle": "vegetarian",
+  "bmi": 17.5,
+  "goalKind": "recomp",
+  "macroStyle": "balanced",
+  "requestedButUnsupported": [],
+  "goalBmi": 17.5,
+  "tupleKey": "[\"EASY\",\"F\",40,159,44.2,44.2,\"cashier\",\"cardio\",0.5,\"vegetarian\",[\"soy\"],3,0,\"balanced\",\"day\",15,null,null,null,null]"
+ },
+ "request": {
+  "horizon": "day",
+  "filters": {
+   "maxPrepMin": 15,
+   "cuisines": [
+    "japanese",
+    "mexican"
+   ]
+  }
+ },
+ "profileResponse": {
+  "id": "cms6x1bqj043hwlw0fe6ca3sn",
+  "userId": "cms6x1bfh0047wl2ob90we3ak",
+  "sex": "F",
+  "age": 40,
+  "heightCm": 159,
+  "bodyFatPct": 18,
+  "bodyFatSource": "measured",
+  "occupationKey": "cashier",
+  "activityOverride": null,
+  "sessionsPerWeek": 2,
+  "trainingStyle": "cardio",
+  "minutesPerSession": 25,
+  "startWeightKg": 44.2,
+  "goalWeightKg": 44.2,
+  "startDate": "2026-07-29",
+  "unitPref": "imperial",
+  "rateLbPerWeek": 0.5,
+  "rateAcknowledged": false,
+  "floorKcal": null,
+  "excludedFormulas": [],
+  "targetKcal": 1312,
+  "mealsPerDay": 3,
+  "snacksPerDay": 0,
+  "excludedFoods": [
+   "soy"
+  ],
+  "dietaryStyle": "vegetarian",
+  "cuisinePreferences": [
+   "japanese",
+   "mexican"
+  ],
+  "mealPreferencesNote": null,
+  "maxPrepMin": null,
+  "budgetTier": null,
+  "allowBatch": null,
+  "maxComplexity": null,
+  "adaptiveTdee": true,
+  "proteinPriorityMode": false,
+  "updatedAt": "2026-07-30T20:33:48.872Z"
+ },
+ "generate": {
+  "status": 200,
+  "ms": 257,
+  "body": {
+   "id": "cms7z1d8l038jwlgwu4bny9l5",
+   "userId": "cms6x1bfh0047wl2ob90we3ak",
+   "startDate": "2026-07-27",
+   "createdAt": "2026-07-30T20:33:49.125Z",
+   "slots": [
+    {
+     "id": "cms7z1d8m038lwlgw21s6fbwk",
+     "planId": "cms7z1d8l038jwlgwu4bny9l5",
+     "dayOfWeek": 3,
+     "slotType": "meal",
+     "slotIndex": 0,
+     "recipeId": "cmrul79z400c0wl8064gi62w8",
+     "proteinScale": 0.58,
+     "sidesScale": 1.56,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t7t00067wlwsj23ngikm",
+       "name": "Egg White",
+       "role": "protein",
+       "grams": 150
+      },
+      {
+       "foodId": "cmrj2t88z0087wlwsmsmchxzb",
+       "name": "Quinoa",
+       "role": "carb",
+       "grams": 170
+      },
+      {
+       "foodId": "cmrj2t6na000ywlws9jek4w4z",
+       "name": "Broccoli",
+       "role": "veg",
+       "grams": 170
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      },
+      {
+       "foodId": "cmrj2t7p5005pwlws4acmktnt",
+       "name": "Greek Yogurt",
+       "role": "protein",
+       "grams": 16,
+       "adjuster": true
+      }
+     ],
+     "kcal": 393.64,
+     "protein": 29.547,
+     "fat": 8.904399999999999,
+     "carb": 50.985,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrul79z400c0wl8064gi62w8",
+      "name": "High-Protein Egg White & Broccoli with Quinoa",
+      "description": null,
+      "steps": [
+       "Cook the egg white.",
+       "Serve over quinoa with broccoli."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 354.1,
+      "protein": 35.5,
+      "fat": 7.5,
+      "carb": 36.5,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 3.86,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:45:29.920Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z1d8n038nwlgw13jetc80",
+     "planId": "cms7z1d8l038jwlgwu4bny9l5",
+     "dayOfWeek": 3,
+     "slotType": "meal",
+     "slotIndex": 1,
+     "recipeId": "cmrujkwvk00buwl9o5qzvdm2i",
+     "proteinScale": 1.59,
+     "sidesScale": 1.08,
+     "ingredients": [
+      {
+       "foodId": "cmrj2tbsj00m1wlwsfeuh3jsf",
+       "name": "flax eggs",
+       "role": "protein",
+       "grams": 240
+      },
+      {
+       "foodId": "cmrj2t7fb004fwlws8ezof2dp",
+       "name": "Russet Potato",
+       "role": "carb",
+       "grams": 195
+      },
+      {
+       "foodId": "cmrevpcnh000iwl5gh2zjhyqe",
+       "name": "Bell peppers",
+       "role": "veg",
+       "grams": 85
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 10
+      }
+     ],
+     "kcal": 433.6,
+     "protein": 31.6585,
+     "fat": 10.5085,
+     "carb": 52.494,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrujkwvk00buwl9o5qzvdm2i",
+      "name": "Classic Eggs & Bell Peppers with Potato",
+      "description": null,
+      "steps": [
+       "Cook the eggs.",
+       "Serve with potato and bell peppers."
+      ],
+      "slotType": "meal",
+      "cuisine": "american",
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 368.3,
+      "protein": 21.584,
+      "fat": 10.474,
+      "carb": 46.85999999999999,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 3.01,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:00:06.897Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z1d8n038pwlgwnwsuk3j3",
+     "planId": "cms7z1d8l038jwlgwu4bny9l5",
+     "dayOfWeek": 3,
+     "slotType": "meal",
+     "slotIndex": 2,
+     "recipeId": "cmrul79z000buwl80q9shge3z",
+     "proteinScale": 0.84,
+     "sidesScale": 2,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t7t00067wlwsj23ngikm",
+       "name": "Egg White",
+       "role": "protein",
+       "grams": 220
+      },
+      {
+       "foodId": "cmrj2t88z0087wlwsmsmchxzb",
+       "name": "Quinoa",
+       "role": "carb",
+       "grams": 220
+      },
+      {
+       "foodId": "cmrevpcnl000jwl5gnqnk630b",
+       "name": "Cucumber",
+       "role": "veg",
+       "grams": 180
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 448,
+     "protein": 34.282,
+     "fat": 9.512,
+     "carb": 55.94,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrul79z000buwl80q9shge3z",
+      "name": "High-Protein Egg White & Cucumber with Quinoa",
+      "description": null,
+      "steps": [
+       "Cook the egg white.",
+       "Serve over quinoa with cucumber."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 329,
+      "protein": 33.191,
+      "fat": 7.256,
+      "carb": 31.51000000000001,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 3.62,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:45:29.916Z",
+      "createdByUserId": null
+     }
+    }
+   ],
+   "groceryList": null,
+   "meta": {
+    "matchPct": 97,
+    "attempts": 1,
+    "score": {
+     "daysInTolerance": 1,
+     "avgMatch": 97,
+     "days": [
+      {
+       "dayOfWeek": 3,
+       "dayName": "Thursday",
+       "matchPct": 97,
+       "totals": {
+        "kcal": 1275,
+        "protein": 95,
+        "fat": 29,
+        "carb": 159
+       },
+       "kcalDeltaPct": -2.8,
+       "proteinShortPct": 0,
+       "fatOk": true,
+       "carbOk": true,
+       "inTolerance": true,
+       "miss": null,
+       "unfilledSlots": 0,
+       "warnedSlots": 0,
+       "windowIndex": 0,
+       "dayIndex": 0,
+       "key": "0:3"
+      }
+     ],
+     "totalDays": 1
+    },
+    "days": [
+     {
+      "dayOfWeek": 3,
+      "dayName": "Thursday",
+      "matchPct": 97,
+      "totals": {
+       "kcal": 1275,
+       "protein": 95,
+       "fat": 29,
+       "carb": 159
+      },
+      "kcalDeltaPct": -2.8,
+      "proteinShortPct": 0,
+      "fatOk": true,
+      "carbOk": true,
+      "inTolerance": true,
+      "miss": null,
+      "unfilledSlots": 0,
+      "warnedSlots": 0,
+      "windowIndex": 0,
+      "dayIndex": 0,
+      "key": "0:3"
+     }
+    ],
+    "diagnosis": null,
+    "poolCounts": {
+     "raw": 910,
+     "afterDiet": 327,
+     "afterPrep": 84,
+     "afterStack": 84,
+     "stackExplain": null
+    },
+    "variety": {
+     "mealEligible": 73,
+     "usableForSlot": 69,
+     "slotKcal": 437,
+     "snackEligible": 9,
+     "weeklyMealSlots": 21,
+     "weeklySnackSlots": 0,
+     "repeatCap": 2,
+     "distinctWeeks": 3.3,
+     "horizonWeeks": 1,
+     "sustainsHorizon": true,
+     "notes": [
+      "1 day: 3 distinct dish(es) across 3 filled slot(s); most-repeated dish appears 1x against a 2x cap for this horizon (2x per week)."
+     ],
+     "horizon": {
+      "weeks": 1,
+      "days": 1,
+      "perWeekCap": 2,
+      "horizonRepeatCap": 2,
+      "mealSlots": 3,
+      "snackSlots": 0,
+      "totalSlots": 3,
+      "distinctFloor": 2,
+      "distinctRecipes": 3,
+      "maxRepeat": 1,
+      "maxRepeatRecipeId": "cmrul79z400c0wl8064gi62w8",
+      "lockedRepeatsOfMax": 0,
+      "filledSlots": 3,
+      "unfilledSlots": 0,
+      "requiredDistinct": 2,
+      "capHeld": true,
+      "floorHeld": true
+     }
+    },
+    "priorWeeksConsidered": 0,
+    "horizon": {
+     "key": "day",
+     "label": "1 day",
+     "days": 1,
+     "kind": "days",
+     "weeks": 1,
+     "custom": false,
+     "startDate": "2026-07-30",
+     "endDate": "2026-07-30",
+     "startDayOfWeek": 3,
+     "weeksWritten": 1,
+     "solveMs": 0,
+     "weekPlans": [
+      {
+       "startDate": "2026-07-27",
+       "dayIndices": [
+        3
+       ],
+       "days": 1,
+       "daysInTolerance": 1,
+       "avgMatch": 97,
+       "unfilledSlots": 0,
+       "poolSize": 84
+      }
+     ]
+    }
+   }
+  }
+ }
+}

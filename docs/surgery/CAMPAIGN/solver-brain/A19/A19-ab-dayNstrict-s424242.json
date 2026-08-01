@@ -1,0 +1,157 @@
+{
+  "tool": "compare.v2.mjs",
+  "baselineFile": "C:\\Users\\<account>\\Desktop\\cut-protocol\\docs\\surgery\\CAMPAIGN\\solver-brain\\A19\\A19-forkweek-s424242.jsonl",
+  "treatmentFile": "C:\\Users\\<account>\\Desktop\\cut-protocol\\docs\\surgery\\CAMPAIGN\\solver-brain\\A19\\A19-dayNstrict-s424242.jsonl",
+  "baselineHeader": {
+    "schemaRun": "solver-brain/run/v1",
+    "label": "forkweek",
+    "agentId": "A19",
+    "pop": "personas",
+    "seed": 424242,
+    "seedName": "primary",
+    "treatment": "A19-week",
+    "customers": 250,
+    "brain": "off",
+    "startDayOfWeek": 0,
+    "foodFingerprint": "423e7279ed6af641",
+    "poolRaw": 910,
+    "foodRows": 14151,
+    "dbPath": "C:\\Users\\<account>\\Desktop\\cut-protocol\\docs\\surgery\\CAMPAIGN\\solver-brain\\A19\\dev.db",
+    "dbHash": "e55f52e53658a086",
+    "startedAt": "2026-07-31T03:35:37.113Z"
+  },
+  "treatmentHeader": {
+    "schemaRun": "solver-brain/run/v1",
+    "label": "dayNstrict",
+    "agentId": "A19",
+    "pop": "personas",
+    "seed": 424242,
+    "seedName": "primary",
+    "treatment": "A19-dayNstrict",
+    "customers": 250,
+    "brain": "off",
+    "startDayOfWeek": 0,
+    "foodFingerprint": "423e7279ed6af641",
+    "poolRaw": 910,
+    "foodRows": 14151,
+    "dbPath": "C:\\Users\\<account>\\Desktop\\cut-protocol\\docs\\surgery\\CAMPAIGN\\solver-brain\\A19\\dev.db",
+    "dbHash": "e55f52e53658a086",
+    "startedAt": "2026-07-31T03:40:04.399Z"
+  },
+  "problems": [],
+  "instrument": {
+    "baseline": {
+      "dis": 0,
+      "drift": 0,
+      "crash": 0,
+      "silent": 0
+    },
+    "treatment": {
+      "dis": 0,
+      "drift": 0,
+      "crash": 0,
+      "silent": 0
+    }
+  },
+  "results": {
+    "satisfiable": {
+      "base": {
+        "k": 413,
+        "n": 536,
+        "p": 0.7705223880597015,
+        "lo": 0.7330738268392512,
+        "hi": 0.8041209277113941
+      },
+      "treat": {
+        "k": 422,
+        "n": 536,
+        "p": 0.7873134328358209,
+        "lo": 0.7506893956896673,
+        "hi": 0.8198484815572248
+      },
+      "deltaUnpaired": {
+        "d": 0.016791044776119368,
+        "lo": -0.03290988040248466,
+        "hi": 0.06639874712954372
+      },
+      "deltaPaired": {
+        "n": 536,
+        "b": 0,
+        "c": 9,
+        "unpaired": 0,
+        "d": 0.016791044776119403,
+        "lo": 0.005913585344454129,
+        "hi": 0.027668504207784675,
+        "thin": true,
+        "chi": 7.111111111111111
+      }
+    },
+    "all": {
+      "base": {
+        "k": 434,
+        "n": 622,
+        "p": 0.6977491961414791,
+        "lo": 0.6605359085930758,
+        "hi": 0.7325348867481756
+      },
+      "treat": {
+        "k": 443,
+        "n": 622,
+        "p": 0.7122186495176849,
+        "lo": 0.6754227187115907,
+        "hi": 0.746409354337557
+      },
+      "deltaUnpaired": {
+        "d": 0.014469453376205754,
+        "lo": -0.03616635208664517,
+        "hi": 0.06500491682752652
+      },
+      "deltaPaired": {
+        "n": 622,
+        "b": 0,
+        "c": 9,
+        "unpaired": 0,
+        "d": 0.014469453376205787,
+        "lo": 0.00508489134330878,
+        "hi": 0.023854015409102793,
+        "thin": true,
+        "chi": 7.111111111111111
+      }
+    },
+    "planned": {
+      "base": {
+        "k": 434,
+        "n": 639,
+        "p": 0.6791862284820032,
+        "lo": 0.6420153720254128,
+        "hi": 0.7142155412677605
+      },
+      "treat": {
+        "k": 443,
+        "n": 639,
+        "p": 0.6932707355242567,
+        "lo": 0.6564499122555034,
+        "hi": 0.727781684178618
+      },
+      "deltaUnpaired": {
+        "d": 0.014084507042253502,
+        "lo": -0.036737001991138905,
+        "hi": 0.06480608180822867
+      },
+      "deltaPaired": {
+        "n": 639,
+        "b": 0,
+        "c": 9,
+        "unpaired": 0,
+        "d": 0.014084507042253521,
+        "lo": 0.004947828681952999,
+        "hi": 0.023221185402554044,
+        "thin": true,
+        "chi": 7.111111111111111
+      }
+    }
+  },
+  "byteIdentical": 630,
+  "total": 639,
+  "generatedAt": "2026-07-31T12:21:06.636Z"
+}

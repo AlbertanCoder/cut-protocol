@@ -1,0 +1,724 @@
+{
+ "persona": {
+  "idx": 25,
+  "id": "p025",
+  "tier": "EASY",
+  "displayName": "miner, 44",
+  "story": "miner, 44, male, 193 cm / 116.5 kg (BMI 31.3), cut at 1 lb/wk, none diet, avoiding gluten, fish, low-carb, 4 meals + 3 snacks, wants a single day",
+  "profile": {
+   "sex": "M",
+   "age": 44,
+   "heightCm": 193,
+   "startWeightKg": 116.5,
+   "goalWeightKg": 89,
+   "occupationKey": "mining",
+   "trainingStyle": "weights",
+   "minutesPerSession": 40,
+   "sessionsPerWeek": 3,
+   "rateLbPerWeek": 1,
+   "dietaryStyle": "none",
+   "excludedFoods": [
+    "gluten",
+    "fish"
+   ],
+   "mealsPerDay": 4,
+   "snacksPerDay": 3,
+   "unitPref": "metric",
+   "bodyFatPct": 28,
+   "bodyFatSource": "measured",
+   "cuisinePreferences": [
+    "japanese",
+    "chinese"
+   ]
+  },
+  "filters": {
+   "cuisines": [
+    "japanese",
+    "chinese"
+   ]
+  },
+  "horizon": "day",
+  "walls": [
+   "gluten",
+   "fish"
+  ],
+  "freeTextExclusions": [],
+  "dietaryStyle": "none",
+  "bmi": 31.3,
+  "goalKind": "cut",
+  "macroStyle": "low-carb",
+  "requestedButUnsupported": [
+   "wanted a low-carb split without full keto; carbs are the leftover after LBM-derived protein and fat, and only dietaryStyle:\"keto\" changes that"
+  ],
+  "tupleKey": "[\"EASY\",\"M\",44,193,116.5,89,\"mining\",\"weights\",1,\"none\",[\"fish\",\"gluten\"],4,3,\"low-carb\",\"day\",null,null,null,null,null]"
+ },
+ "request": {
+  "horizon": "day",
+  "filters": {
+   "cuisines": [
+    "japanese",
+    "chinese"
+   ]
+  }
+ },
+ "profileResponse": {
+  "id": "cms6x0dkq00zdwlw0bfzqf5j6",
+  "userId": "cms6x0dfe000jwl2o7olsbg06",
+  "sex": "M",
+  "age": 44,
+  "heightCm": 193,
+  "bodyFatPct": 28,
+  "bodyFatSource": "measured",
+  "occupationKey": "mining",
+  "activityOverride": null,
+  "sessionsPerWeek": 3,
+  "trainingStyle": "weights",
+  "minutesPerSession": 40,
+  "startWeightKg": 116.5,
+  "goalWeightKg": 89,
+  "startDate": "2026-07-29",
+  "unitPref": "metric",
+  "rateLbPerWeek": 1,
+  "rateAcknowledged": false,
+  "floorKcal": null,
+  "excludedFormulas": [],
+  "targetKcal": 3437,
+  "mealsPerDay": 4,
+  "snacksPerDay": 3,
+  "excludedFoods": [
+   "gluten",
+   "fish"
+  ],
+  "dietaryStyle": "none",
+  "cuisinePreferences": [
+   "japanese",
+   "chinese"
+  ],
+  "mealPreferencesNote": null,
+  "maxPrepMin": null,
+  "budgetTier": null,
+  "allowBatch": null,
+  "maxComplexity": null,
+  "adaptiveTdee": true,
+  "proteinPriorityMode": false,
+  "updatedAt": "2026-07-30T02:49:17.723Z"
+ },
+ "generate": {
+  "status": 200,
+  "ms": 489,
+  "body": {
+   "id": "cms6x0dz50119wlw0udm1472i",
+   "userId": "cms6x0dfe000jwl2o7olsbg06",
+   "startDate": "2026-07-27",
+   "createdAt": "2026-07-30T02:49:18.017Z",
+   "slots": [
+    {
+     "id": "cms6x0e4c011bwlw0f3bgld7g",
+     "planId": "cms6x0dz50119wlw0udm1472i",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 0,
+     "recipeId": "cmrul79wr0086wl809z2b475h",
+     "proteinScale": 0.79,
+     "sidesScale": 2,
+     "ingredients": [
+      {
+       "foodId": "cmrfoyrjh0009wl08cmcid51m",
+       "name": "Turkey breast, low salt, prepackaged or deli, luncheon meat",
+       "role": "protein",
+       "grams": 135
+      },
+      {
+       "foodId": "cmrevpcn2000ewl5gmlyzu0vd",
+       "name": "White rice, cooked",
+       "role": "carb",
+       "grams": 220
+      },
+      {
+       "foodId": "cmrg8zxar000lwli0qy2ovmx4",
+       "name": "Onion",
+       "role": "veg",
+       "grams": 120
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 526.15,
+     "protein": 36.69,
+     "fat": 6.9005,
+     "carb": 77.54650000000001,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrul79wr0086wl809z2b475h",
+      "name": "High-Protein Turkey & Onions with Rice",
+      "description": null,
+      "steps": [
+       "Cook the turkey.",
+       "Serve over white rice with onions."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 397.3,
+      "protein": 40.7,
+      "fat": 6.8,
+      "carb": 42.4,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 6.34,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:45:29.835Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x0e4f011dwlw0clzz4z4c",
+     "planId": "cms6x0dz50119wlw0udm1472i",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 1,
+     "recipeId": "cmrujkwq00020wl9ofnqk0q0v",
+     "proteinScale": 1.81,
+     "sidesScale": 1.85,
+     "ingredients": [
+      {
+       "foodId": "cmrj2tbsj00m1wlwsfeuh3jsf",
+       "name": "flax eggs",
+       "role": "protein",
+       "grams": 270
+      },
+      {
+       "foodId": "cmrevpcn2000ewl5gmlyzu0vd",
+       "name": "White rice, cooked",
+       "role": "carb",
+       "grams": 295
+      },
+      {
+       "foodId": "cmrj2t6na000ywlws9jek4w4z",
+       "name": "Broccoli",
+       "role": "veg",
+       "grams": 205
+      },
+      {
+       "foodId": "cmrj2t6xc0028wlwszh51pa6i",
+       "name": "Sesame Seed Oil",
+       "role": "fat",
+       "grams": 8
+      }
+     ],
+     "kcal": 666.27,
+     "protein": 42.12350000000001,
+     "fat": 9.582,
+     "carb": 101.8255,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrujkwq00020wl9ofnqk0q0v",
+      "name": "Stir-Fried Eggs & Broccoli with Rice",
+      "description": null,
+      "steps": [
+       "Cook the eggs.",
+       "Serve with white rice and broccoli."
+      ],
+      "slotType": "meal",
+      "cuisine": "asian",
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 395.3200000000001,
+      "protein": 23.197,
+      "fat": 8.854,
+      "carb": 55.237,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 3.06,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:00:06.697Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x0e4f011fwlw0mxf0b3g7",
+     "planId": "cms6x0dz50119wlw0udm1472i",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 2,
+     "recipeId": "cmrujkwvg00bowl9om7w4rqwf",
+     "proteinScale": 1.62,
+     "sidesScale": 2,
+     "ingredients": [
+      {
+       "foodId": "cmrj2tbsj00m1wlwsfeuh3jsf",
+       "name": "flax eggs",
+       "role": "protein",
+       "grams": 245
+      },
+      {
+       "foodId": "cmrj2t7fb004fwlws8ezof2dp",
+       "name": "Russet Potato",
+       "role": "carb",
+       "grams": 360
+      },
+      {
+       "foodId": "cmrj2t6na000ywlws9jek4w4z",
+       "name": "Broccoli",
+       "role": "veg",
+       "grams": 220
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 10
+      }
+     ],
+     "kcal": 634.95,
+     "protein": 41.337,
+     "fat": 11.216,
+     "carb": 96.61599999999999,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrujkwvg00bowl9om7w4rqwf",
+      "name": "Classic Eggs & Broccoli with Potato",
+      "description": null,
+      "steps": [
+       "Cook the eggs.",
+       "Serve with potato and broccoli."
+      ],
+      "slotType": "meal",
+      "cuisine": "american",
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 377.6,
+      "protein": 23.6,
+      "fat": 10.6,
+      "carb": 49,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 3.1,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:00:06.893Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x0e4g011hwlw0y15tussp",
+     "planId": "cms6x0dz50119wlw0udm1472i",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 3,
+     "recipeId": "cmrevpcv8003cwl5ge0f588s7",
+     "proteinScale": 1.23,
+     "sidesScale": 1.39,
+     "ingredients": [
+      {
+       "foodId": "cmrevpcmd0008wl5g5sikt63c",
+       "name": "Turkey sausages",
+       "role": "protein",
+       "grams": 245
+      },
+      {
+       "foodId": "cmrevpcn5000fwl5g0j42i9os",
+       "name": "Potato, baked with skin",
+       "role": "carb",
+       "grams": 350
+      },
+      {
+       "foodId": "cmrevpcnl000jwl5gnqnk630b",
+       "name": "Cucumber",
+       "role": "veg",
+       "grams": 210
+      }
+     ],
+     "kcal": 787.5,
+     "protein": 49.189,
+     "fat": 30.086,
+     "carb": 82.936,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrevpcv8003cwl5ge0f588s7",
+      "name": "Turkey Sausage & Potato",
+      "description": null,
+      "steps": [
+       "Pan-fry sausages until browned.",
+       "Serve with baked potato and cold cucumber."
+      ],
+      "slotType": "meal",
+      "cuisine": "western-comfort",
+      "prepTimeMin": 20,
+      "source": "curated",
+      "mealCategory": null,
+      "kcal": 607.5,
+      "protein": 39.1,
+      "fat": 24.5,
+      "carb": 59.7,
+      "tasteTier": "really_good",
+      "tasteTierSource": "curated",
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 7.35,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-10T11:55:10.820Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x0e4h011lwlw0greq1cu2",
+     "planId": "cms6x0dz50119wlw0udm1472i",
+     "dayOfWeek": 2,
+     "slotType": "snack",
+     "slotIndex": 0,
+     "recipeId": "cmrujhgxz000zwlbon488ewmg",
+     "proteinScale": 1.06,
+     "sidesScale": 1.06,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t7p5005pwlws4acmktnt",
+       "name": "Greek Yogurt",
+       "role": "dairy",
+       "grams": 180
+      },
+      {
+       "foodId": "cmrevpco3000nwl5g1d51b3it",
+       "name": "Almonds",
+       "role": "fat",
+       "grams": 16
+      },
+      {
+       "foodId": "cmrfoyp7m0002wl0851se2p2b",
+       "name": "Honey",
+       "role": "other",
+       "grams": 11
+      }
+     ],
+     "kcal": 276.72,
+     "protein": 16.407,
+     "fat": 8.832,
+     "carb": 35.464,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrujhgxz000zwlbon488ewmg",
+      "name": "Greek Yogurt, Honey & Almonds",
+      "description": null,
+      "steps": [
+       "Stir together."
+      ],
+      "slotType": "snack",
+      "cuisine": "american",
+      "prepTimeMin": 10,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 259.5,
+      "protein": 15.5,
+      "fat": 8.3,
+      "carb": 33.2,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 1.58,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T10:57:26.280Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x0e4i011nwlw0mayk9e35",
+     "planId": "cms6x0dz50119wlw0udm1472i",
+     "dayOfWeek": 2,
+     "slotType": "snack",
+     "slotIndex": 1,
+     "recipeId": "cmrevpd0k0057wl5ggnxuvv9c",
+     "proteinScale": 1.3,
+     "sidesScale": 0.5,
+     "ingredients": [
+      {
+       "foodId": "cmrevpcod000pwl5g8cou0uqo",
+       "name": "Avocado chips",
+       "role": "fat",
+       "grams": 13
+      },
+      {
+       "foodId": "cmrevpcma0007wl5gfj59j5mk",
+       "name": "Beef jerky",
+       "role": "protein",
+       "grams": 50
+      }
+     ],
+     "kcal": 270,
+     "protein": 17.02,
+     "fat": 17.29,
+     "carb": 11.35,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrevpd0k0057wl5ggnxuvv9c",
+      "name": "Avocado Chips & Jerky",
+      "description": "Weekends only.",
+      "steps": [
+       "No cooking — portion and eat."
+      ],
+      "slotType": "snack",
+      "cuisine": "western-comfort",
+      "prepTimeMin": 0,
+      "source": "curated",
+      "mealCategory": null,
+      "kcal": 289,
+      "protein": 14.2,
+      "fat": 18.65,
+      "carb": 15.65,
+      "tasteTier": "really_good",
+      "tasteTierSource": "curated",
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 4.35,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-10T11:55:11.012Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x0e4i011pwlw0c18fpiwm",
+     "planId": "cms6x0dz50119wlw0udm1472i",
+     "dayOfWeek": 2,
+     "slotType": "snack",
+     "slotIndex": 2,
+     "recipeId": "cmrevpcyt004lwl5gx6bidm0z",
+     "proteinScale": 0.67,
+     "sidesScale": 0.67,
+     "ingredients": [
+      {
+       "foodId": "cmrevpcma0007wl5gfj59j5mk",
+       "name": "Beef jerky",
+       "role": "protein",
+       "grams": 40
+      },
+      {
+       "foodId": "cmrevpcmq000bwl5g2mbd0jsv",
+       "name": "Pork rinds",
+       "role": "protein",
+       "grams": 20
+      }
+     ],
+     "kcal": 272.8,
+     "protein": 25.4,
+     "fat": 16.6,
+     "carb": 4.4,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrevpcyt004lwl5gx6bidm0z",
+      "name": "Jerky & Pork Rinds Snack Plate",
+      "description": "Closer / site valve — his words.",
+      "steps": [
+       "No cooking — portion and eat."
+      ],
+      "slotType": "snack",
+      "cuisine": "western-comfort",
+      "prepTimeMin": 0,
+      "source": "curated",
+      "mealCategory": null,
+      "kcal": 409.2,
+      "protein": 38.1,
+      "fat": 24.9,
+      "carb": 6.6,
+      "tasteTier": "really_good",
+      "tasteTierSource": "curated",
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 6.75,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-10T11:55:10.950Z",
+      "createdByUserId": null
+     }
+    }
+   ],
+   "groceryList": null,
+   "meta": {
+    "matchPct": 84,
+    "attempts": 5,
+    "score": {
+     "daysInTolerance": 0,
+     "avgMatch": 84,
+     "days": [
+      {
+       "dayOfWeek": 2,
+       "dayName": "Wednesday",
+       "matchPct": 84,
+       "totals": {
+        "kcal": 3434,
+        "protein": 228,
+        "fat": 101,
+        "carb": 410
+       },
+       "kcalDeltaPct": -0.1,
+       "proteinShortPct": 0,
+       "fatOk": false,
+       "carbOk": true,
+       "inTolerance": false,
+       "miss": "101 g fat vs a 63–74 g range — 27 g over",
+       "unfilledSlots": 0,
+       "warnedSlots": 0,
+       "windowIndex": 0,
+       "dayIndex": 0,
+       "key": "0:2"
+      }
+     ],
+     "totalDays": 1
+    },
+    "days": [
+     {
+      "dayOfWeek": 2,
+      "dayName": "Wednesday",
+      "matchPct": 84,
+      "totals": {
+       "kcal": 3434,
+       "protein": 228,
+       "fat": 101,
+       "carb": 410
+      },
+      "kcalDeltaPct": -0.1,
+      "proteinShortPct": 0,
+      "fatOk": false,
+      "carbOk": true,
+      "inTolerance": false,
+      "miss": "101 g fat vs a 63–74 g range — 27 g over",
+      "unfilledSlots": 0,
+      "warnedSlots": 0,
+      "windowIndex": 0,
+      "dayIndex": 0,
+      "key": "0:2"
+     }
+    ],
+    "diagnosis": {
+     "feasible": false,
+     "reasons": [
+      "1 day(s) landed outside your 63–74 g fat range — portion scaling moves a dish's calories, not its fat/carb ratio, so the pool's composition is what binds here."
+     ],
+     "suggestions": [
+      "Add (or AI-generate) a few recipes built around the macro you keep missing, or drop the cuisine/protein preference so the solver can reach dishes that carry it."
+     ],
+     "binding": {
+      "key": "macro-composition",
+      "label": "fat in your recipe pool",
+      "detail": "1 of 1 day(s) landed outside your 63-74 g fat range. Portion scaling moves a dish's calories, not its fat/carb ratio, so what binds here is which dishes your rules leave in the pool. Calories and protein landed on target on every day — it is composition, not portion size, that is short."
+     }
+    },
+    "poolCounts": {
+     "raw": 889,
+     "afterDiet": 329,
+     "afterPrep": 329,
+     "afterStack": 329,
+     "stackExplain": null
+    },
+    "variety": {
+     "mealEligible": 293,
+     "usableForSlot": 204,
+     "slotKcal": 663,
+     "snackEligible": 8,
+     "weeklyMealSlots": 28,
+     "weeklySnackSlots": 21,
+     "repeatCap": 2,
+     "distinctWeeks": 7.3,
+     "horizonWeeks": 1,
+     "sustainsHorizon": false,
+     "notes": [
+      "Only 8 snack recipe(s) fit your rules, so the same snacks come back every week.",
+      "1 day: 7 distinct dish(es) across 7 filled slot(s); most-repeated dish appears 1x against a 2x cap for this horizon (2x per week)."
+     ],
+     "horizon": {
+      "weeks": 1,
+      "days": 1,
+      "perWeekCap": 2,
+      "horizonRepeatCap": 2,
+      "mealSlots": 4,
+      "snackSlots": 3,
+      "totalSlots": 7,
+      "distinctFloor": 4,
+      "distinctRecipes": 7,
+      "maxRepeat": 1,
+      "maxRepeatRecipeId": "cmrul79wr0086wl809z2b475h",
+      "lockedRepeatsOfMax": 0,
+      "filledSlots": 7,
+      "unfilledSlots": 0,
+      "requiredDistinct": 4,
+      "capHeld": true,
+      "floorHeld": true
+     }
+    },
+    "priorWeeksConsidered": 0,
+    "horizon": {
+     "key": "day",
+     "label": "1 day",
+     "days": 1,
+     "kind": "days",
+     "weeks": 1,
+     "custom": false,
+     "startDate": "2026-07-29",
+     "endDate": "2026-07-29",
+     "startDayOfWeek": 2,
+     "weeksWritten": 1,
+     "solveMs": 4,
+     "weekPlans": [
+      {
+       "startDate": "2026-07-27",
+       "dayIndices": [
+        2
+       ],
+       "days": 1,
+       "daysInTolerance": 0,
+       "avgMatch": 84,
+       "unfilledSlots": 0,
+       "poolSize": 329
+      }
+     ]
+    }
+   }
+  }
+ }
+}

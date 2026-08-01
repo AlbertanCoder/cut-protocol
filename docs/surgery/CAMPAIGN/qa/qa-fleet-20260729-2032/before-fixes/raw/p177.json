@@ -1,0 +1,689 @@
+{
+ "persona": {
+  "idx": 177,
+  "id": "p177",
+  "tier": "EASY",
+  "displayName": "personal trainer, 45",
+  "story": "personal trainer, 45, male, 198 cm / 150.9 kg (BMI 38.5), cut at 2 lb/wk, none diet, avoiding dairy, shellfish, high-protein, 3 meals + 2 snacks, wants a single day",
+  "profile": {
+   "sex": "M",
+   "age": 45,
+   "heightCm": 198,
+   "startWeightKg": 150.9,
+   "goalWeightKg": 140.6,
+   "occupationKey": "personal-trainer",
+   "trainingStyle": "weights",
+   "minutesPerSession": 75,
+   "sessionsPerWeek": 5,
+   "rateLbPerWeek": 2,
+   "dietaryStyle": "none",
+   "excludedFoods": [
+    "dairy",
+    "shellfish"
+   ],
+   "mealsPerDay": 3,
+   "snacksPerDay": 2,
+   "unitPref": "imperial",
+   "rateAcknowledged": true
+  },
+  "filters": {
+   "proteinPriority": true
+  },
+  "horizon": "day",
+  "walls": [
+   "dairy",
+   "shellfish"
+  ],
+  "freeTextExclusions": [],
+  "dietaryStyle": "none",
+  "bmi": 38.5,
+  "goalKind": "cut",
+  "macroStyle": "high-protein",
+  "requestedButUnsupported": [
+   "wanted protein set explicitly in g/lb; the API derives the protein band from LBM (1.14-1.25 g/lb) and accepts no client protein target — only the per-request proteinPriority filter"
+  ],
+  "tupleKey": "[\"EASY\",\"M\",45,198,150.9,140.6,\"personal-trainer\",\"weights\",2,\"none\",[\"dairy\",\"shellfish\"],3,2,\"high-protein\",\"day\",null,null,true,null,null]"
+ },
+ "request": {
+  "horizon": "day",
+  "filters": {
+   "proteinPriority": true
+  }
+ },
+ "profileResponse": {
+  "id": "cms6x1gyl04i7wlw0mswa05yx",
+  "userId": "cms6x1gmw004rwl2ogh09db8f",
+  "sex": "M",
+  "age": 45,
+  "heightCm": 198,
+  "bodyFatPct": 0,
+  "bodyFatSource": null,
+  "occupationKey": "personal-trainer",
+  "activityOverride": null,
+  "sessionsPerWeek": 5,
+  "trainingStyle": "weights",
+  "minutesPerSession": 75,
+  "startWeightKg": 150.9,
+  "goalWeightKg": 140.6,
+  "startDate": "2026-07-29",
+  "unitPref": "imperial",
+  "rateLbPerWeek": 2,
+  "rateAcknowledged": false,
+  "floorKcal": null,
+  "excludedFormulas": [],
+  "targetKcal": 3363,
+  "mealsPerDay": 3,
+  "snacksPerDay": 2,
+  "excludedFoods": [
+   "dairy",
+   "shellfish"
+  ],
+  "dietaryStyle": "none",
+  "cuisinePreferences": [],
+  "mealPreferencesNote": null,
+  "maxPrepMin": null,
+  "budgetTier": null,
+  "allowBatch": null,
+  "maxComplexity": null,
+  "adaptiveTdee": true,
+  "proteinPriorityMode": false,
+  "updatedAt": "2026-07-30T02:50:08.561Z"
+ },
+ "generate": {
+  "status": 200,
+  "ms": 314,
+  "body": {
+   "id": "cms6x1h7m04ijwlw0rsxg1nav",
+   "userId": "cms6x1gmw004rwl2ogh09db8f",
+   "startDate": "2026-07-27",
+   "createdAt": "2026-07-30T02:50:08.867Z",
+   "slots": [
+    {
+     "id": "cms6x1h7n04ilwlw0cddqib6s",
+     "planId": "cms6x1h7m04ijwlw0rsxg1nav",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 0,
+     "recipeId": "cmrul79sv001uwl80m4kyr7ig",
+     "proteinScale": 2,
+     "sidesScale": 2,
+     "ingredients": [
+      {
+       "foodId": "cmrukzae20001wlbwgdjqlh3f",
+       "name": "Textured vegetable protein, dry",
+       "role": "protein",
+       "grams": 110
+      },
+      {
+       "foodId": "cmrj2t88z0087wlwsmsmchxzb",
+       "name": "Quinoa",
+       "role": "carb",
+       "grams": 220
+      },
+      {
+       "foodId": "cmrevpcnl000jwl5gnqnk630b",
+       "name": "Cucumber",
+       "role": "veg",
+       "grams": 180
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 690,
+     "protein": 67.94200000000001,
+     "fat": 10.612,
+     "carb": 83.74800000000002,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrul79sv001uwl80m4kyr7ig",
+      "name": "High-Protein TVP & Cucumber with Quinoa",
+      "description": null,
+      "steps": [
+       "Cook the tvp.",
+       "Serve over quinoa with cucumber."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 367.5,
+      "protein": 34,
+      "fat": 7.8,
+      "carb": 41.9,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 2.31,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:45:29.695Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x1h7o04ipwlw0su3xsjd6",
+     "planId": "cms6x1h7m04ijwlw0rsxg1nav",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 1,
+     "recipeId": "cmrj2tl0602kjwlwsrca62adg",
+     "proteinScale": 0.72,
+     "sidesScale": 0.5,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t84f007mwlws3l8rub2z",
+       "name": "Chicken Thighs",
+       "role": "protein",
+       "grams": 280
+      },
+      {
+       "foodId": "cmrj2t6rj001iwlwsv6losppt",
+       "name": "Lime",
+       "role": "veg",
+       "grams": 8
+      },
+      {
+       "foodId": "cmrj2t6w20022wlws8tukrt3u",
+       "name": "Spring Onions",
+       "role": "veg",
+       "grams": 30
+      },
+      {
+       "foodId": "cmrj2t6ye002dwlwssjv94yyn",
+       "name": "Ginger",
+       "role": "veg",
+       "grams": 13
+      },
+      {
+       "foodId": "cmrj2t6ft0001wlwstiofk9on",
+       "name": "Garlic",
+       "role": "veg",
+       "grams": 2
+      },
+      {
+       "foodId": "cmrg8zxar000lwli0qy2ovmx4",
+       "name": "Onion",
+       "role": "veg",
+       "grams": 7
+      },
+      {
+       "foodId": "cmrj2t7me005cwlwssmv2um0d",
+       "name": "Red Chilli",
+       "role": null,
+       "grams": 7
+      },
+      {
+       "foodId": "cmrj2t6oj0014wlwsaw8ffg0k",
+       "name": "Thyme",
+       "role": null,
+       "grams": 25
+      },
+      {
+       "foodId": "cmrj2t6ls000rwlwsf7bu3ffs",
+       "name": "Soy Sauce",
+       "role": "carb",
+       "grams": 2
+      },
+      {
+       "foodId": "cmrj2t7hg004pwlwsioxvv8bh",
+       "name": "Vegetable Oil",
+       "role": "carb",
+       "grams": 3
+      },
+      {
+       "foodId": "cmrj2t7ms005ewlwsa4b4sslc",
+       "name": "Brown Sugar",
+       "role": "carb",
+       "grams": 5
+      },
+      {
+       "foodId": "cmrj2t7at003uwlwsq3e1ii9n",
+       "name": "Allspice",
+       "role": null,
+       "grams": 2
+      },
+      {
+       "foodId": "cmrj2t716002pwlws440mk01m",
+       "name": "Basmati Rice",
+       "role": "carb",
+       "grams": 25
+      },
+      {
+       "foodId": "cmrj2t7r3005ywlwsd3jq76r1",
+       "name": "Coconut Milk",
+       "role": null,
+       "grams": 50
+      },
+      {
+       "foodId": "cmrj2t7o4005kwlwsskpa8p25",
+       "name": "Kidney Beans",
+       "role": "carb",
+       "grams": 100
+      }
+     ],
+     "kcal": 989.4999999999998,
+     "protein": 86.2967,
+     "fat": 43.5815,
+     "carb": 62.9453,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrj2tl0602kjwlwsrca62adg",
+      "name": "Jerk chicken with rice & peas",
+      "description": null,
+      "steps": [
+       "To make the jerk marinade, combine all the ingredients in a food processor along with 1 tsp salt, and blend to a purée. If you’re having trouble getting it to blend, just keep turning off the blender, stirring the mixture, and trying again. Eventually it will start to blend up – don’t be tempted to add water, as you want a thick paste.",
+       "Taste the jerk mixture for seasoning – it should taste pretty salty, but not unpleasantly, puckering salty. You can now throw in more chillies if it’s not spicy enough for you. If it tastes too salty and sour, try adding in a bit more brown sugar until the mixture tastes well balanced.",
+       "Make a few slashes in the chicken thighs and pour the marinade over the meat, rubbing it into all the crevices. Cover and leave to marinate overnight in the fridge.",
+       "If you want to barbecue your chicken, get the coals burning 1 hr or so before you’re ready to cook. Authentic jerked meats are not exactly grilled as we think of grilling, but sort of smoke-grilled. To get a more authentic jerk experience, add some wood chips to your barbecue, and cook your chicken over slow, indirect heat for 30 mins. To cook in the oven, heat to 180C/160C fan/gas 4. Put the chicken pieces in a roasting tin with the lime halves and cook for 45 mins until tender and cooked through.",
+       "While the chicken is cooking, prepare the rice & peas. Rinse the rice in plenty of cold water, then tip it into a large saucepan with all the remaining ingredients except the kidney beans. Season with salt, add 300ml cold water and set over a high heat. Once the rice begins to boil, turn it down to a medium heat, cover and cook for 10 mins.",
+       "Add the beans to the rice, then cover with a lid. Leave off the heat for 5 mins until all the liquid is absorbed. Squeeze the roasted lime over the chicken and serve with the rice & peas, and some hot sauce if you like it really spicy."
+      ],
+      "slotType": "meal",
+      "cuisine": "western-comfort",
+      "prepTimeMin": 38,
+      "source": "themealdb-import",
+      "mealCategory": null,
+      "kcal": 1632.1,
+      "protein": 128.4,
+      "fat": 69.5,
+      "carb": 126.2,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 14.31,
+      "difficulty": 6,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-13T10:25:30.006Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x1h7p04irwlw07y3d5slc",
+     "planId": "cms6x1h7m04ijwlw0rsxg1nav",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 2,
+     "recipeId": "cmrj2u84807p6wlwsltuavhf7",
+     "proteinScale": 1.07,
+     "sidesScale": 1.59,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "carb",
+       "grams": 20
+      },
+      {
+       "foodId": "cmrg8zxar000lwli0qy2ovmx4",
+       "name": "Onion",
+       "role": "veg",
+       "grams": 45
+      },
+      {
+       "foodId": "cmrj2t8nb00a1wlwslv2l5bf2",
+       "name": "Jersey Royal Potatoes",
+       "role": "veg",
+       "grams": 120
+      },
+      {
+       "foodId": "cmrj2t6ft0001wlwstiofk9on",
+       "name": "Garlic",
+       "role": "veg",
+       "grams": 2
+      },
+      {
+       "foodId": "cmrj2t6wp0025wlwsvl5esd2h",
+       "name": "Egg",
+       "role": "protein",
+       "grams": 105
+      },
+      {
+       "foodId": "cmrj2t6h10006wlwslufza94y",
+       "name": "Parsley",
+       "role": null,
+       "grams": 4
+      },
+      {
+       "foodId": "cmrj2tax800iowlwsnqv5ylcj",
+       "name": "Salt Cod",
+       "role": "protein",
+       "grams": 80
+      }
+     ],
+     "kcal": 979.25,
+     "protein": 94.5762,
+     "fat": 32.4952,
+     "carb": 75.7152,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrj2u84807p6wlwsltuavhf7",
+      "name": "Salt cod tortilla",
+      "description": null,
+      "steps": [
+       "step 1",
+       "Heat half the oil in a frying pan, and sauté the onion over a medium heat until soft and pale gold – this will take about 8 mins. Remove from the pan, set aside, and add the potatoes to the pan. Cook until they are tender but not falling apart, carefully turning every so often. Cover the pan some of the time to help the slices cook through. Add the onions back to the pan along with the garlic and cook for another 4 mins. Tip into a bowl with the eggs, parsley and some seasoning and mix together. Leave to sit for half an hour.",
+       "step 2",
+       "Meanwhile, put the cod in a saucepan and cover with water. Bring up to a simmer. Remove from the heat, cover and leave for 10 mins. Drain, leave to cool and remove the skin and any bones. Break into large flakes and add to the potato and egg mixture.",
+       "step 3",
+       "Heat the rest of the oil in a non-stick frying pan. Pour in the tortilla mix and cook over a medium-low heat until it is just set and coming away from the sides of the pan. You might need to cover it to help the centre set. Be careful not to overcook it. Put a spatula underneath the tortilla every so often to make sure it isn’t sticking. Slide the tortilla onto a plate, then put the pan on top and flip the tortilla into it, uncooked side-down. Cook over a low heat until golden, or grill until just set. Leave to cool a little before serving."
+      ],
+      "slotType": "meal",
+      "cuisine": "western-comfort",
+      "prepTimeMin": 29,
+      "source": "themealdb-import",
+      "mealCategory": null,
+      "kcal": 743.9,
+      "protein": 79.1,
+      "fat": 25.3,
+      "carb": 47.6,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 4.95,
+      "difficulty": 3,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-13T10:25:59.961Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x1h7q04itwlw01hm9mxko",
+     "planId": "cms6x1h7m04ijwlw0rsxg1nav",
+     "dayOfWeek": 2,
+     "slotType": "snack",
+     "slotIndex": 0,
+     "recipeId": "cmrevpcyt004lwl5gx6bidm0z",
+     "proteinScale": 0.86,
+     "sidesScale": 0.86,
+     "ingredients": [
+      {
+       "foodId": "cmrevpcma0007wl5gfj59j5mk",
+       "name": "Beef jerky",
+       "role": "protein",
+       "grams": 50
+      },
+      {
+       "foodId": "cmrevpcmq000bwl5g2mbd0jsv",
+       "name": "Pork rinds",
+       "role": "protein",
+       "grams": 25
+      }
+     ],
+     "kcal": 341,
+     "protein": 31.75,
+     "fat": 20.75,
+     "carb": 5.5,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrevpcyt004lwl5gx6bidm0z",
+      "name": "Jerky & Pork Rinds Snack Plate",
+      "description": "Closer / site valve — his words.",
+      "steps": [
+       "No cooking — portion and eat."
+      ],
+      "slotType": "snack",
+      "cuisine": "western-comfort",
+      "prepTimeMin": 0,
+      "source": "curated",
+      "mealCategory": null,
+      "kcal": 409.2,
+      "protein": 38.1,
+      "fat": 24.9,
+      "carb": 6.6,
+      "tasteTier": "really_good",
+      "tasteTierSource": "curated",
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 6.75,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-10T11:55:10.950Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x1h7q04ivwlw028n87orb",
+     "planId": "cms6x1h7m04ijwlw0rsxg1nav",
+     "dayOfWeek": 2,
+     "slotType": "snack",
+     "slotIndex": 1,
+     "recipeId": "cmrevpcyt004lwl5gx6bidm0z",
+     "proteinScale": 0.89,
+     "sidesScale": 0.89,
+     "ingredients": [
+      {
+       "foodId": "cmrevpcma0007wl5gfj59j5mk",
+       "name": "Beef jerky",
+       "role": "protein",
+       "grams": 55
+      },
+      {
+       "foodId": "cmrevpcmq000bwl5g2mbd0jsv",
+       "name": "Pork rinds",
+       "role": "protein",
+       "grams": 25
+      }
+     ],
+     "kcal": 361.5,
+     "protein": 33.40000000000001,
+     "fat": 22.05,
+     "carb": 6.050000000000001,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrevpcyt004lwl5gx6bidm0z",
+      "name": "Jerky & Pork Rinds Snack Plate",
+      "description": "Closer / site valve — his words.",
+      "steps": [
+       "No cooking — portion and eat."
+      ],
+      "slotType": "snack",
+      "cuisine": "western-comfort",
+      "prepTimeMin": 0,
+      "source": "curated",
+      "mealCategory": null,
+      "kcal": 409.2,
+      "protein": 38.1,
+      "fat": 24.9,
+      "carb": 6.6,
+      "tasteTier": "really_good",
+      "tasteTierSource": "curated",
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 6.75,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-10T11:55:10.950Z",
+      "createdByUserId": null
+     }
+    }
+   ],
+   "groceryList": null,
+   "meta": {
+    "matchPct": 82,
+    "attempts": 5,
+    "score": {
+     "daysInTolerance": 0,
+     "avgMatch": 82,
+     "days": [
+      {
+       "dayOfWeek": 2,
+       "dayName": "Wednesday",
+       "matchPct": 82,
+       "totals": {
+        "kcal": 3361,
+        "protein": 314,
+        "fat": 129,
+        "carb": 234
+       },
+       "kcalDeltaPct": -0.1,
+       "proteinShortPct": 0.2,
+       "fatOk": false,
+       "carbOk": true,
+       "inTolerance": false,
+       "miss": "129 g fat vs a 89–105 g range — 24 g over",
+       "unfilledSlots": 0,
+       "warnedSlots": 0,
+       "proteinFloor": {
+        "met": true,
+        "floorG": 300,
+        "achievedG": 314,
+        "shortG": 0,
+        "shortPct": 0,
+        "reason": null
+       },
+       "windowIndex": 0,
+       "dayIndex": 0,
+       "key": "0:2"
+      }
+     ],
+     "totalDays": 1,
+     "floorDaysMet": 1,
+     "floorDaysTotal": 1
+    },
+    "days": [
+     {
+      "dayOfWeek": 2,
+      "dayName": "Wednesday",
+      "matchPct": 82,
+      "totals": {
+       "kcal": 3361,
+       "protein": 314,
+       "fat": 129,
+       "carb": 234
+      },
+      "kcalDeltaPct": -0.1,
+      "proteinShortPct": 0.2,
+      "fatOk": false,
+      "carbOk": true,
+      "inTolerance": false,
+      "miss": "129 g fat vs a 89–105 g range — 24 g over",
+      "unfilledSlots": 0,
+      "warnedSlots": 0,
+      "proteinFloor": {
+       "met": true,
+       "floorG": 300,
+       "achievedG": 314,
+       "shortG": 0,
+       "shortPct": 0,
+       "reason": null
+      },
+      "windowIndex": 0,
+      "dayIndex": 0,
+      "key": "0:2"
+     }
+    ],
+    "diagnosis": {
+     "feasible": false,
+     "reasons": [
+      "1 day(s) landed outside your 89–105 g fat range — portion scaling moves a dish's calories, not its fat/carb ratio, so the pool's composition is what binds here."
+     ],
+     "suggestions": [
+      "Add (or AI-generate) a few recipes built around the macro you keep missing, or drop the cuisine/protein preference so the solver can reach dishes that carry it."
+     ],
+     "binding": {
+      "key": "macro-composition",
+      "label": "fat in your recipe pool",
+      "detail": "1 of 1 day(s) landed outside your 89-105 g fat range. Portion scaling moves a dish's calories, not its fat/carb ratio, so what binds here is which dishes your rules leave in the pool. Calories and protein landed on target on every day — it is composition, not portion size, that is short."
+     }
+    },
+    "poolCounts": {
+     "raw": 889,
+     "afterDiet": 481,
+     "afterPrep": 481,
+     "afterStack": 481,
+     "stackExplain": null
+    },
+    "variety": {
+     "mealEligible": 452,
+     "usableForSlot": 153,
+     "slotKcal": 888,
+     "snackEligible": 5,
+     "weeklyMealSlots": 21,
+     "weeklySnackSlots": 14,
+     "repeatCap": 2,
+     "distinctWeeks": 7.3,
+     "horizonWeeks": 1,
+     "sustainsHorizon": false,
+     "notes": [
+      "Only 5 snack recipe(s) fit your rules, so the same snacks come back every week.",
+      "1 day: 4 distinct dish(es) across 5 filled slot(s); most-repeated dish appears 2x against a 2x cap for this horizon (2x per week)."
+     ],
+     "horizon": {
+      "weeks": 1,
+      "days": 1,
+      "perWeekCap": 2,
+      "horizonRepeatCap": 2,
+      "mealSlots": 3,
+      "snackSlots": 2,
+      "totalSlots": 5,
+      "distinctFloor": 3,
+      "distinctRecipes": 4,
+      "maxRepeat": 2,
+      "maxRepeatRecipeId": "cmrevpcyt004lwl5gx6bidm0z",
+      "lockedRepeatsOfMax": 0,
+      "filledSlots": 5,
+      "unfilledSlots": 0,
+      "requiredDistinct": 3,
+      "capHeld": true,
+      "floorHeld": true
+     }
+    },
+    "priorWeeksConsidered": 0,
+    "horizon": {
+     "key": "day",
+     "label": "1 day",
+     "days": 1,
+     "kind": "days",
+     "weeks": 1,
+     "custom": false,
+     "startDate": "2026-07-29",
+     "endDate": "2026-07-29",
+     "startDayOfWeek": 2,
+     "weeksWritten": 1,
+     "solveMs": 4,
+     "weekPlans": [
+      {
+       "startDate": "2026-07-27",
+       "dayIndices": [
+        2
+       ],
+       "days": 1,
+       "daysInTolerance": 0,
+       "avgMatch": 82,
+       "unfilledSlots": 0,
+       "poolSize": 481
+      }
+     ]
+    }
+   }
+  }
+ }
+}

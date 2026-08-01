@@ -1,0 +1,493 @@
+{
+ "persona": {
+  "idx": 20,
+  "id": "p020",
+  "tier": "EASY",
+  "displayName": "powerlifter, 30",
+  "story": "powerlifter, 30, female, 155 cm / 57 kg (BMI 23.7), cut at 2 lb/wk, vegetarian diet, avoiding dairy, balanced, 2 meals + 2 snacks, wants a single day",
+  "profile": {
+   "sex": "F",
+   "age": 30,
+   "heightCm": 155,
+   "startWeightKg": 57,
+   "goalWeightKg": 49.4,
+   "occupationKey": "trades-general",
+   "trainingStyle": "weights",
+   "minutesPerSession": 90,
+   "sessionsPerWeek": 5,
+   "rateLbPerWeek": 2,
+   "dietaryStyle": "vegetarian",
+   "excludedFoods": [
+    "dairy"
+   ],
+   "mealsPerDay": 2,
+   "snacksPerDay": 2,
+   "unitPref": "metric",
+   "bodyFatPct": 22,
+   "bodyFatSource": "measured",
+   "rateAcknowledged": true
+  },
+  "filters": {
+   "maxPrepMin": 15
+  },
+  "horizon": "day",
+  "walls": [
+   "dairy"
+  ],
+  "freeTextExclusions": [],
+  "dietaryStyle": "vegetarian",
+  "bmi": 23.7,
+  "goalKind": "cut",
+  "macroStyle": "balanced",
+  "requestedButUnsupported": [],
+  "tupleKey": "[\"EASY\",\"F\",30,155,57,49.4,\"trades-general\",\"weights\",2,\"vegetarian\",[\"dairy\"],2,2,\"balanced\",\"day\",15,null,null,null,null]"
+ },
+ "request": {
+  "horizon": "day",
+  "filters": {
+   "maxPrepMin": 15
+  }
+ },
+ "profileResponse": {
+  "id": "cms6x0c8e00trwlw0oi6giowl",
+  "userId": "cms6x0c1w000ewl2o7ed8uk5n",
+  "sex": "F",
+  "age": 30,
+  "heightCm": 155,
+  "bodyFatPct": 22,
+  "bodyFatSource": "measured",
+  "occupationKey": "trades-general",
+  "activityOverride": null,
+  "sessionsPerWeek": 5,
+  "trainingStyle": "weights",
+  "minutesPerSession": 90,
+  "startWeightKg": 57,
+  "goalWeightKg": 49.4,
+  "startDate": "2026-07-29",
+  "unitPref": "metric",
+  "rateLbPerWeek": 2,
+  "rateAcknowledged": true,
+  "floorKcal": null,
+  "excludedFormulas": [],
+  "targetKcal": 1254,
+  "mealsPerDay": 2,
+  "snacksPerDay": 2,
+  "excludedFoods": [
+   "dairy"
+  ],
+  "dietaryStyle": "vegetarian",
+  "cuisinePreferences": [],
+  "mealPreferencesNote": null,
+  "maxPrepMin": null,
+  "budgetTier": null,
+  "allowBatch": null,
+  "maxComplexity": null,
+  "adaptiveTdee": true,
+  "proteinPriorityMode": false,
+  "updatedAt": "2026-07-30T20:33:06.006Z"
+ },
+ "generate": {
+  "status": 200,
+  "ms": 463,
+  "body": {
+   "id": "cms7z0gkj00gbwlgwp4erjrqb",
+   "userId": "cms6x0c1w000ewl2o7ed8uk5n",
+   "startDate": "2026-07-27",
+   "createdAt": "2026-07-30T20:33:06.788Z",
+   "slots": [
+    {
+     "id": "cms7z0gkl00gdwlgw0ythbw20",
+     "planId": "cms7z0gkj00gbwlgwp4erjrqb",
+     "dayOfWeek": 3,
+     "slotType": "meal",
+     "slotIndex": 0,
+     "recipeId": "cmrujkwq00020wl9ofnqk0q0v",
+     "proteinScale": 2,
+     "sidesScale": 0.66,
+     "ingredients": [
+      {
+       "foodId": "cmrj2tbsj00m1wlwsfeuh3jsf",
+       "name": "flax eggs",
+       "role": "protein",
+       "grams": 300
+      },
+      {
+       "foodId": "cmrevpcn2000ewl5gmlyzu0vd",
+       "name": "White rice, cooked",
+       "role": "carb",
+       "grams": 105
+      },
+      {
+       "foodId": "cmrj2t6na000ywlws9jek4w4z",
+       "name": "Broccoli",
+       "role": "veg",
+       "grams": 70
+      },
+      {
+       "foodId": "cmrj2t6xc0028wlwszh51pa6i",
+       "name": "Sesame Seed Oil",
+       "role": "fat",
+       "grams": 8
+      }
+     ],
+     "kcal": 393.92,
+     "protein": 36.73399999999999,
+     "fat": 8.553,
+     "carb": 40.869,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrujkwq00020wl9ofnqk0q0v",
+      "name": "Stir-Fried Eggs & Broccoli with Rice",
+      "description": null,
+      "steps": [
+       "Cook the eggs.",
+       "Serve with white rice and broccoli."
+      ],
+      "slotType": "meal",
+      "cuisine": "asian",
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 395.3200000000001,
+      "protein": 23.197,
+      "fat": 8.854,
+      "carb": 55.237,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 3.06,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:00:06.697Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z0gkn00gfwlgwh138hgti",
+     "planId": "cms7z0gkj00gbwlgwp4erjrqb",
+     "dayOfWeek": 3,
+     "slotType": "meal",
+     "slotIndex": 1,
+     "recipeId": "cmrul1dq8001iwlk4q6vbntmf",
+     "proteinScale": 1.03,
+     "sidesScale": 0.5,
+     "ingredients": [
+      {
+       "foodId": "cmrj2tapd00htwlwsd6ggixb6",
+       "name": "Tofu",
+       "role": "protein",
+       "grams": 205
+      },
+      {
+       "foodId": "cmrukzaed0004wlbwdxnybljb",
+       "name": "Lentil pasta, dry",
+       "role": "carb",
+       "grams": 50
+      },
+      {
+       "foodId": "cmrj2t6na000ywlws9jek4w4z",
+       "name": "Broccoli",
+       "role": "veg",
+       "grams": 55
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 532.25,
+     "protein": 49.3785,
+     "fat": 24.063,
+     "carb": 36.6475,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrul1dq8001iwlk4q6vbntmf",
+      "name": "High-Protein Tofu & Broccoli with Lentil Pasta",
+      "description": null,
+      "steps": [
+       "Cook the tofu.",
+       "Serve over lentil pasta with broccoli."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 717.1,
+      "protein": 62.427,
+      "fat": 24.814,
+      "carb": 67.457,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 3.98,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:40:54.849Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z0gkn00gjwlgwj5669y20",
+     "planId": "cms7z0gkj00gbwlgwp4erjrqb",
+     "dayOfWeek": 3,
+     "slotType": "snack",
+     "slotIndex": 0,
+     "recipeId": "cms7pjmju002swlbktsksba9r",
+     "proteinScale": 0.9,
+     "sidesScale": 0.9,
+     "ingredients": [
+      {
+       "foodId": "cmrukzae50002wlbwr9bq9oa7",
+       "name": "Edamame, shelled, cooked",
+       "role": "protein",
+       "grams": 135
+      },
+      {
+       "foodId": "cmrj2t6gd0003wlwss7jf3wzf",
+       "name": "Salt",
+       "role": "other",
+       "grams": 1
+      }
+     ],
+     "kcal": 163.35,
+     "protein": 16.2,
+     "fat": 6.75,
+     "carb": 12.15,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cms7pjmju002swlbktsksba9r",
+      "name": "Edamame with Sea Salt",
+      "description": null,
+      "steps": [
+       "Boil the pods 4 minutes in well-salted water.",
+       "Drain and salt again while hot. Eat from the pod."
+      ],
+      "slotType": "snack",
+      "cuisine": "japanese",
+      "prepTimeMin": 6,
+      "source": "curated",
+      "mealCategory": null,
+      "kcal": 181.5,
+      "protein": 18,
+      "fat": 7.5,
+      "carb": 13.5,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": null,
+      "difficulty": 1,
+      "filterProvenance": null,
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-30T16:08:04.843Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z0gko00glwlgwk4rlsdbm",
+     "planId": "cms7z0gkj00gbwlgwp4erjrqb",
+     "dayOfWeek": 3,
+     "slotType": "snack",
+     "slotIndex": 1,
+     "recipeId": "cms7pjmju002swlbktsksba9r",
+     "proteinScale": 0.91,
+     "sidesScale": 0.91,
+     "ingredients": [
+      {
+       "foodId": "cmrukzae50002wlbwr9bq9oa7",
+       "name": "Edamame, shelled, cooked",
+       "role": "protein",
+       "grams": 135
+      },
+      {
+       "foodId": "cmrj2t6gd0003wlwss7jf3wzf",
+       "name": "Salt",
+       "role": "other",
+       "grams": 1
+      }
+     ],
+     "kcal": 163.35,
+     "protein": 16.2,
+     "fat": 6.75,
+     "carb": 12.15,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cms7pjmju002swlbktsksba9r",
+      "name": "Edamame with Sea Salt",
+      "description": null,
+      "steps": [
+       "Boil the pods 4 minutes in well-salted water.",
+       "Drain and salt again while hot. Eat from the pod."
+      ],
+      "slotType": "snack",
+      "cuisine": "japanese",
+      "prepTimeMin": 6,
+      "source": "curated",
+      "mealCategory": null,
+      "kcal": 181.5,
+      "protein": 18,
+      "fat": 7.5,
+      "carb": 13.5,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": null,
+      "difficulty": 1,
+      "filterProvenance": null,
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-30T16:08:04.843Z",
+      "createdByUserId": null
+     }
+    }
+   ],
+   "groceryList": null,
+   "meta": {
+    "matchPct": 90,
+    "attempts": 5,
+    "score": {
+     "daysInTolerance": 1,
+     "avgMatch": 90,
+     "days": [
+      {
+       "dayOfWeek": 3,
+       "dayName": "Thursday",
+       "matchPct": 90,
+       "totals": {
+        "kcal": 1253,
+        "protein": 119,
+        "fat": 46,
+        "carb": 102
+       },
+       "kcalDeltaPct": -0.1,
+       "proteinShortPct": 0,
+       "fatOk": true,
+       "carbOk": true,
+       "inTolerance": true,
+       "miss": null,
+       "unfilledSlots": 0,
+       "warnedSlots": 0,
+       "windowIndex": 0,
+       "dayIndex": 0,
+       "key": "0:3"
+      }
+     ],
+     "totalDays": 1
+    },
+    "days": [
+     {
+      "dayOfWeek": 3,
+      "dayName": "Thursday",
+      "matchPct": 90,
+      "totals": {
+       "kcal": 1253,
+       "protein": 119,
+       "fat": 46,
+       "carb": 102
+      },
+      "kcalDeltaPct": -0.1,
+      "proteinShortPct": 0,
+      "fatOk": true,
+      "carbOk": true,
+      "inTolerance": true,
+      "miss": null,
+      "unfilledSlots": 0,
+      "warnedSlots": 0,
+      "windowIndex": 0,
+      "dayIndex": 0,
+      "key": "0:3"
+     }
+    ],
+    "diagnosis": null,
+    "poolCounts": {
+     "raw": 910,
+     "afterDiet": 217,
+     "afterPrep": 129,
+     "afterStack": 129,
+     "stackExplain": null
+    },
+    "variety": {
+     "mealEligible": 123,
+     "usableForSlot": 118,
+     "slotKcal": 451,
+     "snackEligible": 5,
+     "weeklyMealSlots": 14,
+     "weeklySnackSlots": 14,
+     "repeatCap": 2,
+     "distinctWeeks": 8.4,
+     "horizonWeeks": 1,
+     "sustainsHorizon": false,
+     "notes": [
+      "Only 5 snack recipe(s) fit your rules, so the same snacks come back every week.",
+      "1 day: 3 distinct dish(es) across 4 filled slot(s); most-repeated dish appears 2x against a 2x cap for this horizon (2x per week)."
+     ],
+     "horizon": {
+      "weeks": 1,
+      "days": 1,
+      "perWeekCap": 2,
+      "horizonRepeatCap": 2,
+      "mealSlots": 2,
+      "snackSlots": 2,
+      "totalSlots": 4,
+      "distinctFloor": 2,
+      "distinctRecipes": 3,
+      "maxRepeat": 2,
+      "maxRepeatRecipeId": "cms7pjmju002swlbktsksba9r",
+      "lockedRepeatsOfMax": 0,
+      "filledSlots": 4,
+      "unfilledSlots": 0,
+      "requiredDistinct": 2,
+      "capHeld": true,
+      "floorHeld": true
+     }
+    },
+    "priorWeeksConsidered": 0,
+    "horizon": {
+     "key": "day",
+     "label": "1 day",
+     "days": 1,
+     "kind": "days",
+     "weeks": 1,
+     "custom": false,
+     "startDate": "2026-07-30",
+     "endDate": "2026-07-30",
+     "startDayOfWeek": 3,
+     "weeksWritten": 1,
+     "solveMs": 2,
+     "weekPlans": [
+      {
+       "startDate": "2026-07-27",
+       "dayIndices": [
+        3
+       ],
+       "days": 1,
+       "daysInTolerance": 1,
+       "avgMatch": 90,
+       "unfilledSlots": 0,
+       "poolSize": 129
+      }
+     ]
+    }
+   }
+  }
+ }
+}

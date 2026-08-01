@@ -1,0 +1,758 @@
+{
+ "persona": {
+  "idx": 178,
+  "id": "p178",
+  "tier": "EASY",
+  "displayName": "electrician, 67",
+  "story": "electrician, 67, male, 190 cm / 134 kg (BMI 37.1), cut at 0.5 lb/wk, mediterranean diet, avoiding shellfish, gluten, beef, low-carb, 4 meals + 3 snacks, wants a single day",
+  "profile": {
+   "sex": "M",
+   "age": 67,
+   "heightCm": 190,
+   "startWeightKg": 134,
+   "goalWeightKg": 109.5,
+   "occupationKey": "electrician",
+   "trainingStyle": "weights",
+   "minutesPerSession": 45,
+   "sessionsPerWeek": 3,
+   "rateLbPerWeek": 0.5,
+   "dietaryStyle": "mediterranean",
+   "excludedFoods": [
+    "shellfish",
+    "gluten",
+    "beef"
+   ],
+   "mealsPerDay": 4,
+   "snacksPerDay": 3,
+   "unitPref": "imperial",
+   "bodyFatPct": 34,
+   "bodyFatSource": "visual-estimate"
+  },
+  "filters": {},
+  "horizon": "day",
+  "walls": [
+   "shellfish",
+   "gluten",
+   "beef"
+  ],
+  "freeTextExclusions": [
+   "beef"
+  ],
+  "dietaryStyle": "mediterranean",
+  "bmi": 37.1,
+  "goalKind": "cut",
+  "macroStyle": "low-carb",
+  "requestedButUnsupported": [
+   "wanted a low-carb split without full keto; carbs are the leftover after LBM-derived protein and fat, and only dietaryStyle:\"keto\" changes that"
+  ],
+  "tupleKey": "[\"EASY\",\"M\",67,190,134,109.5,\"electrician\",\"weights\",0.5,\"mediterranean\",[\"beef\",\"gluten\",\"shellfish\"],4,3,\"low-carb\",\"day\",null,null,null,null,null]"
+ },
+ "request": {
+  "horizon": "day",
+  "filters": {}
+ },
+ "profileResponse": {
+  "id": "cms6x1gym04idwlw0ce5z8o7r",
+  "userId": "cms6x1goc004swl2oute772mw",
+  "sex": "M",
+  "age": 67,
+  "heightCm": 190,
+  "bodyFatPct": 34,
+  "bodyFatSource": "visual-estimate",
+  "occupationKey": "electrician",
+  "activityOverride": null,
+  "sessionsPerWeek": 3,
+  "trainingStyle": "weights",
+  "minutesPerSession": 45,
+  "startWeightKg": 134,
+  "goalWeightKg": 109.5,
+  "startDate": "2026-07-29",
+  "unitPref": "imperial",
+  "rateLbPerWeek": 0.5,
+  "rateAcknowledged": false,
+  "floorKcal": null,
+  "excludedFormulas": [],
+  "targetKcal": 3216,
+  "mealsPerDay": 4,
+  "snacksPerDay": 3,
+  "excludedFoods": [
+   "shellfish",
+   "gluten",
+   "beef"
+  ],
+  "dietaryStyle": "mediterranean",
+  "cuisinePreferences": [],
+  "mealPreferencesNote": null,
+  "maxPrepMin": null,
+  "budgetTier": null,
+  "allowBatch": null,
+  "maxComplexity": null,
+  "adaptiveTdee": true,
+  "proteinPriorityMode": false,
+  "updatedAt": "2026-07-30T02:50:08.576Z"
+ },
+ "generate": {
+  "status": 200,
+  "ms": 760,
+  "body": {
+   "id": "cms6x1hjw04izwlw05alvgpem",
+   "userId": "cms6x1goc004swl2oute772mw",
+   "startDate": "2026-07-27",
+   "createdAt": "2026-07-30T02:50:09.308Z",
+   "slots": [
+    {
+     "id": "cms6x1hkj04j1wlw08tq0mc1e",
+     "planId": "cms6x1hjw04izwlw05alvgpem",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 0,
+     "recipeId": "cmrujkwvk00buwl9o5qzvdm2i",
+     "proteinScale": 1.96,
+     "sidesScale": 1.53,
+     "ingredients": [
+      {
+       "foodId": "cmrj2tbsj00m1wlwsfeuh3jsf",
+       "name": "flax eggs",
+       "role": "protein",
+       "grams": 295
+      },
+      {
+       "foodId": "cmrj2t7fb004fwlws8ezof2dp",
+       "name": "Russet Potato",
+       "role": "carb",
+       "grams": 275
+      },
+      {
+       "foodId": "cmrevpcnh000iwl5gh2zjhyqe",
+       "name": "Bell peppers",
+       "role": "veg",
+       "grams": 120
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 10
+      }
+     ],
+     "kcal": 550.7,
+     "protein": 39.9975,
+     "fat": 10.7175,
+     "carb": 73.012,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrujkwvk00buwl9o5qzvdm2i",
+      "name": "Classic Eggs & Bell Peppers with Potato",
+      "description": null,
+      "steps": [
+       "Cook the eggs.",
+       "Serve with potato and bell peppers."
+      ],
+      "slotType": "meal",
+      "cuisine": "american",
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 368.3,
+      "protein": 21.6,
+      "fat": 10.5,
+      "carb": 46.9,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 3.01,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:00:06.897Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x1hkl04j3wlw0u3hrmvg9",
+     "planId": "cms6x1hjw04izwlw05alvgpem",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 1,
+     "recipeId": "cmrj2u3bg06muwlwsgac7ps12",
+     "proteinScale": 2,
+     "sidesScale": 0.86,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t6t4001pwlwsxeja9565",
+       "name": "Potatoes",
+       "role": "veg",
+       "grams": 75
+      },
+      {
+       "foodId": "cmrj2t8xx00b4wlwsm2tbvosk",
+       "name": "Apples",
+       "role": "veg",
+       "grams": 40
+      },
+      {
+       "foodId": "cmrj2t6ft0001wlwstiofk9on",
+       "name": "Garlic",
+       "role": "veg",
+       "grams": 1
+      },
+      {
+       "foodId": "cmrj2t6qp001ewlwsds5bbm29",
+       "name": "Lemon",
+       "role": "veg",
+       "grams": 12
+      },
+      {
+       "foodId": "cmrj2taan00g8wlwsbyawztow",
+       "name": "Pork",
+       "role": "protein",
+       "grams": 100
+      },
+      {
+       "foodId": "cmrj2tas100i4wlwsslkljykk",
+       "name": "Zucchini",
+       "role": "veg",
+       "grams": 20
+      },
+      {
+       "foodId": "cmrj2t6n2000xwlwsqltep2pn",
+       "name": "Chicken Stock",
+       "role": "protein",
+       "grams": 50
+      },
+      {
+       "foodId": "cmrj2t7hg004pwlwsioxvv8bh",
+       "name": "Vegetable Oil",
+       "role": "carb",
+       "grams": 3
+      },
+      {
+       "foodId": "cmrj2t6z2002gwlwsjklhz848",
+       "name": "Sugar",
+       "role": "carb",
+       "grams": 1
+      },
+      {
+       "foodId": "cmrevpcnz000mwl5g62fmfzqk",
+       "name": "Butter",
+       "role": null,
+       "grams": 6
+      }
+     ],
+     "kcal": 592.8,
+     "protein": 41.4136,
+     "fat": 23.0529,
+     "carb": 54.51520000000001,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrj2u3bg06muwlwsgac7ps12",
+      "name": "Skillet Apple Pork Chops with Roasted Sweet Potatoes & Zucchini",
+      "description": null,
+      "steps": [
+       "Serves 2",
+       "Adjust racks to top and middle positions and preheat oven to 450 degrees. Wash and dry all produce. Dice sweet potatoes into 1/2-inch pieces. Toss on a baking sheet with a drizzle of oil, salt, and pepper. Roast on top rack for 12 minutes (we'll roast the zucchini then).",
+       "Meanwhile, halve and core apple; thinly slice into half-moons. Peel and finely chop garlic. Quarter lemon. Trim and halve zucchini lengthwise; cut crosswise into 1/2-inch-thick half-moons. Toss on a second baking sheet with a drizzle of oil and a pinch of salt and pepper. Set aside.",
+       "Pat pork dry with paper towels and season all over with salt and pepper. Heat a drizzle of oil in a large pan over medium-high heat. Add pork and cook until browned and cooked through, 4-5 minutes per side. Turn off heat; transfer to a plate.",
+       "Once sweet potatoes have roasted 12 minutes, transfer baking sheet with zucchini to middle rack and continue roasting until both veggies are browned and softened, 12-15 minutes more.",
+       "Meanwhile, melt 1 TBSP butter (2 TBSP for 4 servings) in pan used for pork over medium-high heat. Add apple and season with salt and pepper. Cook, scraping up any browned bits from bottom of pan, until apple is slightly softened, 2-3 minutes. Add garlic; cook until fragrant, 30 seconds. Add 1/z cup water (3/4 cup for 4), stock concentrate, and 11/2 tsp sugar (3 tsp for 4). Cook, stirring, until sauce has thickened and apple is very tender, 3-5 minutes. Season with salt and pepper.",
+       "Remove pan with apple from heat; stir in 1 TBSP butter (2 TBSP for 4 servings) and a squeeze of lemon juice. Divide pork, zucchini, and sweet potatoes between plates. Top pork with glazed apple sauce. Top zucchini with a squeeze of lemon juice."
+      ],
+      "slotType": "meal",
+      "cuisine": "western-comfort",
+      "prepTimeMin": 34,
+      "source": "themealdb-import",
+      "mealCategory": null,
+      "kcal": 548.3,
+      "protein": 29.3,
+      "fat": 20.6,
+      "carb": 62.1,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 2.52,
+      "difficulty": 5,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-13T10:25:53.741Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x1hkm04j5wlw0wjw0gu6s",
+     "planId": "cms6x1hjw04izwlw05alvgpem",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 2,
+     "recipeId": "cmrul79zk00cowl80j0zs7xej",
+     "proteinScale": 1.76,
+     "sidesScale": 1.88,
+     "ingredients": [
+      {
+       "foodId": "cmrj2tbym00mowlwszf3qi0d8",
+       "name": "Cottage Cheese",
+       "role": "protein",
+       "grams": 350
+      },
+      {
+       "foodId": "cmrevpcn2000ewl5gmlyzu0vd",
+       "name": "White rice, cooked",
+       "role": "carb",
+       "grams": 205
+      },
+      {
+       "foodId": "cmrevpcnl000jwl5gnqnk630b",
+       "name": "Cucumber",
+       "role": "veg",
+       "grams": 170
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 615.5,
+     "protein": 45.038,
+     "fat": 13.937,
+     "carb": 76.15699999999998,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrul79zk00cowl80j0zs7xej",
+      "name": "High-Protein Cottage Cheese & Cucumber with Rice",
+      "description": null,
+      "steps": [
+       "Cook the cottage cheese.",
+       "Serve over white rice with cucumber."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 361,
+      "protein": 25.5,
+      "fat": 10.1,
+      "carb": 41.4,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 2.57,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:45:29.936Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x1hkm04j7wlw0wjvd45a7",
+     "planId": "cms6x1hjw04izwlw05alvgpem",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 3,
+     "recipeId": "cmrul1dpj000owlk41m8hxi3g",
+     "proteinScale": 1.51,
+     "sidesScale": 2,
+     "ingredients": [
+      {
+       "foodId": "cmrukzae20001wlbwgdjqlh3f",
+       "name": "Textured vegetable protein, dry",
+       "role": "protein",
+       "grams": 85
+      },
+      {
+       "foodId": "cmrevpcn2000ewl5gmlyzu0vd",
+       "name": "White rice, cooked",
+       "role": "carb",
+       "grams": 220
+      },
+      {
+       "foodId": "cmrevpcnh000iwl5gh2zjhyqe",
+       "name": "Bell peppers",
+       "role": "veg",
+       "grams": 160
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 661.1,
+     "protein": 51.74,
+     "fat": 6.99,
+     "carb": 96.70000000000002,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrul1dpj000owlk41m8hxi3g",
+      "name": "High-Protein TVP & Bell Peppers with Rice",
+      "description": null,
+      "steps": [
+       "Cook the tvp.",
+       "Serve over white rice with bell peppers."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 394.3,
+      "protein": 32.4,
+      "fat": 6.1,
+      "carb": 52.1,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 1.7,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:40:54.824Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x1hkn04j9wlw0zjq6je4t",
+     "planId": "cms6x1hjw04izwlw05alvgpem",
+     "dayOfWeek": 2,
+     "slotType": "snack",
+     "slotIndex": 0,
+     "recipeId": "cmrevpcz5004qwl5gt3aso51q",
+     "proteinScale": 0.5,
+     "sidesScale": 0.65,
+     "ingredients": [
+      {
+       "foodId": "cmrevpcoi000qwl5ghkc51bf4",
+       "name": "Greek yogurt, 0%",
+       "role": "protein",
+       "grams": 175
+      },
+      {
+       "foodId": "cmrevpco3000nwl5g1d51b3it",
+       "name": "Almonds",
+       "role": "fat",
+       "grams": 25
+      },
+      {
+       "foodId": "cmrevpcnv000lwl5go8mxze0i",
+       "name": "Mixed berries",
+       "role": "veg",
+       "grams": 65
+      }
+     ],
+     "kcal": 289.8,
+     "protein": 23.205,
+     "fat": 14.02,
+     "carb": 20.65,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrevpcz5004qwl5gt3aso51q",
+      "name": "Greek Yogurt, Almonds & Berries",
+      "description": "The Closer from the day template.",
+      "steps": [
+       "Stir almonds and berries into the yogurt."
+      ],
+      "slotType": "snack",
+      "cuisine": "mediterranean",
+      "prepTimeMin": 5,
+      "source": "curated",
+      "mealCategory": null,
+      "kcal": 502.7,
+      "protein": 44.1,
+      "fat": 22.7,
+      "carb": 35,
+      "tasteTier": "really_good",
+      "tasteTierSource": "curated",
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 4.37,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-10T11:55:10.962Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x1hko04jbwlw07yybhv68",
+     "planId": "cms6x1hjw04izwlw05alvgpem",
+     "dayOfWeek": 2,
+     "slotType": "snack",
+     "slotIndex": 1,
+     "recipeId": "cmrujhgxz000zwlbon488ewmg",
+     "proteinScale": 0.98,
+     "sidesScale": 0.98,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t7p5005pwlws4acmktnt",
+       "name": "Greek Yogurt",
+       "role": "dairy",
+       "grams": 165
+      },
+      {
+       "foodId": "cmrevpco3000nwl5g1d51b3it",
+       "name": "Almonds",
+       "role": "fat",
+       "grams": 15
+      },
+      {
+       "foodId": "cmrfoyp7m0002wl0851se2p2b",
+       "name": "Honey",
+       "role": "other",
+       "grams": 10
+      }
+     ],
+     "kcal": 255.4,
+     "protein": 15.1095,
+     "fat": 8.271,
+     "carb": 32.51,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrujhgxz000zwlbon488ewmg",
+      "name": "Greek Yogurt, Honey & Almonds",
+      "description": null,
+      "steps": [
+       "Stir together."
+      ],
+      "slotType": "snack",
+      "cuisine": "american",
+      "prepTimeMin": 10,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 259.5,
+      "protein": 15.5,
+      "fat": 8.3,
+      "carb": 33.2,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 1.58,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T10:57:26.280Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x1hko04jdwlw03ywedraz",
+     "planId": "cms6x1hjw04izwlw05alvgpem",
+     "dayOfWeek": 2,
+     "slotType": "snack",
+     "slotIndex": 2,
+     "recipeId": "cmrujhgxz000zwlbon488ewmg",
+     "proteinScale": 0.97,
+     "sidesScale": 0.97,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t7p5005pwlws4acmktnt",
+       "name": "Greek Yogurt",
+       "role": "dairy",
+       "grams": 165
+      },
+      {
+       "foodId": "cmrevpco3000nwl5g1d51b3it",
+       "name": "Almonds",
+       "role": "fat",
+       "grams": 14
+      },
+      {
+       "foodId": "cmrfoyp7m0002wl0851se2p2b",
+       "name": "Honey",
+       "role": "other",
+       "grams": 10
+      }
+     ],
+     "kcal": 249.42,
+     "protein": 14.8995,
+     "fat": 7.746,
+     "carb": 32.3,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrujhgxz000zwlbon488ewmg",
+      "name": "Greek Yogurt, Honey & Almonds",
+      "description": null,
+      "steps": [
+       "Stir together."
+      ],
+      "slotType": "snack",
+      "cuisine": "american",
+      "prepTimeMin": 10,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 259.5,
+      "protein": 15.5,
+      "fat": 8.3,
+      "carb": 33.2,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 1.58,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T10:57:26.280Z",
+      "createdByUserId": null
+     }
+    }
+   ],
+   "groceryList": null,
+   "meta": {
+    "matchPct": 95,
+    "attempts": 2,
+    "score": {
+     "daysInTolerance": 1,
+     "avgMatch": 95,
+     "days": [
+      {
+       "dayOfWeek": 2,
+       "dayName": "Wednesday",
+       "matchPct": 95,
+       "totals": {
+        "kcal": 3215,
+        "protein": 231,
+        "fat": 85,
+        "carb": 386
+       },
+       "kcalDeltaPct": 0,
+       "proteinShortPct": 0.7,
+       "fatOk": true,
+       "carbOk": true,
+       "inTolerance": true,
+       "miss": null,
+       "unfilledSlots": 0,
+       "warnedSlots": 0,
+       "windowIndex": 0,
+       "dayIndex": 0,
+       "key": "0:2"
+      }
+     ],
+     "totalDays": 1
+    },
+    "days": [
+     {
+      "dayOfWeek": 2,
+      "dayName": "Wednesday",
+      "matchPct": 95,
+      "totals": {
+       "kcal": 3215,
+       "protein": 231,
+       "fat": 85,
+       "carb": 386
+      },
+      "kcalDeltaPct": 0,
+      "proteinShortPct": 0.7,
+      "fatOk": true,
+      "carbOk": true,
+      "inTolerance": true,
+      "miss": null,
+      "unfilledSlots": 0,
+      "warnedSlots": 0,
+      "windowIndex": 0,
+      "dayIndex": 0,
+      "key": "0:2"
+     }
+    ],
+    "diagnosis": null,
+    "poolCounts": {
+     "raw": 889,
+     "afterDiet": 284,
+     "afterPrep": 284,
+     "afterStack": 284,
+     "stackExplain": null
+    },
+    "variety": {
+     "mealEligible": 255,
+     "usableForSlot": 176,
+     "slotKcal": 620,
+     "snackEligible": 2,
+     "weeklyMealSlots": 28,
+     "weeklySnackSlots": 21,
+     "repeatCap": 2,
+     "distinctWeeks": 6.3,
+     "horizonWeeks": 1,
+     "sustainsHorizon": false,
+     "notes": [
+      "Only 2 snack recipe(s) fit your rules, so the same snacks come back every week.",
+      "1 day: 6 distinct dish(es) across 7 filled slot(s); most-repeated dish appears 2x against a 2x cap for this horizon (2x per week)."
+     ],
+     "horizon": {
+      "weeks": 1,
+      "days": 1,
+      "perWeekCap": 2,
+      "horizonRepeatCap": 2,
+      "mealSlots": 4,
+      "snackSlots": 3,
+      "totalSlots": 7,
+      "distinctFloor": 4,
+      "distinctRecipes": 6,
+      "maxRepeat": 2,
+      "maxRepeatRecipeId": "cmrujhgxz000zwlbon488ewmg",
+      "lockedRepeatsOfMax": 0,
+      "filledSlots": 7,
+      "unfilledSlots": 0,
+      "requiredDistinct": 4,
+      "capHeld": true,
+      "floorHeld": true
+     }
+    },
+    "priorWeeksConsidered": 0,
+    "horizon": {
+     "key": "day",
+     "label": "1 day",
+     "days": 1,
+     "kind": "days",
+     "weeks": 1,
+     "custom": false,
+     "startDate": "2026-07-29",
+     "endDate": "2026-07-29",
+     "startDayOfWeek": 2,
+     "weeksWritten": 1,
+     "solveMs": 3,
+     "weekPlans": [
+      {
+       "startDate": "2026-07-27",
+       "dayIndices": [
+        2
+       ],
+       "days": 1,
+       "daysInTolerance": 1,
+       "avgMatch": 95,
+       "unfilledSlots": 0,
+       "poolSize": 284
+      }
+     ]
+    }
+   }
+  }
+ }
+}

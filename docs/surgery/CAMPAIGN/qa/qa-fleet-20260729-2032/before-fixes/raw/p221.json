@@ -1,0 +1,456 @@
+{
+ "persona": {
+  "idx": 221,
+  "id": "p221",
+  "tier": "ROBUSTNESS",
+  "displayName": "powerlifter, 37",
+  "story": "powerlifter, 37 (managing meals for a 15-year-old), male, 168 cm / 56.7 kg (BMI 20.1), cut at 1 lb/wk, none diet, avoiding cilantro, shellfish, low-fat, 3 meals + 0 snacks, wants a single day",
+  "profile": {
+   "sex": "M",
+   "age": 37,
+   "heightCm": 168,
+   "startWeightKg": 56.7,
+   "goalWeightKg": 46.9,
+   "occupationKey": "trades-general",
+   "trainingStyle": "weights",
+   "minutesPerSession": 90,
+   "sessionsPerWeek": 5,
+   "rateLbPerWeek": 1,
+   "dietaryStyle": "none",
+   "excludedFoods": [
+    "cilantro",
+    "shellfish"
+   ],
+   "mealsPerDay": 9,
+   "snacksPerDay": 0,
+   "unitPref": "metric",
+   "goalWeightAcknowledged": true
+  },
+  "filters": {},
+  "horizon": "day",
+  "walls": [
+   "cilantro",
+   "shellfish"
+  ],
+  "freeTextExclusions": [
+   "cilantro"
+  ],
+  "dietaryStyle": "none",
+  "bmi": 20.1,
+  "goalKind": "cut",
+  "macroStyle": "low-fat",
+  "requestedButUnsupported": [
+   "managing meals for a 15-year-old; the app has no parent-managed or dependent flag (adultGate refuses under-18 outright), so only the adult's own plan can be built",
+   "wanted a low-fat split; the fat band is fixed at LBM x0.34-0.40 and is not client-settable"
+  ],
+  "parentManaged": {
+   "kidAge": 15,
+   "note": "managing meals for a 15-year-old"
+  },
+  "robustKind": "nine-meals",
+  "expectRejection": {
+   "field": "mealsPerDay",
+   "why": "validator requires 1-8"
+  },
+  "goalBmi": 16.6,
+  "tupleKey": "[\"ROBUSTNESS\",\"M\",37,168,56.7,46.9,\"trades-general\",\"weights\",1,\"none\",[\"cilantro\",\"shellfish\"],9,0,\"low-fat\",\"day\",null,null,null,\"nine-meals\",null]"
+ },
+ "request": {
+  "horizon": "day",
+  "filters": {}
+ },
+ "profileResponse": {
+  "id": "cms6x1s2105frwlw0mws7jxl8",
+  "userId": "cms6x1rwn005zwl2otykhfsy8",
+  "sex": "M",
+  "age": 37,
+  "heightCm": 168,
+  "bodyFatPct": 0,
+  "bodyFatSource": null,
+  "occupationKey": "trades-general",
+  "activityOverride": null,
+  "sessionsPerWeek": 5,
+  "trainingStyle": "weights",
+  "minutesPerSession": 90,
+  "startWeightKg": 56.7,
+  "goalWeightKg": 46.9,
+  "startDate": "2026-07-29",
+  "unitPref": "metric",
+  "rateLbPerWeek": 1,
+  "rateAcknowledged": false,
+  "floorKcal": null,
+  "excludedFormulas": [],
+  "targetKcal": 1783,
+  "mealsPerDay": 3,
+  "snacksPerDay": 0,
+  "excludedFoods": [
+   "cilantro",
+   "shellfish"
+  ],
+  "dietaryStyle": "none",
+  "cuisinePreferences": [],
+  "mealPreferencesNote": null,
+  "maxPrepMin": null,
+  "budgetTier": null,
+  "allowBatch": null,
+  "maxComplexity": null,
+  "adaptiveTdee": true,
+  "proteinPriorityMode": false,
+  "updatedAt": "2026-07-30T02:50:22.929Z"
+ },
+ "generate": {
+  "status": 200,
+  "ms": 460,
+  "body": {
+   "id": "cms6x1sev05glwlw04ixsxfvg",
+   "userId": "cms6x1rwn005zwl2otykhfsy8",
+   "startDate": "2026-07-27",
+   "createdAt": "2026-07-30T02:50:23.384Z",
+   "slots": [
+    {
+     "id": "cms6x1sex05gnwlw0igfo0w8o",
+     "planId": "cms6x1sev05glwlw04ixsxfvg",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 0,
+     "recipeId": "cmrujkwq00020wl9ofnqk0q0v",
+     "proteinScale": 1.57,
+     "sidesScale": 1.35,
+     "ingredients": [
+      {
+       "foodId": "cmrj2tbsj00m1wlwsfeuh3jsf",
+       "name": "flax eggs",
+       "role": "protein",
+       "grams": 235
+      },
+      {
+       "foodId": "cmrevpcn2000ewl5gmlyzu0vd",
+       "name": "White rice, cooked",
+       "role": "carb",
+       "grams": 215
+      },
+      {
+       "foodId": "cmrj2t6na000ywlws9jek4w4z",
+       "name": "Broccoli",
+       "role": "veg",
+       "grams": 150
+      },
+      {
+       "foodId": "cmrj2t6xc0028wlwszh51pa6i",
+       "name": "Sesame Seed Oil",
+       "role": "fat",
+       "grams": 8
+      }
+     ],
+     "kcal": 525.97,
+     "protein": 34.805,
+     "fat": 9.155,
+     "carb": 75.151,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrujkwq00020wl9ofnqk0q0v",
+      "name": "Stir-Fried Eggs & Broccoli with Rice",
+      "description": null,
+      "steps": [
+       "Cook the eggs.",
+       "Serve with white rice and broccoli."
+      ],
+      "slotType": "meal",
+      "cuisine": "asian",
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 395.3200000000001,
+      "protein": 23.197,
+      "fat": 8.854,
+      "carb": 55.237,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 3.06,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:00:06.697Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x1sey05gpwlw0hdkev05q",
+     "planId": "cms6x1sev05glwlw04ixsxfvg",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 1,
+     "recipeId": "cmrul4e6v006owl6849588n2z",
+     "proteinScale": 0.96,
+     "sidesScale": 2,
+     "ingredients": [
+      {
+       "foodId": "cmrj2tay100irwlwsiujfz75h",
+       "name": "White Fish",
+       "role": "protein",
+       "grams": 180
+      },
+      {
+       "foodId": "cmrevpcn2000ewl5gmlyzu0vd",
+       "name": "White rice, cooked",
+       "role": "carb",
+       "grams": 220
+      },
+      {
+       "foodId": "cmrg8zxar000lwli0qy2ovmx4",
+       "name": "Onion",
+       "role": "veg",
+       "grams": 120
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 544.6,
+     "protein": 37.50000000000001,
+     "fat": 9.956,
+     "carb": 72.808,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrul4e6v006owl6849588n2z",
+      "name": "High-Protein White Fish & Onions with Rice",
+      "description": null,
+      "steps": [
+       "Cook the white fish.",
+       "Serve over white rice with onions."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 386.8,
+      "protein": 35.6,
+      "fat": 9.8,
+      "carb": 36.4,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 7.4,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:43:15.415Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x1sey05grwlw0mib9joi1",
+     "planId": "cms6x1sev05glwlw04ixsxfvg",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 2,
+     "recipeId": "cmrul4e7s0086wl68eznlavgl",
+     "proteinScale": 1.43,
+     "sidesScale": 2,
+     "ingredients": [
+      {
+       "foodId": "cmrj2tbym00mowlwszf3qi0d8",
+       "name": "Cottage Cheese",
+       "role": "protein",
+       "grams": 285
+      },
+      {
+       "foodId": "cmrevpcn2000ewl5gmlyzu0vd",
+       "name": "White rice, cooked",
+       "role": "carb",
+       "grams": 220
+      },
+      {
+       "foodId": "cmrj2t6na000ywlws9jek4w4z",
+       "name": "Broccoli",
+       "role": "veg",
+       "grams": 220
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 632.9000000000001,
+     "protein": 42.944,
+     "fat": 12.963,
+     "carb": 87.67750000000001,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrul4e7s0086wl68eznlavgl",
+      "name": "High-Protein Cottage Cheese & Broccoli with Rice",
+      "description": null,
+      "steps": [
+       "Cook the cottage cheese.",
+       "Serve over white rice with broccoli."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 386.1,
+      "protein": 27.8,
+      "fat": 10.3,
+      "carb": 46.3,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 2.81,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:43:15.448Z",
+      "createdByUserId": null
+     }
+    }
+   ],
+   "groceryList": null,
+   "meta": {
+    "matchPct": 94,
+    "attempts": 5,
+    "score": {
+     "daysInTolerance": 1,
+     "avgMatch": 94,
+     "days": [
+      {
+       "dayOfWeek": 2,
+       "dayName": "Wednesday",
+       "matchPct": 94,
+       "totals": {
+        "kcal": 1703,
+        "protein": 115,
+        "fat": 32,
+        "carb": 236
+       },
+       "kcalDeltaPct": -4.5,
+       "proteinShortPct": 2.3,
+       "fatOk": true,
+       "carbOk": true,
+       "inTolerance": true,
+       "miss": null,
+       "unfilledSlots": 0,
+       "warnedSlots": 0,
+       "windowIndex": 0,
+       "dayIndex": 0,
+       "key": "0:2"
+      }
+     ],
+     "totalDays": 1
+    },
+    "days": [
+     {
+      "dayOfWeek": 2,
+      "dayName": "Wednesday",
+      "matchPct": 94,
+      "totals": {
+       "kcal": 1703,
+       "protein": 115,
+       "fat": 32,
+       "carb": 236
+      },
+      "kcalDeltaPct": -4.5,
+      "proteinShortPct": 2.3,
+      "fatOk": true,
+      "carbOk": true,
+      "inTolerance": true,
+      "miss": null,
+      "unfilledSlots": 0,
+      "warnedSlots": 0,
+      "windowIndex": 0,
+      "dayIndex": 0,
+      "key": "0:2"
+     }
+    ],
+    "diagnosis": null,
+    "poolCounts": {
+     "raw": 889,
+     "afterDiet": 787,
+     "afterPrep": 787,
+     "afterStack": 787,
+     "stackExplain": null
+    },
+    "variety": {
+     "mealEligible": 636,
+     "usableForSlot": 423,
+     "slotKcal": 594,
+     "snackEligible": 8,
+     "weeklyMealSlots": 21,
+     "weeklySnackSlots": 0,
+     "repeatCap": 2,
+     "distinctWeeks": 20.1,
+     "horizonWeeks": 1,
+     "sustainsHorizon": true,
+     "notes": [
+      "1 day: 3 distinct dish(es) across 3 filled slot(s); most-repeated dish appears 1x against a 2x cap for this horizon (2x per week)."
+     ],
+     "horizon": {
+      "weeks": 1,
+      "days": 1,
+      "perWeekCap": 2,
+      "horizonRepeatCap": 2,
+      "mealSlots": 3,
+      "snackSlots": 0,
+      "totalSlots": 3,
+      "distinctFloor": 2,
+      "distinctRecipes": 3,
+      "maxRepeat": 1,
+      "maxRepeatRecipeId": "cmrujkwq00020wl9ofnqk0q0v",
+      "lockedRepeatsOfMax": 0,
+      "filledSlots": 3,
+      "unfilledSlots": 0,
+      "requiredDistinct": 2,
+      "capHeld": true,
+      "floorHeld": true
+     }
+    },
+    "priorWeeksConsidered": 0,
+    "horizon": {
+     "key": "day",
+     "label": "1 day",
+     "days": 1,
+     "kind": "days",
+     "weeks": 1,
+     "custom": false,
+     "startDate": "2026-07-29",
+     "endDate": "2026-07-29",
+     "startDayOfWeek": 2,
+     "weeksWritten": 1,
+     "solveMs": 5,
+     "weekPlans": [
+      {
+       "startDate": "2026-07-27",
+       "dayIndices": [
+        2
+       ],
+       "days": 1,
+       "daysInTolerance": 1,
+       "avgMatch": 94,
+       "unfilledSlots": 0,
+       "poolSize": 787
+      }
+     ]
+    }
+   }
+  }
+ }
+}

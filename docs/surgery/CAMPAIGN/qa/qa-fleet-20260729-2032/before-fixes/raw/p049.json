@@ -1,0 +1,668 @@
+{
+ "persona": {
+  "idx": 49,
+  "id": "p049",
+  "tier": "EASY",
+  "displayName": "long-haul trucker, 25",
+  "story": "long-haul trucker, 25, male, 173 cm / 116.9 kg (BMI 39.1), cut at 1.5 lb/wk, vegetarian diet, avoiding peanut, pork, gluten, low-carb, 4 meals + 2 snacks, wants a single day",
+  "profile": {
+   "sex": "M",
+   "age": 25,
+   "heightCm": 173,
+   "startWeightKg": 116.9,
+   "goalWeightKg": 110.8,
+   "occupationKey": "driver-truck",
+   "trainingStyle": "weights",
+   "minutesPerSession": 30,
+   "sessionsPerWeek": 2,
+   "rateLbPerWeek": 1.5,
+   "dietaryStyle": "vegetarian",
+   "excludedFoods": [
+    "peanuts",
+    "pork",
+    "gluten"
+   ],
+   "mealsPerDay": 4,
+   "snacksPerDay": 2,
+   "unitPref": "metric",
+   "bodyFatPct": 8,
+   "bodyFatSource": "visual-estimate",
+   "rateAcknowledged": true
+  },
+  "filters": {},
+  "horizon": "day",
+  "walls": [
+   "peanut",
+   "pork",
+   "gluten"
+  ],
+  "freeTextExclusions": [
+   "pork"
+  ],
+  "dietaryStyle": "vegetarian",
+  "bmi": 39.1,
+  "goalKind": "cut",
+  "macroStyle": "low-carb",
+  "requestedButUnsupported": [
+   "wanted a low-carb split without full keto; carbs are the leftover after LBM-derived protein and fat, and only dietaryStyle:\"keto\" changes that"
+  ],
+  "tupleKey": "[\"EASY\",\"M\",25,173,116.9,110.8,\"driver-truck\",\"weights\",1.5,\"vegetarian\",[\"gluten\",\"peanuts\",\"pork\"],4,2,\"low-carb\",\"day\",null,null,null,null,null]"
+ },
+ "request": {
+  "horizon": "day",
+  "filters": {}
+ },
+ "profileResponse": {
+  "id": "cms6x0ju101l9wlw0korsfn4d",
+  "userId": "cms6x0jni0017wl2o7omkylil",
+  "sex": "M",
+  "age": 25,
+  "heightCm": 173,
+  "bodyFatPct": 8,
+  "bodyFatSource": "visual-estimate",
+  "occupationKey": "driver-truck",
+  "activityOverride": null,
+  "sessionsPerWeek": 2,
+  "trainingStyle": "weights",
+  "minutesPerSession": 30,
+  "startWeightKg": 116.9,
+  "goalWeightKg": 110.8,
+  "startDate": "2026-07-29",
+  "unitPref": "metric",
+  "rateLbPerWeek": 1.5,
+  "rateAcknowledged": false,
+  "floorKcal": null,
+  "excludedFormulas": [],
+  "targetKcal": 2415,
+  "mealsPerDay": 4,
+  "snacksPerDay": 2,
+  "excludedFoods": [
+   "peanuts",
+   "pork",
+   "gluten"
+  ],
+  "dietaryStyle": "vegetarian",
+  "cuisinePreferences": [],
+  "mealPreferencesNote": null,
+  "maxPrepMin": null,
+  "budgetTier": null,
+  "allowBatch": null,
+  "maxComplexity": null,
+  "adaptiveTdee": true,
+  "proteinPriorityMode": false,
+  "updatedAt": "2026-07-30T02:49:25.632Z"
+ },
+ "generate": {
+  "status": 200,
+  "ms": 841,
+  "body": {
+   "id": "cms6x0kfn01lpwlw0gjtyg1ey",
+   "userId": "cms6x0jni0017wl2o7omkylil",
+   "startDate": "2026-07-27",
+   "createdAt": "2026-07-30T02:49:26.388Z",
+   "slots": [
+    {
+     "id": "cms6x0kfo01lrwlw0ic12suof",
+     "planId": "cms6x0kfn01lpwlw0gjtyg1ey",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 0,
+     "recipeId": "cmrul1dpn000uwlk46n19bre7",
+     "proteinScale": 1.77,
+     "sidesScale": 0.5,
+     "ingredients": [
+      {
+       "foodId": "cmrj2tclc00pqwlws0vlepf5r",
+       "name": "Tempeh, cooked",
+       "role": "protein",
+       "grams": 285
+      },
+      {
+       "foodId": "cmrj2t88z0087wlwsmsmchxzb",
+       "name": "Quinoa",
+       "role": "carb",
+       "grams": 55
+      },
+      {
+       "foodId": "cmrg8zxar000lwli0qy2ovmx4",
+       "name": "Onion",
+       "role": "veg",
+       "grams": 30
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 670.2,
+     "protein": 60.605,
+     "fat": 36.86600000000001,
+     "carb": 36.177,
+     "warning": "Tried 5 recipe(s) for this slot, none fit within tolerance — closest was \"High-Protein Tempeh & Onions with Quinoa\" (landed 670 kcal vs a 448 target).",
+     "locked": false,
+     "recipe": {
+      "id": "cmrul1dpn000uwlk46n19bre7",
+      "name": "High-Protein Tempeh & Onions with Quinoa",
+      "description": null,
+      "steps": [
+       "Cook the tempeh.",
+       "Serve over quinoa with onions."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 508.2,
+      "protein": 38,
+      "fat": 24.5,
+      "carb": 41.2,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 4.21,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:40:54.828Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x0kfp01ltwlw0zmy7um5b",
+     "planId": "cms6x0kfn01lpwlw0gjtyg1ey",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 1,
+     "recipeId": "cmrul4e3x001owl68vrnpml1f",
+     "proteinScale": 1.96,
+     "sidesScale": 0.5,
+     "ingredients": [
+      {
+       "foodId": "cmrj2tclc00pqwlws0vlepf5r",
+       "name": "Tempeh, cooked",
+       "role": "protein",
+       "grams": 315
+      },
+      {
+       "foodId": "cmrj2t88z0087wlwsmsmchxzb",
+       "name": "Quinoa",
+       "role": "carb",
+       "grams": 55
+      },
+      {
+       "foodId": "cmrevpcnh000iwl5gh2zjhyqe",
+       "name": "Bell peppers",
+       "role": "veg",
+       "grams": 40
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 728.1999999999999,
+     "protein": 66.765,
+     "fat": 40.196,
+     "carb": 38.055,
+     "warning": "Tried 5 recipe(s) for this slot, none fit within tolerance — closest was \"High-Protein Tempeh & Bell Peppers with Quinoa\" (landed 728 kcal vs a 442 target).",
+     "locked": false,
+     "recipe": {
+      "id": "cmrul4e3x001owl68vrnpml1f",
+      "name": "High-Protein Tempeh & Bell Peppers with Quinoa",
+      "description": null,
+      "steps": [
+       "Cook the tempeh.",
+       "Serve over quinoa with bell peppers."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 509,
+      "protein": 38.1,
+      "fat": 24.6,
+      "carb": 40.4,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 4.58,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:43:15.309Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x0kfq01lvwlw00la32tnp",
+     "planId": "cms6x0kfn01lpwlw0gjtyg1ey",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 2,
+     "recipeId": "cmrul4e7d007iwl68jd6y2spq",
+     "proteinScale": 1.87,
+     "sidesScale": 0.5,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t7t00067wlwsj23ngikm",
+       "name": "Egg White",
+       "role": "protein",
+       "grams": 485
+      },
+      {
+       "foodId": "cmrevpcn2000ewl5gmlyzu0vd",
+       "name": "White rice, cooked",
+       "role": "carb",
+       "grams": 55
+      },
+      {
+       "foodId": "cmrevpcnh000iwl5gh2zjhyqe",
+       "name": "Bell peppers",
+       "role": "veg",
+       "grams": 40
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 395.65,
+     "protein": 53.77999999999999,
+     "fat": 5.285,
+     "carb": 29.246,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrul4e7d007iwl68jd6y2spq",
+      "name": "High-Protein Egg White & Bell Peppers with Rice",
+      "description": null,
+      "steps": [
+       "Cook the egg white.",
+       "Serve over white rice with bell peppers."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 355.8,
+      "protein": 31.6,
+      "fat": 5.6,
+      "carb": 41.7,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 3.01,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:43:15.434Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x0kl301lxwlw0x9x3y7xc",
+     "planId": "cms6x0kfn01lpwlw0gjtyg1ey",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 3,
+     "recipeId": "cmrul79z400c0wl8064gi62w8",
+     "proteinScale": 2,
+     "sidesScale": 0.5,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t7t00067wlwsj23ngikm",
+       "name": "Egg White",
+       "role": "protein",
+       "grams": 520
+      },
+      {
+       "foodId": "cmrj2t88z0087wlwsmsmchxzb",
+       "name": "Quinoa",
+       "role": "carb",
+       "grams": 55
+      },
+      {
+       "foodId": "cmrj2t6na000ywlws9jek4w4z",
+       "name": "Broccoli",
+       "role": "veg",
+       "grams": 55
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 414.05,
+     "protein": 59.4735,
+     "fat": 6.243,
+     "carb": 27.4355,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrul79z400c0wl8064gi62w8",
+      "name": "High-Protein Egg White & Broccoli with Quinoa",
+      "description": null,
+      "steps": [
+       "Cook the egg white.",
+       "Serve over quinoa with broccoli."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 354.1,
+      "protein": 35.5,
+      "fat": 7.5,
+      "carb": 36.5,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 3.86,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:45:29.920Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x0kl301lzwlw0jc7dhhux",
+     "planId": "cms6x0kfn01lpwlw0gjtyg1ey",
+     "dayOfWeek": 2,
+     "slotType": "snack",
+     "slotIndex": 0,
+     "recipeId": "cmrujhgxz000zwlbon488ewmg",
+     "proteinScale": 0.54,
+     "sidesScale": 0.54,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t7p5005pwlws4acmktnt",
+       "name": "Greek Yogurt",
+       "role": "dairy",
+       "grams": 90
+      },
+      {
+       "foodId": "cmrevpco3000nwl5g1d51b3it",
+       "name": "Almonds",
+       "role": "fat",
+       "grams": 8
+      },
+      {
+       "foodId": "cmrfoyp7m0002wl0851se2p2b",
+       "name": "Honey",
+       "role": "other",
+       "grams": 5
+      }
+     ],
+     "kcal": 136.84,
+     "protein": 8.202000000000002,
+     "fat": 4.416,
+     "carb": 17.32,
+     "warning": "Tried 2 recipe(s) for this slot, none fit within tolerance — closest was \"Greek Yogurt, Honey & Almonds\" (delivered 8g protein vs a 21g target).",
+     "locked": false,
+     "recipe": {
+      "id": "cmrujhgxz000zwlbon488ewmg",
+      "name": "Greek Yogurt, Honey & Almonds",
+      "description": null,
+      "steps": [
+       "Stir together."
+      ],
+      "slotType": "snack",
+      "cuisine": "american",
+      "prepTimeMin": 10,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 259.5,
+      "protein": 15.5,
+      "fat": 8.3,
+      "carb": 33.2,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 1.58,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T10:57:26.280Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x0kl401m1wlw02uo01irt",
+     "planId": "cms6x0kfn01lpwlw0gjtyg1ey",
+     "dayOfWeek": 2,
+     "slotType": "snack",
+     "slotIndex": 1,
+     "recipeId": "cmrujhgxz000zwlbon488ewmg",
+     "proteinScale": 0.54,
+     "sidesScale": 0.54,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t7p5005pwlws4acmktnt",
+       "name": "Greek Yogurt",
+       "role": "dairy",
+       "grams": 90
+      },
+      {
+       "foodId": "cmrevpco3000nwl5g1d51b3it",
+       "name": "Almonds",
+       "role": "fat",
+       "grams": 8
+      },
+      {
+       "foodId": "cmrfoyp7m0002wl0851se2p2b",
+       "name": "Honey",
+       "role": "other",
+       "grams": 5
+      }
+     ],
+     "kcal": 136.84,
+     "protein": 8.202000000000002,
+     "fat": 4.416,
+     "carb": 17.32,
+     "warning": "Tried 2 recipe(s) for this slot, none fit within tolerance — closest was \"Greek Yogurt, Honey & Almonds\" (delivered 8g protein vs a 30g target).",
+     "locked": false,
+     "recipe": {
+      "id": "cmrujhgxz000zwlbon488ewmg",
+      "name": "Greek Yogurt, Honey & Almonds",
+      "description": null,
+      "steps": [
+       "Stir together."
+      ],
+      "slotType": "snack",
+      "cuisine": "american",
+      "prepTimeMin": 10,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 259.5,
+      "protein": 15.5,
+      "fat": 8.3,
+      "carb": 33.2,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 1.58,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T10:57:26.280Z",
+      "createdByUserId": null
+     }
+    }
+   ],
+   "groceryList": null,
+   "meta": {
+    "matchPct": 83,
+    "attempts": 5,
+    "score": {
+     "daysInTolerance": 0,
+     "avgMatch": 83,
+     "days": [
+      {
+       "dayOfWeek": 2,
+       "dayName": "Wednesday",
+       "matchPct": 83,
+       "totals": {
+        "kcal": 2482,
+        "protein": 257,
+        "fat": 97,
+        "carb": 166
+       },
+       "kcalDeltaPct": 2.8,
+       "proteinShortPct": 9.2,
+       "fatOk": true,
+       "carbOk": false,
+       "inTolerance": false,
+       "miss": "166 g carbs vs a 86–110 g range — 56 g over",
+       "unfilledSlots": 0,
+       "warnedSlots": 4,
+       "windowIndex": 0,
+       "dayIndex": 0,
+       "key": "0:2"
+      }
+     ],
+     "totalDays": 1
+    },
+    "days": [
+     {
+      "dayOfWeek": 2,
+      "dayName": "Wednesday",
+      "matchPct": 83,
+      "totals": {
+       "kcal": 2482,
+       "protein": 257,
+       "fat": 97,
+       "carb": 166
+      },
+      "kcalDeltaPct": 2.8,
+      "proteinShortPct": 9.2,
+      "fatOk": true,
+      "carbOk": false,
+      "inTolerance": false,
+      "miss": "166 g carbs vs a 86–110 g range — 56 g over",
+      "unfilledSlots": 0,
+      "warnedSlots": 4,
+      "windowIndex": 0,
+      "dayIndex": 0,
+      "key": "0:2"
+     }
+    ],
+    "diagnosis": {
+     "feasible": false,
+     "reasons": [
+      "Your targets need ~11.7g protein per 100 kcal; only 12 of 160 eligible recipes come close (16+ needed for a full varied week).",
+      "1 day(s) landed outside your 86–110 g carb range — portion scaling moves a dish's calories, not its fat/carb ratio, so the pool's composition is what binds here."
+     ],
+     "suggestions": [
+      "Set the protein-preference filter, or AI-generate a few high-protein recipes to deepen the pool.",
+      "Add (or AI-generate) a few recipes built around the macro you keep missing, or drop the cuisine/protein preference so the solver can reach dishes that carry it."
+     ],
+     "binding": {
+      "key": "protein-density",
+      "label": "protein density in your recipe pool",
+      "detail": "your targets need ~11.7 g protein per 100 kcal and only 12 of 160 compliant recipes come close."
+     }
+    },
+    "poolCounts": {
+     "raw": 889,
+     "afterDiet": 160,
+     "afterPrep": 160,
+     "afterStack": 160,
+     "stackExplain": null
+    },
+    "variety": {
+     "mealEligible": 133,
+     "usableForSlot": 50,
+     "slotKcal": 504,
+     "snackEligible": 2,
+     "weeklyMealSlots": 28,
+     "weeklySnackSlots": 14,
+     "repeatCap": 2,
+     "distinctWeeks": 1.8,
+     "horizonWeeks": 1,
+     "sustainsHorizon": false,
+     "notes": [
+      "Only 2 snack recipe(s) fit your rules, so the same snacks come back every week.",
+      "1 day: 5 distinct dish(es) across 6 filled slot(s); most-repeated dish appears 2x against a 2x cap for this horizon (2x per week)."
+     ],
+     "horizon": {
+      "weeks": 1,
+      "days": 1,
+      "perWeekCap": 2,
+      "horizonRepeatCap": 2,
+      "mealSlots": 4,
+      "snackSlots": 2,
+      "totalSlots": 6,
+      "distinctFloor": 3,
+      "distinctRecipes": 5,
+      "maxRepeat": 2,
+      "maxRepeatRecipeId": "cmrujhgxz000zwlbon488ewmg",
+      "lockedRepeatsOfMax": 0,
+      "filledSlots": 6,
+      "unfilledSlots": 0,
+      "requiredDistinct": 3,
+      "capHeld": true,
+      "floorHeld": true
+     }
+    },
+    "priorWeeksConsidered": 0,
+    "horizon": {
+     "key": "day",
+     "label": "1 day",
+     "days": 1,
+     "kind": "days",
+     "weeks": 1,
+     "custom": false,
+     "startDate": "2026-07-29",
+     "endDate": "2026-07-29",
+     "startDayOfWeek": 2,
+     "weeksWritten": 1,
+     "solveMs": 2,
+     "weekPlans": [
+      {
+       "startDate": "2026-07-27",
+       "dayIndices": [
+        2
+       ],
+       "days": 1,
+       "daysInTolerance": 0,
+       "avgMatch": 83,
+       "unfilledSlots": 0,
+       "poolSize": 160
+      }
+     ]
+    }
+   }
+  }
+ }
+}

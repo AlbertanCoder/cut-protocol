@@ -1,0 +1,579 @@
+{
+ "persona": {
+  "idx": 26,
+  "id": "p026",
+  "tier": "HARD",
+  "displayName": "software developer, 55",
+  "story": "software developer, 55, female, 179 cm / 119.7 kg (BMI 37.4), cut at 2 lb/wk, mediterranean diet, avoiding nightshade, dairy, peanut, soy, low-fat, 4 meals + 0 snacks, wants a single day",
+  "profile": {
+   "sex": "F",
+   "age": 55,
+   "heightCm": 179,
+   "startWeightKg": 119.7,
+   "goalWeightKg": 112.2,
+   "occupationKey": "software-tech",
+   "trainingStyle": "mixed",
+   "minutesPerSession": 40,
+   "sessionsPerWeek": 3,
+   "rateLbPerWeek": 2,
+   "dietaryStyle": "mediterranean",
+   "excludedFoods": [
+    "nightshades",
+    "dairy",
+    "peanuts",
+    "soy"
+   ],
+   "mealsPerDay": 4,
+   "snacksPerDay": 0,
+   "unitPref": "metric",
+   "rateAcknowledged": true
+  },
+  "filters": {
+   "budget": "premium",
+   "proteinPriority": true
+  },
+  "horizon": "day",
+  "walls": [
+   "nightshade",
+   "dairy",
+   "peanut",
+   "soy"
+  ],
+  "freeTextExclusions": [
+   "nightshades"
+  ],
+  "dietaryStyle": "mediterranean",
+  "bmi": 37.4,
+  "goalKind": "cut",
+  "macroStyle": "low-fat",
+  "requestedButUnsupported": [
+   "wanted a low-fat split; the fat band is fixed at LBM x0.34-0.40 and is not client-settable"
+  ],
+  "tupleKey": "[\"HARD\",\"F\",55,179,119.7,112.2,\"software-tech\",\"mixed\",2,\"mediterranean\",[\"dairy\",\"nightshades\",\"peanuts\",\"soy\"],4,0,\"low-fat\",\"day\",null,\"premium\",true,null,null]"
+ },
+ "request": {
+  "horizon": "day",
+  "filters": {
+   "budget": "premium",
+   "proteinPriority": true
+  }
+ },
+ "profileResponse": {
+  "id": "cms6x0dr1010xwlw0g5jxxgya",
+  "userId": "cms6x0dln000kwl2ow8go5nti",
+  "sex": "F",
+  "age": 55,
+  "heightCm": 179,
+  "bodyFatPct": 0,
+  "bodyFatSource": null,
+  "occupationKey": "software-tech",
+  "activityOverride": null,
+  "sessionsPerWeek": 3,
+  "trainingStyle": "mixed",
+  "minutesPerSession": 40,
+  "startWeightKg": 119.7,
+  "goalWeightKg": 112.2,
+  "startDate": "2026-07-29",
+  "unitPref": "metric",
+  "rateLbPerWeek": 2,
+  "rateAcknowledged": true,
+  "floorKcal": null,
+  "excludedFormulas": [],
+  "targetKcal": 1764,
+  "mealsPerDay": 4,
+  "snacksPerDay": 0,
+  "excludedFoods": [
+   "nightshades",
+   "dairy",
+   "peanuts",
+   "soy"
+  ],
+  "dietaryStyle": "mediterranean",
+  "cuisinePreferences": [],
+  "mealPreferencesNote": null,
+  "maxPrepMin": null,
+  "budgetTier": null,
+  "allowBatch": null,
+  "maxComplexity": null,
+  "adaptiveTdee": true,
+  "proteinPriorityMode": false,
+  "updatedAt": "2026-07-30T02:49:17.742Z"
+ },
+ "generate": {
+  "status": 200,
+  "ms": 674,
+  "body": {
+   "id": "cms6x0ea3011rwlw0znla3fk8",
+   "userId": "cms6x0dln000kwl2ow8go5nti",
+   "startDate": "2026-07-27",
+   "createdAt": "2026-07-30T02:49:18.411Z",
+   "slots": [
+    {
+     "id": "cms6x0ea5011twlw0y7hdt83l",
+     "planId": "cms6x0ea3011rwlw0znla3fk8",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 0,
+     "recipeId": "cmrul4e6y006uwl68r96b54pe",
+     "proteinScale": 1.45,
+     "sidesScale": 0.57,
+     "ingredients": [
+      {
+       "foodId": "cmrj2tay100irwlwsiujfz75h",
+       "name": "White Fish",
+       "role": "protein",
+       "grams": 275
+      },
+      {
+       "foodId": "cmrj2t88z0087wlwsmsmchxzb",
+       "name": "Quinoa",
+       "role": "carb",
+       "grams": 60
+      },
+      {
+       "foodId": "cmrj2t6na000ywlws9jek4w4z",
+       "name": "Broccoli",
+       "role": "veg",
+       "grams": 60
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 388.6,
+     "protein": 50.38200000000001,
+     "fat": 12.736,
+     "carb": 16.542,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrul4e6y006uwl68r96b54pe",
+      "name": "High-Protein White Fish & Broccoli with Quinoa",
+      "description": null,
+      "steps": [
+       "Cook the white fish.",
+       "Serve over quinoa with broccoli."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 385.9,
+      "protein": 39.6,
+      "fat": 11.9,
+      "carb": 30.3,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 8.62,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:43:15.419Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x0ea6011vwlw0j609ar0m",
+     "planId": "cms6x0ea3011rwlw0znla3fk8",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 1,
+     "recipeId": "cmrj2u3i806oawlwsrvqxe0y5",
+     "proteinScale": 0.5,
+     "sidesScale": 0.55,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t6ft0001wlwstiofk9on",
+       "name": "Garlic",
+       "role": "veg",
+       "grams": 2
+      },
+      {
+       "foodId": "cmrj2t6qp001ewlwsds5bbm29",
+       "name": "Lemon",
+       "role": "veg",
+       "grams": 8
+      },
+      {
+       "foodId": "cmrj2t6gd0003wlwss7jf3wzf",
+       "name": "Salt",
+       "role": null,
+       "grams": 2
+      },
+      {
+       "foodId": "cmrj2t6mf000uwlwsne5kc5wl",
+       "name": "Black Pepper",
+       "role": null,
+       "grams": 1
+      },
+      {
+       "foodId": "cmrj2t7hg004pwlwsioxvv8bh",
+       "name": "Vegetable Oil",
+       "role": "carb",
+       "grams": 6
+      },
+      {
+       "foodId": "cmrj2t7a7003rwlwsqp9i2kfd",
+       "name": "Pork Shoulder",
+       "role": "protein",
+       "grams": 250
+      },
+      {
+       "foodId": "cmrj2tabp00gcwlwspk69j20a",
+       "name": "Dry White Wine",
+       "role": null,
+       "grams": 70
+      }
+     ],
+     "kcal": 435.63,
+     "protein": 56.594,
+     "fat": 14.5458,
+     "carb": 3.4768,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrj2u3i806oawlwsrvqxe0y5",
+      "name": "Slow-roasted ham with lemon, garlic & sage",
+      "description": null,
+      "steps": [
+       "step 1",
+       "Heat the oven to 200C/180C fan/gas 6. Bash the garlic, sage, lemon zest, salt and pepper together using a pestle and mortar until the mixture becomes a paste. Stir in the oil, then spread the mixture over the pork shoulder, avoiding the skin on top. Score the skin using a sharp knife, then rub a large pinch of salt into the skin. Tie the pork together using kitchen string.",
+       "step 2",
+       "Line a large baking tray with a double layer of foil and put the pork on top, skin-side up. Bring the sides of the foil up around the pork to create a parcel, then pour the wine into the tray around the sides. Transfer to the oven and reduce the temperature to 140C/120C fan/gas 1. Roast for 4-5 hrs, or until a meat thermometer inserted into the thickest part of the pork reads 70C.",
+       "step 3",
+       "Turn the oven up to 240C/220C fan/gas 9. Carefully spoon the pork roasting juices from the pan into a saucepan and cook over a medium heat for 10-15 mins, or until reduced by a third. Season to taste.",
+       "step 4",
+       "Meanwhile, arrange the foil around the meat so only the skin is exposed, then return to the oven for 10-15 mins until the skin is puffed up and browned all over. Leave to rest for 20 mins before slicing. Serve with the sauce drizzled over."
+      ],
+      "slotType": "meal",
+      "cuisine": "western-comfort",
+      "prepTimeMin": 34,
+      "source": "themealdb-import",
+      "mealCategory": null,
+      "kcal": 854.6,
+      "protein": 113.2,
+      "fat": 28.6,
+      "carb": 6.7,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 15.78,
+      "difficulty": 5,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-13T10:25:53.984Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x0ea6011zwlw0pxxg14eo",
+     "planId": "cms6x0ea3011rwlw0znla3fk8",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 2,
+     "recipeId": "cmrj2u6f107bfwlwsp1jkx0rh",
+     "proteinScale": 2,
+     "sidesScale": 1.87,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "carb",
+       "grams": 19
+      },
+      {
+       "foodId": "cmrj2t6ft0001wlwstiofk9on",
+       "name": "Garlic",
+       "role": "veg",
+       "grams": 4
+      },
+      {
+       "foodId": "cmrj2tb0x00j2wlwsjzrofelh",
+       "name": "Shrimp",
+       "role": "protein",
+       "grams": 200
+      },
+      {
+       "foodId": "cmrj2t6m0000swlws689kgktw",
+       "name": "Dry sherry",
+       "role": null,
+       "grams": 9
+      },
+      {
+       "foodId": "cmrj2t6h10006wlwslufza94y",
+       "name": "Parsley",
+       "role": null,
+       "grams": 14
+      }
+     ],
+     "kcal": 410.54,
+     "protein": 49.7876,
+     "fat": 19.8055,
+     "carb": 9.2452,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrj2u6f107bfwlwsp1jkx0rh",
+      "name": "Garlicky prawns with sherry",
+      "description": null,
+      "steps": [
+       "step 1",
+       "Heat the olive oil in a large frying pan. Tip in the garlic slices and cook for a few secs. Then stir through the prawns and cook for a couple of mins until they start to turn pink.",
+       "step 2",
+       "Pour over the sherry and cook for a few mins more, just until the prawns are cooked through. Sprinkle with parsley before serving."
+      ],
+      "slotType": "meal",
+      "cuisine": "western-comfort",
+      "prepTimeMin": 22,
+      "source": "themealdb-import",
+      "mealCategory": null,
+      "kcal": 213,
+      "protein": 24.9,
+      "fat": 10.6,
+      "carb": 4.9,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 5.87,
+      "difficulty": 2,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-13T10:25:57.758Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x0ea70121wlw0flx0wq7z",
+     "planId": "cms6x0ea3011rwlw0znla3fk8",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 3,
+     "recipeId": "cmrul79y900aowl80xwbjxbia",
+     "proteinScale": 2,
+     "sidesScale": 0.87,
+     "ingredients": [
+      {
+       "foodId": "cmrj2tay100irwlwsiujfz75h",
+       "name": "White Fish",
+       "role": "protein",
+       "grams": 380
+      },
+      {
+       "foodId": "cmrj2t88z0087wlwsmsmchxzb",
+       "name": "Quinoa",
+       "role": "carb",
+       "grams": 95
+      },
+      {
+       "foodId": "cmrevpcnl000jwl5gnqnk630b",
+       "name": "Cucumber",
+       "role": "veg",
+       "grams": 80
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 516.5999999999999,
+     "protein": 68.49199999999999,
+     "fat": 15.768,
+     "carb": 21.963,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrul79y900aowl80xwbjxbia",
+      "name": "High-Protein White Fish & Cucumber with Quinoa",
+      "description": null,
+      "steps": [
+       "Cook the white fish.",
+       "Serve over quinoa with cucumber."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 360.8,
+      "protein": 37.3,
+      "fat": 11.7,
+      "carb": 25.4,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 8.37,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:45:29.889Z",
+      "createdByUserId": null
+     }
+    }
+   ],
+   "groceryList": null,
+   "meta": {
+    "matchPct": 97,
+    "attempts": 4,
+    "score": {
+     "daysInTolerance": 1,
+     "avgMatch": 97,
+     "days": [
+      {
+       "dayOfWeek": 2,
+       "dayName": "Wednesday",
+       "matchPct": 97,
+       "totals": {
+        "kcal": 1751,
+        "protein": 225,
+        "fat": 63,
+        "carb": 51
+       },
+       "kcalDeltaPct": -0.7,
+       "proteinShortPct": 1,
+       "fatOk": true,
+       "carbOk": true,
+       "inTolerance": true,
+       "miss": null,
+       "unfilledSlots": 0,
+       "warnedSlots": 0,
+       "proteinFloor": {
+        "met": true,
+        "floorG": 217,
+        "achievedG": 225.3,
+        "shortG": 0,
+        "shortPct": 0,
+        "reason": null
+       },
+       "windowIndex": 0,
+       "dayIndex": 0,
+       "key": "0:2"
+      }
+     ],
+     "totalDays": 1,
+     "floorDaysMet": 1,
+     "floorDaysTotal": 1
+    },
+    "days": [
+     {
+      "dayOfWeek": 2,
+      "dayName": "Wednesday",
+      "matchPct": 97,
+      "totals": {
+       "kcal": 1751,
+       "protein": 225,
+       "fat": 63,
+       "carb": 51
+      },
+      "kcalDeltaPct": -0.7,
+      "proteinShortPct": 1,
+      "fatOk": true,
+      "carbOk": true,
+      "inTolerance": true,
+      "miss": null,
+      "unfilledSlots": 0,
+      "warnedSlots": 0,
+      "proteinFloor": {
+       "met": true,
+       "floorG": 217,
+       "achievedG": 225.3,
+       "shortG": 0,
+       "shortPct": 0,
+       "reason": null
+      },
+      "windowIndex": 0,
+      "dayIndex": 0,
+      "key": "0:2"
+     }
+    ],
+    "diagnosis": null,
+    "poolCounts": {
+     "raw": 889,
+     "afterDiet": 170,
+     "afterPrep": 170,
+     "afterStack": 170,
+     "stackExplain": null
+    },
+    "variety": {
+     "mealEligible": 147,
+     "usableForSlot": 78,
+     "slotKcal": 441,
+     "snackEligible": 3,
+     "weeklyMealSlots": 28,
+     "weeklySnackSlots": 0,
+     "repeatCap": 2,
+     "distinctWeeks": 2.8,
+     "horizonWeeks": 1,
+     "sustainsHorizon": true,
+     "notes": [
+      "1 day: 4 distinct dish(es) across 4 filled slot(s); most-repeated dish appears 1x against a 2x cap for this horizon (2x per week)."
+     ],
+     "horizon": {
+      "weeks": 1,
+      "days": 1,
+      "perWeekCap": 2,
+      "horizonRepeatCap": 2,
+      "mealSlots": 4,
+      "snackSlots": 0,
+      "totalSlots": 4,
+      "distinctFloor": 2,
+      "distinctRecipes": 4,
+      "maxRepeat": 1,
+      "maxRepeatRecipeId": "cmrul4e6y006uwl68r96b54pe",
+      "lockedRepeatsOfMax": 0,
+      "filledSlots": 4,
+      "unfilledSlots": 0,
+      "requiredDistinct": 2,
+      "capHeld": true,
+      "floorHeld": true
+     }
+    },
+    "priorWeeksConsidered": 0,
+    "horizon": {
+     "key": "day",
+     "label": "1 day",
+     "days": 1,
+     "kind": "days",
+     "weeks": 1,
+     "custom": false,
+     "startDate": "2026-07-29",
+     "endDate": "2026-07-29",
+     "startDayOfWeek": 2,
+     "weeksWritten": 1,
+     "solveMs": 2,
+     "weekPlans": [
+      {
+       "startDate": "2026-07-27",
+       "dayIndices": [
+        2
+       ],
+       "days": 1,
+       "daysInTolerance": 1,
+       "avgMatch": 97,
+       "unfilledSlots": 0,
+       "poolSize": 170
+      }
+     ]
+    }
+   }
+  }
+ }
+}

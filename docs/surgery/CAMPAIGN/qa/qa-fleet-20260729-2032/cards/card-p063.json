@@ -1,0 +1,79 @@
+{
+  "personaId": "p063",
+  "sessionCrossed": false,
+  "satisfaction": 3,
+  "wouldRecommend": false,
+  "criteria": {
+    "macrosInRange": 2,
+    "worksEndToEnd": 5,
+    "mealsAreGood": 2,
+    "affordableAdjustable": 4,
+    "tasty": 4
+  },
+  "allergenRespect": {
+    "ok": true,
+    "leaks": []
+  },
+  "delights": [
+    "It admits when it fails instead of hiding it. Every slot came with a plain-spoken note: \"Tried 5 recipe(s) for this slot, none fit within tolerance - closest was \\\"Cacik\\\" (delivered 78g protein vs a 95g target).\" I would rather be told than be fooled.",
+    "Nothing on the plate broke a wall. Across all four dishes I saw there was no gluten, soy, nightshade or shellfish - and a dish literally called \"Stir-Fried Ground Beef & Broccoli with Rice\" came back with no soy sauce in its ingredient list. That is exactly the catch a coeliac needs someone else to make.",
+    "The swap genuinely worked and the day re-costed itself. \"Classic Salmon & Broccoli with Rice\" replaced the yogurt dip and the day moved from 3,136 kcal to 2,988 without me touching anything else."
+  ],
+  "defects": [
+    {
+      "what": "My calorie target points the wrong way. I told it I am going UP from 124.6 kg to 134.4 kg at 2 lb/week and it handed me a number that is a deficit for a 275 lb man training five times a week - it looks like it subtracted 1,000 kcal/day instead of adding it.",
+      "snippet": "\"startWeightKg\": 124.6, \"goalWeightKg\": 134.4, \"rateLbPerWeek\": 2, \"targetKcal\": 2667"
+    },
+    {
+      "what": "The solver failed on all three slots - it never once hit tolerance, it just handed me its least-bad attempt each time.",
+      "snippet": "Tried 5 recipe(s) for this slot, none fit within tolerance - closest was \"Chicken with saffron, raisins & pine nuts\" (landed 1677 kcal vs a 1249 target)."
+    },
+    {
+      "what": "A yogurt-and-cucumber dip was served to me as a 984-kcal dinner, with nothing to eat it with (and I cannot have bread).",
+      "snippet": "Cacik - Natural Yoghurt: 465 g, Cucumber: 95 g, Lemon Juice: 10 g, Dried Mint: 4 g"
+    },
+    {
+      "what": "The dish name lies about what is in it after scaling - sides were cut to 0.5x while the meat doubled, so the dish is 625 g of chicken and a rumour of the recipe it is named after.",
+      "snippet": "\"Chicken with saffron, raisins & pine nuts\" - Chicken: 625 g, Pine Nuts: 2 g, Raisins: 6 g, Garlic: 1 g, Thyme: 1 g"
+    },
+    {
+      "what": "555 g of Greek yogurt is called a snack, and the original day put over a kilo of yogurt in front of me across two of three slots (465 g + 555 g).",
+      "snippet": "snack: \"Greek Yogurt, Almonds & Berries\" - Greek yogurt, 0%: 555 g"
+    },
+    {
+      "what": "I asked for balanced and mediterranean and got a near-keto day: 75 g carbs is 10% of calories and fat is 56%. You cannot fuel five 75-minute weights sessions a week on that, and Mediterranean eating is not fat-only.",
+      "snippet": "DAY TOTAL: 2988 kcal | P 246 g | F 186 g | C 75 g  (target 2667)"
+    },
+    {
+      "what": "Swapping a meal in the obvious way is rejected with an error about something I never sent. PUT .../apply with {\"recipeId\":\"...\"} returns 400; it only works if you post the entire alternate object back.",
+      "snippet": "{ \"error\": \"a slot needs at least one ingredient\" }"
+    },
+    {
+      "what": "Chicken Stock is in my dinner with no gluten-free note. Supermarket stock cubes and cartons routinely carry wheat and soy - as a coeliac this is the one line on the plan I would have to go and verify myself, and the app said nothing.",
+      "snippet": "Chicken Stock: 100 g  (role=protein)"
+    },
+    {
+      "what": "The mediterranean request is not reflected in how dishes are labelled - a Turkish dip and a Spanish saffron chicken are both filed as western-comfort, and the salmon is filed as american. Only the snack is tagged mediterranean.",
+      "snippet": "Cacik  cuisine=western-comfort ; Classic Salmon & Broccoli with Rice  [american]"
+    },
+    {
+      "what": "Olive oil is labelled as a carbohydrate in two different meals.",
+      "snippet": "\"name\": \"Extra Virgin Olive Oil\", \"role\": \"carb\", \"grams\": 13"
+    },
+    {
+      "what": "Prep time is dishonest for a working day - 34 minutes advertised, but the first instruction needs the yogurt straining overnight.",
+      "snippet": "prep=34min ... \"leave to strain in the fridge for a minimum of 12 hrs\""
+    },
+    {
+      "what": "The three alternates offered were really two dishes - the same ground beef and broccoli twice, differing only in which oil it uses.",
+      "snippet": "88% Stir-Fried Ground Beef & Broccoli with Rice (Sesame Seed Oil) / 89% Classic Ground Beef & Broccoli with Rice (Olive Oil) / 78% Classic Salmon & Broccoli with Rice"
+    }
+  ],
+  "followUp": {
+    "action": "I would not eat 465 g of yogurt dip as my dinner, so I asked for alternates on that slot and swapped one in - the salmon, because it was the only one of the three that read Mediterranean to me.",
+    "endpoint": "POST /api/plans/cms6x0nwf0207wlw0c3ima8vh/slots/cms6x0nwh0209wlw0w52djdl1/alternates (200), then PUT .../apply (400, then 200 on retry)",
+    "status": 200,
+    "howItWent": "The alternates came back fast and the swap did stick - the plan now reads \"Classic Salmon & Broccoli with Rice\" and the day re-totalled from 3,136 to 2,988 kcal. But two of the three choices were the same beef-and-broccoli dish with a different oil, all three still carried the same none-fit-within-tolerance warning, and my first apply attempt was rejected 400 with \"a slot needs at least one ingredient\" until I posted the whole alternate object back."
+  },
+  "verdict": "It kept me safe - no gluten, soy, nightshade or shellfish anywhere, and it was honest every time it fell short - but it aimed me at a deficit while I am trying to lean bulk, missed tolerance on all three slots, and called a tub of yogurt dinner and half a kilo of yogurt a snack."
+}

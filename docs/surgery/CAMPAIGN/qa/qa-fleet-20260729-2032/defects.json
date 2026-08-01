@@ -1,0 +1,30 @@
+{
+  "runId": "qa-fleet-20260729-2032",
+  "head": "0d3eaa5",
+  "clusters": [
+    {
+      "endpoint": "POST /api/plans/generate",
+      "signature": "mostly-empty-plan-written",
+      "sev": "P1",
+      "count": 3,
+      "personas": [
+        "p005",
+        "p018",
+        "p115"
+      ],
+      "tiers": {
+        "HARD": 1,
+        "EASY": 2
+      },
+      "constraintPatterns": {
+        "keto+2walls": 1,
+        "carnivore+0walls": 1,
+        "keto+3walls": 1
+      },
+      "example": "0/21 slots filled (7 day(s) at 0 kcal); pool collapsed 910→33→1→1, binding=meal-pool",
+      "repro": "raw/p005.json"
+    }
+  ],
+  "leaks": [],
+  "suppressedFalsePositives": []
+}

@@ -1,0 +1,655 @@
+{
+ "persona": {
+  "idx": 78,
+  "id": "p078",
+  "tier": "EASY",
+  "displayName": "miner, 33",
+  "story": "miner, 33, female, 178 cm / 99.6 kg (BMI 31.4), maintain, vegetarian diet, avoiding dairy, low-fat, 5 meals + 2 snacks, wants a single day",
+  "profile": {
+   "sex": "F",
+   "age": 33,
+   "heightCm": 178,
+   "startWeightKg": 99.6,
+   "goalWeightKg": 99.5,
+   "occupationKey": "mining",
+   "trainingStyle": "weights",
+   "minutesPerSession": 40,
+   "sessionsPerWeek": 3,
+   "rateLbPerWeek": 0.25,
+   "dietaryStyle": "vegetarian",
+   "excludedFoods": [
+    "dairy"
+   ],
+   "mealsPerDay": 5,
+   "snacksPerDay": 2,
+   "unitPref": "imperial",
+   "bodyFatPct": 27,
+   "bodyFatSource": "measured",
+   "cuisinePreferences": [
+    "indian",
+    "italian"
+   ]
+  },
+  "filters": {
+   "budget": "cheap",
+   "cuisines": [
+    "indian",
+    "italian"
+   ]
+  },
+  "horizon": "day",
+  "walls": [
+   "dairy"
+  ],
+  "freeTextExclusions": [],
+  "dietaryStyle": "vegetarian",
+  "bmi": 31.4,
+  "goalKind": "maintain",
+  "macroStyle": "low-fat",
+  "requestedButUnsupported": [
+   "wanted a low-fat split; the fat band is fixed at LBM x0.34-0.40 and is not client-settable"
+  ],
+  "tupleKey": "[\"EASY\",\"F\",33,178,99.6,99.5,\"mining\",\"weights\",0.25,\"vegetarian\",[\"dairy\"],5,2,\"low-fat\",\"day\",null,\"cheap\",null,null,null]"
+ },
+ "request": {
+  "horizon": "day",
+  "filters": {
+   "budget": "cheap",
+   "cuisines": [
+    "indian",
+    "italian"
+   ]
+  }
+ },
+ "profileResponse": {
+  "id": "cms6x0r6c02alwlw0r3dnjfjz",
+  "userId": "cms6x0r0x0020wl2on7ys1m0j",
+  "sex": "F",
+  "age": 33,
+  "heightCm": 178,
+  "bodyFatPct": 27,
+  "bodyFatSource": "measured",
+  "occupationKey": "mining",
+  "activityOverride": null,
+  "sessionsPerWeek": 3,
+  "trainingStyle": "weights",
+  "minutesPerSession": 40,
+  "startWeightKg": 99.6,
+  "goalWeightKg": 99.5,
+  "startDate": "2026-07-29",
+  "unitPref": "imperial",
+  "rateLbPerWeek": 0.25,
+  "rateAcknowledged": false,
+  "floorKcal": null,
+  "excludedFormulas": [],
+  "targetKcal": 3074,
+  "mealsPerDay": 5,
+  "snacksPerDay": 2,
+  "excludedFoods": [
+   "dairy"
+  ],
+  "dietaryStyle": "vegetarian",
+  "cuisinePreferences": [
+   "indian",
+   "italian"
+  ],
+  "mealPreferencesNote": null,
+  "maxPrepMin": null,
+  "budgetTier": null,
+  "allowBatch": null,
+  "maxComplexity": null,
+  "adaptiveTdee": true,
+  "proteinPriorityMode": false,
+  "updatedAt": "2026-07-30T02:49:35.326Z"
+ },
+ "generate": {
+  "status": 200,
+  "ms": 429,
+  "body": {
+   "id": "cms6x0rnp02b7wlw047jawqc3",
+   "userId": "cms6x0r0x0020wl2on7ys1m0j",
+   "startDate": "2026-07-27",
+   "createdAt": "2026-07-30T02:49:35.749Z",
+   "slots": [
+    {
+     "id": "cms6x0rnq02b9wlw0hjcxvhvv",
+     "planId": "cms6x0rnp02b7wlw047jawqc3",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 0,
+     "recipeId": "cmrujhgyk001ywlbomxh6qzyb",
+     "proteinScale": 2,
+     "sidesScale": 0.5,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t88z0087wlwsmsmchxzb",
+       "name": "Quinoa",
+       "role": "carb",
+       "grams": 75
+      },
+      {
+       "foodId": "cmrj2t6hy000awlwshh4r4w95",
+       "name": "Black Beans",
+       "role": "protein",
+       "grams": 300
+      },
+      {
+       "foodId": "cmrevpcnh000iwl5gh2zjhyqe",
+       "name": "Bell peppers",
+       "role": "veg",
+       "grams": 40
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 690.4,
+     "protein": 28.39,
+     "fat": 27.59,
+     "carb": 84.375,
+     "warning": "Tried 5 recipe(s) for this slot, none fit within tolerance — closest was \"Quinoa & Black Bean Salad\" (landed 690 kcal vs a 473 target).",
+     "locked": false,
+     "recipe": {
+      "id": "cmrujhgyk001ywlbomxh6qzyb",
+      "name": "Quinoa & Black Bean Salad",
+      "description": null,
+      "steps": [
+       "Combine cooled quinoa and beans.",
+       "Fold in peppers and dress."
+      ],
+      "slotType": "meal",
+      "cuisine": "mexican",
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 566.3,
+      "protein": 19.7,
+      "fat": 23.6,
+      "carb": 69.8,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 2.7,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T10:57:26.301Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x0rnr02bbwlw0hyaec2b9",
+     "planId": "cms6x0rnp02b7wlw047jawqc3",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 1,
+     "recipeId": "cmrujkwq00020wl9ofnqk0q0v",
+     "proteinScale": 1.53,
+     "sidesScale": 1.18,
+     "ingredients": [
+      {
+       "foodId": "cmrj2tbsj00m1wlwsfeuh3jsf",
+       "name": "flax eggs",
+       "role": "protein",
+       "grams": 230
+      },
+      {
+       "foodId": "cmrevpcn2000ewl5gmlyzu0vd",
+       "name": "White rice, cooked",
+       "role": "carb",
+       "grams": 190
+      },
+      {
+       "foodId": "cmrj2t6na000ywlws9jek4w4z",
+       "name": "Broccoli",
+       "role": "veg",
+       "grams": 130
+      },
+      {
+       "foodId": "cmrj2t6xc0028wlwszh51pa6i",
+       "name": "Sesame Seed Oil",
+       "role": "fat",
+       "grams": 8
+      }
+     ],
+     "kcal": 484.52,
+     "protein": 33.081,
+     "fat": 9.012,
+     "carb": 66.779,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrujkwq00020wl9ofnqk0q0v",
+      "name": "Stir-Fried Eggs & Broccoli with Rice",
+      "description": null,
+      "steps": [
+       "Cook the eggs.",
+       "Serve with white rice and broccoli."
+      ],
+      "slotType": "meal",
+      "cuisine": "asian",
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 395.3200000000001,
+      "protein": 23.197,
+      "fat": 8.854,
+      "carb": 55.237,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 3.06,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:00:06.697Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x0rns02bdwlw0wq87vbm3",
+     "planId": "cms6x0rnp02b7wlw047jawqc3",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 2,
+     "recipeId": "cmrul79sr001owl80dqc054hi",
+     "proteinScale": 0.94,
+     "sidesScale": 1.75,
+     "ingredients": [
+      {
+       "foodId": "cmrukzae20001wlbwgdjqlh3f",
+       "name": "Textured vegetable protein, dry",
+       "role": "protein",
+       "grams": 50
+      },
+      {
+       "foodId": "cmrevpcn2000ewl5gmlyzu0vd",
+       "name": "White rice, cooked",
+       "role": "carb",
+       "grams": 190
+      },
+      {
+       "foodId": "cmrevpcnl000jwl5gnqnk630b",
+       "name": "Cucumber",
+       "role": "veg",
+       "grams": 155
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 472.5,
+     "protein": 32.0445,
+     "fat": 6.318,
+     "carb": 71.54799999999999,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrul79sr001owl80dqc054hi",
+      "name": "High-Protein TVP & Cucumber with Rice",
+      "description": null,
+      "steps": [
+       "Cook the tvp.",
+       "Serve over white rice with cucumber."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 378.5,
+      "protein": 32.1,
+      "fat": 6,
+      "carb": 49.2,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 1.54,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:45:29.692Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x0rns02bfwlw0x0be4tee",
+     "planId": "cms6x0rnp02b7wlw047jawqc3",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 3,
+     "recipeId": "cmrujkwvg00bowl9om7w4rqwf",
+     "proteinScale": 1.44,
+     "sidesScale": 1.34,
+     "ingredients": [
+      {
+       "foodId": "cmrj2tbsj00m1wlwsfeuh3jsf",
+       "name": "flax eggs",
+       "role": "protein",
+       "grams": 215
+      },
+      {
+       "foodId": "cmrj2t7fb004fwlws8ezof2dp",
+       "name": "Russet Potato",
+       "role": "carb",
+       "grams": 240
+      },
+      {
+       "foodId": "cmrj2t6na000ywlws9jek4w4z",
+       "name": "Broccoli",
+       "role": "veg",
+       "grams": 145
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 10
+      }
+     ],
+     "kcal": 481.2,
+     "protein": 33.0435,
+     "fat": 10.805,
+     "carb": 65.5255,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrujkwvg00bowl9om7w4rqwf",
+      "name": "Classic Eggs & Broccoli with Potato",
+      "description": null,
+      "steps": [
+       "Cook the eggs.",
+       "Serve with potato and broccoli."
+      ],
+      "slotType": "meal",
+      "cuisine": "american",
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 377.6,
+      "protein": 23.6,
+      "fat": 10.6,
+      "carb": 49,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 3.1,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:00:06.893Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x0rnt02bhwlw0hw4jfmka",
+     "planId": "cms6x0rnp02b7wlw047jawqc3",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 4,
+     "recipeId": "cmrujkwq8002cwl9ojjtjzot2",
+     "proteinScale": 1.79,
+     "sidesScale": 1.73,
+     "ingredients": [
+      {
+       "foodId": "cmrj2tbsj00m1wlwsfeuh3jsf",
+       "name": "flax eggs",
+       "role": "protein",
+       "grams": 270
+      },
+      {
+       "foodId": "cmrj2t6xy002bwlwstg6a0xsf",
+       "name": "Noodles",
+       "role": "carb",
+       "grams": 260
+      },
+      {
+       "foodId": "cmrj2t6na000ywlws9jek4w4z",
+       "name": "Broccoli",
+       "role": "veg",
+       "grams": 190
+      },
+      {
+       "foodId": "cmrj2t6xc0028wlwszh51pa6i",
+       "name": "Sesame Seed Oil",
+       "role": "fat",
+       "grams": 8
+      }
+     ],
+     "kcal": 558.92,
+     "protein": 38.42699999999999,
+     "fat": 9.166,
+     "carb": 80.685,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrujkwq8002cwl9ojjtjzot2",
+      "name": "Stir-Fried Eggs & Broccoli with Noodles",
+      "description": null,
+      "steps": [
+       "Cook the eggs.",
+       "Serve with noodles and broccoli."
+      ],
+      "slotType": "meal",
+      "cuisine": "asian",
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 349.3200000000001,
+      "protein": 21.562,
+      "fat": 8.674,
+      "carb": 46.437,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 3.18,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:00:06.704Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x0rnt02bjwlw07gd4modj",
+     "planId": "cms6x0rnp02b7wlw047jawqc3",
+     "dayOfWeek": 2,
+     "slotType": "snack",
+     "slotIndex": 0,
+     "recipeId": null,
+     "proteinScale": 1,
+     "sidesScale": 1,
+     "ingredients": [],
+     "kcal": 0,
+     "protein": 0,
+     "fat": 0,
+     "carb": 0,
+     "warning": "No eligible snack recipe left for this slot.",
+     "locked": false,
+     "recipe": null
+    },
+    {
+     "id": "cms6x0rnu02blwlw06b6fu2iu",
+     "planId": "cms6x0rnp02b7wlw047jawqc3",
+     "dayOfWeek": 2,
+     "slotType": "snack",
+     "slotIndex": 1,
+     "recipeId": null,
+     "proteinScale": 1,
+     "sidesScale": 1,
+     "ingredients": [],
+     "kcal": 0,
+     "protein": 0,
+     "fat": 0,
+     "carb": 0,
+     "warning": "No eligible snack recipe left for this slot.",
+     "locked": false,
+     "recipe": null
+    }
+   ],
+   "groceryList": null,
+   "meta": {
+    "matchPct": 86,
+    "attempts": 5,
+    "score": {
+     "daysInTolerance": 1,
+     "avgMatch": 86,
+     "days": [
+      {
+       "dayOfWeek": 2,
+       "dayName": "Wednesday",
+       "matchPct": 86,
+       "totals": {
+        "kcal": 2688,
+        "protein": 165,
+        "fat": 63,
+        "carb": 369
+       },
+       "kcalDeltaPct": -12.6,
+       "proteinShortPct": 13.8,
+       "fatOk": true,
+       "carbOk": true,
+       "inTolerance": true,
+       "miss": null,
+       "unfilledSlots": 2,
+       "warnedSlots": 3,
+       "windowIndex": 0,
+       "dayIndex": 0,
+       "key": "0:2"
+      }
+     ],
+     "totalDays": 1
+    },
+    "days": [
+     {
+      "dayOfWeek": 2,
+      "dayName": "Wednesday",
+      "matchPct": 86,
+      "totals": {
+       "kcal": 2688,
+       "protein": 165,
+       "fat": 63,
+       "carb": 369
+      },
+      "kcalDeltaPct": -12.6,
+      "proteinShortPct": 13.8,
+      "fatOk": true,
+      "carbOk": true,
+      "inTolerance": true,
+      "miss": null,
+      "unfilledSlots": 2,
+      "warnedSlots": 3,
+      "windowIndex": 0,
+      "dayIndex": 0,
+      "key": "0:2"
+     }
+    ],
+    "diagnosis": {
+     "feasible": false,
+     "reasons": [
+      "2 of 7 slots over 1 days came back empty — no compliant recipe was left that could fill them.",
+      "Your library has no snack-sized recipe that fits your rules — all 2 snack slots this week come back empty."
+     ],
+     "suggestions": [
+      "Set snacks per day to 0 and fold those calories into your meals, or AI-generate a few compliant snacks on the Recipes tab."
+     ],
+     "binding": {
+      "key": "snack-pool",
+      "label": "your snack-eligible recipe pool",
+      "detail": "no snack-sized recipe fits your rules, so all 2 snack slot(s) come back empty."
+     }
+    },
+    "poolCounts": {
+     "raw": 889,
+     "afterDiet": 207,
+     "afterPrep": 207,
+     "afterStack": 207,
+     "stackExplain": null
+    },
+    "variety": {
+     "mealEligible": 184,
+     "usableForSlot": 126,
+     "slotKcal": 531,
+     "snackEligible": 0,
+     "weeklyMealSlots": 35,
+     "weeklySnackSlots": 14,
+     "repeatCap": 2,
+     "distinctWeeks": 3.6,
+     "horizonWeeks": 1,
+     "sustainsHorizon": false,
+     "notes": [
+      "Your library has no snack-sized recipe that fits your rules — snack slots stay empty until you add one.",
+      "1 day: 5 distinct dish(es) across 5 filled slot(s); most-repeated dish appears 1x against a 2x cap for this horizon (2x per week)."
+     ],
+     "horizon": {
+      "weeks": 1,
+      "days": 1,
+      "perWeekCap": 2,
+      "horizonRepeatCap": 2,
+      "mealSlots": 5,
+      "snackSlots": 2,
+      "totalSlots": 7,
+      "distinctFloor": 4,
+      "distinctRecipes": 5,
+      "maxRepeat": 1,
+      "maxRepeatRecipeId": "cmrujhgyk001ywlbomxh6qzyb",
+      "lockedRepeatsOfMax": 0,
+      "filledSlots": 5,
+      "unfilledSlots": 2,
+      "requiredDistinct": 3,
+      "capHeld": true,
+      "floorHeld": true
+     }
+    },
+    "priorWeeksConsidered": 0,
+    "horizon": {
+     "key": "day",
+     "label": "1 day",
+     "days": 1,
+     "kind": "days",
+     "weeks": 1,
+     "custom": false,
+     "startDate": "2026-07-29",
+     "endDate": "2026-07-29",
+     "startDayOfWeek": 2,
+     "weeksWritten": 1,
+     "solveMs": 4,
+     "weekPlans": [
+      {
+       "startDate": "2026-07-27",
+       "dayIndices": [
+        2
+       ],
+       "days": 1,
+       "daysInTolerance": 1,
+       "avgMatch": 86,
+       "unfilledSlots": 2,
+       "poolSize": 207
+      }
+     ]
+    }
+   }
+  }
+ }
+}

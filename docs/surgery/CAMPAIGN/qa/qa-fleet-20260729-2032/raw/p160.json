@@ -1,0 +1,571 @@
+{
+ "persona": {
+  "idx": 160,
+  "id": "p160",
+  "tier": "IMPOSSIBLE",
+  "displayName": "sedentary senior, 23",
+  "story": "wants 2 lb/wk off a small frame at the calorie floor, with gluten, dairy and soy all walled off and nothing over 15 minutes to cook",
+  "profile": {
+   "sex": "F",
+   "age": 23,
+   "heightCm": 173,
+   "startWeightKg": 129.1,
+   "goalWeightKg": 116,
+   "occupationKey": "unemployed-home",
+   "trainingStyle": "cardio",
+   "minutesPerSession": 20,
+   "sessionsPerWeek": 2,
+   "rateLbPerWeek": 2,
+   "dietaryStyle": "none",
+   "excludedFoods": [
+    "gluten",
+    "beef",
+    "fish",
+    "soy",
+    "dairy"
+   ],
+   "mealsPerDay": 3,
+   "snacksPerDay": 1,
+   "unitPref": "imperial",
+   "bodyFatPct": 46,
+   "bodyFatSource": "visual-estimate",
+   "cuisinePreferences": [
+    "italian",
+    "chinese"
+   ],
+   "rateAcknowledged": true,
+   "floorKcal": 1200
+  },
+  "filters": {
+   "proteinPriority": true,
+   "cuisines": [
+    "italian",
+    "chinese"
+   ],
+   "maxPrepMin": 15
+  },
+  "horizon": "day",
+  "walls": [
+   "gluten",
+   "beef",
+   "fish",
+   "soy",
+   "dairy"
+  ],
+  "freeTextExclusions": [
+   "beef"
+  ],
+  "dietaryStyle": "none",
+  "bmi": 43.1,
+  "goalKind": "cut",
+  "macroStyle": "high-protein",
+  "requestedButUnsupported": [
+   "wanted protein set explicitly in g/lb; the API derives the protein band from LBM (1.14-1.25 g/lb) and accepts no client protein target — only the per-request proteinPriority filter",
+   "this request is mathematically unsatisfiable by design — a clear, fast, honest refusal is the pass condition, and a confident plan is a critical honesty defect"
+  ],
+  "impossibleKind": "floor-vs-rate",
+  "tupleKey": "[\"IMPOSSIBLE\",\"F\",23,173,129.1,116,\"unemployed-home\",\"cardio\",2,\"none\",[\"beef\",\"dairy\",\"fish\",\"gluten\",\"soy\"],3,1,\"high-protein\",\"day\",15,null,true,null,\"floor-vs-rate\"]"
+ },
+ "request": {
+  "horizon": "day",
+  "filters": {
+   "proteinPriority": true,
+   "cuisines": [
+    "italian",
+    "chinese"
+   ],
+   "maxPrepMin": 15
+  }
+ },
+ "profileResponse": {
+  "id": "cms6x1c980445wlw08eduwxde",
+  "userId": "cms6x1c1o004awl2o5ck3al83",
+  "sex": "F",
+  "age": 23,
+  "heightCm": 173,
+  "bodyFatPct": 46,
+  "bodyFatSource": "visual-estimate",
+  "occupationKey": "unemployed-home",
+  "activityOverride": null,
+  "sessionsPerWeek": 2,
+  "trainingStyle": "cardio",
+  "minutesPerSession": 20,
+  "startWeightKg": 129.1,
+  "goalWeightKg": 116,
+  "startDate": "2026-07-29",
+  "unitPref": "imperial",
+  "rateLbPerWeek": 2,
+  "rateAcknowledged": true,
+  "floorKcal": 1200,
+  "excludedFormulas": [],
+  "targetKcal": 2016,
+  "mealsPerDay": 3,
+  "snacksPerDay": 1,
+  "excludedFoods": [
+   "gluten",
+   "beef",
+   "fish",
+   "soy",
+   "dairy"
+  ],
+  "dietaryStyle": "none",
+  "cuisinePreferences": [
+   "italian",
+   "chinese"
+  ],
+  "mealPreferencesNote": null,
+  "maxPrepMin": null,
+  "budgetTier": null,
+  "allowBatch": null,
+  "maxComplexity": null,
+  "adaptiveTdee": true,
+  "proteinPriorityMode": false,
+  "updatedAt": "2026-07-30T20:33:49.706Z"
+ },
+ "generate": {
+  "status": 200,
+  "ms": 588,
+  "body": {
+   "id": "cms7z1eac039fwlgwel2qvjn5",
+   "userId": "cms6x1c1o004awl2o5ck3al83",
+   "startDate": "2026-07-27",
+   "createdAt": "2026-07-30T20:33:50.484Z",
+   "slots": [
+    {
+     "id": "cms7z1ead039hwlgw4mlhhy77",
+     "planId": "cms7z1eac039fwlgwel2qvjn5",
+     "dayOfWeek": 3,
+     "slotType": "meal",
+     "slotIndex": 0,
+     "recipeId": "cmrujkwu8009cwl9oow6fi2qu",
+     "proteinScale": 1.09,
+     "sidesScale": 0.89,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t7w3006lwlws4zdhow4d",
+       "name": "Chicken Breast",
+       "role": "protein",
+       "grams": 185
+      },
+      {
+       "foodId": "cmrevpcn2000ewl5gmlyzu0vd",
+       "name": "White rice, cooked",
+       "role": "carb",
+       "grams": 140
+      },
+      {
+       "foodId": "cmrj2t6na000ywlws9jek4w4z",
+       "name": "Broccoli",
+       "role": "veg",
+       "grams": 95
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 10
+      },
+      {
+       "foodId": "cmrevpclb0000wl5ghnno9i5f",
+       "name": "Chicken breast, cooked, skinless",
+       "role": "protein",
+       "grams": 5,
+       "adjuster": true
+      }
+     ],
+     "kcal": 531.7,
+     "protein": 49.3965,
+     "fat": 15.77,
+     "carb": 45.15649999999999,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrujkwu8009cwl9oow6fi2qu",
+      "name": "Classic Chicken & Broccoli with Rice",
+      "description": null,
+      "steps": [
+       "Cook the chicken.",
+       "Serve with white rice and broccoli."
+      ],
+      "slotType": "meal",
+      "cuisine": "american",
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 536.1,
+      "protein": 45.397,
+      "fat": 15.308,
+      "carb": 51.697,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 6.34,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:00:06.848Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z1eae039jwlgw9t128c2j",
+     "planId": "cms7z1eac039fwlgwel2qvjn5",
+     "dayOfWeek": 3,
+     "slotType": "meal",
+     "slotIndex": 1,
+     "recipeId": "cmrujkwr4003uwl9or0xver7i",
+     "proteinScale": 1.25,
+     "sidesScale": 1.03,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t7w3006lwlws4zdhow4d",
+       "name": "Chicken Breast",
+       "role": "protein",
+       "grams": 215
+      },
+      {
+       "foodId": "cmrevpcn2000ewl5gmlyzu0vd",
+       "name": "White rice, cooked",
+       "role": "carb",
+       "grams": 165
+      },
+      {
+       "foodId": "cmrevpcnh000iwl5gh2zjhyqe",
+       "name": "Bell peppers",
+       "role": "veg",
+       "grams": 80
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 10
+      }
+     ],
+     "kcal": 587.3,
+     "protein": 53.63,
+     "fat": 16.368,
+     "carb": 51,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrujkwr4003uwl9or0xver7i",
+      "name": "Spiced Chicken & Bell Peppers with Rice",
+      "description": null,
+      "steps": [
+       "Cook the chicken.",
+       "Serve with white rice and bell peppers."
+      ],
+      "slotType": "meal",
+      "cuisine": "indian",
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 526.8,
+      "protein": 43.37,
+      "fat": 15.174,
+      "carb": 49.60000000000001,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 6.25,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:00:06.737Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z1eae039lwlgwyhksalsg",
+     "planId": "cms7z1eac039fwlgwel2qvjn5",
+     "dayOfWeek": 3,
+     "slotType": "meal",
+     "slotIndex": 2,
+     "recipeId": "cmrujkwqi002uwl9ob1bgrck4",
+     "proteinScale": 1.43,
+     "sidesScale": 1.25,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t7w3006lwlws4zdhow4d",
+       "name": "Chicken Breast",
+       "role": "protein",
+       "grams": 245
+      },
+      {
+       "foodId": "cmrevpcn2000ewl5gmlyzu0vd",
+       "name": "White rice, cooked",
+       "role": "carb",
+       "grams": 200
+      },
+      {
+       "foodId": "cmrg8zxar000lwli0qy2ovmx4",
+       "name": "Onion",
+       "role": "veg",
+       "grams": 75
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 10
+      }
+     ],
+     "kcal": 674,
+     "protein": 61.35000000000001,
+     "fat": 17.094,
+     "carb": 63.005,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrujkwqi002uwl9ob1bgrck4",
+      "name": "Fiesta Chicken & Onions with Rice",
+      "description": null,
+      "steps": [
+       "Cook the chicken.",
+       "Serve with white rice and onions."
+      ],
+      "slotType": "meal",
+      "cuisine": "mexican",
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 526,
+      "protein": 43.23,
+      "fat": 14.994,
+      "carb": 50.404,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 5.88,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:00:06.715Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z1eaf039nwlgwa41o2n2h",
+     "planId": "cms7z1eac039fwlgwel2qvjn5",
+     "dayOfWeek": 3,
+     "slotType": "snack",
+     "slotIndex": 0,
+     "recipeId": "cms7pjmks003ewlbkbzjiva2m",
+     "proteinScale": 1.22,
+     "sidesScale": 1.22,
+     "ingredients": [
+      {
+       "foodId": "cmrevpcm50006wl5g2u2bcspd",
+       "name": "Eggs, whole, cooked",
+       "role": "protein",
+       "grams": 145
+      },
+      {
+       "foodId": "cmrj2t6gd0003wlwss7jf3wzf",
+       "name": "Salt",
+       "role": "other",
+       "grams": 1
+      },
+      {
+       "foodId": "cmrj2t6tr001swlwsgjm8tehu",
+       "name": "Chilli Powder",
+       "role": "other",
+       "grams": 1
+      }
+     ],
+     "kcal": 227.57,
+     "protein": 18.985,
+     "fat": 16.093,
+     "carb": 2.092,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cms7pjmks003ewlbkbzjiva2m",
+      "name": "Hard-Boiled Eggs with Chilli Salt",
+      "description": null,
+      "steps": [
+       "Boil 8 minutes for a set yolk, then straight into cold water.",
+       "Peel and dip in chilli salt."
+      ],
+      "slotType": "snack",
+      "cuisine": "american",
+      "prepTimeMin": 12,
+      "source": "curated",
+      "mealCategory": null,
+      "kcal": 188.82,
+      "protein": 15.735,
+      "fat": 13.343,
+      "carb": 1.817,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": null,
+      "difficulty": 1,
+      "filterProvenance": null,
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-30T16:08:04.877Z",
+      "createdByUserId": null
+     }
+    }
+   ],
+   "groceryList": null,
+   "meta": {
+    "matchPct": 96,
+    "attempts": 2,
+    "score": {
+     "daysInTolerance": 1,
+     "avgMatch": 96,
+     "days": [
+      {
+       "dayOfWeek": 3,
+       "dayName": "Thursday",
+       "matchPct": 96,
+       "totals": {
+        "kcal": 2021,
+        "protein": 183,
+        "fat": 65,
+        "carb": 161
+       },
+       "kcalDeltaPct": 0.2,
+       "proteinShortPct": 0.1,
+       "fatOk": true,
+       "carbOk": true,
+       "inTolerance": true,
+       "miss": null,
+       "unfilledSlots": 0,
+       "warnedSlots": 0,
+       "proteinFloor": {
+        "met": true,
+        "floorG": 175,
+        "achievedG": 183.4,
+        "shortG": 0,
+        "shortPct": 0,
+        "reason": null
+       },
+       "windowIndex": 0,
+       "dayIndex": 0,
+       "key": "0:3"
+      }
+     ],
+     "totalDays": 1,
+     "floorDaysMet": 1,
+     "floorDaysTotal": 1
+    },
+    "days": [
+     {
+      "dayOfWeek": 3,
+      "dayName": "Thursday",
+      "matchPct": 96,
+      "totals": {
+       "kcal": 2021,
+       "protein": 183,
+       "fat": 65,
+       "carb": 161
+      },
+      "kcalDeltaPct": 0.2,
+      "proteinShortPct": 0.1,
+      "fatOk": true,
+      "carbOk": true,
+      "inTolerance": true,
+      "miss": null,
+      "unfilledSlots": 0,
+      "warnedSlots": 0,
+      "proteinFloor": {
+       "met": true,
+       "floorG": 175,
+       "achievedG": 183.4,
+       "shortG": 0,
+       "shortPct": 0,
+       "reason": null
+      },
+      "windowIndex": 0,
+      "dayIndex": 0,
+      "key": "0:3"
+     }
+    ],
+    "diagnosis": null,
+    "poolCounts": {
+     "raw": 910,
+     "afterDiet": 165,
+     "afterPrep": 72,
+     "afterStack": 72,
+     "stackExplain": null
+    },
+    "variety": {
+     "mealEligible": 67,
+     "usableForSlot": 45,
+     "slotKcal": 594,
+     "snackEligible": 5,
+     "weeklyMealSlots": 21,
+     "weeklySnackSlots": 7,
+     "repeatCap": 2,
+     "distinctWeeks": 2.1,
+     "horizonWeeks": 1,
+     "sustainsHorizon": true,
+     "notes": [
+      "1 day: 4 distinct dish(es) across 4 filled slot(s); most-repeated dish appears 1x against a 2x cap for this horizon (2x per week)."
+     ],
+     "horizon": {
+      "weeks": 1,
+      "days": 1,
+      "perWeekCap": 2,
+      "horizonRepeatCap": 2,
+      "mealSlots": 3,
+      "snackSlots": 1,
+      "totalSlots": 4,
+      "distinctFloor": 2,
+      "distinctRecipes": 4,
+      "maxRepeat": 1,
+      "maxRepeatRecipeId": "cmrujkwu8009cwl9oow6fi2qu",
+      "lockedRepeatsOfMax": 0,
+      "filledSlots": 4,
+      "unfilledSlots": 0,
+      "requiredDistinct": 2,
+      "capHeld": true,
+      "floorHeld": true
+     }
+    },
+    "priorWeeksConsidered": 0,
+    "horizon": {
+     "key": "day",
+     "label": "1 day",
+     "days": 1,
+     "kind": "days",
+     "weeks": 1,
+     "custom": false,
+     "startDate": "2026-07-30",
+     "endDate": "2026-07-30",
+     "startDayOfWeek": 3,
+     "weeksWritten": 1,
+     "solveMs": 1,
+     "weekPlans": [
+      {
+       "startDate": "2026-07-27",
+       "dayIndices": [
+        3
+       ],
+       "days": 1,
+       "daysInTolerance": 1,
+       "avgMatch": 96,
+       "unfilledSlots": 0,
+       "poolSize": 72
+      }
+     ]
+    }
+   }
+  }
+ }
+}

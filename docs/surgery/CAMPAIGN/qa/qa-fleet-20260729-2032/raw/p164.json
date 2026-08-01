@@ -1,0 +1,545 @@
+{
+ "persona": {
+  "idx": 164,
+  "id": "p164",
+  "tier": "HARD",
+  "displayName": "sedentary senior, 19",
+  "story": "sedentary senior, 19, female, 148 cm / 46.3 kg (BMI 21.1), cut at 1.5 lb/wk, pescatarian diet, avoiding sesame, dairy, egg, pork, beef, high-protein, 3 meals + 1 snacks, wants a single day",
+  "profile": {
+   "sex": "F",
+   "age": 19,
+   "heightCm": 148,
+   "startWeightKg": 46.3,
+   "goalWeightKg": 40.7,
+   "occupationKey": "unemployed-home",
+   "trainingStyle": "cardio",
+   "minutesPerSession": 20,
+   "sessionsPerWeek": 2,
+   "rateLbPerWeek": 1.5,
+   "dietaryStyle": null,
+   "excludedFoods": [
+    "sesame",
+    "dairy",
+    "eggs",
+    "pork",
+    "beef"
+   ],
+   "mealsPerDay": 3,
+   "snacksPerDay": 1,
+   "unitPref": "metric",
+   "bodyFatPct": 30,
+   "bodyFatSource": "visual-estimate",
+   "rateAcknowledged": true
+  },
+  "filters": {
+   "proteinPriority": true,
+   "maxPrepMin": 20,
+   "budget": "premium"
+  },
+  "horizon": "day",
+  "walls": [
+   "sesame",
+   "dairy",
+   "egg",
+   "pork",
+   "beef"
+  ],
+  "freeTextExclusions": [
+   "pork",
+   "beef"
+  ],
+  "dietaryStyle": null,
+  "bmi": 21.1,
+  "goalKind": "cut",
+  "macroStyle": "high-protein",
+  "requestedButUnsupported": [
+   "pescatarian is not one of the 9 dietary styles; expressed instead as walls on pork+beef, which is not the same promise",
+   "wanted protein set explicitly in g/lb; the API derives the protein band from LBM (1.14-1.25 g/lb) and accepts no client protein target — only the per-request proteinPriority filter"
+  ],
+  "tupleKey": "[\"HARD\",\"F\",19,148,46.3,40.7,\"unemployed-home\",\"cardio\",1.5,null,[\"beef\",\"dairy\",\"eggs\",\"pork\",\"sesame\"],3,1,\"high-protein\",\"day\",20,\"premium\",true,null,null]"
+ },
+ "request": {
+  "horizon": "day",
+  "filters": {
+   "proteinPriority": true,
+   "maxPrepMin": 20,
+   "budget": "premium"
+  }
+ },
+ "profileResponse": {
+  "id": "cms6x1d45045nwlw0d69diinw",
+  "userId": "cms6x1cys004ewl2o7i0j49xh",
+  "sex": "F",
+  "age": 19,
+  "heightCm": 148,
+  "bodyFatPct": 30,
+  "bodyFatSource": "visual-estimate",
+  "occupationKey": "unemployed-home",
+  "activityOverride": null,
+  "sessionsPerWeek": 2,
+  "trainingStyle": "cardio",
+  "minutesPerSession": 20,
+  "startWeightKg": 46.3,
+  "goalWeightKg": 40.7,
+  "startDate": "2026-07-29",
+  "unitPref": "metric",
+  "rateLbPerWeek": 1.5,
+  "rateAcknowledged": true,
+  "floorKcal": null,
+  "excludedFormulas": [],
+  "targetKcal": 1200,
+  "mealsPerDay": 3,
+  "snacksPerDay": 1,
+  "excludedFoods": [
+   "sesame",
+   "dairy",
+   "eggs",
+   "pork",
+   "beef"
+  ],
+  "dietaryStyle": null,
+  "cuisinePreferences": [],
+  "mealPreferencesNote": null,
+  "maxPrepMin": null,
+  "budgetTier": null,
+  "allowBatch": null,
+  "maxComplexity": null,
+  "adaptiveTdee": true,
+  "proteinPriorityMode": false,
+  "updatedAt": "2026-07-30T20:33:51.132Z"
+ },
+ "generate": {
+  "status": 200,
+  "ms": 923,
+  "body": {
+   "id": "cms7z1fcm03cxwlgwt5ec0l6v",
+   "userId": "cms6x1cys004ewl2o7i0j49xh",
+   "startDate": "2026-07-27",
+   "createdAt": "2026-07-30T20:33:51.863Z",
+   "slots": [
+    {
+     "id": "cms7z1fco03czwlgwniea5g1c",
+     "planId": "cms7z1fcm03cxwlgwt5ec0l6v",
+     "dayOfWeek": 3,
+     "slotType": "meal",
+     "slotIndex": 0,
+     "recipeId": "cmrul79vt006owl80149rmasx",
+     "proteinScale": 0.5,
+     "sidesScale": 1.05,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t7w3006lwlws4zdhow4d",
+       "name": "Chicken Breast",
+       "role": "protein",
+       "grams": 100
+      },
+      {
+       "foodId": "cmrj2t7fb004fwlws8ezof2dp",
+       "name": "Russet Potato",
+       "role": "carb",
+       "grams": 160
+      },
+      {
+       "foodId": "cmrevpcnh000iwl5gh2zjhyqe",
+       "name": "Bell peppers",
+       "role": "veg",
+       "grams": 85
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 343.35,
+     "protein": 27.558,
+     "fat": 8.083,
+     "carb": 39.34,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrul79vt006owl80149rmasx",
+      "name": "High-Protein Chicken & Bell Peppers with Potato",
+      "description": null,
+      "steps": [
+       "Cook the chicken.",
+       "Serve over potato with bell peppers."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 452.3,
+      "protein": 49.745,
+      "fat": 10.675,
+      "carb": 36.89999999999999,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 7.05,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:45:29.802Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z1fcp03d1wlgw3wi2l0m9",
+     "planId": "cms7z1fcm03cxwlgwt5ec0l6v",
+     "dayOfWeek": 3,
+     "slotType": "meal",
+     "slotIndex": 1,
+     "recipeId": "cmrul79yd00auwl802b3wg576",
+     "proteinScale": 0.5,
+     "sidesScale": 1.2,
+     "ingredients": [
+      {
+       "foodId": "cmrj2tay100irwlwsiujfz75h",
+       "name": "White Fish",
+       "role": "protein",
+       "grams": 95
+      },
+      {
+       "foodId": "cmrj2t7fb004fwlws8ezof2dp",
+       "name": "Russet Potato",
+       "role": "carb",
+       "grams": 180
+      },
+      {
+       "foodId": "cmrj2t6na000ywlws9jek4w4z",
+       "name": "Broccoli",
+       "role": "veg",
+       "grams": 130
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 343.7,
+     "protein": 24.035,
+     "fat": 7.88,
+     "carb": 46.67099999999999,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrul79yd00auwl802b3wg576",
+      "name": "High-Protein White Fish & Broccoli with Potato",
+      "description": null,
+      "steps": [
+       "Cook the white fish.",
+       "Serve over potato with broccoli."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 396.4,
+      "protein": 38.692,
+      "fat": 9.977,
+      "carb": 38.99699999999999,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 7.97,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:45:29.893Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z1fi003d5wlgwjjl6sq3d",
+     "planId": "cms7z1fcm03cxwlgwt5ec0l6v",
+     "dayOfWeek": 3,
+     "slotType": "meal",
+     "slotIndex": 2,
+     "recipeId": "cmrul79sv001uwl80m4kyr7ig",
+     "proteinScale": 0.55,
+     "sidesScale": 1.67,
+     "ingredients": [
+      {
+       "foodId": "cmrukzae20001wlbwgdjqlh3f",
+       "name": "Textured vegetable protein, dry",
+       "role": "protein",
+       "grams": 30
+      },
+      {
+       "foodId": "cmrj2t88z0087wlwsmsmchxzb",
+       "name": "Quinoa",
+       "role": "carb",
+       "grams": 185
+      },
+      {
+       "foodId": "cmrevpcnl000jwl5gnqnk630b",
+       "name": "Cucumber",
+       "role": "veg",
+       "grams": 150
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 381,
+     "protein": 24.625,
+     "fat": 9.091999999999999,
+     "carb": 51.645,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrul79sv001uwl80m4kyr7ig",
+      "name": "High-Protein TVP & Cucumber with Quinoa",
+      "description": null,
+      "steps": [
+       "Cook the tvp.",
+       "Serve over quinoa with cucumber."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 367.5,
+      "protein": 33.971,
+      "fat": 7.806,
+      "carb": 41.874,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 2.31,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:45:29.695Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z1fi103d7wlgwyyiw2lfd",
+     "planId": "cms7z1fcm03cxwlgwt5ec0l6v",
+     "dayOfWeek": 3,
+     "slotType": "snack",
+     "slotIndex": 0,
+     "recipeId": "cms7pjmju002swlbktsksba9r",
+     "proteinScale": 0.73,
+     "sidesScale": 0.73,
+     "ingredients": [
+      {
+       "foodId": "cmrukzae50002wlbwr9bq9oa7",
+       "name": "Edamame, shelled, cooked",
+       "role": "protein",
+       "grams": 110
+      },
+      {
+       "foodId": "cmrj2t6gd0003wlwss7jf3wzf",
+       "name": "Salt",
+       "role": "other",
+       "grams": 1
+      }
+     ],
+     "kcal": 133.1,
+     "protein": 13.2,
+     "fat": 5.5,
+     "carb": 9.9,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cms7pjmju002swlbktsksba9r",
+      "name": "Edamame with Sea Salt",
+      "description": null,
+      "steps": [
+       "Boil the pods 4 minutes in well-salted water.",
+       "Drain and salt again while hot. Eat from the pod."
+      ],
+      "slotType": "snack",
+      "cuisine": "japanese",
+      "prepTimeMin": 6,
+      "source": "curated",
+      "mealCategory": null,
+      "kcal": 181.5,
+      "protein": 18,
+      "fat": 7.5,
+      "carb": 13.5,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": null,
+      "difficulty": 1,
+      "filterProvenance": null,
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-30T16:08:04.843Z",
+      "createdByUserId": null
+     }
+    }
+   ],
+   "groceryList": null,
+   "meta": {
+    "matchPct": 95,
+    "attempts": 1,
+    "score": {
+     "daysInTolerance": 1,
+     "avgMatch": 95,
+     "days": [
+      {
+       "dayOfWeek": 3,
+       "dayName": "Thursday",
+       "matchPct": 95,
+       "totals": {
+        "kcal": 1201,
+        "protein": 89,
+        "fat": 31,
+        "carb": 148
+       },
+       "kcalDeltaPct": 0.1,
+       "proteinShortPct": 0,
+       "fatOk": true,
+       "carbOk": true,
+       "inTolerance": true,
+       "miss": null,
+       "unfilledSlots": 0,
+       "warnedSlots": 0,
+       "proteinFloor": {
+        "met": true,
+        "floorG": 81,
+        "achievedG": 89.4,
+        "shortG": 0,
+        "shortPct": 0,
+        "reason": null
+       },
+       "windowIndex": 0,
+       "dayIndex": 0,
+       "key": "0:3"
+      }
+     ],
+     "totalDays": 1,
+     "floorDaysMet": 1,
+     "floorDaysTotal": 1
+    },
+    "days": [
+     {
+      "dayOfWeek": 3,
+      "dayName": "Thursday",
+      "matchPct": 95,
+      "totals": {
+       "kcal": 1201,
+       "protein": 89,
+       "fat": 31,
+       "carb": 148
+      },
+      "kcalDeltaPct": 0.1,
+      "proteinShortPct": 0,
+      "fatOk": true,
+      "carbOk": true,
+      "inTolerance": true,
+      "miss": null,
+      "unfilledSlots": 0,
+      "warnedSlots": 0,
+      "proteinFloor": {
+       "met": true,
+       "floorG": 81,
+       "achievedG": 89.4,
+       "shortG": 0,
+       "shortPct": 0,
+       "reason": null
+      },
+      "windowIndex": 0,
+      "dayIndex": 0,
+      "key": "0:3"
+     }
+    ],
+    "diagnosis": null,
+    "poolCounts": {
+     "raw": 910,
+     "afterDiet": 366,
+     "afterPrep": 236,
+     "afterStack": 236,
+     "stackExplain": null
+    },
+    "variety": {
+     "mealEligible": 230,
+     "usableForSlot": 198,
+     "slotKcal": 354,
+     "snackEligible": 3,
+     "weeklyMealSlots": 21,
+     "weeklySnackSlots": 7,
+     "repeatCap": 2,
+     "distinctWeeks": 9.4,
+     "horizonWeeks": 1,
+     "sustainsHorizon": false,
+     "notes": [
+      "Only 3 snack recipe(s) fit your rules, so the same snacks come back every week.",
+      "1 day: 4 distinct dish(es) across 4 filled slot(s); most-repeated dish appears 1x against a 2x cap for this horizon (2x per week)."
+     ],
+     "horizon": {
+      "weeks": 1,
+      "days": 1,
+      "perWeekCap": 2,
+      "horizonRepeatCap": 2,
+      "mealSlots": 3,
+      "snackSlots": 1,
+      "totalSlots": 4,
+      "distinctFloor": 2,
+      "distinctRecipes": 4,
+      "maxRepeat": 1,
+      "maxRepeatRecipeId": "cmrul79vt006owl80149rmasx",
+      "lockedRepeatsOfMax": 0,
+      "filledSlots": 4,
+      "unfilledSlots": 0,
+      "requiredDistinct": 2,
+      "capHeld": true,
+      "floorHeld": true
+     }
+    },
+    "priorWeeksConsidered": 0,
+    "horizon": {
+     "key": "day",
+     "label": "1 day",
+     "days": 1,
+     "kind": "days",
+     "weeks": 1,
+     "custom": false,
+     "startDate": "2026-07-30",
+     "endDate": "2026-07-30",
+     "startDayOfWeek": 3,
+     "weeksWritten": 1,
+     "solveMs": 2,
+     "weekPlans": [
+      {
+       "startDate": "2026-07-27",
+       "dayIndices": [
+        3
+       ],
+       "days": 1,
+       "daysInTolerance": 1,
+       "avgMatch": 95,
+       "unfilledSlots": 0,
+       "poolSize": 236
+      }
+     ]
+    }
+   }
+  }
+ }
+}

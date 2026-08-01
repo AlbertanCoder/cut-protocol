@@ -1,0 +1,548 @@
+{
+ "persona": {
+  "idx": 187,
+  "id": "p187",
+  "tier": "HARD",
+  "displayName": "postpartum, 45",
+  "story": "postpartum, 45, male, 167 cm / 96.3 kg (BMI 34.5), cut at 1.5 lb/wk, vegetarian diet, avoiding tree nut, beef, dairy, low-fat, 2 meals + 2 snacks, wants a single day",
+  "profile": {
+   "sex": "M",
+   "age": 45,
+   "heightCm": 167,
+   "startWeightKg": 96.3,
+   "goalWeightKg": 79.6,
+   "occupationKey": "unemployed-home",
+   "trainingStyle": "mixed",
+   "minutesPerSession": 25,
+   "sessionsPerWeek": 3,
+   "rateLbPerWeek": 1.5,
+   "dietaryStyle": "vegetarian",
+   "excludedFoods": [
+    "tree nuts",
+    "beef",
+    "dairy"
+   ],
+   "mealsPerDay": 2,
+   "snacksPerDay": 2,
+   "unitPref": "imperial",
+   "rateAcknowledged": true
+  },
+  "filters": {
+   "maxPrepMin": 20,
+   "proteinPriority": true
+  },
+  "horizon": "day",
+  "walls": [
+   "tree nut",
+   "beef",
+   "dairy"
+  ],
+  "freeTextExclusions": [
+   "beef"
+  ],
+  "dietaryStyle": "vegetarian",
+  "bmi": 34.5,
+  "goalKind": "cut",
+  "macroStyle": "low-fat",
+  "requestedButUnsupported": [
+   "wanted a low-fat split; the fat band is fixed at LBM x0.34-0.40 and is not client-settable"
+  ],
+  "tupleKey": "[\"HARD\",\"M\",45,167,96.3,79.6,\"unemployed-home\",\"mixed\",1.5,\"vegetarian\",[\"beef\",\"dairy\",\"tree nuts\"],2,2,\"low-fat\",\"day\",20,null,true,null,null]"
+ },
+ "request": {
+  "horizon": "day",
+  "filters": {
+   "maxPrepMin": 20,
+   "proteinPriority": true
+  }
+ },
+ "profileResponse": {
+  "id": "cms6x1jc804q3wlw001jsp75e",
+  "userId": "cms6x1j2x0051wl2o1zmpru3w",
+  "sex": "M",
+  "age": 45,
+  "heightCm": 167,
+  "bodyFatPct": 0,
+  "bodyFatSource": null,
+  "occupationKey": "unemployed-home",
+  "activityOverride": null,
+  "sessionsPerWeek": 3,
+  "trainingStyle": "mixed",
+  "minutesPerSession": 25,
+  "startWeightKg": 96.3,
+  "goalWeightKg": 79.6,
+  "startDate": "2026-07-29",
+  "unitPref": "imperial",
+  "rateLbPerWeek": 1.5,
+  "rateAcknowledged": true,
+  "floorKcal": null,
+  "excludedFormulas": [],
+  "targetKcal": 1816,
+  "mealsPerDay": 2,
+  "snacksPerDay": 2,
+  "excludedFoods": [
+   "tree nuts",
+   "beef",
+   "dairy"
+  ],
+  "dietaryStyle": "vegetarian",
+  "cuisinePreferences": [],
+  "mealPreferencesNote": null,
+  "maxPrepMin": null,
+  "budgetTier": null,
+  "allowBatch": null,
+  "maxComplexity": null,
+  "adaptiveTdee": true,
+  "proteinPriorityMode": false,
+  "updatedAt": "2026-07-30T20:33:59.203Z"
+ },
+ "generate": {
+  "status": 200,
+  "ms": 512,
+  "body": {
+   "id": "cms7z1lep03v1wlgwggiwi3f6",
+   "userId": "cms6x1j2x0051wl2o1zmpru3w",
+   "startDate": "2026-07-27",
+   "createdAt": "2026-07-30T20:33:59.714Z",
+   "slots": [
+    {
+     "id": "cms7z1ler03v3wlgwjgjzd21k",
+     "planId": "cms7z1lep03v1wlgwggiwi3f6",
+     "dayOfWeek": 3,
+     "slotType": "meal",
+     "slotIndex": 0,
+     "recipeId": "cmrul4e2n0000wl68oom44dco",
+     "proteinScale": 1.07,
+     "sidesScale": 0.85,
+     "ingredients": [
+      {
+       "foodId": "cmrukzadw0000wlbwara3md10",
+       "name": "Seitan",
+       "role": "protein",
+       "grams": 185
+      },
+      {
+       "foodId": "cmrukzaeh0005wlbwrbkygio0",
+       "name": "Chickpea pasta, dry",
+       "role": "carb",
+       "grams": 85
+      },
+      {
+       "foodId": "cmrevpcnh000iwl5gh2zjhyqe",
+       "name": "Bell peppers",
+       "role": "veg",
+       "grams": 70
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 11,
+       "adjuster": true
+      },
+      {
+       "foodId": "cmrj2tapd00htwlwsd6ggixb6",
+       "name": "Tofu",
+       "role": "protein",
+       "grams": 35,
+       "adjuster": true
+      }
+     ],
+     "kcal": 727.1,
+     "protein": 70.005,
+     "fat": 27.212,
+     "carb": 59.32299999999999,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrul4e2n0000wl68oom44dco",
+      "name": "High-Protein Seitan & Bell Peppers with Chickpea Pasta",
+      "description": null,
+      "steps": [
+       "Cook the seitan.",
+       "Serve over chickpea pasta with bell peppers."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 613.8,
+      "protein": 63.3,
+      "fat": 13.6,
+      "carb": 66.6,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 4.73,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:43:15.263Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z1les03v5wlgw9y4xqysq",
+     "planId": "cms7z1lep03v1wlgwggiwi3f6",
+     "dayOfWeek": 3,
+     "slotType": "meal",
+     "slotIndex": 1,
+     "recipeId": "cmrul79rk0000wl80gccu6hul",
+     "proteinScale": 1.17,
+     "sidesScale": 1.19,
+     "ingredients": [
+      {
+       "foodId": "cmrukzadw0000wlbwara3md10",
+       "name": "Seitan",
+       "role": "protein",
+       "grams": 200
+      },
+      {
+       "foodId": "cmrukzaed0004wlbwdxnybljb",
+       "name": "Lentil pasta, dry",
+       "role": "carb",
+       "grams": 120
+      },
+      {
+       "foodId": "cmrevpcnh000iwl5gh2zjhyqe",
+       "name": "Bell peppers",
+       "role": "veg",
+       "grams": 95
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 734.45,
+     "protein": 80.95,
+     "fat": 11.685,
+     "carb": 79.7,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrul79rk0000wl80gccu6hul",
+      "name": "High-Protein Seitan & Bell Peppers with Lentil Pasta",
+      "description": null,
+      "steps": [
+       "Cook the seitan.",
+       "Serve over lentil pasta with bell peppers."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 623.8,
+      "protein": 68.3,
+      "fat": 10.6,
+      "carb": 66.6,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 4.73,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:45:29.648Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z1let03v9wlgw1mehaun3",
+     "planId": "cms7z1lep03v1wlgwggiwi3f6",
+     "dayOfWeek": 3,
+     "slotType": "snack",
+     "slotIndex": 0,
+     "recipeId": "cms7pjmju002swlbktsksba9r",
+     "proteinScale": 1.39,
+     "sidesScale": 1.39,
+     "ingredients": [
+      {
+       "foodId": "cmrukzae50002wlbwr9bq9oa7",
+       "name": "Edamame, shelled, cooked",
+       "role": "protein",
+       "grams": 210
+      },
+      {
+       "foodId": "cmrj2t6gd0003wlwss7jf3wzf",
+       "name": "Salt",
+       "role": "other",
+       "grams": 1
+      }
+     ],
+     "kcal": 254.1,
+     "protein": 25.2,
+     "fat": 10.5,
+     "carb": 18.9,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cms7pjmju002swlbktsksba9r",
+      "name": "Edamame with Sea Salt",
+      "description": null,
+      "steps": [
+       "Boil the pods 4 minutes in well-salted water.",
+       "Drain and salt again while hot. Eat from the pod."
+      ],
+      "slotType": "snack",
+      "cuisine": "japanese",
+      "prepTimeMin": 6,
+      "source": "curated",
+      "mealCategory": null,
+      "kcal": 181.5,
+      "protein": 18,
+      "fat": 7.5,
+      "carb": 13.5,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": null,
+      "difficulty": 1,
+      "filterProvenance": null,
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-30T16:08:04.843Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z1let03vbwlgw76e9l9si",
+     "planId": "cms7z1lep03v1wlgwggiwi3f6",
+     "dayOfWeek": 3,
+     "slotType": "snack",
+     "slotIndex": 1,
+     "recipeId": "cms7pjmju002swlbktsksba9r",
+     "proteinScale": 1.38,
+     "sidesScale": 1.38,
+     "ingredients": [
+      {
+       "foodId": "cmrukzae50002wlbwr9bq9oa7",
+       "name": "Edamame, shelled, cooked",
+       "role": "protein",
+       "grams": 205
+      },
+      {
+       "foodId": "cmrj2t6gd0003wlwss7jf3wzf",
+       "name": "Salt",
+       "role": "other",
+       "grams": 1
+      }
+     ],
+     "kcal": 248.05,
+     "protein": 24.6,
+     "fat": 10.25,
+     "carb": 18.45,
+     "warning": "Tried 4 recipe(s) for this slot, none fit within tolerance — closest was \"Edamame with Sea Salt\" (delivered 25g protein vs a 30g target).",
+     "locked": false,
+     "recipe": {
+      "id": "cms7pjmju002swlbktsksba9r",
+      "name": "Edamame with Sea Salt",
+      "description": null,
+      "steps": [
+       "Boil the pods 4 minutes in well-salted water.",
+       "Drain and salt again while hot. Eat from the pod."
+      ],
+      "slotType": "snack",
+      "cuisine": "japanese",
+      "prepTimeMin": 6,
+      "source": "curated",
+      "mealCategory": null,
+      "kcal": 181.5,
+      "protein": 18,
+      "fat": 7.5,
+      "carb": 13.5,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": null,
+      "difficulty": 1,
+      "filterProvenance": null,
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-30T16:08:04.843Z",
+      "createdByUserId": null
+     }
+    }
+   ],
+   "groceryList": null,
+   "meta": {
+    "matchPct": 85,
+    "attempts": 5,
+    "score": {
+     "daysInTolerance": 0,
+     "avgMatch": 85,
+     "days": [
+      {
+       "dayOfWeek": 3,
+       "dayName": "Thursday",
+       "matchPct": 85,
+       "totals": {
+        "kcal": 1964,
+        "protein": 201,
+        "fat": 60,
+        "carb": 176
+       },
+       "kcalDeltaPct": 8.1,
+       "proteinShortPct": 0,
+       "fatOk": true,
+       "carbOk": false,
+       "inTolerance": false,
+       "miss": "176 g carbs vs a 77–101 g range — 75 g over",
+       "unfilledSlots": 0,
+       "warnedSlots": 1,
+       "proteinFloor": {
+        "met": true,
+        "floorG": 191,
+        "achievedG": 200.8,
+        "shortG": 0,
+        "shortPct": 0,
+        "reason": null
+       },
+       "windowIndex": 0,
+       "dayIndex": 0,
+       "key": "0:3"
+      }
+     ],
+     "totalDays": 1,
+     "floorDaysMet": 1,
+     "floorDaysTotal": 1
+    },
+    "days": [
+     {
+      "dayOfWeek": 3,
+      "dayName": "Thursday",
+      "matchPct": 85,
+      "totals": {
+       "kcal": 1964,
+       "protein": 201,
+       "fat": 60,
+       "carb": 176
+      },
+      "kcalDeltaPct": 8.1,
+      "proteinShortPct": 0,
+      "fatOk": true,
+      "carbOk": false,
+      "inTolerance": false,
+      "miss": "176 g carbs vs a 77–101 g range — 75 g over",
+      "unfilledSlots": 0,
+      "warnedSlots": 1,
+      "proteinFloor": {
+       "met": true,
+       "floorG": 191,
+       "achievedG": 200.8,
+       "shortG": 0,
+       "shortPct": 0,
+       "reason": null
+      },
+      "windowIndex": 0,
+      "dayIndex": 0,
+      "key": "0:3"
+     }
+    ],
+    "diagnosis": {
+     "feasible": false,
+     "reasons": [
+      "1 day(s) landed outside your 77–101 g carb range — portion scaling moves a dish's calories, not its fat/carb ratio, so the pool's composition is what binds here."
+     ],
+     "suggestions": [
+      "Add (or AI-generate) a few recipes built around the macro you keep missing, or drop the cuisine/protein preference so the solver can reach dishes that carry it."
+     ],
+     "binding": {
+      "key": "macro-composition",
+      "label": "carbs in your recipe pool",
+      "detail": "1 of 1 day(s) landed outside your 77-101 g carb range. Portion scaling moves a dish's calories, not its fat/carb ratio, so what binds here is which dishes your rules leave in the pool. Calories and protein landed on target on every day — it is composition, not portion size, that is short."
+     }
+    },
+    "poolCounts": {
+     "raw": 910,
+     "afterDiet": 196,
+     "afterPrep": 140,
+     "afterStack": 140,
+     "stackExplain": null
+    },
+    "variety": {
+     "mealEligible": 131,
+     "usableForSlot": 82,
+     "slotKcal": 653,
+     "snackEligible": 4,
+     "weeklyMealSlots": 14,
+     "weeklySnackSlots": 14,
+     "repeatCap": 2,
+     "distinctWeeks": 5.9,
+     "horizonWeeks": 1,
+     "sustainsHorizon": false,
+     "notes": [
+      "Only 4 snack recipe(s) fit your rules, so the same snacks come back every week.",
+      "1 day: 3 distinct dish(es) across 4 filled slot(s); most-repeated dish appears 2x against a 2x cap for this horizon (2x per week)."
+     ],
+     "horizon": {
+      "weeks": 1,
+      "days": 1,
+      "perWeekCap": 2,
+      "horizonRepeatCap": 2,
+      "mealSlots": 2,
+      "snackSlots": 2,
+      "totalSlots": 4,
+      "distinctFloor": 2,
+      "distinctRecipes": 3,
+      "maxRepeat": 2,
+      "maxRepeatRecipeId": "cms7pjmju002swlbktsksba9r",
+      "lockedRepeatsOfMax": 0,
+      "filledSlots": 4,
+      "unfilledSlots": 0,
+      "requiredDistinct": 2,
+      "capHeld": true,
+      "floorHeld": true
+     }
+    },
+    "priorWeeksConsidered": 0,
+    "horizon": {
+     "key": "day",
+     "label": "1 day",
+     "days": 1,
+     "kind": "days",
+     "weeks": 1,
+     "custom": false,
+     "startDate": "2026-07-30",
+     "endDate": "2026-07-30",
+     "startDayOfWeek": 3,
+     "weeksWritten": 1,
+     "solveMs": 1,
+     "weekPlans": [
+      {
+       "startDate": "2026-07-27",
+       "dayIndices": [
+        3
+       ],
+       "days": 1,
+       "daysInTolerance": 0,
+       "avgMatch": 85,
+       "unfilledSlots": 0,
+       "poolSize": 140
+      }
+     ]
+    }
+   }
+  }
+ }
+}

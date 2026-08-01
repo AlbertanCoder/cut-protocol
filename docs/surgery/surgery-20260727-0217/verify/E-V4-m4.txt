@@ -1,0 +1,33 @@
+E-V4 — M4 DRIFT + NO-CUT (verifier's own derivation)
+
+### every caller of generateDayCandidates in backend/src
+backend/src/lib/brain/chatPlan.js:13:const { generateDayCandidates } = require("../mealSolver.js");
+backend/src/lib/brain/chatPlan.js:29:  const _generate = deps.generateDayCandidates || generateDayCandidates;
+backend/src/lib/brain/chatPlan.js:32:  // No `profile` passed → the LLM critic block inside generateDayCandidates is
+backend/src/lib/brain/index.js:2:// (mealSolver.generateDayCandidates) and gated by isBrainEnabled(). Untouched by
+backend/src/lib/mealSolver.js:456:async function generateDayCandidates({
+backend/src/lib/mealSolver.js:1450:  generateDayCandidates, generateBestWeekPlan, alternatesForSlot, SCORE_WEIGHTS,
+backend/src/routes/plans.js:7:  generateDayCandidates, alternatesForSlot, buildBias, applyPrepFilter, applyFilterStack, varietyOutlook,
+backend/src/routes/plans.js:461:    const result = await generateDayCandidates({
+
+### does generateBestWeekPlan call generateDayCandidates? (body scan)
+2:  // Stage-C (L4): more attempts + randomized day order (in generateWeekPlan)
+25:    const slots = await generateWeekPlan(dailyTarget, mealConfig, recipePool, { ...options, aiFallback: undefined });
+71:    const pass = await fillGapsWithBrain(best.slots, {
+
+### does generateHorizonPlan call generateDayCandidates? (body scan)
+  generateDayCandidates occurrences: 0
+  generateBestWeekPlan occurrences: 1
+
+### was ANY M4 cut committed? (profile plumbing into those two functions)
+-- commits touching mealSolver.js in the surgical era --
+f489264 fix(brain): the server always answers before the client hangs up
+-- did any surgical commit add a profile param to those signatures? --
+(empty above = no M4 cut)
+
+### the critic gate is unchanged
+  if (profile && candidates.length) {
+    // Lazy require so nothing brain-related (or the Anthropic SDK) loads on the
+    // deterministic hot path when the brain is disabled.
+    const { isBrainEnabled, reviseDayWithCritic } = require("./brain/index.js");
+    if (isBrainEnabled()) {

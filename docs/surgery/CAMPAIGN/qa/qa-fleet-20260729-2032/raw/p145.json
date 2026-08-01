@@ -1,0 +1,569 @@
+{
+ "persona": {
+  "idx": 145,
+  "id": "p145",
+  "tier": "HARD",
+  "displayName": "triathlete, 36",
+  "story": "triathlete, 36, male, 188 cm / 66.7 kg (BMI 18.9), cut at 1.5 lb/wk, vegan diet, avoiding pork, shellfish, peanut, nightshade, gluten, high-protein, 3 meals + 1 snacks, wants a single day",
+  "profile": {
+   "sex": "M",
+   "age": 36,
+   "heightCm": 188,
+   "startWeightKg": 66.7,
+   "goalWeightKg": 58.7,
+   "occupationKey": "software-tech",
+   "trainingStyle": "cardio",
+   "minutesPerSession": 150,
+   "sessionsPerWeek": 9,
+   "rateLbPerWeek": 1.5,
+   "dietaryStyle": "vegan",
+   "excludedFoods": [
+    "pork",
+    "shellfish",
+    "peanuts",
+    "nightshades",
+    "gluten"
+   ],
+   "mealsPerDay": 3,
+   "snacksPerDay": 1,
+   "unitPref": "imperial",
+   "rateAcknowledged": true,
+   "goalWeightAcknowledged": true
+  },
+  "filters": {
+   "proteinPriority": true,
+   "maxPrepMin": 45
+  },
+  "horizon": "day",
+  "walls": [
+   "pork",
+   "shellfish",
+   "peanut",
+   "nightshade",
+   "gluten"
+  ],
+  "freeTextExclusions": [
+   "pork",
+   "nightshades"
+  ],
+  "dietaryStyle": "vegan",
+  "bmi": 18.9,
+  "goalKind": "cut",
+  "macroStyle": "high-protein",
+  "requestedButUnsupported": [
+   "wanted protein set explicitly in g/lb; the API derives the protein band from LBM (1.14-1.25 g/lb) and accepts no client protein target — only the per-request proteinPriority filter"
+  ],
+  "goalBmi": 16.6,
+  "tupleKey": "[\"HARD\",\"M\",36,188,66.7,58.7,\"software-tech\",\"cardio\",1.5,\"vegan\",[\"gluten\",\"nightshades\",\"peanuts\",\"pork\",\"shellfish\"],3,1,\"high-protein\",\"day\",45,null,true,null,null]"
+ },
+ "request": {
+  "horizon": "day",
+  "filters": {
+   "proteinPriority": true,
+   "maxPrepMin": 45
+  }
+ },
+ "profileResponse": {
+  "id": "cms6x18p703utwlw0xkmc9ngq",
+  "userId": "cms6x18f8003vwl2ov0iczyqc",
+  "sex": "M",
+  "age": 36,
+  "heightCm": 188,
+  "bodyFatPct": 0,
+  "bodyFatSource": null,
+  "occupationKey": "software-tech",
+  "activityOverride": null,
+  "sessionsPerWeek": 9,
+  "trainingStyle": "cardio",
+  "minutesPerSession": 150,
+  "startWeightKg": 66.7,
+  "goalWeightKg": 58.7,
+  "startDate": "2026-07-29",
+  "unitPref": "imperial",
+  "rateLbPerWeek": 1.5,
+  "rateAcknowledged": true,
+  "floorKcal": null,
+  "excludedFormulas": [],
+  "targetKcal": 2784,
+  "mealsPerDay": 3,
+  "snacksPerDay": 1,
+  "excludedFoods": [
+   "pork",
+   "shellfish",
+   "peanuts",
+   "nightshades",
+   "gluten"
+  ],
+  "dietaryStyle": "vegan",
+  "cuisinePreferences": [],
+  "mealPreferencesNote": null,
+  "maxPrepMin": null,
+  "budgetTier": null,
+  "allowBatch": null,
+  "maxComplexity": null,
+  "adaptiveTdee": true,
+  "proteinPriorityMode": false,
+  "updatedAt": "2026-07-30T20:33:45.807Z"
+ },
+ "generate": {
+  "status": 200,
+  "ms": 374,
+  "body": {
+   "id": "cms7z1b4q033zwlgw64gesegs",
+   "userId": "cms6x18f8003vwl2ov0iczyqc",
+   "startDate": "2026-07-27",
+   "createdAt": "2026-07-30T20:33:46.394Z",
+   "slots": [
+    {
+     "id": "cms7z1b4r0343wlgwxn6e4co1",
+     "planId": "cms7z1b4q033zwlgw64gesegs",
+     "dayOfWeek": 3,
+     "slotType": "meal",
+     "slotIndex": 0,
+     "recipeId": "cmrul1dq4001cwlk4f8jv3x97",
+     "proteinScale": 0.87,
+     "sidesScale": 2,
+     "ingredients": [
+      {
+       "foodId": "cmrukzae50002wlbwr9bq9oa7",
+       "name": "Edamame, shelled, cooked",
+       "role": "protein",
+       "grams": 155
+      },
+      {
+       "foodId": "cmrj2t88z0087wlwsmsmchxzb",
+       "name": "Quinoa",
+       "role": "carb",
+       "grams": 220
+      },
+      {
+       "foodId": "cmrg8zxar000lwli0qy2ovmx4",
+       "name": "Onion",
+       "role": "veg",
+       "grams": 120
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      },
+      {
+       "foodId": "cmrevpcn2000ewl5gmlyzu0vd",
+       "name": "White rice, cooked",
+       "role": "carb",
+       "grams": 160,
+       "adjuster": true
+      },
+      {
+       "foodId": "cmrj2t9dj00cswlwsn2mrylyl",
+       "name": "Oats",
+       "role": "carb",
+       "grams": 140,
+       "adjuster": true
+      }
+     ],
+     "kcal": 1283.15,
+     "protein": 52.4,
+     "fat": 26.674,
+     "carb": 211.598,
+     "warning": "Tried 5 recipe(s) for this slot, none fit within tolerance — closest was \"High-Protein Edamame & Onions with Quinoa\" (landed 545 kcal vs a 726 target; delivered 30g protein vs a 36g target).",
+     "locked": false,
+     "recipe": {
+      "id": "cmrul1dq4001cwlk4f8jv3x97",
+      "name": "High-Protein Edamame & Onions with Quinoa",
+      "description": null,
+      "steps": [
+       "Cook the edamame.",
+       "Serve over quinoa with onions."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 418.8,
+      "protein": 27.1,
+      "fat": 16.2,
+      "carb": 45.2,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 4.21,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:40:54.845Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z1b4s0345wlgwp2vyu8jh",
+     "planId": "cms7z1b4q033zwlgw64gesegs",
+     "dayOfWeek": 3,
+     "slotType": "meal",
+     "slotIndex": 1,
+     "recipeId": "cmrul4e470026wl68kyx7r5z9",
+     "proteinScale": 1.46,
+     "sidesScale": 2,
+     "ingredients": [
+      {
+       "foodId": "cmrukzae50002wlbwr9bq9oa7",
+       "name": "Edamame, shelled, cooked",
+       "role": "protein",
+       "grams": 260
+      },
+      {
+       "foodId": "cmrevpcn2000ewl5gmlyzu0vd",
+       "name": "White rice, cooked",
+       "role": "carb",
+       "grams": 220
+      },
+      {
+       "foodId": "cmrg8zxar000lwli0qy2ovmx4",
+       "name": "Onion",
+       "role": "veg",
+       "grams": 120
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 693.6,
+     "protein": 38.46,
+     "fat": 18.78,
+     "carb": 96.20800000000001,
+     "warning": "Tried 5 recipe(s) for this slot, none fit within tolerance — closest was \"High-Protein Edamame & Onions with Rice\" (landed 694 kcal vs a 878 target).",
+     "locked": false,
+     "recipe": {
+      "id": "cmrul4e470026wl68kyx7r5z9",
+      "name": "High-Protein Edamame & Onions with Rice",
+      "description": null,
+      "steps": [
+       "Cook the edamame.",
+       "Serve over white rice with onions."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 429.8,
+      "protein": 25.2,
+      "fat": 14.4,
+      "carb": 52.6,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 3.44,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:43:15.319Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z1b4t0347wlgwooqn3qxd",
+     "planId": "cms7z1b4q033zwlgw64gesegs",
+     "dayOfWeek": 3,
+     "slotType": "meal",
+     "slotIndex": 2,
+     "recipeId": "cmrul79u2003uwl80s508hxy8",
+     "proteinScale": 1.62,
+     "sidesScale": 2,
+     "ingredients": [
+      {
+       "foodId": "cmrukzae50002wlbwr9bq9oa7",
+       "name": "Edamame, shelled, cooked",
+       "role": "protein",
+       "grams": 290
+      },
+      {
+       "foodId": "cmrevpcn2000ewl5gmlyzu0vd",
+       "name": "White rice, cooked",
+       "role": "carb",
+       "grams": 220
+      },
+      {
+       "foodId": "cmrevpcnl000jwl5gnqnk630b",
+       "name": "Cucumber",
+       "role": "veg",
+       "grams": 180
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 699.9,
+     "protein": 41.80199999999999,
+     "fat": 20.448,
+     "carb": 91.58800000000001,
+     "warning": "Tried 5 recipe(s) for this slot, none fit within tolerance — closest was \"High-Protein Edamame & Cucumber with Rice\" (landed 700 kcal vs a 1147 target; delivered 42g protein vs a 52g target).",
+     "locked": false,
+     "recipe": {
+      "id": "cmrul79u2003uwl80s508hxy8",
+      "name": "High-Protein Edamame & Cucumber with Rice",
+      "description": null,
+      "steps": [
+       "Cook the edamame.",
+       "Serve over white rice with cucumber."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 414.8,
+      "protein": 25.101,
+      "fat": 14.474,
+      "carb": 48.944,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 3.65,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:45:29.739Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z1b4t0349wlgwalpr5it4",
+     "planId": "cms7z1b4q033zwlgw64gesegs",
+     "dayOfWeek": 3,
+     "slotType": "snack",
+     "slotIndex": 0,
+     "recipeId": "cms7pjmju002swlbktsksba9r",
+     "proteinScale": 2,
+     "sidesScale": 2,
+     "ingredients": [
+      {
+       "foodId": "cmrukzae50002wlbwr9bq9oa7",
+       "name": "Edamame, shelled, cooked",
+       "role": "protein",
+       "grams": 300
+      },
+      {
+       "foodId": "cmrj2t6gd0003wlwss7jf3wzf",
+       "name": "Salt",
+       "role": "other",
+       "grams": 1
+      }
+     ],
+     "kcal": 363,
+     "protein": 36,
+     "fat": 15,
+     "carb": 27,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cms7pjmju002swlbktsksba9r",
+      "name": "Edamame with Sea Salt",
+      "description": null,
+      "steps": [
+       "Boil the pods 4 minutes in well-salted water.",
+       "Drain and salt again while hot. Eat from the pod."
+      ],
+      "slotType": "snack",
+      "cuisine": "japanese",
+      "prepTimeMin": 6,
+      "source": "curated",
+      "mealCategory": null,
+      "kcal": 181.5,
+      "protein": 18,
+      "fat": 7.5,
+      "carb": 13.5,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": null,
+      "difficulty": 1,
+      "filterProvenance": null,
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-30T16:08:04.843Z",
+      "createdByUserId": null
+     }
+    }
+   ],
+   "groceryList": null,
+   "meta": {
+    "matchPct": 85,
+    "attempts": 5,
+    "score": {
+     "daysInTolerance": 0,
+     "avgMatch": 85,
+     "days": [
+      {
+       "dayOfWeek": 3,
+       "dayName": "Thursday",
+       "matchPct": 85,
+       "totals": {
+        "kcal": 3040,
+        "protein": 169,
+        "fat": 81,
+        "carb": 426
+       },
+       "kcalDeltaPct": 9.2,
+       "proteinShortPct": 0,
+       "fatOk": false,
+       "carbOk": true,
+       "inTolerance": false,
+       "miss": "81 g fat vs a 39–46 g range — 35 g over",
+       "unfilledSlots": 0,
+       "warnedSlots": 3,
+       "proteinFloor": {
+        "met": true,
+        "floorG": 132,
+        "achievedG": 168.7,
+        "shortG": 0,
+        "shortPct": 0,
+        "reason": null
+       },
+       "windowIndex": 0,
+       "dayIndex": 0,
+       "key": "0:3"
+      }
+     ],
+     "totalDays": 1,
+     "floorDaysMet": 1,
+     "floorDaysTotal": 1
+    },
+    "days": [
+     {
+      "dayOfWeek": 3,
+      "dayName": "Thursday",
+      "matchPct": 85,
+      "totals": {
+       "kcal": 3040,
+       "protein": 169,
+       "fat": 81,
+       "carb": 426
+      },
+      "kcalDeltaPct": 9.2,
+      "proteinShortPct": 0,
+      "fatOk": false,
+      "carbOk": true,
+      "inTolerance": false,
+      "miss": "81 g fat vs a 39–46 g range — 35 g over",
+      "unfilledSlots": 0,
+      "warnedSlots": 3,
+      "proteinFloor": {
+       "met": true,
+       "floorG": 132,
+       "achievedG": 168.7,
+       "shortG": 0,
+       "shortPct": 0,
+       "reason": null
+      },
+      "windowIndex": 0,
+      "dayIndex": 0,
+      "key": "0:3"
+     }
+    ],
+    "diagnosis": {
+     "feasible": false,
+     "reasons": [
+      "1 day(s) landed outside your 39–46 g fat range — portion scaling moves a dish's calories, not its fat/carb ratio, so the pool's composition is what binds here."
+     ],
+     "suggestions": [
+      "Add (or AI-generate) a few recipes built around the macro you keep missing, or drop the cuisine/protein preference so the solver can reach dishes that carry it."
+     ],
+     "binding": {
+      "key": "macro-composition",
+      "label": "fat in your recipe pool",
+      "detail": "1 of 1 day(s) landed outside your 39-46 g fat range. Portion scaling moves a dish's calories, not its fat/carb ratio, so what binds here is which dishes your rules leave in the pool. Calories and protein landed on target on every day — it is composition, not portion size, that is short."
+     }
+    },
+    "poolCounts": {
+     "raw": 910,
+     "afterDiet": 46,
+     "afterPrep": 44,
+     "afterStack": 44,
+     "stackExplain": null
+    },
+    "variety": {
+     "mealEligible": 36,
+     "usableForSlot": 22,
+     "slotKcal": 820,
+     "snackEligible": 3,
+     "weeklyMealSlots": 21,
+     "weeklySnackSlots": 7,
+     "repeatCap": 2,
+     "distinctWeeks": 1,
+     "horizonWeeks": 1,
+     "sustainsHorizon": false,
+     "notes": [
+      "Only 3 snack recipe(s) fit your rules, so the same snacks come back every week.",
+      "1 day: 4 distinct dish(es) across 4 filled slot(s); most-repeated dish appears 1x against a 2x cap for this horizon (2x per week)."
+     ],
+     "horizon": {
+      "weeks": 1,
+      "days": 1,
+      "perWeekCap": 2,
+      "horizonRepeatCap": 2,
+      "mealSlots": 3,
+      "snackSlots": 1,
+      "totalSlots": 4,
+      "distinctFloor": 2,
+      "distinctRecipes": 4,
+      "maxRepeat": 1,
+      "maxRepeatRecipeId": "cmrul1dq4001cwlk4f8jv3x97",
+      "lockedRepeatsOfMax": 0,
+      "filledSlots": 4,
+      "unfilledSlots": 0,
+      "requiredDistinct": 2,
+      "capHeld": true,
+      "floorHeld": true
+     }
+    },
+    "priorWeeksConsidered": 0,
+    "horizon": {
+     "key": "day",
+     "label": "1 day",
+     "days": 1,
+     "kind": "days",
+     "weeks": 1,
+     "custom": false,
+     "startDate": "2026-07-30",
+     "endDate": "2026-07-30",
+     "startDayOfWeek": 3,
+     "weeksWritten": 1,
+     "solveMs": 1,
+     "weekPlans": [
+      {
+       "startDate": "2026-07-27",
+       "dayIndices": [
+        3
+       ],
+       "days": 1,
+       "daysInTolerance": 0,
+       "avgMatch": 85,
+       "unfilledSlots": 0,
+       "poolSize": 44
+      }
+     ]
+    }
+   }
+  }
+ }
+}

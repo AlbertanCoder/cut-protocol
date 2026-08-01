@@ -1,0 +1,491 @@
+{
+ "persona": {
+  "idx": 84,
+  "id": "p084",
+  "tier": "HARD",
+  "displayName": "retail cashier, 19",
+  "story": "retail cashier, 19, female, 160 cm / 46.7 kg (BMI 18.2), lean bulk at 2 lb/wk, none diet, avoiding fish, dairy, egg, gluten, soy, low-carb, 3 meals + 0 snacks, wants a single day",
+  "profile": {
+   "sex": "F",
+   "age": 19,
+   "heightCm": 160,
+   "startWeightKg": 46.7,
+   "goalWeightKg": 49.2,
+   "occupationKey": "cashier",
+   "trainingStyle": "cardio",
+   "minutesPerSession": 25,
+   "sessionsPerWeek": 2,
+   "rateLbPerWeek": 2,
+   "dietaryStyle": "none",
+   "excludedFoods": [
+    "fish",
+    "dairy",
+    "eggs",
+    "gluten",
+    "soy"
+   ],
+   "mealsPerDay": 3,
+   "snacksPerDay": 0,
+   "unitPref": "imperial",
+   "rateAcknowledged": true
+  },
+  "filters": {
+   "maxPrepMin": 15,
+   "budget": "moderate",
+   "proteinPriority": true
+  },
+  "horizon": "day",
+  "walls": [
+   "fish",
+   "dairy",
+   "egg",
+   "gluten",
+   "soy"
+  ],
+  "freeTextExclusions": [],
+  "dietaryStyle": "none",
+  "bmi": 18.2,
+  "goalKind": "lean bulk",
+  "macroStyle": "low-carb",
+  "requestedButUnsupported": [
+   "wanted a low-carb split without full keto; carbs are the leftover after LBM-derived protein and fat, and only dietaryStyle:\"keto\" changes that"
+  ],
+  "tupleKey": "[\"HARD\",\"F\",19,160,46.7,49.2,\"cashier\",\"cardio\",2,\"none\",[\"dairy\",\"eggs\",\"fish\",\"gluten\",\"soy\"],3,0,\"low-carb\",\"day\",15,\"moderate\",true,null,null]"
+ },
+ "request": {
+  "horizon": "day",
+  "filters": {
+   "maxPrepMin": 15,
+   "budget": "moderate",
+   "proteinPriority": true
+  }
+ },
+ "profileResponse": {
+  "id": "cms6x0swi02cxwlw0l3kgogut",
+  "userId": "cms6x0sr70026wl2ocw3rzo5c",
+  "sex": "F",
+  "age": 19,
+  "heightCm": 160,
+  "bodyFatPct": 0,
+  "bodyFatSource": null,
+  "occupationKey": "cashier",
+  "activityOverride": null,
+  "sessionsPerWeek": 2,
+  "trainingStyle": "cardio",
+  "minutesPerSession": 25,
+  "startWeightKg": 46.7,
+  "goalWeightKg": 49.2,
+  "startDate": "2026-07-29",
+  "unitPref": "imperial",
+  "rateLbPerWeek": 2,
+  "rateAcknowledged": true,
+  "floorKcal": null,
+  "excludedFormulas": [],
+  "targetKcal": 1200,
+  "mealsPerDay": 3,
+  "snacksPerDay": 0,
+  "excludedFoods": [
+   "fish",
+   "dairy",
+   "eggs",
+   "gluten",
+   "soy"
+  ],
+  "dietaryStyle": "none",
+  "cuisinePreferences": [],
+  "mealPreferencesNote": null,
+  "maxPrepMin": null,
+  "budgetTier": null,
+  "allowBatch": null,
+  "maxComplexity": null,
+  "adaptiveTdee": true,
+  "proteinPriorityMode": false,
+  "updatedAt": "2026-07-30T02:49:37.375Z"
+ },
+ "generate": {
+  "status": 200,
+  "ms": 454,
+  "body": {
+   "id": "cms6x0t9b02d1wlw0g51zlxks",
+   "userId": "cms6x0sr70026wl2ocw3rzo5c",
+   "startDate": "2026-07-27",
+   "createdAt": "2026-07-30T02:49:37.823Z",
+   "slots": [
+    {
+     "id": "cms6x0t9c02d3wlw0ozbyuv49",
+     "planId": "cms6x0t9b02d1wlw0g51zlxks",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 0,
+     "recipeId": "cmrul4e63005cwl68h153kd2q",
+     "proteinScale": 0.5,
+     "sidesScale": 1.25,
+     "ingredients": [
+      {
+       "foodId": "cmrfoyrjh0009wl08cmcid51m",
+       "name": "Turkey breast, low salt, prepackaged or deli, luncheon meat",
+       "role": "protein",
+       "grams": 85
+      },
+      {
+       "foodId": "cmrj2t7fb004fwlws8ezof2dp",
+       "name": "Russet Potato",
+       "role": "carb",
+       "grams": 185
+      },
+      {
+       "foodId": "cmrj2t6na000ywlws9jek4w4z",
+       "name": "Broccoli",
+       "role": "veg",
+       "grams": 135
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 355.25,
+     "protein": 26.865,
+     "fat": 6.405,
+     "carb": 51.038,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrul4e63005cwl68h153kd2q",
+      "name": "High-Protein Turkey & Broccoli with Potato",
+      "description": null,
+      "steps": [
+       "Cook the turkey.",
+       "Serve over potato with broccoli."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 406.9,
+      "protein": 43.8,
+      "fat": 7,
+      "carb": 45,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 6.91,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:43:15.387Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x0t9d02d7wlw0bjjd6cwq",
+     "planId": "cms6x0t9b02d1wlw0g51zlxks",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 1,
+     "recipeId": "cmrujkwuv00aiwl9ojjf66d82",
+     "proteinScale": 0.8,
+     "sidesScale": 0.5,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t6fj0000wlwsdedjzth2",
+       "name": "Ground Beef",
+       "role": "protein",
+       "grams": 110
+      },
+      {
+       "foodId": "cmrj2t7fb004fwlws8ezof2dp",
+       "name": "Russet Potato",
+       "role": "carb",
+       "grams": 90
+      },
+      {
+       "foodId": "cmrevpcnh000iwl5gh2zjhyqe",
+       "name": "Bell peppers",
+       "role": "veg",
+       "grams": 40
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 10
+      }
+     ],
+     "kcal": 475,
+     "protein": 30.927,
+     "fat": 28.71700000000001,
+     "carb": 21.66,
+     "warning": "Tried 5 recipe(s) for this slot, none fit within tolerance — closest was \"Classic Ground Beef & Bell Peppers with Potato\" (landed 475 kcal vs a 393 target).",
+     "locked": false,
+     "recipe": {
+      "id": "cmrujkwuv00aiwl9ojjf66d82",
+      "name": "Classic Ground Beef & Bell Peppers with Potato",
+      "description": null,
+      "steps": [
+       "Cook the ground beef.",
+       "Serve with potato and bell peppers."
+      ],
+      "slotType": "meal",
+      "cuisine": "american",
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 651.2,
+      "protein": 41.4,
+      "fat": 34,
+      "carb": 43.3,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 6.11,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:00:06.871Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x0t9e02d9wlw0xpvvjrju",
+     "planId": "cms6x0t9b02d1wlw0g51zlxks",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 2,
+     "recipeId": "cmrujhgyr002awlbolpmgs3hm",
+     "proteinScale": 0.83,
+     "sidesScale": 0.5,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t6fj0000wlwsdedjzth2",
+       "name": "Ground Beef",
+       "role": "protein",
+       "grams": 115
+      },
+      {
+       "foodId": "cmrj2t6na000ywlws9jek4w4z",
+       "name": "Broccoli",
+       "role": "veg",
+       "grams": 60
+      },
+      {
+       "foodId": "cmrevpcn2000ewl5gmlyzu0vd",
+       "name": "White rice, cooked",
+       "role": "carb",
+       "grams": 75
+      },
+      {
+       "foodId": "cmrj2t6xc0028wlwszh51pa6i",
+       "name": "Sesame Seed Oil",
+       "role": "fat",
+       "grams": 4
+      }
+     ],
+     "kcal": 451.61,
+     "protein": 33.007,
+     "fat": 23.749,
+     "carb": 24.762,
+     "warning": "Tried 5 recipe(s) for this slot, none fit within tolerance — closest was \"Beef & Broccoli with Rice\" (landed 452 kcal vs a 370 target).",
+     "locked": false,
+     "recipe": {
+      "id": "cmrujhgyr002awlbolpmgs3hm",
+      "name": "Beef & Broccoli with Rice",
+      "description": null,
+      "steps": [
+       "Brown the beef.",
+       "Stir-fry with broccoli, serve over rice."
+      ],
+      "slotType": "meal",
+      "cuisine": "asian",
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 668.3,
+      "protein": 43,
+      "fat": 32.4,
+      "carb": 49.5,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 6.19,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T10:57:26.308Z",
+      "createdByUserId": null
+     }
+    }
+   ],
+   "groceryList": null,
+   "meta": {
+    "matchPct": 80,
+    "attempts": 5,
+    "score": {
+     "daysInTolerance": 0,
+     "avgMatch": 80,
+     "days": [
+      {
+       "dayOfWeek": 2,
+       "dayName": "Wednesday",
+       "matchPct": 80,
+       "totals": {
+        "kcal": 1282,
+        "protein": 91,
+        "fat": 59,
+        "carb": 97
+       },
+       "kcalDeltaPct": 6.8,
+       "proteinShortPct": 0,
+       "fatOk": false,
+       "carbOk": true,
+       "inTolerance": false,
+       "miss": "59 g fat vs a 25–30 g range — 29 g over",
+       "unfilledSlots": 0,
+       "warnedSlots": 2,
+       "proteinFloor": {
+        "met": true,
+        "floorG": 85,
+        "achievedG": 90.8,
+        "shortG": 0,
+        "shortPct": 0,
+        "reason": null
+       },
+       "windowIndex": 0,
+       "dayIndex": 0,
+       "key": "0:2"
+      }
+     ],
+     "totalDays": 1,
+     "floorDaysMet": 1,
+     "floorDaysTotal": 1
+    },
+    "days": [
+     {
+      "dayOfWeek": 2,
+      "dayName": "Wednesday",
+      "matchPct": 80,
+      "totals": {
+       "kcal": 1282,
+       "protein": 91,
+       "fat": 59,
+       "carb": 97
+      },
+      "kcalDeltaPct": 6.8,
+      "proteinShortPct": 0,
+      "fatOk": false,
+      "carbOk": true,
+      "inTolerance": false,
+      "miss": "59 g fat vs a 25–30 g range — 29 g over",
+      "unfilledSlots": 0,
+      "warnedSlots": 2,
+      "proteinFloor": {
+       "met": true,
+       "floorG": 85,
+       "achievedG": 90.8,
+       "shortG": 0,
+       "shortPct": 0,
+       "reason": null
+      },
+      "windowIndex": 0,
+      "dayIndex": 0,
+      "key": "0:2"
+     }
+    ],
+    "diagnosis": {
+     "feasible": false,
+     "reasons": [
+      "1 day(s) landed outside your 25–30 g fat range — portion scaling moves a dish's calories, not its fat/carb ratio, so the pool's composition is what binds here."
+     ],
+     "suggestions": [
+      "Add (or AI-generate) a few recipes built around the macro you keep missing, or drop the cuisine/protein preference so the solver can reach dishes that carry it."
+     ],
+     "binding": {
+      "key": "macro-composition",
+      "label": "fat in your recipe pool",
+      "detail": "1 of 1 day(s) landed outside your 25-30 g fat range. Portion scaling moves a dish's calories, not its fat/carb ratio, so what binds here is which dishes your rules leave in the pool. Calories and protein landed on target on every day — it is composition, not portion size, that is short."
+     }
+    },
+    "poolCounts": {
+     "raw": 889,
+     "afterDiet": 153,
+     "afterPrep": 65,
+     "afterStack": 65,
+     "stackExplain": null
+    },
+    "variety": {
+     "mealEligible": 61,
+     "usableForSlot": 58,
+     "slotKcal": 400,
+     "snackEligible": 4,
+     "weeklyMealSlots": 21,
+     "weeklySnackSlots": 0,
+     "repeatCap": 2,
+     "distinctWeeks": 2.8,
+     "horizonWeeks": 1,
+     "sustainsHorizon": true,
+     "notes": [
+      "1 day: 3 distinct dish(es) across 3 filled slot(s); most-repeated dish appears 1x against a 2x cap for this horizon (2x per week)."
+     ],
+     "horizon": {
+      "weeks": 1,
+      "days": 1,
+      "perWeekCap": 2,
+      "horizonRepeatCap": 2,
+      "mealSlots": 3,
+      "snackSlots": 0,
+      "totalSlots": 3,
+      "distinctFloor": 2,
+      "distinctRecipes": 3,
+      "maxRepeat": 1,
+      "maxRepeatRecipeId": "cmrul4e63005cwl68h153kd2q",
+      "lockedRepeatsOfMax": 0,
+      "filledSlots": 3,
+      "unfilledSlots": 0,
+      "requiredDistinct": 2,
+      "capHeld": true,
+      "floorHeld": true
+     }
+    },
+    "priorWeeksConsidered": 0,
+    "horizon": {
+     "key": "day",
+     "label": "1 day",
+     "days": 1,
+     "kind": "days",
+     "weeks": 1,
+     "custom": false,
+     "startDate": "2026-07-29",
+     "endDate": "2026-07-29",
+     "startDayOfWeek": 2,
+     "weeksWritten": 1,
+     "solveMs": 1,
+     "weekPlans": [
+      {
+       "startDate": "2026-07-27",
+       "dayIndices": [
+        2
+       ],
+       "days": 1,
+       "daysInTolerance": 0,
+       "avgMatch": 80,
+       "unfilledSlots": 0,
+       "poolSize": 65
+      }
+     ]
+    }
+   }
+  }
+ }
+}

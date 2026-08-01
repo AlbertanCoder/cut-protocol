@@ -1,0 +1,70 @@
+{
+  "personaId": "p108",
+  "satisfaction": 2,
+  "wouldRecommend": false,
+  "criteria": {
+    "macrosInRange": 1,
+    "worksEndToEnd": 3,
+    "mealsAreGood": 1,
+    "affordableAdjustable": 3,
+    "tasty": 3
+  },
+  "allergenRespect": {
+    "ok": true,
+    "leaks": []
+  },
+  "delights": [
+    "It never pretended the day fitted. Every slot said so in grams: \"Tried 5 recipe(s) for this slot, none fit within tolerance — closest was \\\"Lao Som Pak Pickled Cabbage\\\" (landed 367 kcal vs a 467 target; delivered 21g protein vs a 53g target).\" I would rather be told the exact shortfall than be handed a number that flatters itself.",
+    "Not one of the 21 ingredients it put in front of me — across all four slots and two rounds of alternates — broke a wall. No soy, no gluten, no peanut, no tree nut, no sesame, and nothing that wasn't vegan. That is the first thing I check and it held.",
+    "Alternates came back instantly with a match score and full gram weights (\"Simple heart of palm & tomato salad\", matchPct 68), and when I swapped it in the server rebuilt the slot itself and re-scaled it to 1.67 rather than just taking my word for the numbers."
+  ],
+  "defects": [
+    {
+      "what": "I asked for 3 meals and 1 snack. The snack slot is simply blank — no dish, no calories, no suggestion.",
+      "snippet": "\"warning\": \"No eligible snack recipe left for this slot.\", \"kcal\": 0, \"ingredients\": []"
+    },
+    {
+      "what": "My first meal was 1.1 kilograms of spring onions and a heaped tablespoon of salt. That is not a meal, it is a bucket. Nobody eats this and no shop sells it as one portion.",
+      "snippet": "Lao Som Pak Pickled Cabbage — Cabbage 100g | Spring Onions 1100g | Water 455g | Salt 19g"
+    },
+    {
+      "what": "The day is over my cutting target, not under it. I am supposed to be eating 1,792 and losing 2 lb a week; the plan feeds me 2,053 (2,163 after the swap it offered me). This moves me the wrong way.",
+      "snippet": "targetKcal 1792 vs DAY TOTAL 2053 kcal, P94g, F36g, C365g"
+    },
+    {
+      "what": "One dish's numbers are impossible. It claims 1,121 calories and 51 g of protein out of potatoes, onion, thyme, a spoon of oil and some stock. Potatoes do not contain that. If I cannot trust the numbers I cannot trust the plan.",
+      "snippet": "Boulangère Potatoes — 1121.4 kcal, P50.9385, C189.122 from: Onion 55g | Thyme 25g | Olive Oil 7g | Potatoes 375g | Vegetable Stock 105g"
+    },
+    {
+      "what": "Protein is nowhere near what it says I need. It set targets of 53 g, 72 g and 89 g for my three meals and then delivered 85 g for the entire day. At 73 I am trying not to lose muscle while I cut, and there is not a single protein food anywhere on this day.",
+      "snippet": "delivered 21g protein vs a 53g target ... delivered 22g protein vs a 72g target ... delivered 51g protein vs a 89g target"
+    },
+    {
+      "what": "It is starch on starch. Two of my three meals are potato dishes, and 311-365 g of carbohydrate for someone who eats low-carb. Then the alternates offered me a third potato dish that was a near-copy of one already on the same day.",
+      "snippet": "meal#1 Patatas bravas (C93) + meal#2 Boulangère Potatoes (C189); alternate offered: \"Air fryer patatas bravas\""
+    },
+    {
+      "what": "The swap refused the obvious request the first time. Asking for the alternate by its own recipeId was rejected; it only worked when I handed the whole alternate object back.",
+      "snippet": "PUT .../apply {\"recipeId\":\"cmrj2uduc08xtwlwsdxsv2yjq\"} -> 400 {\"error\":\"a slot needs at least one ingredient\"}"
+    },
+    {
+      "what": "A recipe's cooking instructions contain a placeholder instead of a step.",
+      "snippet": "\"steps\": [\"step 1\", \"Mix together the hearts of palm, tomatoes and spring onions...\"]"
+    },
+    {
+      "what": "No shopping list came with the plan — the field is empty — so I cannot see what to actually buy.",
+      "snippet": "\"groceryList\": null"
+    },
+    {
+      "what": "\"Vegetable Stock\" appears with no gluten-free provenance. Shop stock cubes very often contain wheat. It is not proof of a leak, but it is exactly the line a coeliac needs labelled and it is not.",
+      "snippet": "Vegetable Stock 105g (Boulangère Potatoes), Vegetable Stock 320g (leek bake alternate)"
+    }
+  ],
+  "followUp": {
+    "action": "Asked for alternates on the 1.1 kg spring-onion pickled cabbage slot and swapped one in — I picked the heart of palm salad because it was the only one that was both edible as a meal and actually low-carb.",
+    "endpoint": "POST /api/plans/cms6x0zg102ubwlw0gkqomip3/slots/cms6x0zg702udwlw0stvzeqhk/alternates then PUT /api/plans/cms6x0zg102ubwlw0gkqomip3/slots/cms6x0zg702udwlw0stvzeqhk/apply",
+    "status": 200,
+    "howItWent": "Alternates returned three options fast with match percentages, and the swap did stick and was re-scaled server-side — but the first apply attempt failed with 400 \"a slot needs at least one ingredient\" until I sent the whole alternate back, and all three choices were themselves flagged as not fitting (12g, 13g and 20g protein against a 53g target). The swap made my day worse, not better: 2,053 kcal became 2,163 against a 1,792 target and my protein fell from 94g to 85g."
+  },
+  "verdict": "It respected every one of my medical walls and it was honest to my face about missing, which I do credit — but what it actually handed me was two potato dishes, a bucket of spring onions, an empty snack slot and 2,053 calories against a 1,792 target, with one dish's macros plainly invented, so I could not eat this day or trust its numbers."
+}

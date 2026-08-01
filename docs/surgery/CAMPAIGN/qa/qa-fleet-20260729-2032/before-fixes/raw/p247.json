@@ -1,0 +1,760 @@
+{
+ "persona": {
+  "idx": 247,
+  "id": "p247",
+  "tier": "EASY",
+  "displayName": "long-haul trucker, 42",
+  "story": "long-haul trucker, 42, female, 149 cm / 75.9 kg (BMI 34.2), cut at 1.5 lb/wk, low-FODMAP diet, avoiding sesame, balanced, 3 meals + 3 snacks, wants a single day",
+  "profile": {
+   "sex": "F",
+   "age": 42,
+   "heightCm": 149,
+   "startWeightKg": 75.9,
+   "goalWeightKg": 68.9,
+   "occupationKey": "driver-truck",
+   "trainingStyle": "weights",
+   "minutesPerSession": 30,
+   "sessionsPerWeek": 2,
+   "rateLbPerWeek": 1.5,
+   "dietaryStyle": null,
+   "excludedFoods": [
+    "sesame"
+   ],
+   "mealsPerDay": 3,
+   "snacksPerDay": 3,
+   "unitPref": "imperial",
+   "cuisinePreferences": [
+    "japanese",
+    "mexican"
+   ],
+   "rateAcknowledged": true
+  },
+  "filters": {
+   "maxPrepMin": 45,
+   "cuisines": [
+    "japanese",
+    "mexican"
+   ]
+  },
+  "horizon": "day",
+  "walls": [
+   "sesame"
+  ],
+  "freeTextExclusions": [],
+  "dietaryStyle": null,
+  "bmi": 34.2,
+  "goalKind": "cut",
+  "macroStyle": "balanced",
+  "requestedButUnsupported": [
+   "low-FODMAP is not a dietary style; expressed instead as free-text exclusions (onion, garlic, wheat)"
+  ],
+  "tupleKey": "[\"EASY\",\"F\",42,149,75.9,68.9,\"driver-truck\",\"weights\",1.5,null,[\"sesame\"],3,3,\"balanced\",\"day\",45,null,null,null,null]"
+ },
+ "request": {
+  "horizon": "day",
+  "filters": {
+   "maxPrepMin": 45,
+   "cuisines": [
+    "japanese",
+    "mexican"
+   ]
+  }
+ },
+ "profileResponse": {
+  "id": "cms6x1ynl064rwlw00nh0ep9u",
+  "userId": "cms6x1yi7006pwl2oa06zpxzt",
+  "sex": "F",
+  "age": 42,
+  "heightCm": 149,
+  "bodyFatPct": 0,
+  "bodyFatSource": null,
+  "occupationKey": "driver-truck",
+  "activityOverride": null,
+  "sessionsPerWeek": 2,
+  "trainingStyle": "weights",
+  "minutesPerSession": 30,
+  "startWeightKg": 75.9,
+  "goalWeightKg": 68.9,
+  "startDate": "2026-07-29",
+  "unitPref": "imperial",
+  "rateLbPerWeek": 1.5,
+  "rateAcknowledged": true,
+  "floorKcal": null,
+  "excludedFormulas": [],
+  "targetKcal": 1340,
+  "mealsPerDay": 3,
+  "snacksPerDay": 3,
+  "excludedFoods": [
+   "sesame"
+  ],
+  "dietaryStyle": null,
+  "cuisinePreferences": [
+   "japanese",
+   "mexican"
+  ],
+  "mealPreferencesNote": null,
+  "maxPrepMin": null,
+  "budgetTier": null,
+  "allowBatch": null,
+  "maxComplexity": null,
+  "adaptiveTdee": true,
+  "proteinPriorityMode": false,
+  "updatedAt": "2026-07-30T02:50:31.531Z"
+ },
+ "generate": {
+  "status": 200,
+  "ms": 61,
+  "body": {
+   "id": "cms6x1yvu067fwlw0t1s0ben1",
+   "userId": "cms6x1yi7006pwl2oa06zpxzt",
+   "startDate": "2026-07-27",
+   "createdAt": "2026-07-30T02:50:31.771Z",
+   "slots": [
+    {
+     "id": "cms6x1yvw067hwlw01m9hqx6y",
+     "planId": "cms6x1yvu067fwlw0t1s0ben1",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 0,
+     "recipeId": "cmrj2tz0q05oowlwsip3w8e0p",
+     "proteinScale": 1.11,
+     "sidesScale": 1.32,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t6zx002jwlws9murdlky",
+       "name": "Sea Salt",
+       "role": null,
+       "grams": 10
+      },
+      {
+       "foodId": "cmrj2t6qh001dwlws2ramsws8",
+       "name": "Bay Leaf",
+       "role": null,
+       "grams": 1
+      },
+      {
+       "foodId": "cmrj2t6ft0001wlwstiofk9on",
+       "name": "Garlic",
+       "role": "veg",
+       "grams": 4
+      },
+      {
+       "foodId": "cmrj2t6oj0014wlwsaw8ffg0k",
+       "name": "Thyme",
+       "role": null,
+       "grams": 10
+      },
+      {
+       "foodId": "cmrj2ta8j00g0wlwsip7fcxb7",
+       "name": "Duck Legs",
+       "role": "protein",
+       "grams": 110
+      },
+      {
+       "foodId": "cmrj2t705002kwlwsxtdzqdki",
+       "name": "White Wine",
+       "role": null,
+       "grams": 35
+      }
+     ],
+     "kcal": 286.35,
+     "protein": 30.4013,
+     "fat": 12.8072,
+     "carb": 5.228,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrj2tz0q05oowlwsip3w8e0p",
+      "name": "Duck Confit",
+      "description": null,
+      "steps": [
+       "The day before you want to make the dish, scatter half the salt, half the garlic and half of the herbs over the base of a small shallow dish. Lay the duck legs, skin-side up, on top, then scatter over the remaining salt, garlic and herbs. Cover the duck and refrigerate overnight. This can be done up to 2 days ahead.",
+       "Pour the wine into a saucepan that will snugly fit the duck legs in a single layer. Brush the salt off the duck legs and place them, skin-side down, in the wine. Cover the pan with a lid and place over a medium heat. As soon as the wine starts to bubble, turn the heat down to the lowest setting and cook for 2 hours, checking occasionally that the liquid is just barely simmering. (If you own a heat diffuser, it would be good to use it here.) After 2 hours, the duck legs should be submerged in their own fat and the meat should feel incredibly tender when prodded. Leave to cool.",
+       "The duck legs are now cooked and can be eaten immediately – or you can follow the next step if you like them crisp. If you are preparing ahead, pack the duck legs tightly into a plastic container or jar and pour over the fat, but not the liquid at the bottom of the pan. Cover and leave in the fridge for up to a month, or freeze for up to 3 months. The liquid you are left with makes a tasty gravy, which can be chilled or frozen until needed.",
+       "To reheat and crisp up the duck legs, heat oven to 220C/fan 200C/gas 7. Remove the legs from the fat and place them, skin-side down, in an ovenproof frying pan. Roast for 30-40 mins, turning halfway through, until brown and crisp. Serve with the reheated gravy, a crisp salad and some crisp golden ptoatoes."
+      ],
+      "slotType": "meal",
+      "cuisine": "western-comfort",
+      "prepTimeMin": 22,
+      "source": "themealdb-import",
+      "mealCategory": null,
+      "kcal": 250.2,
+      "protein": 27.5,
+      "fat": 11.6,
+      "carb": 3.5,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 5.76,
+      "difficulty": 3,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-13T10:25:48.171Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x1yvx067jwlw0dbvvjh2l",
+     "planId": "cms6x1yvu067fwlw0t1s0ben1",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 1,
+     "recipeId": "cmrj2ufn709c3wlwshmx02qv8",
+     "proteinScale": 1.67,
+     "sidesScale": 0.5,
+     "ingredients": [
+      {
+       "foodId": "cmrj2tbja00l0wlwsjh9zup9s",
+       "name": "Egg Plants",
+       "role": "protein",
+       "grams": 190
+      },
+      {
+       "foodId": "cmrj2t6z2002gwlwsjklhz848",
+       "name": "Sugar",
+       "role": "carb",
+       "grams": 3
+      },
+      {
+       "foodId": "cmrj2t6gd0003wlwss7jf3wzf",
+       "name": "Salt",
+       "role": null,
+       "grams": 1
+      },
+      {
+       "foodId": "cmrj2t6gl0004wlws73buybhw",
+       "name": "Pepper",
+       "role": null,
+       "grams": 1
+      },
+      {
+       "foodId": "cmrj2t6ft0001wlwstiofk9on",
+       "name": "Garlic",
+       "role": "veg",
+       "grams": 13
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "carb",
+       "grams": 5
+      },
+      {
+       "foodId": "cmrj2t7eh004bwlwsd0g31o7x",
+       "name": "Ground Pork",
+       "role": "protein",
+       "grams": 45
+      },
+      {
+       "foodId": "cmrj2t7su0066wlwsdhqirahi",
+       "name": "Rice Vinegar",
+       "role": "carb",
+       "grams": 4
+      },
+      {
+       "foodId": "cmrj2t6ls000rwlwsf7bu3ffs",
+       "name": "Soy Sauce",
+       "role": "carb",
+       "grams": 2
+      },
+      {
+       "foodId": "cmrj2t6qh001dwlws2ramsws8",
+       "name": "Bay Leaf",
+       "role": null,
+       "grams": 1
+      }
+     ],
+     "kcal": 319.85,
+     "protein": 33.551,
+     "fat": 14.6989,
+     "carb": 12.0701,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrj2ufn709c3wlwshmx02qv8",
+      "name": "Eggplant Adobo",
+      "description": null,
+      "steps": [
+       "Slice 1 lb. small Japanese or Italian eggplant (about 3) into quarters lengthwise, then cut crosswise into 2\"-wide pieces. Place in a medium bowl. Add 1 Tbsp. sugar, 1 tsp. Diamond Crystal or ½ tsp. Morton kosher salt, and ½ tsp. freshly ground black pepper. Toss to evenly coat eggplant and let sit at room temperature at least 20 minutes and up to 2 hours.",
+       "Peel and thinly slice 8 garlic cloves. Add 3 Tbsp. vegetable oil and half of garlic to a medium Dutch oven or other heavy pot. Cook over medium-high heat, stirring constantly with a wooden spoon, until light golden and crisp, about 5 minutes. Using a slotted spoon, transfer garlic chips to a plate; season lightly with salt.",
+       "Place 4 oz. ground pork in same pot and break up into small pieces with wooden spoon. Season with ¼ tsp. Diamond Crystal or Morton kosher salt and cook, undisturbed, until deeply browned underneath, about 5 minutes. Using a slotted spoon, transfer to another plate, leaving fat behind in the pot.",
+       "Place eggplant on a clean kitchen towel and blot away any moisture the salt has drawn out.",
+       "Working in batches and adding more oil if needed, cook eggplant in the same pot until lightly browned, about 3 minutes per side. Transfer to a plate with pork.",
+       "Pour 1½ cups of water into the pot and scrape up browned bits from the bottom with a wooden spoon. Add remaining garlic, 3 Tbsp. coconut vinegar or unseasoned rice vinegar, 2 Tbsp. soy sauce, 2 bay leaves, 1 tsp. freshly ground black pepper, and remaining 1 Tbsp. sugar. Bring to a simmer, then return pork and eggplant to pot. Reduce heat to medium-low, partially cover, and simmer until eggplant is tender and silky and sauce is reduced by half, 20–25 minutes. Taste and season with more salt and pepper and add a little more sugar if needed.",
+       "Top with garlic chips and serve with cooked white rice."
+      ],
+      "slotType": "meal",
+      "cuisine": "asian",
+      "prepTimeMin": 34,
+      "source": "themealdb-import",
+      "mealCategory": null,
+      "kcal": 304.7,
+      "protein": 21.8,
+      "fat": 16.4,
+      "carb": 16.4,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 2.03,
+      "difficulty": 5,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-13T10:26:09.715Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x1yvx067lwlw0d7eixrx3",
+     "planId": "cms6x1yvu067fwlw0t1s0ben1",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 2,
+     "recipeId": "cmrj2u9jy0800wlws68a87nqg",
+     "proteinScale": 1.57,
+     "sidesScale": 2,
+     "ingredients": [
+      {
+       "foodId": "cmrj2tbfv00knwlwswkomr0jr",
+       "name": "Trout",
+       "role": "protein",
+       "grams": 80
+      },
+      {
+       "foodId": "cmrj2t6ye002dwlwssjv94yyn",
+       "name": "Ginger",
+       "role": "veg",
+       "grams": 50
+      },
+      {
+       "foodId": "cmrj2t6rr001jwlwsqfi60fyj",
+       "name": "Garlic Clove",
+       "role": null,
+       "grams": 2
+      },
+      {
+       "foodId": "cmrj2t7me005cwlwssmv2um0d",
+       "name": "Red Chilli",
+       "role": null,
+       "grams": 9
+      },
+      {
+       "foodId": "cmrj2t6rj001iwlwsv6losppt",
+       "name": "Lime",
+       "role": "veg",
+       "grams": 20
+      },
+      {
+       "foodId": "cmrj2tbg600kowlwsyyubcbk4",
+       "name": "Baby Pak Koi",
+       "role": null,
+       "grams": 150
+      },
+      {
+       "foodId": "cmrj2t6ls000rwlwsf7bu3ffs",
+       "name": "Soy Sauce",
+       "role": "carb",
+       "grams": 100
+      }
+     ],
+     "kcal": 242.67,
+     "protein": 28.3367,
+     "fat": 6.5974,
+     "carb": 20.5253,
+     "warning": "Tried 5 recipe(s) for this slot, none fit within tolerance — closest was \"Thai-style steamed fish\" (landed 243 kcal vs a 359 target; delivered 28g protein vs a 39g target).",
+     "locked": false,
+     "recipe": {
+      "id": "cmrj2u9jy0800wlws68a87nqg",
+      "name": "Thai-style steamed fish",
+      "description": null,
+      "steps": [
+       "step 1",
+       "Nestle the fish fillets side by side on a large square of foil and scatter the ginger, garlic, chilli and lime zest over them. Drizzle the lime juice on top and then scatter the pieces of pak choi around and on top of the fish. Pour the soy sauce over the pak choi and loosely seal the foil to make a package, making sure you leave space at the top for the steam to circulate as the fish cooks.",
+       "step 2",
+       "Steam for 15 minutes. (If you haven’t got a steamer, put the parcel on a heatproof plate over a pan of gently simmering water, cover with a lid and steam.)"
+      ],
+      "slotType": "meal",
+      "cuisine": "asian",
+      "prepTimeMin": 23,
+      "source": "themealdb-import",
+      "mealCategory": null,
+      "kcal": 136.1,
+      "protein": 16.2,
+      "fat": 4,
+      "carb": 10.3,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 3.42,
+      "difficulty": 3,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-13T10:26:01.822Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x1yvy067nwlw0n521ut6c",
+     "planId": "cms6x1yvu067fwlw0t1s0ben1",
+     "dayOfWeek": 2,
+     "slotType": "snack",
+     "slotIndex": 0,
+     "recipeId": "cmrg91na2000mwli0w2pcl3e2",
+     "proteinScale": 0.5,
+     "sidesScale": 2,
+     "ingredients": [
+      {
+       "foodId": "cmrfoyrjh0009wl08cmcid51m",
+       "name": "Turkey breast, low salt, prepackaged or deli, luncheon meat",
+       "role": "protein",
+       "grams": 55
+      },
+      {
+       "foodId": "cmrg8us5k0002wli07r50svzc",
+       "name": "Cheese, swiss, low fat",
+       "role": "dairy",
+       "grams": 50
+      },
+      {
+       "foodId": "cmrevpcnl000jwl5gnqnk630b",
+       "name": "Cucumber",
+       "role": "veg",
+       "grams": 160
+      },
+      {
+       "foodId": "cmrj2t6mf000uwlwsne5kc5wl",
+       "name": "Black Pepper",
+       "role": "other",
+       "grams": 1
+      }
+     ],
+     "kcal": 167.96,
+     "protein": 27.238,
+     "fat": 3.2951,
+     "carb": 7.726500000000001,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrg91na2000mwli0w2pcl3e2",
+      "name": "Turkey & Swiss Roll-Ups",
+      "description": "Lean deli turkey rolled around reduced-fat Swiss with crisp cucumber spears — no bread, all protein.",
+      "steps": [
+       "Lay turkey slices flat.",
+       "Place a strip of Swiss and a cucumber spear on each.",
+       "Roll tightly.",
+       "Season with black pepper and serve."
+      ],
+      "slotType": "snack",
+      "cuisine": "western-comfort",
+      "prepTimeMin": 6,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 175.2,
+      "protein": 31.7,
+      "fat": 2.3,
+      "carb": 7.1,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 4.49,
+      "difficulty": 2,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-11T10:56:25.371Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x1yvz067pwlw0qpqzdrla",
+     "planId": "cms6x1yvu067fwlw0t1s0ben1",
+     "dayOfWeek": 2,
+     "slotType": "snack",
+     "slotIndex": 1,
+     "recipeId": "cmrevpcyt004lwl5gx6bidm0z",
+     "proteinScale": 0.5,
+     "sidesScale": 0.5,
+     "ingredients": [
+      {
+       "foodId": "cmrevpcma0007wl5gfj59j5mk",
+       "name": "Beef jerky",
+       "role": "protein",
+       "grams": 30
+      },
+      {
+       "foodId": "cmrevpcmq000bwl5g2mbd0jsv",
+       "name": "Pork rinds",
+       "role": "protein",
+       "grams": 15
+      }
+     ],
+     "kcal": 204.6,
+     "protein": 19.05,
+     "fat": 12.45,
+     "carb": 3.3,
+     "warning": "Tried 5 recipe(s) for this slot, none fit within tolerance — closest was \"Jerky & Pork Rinds Snack Plate\" (landed 205 kcal vs a 162 target).",
+     "locked": false,
+     "recipe": {
+      "id": "cmrevpcyt004lwl5gx6bidm0z",
+      "name": "Jerky & Pork Rinds Snack Plate",
+      "description": "Closer / site valve — his words.",
+      "steps": [
+       "No cooking — portion and eat."
+      ],
+      "slotType": "snack",
+      "cuisine": "western-comfort",
+      "prepTimeMin": 0,
+      "source": "curated",
+      "mealCategory": null,
+      "kcal": 409.2,
+      "protein": 38.1,
+      "fat": 24.9,
+      "carb": 6.6,
+      "tasteTier": "really_good",
+      "tasteTierSource": "curated",
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 6.75,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-10T11:55:10.950Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x1yw0067rwlw0hrmpzzsf",
+     "planId": "cms6x1yvu067fwlw0t1s0ben1",
+     "dayOfWeek": 2,
+     "slotType": "snack",
+     "slotIndex": 2,
+     "recipeId": "cmrfp3wtp000ewlj0rcs6iepn",
+     "proteinScale": 0.5,
+     "sidesScale": 0.54,
+     "ingredients": [
+      {
+       "foodId": "cmrfoypup0004wl085b1p8hrt",
+       "name": "Fish, tuna, light, canned in water, drained solids",
+       "role": "protein",
+       "grams": 40
+      },
+      {
+       "foodId": "cmrevpcoi000qwl5ghkc51bf4",
+       "name": "Greek yogurt, 0%",
+       "role": "dairy",
+       "grams": 16
+      },
+      {
+       "foodId": "cmrfoyqc20005wl08vpvpwsgl",
+       "name": "Crackers, cheese, whole grain",
+       "role": "carb",
+       "grams": 14
+      },
+      {
+       "foodId": "cmrevpcnl000jwl5gnqnk630b",
+       "name": "Cucumber",
+       "role": "veg",
+       "grams": 45
+      },
+      {
+       "foodId": "cmrfoyqn10006wl080mnva73o",
+       "name": "Oil, corn, peanut, and olive",
+       "role": "fat",
+       "grams": 2
+      },
+      {
+       "foodId": "cmrj2t7ve006iwlwsr3tyleyw",
+       "name": "Lemon Juice",
+       "role": "other",
+       "grams": 5
+      },
+      {
+       "foodId": "cmrfoyr8u0008wl0809yfp9zn",
+       "name": "Dill weed, fresh",
+       "role": "other",
+       "grams": 1
+      }
+     ],
+     "kcal": 126.83,
+     "protein": 10.8644,
+     "fat": 4.7752,
+     "carb": 10.0172,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrfp3wtp000ewlj0rcs6iepn",
+      "name": "Tuna Cucumber Cracker Plate",
+      "description": "Lemon-dill tuna salad with Greek yogurt served over cucumber slices and whole-grain crackers.",
+      "steps": [
+       "Drain tuna and flake into a bowl.",
+       "Mix in Greek yogurt, olive oil, lemon juice, and dill.",
+       "Slice cucumber into rounds.",
+       "Top cucumber and crackers with tuna mixture and serve."
+      ],
+      "slotType": "snack",
+      "cuisine": "mediterranean",
+      "prepTimeMin": 8,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 215.4,
+      "protein": 20.2,
+      "fat": 7,
+      "carb": 17.6,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 0.83,
+      "difficulty": 3,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-11T01:38:18.733Z",
+      "createdByUserId": null
+     }
+    }
+   ],
+   "groceryList": null,
+   "meta": {
+    "matchPct": 93,
+    "attempts": 5,
+    "score": {
+     "daysInTolerance": 1,
+     "avgMatch": 93,
+     "days": [
+      {
+       "dayOfWeek": 2,
+       "dayName": "Wednesday",
+       "matchPct": 93,
+       "totals": {
+        "kcal": 1348,
+        "protein": 149,
+        "fat": 55,
+        "carb": 59
+       },
+       "kcalDeltaPct": 0.6,
+       "proteinShortPct": 0,
+       "fatOk": true,
+       "carbOk": true,
+       "inTolerance": true,
+       "miss": null,
+       "unfilledSlots": 0,
+       "warnedSlots": 2,
+       "windowIndex": 0,
+       "dayIndex": 0,
+       "key": "0:2"
+      }
+     ],
+     "totalDays": 1
+    },
+    "days": [
+     {
+      "dayOfWeek": 2,
+      "dayName": "Wednesday",
+      "matchPct": 93,
+      "totals": {
+       "kcal": 1348,
+       "protein": 149,
+       "fat": 55,
+       "carb": 59
+      },
+      "kcalDeltaPct": 0.6,
+      "proteinShortPct": 0,
+      "fatOk": true,
+      "carbOk": true,
+      "inTolerance": true,
+      "miss": null,
+      "unfilledSlots": 0,
+      "warnedSlots": 2,
+      "windowIndex": 0,
+      "dayIndex": 0,
+      "key": "0:2"
+     }
+    ],
+    "diagnosis": null,
+    "poolCounts": {
+     "raw": 889,
+     "afterDiet": 833,
+     "afterPrep": 754,
+     "afterStack": 754,
+     "stackExplain": null
+    },
+    "variety": {
+     "mealEligible": 625,
+     "usableForSlot": 261,
+     "slotKcal": 321,
+     "snackEligible": 9,
+     "weeklyMealSlots": 21,
+     "weeklySnackSlots": 21,
+     "repeatCap": 2,
+     "distinctWeeks": 12.4,
+     "horizonWeeks": 1,
+     "sustainsHorizon": false,
+     "notes": [
+      "Only 9 snack recipe(s) fit your rules, so the same snacks come back every week.",
+      "1 day: 6 distinct dish(es) across 6 filled slot(s); most-repeated dish appears 1x against a 2x cap for this horizon (2x per week)."
+     ],
+     "horizon": {
+      "weeks": 1,
+      "days": 1,
+      "perWeekCap": 2,
+      "horizonRepeatCap": 2,
+      "mealSlots": 3,
+      "snackSlots": 3,
+      "totalSlots": 6,
+      "distinctFloor": 3,
+      "distinctRecipes": 6,
+      "maxRepeat": 1,
+      "maxRepeatRecipeId": "cmrj2tz0q05oowlwsip3w8e0p",
+      "lockedRepeatsOfMax": 0,
+      "filledSlots": 6,
+      "unfilledSlots": 0,
+      "requiredDistinct": 3,
+      "capHeld": true,
+      "floorHeld": true
+     }
+    },
+    "priorWeeksConsidered": 0,
+    "horizon": {
+     "key": "day",
+     "label": "1 day",
+     "days": 1,
+     "kind": "days",
+     "weeks": 1,
+     "custom": false,
+     "startDate": "2026-07-29",
+     "endDate": "2026-07-29",
+     "startDayOfWeek": 2,
+     "weeksWritten": 1,
+     "solveMs": 10,
+     "weekPlans": [
+      {
+       "startDate": "2026-07-27",
+       "dayIndices": [
+        2
+       ],
+       "days": 1,
+       "daysInTolerance": 1,
+       "avgMatch": 93,
+       "unfilledSlots": 0,
+       "poolSize": 754
+      }
+     ]
+    }
+   }
+  }
+ }
+}

@@ -1,0 +1,63 @@
+{
+  "personaId": "p033",
+  "satisfaction": 4,
+  "wouldRecommend": false,
+  "criteria": {
+    "macrosInRange": 5,
+    "worksEndToEnd": 4,
+    "mealsAreGood": 4,
+    "affordableAdjustable": 3,
+    "tasty": 6
+  },
+  "allergenRespect": { "ok": true, "leaks": [] },
+  "delights": [
+    "Keto was genuinely respected end to end — 25 g total carbs, 3.9% of calories, with 'Sledz w Oleju (Polish Herrings)' at 2.08 g carbs and 'Chilli ginger lamb chops' at 4.6 g. Nothing starchy snuck in.",
+    "It told me when it failed instead of hiding it: 'Tried 2 recipe(s) for this slot, none fit within tolerance — closest was \"Jerky & Pork Rinds Snack Plate\" (landed 205 kcal vs a 156 target).' I would rather be told.",
+    "Protein landed at 148 g (2.6 g/kg at 57 kg), which is exactly what I want for a lean bulk, and the recipes are real food with real steps — 'Cook bacon until crisp, set aside. Fry or scramble eggs in the bacon fat.'"
+  ],
+  "defects": [
+    {
+      "what": "Swapping a slot 400s on the exact candidate the app itself handed me — I had to hand-copy the ingredients array back before it would accept it.",
+      "snippet": "{\"error\":\"a slot needs at least one ingredient\"}"
+    },
+    {
+      "what": "Only ONE alternate was offered for the snack I disliked, and it was a dish already on the same day, so the swap traded a duplicate for a duplicate.",
+      "snippet": "{\"alternates\":[{...\"recipeName\":\"Bacon & Eggs\",\"matchPct\":63}]} — Bacon & Eggs was already my snack #3"
+    },
+    {
+      "what": "The day is 293 kcal (12.9%) over my 2272 target — all of it in the three snacks the app admits it could not fit. On a 0.5 lb/wk lean bulk that overshoot roughly doubles my intended surplus.",
+      "snippet": "Tried 1 recipe(s) for this slot, none fit within tolerance — closest was \"Bacon & Eggs\" (landed 279 kcal vs a 121 target)."
+    },
+    {
+      "what": "Two of my three snacks were the identical dish before I touched anything; after the swap I have the other dish twice instead. The keto snack pool looks like it is two recipes deep.",
+      "snippet": "snack#0 Jerky & Pork Rinds Snack Plate | snack#1 Jerky & Pork Rinds Snack Plate"
+    },
+    {
+      "what": "There are essentially no vegetables in the entire day. I asked for balanced, not carnivore — keto has plenty of green vegetables and none of them showed up.",
+      "snippet": "Total veg across 7 slots: Onion 46 g, Ginger 13 g, Garlic 3 g, Parsley 1 g"
+    },
+    {
+      "what": "Four separately cooked meat mains plus a cooked snack is about 116 minutes of cooking in one day. I work in a mine and train 40 minutes three times a week — that is not a day I can execute.",
+      "snippet": "prep 29 min + 39 min + 25 min + 23 min + 15 min"
+    },
+    {
+      "what": "$43.86 for one single day of food, driven by lamb loin chops and a jerky plate. That is roughly $1,300 a month and I cannot run it.",
+      "snippet": "\"Chilli ginger lamb chops\" costPerServing 12.83 · \"Jerky & Pork Rinds Snack Plate\" costPerServing 6.75"
+    },
+    {
+      "what": "Inconsistent honesty after the swap: two slots now hold the identical dish at the identical 279 kcal, but only one still carries the over-target warning — the one I swapped in went silent.",
+      "snippet": "snack#1 Bacon & Eggs 279 kcal warning:null · snack#2 Bacon & Eggs 279 kcal warning:YES"
+    },
+    {
+      "what": "Minor, but a keto user notices: my first meal contains honey, and my second contains cornstarch.",
+      "snippet": "\"name\":\"Honey\",\"role\":\"carb\",\"grams\":3 in Creamy Mustard Chicken"
+    }
+  ],
+  "followUp": {
+    "action": "Asked for alternates for snack #2, the second identical Jerky & Pork Rinds plate, then tried to swap the alternate in.",
+    "endpoint": "POST /api/plans/cms6x0fvp0147wlw012hexbe2/slots/cms6x0fvv014jwlw0ma4h399w/alternates then PUT /api/plans/.../slots/.../apply",
+    "status": 400,
+    "howItWent": "Alternates returned 200 but offered exactly one option — Bacon & Eggs, which was already my other snack, at 63% match and carrying its own 'landed 279 kcal vs a 173 target' warning. The apply then failed 400 with 'a slot needs at least one ingredient' on the very object the alternates call gave me, and only succeeded (200) after I manually pasted the ingredients array back into the request; the result left me eating Bacon & Eggs twice and pushed the day from 2491 to 2565 kcal."
+  },
+  "verdict": "Nothing I refuse to eat got through and the keto math is genuinely tight at 25 g carbs, but a two-recipe snack pool, a vegetable-free 2565 kcal day it admits overshoots my target, $44 of groceries, two hours of cooking, and a swap that errors on the app's own payload mean this is not a plan I can actually run."
+}

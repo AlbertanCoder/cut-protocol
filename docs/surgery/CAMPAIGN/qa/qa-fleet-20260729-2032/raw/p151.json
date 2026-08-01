@@ -1,0 +1,631 @@
+{
+ "persona": {
+  "idx": 151,
+  "id": "p151",
+  "tier": "EASY",
+  "displayName": "formwork carpenter, 43",
+  "story": "formwork carpenter, 43, female, 174 cm / 90.6 kg (BMI 29.9), cut at 0.5 lb/wk, pescatarian diet, avoiding pork, beef, high-protein, 5 meals + 0 snacks, wants a single day",
+  "profile": {
+   "sex": "F",
+   "age": 43,
+   "heightCm": 174,
+   "startWeightKg": 90.6,
+   "goalWeightKg": 82.3,
+   "occupationKey": "formwork-concrete",
+   "trainingStyle": "weights",
+   "minutesPerSession": 60,
+   "sessionsPerWeek": 4,
+   "rateLbPerWeek": 0.5,
+   "dietaryStyle": null,
+   "excludedFoods": [
+    "pork",
+    "beef"
+   ],
+   "mealsPerDay": 5,
+   "snacksPerDay": 0,
+   "unitPref": "imperial",
+   "bodyFatPct": 28,
+   "bodyFatSource": "visual-estimate",
+   "cuisinePreferences": [
+    "mexican",
+    "indian"
+   ]
+  },
+  "filters": {
+   "proteinPriority": true,
+   "maxPrepMin": 30,
+   "cuisines": [
+    "mexican",
+    "indian"
+   ]
+  },
+  "horizon": "day",
+  "walls": [
+   "pork",
+   "beef"
+  ],
+  "freeTextExclusions": [
+   "pork",
+   "beef"
+  ],
+  "dietaryStyle": null,
+  "bmi": 29.9,
+  "goalKind": "cut",
+  "macroStyle": "high-protein",
+  "requestedButUnsupported": [
+   "pescatarian is not one of the 9 dietary styles; expressed instead as walls on pork+beef, which is not the same promise",
+   "wanted protein set explicitly in g/lb; the API derives the protein band from LBM (1.14-1.25 g/lb) and accepts no client protein target — only the per-request proteinPriority filter"
+  ],
+  "tupleKey": "[\"EASY\",\"F\",43,174,90.6,82.3,\"formwork-concrete\",\"weights\",0.5,null,[\"beef\",\"pork\"],5,0,\"high-protein\",\"day\",30,null,true,null,null]"
+ },
+ "request": {
+  "horizon": "day",
+  "filters": {
+   "proteinPriority": true,
+   "maxPrepMin": 30,
+   "cuisines": [
+    "mexican",
+    "indian"
+   ]
+  }
+ },
+ "profileResponse": {
+  "id": "cms6x1a5v0403wlw0wusjrqiq",
+  "userId": "cms6x19qe0041wl2o5f6i74ie",
+  "sex": "F",
+  "age": 43,
+  "heightCm": 174,
+  "bodyFatPct": 28,
+  "bodyFatSource": "visual-estimate",
+  "occupationKey": "formwork-concrete",
+  "activityOverride": null,
+  "sessionsPerWeek": 4,
+  "trainingStyle": "weights",
+  "minutesPerSession": 60,
+  "startWeightKg": 90.6,
+  "goalWeightKg": 82.3,
+  "startDate": "2026-07-29",
+  "unitPref": "imperial",
+  "rateLbPerWeek": 0.5,
+  "rateAcknowledged": false,
+  "floorKcal": null,
+  "excludedFormulas": [],
+  "targetKcal": 2556,
+  "mealsPerDay": 5,
+  "snacksPerDay": 0,
+  "excludedFoods": [
+   "pork",
+   "beef"
+  ],
+  "dietaryStyle": null,
+  "cuisinePreferences": [
+   "mexican",
+   "indian"
+  ],
+  "mealPreferencesNote": null,
+  "maxPrepMin": null,
+  "budgetTier": null,
+  "allowBatch": null,
+  "maxComplexity": null,
+  "adaptiveTdee": true,
+  "proteinPriorityMode": false,
+  "updatedAt": "2026-07-30T20:33:47.630Z"
+ },
+ "generate": {
+  "status": 200,
+  "ms": 239,
+  "body": {
+   "id": "cms7z1ca3036zwlgwld7t0799",
+   "userId": "cms6x19qe0041wl2o5f6i74ie",
+   "startDate": "2026-07-27",
+   "createdAt": "2026-07-30T20:33:47.883Z",
+   "slots": [
+    {
+     "id": "cms7z1ca40371wlgwuuyph41b",
+     "planId": "cms7z1ca3036zwlgwld7t0799",
+     "dayOfWeek": 3,
+     "slotType": "meal",
+     "slotIndex": 0,
+     "recipeId": "cmrujkwva00bcwl9o5zlcp7uy",
+     "proteinScale": 1.46,
+     "sidesScale": 1.01,
+     "ingredients": [
+      {
+       "foodId": "cmrj2tbsj00m1wlwsfeuh3jsf",
+       "name": "flax eggs",
+       "role": "protein",
+       "grams": 220
+      },
+      {
+       "foodId": "cmrevpcn2000ewl5gmlyzu0vd",
+       "name": "White rice, cooked",
+       "role": "carb",
+       "grams": 160
+      },
+      {
+       "foodId": "cmrj2t6na000ywlws9jek4w4z",
+       "name": "Broccoli",
+       "role": "veg",
+       "grams": 110
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 10
+      }
+     ],
+     "kcal": 453.1,
+     "protein": 30.687,
+     "fat": 10.854,
+     "carb": 56.889,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrujkwva00bcwl9o5zlcp7uy",
+      "name": "Classic Eggs & Broccoli with Rice",
+      "description": null,
+      "steps": [
+       "Cook the eggs.",
+       "Serve with white rice and broccoli."
+      ],
+      "slotType": "meal",
+      "cuisine": "american",
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 414.6,
+      "protein": 23.2,
+      "fat": 10.9,
+      "carb": 55.2,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 3.03,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:00:06.887Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z1ca80373wlgwnv0sxz5w",
+     "planId": "cms7z1ca3036zwlgwld7t0799",
+     "dayOfWeek": 3,
+     "slotType": "meal",
+     "slotIndex": 1,
+     "recipeId": "cmrul79wj007uwl80cppf9p71",
+     "proteinScale": 0.5,
+     "sidesScale": 1.12,
+     "ingredients": [
+      {
+       "foodId": "cmrfoyrjh0009wl08cmcid51m",
+       "name": "Turkey breast, low salt, prepackaged or deli, luncheon meat",
+       "role": "protein",
+       "grams": 85
+      },
+      {
+       "foodId": "cmrukzaeh0005wlbwrbkygio0",
+       "name": "Chickpea pasta, dry",
+       "role": "carb",
+       "grams": 110
+      },
+      {
+       "foodId": "cmrevpcnh000iwl5gh2zjhyqe",
+       "name": "Bell peppers",
+       "role": "veg",
+       "grams": 90
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 539.55,
+     "protein": 41.43,
+     "fat": 11.4755,
+     "carb": 68.88350000000001,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrul79wj007uwl80cppf9p71",
+      "name": "High-Protein Turkey & Bell Peppers with Chickpea Pasta",
+      "description": null,
+      "steps": [
+       "Cook the turkey.",
+       "Serve over chickpea pasta with bell peppers."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 595.1,
+      "protein": 57.9,
+      "fat": 11.7,
+      "carb": 65.8,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 7.28,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:45:29.828Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z1ca80375wlgwu73tcqav",
+     "planId": "cms7z1ca3036zwlgwld7t0799",
+     "dayOfWeek": 3,
+     "slotType": "meal",
+     "slotIndex": 2,
+     "recipeId": "cmrul1drg003iwlk44ztb1cc1",
+     "proteinScale": 0.65,
+     "sidesScale": 1.91,
+     "ingredients": [
+      {
+       "foodId": "cmrj2tay100irwlwsiujfz75h",
+       "name": "White Fish",
+       "role": "protein",
+       "grams": 125
+      },
+      {
+       "foodId": "cmrevpcn2000ewl5gmlyzu0vd",
+       "name": "White rice, cooked",
+       "role": "carb",
+       "grams": 210
+      },
+      {
+       "foodId": "cmrj2t6na000ywlws9jek4w4z",
+       "name": "Broccoli",
+       "role": "veg",
+       "grams": 210
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 498.1,
+     "protein": 32.067,
+     "fat": 9.244,
+     "carb": 71.967,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrul1drg003iwlk44ztb1cc1",
+      "name": "High-Protein White Fish & Broccoli with Rice",
+      "description": null,
+      "steps": [
+       "Cook the white fish.",
+       "Serve over white rice with broccoli."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 396.9,
+      "protein": 37.7,
+      "fat": 10.1,
+      "carb": 37.7,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 7.85,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:40:54.892Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z1ca90377wlgw97rfdqmn",
+     "planId": "cms7z1ca3036zwlgwld7t0799",
+     "dayOfWeek": 3,
+     "slotType": "meal",
+     "slotIndex": 3,
+     "recipeId": "cmrujkwq00020wl9ofnqk0q0v",
+     "proteinScale": 1.4,
+     "sidesScale": 1.28,
+     "ingredients": [
+      {
+       "foodId": "cmrj2tbsj00m1wlwsfeuh3jsf",
+       "name": "flax eggs",
+       "role": "protein",
+       "grams": 210
+      },
+      {
+       "foodId": "cmrevpcn2000ewl5gmlyzu0vd",
+       "name": "White rice, cooked",
+       "role": "carb",
+       "grams": 205
+      },
+      {
+       "foodId": "cmrj2t6na000ywlws9jek4w4z",
+       "name": "Broccoli",
+       "role": "veg",
+       "grams": 140
+      },
+      {
+       "foodId": "cmrj2t6xc0028wlwszh51pa6i",
+       "name": "Sesame Seed Oil",
+       "role": "fat",
+       "grams": 8
+      }
+     ],
+     "kcal": 496.12,
+     "protein": 31.603,
+     "fat": 9.091,
+     "carb": 71.13399999999999,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrujkwq00020wl9ofnqk0q0v",
+      "name": "Stir-Fried Eggs & Broccoli with Rice",
+      "description": null,
+      "steps": [
+       "Cook the eggs.",
+       "Serve with white rice and broccoli."
+      ],
+      "slotType": "meal",
+      "cuisine": "asian",
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 395.3200000000001,
+      "protein": 23.197,
+      "fat": 8.854,
+      "carb": 55.237,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 3.06,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:00:06.697Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z1ca90379wlgwfe6j946s",
+     "planId": "cms7z1ca3036zwlgwld7t0799",
+     "dayOfWeek": 3,
+     "slotType": "meal",
+     "slotIndex": 4,
+     "recipeId": "cmrujkwvr00c6wl9ors1onpyk",
+     "proteinScale": 0.78,
+     "sidesScale": 1.81,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t7w3006lwlws4zdhow4d",
+       "name": "Chicken Breast",
+       "role": "protein",
+       "grams": 135
+      },
+      {
+       "foodId": "cmrj2t6xy002bwlwstg6a0xsf",
+       "name": "Noodles",
+       "role": "carb",
+       "grams": 270
+      },
+      {
+       "foodId": "cmrevpcnh000iwl5gh2zjhyqe",
+       "name": "Bell peppers",
+       "role": "veg",
+       "grams": 145
+      },
+      {
+       "foodId": "cmrj2t6xc0028wlwszh51pa6i",
+       "name": "Sesame Seed Oil",
+       "role": "fat",
+       "grams": 8
+      }
+     ],
+     "kcal": 569.27,
+     "protein": 36.65800000000001,
+     "fat": 12.512,
+     "carb": 75.93,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrujkwvr00c6wl9ors1onpyk",
+      "name": "Thai Chicken & Bell Peppers with Noodles",
+      "description": null,
+      "steps": [
+       "Cook the chicken.",
+       "Serve with noodles and bell peppers."
+      ],
+      "slotType": "meal",
+      "cuisine": "thai",
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 461.52,
+      "protein": 41.735,
+      "fat": 12.994,
+      "carb": 42.14999999999999,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 6.4,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:00:06.903Z",
+      "createdByUserId": null
+     }
+    }
+   ],
+   "groceryList": null,
+   "meta": {
+    "matchPct": 98,
+    "attempts": 1,
+    "score": {
+     "daysInTolerance": 1,
+     "avgMatch": 98,
+     "days": [
+      {
+       "dayOfWeek": 3,
+       "dayName": "Thursday",
+       "matchPct": 98,
+       "totals": {
+        "kcal": 2556,
+        "protein": 172,
+        "fat": 53,
+        "carb": 345
+       },
+       "kcalDeltaPct": 0,
+       "proteinShortPct": 0,
+       "fatOk": true,
+       "carbOk": true,
+       "inTolerance": true,
+       "miss": null,
+       "unfilledSlots": 0,
+       "warnedSlots": 0,
+       "proteinFloor": {
+        "met": true,
+        "floorG": 164,
+        "achievedG": 172.4,
+        "shortG": 0,
+        "shortPct": 0,
+        "reason": null
+       },
+       "windowIndex": 0,
+       "dayIndex": 0,
+       "key": "0:3"
+      }
+     ],
+     "totalDays": 1,
+     "floorDaysMet": 1,
+     "floorDaysTotal": 1
+    },
+    "days": [
+     {
+      "dayOfWeek": 3,
+      "dayName": "Thursday",
+      "matchPct": 98,
+      "totals": {
+       "kcal": 2556,
+       "protein": 172,
+       "fat": 53,
+       "carb": 345
+      },
+      "kcalDeltaPct": 0,
+      "proteinShortPct": 0,
+      "fatOk": true,
+      "carbOk": true,
+      "inTolerance": true,
+      "miss": null,
+      "unfilledSlots": 0,
+      "warnedSlots": 0,
+      "proteinFloor": {
+       "met": true,
+       "floorG": 164,
+       "achievedG": 172.4,
+       "shortG": 0,
+       "shortPct": 0,
+       "reason": null
+      },
+      "windowIndex": 0,
+      "dayIndex": 0,
+      "key": "0:3"
+     }
+    ],
+    "diagnosis": null,
+    "poolCounts": {
+     "raw": 910,
+     "afterDiet": 728,
+     "afterPrep": 534,
+     "afterStack": 534,
+     "stackExplain": null
+    },
+    "variety": {
+     "mealEligible": 443,
+     "usableForSlot": 340,
+     "slotKcal": 511,
+     "snackEligible": 13,
+     "weeklyMealSlots": 35,
+     "weeklySnackSlots": 0,
+     "repeatCap": 2,
+     "distinctWeeks": 9.7,
+     "horizonWeeks": 1,
+     "sustainsHorizon": true,
+     "notes": [
+      "1 day: 5 distinct dish(es) across 5 filled slot(s); most-repeated dish appears 1x against a 2x cap for this horizon (2x per week)."
+     ],
+     "horizon": {
+      "weeks": 1,
+      "days": 1,
+      "perWeekCap": 2,
+      "horizonRepeatCap": 2,
+      "mealSlots": 5,
+      "snackSlots": 0,
+      "totalSlots": 5,
+      "distinctFloor": 3,
+      "distinctRecipes": 5,
+      "maxRepeat": 1,
+      "maxRepeatRecipeId": "cmrujkwva00bcwl9o5zlcp7uy",
+      "lockedRepeatsOfMax": 0,
+      "filledSlots": 5,
+      "unfilledSlots": 0,
+      "requiredDistinct": 3,
+      "capHeld": true,
+      "floorHeld": true
+     }
+    },
+    "priorWeeksConsidered": 0,
+    "horizon": {
+     "key": "day",
+     "label": "1 day",
+     "days": 1,
+     "kind": "days",
+     "weeks": 1,
+     "custom": false,
+     "startDate": "2026-07-30",
+     "endDate": "2026-07-30",
+     "startDayOfWeek": 3,
+     "weeksWritten": 1,
+     "solveMs": 4,
+     "weekPlans": [
+      {
+       "startDate": "2026-07-27",
+       "dayIndices": [
+        3
+       ],
+       "days": 1,
+       "daysInTolerance": 1,
+       "avgMatch": 98,
+       "unfilledSlots": 0,
+       "poolSize": 534
+      }
+     ]
+    }
+   }
+  }
+ }
+}

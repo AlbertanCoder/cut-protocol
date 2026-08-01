@@ -1,0 +1,666 @@
+{
+ "persona": {
+  "idx": 65,
+  "id": "p065",
+  "tier": "EASY",
+  "displayName": "restaurant chef, 63",
+  "story": "restaurant chef, 63, male, 195 cm / 157 kg (BMI 41.3), maintain, pescatarian diet, avoiding peanut, beef, tree nut, pork, high-protein, 3 meals + 2 snacks, wants a single day",
+  "profile": {
+   "sex": "M",
+   "age": 63,
+   "heightCm": 195,
+   "startWeightKg": 157,
+   "goalWeightKg": 157,
+   "occupationKey": "chef-kitchen",
+   "trainingStyle": "mixed",
+   "minutesPerSession": 30,
+   "sessionsPerWeek": 2,
+   "rateLbPerWeek": 0.25,
+   "dietaryStyle": null,
+   "excludedFoods": [
+    "peanuts",
+    "beef",
+    "tree nuts",
+    "pork"
+   ],
+   "mealsPerDay": 3,
+   "snacksPerDay": 2,
+   "unitPref": "metric",
+   "bodyFatPct": 34,
+   "bodyFatSource": "visual-estimate",
+   "cuisinePreferences": [
+    "japanese",
+    "chinese"
+   ]
+  },
+  "filters": {
+   "proteinPriority": true,
+   "cuisines": [
+    "japanese",
+    "chinese"
+   ]
+  },
+  "horizon": "day",
+  "walls": [
+   "peanut",
+   "beef",
+   "tree nut",
+   "pork"
+  ],
+  "freeTextExclusions": [
+   "beef",
+   "pork"
+  ],
+  "dietaryStyle": null,
+  "bmi": 41.3,
+  "goalKind": "maintain",
+  "macroStyle": "high-protein",
+  "requestedButUnsupported": [
+   "pescatarian is not one of the 9 dietary styles; expressed instead as walls on pork+beef, which is not the same promise",
+   "wanted protein set explicitly in g/lb; the API derives the protein band from LBM (1.14-1.25 g/lb) and accepts no client protein target — only the per-request proteinPriority filter"
+  ],
+  "tupleKey": "[\"EASY\",\"M\",63,195,157,157,\"chef-kitchen\",\"mixed\",0.25,null,[\"beef\",\"peanuts\",\"pork\",\"tree nuts\"],3,2,\"high-protein\",\"day\",null,null,true,null,null]"
+ },
+ "request": {
+  "horizon": "day",
+  "filters": {
+   "proteinPriority": true,
+   "cuisines": [
+    "japanese",
+    "chinese"
+   ]
+  }
+ },
+ "profileResponse": {
+  "id": "cms6x0nus0205wlw0d53vugo6",
+  "userId": "cms6x0nkn001nwl2ocj0m6pux",
+  "sex": "M",
+  "age": 63,
+  "heightCm": 195,
+  "bodyFatPct": 34,
+  "bodyFatSource": "visual-estimate",
+  "occupationKey": "chef-kitchen",
+  "activityOverride": null,
+  "sessionsPerWeek": 2,
+  "trainingStyle": "mixed",
+  "minutesPerSession": 30,
+  "startWeightKg": 157,
+  "goalWeightKg": 157,
+  "startDate": "2026-07-29",
+  "unitPref": "metric",
+  "rateLbPerWeek": 0.25,
+  "rateAcknowledged": false,
+  "floorKcal": null,
+  "excludedFormulas": [],
+  "targetKcal": 3754,
+  "mealsPerDay": 3,
+  "snacksPerDay": 2,
+  "excludedFoods": [
+   "peanuts",
+   "beef",
+   "tree nuts",
+   "pork"
+  ],
+  "dietaryStyle": null,
+  "cuisinePreferences": [
+   "japanese",
+   "chinese"
+  ],
+  "mealPreferencesNote": null,
+  "maxPrepMin": null,
+  "budgetTier": null,
+  "allowBatch": null,
+  "maxComplexity": null,
+  "adaptiveTdee": true,
+  "proteinPriorityMode": false,
+  "updatedAt": "2026-07-30T20:33:20.379Z"
+ },
+ "generate": {
+  "status": 200,
+  "ms": 371,
+  "body": {
+   "id": "cms7z0rmj01dzwlgw11bzzrv9",
+   "userId": "cms6x0nkn001nwl2ocj0m6pux",
+   "startDate": "2026-07-27",
+   "createdAt": "2026-07-30T20:33:21.115Z",
+   "slots": [
+    {
+     "id": "cms7z0rmk01e1wlgwfar6xv29",
+     "planId": "cms7z0rmj01dzwlgw11bzzrv9",
+     "dayOfWeek": 3,
+     "slotType": "meal",
+     "slotIndex": 0,
+     "recipeId": "cmrujkwr4003uwl9or0xver7i",
+     "proteinScale": 1.38,
+     "sidesScale": 2,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t7w3006lwlws4zdhow4d",
+       "name": "Chicken Breast",
+       "role": "protein",
+       "grams": 235
+      },
+      {
+       "foodId": "cmrevpcn2000ewl5gmlyzu0vd",
+       "name": "White rice, cooked",
+       "role": "carb",
+       "grams": 320
+      },
+      {
+       "foodId": "cmrevpcnh000iwl5gh2zjhyqe",
+       "name": "Bell peppers",
+       "role": "veg",
+       "grams": 160
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 10
+      }
+     ],
+     "kcal": 837.6,
+     "protein": 63.115,
+     "fat": 17.597,
+     "carb": 99.20000000000002,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrujkwr4003uwl9or0xver7i",
+      "name": "Spiced Chicken & Bell Peppers with Rice",
+      "description": null,
+      "steps": [
+       "Cook the chicken.",
+       "Serve with white rice and bell peppers."
+      ],
+      "slotType": "meal",
+      "cuisine": "indian",
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 526.8,
+      "protein": 43.37,
+      "fat": 15.174,
+      "carb": 49.60000000000001,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 6.25,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:00:06.737Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z0rmm01e3wlgwbi9md4pe",
+     "planId": "cms7z0rmj01dzwlgw11bzzrv9",
+     "dayOfWeek": 3,
+     "slotType": "meal",
+     "slotIndex": 1,
+     "recipeId": "cmrul79ud004cwl808rgh68b3",
+     "proteinScale": 0.5,
+     "sidesScale": 2,
+     "ingredients": [
+      {
+       "foodId": "cmrj2tapd00htwlwsd6ggixb6",
+       "name": "Tofu",
+       "role": "protein",
+       "grams": 100
+      },
+      {
+       "foodId": "cmrukzaed0004wlbwdxnybljb",
+       "name": "Lentil pasta, dry",
+       "role": "carb",
+       "grams": 200
+      },
+      {
+       "foodId": "cmrevpcnh000iwl5gh2zjhyqe",
+       "name": "Bell peppers",
+       "role": "veg",
+       "grams": 160
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 938.6,
+     "protein": 68.89999999999999,
+     "fat": 18.2,
+     "carb": 122.38,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrul79ud004cwl808rgh68b3",
+      "name": "High-Protein Tofu & Bell Peppers with Lentil Pasta",
+      "description": null,
+      "steps": [
+       "Cook the tofu.",
+       "Serve over lentil pasta with bell peppers."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 707.8,
+      "protein": 60.4,
+      "fat": 24.68,
+      "carb": 65.36,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 3.9,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:45:29.749Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z0rmn01e5wlgwoblwrmhg",
+     "planId": "cms7z0rmj01dzwlgw11bzzrv9",
+     "dayOfWeek": 3,
+     "slotType": "meal",
+     "slotIndex": 2,
+     "recipeId": "cmrj2ukzm0aj1wlwso653l1k8",
+     "proteinScale": 0.54,
+     "sidesScale": 0.5,
+     "ingredients": [
+      {
+       "foodId": "cmrevpcnz000mwl5g62fmfzqk",
+       "name": "Butter",
+       "role": "fat",
+       "grams": 13
+      },
+      {
+       "foodId": "cmrg8zxar000lwli0qy2ovmx4",
+       "name": "Onion",
+       "role": "veg",
+       "grams": 30
+      },
+      {
+       "foodId": "cmrj2t71u002swlwso64bbr0r",
+       "name": "Cardamom",
+       "role": null,
+       "grams": 75
+      },
+      {
+       "foodId": "cmrj2t8dg008swlws9uhv1fo5",
+       "name": "Turmeric",
+       "role": null,
+       "grams": 1
+      },
+      {
+       "foodId": "cmrj2t72a002uwlwsg6tictrb",
+       "name": "Cinnamon Stick",
+       "role": null,
+       "grams": 1
+      },
+      {
+       "foodId": "cmrj2t6qh001dwlws2ramsws8",
+       "name": "Bay Leaf",
+       "role": null,
+       "grams": 1
+      },
+      {
+       "foodId": "cmrj2t716002pwlws440mk01m",
+       "name": "Basmati Rice",
+       "role": "carb",
+       "grams": 115
+      },
+      {
+       "foodId": "cmrj2t6n2000xwlwsqltep2pn",
+       "name": "Chicken Stock",
+       "role": "other",
+       "grams": 255
+      },
+      {
+       "foodId": "cmrj2tb5t00jlwlws1je5rrh4",
+       "name": "Smoked Haddock",
+       "role": "protein",
+       "grams": 200
+      },
+      {
+       "foodId": "cmrj2t6wp0025wlwsvl5esd2h",
+       "name": "Egg",
+       "role": "protein",
+       "grams": 40
+      },
+      {
+       "foodId": "cmrj2t6h10006wlwslufza94y",
+       "name": "Parsley",
+       "role": null,
+       "grams": 75
+      },
+      {
+       "foodId": "cmrj2t6qp001ewlwsds5bbm29",
+       "name": "Lemon",
+       "role": "veg",
+       "grams": 15
+      }
+     ],
+     "kcal": 1238.62,
+     "protein": 84.62730000000002,
+     "fat": 31.053,
+     "carb": 166.257,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrj2ukzm0aj1wlwso653l1k8",
+      "name": "Smoked Haddock Kedgeree",
+      "description": null,
+      "steps": [
+       "Melt 50g butter in a large saucepan (about 20cm across), add 1 finely chopped medium onion and cook gently over a medium heat for 5 minutes, until softened but not browned.",
+       "Stir in 3 split cardamom pods, ¼ tsp turmeric, 1 small cinnamon stick and 2 bay leaves, then cook for 1 minute.",
+       "Tip in 450g basmati rice and stir until it is all well coated in the spicy butter.",
+       "Pour in 1 litre chicken or fish stock, add ½ teaspoon salt and bring to the boil, stir once to release any rice from the bottom of the pan. Cover with a close-fitting lid, reduce the heat to low and leave to cook very gently for 12 minutes.",
+       "Meanwhile, bring some water to the boil in a large shallow pan. Add 750g un-dyed smoked haddock fillet and simmer for 4 minutes, until the fish is just cooked. Lift it out onto a plate and leave until cool enough to handle.",
+       "Hard-boil 3 eggs for 8 minutes.",
+       "Flake the fish, discarding any skin and bones. Drain the eggs, cool slightly, then peel and chop.",
+       "Uncover the rice and remove the bay leaves, cinnamon stick and cardamom pods if you wish to. Gently fork in the fish and the chopped eggs, cover again and return to the heat for 2-3 minutes, or until the fish has heated through.",
+       "Gently stir in almost all the 3 tbsp chopped fresh parsley, and season with a little salt and black pepper to taste. Serve scattered with the remaining parsley and garnished with 1 lemon, cut into wedges."
+      ],
+      "slotType": "meal",
+      "cuisine": "british-irish",
+      "prepTimeMin": 41,
+      "source": "themealdb-import",
+      "mealCategory": "breakfast_only",
+      "kcal": 2395.8795,
+      "protein": 161.23456,
+      "fat": 59.898,
+      "carb": 324.9988599999999,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 32.97,
+      "difficulty": 6,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-13T10:26:16.643Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z0rmo01e7wlgwbrsfhdif",
+     "planId": "cms7z0rmj01dzwlgw11bzzrv9",
+     "dayOfWeek": 3,
+     "slotType": "snack",
+     "slotIndex": 0,
+     "recipeId": "cms7pjmju002swlbktsksba9r",
+     "proteinScale": 2,
+     "sidesScale": 2,
+     "ingredients": [
+      {
+       "foodId": "cmrukzae50002wlbwr9bq9oa7",
+       "name": "Edamame, shelled, cooked",
+       "role": "protein",
+       "grams": 300
+      },
+      {
+       "foodId": "cmrj2t6gd0003wlwss7jf3wzf",
+       "name": "Salt",
+       "role": "other",
+       "grams": 1
+      }
+     ],
+     "kcal": 363,
+     "protein": 36,
+     "fat": 15,
+     "carb": 27,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cms7pjmju002swlbktsksba9r",
+      "name": "Edamame with Sea Salt",
+      "description": null,
+      "steps": [
+       "Boil the pods 4 minutes in well-salted water.",
+       "Drain and salt again while hot. Eat from the pod."
+      ],
+      "slotType": "snack",
+      "cuisine": "japanese",
+      "prepTimeMin": 6,
+      "source": "curated",
+      "mealCategory": null,
+      "kcal": 181.5,
+      "protein": 18,
+      "fat": 7.5,
+      "carb": 13.5,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": null,
+      "difficulty": 1,
+      "filterProvenance": null,
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-30T16:08:04.843Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z0rmp01e9wlgwr3p48zws",
+     "planId": "cms7z0rmj01dzwlgw11bzzrv9",
+     "dayOfWeek": 3,
+     "slotType": "snack",
+     "slotIndex": 1,
+     "recipeId": "cms7pjmju002swlbktsksba9r",
+     "proteinScale": 2,
+     "sidesScale": 2,
+     "ingredients": [
+      {
+       "foodId": "cmrukzae50002wlbwr9bq9oa7",
+       "name": "Edamame, shelled, cooked",
+       "role": "protein",
+       "grams": 300
+      },
+      {
+       "foodId": "cmrj2t6gd0003wlwss7jf3wzf",
+       "name": "Salt",
+       "role": "other",
+       "grams": 1
+      }
+     ],
+     "kcal": 363,
+     "protein": 36,
+     "fat": 15,
+     "carb": 27,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cms7pjmju002swlbktsksba9r",
+      "name": "Edamame with Sea Salt",
+      "description": null,
+      "steps": [
+       "Boil the pods 4 minutes in well-salted water.",
+       "Drain and salt again while hot. Eat from the pod."
+      ],
+      "slotType": "snack",
+      "cuisine": "japanese",
+      "prepTimeMin": 6,
+      "source": "curated",
+      "mealCategory": null,
+      "kcal": 181.5,
+      "protein": 18,
+      "fat": 7.5,
+      "carb": 13.5,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": null,
+      "difficulty": 1,
+      "filterProvenance": null,
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-30T16:08:04.843Z",
+      "createdByUserId": null
+     }
+    }
+   ],
+   "groceryList": null,
+   "meta": {
+    "matchPct": 97,
+    "attempts": 3,
+    "score": {
+     "daysInTolerance": 1,
+     "avgMatch": 97,
+     "days": [
+      {
+       "dayOfWeek": 3,
+       "dayName": "Thursday",
+       "matchPct": 97,
+       "totals": {
+        "kcal": 3741,
+        "protein": 289,
+        "fat": 97,
+        "carb": 442
+       },
+       "kcalDeltaPct": -0.4,
+       "proteinShortPct": 0,
+       "fatOk": true,
+       "carbOk": true,
+       "inTolerance": true,
+       "miss": null,
+       "unfilledSlots": 0,
+       "warnedSlots": 0,
+       "proteinFloor": {
+        "met": true,
+        "floorG": 260,
+        "achievedG": 288.6,
+        "shortG": 0,
+        "shortPct": 0,
+        "reason": null
+       },
+       "windowIndex": 0,
+       "dayIndex": 0,
+       "key": "0:3"
+      }
+     ],
+     "totalDays": 1,
+     "floorDaysMet": 1,
+     "floorDaysTotal": 1
+    },
+    "days": [
+     {
+      "dayOfWeek": 3,
+      "dayName": "Thursday",
+      "matchPct": 97,
+      "totals": {
+       "kcal": 3741,
+       "protein": 289,
+       "fat": 97,
+       "carb": 442
+      },
+      "kcalDeltaPct": -0.4,
+      "proteinShortPct": 0,
+      "fatOk": true,
+      "carbOk": true,
+      "inTolerance": true,
+      "miss": null,
+      "unfilledSlots": 0,
+      "warnedSlots": 0,
+      "proteinFloor": {
+       "met": true,
+       "floorG": 260,
+       "achievedG": 288.6,
+       "shortG": 0,
+       "shortPct": 0,
+       "reason": null
+      },
+      "windowIndex": 0,
+      "dayIndex": 0,
+      "key": "0:3"
+     }
+    ],
+    "diagnosis": null,
+    "poolCounts": {
+     "raw": 910,
+     "afterDiet": 629,
+     "afterPrep": 629,
+     "afterStack": 629,
+     "stackExplain": null
+    },
+    "variety": {
+     "mealEligible": 500,
+     "usableForSlot": 190,
+     "slotKcal": 991,
+     "snackEligible": 7,
+     "weeklyMealSlots": 21,
+     "weeklySnackSlots": 14,
+     "repeatCap": 2,
+     "distinctWeeks": 9,
+     "horizonWeeks": 1,
+     "sustainsHorizon": true,
+     "notes": [
+      "1 day: 4 distinct dish(es) across 5 filled slot(s); most-repeated dish appears 2x against a 2x cap for this horizon (2x per week)."
+     ],
+     "horizon": {
+      "weeks": 1,
+      "days": 1,
+      "perWeekCap": 2,
+      "horizonRepeatCap": 2,
+      "mealSlots": 3,
+      "snackSlots": 2,
+      "totalSlots": 5,
+      "distinctFloor": 3,
+      "distinctRecipes": 4,
+      "maxRepeat": 2,
+      "maxRepeatRecipeId": "cms7pjmju002swlbktsksba9r",
+      "lockedRepeatsOfMax": 0,
+      "filledSlots": 5,
+      "unfilledSlots": 0,
+      "requiredDistinct": 3,
+      "capHeld": true,
+      "floorHeld": true
+     }
+    },
+    "priorWeeksConsidered": 0,
+    "horizon": {
+     "key": "day",
+     "label": "1 day",
+     "days": 1,
+     "kind": "days",
+     "weeks": 1,
+     "custom": false,
+     "startDate": "2026-07-30",
+     "endDate": "2026-07-30",
+     "startDayOfWeek": 3,
+     "weeksWritten": 1,
+     "solveMs": 10,
+     "weekPlans": [
+      {
+       "startDate": "2026-07-27",
+       "dayIndices": [
+        3
+       ],
+       "days": 1,
+       "daysInTolerance": 1,
+       "avgMatch": 97,
+       "unfilledSlots": 0,
+       "poolSize": 629
+      }
+     ]
+    }
+   }
+  }
+ }
+}

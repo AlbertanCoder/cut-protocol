@@ -1,0 +1,348 @@
+{
+ "persona": {
+  "idx": 111,
+  "id": "p111",
+  "tier": "EASY",
+  "displayName": "nurse on 12s, 57",
+  "story": "nurse on 12s, 57, female, 154 cm / 86.7 kg (BMI 36.6), cut at 0.5 lb/wk, carnivore diet, avoiding nightshade, low-carb, 2 meals + 0 snacks, wants a single day",
+  "profile": {
+   "sex": "F",
+   "age": 57,
+   "heightCm": 154,
+   "startWeightKg": 86.7,
+   "goalWeightKg": 81.5,
+   "occupationKey": "nurse-healthcare",
+   "trainingStyle": "mixed",
+   "minutesPerSession": 30,
+   "sessionsPerWeek": 2,
+   "rateLbPerWeek": 0.5,
+   "dietaryStyle": "carnivore",
+   "excludedFoods": [
+    "nightshades"
+   ],
+   "mealsPerDay": 2,
+   "snacksPerDay": 0,
+   "unitPref": "imperial",
+   "bodyFatPct": 43,
+   "bodyFatSource": "visual-estimate"
+  },
+  "filters": {},
+  "horizon": "day",
+  "walls": [
+   "nightshade"
+  ],
+  "freeTextExclusions": [
+   "nightshades"
+  ],
+  "dietaryStyle": "carnivore",
+  "bmi": 36.6,
+  "goalKind": "cut",
+  "macroStyle": "low-carb",
+  "requestedButUnsupported": [
+   "wanted a low-carb split without full keto; carbs are the leftover after LBM-derived protein and fat, and only dietaryStyle:\"keto\" changes that"
+  ],
+  "tupleKey": "[\"EASY\",\"F\",57,154,86.7,81.5,\"nurse-healthcare\",\"mixed\",0.5,\"carnivore\",[\"nightshades\"],2,0,\"low-carb\",\"day\",null,null,null,null,null]"
+ },
+ "request": {
+  "horizon": "day",
+  "filters": {}
+ },
+ "profileResponse": {
+  "id": "cms6x0zwk02uvwlw05uu4rvja",
+  "userId": "cms6x0zg6002xwl2o03wok7cl",
+  "sex": "F",
+  "age": 57,
+  "heightCm": 154,
+  "bodyFatPct": 43,
+  "bodyFatSource": "visual-estimate",
+  "occupationKey": "nurse-healthcare",
+  "activityOverride": null,
+  "sessionsPerWeek": 2,
+  "trainingStyle": "mixed",
+  "minutesPerSession": 30,
+  "startWeightKg": 86.7,
+  "goalWeightKg": 81.5,
+  "startDate": "2026-07-29",
+  "unitPref": "imperial",
+  "rateLbPerWeek": 0.5,
+  "rateAcknowledged": false,
+  "floorKcal": null,
+  "excludedFormulas": [],
+  "targetKcal": 1984,
+  "mealsPerDay": 2,
+  "snacksPerDay": 0,
+  "excludedFoods": [
+   "nightshades"
+  ],
+  "dietaryStyle": "carnivore",
+  "cuisinePreferences": [],
+  "mealPreferencesNote": null,
+  "maxPrepMin": null,
+  "budgetTier": null,
+  "allowBatch": null,
+  "maxComplexity": null,
+  "adaptiveTdee": true,
+  "proteinPriorityMode": false,
+  "updatedAt": "2026-07-30T02:49:46.688Z"
+ },
+ "generate": {
+  "status": 200,
+  "ms": 95,
+  "body": {
+   "id": "cms6x10ah02wjwlw0zw0r426o",
+   "userId": "cms6x0zg6002xwl2o03wok7cl",
+   "startDate": "2026-07-27",
+   "createdAt": "2026-07-30T02:49:46.938Z",
+   "slots": [
+    {
+     "id": "cms6x10aj02wlwlw0h97642gv",
+     "planId": "cms6x10ah02wjwlw0zw0r426o",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 0,
+     "recipeId": "cmrfn2w780030wlg49qus3ftp",
+     "proteinScale": 0.66,
+     "sidesScale": 1.09,
+     "ingredients": [
+      {
+       "foodId": "cmrevpclb0000wl5ghnno9i5f",
+       "name": "Chicken breast, cooked, skinless",
+       "role": "protein",
+       "grams": 130
+      },
+      {
+       "foodId": "cmrevpcn9000gwl5gw6adqo4o",
+       "name": "Perogies, boiled",
+       "role": "carb",
+       "grams": 325
+      }
+     ],
+     "kcal": 864.5,
+     "protein": 56.55,
+     "fat": 20.93,
+     "carb": 107.25,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrfn2w780030wlg49qus3ftp",
+      "name": "Grilled Chicken Breast & Perogies",
+      "description": null,
+      "steps": [
+       "Grill or pan-sear chicken breast.",
+       "Boil perogies 4-5 min until they float, or pan-fry in a little butter for crisp edges."
+      ],
+      "slotType": "meal",
+      "cuisine": "western-comfort",
+      "prepTimeMin": 15,
+      "source": "curated",
+      "mealCategory": null,
+      "kcal": 930,
+      "protein": 77,
+      "fat": 22.2,
+      "carb": 99,
+      "tasteTier": "really_good",
+      "tasteTierSource": "curated",
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 8.7,
+      "difficulty": 2,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-11T00:41:32.037Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x10aj02wnwlw0y1tf688x",
+     "planId": "cms6x10ah02wjwlw0zw0r426o",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 1,
+     "recipeId": "cmrfn2w780030wlg49qus3ftp",
+     "proteinScale": 0.85,
+     "sidesScale": 1.4,
+     "ingredients": [
+      {
+       "foodId": "cmrevpclb0000wl5ghnno9i5f",
+       "name": "Chicken breast, cooked, skinless",
+       "role": "protein",
+       "grams": 170
+      },
+      {
+       "foodId": "cmrevpcn9000gwl5gw6adqo4o",
+       "name": "Perogies, boiled",
+       "role": "carb",
+       "grams": 420
+      }
+     ],
+     "kcal": 1120.5,
+     "protein": 73.69999999999999,
+     "fat": 27.12,
+     "carb": 138.6,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrfn2w780030wlg49qus3ftp",
+      "name": "Grilled Chicken Breast & Perogies",
+      "description": null,
+      "steps": [
+       "Grill or pan-sear chicken breast.",
+       "Boil perogies 4-5 min until they float, or pan-fry in a little butter for crisp edges."
+      ],
+      "slotType": "meal",
+      "cuisine": "western-comfort",
+      "prepTimeMin": 15,
+      "source": "curated",
+      "mealCategory": null,
+      "kcal": 930,
+      "protein": 77,
+      "fat": 22.2,
+      "carb": 99,
+      "tasteTier": "really_good",
+      "tasteTierSource": "curated",
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 8.7,
+      "difficulty": 2,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-11T00:41:32.037Z",
+      "createdByUserId": null
+     }
+    }
+   ],
+   "groceryList": null,
+   "meta": {
+    "matchPct": 95,
+    "attempts": 1,
+    "score": {
+     "daysInTolerance": 1,
+     "avgMatch": 95,
+     "days": [
+      {
+       "dayOfWeek": 2,
+       "dayName": "Wednesday",
+       "matchPct": 95,
+       "totals": {
+        "kcal": 1985,
+        "protein": 130,
+        "fat": 48,
+        "carb": 246
+       },
+       "kcalDeltaPct": 0.1,
+       "proteinShortPct": 0,
+       "fatOk": true,
+       "carbOk": true,
+       "inTolerance": true,
+       "miss": null,
+       "unfilledSlots": 0,
+       "warnedSlots": 0,
+       "windowIndex": 0,
+       "dayIndex": 0,
+       "key": "0:2"
+      }
+     ],
+     "totalDays": 1
+    },
+    "days": [
+     {
+      "dayOfWeek": 2,
+      "dayName": "Wednesday",
+      "matchPct": 95,
+      "totals": {
+       "kcal": 1985,
+       "protein": 130,
+       "fat": 48,
+       "carb": 246
+      },
+      "kcalDeltaPct": 0.1,
+      "proteinShortPct": 0,
+      "fatOk": true,
+      "carbOk": true,
+      "inTolerance": true,
+      "miss": null,
+      "unfilledSlots": 0,
+      "warnedSlots": 0,
+      "windowIndex": 0,
+      "dayIndex": 0,
+      "key": "0:2"
+     }
+    ],
+    "diagnosis": null,
+    "poolCounts": {
+     "raw": 889,
+     "afterDiet": 3,
+     "afterPrep": 3,
+     "afterStack": 3,
+     "stackExplain": null
+    },
+    "variety": {
+     "mealEligible": 3,
+     "usableForSlot": 3,
+     "slotKcal": 992,
+     "snackEligible": 1,
+     "weeklyMealSlots": 14,
+     "weeklySnackSlots": 0,
+     "repeatCap": 2,
+     "distinctWeeks": 0.2,
+     "horizonWeeks": 1,
+     "sustainsHorizon": false,
+     "notes": [
+      "3 of your 3 compliant recipes can be portioned to a 992 kcal meal — about 0.2 week(s) of 14 meals before dishes start repeating, so over 1 weeks you will see favourites come back.",
+      "1 day: 1 distinct dish(es) across 2 filled slot(s); most-repeated dish appears 2x against a 2x cap for this horizon (2x per week)."
+     ],
+     "horizon": {
+      "weeks": 1,
+      "days": 1,
+      "perWeekCap": 2,
+      "horizonRepeatCap": 2,
+      "mealSlots": 2,
+      "snackSlots": 0,
+      "totalSlots": 2,
+      "distinctFloor": 1,
+      "distinctRecipes": 1,
+      "maxRepeat": 2,
+      "maxRepeatRecipeId": "cmrfn2w780030wlg49qus3ftp",
+      "lockedRepeatsOfMax": 0,
+      "filledSlots": 2,
+      "unfilledSlots": 0,
+      "requiredDistinct": 1,
+      "capHeld": true,
+      "floorHeld": true
+     }
+    },
+    "priorWeeksConsidered": 0,
+    "horizon": {
+     "key": "day",
+     "label": "1 day",
+     "days": 1,
+     "kind": "days",
+     "weeks": 1,
+     "custom": false,
+     "startDate": "2026-07-29",
+     "endDate": "2026-07-29",
+     "startDayOfWeek": 2,
+     "weeksWritten": 1,
+     "solveMs": 0,
+     "weekPlans": [
+      {
+       "startDate": "2026-07-27",
+       "dayIndices": [
+        2
+       ],
+       "days": 1,
+       "daysInTolerance": 1,
+       "avgMatch": 95,
+       "unfilledSlots": 0,
+       "poolSize": 3
+      }
+     ]
+    }
+   }
+  }
+ }
+}

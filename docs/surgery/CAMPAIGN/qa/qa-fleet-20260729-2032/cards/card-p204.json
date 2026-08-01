@@ -1,0 +1,72 @@
+{
+  "personaId": "p204",
+  "satisfaction": 1,
+  "wouldRecommend": false,
+  "criteria": {
+    "macrosInRange": 3,
+    "worksEndToEnd": 5,
+    "mealsAreGood": 3,
+    "affordableAdjustable": 4,
+    "tasty": 4
+  },
+  "allergenRespect": {
+    "ok": false,
+    "leaks": [
+      "\"Coconut Milk\" 200 g - the largest single ingredient in the meal-2 dish \"Grilled eggplant with coconut milk\", served against a stored exclusion list that reads [\"sesame\",\"fish\",\"tree nuts\",\"soy\",\"gluten\"]"
+    ]
+  },
+  "delights": [
+    "It admitted failure instead of faking a fit: the slot I swapped came back carrying \"Tried 5 recipe(s) for this slot, none fit within tolerance - closest was \\\"Jamaican Curry Chicken Recipe\\\" (landed 458 kcal vs a 365 target).\" I would rather be told that than handed a quiet miss.",
+    "The protein and the carb level genuinely suit how I eat: \"Lakra me Mish Cabbage and Meat Stew\" alone is 60.2 g protein against 3.2 g carb, and the day came to 169 g protein at 18% of calories from carbs.",
+    "The shopping list refuses to invent numbers it does not have - \"as-prepared (state unrecorded) - NOT a raw/dry purchase quantity\" - and where it does know, it speaks my language: Bell peppers came through as \"1 pepper\", \"~120 g each\"."
+  ],
+  "defects": [
+    {
+      "what": "A tree-nut-labelled ingredient reached a plate walled off against tree nuts, and the dish title advertises it - the filter did not even catch its own name.",
+      "snippet": "\"Grilled eggplant with coconut milk\" - 200g Coconut Milk. Coconut is a botanical drupe and many tree-nut-allergic people tolerate it, but FDA and Health Canada both classify it as a tree nut, so every can on the shelf here is labelled \"Contains: Tree Nuts\". Either exclude it or flag it and let me decide - handing it to me silently is the failure."
+    },
+    {
+      "what": "The calorie target has the wrong sign for my goal: I am prescribed less than my own resting metabolic rate while trying to gain 9.5 kg.",
+      "snippet": "profile: \"startWeightKg\":82.4, \"goalWeightKg\":91.9, \"rateLbPerWeek\":1.5, \"targetKcal\":1404. My Mifflin BMR is about 1420. A 1.5 lb/week lean bulk for a 56-year-old woman training 2x90 min of sport needs roughly 2600, not 1404 - the surplus was subtracted instead of added, and the solver then hit that wrong number precisely at 1384."
+    },
+    {
+      "what": "A dish reports protein that its ingredients cannot contain - the headline 169 g is inflated.",
+      "snippet": "meal#1 \"Grilled eggplant with coconut milk\" claims 16.7 g protein and 153 kcal from 150g Egg Plants + 200g Coconut Milk + 8g Lemon Juice + 2g Salt + 1g Red Pepper Flakes + 10g Onion. Eggplant and coconut milk cannot produce 16.7 g of protein. Also the eggplant is tagged \"role\":\"protein\"."
+    },
+    {
+      "what": "Portion scaling destroys the recipes it is scaling - the stew is a cabbage stew with one leaf of cabbage in it.",
+      "snippet": "\"Lakra me Mish Cabbage and Meat Stew\": 220g Beef, 13g Cabbage, 1g Tomato Puree, 1g Olive Oil, 1g Paprika. One gram of olive oil will not brown 220 g of beef. The swapped-in curry is the same story: 40g Thyme next to 1g Green Pepper and 20g Russet Potato."
+    },
+    {
+      "what": "I am asked to buy water, for 92 cents.",
+      "snippet": "grocery list item: {\"name\":\"Boiling Water\",\"section\":\"other\",\"preparedGrams\":115,\"cost\":{\"amountCad\":0.92}}"
+    },
+    {
+      "what": "The same snack twice in one day, and beef twice in one day - five slots, three distinct dishes.",
+      "snippet": "snack#0 \"Turkey & Swiss Roll-Ups\" and snack#1 \"Turkey & Swiss Roll-Ups\", identical to the gram; plus \"Ground Beef & Potato Hash\" and \"Lakra me Mish Cabbage and Meat Stew\" = 350 g of beef and $14.45 of a $24.27 day."
+    },
+    {
+      "what": "The alternates list re-rolls between calls, so the dish I vetted is not the dish I can apply - dangerous when I am vetting for allergens.",
+      "snippet": "First alternates call offered \"High-Protein Cottage Cheese & Broccoli with Quinoa\" (clean for all five of my walls). Applying it by recipeId was rejected 400 \"a slot needs at least one ingredient\". A second alternates call had reshuffled and its first entry was \"Jamaican Curry Chicken Recipe\" - which is what ended up on my plan."
+    },
+    {
+      "what": "Swapping one meal blew the day's total and nothing rebalanced.",
+      "snippet": "day total went 1384 -> 1689 kcal against \"targetKcal\":1404 after one swap; no other slot moved."
+    },
+    {
+      "what": "Unflagged hidden-gluten and hidden-soy vectors for a coeliac - no brand, no label, no warning.",
+      "snippet": "\"Turkey breast, low salt, prepackaged or deli, luncheon meat\" (in both snacks), plus \"Curry Powder\" and \"All-purpose Seasoning\" in the swapped-in curry. Deli meats and seasoning blends are exactly where wheat and soy hide; with gluten and soy on my list these needed a check-the-label flag."
+    },
+    {
+      "what": "A customer-facing price note tells me to go edit the source code, and three items have no price at all.",
+      "snippet": "\"rough manually-entered CAD estimate, not sourced pricing data - edit src/lib/groceryPrices.js to correct\". Chilli Flakes, Salt and Tomato Puree carry no cost. $24.27 for a single day is about $170/week for one person."
+    }
+  ],
+  "followUp": {
+    "action": "Asked for alternates on the eggplant-and-coconut-milk meal - the dish that breaks my tree-nut wall and is only 153 kcal - and then tried to swap it out.",
+    "endpoint": "POST /api/plans/cms6x1o5q058hwlw0glu47nml/slots/cms6x1o8o058lwlw0asjfphjp/alternates then PUT .../apply",
+    "status": 400,
+    "howItWent": "Alternates worked well and fast (200, three options, one of them - cottage cheese, quinoa, broccoli - clean against all five of my walls), but applying it by recipeId was rejected 400 \"a slot needs at least one ingredient\" even though I had sent a recipeId. Re-posting a whole alternate object succeeded (200), except the list had reshuffled in between, so the meal I actually got was Jamaican Curry Chicken, not the cottage cheese I chose - and the day jumped to 1689 kcal against a 1404 target with nothing rebalancing."
+  },
+  "verdict": "It put a tree-nut-labelled coconut milk on a plate I told it to keep tree nuts off - and then aimed 1404 calories at a woman trying to gain 9.5 kg - so however good the protein numbers look, I cannot trust this with a medical restriction."
+}

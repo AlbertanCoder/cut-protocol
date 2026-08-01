@@ -1,0 +1,517 @@
+{
+ "persona": {
+  "idx": 212,
+  "id": "p212",
+  "tier": "IMPOSSIBLE",
+  "displayName": "formwork carpenter, 52",
+  "story": "wants 2 lb/wk off a small frame at the calorie floor, with gluten, dairy and soy all walled off and nothing over 15 minutes to cook",
+  "profile": {
+   "sex": "M",
+   "age": 52,
+   "heightCm": 191,
+   "startWeightKg": 71,
+   "goalWeightKg": 60.6,
+   "occupationKey": "formwork-concrete",
+   "trainingStyle": "weights",
+   "minutesPerSession": 60,
+   "sessionsPerWeek": 4,
+   "rateLbPerWeek": 2,
+   "dietaryStyle": "vegetarian",
+   "excludedFoods": [
+    "shellfish",
+    "gluten",
+    "dairy",
+    "soy"
+   ],
+   "mealsPerDay": 3,
+   "snacksPerDay": 1,
+   "unitPref": "metric",
+   "bodyFatPct": 29,
+   "bodyFatSource": "measured",
+   "rateAcknowledged": true,
+   "floorKcal": 1500,
+   "goalWeightAcknowledged": true
+  },
+  "filters": {
+   "proteinPriority": true,
+   "maxPrepMin": 15
+  },
+  "horizon": "day",
+  "walls": [
+   "shellfish",
+   "gluten",
+   "dairy",
+   "soy"
+  ],
+  "freeTextExclusions": [],
+  "dietaryStyle": "vegetarian",
+  "bmi": 19.5,
+  "goalKind": "cut",
+  "macroStyle": "high-protein",
+  "requestedButUnsupported": [
+   "wanted protein set explicitly in g/lb; the API derives the protein band from LBM (1.14-1.25 g/lb) and accepts no client protein target — only the per-request proteinPriority filter",
+   "this request is mathematically unsatisfiable by design — a clear, fast, honest refusal is the pass condition, and a confident plan is a critical honesty defect"
+  ],
+  "impossibleKind": "floor-vs-rate",
+  "goalBmi": 16.6,
+  "tupleKey": "[\"IMPOSSIBLE\",\"M\",52,191,71,60.6,\"formwork-concrete\",\"weights\",2,\"vegetarian\",[\"dairy\",\"gluten\",\"shellfish\",\"soy\"],3,1,\"high-protein\",\"day\",15,null,true,null,\"floor-vs-rate\"]"
+ },
+ "request": {
+  "horizon": "day",
+  "filters": {
+   "proteinPriority": true,
+   "maxPrepMin": 15
+  }
+ },
+ "profileResponse": {
+  "id": "cms6x1pno05bbwlw09hbmev9w",
+  "userId": "cms6x1pib005qwl2o0oe25n5q",
+  "sex": "M",
+  "age": 52,
+  "heightCm": 191,
+  "bodyFatPct": 29,
+  "bodyFatSource": "measured",
+  "occupationKey": "formwork-concrete",
+  "activityOverride": null,
+  "sessionsPerWeek": 4,
+  "trainingStyle": "weights",
+  "minutesPerSession": 60,
+  "startWeightKg": 71,
+  "goalWeightKg": 60.6,
+  "startDate": "2026-07-29",
+  "unitPref": "metric",
+  "rateLbPerWeek": 2,
+  "rateAcknowledged": true,
+  "floorKcal": 1500,
+  "excludedFormulas": [],
+  "targetKcal": 1646,
+  "mealsPerDay": 3,
+  "snacksPerDay": 1,
+  "excludedFoods": [
+   "shellfish",
+   "gluten",
+   "dairy",
+   "soy"
+  ],
+  "dietaryStyle": "vegetarian",
+  "cuisinePreferences": [],
+  "mealPreferencesNote": null,
+  "maxPrepMin": null,
+  "budgetTier": null,
+  "allowBatch": null,
+  "maxComplexity": null,
+  "adaptiveTdee": true,
+  "proteinPriorityMode": false,
+  "updatedAt": "2026-07-30T02:50:20.020Z"
+ },
+ "generate": {
+  "status": 200,
+  "ms": 837,
+  "body": {
+   "id": "cms6x1qhi05djwlw00ek8tttd",
+   "userId": "cms6x1pib005qwl2o0oe25n5q",
+   "startDate": "2026-07-27",
+   "createdAt": "2026-07-30T02:50:20.887Z",
+   "slots": [
+    {
+     "id": "cms6x1qmo05dlwlw0jurrkfbh",
+     "planId": "cms6x1qhi05djwlw00ek8tttd",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 0,
+     "recipeId": "cmrujkwvk00buwl9o5qzvdm2i",
+     "proteinScale": 1.83,
+     "sidesScale": 0.96,
+     "ingredients": [
+      {
+       "foodId": "cmrj2tbsj00m1wlwsfeuh3jsf",
+       "name": "flax eggs",
+       "role": "protein",
+       "grams": 275
+      },
+      {
+       "foodId": "cmrj2t7fb004fwlws8ezof2dp",
+       "name": "Russet Potato",
+       "role": "carb",
+       "grams": 175
+      },
+      {
+       "foodId": "cmrevpcnh000iwl5gh2zjhyqe",
+       "name": "Bell peppers",
+       "role": "veg",
+       "grams": 75
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 10
+      }
+     ],
+     "kcal": 430.75,
+     "protein": 34.7775,
+     "fat": 10.4525,
+     "carb": 48.44,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrujkwvk00buwl9o5qzvdm2i",
+      "name": "Classic Eggs & Bell Peppers with Potato",
+      "description": null,
+      "steps": [
+       "Cook the eggs.",
+       "Serve with potato and bell peppers."
+      ],
+      "slotType": "meal",
+      "cuisine": "american",
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 368.3,
+      "protein": 21.6,
+      "fat": 10.5,
+      "carb": 46.9,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 3.01,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:00:06.897Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x1qmp05dnwlw0r4himsgd",
+     "planId": "cms6x1qhi05djwlw00ek8tttd",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 1,
+     "recipeId": "cmrujhgyd001mwlbo1yhlk5mq",
+     "proteinScale": 1.99,
+     "sidesScale": 1.23,
+     "ingredients": [
+      {
+       "foodId": "cmrj2tbsj00m1wlwsfeuh3jsf",
+       "name": "flax eggs",
+       "role": "protein",
+       "grams": 300
+      },
+      {
+       "foodId": "cmrj2t6na000ywlws9jek4w4z",
+       "name": "Broccoli",
+       "role": "veg",
+       "grams": 100
+      },
+      {
+       "foodId": "cmrevpcn2000ewl5gmlyzu0vd",
+       "name": "White rice, cooked",
+       "role": "carb",
+       "grams": 150
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 10
+      }
+     ],
+     "kcal": 481,
+     "protein": 38.72,
+     "fat": 10.79,
+     "carb": 55.35,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrujhgyd001mwlbo1yhlk5mq",
+      "name": "Egg & Spinach Scramble",
+      "description": null,
+      "steps": [
+       "Scramble eggs with greens.",
+       "Serve with rice."
+      ],
+      "slotType": "meal",
+      "cuisine": "american",
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 335.3,
+      "protein": 21.3,
+      "fat": 8.6,
+      "carb": 42.2,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 2.72,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T10:57:26.294Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x1qmq05dpwlw0upvhewmv",
+     "planId": "cms6x1qhi05djwlw00ek8tttd",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 2,
+     "recipeId": "cmrul4e7h007owl68wk6sgpum",
+     "proteinScale": 1.16,
+     "sidesScale": 2,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t7t00067wlwsj23ngikm",
+       "name": "Egg White",
+       "role": "protein",
+       "grams": 305
+      },
+      {
+       "foodId": "cmrj2t88z0087wlwsmsmchxzb",
+       "name": "Quinoa",
+       "role": "carb",
+       "grams": 220
+      },
+      {
+       "foodId": "cmrg8zxar000lwli0qy2ovmx4",
+       "name": "Onion",
+       "role": "veg",
+       "grams": 120
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 524.75,
+     "protein": 43.635,
+     "fat": 9.344000000000001,
+     "carb": 65.266,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrul4e7h007owl68wk6sgpum",
+      "name": "High-Protein Egg White & Onions with Quinoa",
+      "description": null,
+      "steps": [
+       "Cook the egg white.",
+       "Serve over quinoa with onions."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 344,
+      "protein": 33.3,
+      "fat": 7.2,
+      "carb": 35.2,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 3.41,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:43:15.438Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x1qmq05dtwlw00k26furt",
+     "planId": "cms6x1qhi05djwlw00ek8tttd",
+     "dayOfWeek": 2,
+     "slotType": "snack",
+     "slotIndex": 0,
+     "recipeId": null,
+     "proteinScale": 1,
+     "sidesScale": 1,
+     "ingredients": [],
+     "kcal": 0,
+     "protein": 0,
+     "fat": 0,
+     "carb": 0,
+     "warning": "No eligible snack recipe left for this slot.",
+     "locked": false,
+     "recipe": null
+    }
+   ],
+   "groceryList": null,
+   "meta": {
+    "matchPct": 82,
+    "attempts": 5,
+    "score": {
+     "daysInTolerance": 1,
+     "avgMatch": 82,
+     "days": [
+      {
+       "dayOfWeek": 2,
+       "dayName": "Wednesday",
+       "matchPct": 82,
+       "totals": {
+        "kcal": 1437,
+        "protein": 117,
+        "fat": 31,
+        "carb": 169
+       },
+       "kcalDeltaPct": -12.7,
+       "proteinShortPct": 11.9,
+       "fatOk": true,
+       "carbOk": true,
+       "inTolerance": true,
+       "miss": null,
+       "unfilledSlots": 1,
+       "warnedSlots": 1,
+       "proteinFloor": {
+        "met": false,
+        "floorG": 127,
+        "achievedG": 117.1,
+        "shortG": 9.9,
+        "shortPct": 7.8,
+        "reason": "9.9 g short of the 127 g protein floor (8% under) — the compliant pool couldn't scale up to close the gap within the 0.5-2x portion limit."
+       },
+       "windowIndex": 0,
+       "dayIndex": 0,
+       "key": "0:2"
+      }
+     ],
+     "totalDays": 1,
+     "floorDaysMet": 0,
+     "floorDaysTotal": 1
+    },
+    "days": [
+     {
+      "dayOfWeek": 2,
+      "dayName": "Wednesday",
+      "matchPct": 82,
+      "totals": {
+       "kcal": 1437,
+       "protein": 117,
+       "fat": 31,
+       "carb": 169
+      },
+      "kcalDeltaPct": -12.7,
+      "proteinShortPct": 11.9,
+      "fatOk": true,
+      "carbOk": true,
+      "inTolerance": true,
+      "miss": null,
+      "unfilledSlots": 1,
+      "warnedSlots": 1,
+      "proteinFloor": {
+       "met": false,
+       "floorG": 127,
+       "achievedG": 117.1,
+       "shortG": 9.9,
+       "shortPct": 7.8,
+       "reason": "9.9 g short of the 127 g protein floor (8% under) — the compliant pool couldn't scale up to close the gap within the 0.5-2x portion limit."
+      },
+      "windowIndex": 0,
+      "dayIndex": 0,
+      "key": "0:2"
+     }
+    ],
+    "diagnosis": {
+     "feasible": false,
+     "reasons": [
+      "1 of 4 slots over 1 days came back empty — no compliant recipe was left that could fill them.",
+      "Protein-priority mode: the 127g/day floor wasn't met on 1 day(s) — only 13 of 31 compliant recipes carry enough protein density to close the gap within the 0.5-2x portion limit.",
+      "Your library has no snack-sized recipe that fits your rules — all 1 snack slots this week come back empty.",
+      "Your targets need ~8.1g protein per 100 kcal; only 10 of 31 eligible recipes come close (12+ needed for a full varied week)."
+     ],
+     "suggestions": [
+      "AI-generate a few high-protein compliant recipes, set the protein-preference filter, or allow batch-cooking repeats of the densest dishes.",
+      "Set snacks per day to 0 and fold those calories into your meals, or AI-generate a few compliant snacks on the Recipes tab.",
+      "Set the protein-preference filter, or AI-generate a few high-protein recipes to deepen the pool."
+     ],
+     "binding": {
+      "key": "snack-pool",
+      "label": "your snack-eligible recipe pool",
+      "detail": "no snack-sized recipe fits your rules, so all 1 snack slot(s) come back empty."
+     }
+    },
+    "poolCounts": {
+     "raw": 889,
+     "afterDiet": 66,
+     "afterPrep": 31,
+     "afterStack": 31,
+     "stackExplain": null
+    },
+    "variety": {
+     "mealEligible": 31,
+     "usableForSlot": 28,
+     "slotKcal": 485,
+     "snackEligible": 0,
+     "weeklyMealSlots": 21,
+     "weeklySnackSlots": 7,
+     "repeatCap": 2,
+     "distinctWeeks": 1.3,
+     "horizonWeeks": 1,
+     "sustainsHorizon": false,
+     "notes": [
+      "Your library has no snack-sized recipe that fits your rules — snack slots stay empty until you add one.",
+      "1 day: 3 distinct dish(es) across 3 filled slot(s); most-repeated dish appears 1x against a 2x cap for this horizon (2x per week)."
+     ],
+     "horizon": {
+      "weeks": 1,
+      "days": 1,
+      "perWeekCap": 2,
+      "horizonRepeatCap": 2,
+      "mealSlots": 3,
+      "snackSlots": 1,
+      "totalSlots": 4,
+      "distinctFloor": 2,
+      "distinctRecipes": 3,
+      "maxRepeat": 1,
+      "maxRepeatRecipeId": "cmrujkwvk00buwl9o5qzvdm2i",
+      "lockedRepeatsOfMax": 0,
+      "filledSlots": 3,
+      "unfilledSlots": 1,
+      "requiredDistinct": 2,
+      "capHeld": true,
+      "floorHeld": true
+     }
+    },
+    "priorWeeksConsidered": 0,
+    "horizon": {
+     "key": "day",
+     "label": "1 day",
+     "days": 1,
+     "kind": "days",
+     "weeks": 1,
+     "custom": false,
+     "startDate": "2026-07-29",
+     "endDate": "2026-07-29",
+     "startDayOfWeek": 2,
+     "weeksWritten": 1,
+     "solveMs": 1,
+     "weekPlans": [
+      {
+       "startDate": "2026-07-27",
+       "dayIndices": [
+        2
+       ],
+       "days": 1,
+       "daysInTolerance": 1,
+       "avgMatch": 82,
+       "unfilledSlots": 1,
+       "poolSize": 31
+      }
+     ]
+    }
+   }
+  }
+ }
+}

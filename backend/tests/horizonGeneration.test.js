@@ -404,9 +404,33 @@ test("classifyBinding names the ONE thing that is binding, per stack", () => {
   assert.equal(
     classifyBinding({ ...base, pool: mealOnly.slice(0, 8), counts: { raw: RAW.length, afterDiet: 8, afterPrep: 8 }, filters: { allowBatchRepeats: true }, variety: batchVariety }).key,
     BINDING.POOL_DEPTH);
-  // Snacks: the real library carries a handful of snack recipes, so asking for
-  // two a day for a month is bound by the snack pool, not by anything else.
-  const snacky = { ...base, mealConfig: { meals: 3, snacks: 2 }, pool: POOL, counts: { raw: RAW.length, afterDiet: POOL.length, afterPrep: POOL.length }, filters: {} };
+  // Snacks: when snack demand outruns the snack-eligible pool, the pool is named.
+  //
+  // Two things had to change here on 2026-07-30, and both are the test catching up
+  // with a real improvement rather than being loosened.
+  //
+  // 1. The variety plan MUST be built for this scenario's own mealConfig. It used to
+  //    inherit `base.variety`, computed from CFG = { meals: 3, snacks: 0 } — a plan
+  //    that knows about no snack slots at all — so the assertion passed only because
+  //    of the order classifyBinding evaluates its branches in.
+  // 2. The demand moved from 2 snacks/day to 4. The snack library grew from 9
+  //    recipes to 18, and `snackEligible x horizonCap` is now 18 x 5 = 90, which
+  //    genuinely covers 2/day (56 slots) and 3/day (84). Asserting SNACK_POOL at
+  //    2/day would now be asserting something false. At 4/day (112 slots) the pool
+  //    is really the binding constraint and the branch is exercised honestly.
+  //
+  // If the snack library grows again this test will fail again, and the right
+  // response is the same: raise the demand until the pool genuinely binds, or
+  // delete the assertion because the shortage is gone.
+  const snackCfg = { meals: 3, snacks: 4 };
+  const snacky = {
+    ...base,
+    mealConfig: snackCfg,
+    variety: varietyPlanFor({ weeks: 4, days: 28, mealConfig: snackCfg, filters: {} }),
+    pool: POOL,
+    counts: { raw: RAW.length, afterDiet: POOL.length, afterPrep: POOL.length },
+    filters: {},
+  };
   assert.equal(classifyBinding(snacky).key, BINDING.SNACK_POOL);
 });
 

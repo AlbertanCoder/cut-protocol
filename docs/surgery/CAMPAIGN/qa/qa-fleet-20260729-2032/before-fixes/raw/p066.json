@@ -1,0 +1,552 @@
+{
+ "persona": {
+  "idx": 66,
+  "id": "p066",
+  "tier": "IMPOSSIBLE",
+  "displayName": "miner, 39",
+  "story": "wants 2 lb/wk off a small frame at the calorie floor, with gluten, dairy and soy all walled off and nothing over 15 minutes to cook",
+  "profile": {
+   "sex": "M",
+   "age": 39,
+   "heightCm": 165,
+   "startWeightKg": 86.1,
+   "goalWeightKg": 78.1,
+   "occupationKey": "mining",
+   "trainingStyle": "weights",
+   "minutesPerSession": 40,
+   "sessionsPerWeek": 3,
+   "rateLbPerWeek": 2,
+   "dietaryStyle": "kosher",
+   "excludedFoods": [
+    "tree nuts",
+    "gluten",
+    "dairy",
+    "soy"
+   ],
+   "mealsPerDay": 3,
+   "snacksPerDay": 1,
+   "unitPref": "imperial",
+   "bodyFatPct": 11,
+   "bodyFatSource": "visual-estimate",
+   "cuisinePreferences": [
+    "chinese",
+    "american"
+   ],
+   "rateAcknowledged": true,
+   "floorKcal": 1500
+  },
+  "filters": {
+   "cuisines": [
+    "chinese",
+    "american"
+   ],
+   "proteinPriority": true,
+   "maxPrepMin": 15
+  },
+  "horizon": "day",
+  "walls": [
+   "tree nut",
+   "gluten",
+   "dairy",
+   "soy"
+  ],
+  "freeTextExclusions": [],
+  "dietaryStyle": "kosher",
+  "bmi": 31.6,
+  "goalKind": "cut",
+  "macroStyle": "balanced",
+  "requestedButUnsupported": [
+   "this request is mathematically unsatisfiable by design — a clear, fast, honest refusal is the pass condition, and a confident plan is a critical honesty defect"
+  ],
+  "impossibleKind": "floor-vs-rate",
+  "tupleKey": "[\"IMPOSSIBLE\",\"M\",39,165,86.1,78.1,\"mining\",\"weights\",2,\"kosher\",[\"dairy\",\"gluten\",\"soy\",\"tree nuts\"],3,1,\"balanced\",\"day\",15,null,true,null,\"floor-vs-rate\"]"
+ },
+ "request": {
+  "horizon": "day",
+  "filters": {
+   "cuisines": [
+    "chinese",
+    "american"
+   ],
+   "proteinPriority": true,
+   "maxPrepMin": 15
+  }
+ },
+ "profileResponse": {
+  "id": "cms6x0ofj0215wlw06fmzvvka",
+  "userId": "cms6x0nwu001owl2o233gzmxd",
+  "sex": "M",
+  "age": 39,
+  "heightCm": 165,
+  "bodyFatPct": 11,
+  "bodyFatSource": "visual-estimate",
+  "occupationKey": "mining",
+  "activityOverride": null,
+  "sessionsPerWeek": 3,
+  "trainingStyle": "weights",
+  "minutesPerSession": 40,
+  "startWeightKg": 86.1,
+  "goalWeightKg": 78.1,
+  "startDate": "2026-07-29",
+  "unitPref": "imperial",
+  "rateLbPerWeek": 2,
+  "rateAcknowledged": true,
+  "floorKcal": 1500,
+  "excludedFormulas": [],
+  "targetKcal": 2321,
+  "mealsPerDay": 3,
+  "snacksPerDay": 1,
+  "excludedFoods": [
+   "tree nuts",
+   "gluten",
+   "dairy",
+   "soy"
+  ],
+  "dietaryStyle": "kosher",
+  "cuisinePreferences": [
+   "chinese",
+   "american"
+  ],
+  "mealPreferencesNote": null,
+  "maxPrepMin": null,
+  "budgetTier": null,
+  "allowBatch": null,
+  "maxComplexity": null,
+  "adaptiveTdee": true,
+  "proteinPriorityMode": false,
+  "updatedAt": "2026-07-30T02:49:31.847Z"
+ },
+ "generate": {
+  "status": 200,
+  "ms": 301,
+  "body": {
+   "id": "cms6x0ouv0231wlw0i82ktmr6",
+   "userId": "cms6x0nwu001owl2o233gzmxd",
+   "startDate": "2026-07-27",
+   "createdAt": "2026-07-30T02:49:32.119Z",
+   "slots": [
+    {
+     "id": "cms6x0ovd0233wlw046007635",
+     "planId": "cms6x0ouv0231wlw0i82ktmr6",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 0,
+     "recipeId": "cmrul79x5008uwl80sum6se6m",
+     "proteinScale": 1.16,
+     "sidesScale": 2,
+     "ingredients": [
+      {
+       "foodId": "cmrfoyrjh0009wl08cmcid51m",
+       "name": "Turkey breast, low salt, prepackaged or deli, luncheon meat",
+       "role": "protein",
+       "grams": 195
+      },
+      {
+       "foodId": "cmrj2t7fb004fwlws8ezof2dp",
+       "name": "Russet Potato",
+       "role": "carb",
+       "grams": 300
+      },
+      {
+       "foodId": "cmrevpcnh000iwl5gh2zjhyqe",
+       "name": "Bell peppers",
+       "role": "veg",
+       "grams": 160
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 592.15,
+     "protein": 52,
+     "fat": 7.4885,
+     "carb": 80.6445,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrul79x5008uwl80sum6se6m",
+      "name": "High-Protein Turkey & Bell Peppers with Potato",
+      "description": null,
+      "steps": [
+       "Cook the turkey.",
+       "Serve over potato with bell peppers."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 397.6,
+      "protein": 41.8,
+      "fat": 6.8,
+      "carb": 42.9,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 6.83,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:45:29.850Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x0ove0235wlw0q27w7to3",
+     "planId": "cms6x0ouv0231wlw0i82ktmr6",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 1,
+     "recipeId": "cmrul79w40076wl80hs6ys0uo",
+     "proteinScale": 2,
+     "sidesScale": 0.5,
+     "ingredients": [
+      {
+       "foodId": "cmrj2tbgn00kqwlwsij0gf7e5",
+       "name": "Tuna",
+       "role": "protein",
+       "grams": 300
+      },
+      {
+       "foodId": "cmrj2t88z0087wlwsmsmchxzb",
+       "name": "Quinoa",
+       "role": "carb",
+       "grams": 55
+      },
+      {
+       "foodId": "cmrevpcnl000jwl5gnqnk630b",
+       "name": "Cucumber",
+       "role": "veg",
+       "grams": 45
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 676.5,
+     "protein": 50.6855,
+     "fat": 33.908,
+     "carb": 40.917,
+     "warning": "Tried 5 recipe(s) for this slot, none fit within tolerance — closest was \"High-Protein Tuna & Cucumber with Quinoa\" (delivered 51g protein vs a 59g target).",
+     "locked": false,
+     "recipe": {
+      "id": "cmrul79w40076wl80hs6ys0uo",
+      "name": "High-Protein Tuna & Cucumber with Quinoa",
+      "description": null,
+      "steps": [
+       "Cook the tuna.",
+       "Serve over quinoa with cucumber."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 466.5,
+      "protein": 29.4,
+      "fat": 21.1,
+      "carb": 39.5,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 7.54,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:45:29.812Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x0ovn0237wlw031vd297e",
+     "planId": "cms6x0ouv0231wlw0i82ktmr6",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 2,
+     "recipeId": "cmrul4e6v006owl6849588n2z",
+     "proteinScale": 2,
+     "sidesScale": 2,
+     "ingredients": [
+      {
+       "foodId": "cmrj2tay100irwlwsiujfz75h",
+       "name": "White Fish",
+       "role": "protein",
+       "grams": 380
+      },
+      {
+       "foodId": "cmrevpcn2000ewl5gmlyzu0vd",
+       "name": "White rice, cooked",
+       "role": "carb",
+       "grams": 220
+      },
+      {
+       "foodId": "cmrg8zxar000lwli0qy2ovmx4",
+       "name": "Onion",
+       "role": "veg",
+       "grams": 120
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 728.5999999999999,
+     "protein": 71.1,
+     "fat": 14.596,
+     "carb": 72.808,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrul4e6v006owl6849588n2z",
+      "name": "High-Protein White Fish & Onions with Rice",
+      "description": null,
+      "steps": [
+       "Cook the white fish.",
+       "Serve over white rice with onions."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 386.8,
+      "protein": 35.6,
+      "fat": 9.8,
+      "carb": 36.4,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 7.4,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:43:15.415Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x0ovo0239wlw0f1habxm5",
+     "planId": "cms6x0ouv0231wlw0i82ktmr6",
+     "dayOfWeek": 2,
+     "slotType": "snack",
+     "slotIndex": 0,
+     "recipeId": "cmrevpd0k0057wl5ggnxuvv9c",
+     "proteinScale": 2,
+     "sidesScale": 0.5,
+     "ingredients": [
+      {
+       "foodId": "cmrevpcod000pwl5g8cou0uqo",
+       "name": "Avocado chips",
+       "role": "fat",
+       "grams": 13
+      },
+      {
+       "foodId": "cmrevpcma0007wl5gfj59j5mk",
+       "name": "Beef jerky",
+       "role": "protein",
+       "grams": 80
+      }
+     ],
+     "kcal": 393,
+     "protein": 26.92,
+     "fat": 25.09,
+     "carb": 14.65,
+     "warning": "Tried 1 recipe(s) for this slot, none fit within tolerance — closest was \"Avocado Chips & Jerky\" (landed 393 kcal vs a 324 target).",
+     "locked": false,
+     "recipe": {
+      "id": "cmrevpd0k0057wl5ggnxuvv9c",
+      "name": "Avocado Chips & Jerky",
+      "description": "Weekends only.",
+      "steps": [
+       "No cooking — portion and eat."
+      ],
+      "slotType": "snack",
+      "cuisine": "western-comfort",
+      "prepTimeMin": 0,
+      "source": "curated",
+      "mealCategory": null,
+      "kcal": 289,
+      "protein": 14.2,
+      "fat": 18.65,
+      "carb": 15.65,
+      "tasteTier": "really_good",
+      "tasteTierSource": "curated",
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 4.35,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-10T11:55:11.012Z",
+      "createdByUserId": null
+     }
+    }
+   ],
+   "groceryList": null,
+   "meta": {
+    "matchPct": 89,
+    "attempts": 5,
+    "score": {
+     "daysInTolerance": 1,
+     "avgMatch": 89,
+     "days": [
+      {
+       "dayOfWeek": 2,
+       "dayName": "Wednesday",
+       "matchPct": 89,
+       "totals": {
+        "kcal": 2390,
+        "protein": 201,
+        "fat": 81,
+        "carb": 209
+       },
+       "kcalDeltaPct": 3,
+       "proteinShortPct": 0.6,
+       "fatOk": true,
+       "carbOk": true,
+       "inTolerance": true,
+       "miss": null,
+       "unfilledSlots": 0,
+       "warnedSlots": 2,
+       "proteinFloor": {
+        "met": true,
+        "floorG": 193,
+        "achievedG": 200.7,
+        "shortG": 0,
+        "shortPct": 0,
+        "reason": null
+       },
+       "windowIndex": 0,
+       "dayIndex": 0,
+       "key": "0:2"
+      }
+     ],
+     "totalDays": 1,
+     "floorDaysMet": 1,
+     "floorDaysTotal": 1
+    },
+    "days": [
+     {
+      "dayOfWeek": 2,
+      "dayName": "Wednesday",
+      "matchPct": 89,
+      "totals": {
+       "kcal": 2390,
+       "protein": 201,
+       "fat": 81,
+       "carb": 209
+      },
+      "kcalDeltaPct": 3,
+      "proteinShortPct": 0.6,
+      "fatOk": true,
+      "carbOk": true,
+      "inTolerance": true,
+      "miss": null,
+      "unfilledSlots": 0,
+      "warnedSlots": 2,
+      "proteinFloor": {
+       "met": true,
+       "floorG": 193,
+       "achievedG": 200.7,
+       "shortG": 0,
+       "shortPct": 0,
+       "reason": null
+      },
+      "windowIndex": 0,
+      "dayIndex": 0,
+      "key": "0:2"
+     }
+    ],
+    "diagnosis": null,
+    "poolCounts": {
+     "raw": 889,
+     "afterDiet": 181,
+     "afterPrep": 94,
+     "afterStack": 94,
+     "stackExplain": null
+    },
+    "variety": {
+     "mealEligible": 93,
+     "usableForSlot": 68,
+     "slotKcal": 684,
+     "snackEligible": 1,
+     "weeklyMealSlots": 21,
+     "weeklySnackSlots": 7,
+     "repeatCap": 2,
+     "distinctWeeks": 3.2,
+     "horizonWeeks": 1,
+     "sustainsHorizon": false,
+     "notes": [
+      "Only 1 snack recipe(s) fit your rules, so the same snacks come back every week.",
+      "1 day: 4 distinct dish(es) across 4 filled slot(s); most-repeated dish appears 1x against a 2x cap for this horizon (2x per week)."
+     ],
+     "horizon": {
+      "weeks": 1,
+      "days": 1,
+      "perWeekCap": 2,
+      "horizonRepeatCap": 2,
+      "mealSlots": 3,
+      "snackSlots": 1,
+      "totalSlots": 4,
+      "distinctFloor": 2,
+      "distinctRecipes": 4,
+      "maxRepeat": 1,
+      "maxRepeatRecipeId": "cmrul79x5008uwl80sum6se6m",
+      "lockedRepeatsOfMax": 0,
+      "filledSlots": 4,
+      "unfilledSlots": 0,
+      "requiredDistinct": 2,
+      "capHeld": true,
+      "floorHeld": true
+     }
+    },
+    "priorWeeksConsidered": 0,
+    "horizon": {
+     "key": "day",
+     "label": "1 day",
+     "days": 1,
+     "kind": "days",
+     "weeks": 1,
+     "custom": false,
+     "startDate": "2026-07-29",
+     "endDate": "2026-07-29",
+     "startDayOfWeek": 2,
+     "weeksWritten": 1,
+     "solveMs": 1,
+     "weekPlans": [
+      {
+       "startDate": "2026-07-27",
+       "dayIndices": [
+        2
+       ],
+       "days": 1,
+       "daysInTolerance": 1,
+       "avgMatch": 89,
+       "unfilledSlots": 0,
+       "poolSize": 94
+      }
+     ]
+    }
+   }
+  }
+ }
+}

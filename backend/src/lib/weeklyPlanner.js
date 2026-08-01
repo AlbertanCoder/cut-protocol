@@ -27,6 +27,9 @@ const { recipeAllowed } = require("./exclusionGate.js");
 // Single source of truth for which mealCategory values are excluded from main
 // "meal" slots. Shared with the classifier so the two can never drift.
 const { NON_MEAL_CATEGORIES } = require("./recipeClassification.js");
+// Adds a small, allergy-filtered component when scaling alone cannot close a day.
+// See macroCloser.js — 68.3% of missing slots were pinned at a portion-scale bound.
+const { closeDayMacros } = require("./macroCloser.js");
 
 // Does a just-generated recipe comply with the profile's diet/allergy rules?
 // Stage-C fix (C3): the /swap AI fallback used to write its output straight
@@ -69,9 +72,37 @@ const KCAL_TOLERANCE_PCT = 0.15;
 // SHORTFALL below target counts against a candidate (the daily target is
 // the midpoint of a range, so "over" is inside the band by construction).
 const PROTEIN_TOLERANCE_PCT = 0.12;
-// Real pool is 600+ recipes deep - trying a handful of distinct candidates
+// Real pool is 600+ recipes deep. RAISED 5 -> 20 (campaign qa-fleet-20260729-2032):
+// with composition-aware sampling in pickRecipe, 5 draws from a 400-dish pool was
+// the binding constraint on macro compliance, not the pool. Measured over 250
+// personas / 578 days: 5 -> 53.3% of days in tolerance, 12 -> 60.2%, 20 -> 60.4%,
+// 30 -> 61.8%. The curve flattens after 12 and latency is unchanged (p50 497-510 ms,
+// p95 829 ms), so 20 takes the bulk of the gain with headroom and without exhausting
+// the pool. Past ~30 the remaining failures are pool composition, not search depth.
+// Trying a handful of distinct candidates
 // before giving up costs nothing (pickRecipe/scaleRecipe are cheap, sync).
-const MAX_SLOT_ATTEMPTS = 5;
+const MIN_SLOT_ATTEMPTS = 5;
+const MAX_SLOT_ATTEMPTS = 20;
+
+// How many distinct candidates to try for one slot, SCALED TO THE POOL.
+//
+// A fixed budget is wrong in both directions, and the second direction is the one
+// that matters here. Measured over 250 personas / 578 days on the real library
+// (~400 recipes after diet filtering), raising the budget from 5 to 20 moved
+// days-in-tolerance 53.3% -> 60.4%. But on a 36-recipe synthetic pool the SAME
+// change moved the best week from 6/7 days down to 4/7: with a repeat cap in play,
+// a deep per-slot search is greedy — it consumes the few workable dishes early in
+// the week and starves the later slots.
+//
+// Thin pools are exactly the restricted-diet customers who are already worst served
+// (vegan sat at 13% of days in band), so a change that trades their outcome for the
+// mainstream one is not acceptable. Scaling the budget to the pool keeps the
+// original behaviour where it was better and takes the gain where there is real
+// depth to search.
+function slotAttemptBudget(poolSize) {
+  const n = Number.isFinite(poolSize) ? poolSize : 0;
+  return Math.max(MIN_SLOT_ATTEMPTS, Math.min(MAX_SLOT_ATTEMPTS, Math.floor(n / 10)));
+}
 // Within-day carry-forward (solveDay below) redistributes the REMAINING day
 // budget across not-yet-solved slots after each slot resolves, capped at
 // CARRY_CAP_PCT of that slot's original target so one bad miss can't force
@@ -191,7 +222,56 @@ function isGeneratedTemplate(r) {
   return r.source === "ai-generated" && /^high-protein\b.*\bwith\b/i.test(r.name || "");
 }
 
-function pickRecipe(candidates, targetRatio, usedYesterday, usedToday, rng, bias, priorUsage) {
+// ── SAMPLING THE COMPOSITION, NOT JUST THE PROTEIN DENSITY ───────────────────
+//
+// THE DEFECT THIS CLOSES (measured, 275-customer campaign qa-fleet-20260729-2032):
+// fat was the single largest cause of an out-of-tolerance day — 59% of failing
+// days, and 74 days were in band on kcal, protein AND carbs and failed on fat
+// alone, every one of them OVER the band by a median of 49% of its midpoint.
+//
+// It was not pool composition. For 8 of 10 sampled fat-failing customers, 20-53%
+// of their own filtered pool was lean enough to hit the target — the solver simply
+// never looked at it. `MAX_SLOT_ATTEMPTS` draws 5 candidates per slot, and this
+// function weighted those draws by protein-per-kcal ONLY. Fat and carbohydrate
+// entered the process one step too late: `compositionDistance` could tie-break
+// among the 5 already drawn, but if all 5 came back fat-heavy — and the library's
+// median dish is 29-37% fat calories against targets of 16-33% — there was nothing
+// lean to choose. The solver was optimising for something narrower than what
+// `dayTolerance()` grades it on.
+//
+// So the slot's remaining fat/carb budget now biases the DRAW. Deliberately soft
+// and bounded: a dish 20 percentage points off gets ~0.56× weight, not 0. In a
+// pool where everything is fat-heavy every candidate is penalised roughly equally,
+// so the pool is still used and the honest warning still fires — the same
+// principle GENERATED_TEMPLATE_WEIGHT above is built on.
+//
+// No composition target (the alternates path, older fixtures, a target with no
+// fat/carb band) => returns 1 => byte-identical to the previous behaviour.
+const COMPOSITION_BIAS_K = 4;
+function compositionWeight(r, target) {
+  if (!target || !(target.kcalTarget > 0)) return 1;
+  const slotKcal = target.kcalTarget;
+  let sum = 0;
+  let n = 0;
+  // Compare SHARES of calories, not grams: the draw happens before scaling, so
+  // absolute grams are not yet comparable but the ratio a dish carries is.
+  if (target.fatTarget != null) {
+    const want = (target.fatTarget * 9) / slotKcal;
+    const got = r.kcal > 0 ? (r.fat * 9) / r.kcal : 0;
+    sum += Math.abs(got - want);
+    n++;
+  }
+  if (target.carbTarget != null) {
+    const want = (target.carbTarget * 4) / slotKcal;
+    const got = r.kcal > 0 ? (r.carb * 4) / r.kcal : 0;
+    sum += Math.abs(got - want);
+    n++;
+  }
+  if (!n) return 1;
+  return 1 / (1 + COMPOSITION_BIAS_K * (sum / n));
+}
+
+function pickRecipe(candidates, targetRatio, usedYesterday, usedToday, rng, bias, priorUsage, compTarget = null) {
   if (candidates.length === 0) return null;
   const weighted = candidates.map((r) => {
     const ratio = r.kcal > 0 ? r.protein / r.kcal : 0;
@@ -199,7 +279,8 @@ function pickRecipe(candidates, targetRatio, usedYesterday, usedToday, rng, bias
     const discount = usedToday.has(r.id) ? 0.02 : usedYesterday.has(r.id) ? 0.15 : 1;
     const pref = bias ? bias(r) : 1;
     const real = isGeneratedTemplate(r) ? GENERATED_TEMPLATE_WEIGHT : 1;
-    return { r, weight: (1 / (diff + 0.015)) * discount * pref * real * priorDiscount(priorUsage, r.id) };
+    const comp = compositionWeight(r, compTarget);
+    return { r, weight: (1 / (diff + 0.015)) * discount * pref * real * comp * priorDiscount(priorUsage, r.id) };
   });
   const total = weighted.reduce((s, x) => s + x.weight, 0);
   let roll = rng() * total;
@@ -510,6 +591,7 @@ async function tryAiFallback(target, recipePool, usageCount, aiFallback) {
 async function resolveSlot(target, recipePool, usageCount, usedYesterday, usedToday, rng, aiFallback = null, bias = null, repeatCap = DEFAULT_REPEAT_CAP, priorUsage = null) {
   const targetRatio = target.kcalTarget > 0 ? target.proteinTarget / target.kcalTarget : 0;
   const composed = hasCompositionTarget(target);
+  const attemptBudget = slotAttemptBudget(recipePool.length);
   const tried = new Set();
   let best = null;
   // Candidates rejected because the SHIPPED portion would break a hard diet
@@ -525,10 +607,13 @@ async function resolveSlot(target, recipePool, usageCount, usedYesterday, usedTo
   const passes = priorUsage && priorUsage.size > 0 ? [priorUsage, null] : [null];
   for (const passUsage of passes) {
     const fits = [];
-    for (let attempt = 0; attempt < MAX_SLOT_ATTEMPTS; attempt++) {
+    for (let attempt = 0; attempt < attemptBudget; attempt++) {
       const candidates = eligibleRecipes(recipePool, target.slotType, usageCount, repeatCap).filter((r) => !tried.has(r.id));
       if (candidates.length === 0) break;
-      const recipe = pickRecipe(candidates, targetRatio, usedYesterday, usedToday, rng, bias, passUsage);
+      // `composed ? target : null` — the composition bias is only armed when this
+      // slot actually carries a fat/carb budget, so every other caller keeps its
+      // existing draw exactly.
+      const recipe = pickRecipe(candidates, targetRatio, usedYesterday, usedToday, rng, bias, passUsage, composed ? target : null);
       tried.add(recipe.id);
       // A hard diet ceiling is re-checked on the PORTION, not the base recipe
       // (solver-core-3). A candidate that can't be portioned into this slot
@@ -764,7 +849,7 @@ function buildLockedMap(lockedSlots) {
  * returned slot set IS the week that gets stored. (The caller owns usageCount:
  * seed the locked recipes into it if the weekly variety cap should count them.)
  */
-async function solveDay(dayTargets, dailyTarget, recipePool, usageCount, prevDayRecipeIds, rng, aiCtx, bias, repeatCap, priorUsage = null, lockedByKey = null) {
+async function solveDay(dayTargets, dailyTarget, recipePool, usageCount, prevDayRecipeIds, rng, aiCtx, bias, repeatCap, priorUsage = null, lockedByKey = null, adjusters = null) {
   const proteinTargetMid = (dailyTarget.proteinLo + dailyTarget.proteinHi) / 2;
   // solver-core-4: the day's fat/carb budget, carried alongside kcal/protein so
   // resolveSlot can pick on the SAME four macros the day is graded on. Null when
@@ -857,7 +942,14 @@ async function solveDay(dayTargets, dailyTarget, recipePool, usageCount, prevDay
     dayAchievedFat += result.fat;
     dayAchievedCarb += result.carb;
   }
-  return { slots: results, todayIds };
+
+  // Last step: if scaling alone could not land the day, add a small real component
+  // rather than stretch a dish past what a serving looks like. `adjusters` arrives
+  // already filtered through the exclusion gate for this profile (planContext), so
+  // this cannot widen what the customer is allowed to eat; with none supplied the
+  // day is returned untouched and every existing fixture and golden is unchanged.
+  const closed = closeDayMacros({ slots: results, dailyTarget, adjusters });
+  return { slots: closed.slots, todayIds };
 }
 
 // Fisher-Yates using the caller's rng (deterministic when rng is seeded).
@@ -872,7 +964,7 @@ function shuffled(arr, rng) {
 
 // recipePool: recipes with `ingredients` (each including `food`) loaded.
 async function generateWeekPlan(dailyTarget, mealConfig, recipePool, options = {}) {
-  const { rng = Math.random, aiFallback, bias = null, priorUsage = null } = options;
+  const { rng = Math.random, aiFallback, bias = null, priorUsage = null, adjusters = null } = options;
   const repeatCap = repeatCapFor(options);
   // options.dayIndices (Stage 2): which days of THIS week to solve. Absent =
   // the whole week, which is what every pre-horizon caller means and gets.
@@ -902,7 +994,7 @@ async function generateWeekPlan(dailyTarget, mealConfig, recipePool, options = {
   let prevDayRecipeIds = new Set();
   for (const day of shuffled(dayIndices, rng)) {
     const { slots: daySlots, todayIds } = await solveDay(
-      byDay.get(day) || [], dailyTarget, recipePool, usageCount, prevDayRecipeIds, rng, aiCtx, bias, repeatCap, priorUsage, lockedByKey
+      byDay.get(day) || [], dailyTarget, recipePool, usageCount, prevDayRecipeIds, rng, aiCtx, bias, repeatCap, priorUsage, lockedByKey, adjusters
     );
     resolvedByDay.set(day, daySlots);
     prevDayRecipeIds = todayIds;

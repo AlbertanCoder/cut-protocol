@@ -1,0 +1,838 @@
+{
+ "persona": {
+  "idx": 228,
+  "id": "p228",
+  "tier": "ROBUSTNESS",
+  "displayName": "finish carpenter, 22",
+  "story": "finish carpenter, 22, male, 190 cm / 159 kg (BMI 44), cut at 0.5 lb/wk, vegetarian diet, no exclusions, high-protein, 5 meals + 0 snacks, wants a single day",
+  "profile": {
+   "sex": "M",
+   "age": 22,
+   "heightCm": 190,
+   "startWeightKg": 159,
+   "goalWeightKg": 136.6,
+   "occupationKey": "carpenter-finish",
+   "trainingStyle": "weights",
+   "minutesPerSession": 50,
+   "sessionsPerWeek": 3,
+   "rateLbPerWeek": 0.5,
+   "dietaryStyle": "keto",
+   "excludedFoods": [],
+   "mealsPerDay": 5,
+   "snacksPerDay": 0,
+   "unitPref": "imperial",
+   "cuisinePreferences": [
+    "mediterranean",
+    "italian"
+   ]
+  },
+  "filters": {
+   "proteinPriority": true,
+   "cuisines": [
+    "mediterranean",
+    "italian"
+   ]
+  },
+  "horizon": "day",
+  "walls": [],
+  "freeTextExclusions": [],
+  "dietaryStyle": "keto",
+  "bmi": 44,
+  "goalKind": "cut",
+  "macroStyle": "high-protein",
+  "requestedButUnsupported": [
+   "wanted protein set explicitly in g/lb; the API derives the protein band from LBM (1.14-1.25 g/lb) and accepts no client protein target — only the per-request proteinPriority filter"
+  ],
+  "robustKind": "keto-with-carb-target",
+  "contradictionNote": "keto flag set while asking for a high-carb day",
+  "tupleKey": "[\"ROBUSTNESS\",\"M\",22,190,159,136.6,\"carpenter-finish\",\"weights\",0.5,\"keto\",[],5,0,\"high-protein\",\"day\",null,null,true,\"keto-with-carb-target\",null]"
+ },
+ "request": {
+  "horizon": "day",
+  "filters": {
+   "proteinPriority": true,
+   "cuisines": [
+    "mediterranean",
+    "italian"
+   ]
+  }
+ },
+ "profileResponse": {
+  "id": "cms6x1tpw05lfwlw05vunie4k",
+  "userId": "cms6x1tkl0066wl2o84eq4k4w",
+  "sex": "M",
+  "age": 22,
+  "heightCm": 190,
+  "bodyFatPct": 0,
+  "bodyFatSource": null,
+  "occupationKey": "carpenter-finish",
+  "activityOverride": null,
+  "sessionsPerWeek": 3,
+  "trainingStyle": "weights",
+  "minutesPerSession": 50,
+  "startWeightKg": 159,
+  "goalWeightKg": 136.6,
+  "startDate": "2026-07-29",
+  "unitPref": "imperial",
+  "rateLbPerWeek": 0.5,
+  "rateAcknowledged": false,
+  "floorKcal": null,
+  "excludedFormulas": [],
+  "targetKcal": 4256,
+  "mealsPerDay": 5,
+  "snacksPerDay": 0,
+  "excludedFoods": [],
+  "dietaryStyle": "keto",
+  "cuisinePreferences": [
+   "mediterranean",
+   "italian"
+  ],
+  "mealPreferencesNote": null,
+  "maxPrepMin": null,
+  "budgetTier": null,
+  "allowBatch": null,
+  "maxComplexity": null,
+  "adaptiveTdee": true,
+  "proteinPriorityMode": false,
+  "updatedAt": "2026-07-30T20:34:12.171Z"
+ },
+ "generate": {
+  "status": 200,
+  "ms": 473,
+  "body": {
+   "id": "cms7z1vcg04pvwlgwysoy7w6j",
+   "userId": "cms6x1tkl0066wl2o84eq4k4w",
+   "startDate": "2026-07-27",
+   "createdAt": "2026-07-30T20:34:12.592Z",
+   "slots": [
+    {
+     "id": "cms7z1vch04pxwlgwn2b9bngh",
+     "planId": "cms7z1vcg04pvwlgwysoy7w6j",
+     "dayOfWeek": 3,
+     "slotType": "meal",
+     "slotIndex": 0,
+     "recipeId": "cmrj2tggn01jtwlwsfpr46mf4",
+     "proteinScale": 0.86,
+     "sidesScale": 0.77,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t6hb0007wlwsh6l6ynal",
+       "name": "Water",
+       "role": null,
+       "grams": 180
+      },
+      {
+       "foodId": "cmrj2t7kx0055wlwsdnc87tsf",
+       "name": "Sirloin Steak tips",
+       "role": "protein",
+       "grams": 195
+      },
+      {
+       "foodId": "cmrj2t6rr001jwlwsqfi60fyj",
+       "name": "Garlic Clove",
+       "role": null,
+       "grams": 3
+      },
+      {
+       "foodId": "cmrj2t7l40056wlws69opouvc",
+       "name": "Ground Ginger",
+       "role": "veg",
+       "grams": 1
+      },
+      {
+       "foodId": "cmrj2t6xs002awlwsfwq9grns",
+       "name": "Oil",
+       "role": "fat",
+       "grams": 40
+      },
+      {
+       "foodId": "cmrj2t6vv0021wlwsx5wv83r4",
+       "name": "Red Onions",
+       "role": "veg",
+       "grams": 40
+      },
+      {
+       "foodId": "cmrj2t6ik000dwlwsj8e736h1",
+       "name": "Tomato",
+       "role": "veg",
+       "grams": 95
+      },
+      {
+       "foodId": "cmrj2t6jp000iwlwsli2ckg55",
+       "name": "Paprika",
+       "role": null,
+       "grams": 1
+      },
+      {
+       "foodId": "cmrj2t6mf000uwlwsne5kc5wl",
+       "name": "Black Pepper",
+       "role": null,
+       "grams": 1
+      },
+      {
+       "foodId": "cmrj2t7k10051wlwsghd1hb86",
+       "name": "Curry Powder",
+       "role": null,
+       "grams": 2
+      },
+      {
+       "foodId": "cmrj2t6pz001bwlwsbarwpyy1",
+       "name": "Tomato Puree",
+       "role": "veg",
+       "grams": 9
+      },
+      {
+       "foodId": "cmrj2t6gd0003wlwss7jf3wzf",
+       "name": "Salt",
+       "role": null,
+       "grams": 1
+      },
+      {
+       "foodId": "cmrj2t7lb0057wlws13ompczm",
+       "name": "Chilli",
+       "role": null,
+       "grams": 3
+      },
+      {
+       "foodId": "cmrj2t7lj0058wlwsk4i51m8h",
+       "name": "Cilantro",
+       "role": null,
+       "grams": 19
+      }
+     ],
+     "kcal": 774.0900000000001,
+     "protein": 59.22089999999999,
+     "fat": 55.29414999999999,
+     "carb": 13.6724,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrj2tggn01jtwlwsfpr46mf4",
+      "name": "Kenyan Beef Curry",
+      "description": null,
+      "steps": [
+       "Bring the 4 cups of water to a boil in a Dutch oven or soup pot. Add the beef, garlic, and ginger, and stir well. Bring to a gentle simmer, cover, and cook, stirring occasionally, for 20 minutes. If you get any foamy scum on the top, not to worry, simply spoon it away or stir it back in.",
+       "Remove from the heat, and drain, but reserve the excess water for later.",
+       "Return the pot or Dutch oven to medium heat with the 2 tablespoons of cooking oil. Once the oil is shimmering, add the onions and cook, stirring occasionally, until softened, 5 to 7 minutes.",
+       "Add the tomatoes to the onions, and continue cooking, stirring occasionally, until the tomatoes are falling apart, 3 to 5 minutes.",
+       "Add the drained beef to the tomato and onion mixture, and stir well. Continue cooking over medium heat for 5 minutes, stirring occasionally.",
+       "Add the paprika, pepper, curry powder, tomato paste, and salt to taste, and stir well.",
+       "Add back the excess water that was used for cooking the beef, along with enough extra water to cover. Bring to a boil, reduce heat, and simmer, uncovered, stirring occasionally, for about 1 hour, or until the meat is tender and the sauce is thickened. Add additional water if your beef curry begins to dry and stick, or if would like your curry to have more of a soupy consistency.",
+       "When the beef curry is ready, remove from the heat, give it a taste, and adjust the seasonings as desired. Garnish with fresh chilis and cilantro."
+      ],
+      "slotType": "meal",
+      "cuisine": "indian",
+      "prepTimeMin": 39,
+      "source": "themealdb-import",
+      "mealCategory": null,
+      "kcal": 935.0275,
+      "protein": 69.03742500000001,
+      "fat": 67.7464725,
+      "carb": 16.64027,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 14.27,
+      "difficulty": 6,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-13T10:25:24.119Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z1vcj04pzwlgwcim4zllq",
+     "planId": "cms7z1vcg04pvwlgwysoy7w6j",
+     "dayOfWeek": 3,
+     "slotType": "meal",
+     "slotIndex": 1,
+     "recipeId": "cmrj2tkaz02evwlws246fya47",
+     "proteinScale": 1.17,
+     "sidesScale": 2,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t89e0089wlwsennkaqet",
+       "name": "Chicken Wings",
+       "role": "protein",
+       "grams": 350
+      },
+      {
+       "foodId": "cmrj2t6ft0001wlwstiofk9on",
+       "name": "Garlic",
+       "role": "veg",
+       "grams": 3
+      },
+      {
+       "foodId": "cmrj2t6qp001ewlwsds5bbm29",
+       "name": "Lemon",
+       "role": "veg",
+       "grams": 30
+      },
+      {
+       "foodId": "cmrj2t89n008awlwskkkc8vj3",
+       "name": "Cumin Seeds",
+       "role": null,
+       "grams": 1
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 14
+      },
+      {
+       "foodId": "cmrfoyp7m0002wl0851se2p2b",
+       "name": "Honey",
+       "role": "carb",
+       "grams": 11
+      }
+     ],
+     "kcal": 767.6800000000001,
+     "protein": 65.13959999999999,
+     "fat": 51.42440000000001,
+     "carb": 13.148,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrj2tkaz02evwlws246fya47",
+      "name": "Chicken wings with cumin, lemon & garlic",
+      "description": null,
+      "steps": [
+       "step 1",
+       "Using a pair of sharp kitchen scissors, cut each wing at the knuckle into two pieces. Mix the garlic, lemon zest and juice, cumin and oil with plenty of seasoning, then tip into a dish with the chicken wings and toss to coat. Cover and put in the fridge to marinate for at least 1 hr, or overnight if you have time.",
+       "step 2",
+       "Heat oven to 200C/180C fan/gas 6, or heat an outdoor barbecue. Bake the chicken wings on an oven tray for 45-50 mins until crisp, or barbecue for 20 mins, drizzling over the honey for the final 10 mins of each method. Serve on a platter with plenty of paper napkins. Fill small bowls with olives, pistachios or almonds, dates and pickled chillies and flatbreads to serve alongside, along with the dishes below."
+      ],
+      "slotType": "meal",
+      "cuisine": "western-comfort",
+      "prepTimeMin": 22,
+      "source": "themealdb-import",
+      "mealCategory": null,
+      "kcal": 593.86925,
+      "protein": 55.612725,
+      "fat": 38.847025,
+      "carb": 6.50475,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 7.48,
+      "difficulty": 3,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-13T10:25:29.099Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z1vcj04q1wlgwewrayuls",
+     "planId": "cms7z1vcg04pvwlgwysoy7w6j",
+     "dayOfWeek": 3,
+     "slotType": "meal",
+     "slotIndex": 2,
+     "recipeId": "cmrevpcyh004gwl5gnni3al5q",
+     "proteinScale": 1.55,
+     "sidesScale": 1.55,
+     "ingredients": [
+      {
+       "foodId": "cmrevpcmu000cwl5gfljr1l1o",
+       "name": "Bacon, cooked",
+       "role": "protein",
+       "grams": 95
+      },
+      {
+       "foodId": "cmrevpcm50006wl5g2u2bcspd",
+       "name": "Eggs, whole, cooked",
+       "role": "protein",
+       "grams": 230
+      }
+     ],
+     "kcal": 870.4499999999999,
+     "protein": 65.05,
+     "fat": 65.19999999999999,
+     "carb": 3.859999999999999,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrevpcyh004gwl5gnni3al5q",
+      "name": "Bacon & Eggs",
+      "description": "Weekend breakfast-style plate.",
+      "steps": [
+       "Cook bacon until crisp, set aside.",
+       "Fry or scramble eggs in the bacon fat."
+      ],
+      "slotType": "either",
+      "cuisine": "western-comfort",
+      "prepTimeMin": 15,
+      "source": "curated",
+      "mealCategory": null,
+      "kcal": 557.0999999999999,
+      "protein": 41.7,
+      "fat": 41.7,
+      "carb": 2.49,
+      "tasteTier": "really_good",
+      "tasteTierSource": "curated",
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 3.38,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-10T11:55:10.938Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z1vh704q3wlgwvx7jtdqr",
+     "planId": "cms7z1vcg04pvwlgwysoy7w6j",
+     "dayOfWeek": 3,
+     "slotType": "meal",
+     "slotIndex": 3,
+     "recipeId": "cmrj2tlrj02qxwlws7c0t2do4",
+     "proteinScale": 0.9,
+     "sidesScale": 0.87,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t7xh006rwlwsunnq7ccf",
+       "name": "Chicken",
+       "role": "protein",
+       "grams": 335
+      },
+      {
+       "foodId": "cmrj2t7me005cwlwssmv2um0d",
+       "name": "Red Chilli",
+       "role": null,
+       "grams": 12
+      },
+      {
+       "foodId": "cmrj2t6ft0001wlwstiofk9on",
+       "name": "Garlic",
+       "role": "veg",
+       "grams": 1
+      },
+      {
+       "foodId": "cmrj2t6ye002dwlwssjv94yyn",
+       "name": "Ginger",
+       "role": "veg",
+       "grams": 1
+      },
+      {
+       "foodId": "cmrj2t6wa0023wlwskt9lv52i",
+       "name": "Dried Oregano",
+       "role": null,
+       "grams": 1
+      },
+      {
+       "foodId": "cmrj2t74b0031wlwsgf5ra3ry",
+       "name": "Coriander",
+       "role": null,
+       "grams": 1
+      },
+      {
+       "foodId": "cmrj2t6jp000iwlwsli2ckg55",
+       "name": "Paprika",
+       "role": null,
+       "grams": 1
+      },
+      {
+       "foodId": "cmrj2t8it009hwlwsyj9qzgjo",
+       "name": "Red Wine Vinegar",
+       "role": "carb",
+       "grams": 13
+      },
+      {
+       "foodId": "cmrj2t6xs002awlwsfwq9grns",
+       "name": "Oil",
+       "role": "fat",
+       "grams": 6
+      },
+      {
+       "foodId": "cmrj2t6vv0021wlwsx5wv83r4",
+       "name": "Red Onions",
+       "role": "veg",
+       "grams": 7
+      },
+      {
+       "foodId": "cmrj2t6oc0013wlwsjzlwoln2",
+       "name": "Carrots",
+       "role": "veg",
+       "grams": 25
+      },
+      {
+       "foodId": "cmrj2t8j1009iwlwsgxkwl2j2",
+       "name": "Beetroot",
+       "role": null,
+       "grams": 20
+      },
+      {
+       "foodId": "cmrj2t7cs0043wlws7x1anr7j",
+       "name": "Cabbage",
+       "role": "veg",
+       "grams": 85
+      },
+      {
+       "foodId": "cmrj2t77l003fwlwsbbp9mdns",
+       "name": "Mayonnaise",
+       "role": "fat",
+       "grams": 6
+      },
+      {
+       "foodId": "cmrj2t7p5005pwlws4acmktnt",
+       "name": "Greek Yogurt",
+       "role": null,
+       "grams": 7
+      },
+      {
+       "foodId": "cmrj2t89n008awlwskkkc8vj3",
+       "name": "Cumin Seeds",
+       "role": null,
+       "grams": 1
+      }
+     ],
+     "kcal": 854.93,
+     "protein": 65.55330000000002,
+     "fat": 58.4282,
+     "carb": 14.7244,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrj2tlrj02qxwlws7c0t2do4",
+      "name": "Piri-piri chicken and slaw",
+      "description": null,
+      "steps": [
+       "STEP 1",
+       "Whizz together all of the marinade ingredients in a small food processor. Rub the marinade onto the chicken and leave for 1 hour at room temperature.",
+       "STEP 2",
+       "Heat the oven to 190C/fan 170C/gas 5. Put the chicken in a roasting tray and cook for 1 hour 20 minutes. Rest under loose foil for 20 minutes. While the chicken is resting, mix together the slaw ingredients and season. Serve the chicken with slaw, fries and condiments."
+      ],
+      "slotType": "meal",
+      "cuisine": "western-comfort",
+      "prepTimeMin": 30,
+      "source": "themealdb-import",
+      "mealCategory": null,
+      "kcal": 958.5145,
+      "protein": 73.36146000000001,
+      "fat": 65.4225425,
+      "carb": 16.696365,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 11.36,
+      "difficulty": 5,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-13T10:25:30.992Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z1vil04q5wlgw9patug44",
+     "planId": "cms7z1vcg04pvwlgwysoy7w6j",
+     "dayOfWeek": 3,
+     "slotType": "meal",
+     "slotIndex": 4,
+     "recipeId": "cmrj2td5300ttwlwszao8ubba",
+     "proteinScale": 0.68,
+     "sidesScale": 0.94,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t6is000ewlwsmzadlvxo",
+       "name": "Beef",
+       "role": "protein",
+       "grams": 255
+      },
+      {
+       "foodId": "cmrj2t6ps001awlws98yh350y",
+       "name": "Beef Stock Concentrate",
+       "role": "other",
+       "grams": 25
+      },
+      {
+       "foodId": "cmrj2t6pz001bwlwsbarwpyy1",
+       "name": "Tomato Puree",
+       "role": "veg",
+       "grams": 55
+      },
+      {
+       "foodId": "cmrj2t6hb0007wlwsh6l6ynal",
+       "name": "Water",
+       "role": null,
+       "grams": 170
+      },
+      {
+       "foodId": "cmrj2t6ls000rwlwsf7bu3ffs",
+       "name": "Soy Sauce",
+       "role": "carb",
+       "grams": 13
+      },
+      {
+       "foodId": "cmrj2t6q7001cwlws8jhsso6r",
+       "name": "White Wine Vinegar",
+       "role": "carb",
+       "grams": 3
+      },
+      {
+       "foodId": "cmrj2t6gl0004wlws73buybhw",
+       "name": "Pepper",
+       "role": null,
+       "grams": 5
+      },
+      {
+       "foodId": "cmrj2t6qh001dwlws2ramsws8",
+       "name": "Bay Leaf",
+       "role": null,
+       "grams": 1
+      },
+      {
+       "foodId": "cmrj2t6qp001ewlwsds5bbm29",
+       "name": "Lemon",
+       "role": "veg",
+       "grams": 7
+      },
+      {
+       "foodId": "cmrj2t6qw001fwlwszwir0gt7",
+       "name": "Tomato Sauce",
+       "role": "veg",
+       "grams": 5
+      },
+      {
+       "foodId": "cmrevpcnz000mwl5g62fmfzqk",
+       "name": "Butter",
+       "role": "fat",
+       "grams": 10
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 25
+      },
+      {
+       "foodId": "cmrg8zxar000lwli0qy2ovmx4",
+       "name": "Onion",
+       "role": "veg",
+       "grams": 25
+      },
+      {
+       "foodId": "cmrj2t6ft0001wlwstiofk9on",
+       "name": "Garlic",
+       "role": "veg",
+       "grams": 3
+      }
+     ],
+     "kcal": 989.66,
+     "protein": 76.661,
+     "fat": 67.79375,
+     "carb": 17.2439,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrj2td5300ttwlwszao8ubba",
+      "name": "Beef Asado",
+      "description": null,
+      "steps": [
+       "Combine beef, crushed peppercorn, soy sauce, vinegar, dried bay leaves, lemon, and tomato sauce. Mix well. Marinate beef for at least 30 minutes.",
+       "Put the marinated beef in a cooking pot along with remaining marinade. Add water. Let boil.",
+       "Add Knorr Beef Cube. Stir. Cover the pot and cook for 40 minutes in low heat.",
+       "Turn the beef over. Add tomato paste. Continue cooking until beef tenderizes. Set aside.",
+       "Heat oil in a pan. Fry the potato until it browns. Turn over and continue frying the opposite side. Remove from the pan and place on a clean plate. Do the same with the carrots.",
+       "Save 3 tablespoons of cooking oil from the pan where the potato was fried. Saute onion and garlic until onion softens.",
+       "Pour-in the sauce from the beef stew. Let boil. Add the beef. Cook for 2 minutes.",
+       "Add butter and let it melt. Continue cooking until the sauce reduces to half."
+      ],
+      "slotType": "meal",
+      "cuisine": "western-comfort",
+      "prepTimeMin": 39,
+      "source": "themealdb-import",
+      "mealCategory": null,
+      "kcal": 1291.426,
+      "protein": 109.255585,
+      "fat": 86.11798999999999,
+      "carb": 17.0201625,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 18.41,
+      "difficulty": 7,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-13T10:25:19.816Z",
+      "createdByUserId": null
+     }
+    }
+   ],
+   "groceryList": null,
+   "meta": {
+    "matchPct": 88,
+    "attempts": 5,
+    "score": {
+     "daysInTolerance": 0,
+     "avgMatch": 88,
+     "days": [
+      {
+       "dayOfWeek": 3,
+       "dayName": "Thursday",
+       "matchPct": 88,
+       "totals": {
+        "kcal": 4257,
+        "protein": 332,
+        "fat": 298,
+        "carb": 63
+       },
+       "kcalDeltaPct": 0,
+       "proteinShortPct": 0,
+       "fatOk": true,
+       "carbOk": false,
+       "inTolerance": false,
+       "miss": "63 g carbs vs a 10–30 g range — 33 g over",
+       "unfilledSlots": 0,
+       "warnedSlots": 0,
+       "proteinFloor": {
+        "met": true,
+        "floorG": 316,
+        "achievedG": 331.6,
+        "shortG": 0,
+        "shortPct": 0,
+        "reason": null
+       },
+       "windowIndex": 0,
+       "dayIndex": 0,
+       "key": "0:3"
+      }
+     ],
+     "totalDays": 1,
+     "floorDaysMet": 1,
+     "floorDaysTotal": 1
+    },
+    "days": [
+     {
+      "dayOfWeek": 3,
+      "dayName": "Thursday",
+      "matchPct": 88,
+      "totals": {
+       "kcal": 4257,
+       "protein": 332,
+       "fat": 298,
+       "carb": 63
+      },
+      "kcalDeltaPct": 0,
+      "proteinShortPct": 0,
+      "fatOk": true,
+      "carbOk": false,
+      "inTolerance": false,
+      "miss": "63 g carbs vs a 10–30 g range — 33 g over",
+      "unfilledSlots": 0,
+      "warnedSlots": 0,
+      "proteinFloor": {
+       "met": true,
+       "floorG": 316,
+       "achievedG": 331.6,
+       "shortG": 0,
+       "shortPct": 0,
+       "reason": null
+      },
+      "windowIndex": 0,
+      "dayIndex": 0,
+      "key": "0:3"
+     }
+    ],
+    "diagnosis": {
+     "feasible": false,
+     "reasons": [
+      "1 day(s) landed outside your 10–30 g carb range — portion scaling moves a dish's calories, not its fat/carb ratio, so the pool's composition is what binds here."
+     ],
+     "suggestions": [
+      "Add (or AI-generate) a few recipes built around the macro you keep missing, or drop the cuisine/protein preference so the solver can reach dishes that carry it."
+     ],
+     "binding": {
+      "key": "macro-composition",
+      "label": "carbs in your recipe pool",
+      "detail": "1 of 1 day(s) landed outside your 10-30 g carb range. Portion scaling moves a dish's calories, not its fat/carb ratio, so what binds here is which dishes your rules leave in the pool. Calories and protein landed on target on every day — it is composition, not portion size, that is short."
+     }
+    },
+    "poolCounts": {
+     "raw": 910,
+     "afterDiet": 53,
+     "afterPrep": 53,
+     "afterStack": 53,
+     "stackExplain": null
+    },
+    "variety": {
+     "mealEligible": 49,
+     "usableForSlot": 32,
+     "slotKcal": 851,
+     "snackEligible": 4,
+     "weeklyMealSlots": 35,
+     "weeklySnackSlots": 0,
+     "repeatCap": 2,
+     "distinctWeeks": 0.9,
+     "horizonWeeks": 1,
+     "sustainsHorizon": false,
+     "notes": [
+      "32 of your 49 compliant recipes can be portioned to a 851 kcal meal — about 0.9 week(s) of 35 meals before dishes start repeating, so over 1 weeks you will see favourites come back.",
+      "1 day: 5 distinct dish(es) across 5 filled slot(s); most-repeated dish appears 1x against a 2x cap for this horizon (2x per week)."
+     ],
+     "horizon": {
+      "weeks": 1,
+      "days": 1,
+      "perWeekCap": 2,
+      "horizonRepeatCap": 2,
+      "mealSlots": 5,
+      "snackSlots": 0,
+      "totalSlots": 5,
+      "distinctFloor": 3,
+      "distinctRecipes": 5,
+      "maxRepeat": 1,
+      "maxRepeatRecipeId": "cmrj2tggn01jtwlwsfpr46mf4",
+      "lockedRepeatsOfMax": 0,
+      "filledSlots": 5,
+      "unfilledSlots": 0,
+      "requiredDistinct": 3,
+      "capHeld": true,
+      "floorHeld": true
+     }
+    },
+    "priorWeeksConsidered": 0,
+    "horizon": {
+     "key": "day",
+     "label": "1 day",
+     "days": 1,
+     "kind": "days",
+     "weeks": 1,
+     "custom": false,
+     "startDate": "2026-07-30",
+     "endDate": "2026-07-30",
+     "startDayOfWeek": 3,
+     "weeksWritten": 1,
+     "solveMs": 1,
+     "weekPlans": [
+      {
+       "startDate": "2026-07-27",
+       "dayIndices": [
+        3
+       ],
+       "days": 1,
+       "daysInTolerance": 0,
+       "avgMatch": 88,
+       "unfilledSlots": 0,
+       "poolSize": 53
+      }
+     ]
+    }
+   }
+  }
+ }
+}

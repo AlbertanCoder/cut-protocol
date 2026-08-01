@@ -1,0 +1,518 @@
+{
+ "persona": {
+  "idx": 11,
+  "id": "p011",
+  "tier": "EASY",
+  "displayName": "office worker, 76",
+  "story": "office worker, 76, male, 171 cm / 127.6 kg (BMI 43.6), cut at 0.5 lb/wk, low-FODMAP diet, avoiding soy, beef, balanced, 3 meals + 0 snacks, wants a single day",
+  "profile": {
+   "sex": "M",
+   "age": 76,
+   "heightCm": 171,
+   "startWeightKg": 127.6,
+   "goalWeightKg": 115.8,
+   "occupationKey": "desk-office",
+   "trainingStyle": "weights",
+   "minutesPerSession": 45,
+   "sessionsPerWeek": 3,
+   "rateLbPerWeek": 0.5,
+   "dietaryStyle": null,
+   "excludedFoods": [
+    "soy",
+    "beef"
+   ],
+   "mealsPerDay": 3,
+   "snacksPerDay": 0,
+   "unitPref": "imperial",
+   "bodyFatPct": 15,
+   "bodyFatSource": "visual-estimate"
+  },
+  "filters": {
+   "maxPrepMin": 30,
+   "budget": "premium"
+  },
+  "horizon": "day",
+  "walls": [
+   "soy",
+   "beef"
+  ],
+  "freeTextExclusions": [
+   "beef"
+  ],
+  "dietaryStyle": null,
+  "bmi": 43.6,
+  "goalKind": "cut",
+  "macroStyle": "balanced",
+  "requestedButUnsupported": [
+   "low-FODMAP is not a dietary style; expressed instead as free-text exclusions (onion, garlic, wheat)"
+  ],
+  "tupleKey": "[\"EASY\",\"M\",76,171,127.6,115.8,\"desk-office\",\"weights\",0.5,null,[\"beef\",\"soy\"],3,0,\"balanced\",\"day\",30,\"premium\",null,null,null]"
+ },
+ "request": {
+  "horizon": "day",
+  "filters": {
+   "maxPrepMin": 30,
+   "budget": "premium"
+  }
+ },
+ "profileResponse": {
+  "id": "cms6x0a3800q7wlw0cepqsjjs",
+  "userId": "cms6x09st0005wl2o9a81u8ba",
+  "sex": "M",
+  "age": 76,
+  "heightCm": 171,
+  "bodyFatPct": 15,
+  "bodyFatSource": "visual-estimate",
+  "occupationKey": "desk-office",
+  "activityOverride": null,
+  "sessionsPerWeek": 3,
+  "trainingStyle": "weights",
+  "minutesPerSession": 45,
+  "startWeightKg": 127.6,
+  "goalWeightKg": 115.8,
+  "startDate": "2026-07-29",
+  "unitPref": "imperial",
+  "rateLbPerWeek": 0.5,
+  "rateAcknowledged": false,
+  "floorKcal": null,
+  "excludedFormulas": [],
+  "targetKcal": 2777,
+  "mealsPerDay": 3,
+  "snacksPerDay": 0,
+  "excludedFoods": [
+   "soy",
+   "beef"
+  ],
+  "dietaryStyle": null,
+  "cuisinePreferences": [],
+  "mealPreferencesNote": null,
+  "maxPrepMin": null,
+  "budgetTier": null,
+  "allowBatch": null,
+  "maxComplexity": null,
+  "adaptiveTdee": true,
+  "proteinPriorityMode": false,
+  "updatedAt": "2026-07-30T02:49:13.018Z"
+ },
+ "generate": {
+  "status": 200,
+  "ms": 273,
+  "body": {
+   "id": "cms6x0ac100qlwlw0tgfcwyza",
+   "userId": "cms6x09st0005wl2o9a81u8ba",
+   "startDate": "2026-07-27",
+   "createdAt": "2026-07-30T02:49:13.297Z",
+   "slots": [
+    {
+     "id": "cms6x0ac200qpwlw0pyuzo6df",
+     "planId": "cms6x0ac100qlwlw0tgfcwyza",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 0,
+     "recipeId": "cmrj2u84807p6wlwsltuavhf7",
+     "proteinScale": 1.03,
+     "sidesScale": 1.17,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "carb",
+       "grams": 16
+      },
+      {
+       "foodId": "cmrg8zxar000lwli0qy2ovmx4",
+       "name": "Onion",
+       "role": "veg",
+       "grams": 30
+      },
+      {
+       "foodId": "cmrj2t8nb00a1wlwslv2l5bf2",
+       "name": "Jersey Royal Potatoes",
+       "role": "veg",
+       "grams": 85
+      },
+      {
+       "foodId": "cmrj2t6ft0001wlwstiofk9on",
+       "name": "Garlic",
+       "role": "veg",
+       "grams": 2
+      },
+      {
+       "foodId": "cmrj2t6wp0025wlwsvl5esd2h",
+       "name": "Egg",
+       "role": "protein",
+       "grams": 105
+      },
+      {
+       "foodId": "cmrj2t6h10006wlwslufza94y",
+       "name": "Parsley",
+       "role": null,
+       "grams": 3
+      },
+      {
+       "foodId": "cmrj2tax800iowlwsnqv5ylcj",
+       "name": "Salt Cod",
+       "role": "protein",
+       "grams": 80
+      }
+     ],
+     "kcal": 821.74,
+     "protein": 85.5265,
+     "fat": 28.3148,
+     "carb": 53.8459,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrj2u84807p6wlwsltuavhf7",
+      "name": "Salt cod tortilla",
+      "description": null,
+      "steps": [
+       "step 1",
+       "Heat half the oil in a frying pan, and sauté the onion over a medium heat until soft and pale gold – this will take about 8 mins. Remove from the pan, set aside, and add the potatoes to the pan. Cook until they are tender but not falling apart, carefully turning every so often. Cover the pan some of the time to help the slices cook through. Add the onions back to the pan along with the garlic and cook for another 4 mins. Tip into a bowl with the eggs, parsley and some seasoning and mix together. Leave to sit for half an hour.",
+       "step 2",
+       "Meanwhile, put the cod in a saucepan and cover with water. Bring up to a simmer. Remove from the heat, cover and leave for 10 mins. Drain, leave to cool and remove the skin and any bones. Break into large flakes and add to the potato and egg mixture.",
+       "step 3",
+       "Heat the rest of the oil in a non-stick frying pan. Pour in the tortilla mix and cook over a medium-low heat until it is just set and coming away from the sides of the pan. You might need to cover it to help the centre set. Be careful not to overcook it. Put a spatula underneath the tortilla every so often to make sure it isn’t sticking. Slide the tortilla onto a plate, then put the pan on top and flip the tortilla into it, uncooked side-down. Cook over a low heat until golden, or grill until just set. Leave to cool a little before serving."
+      ],
+      "slotType": "meal",
+      "cuisine": "western-comfort",
+      "prepTimeMin": 29,
+      "source": "themealdb-import",
+      "mealCategory": null,
+      "kcal": 743.9,
+      "protein": 79.1,
+      "fat": 25.3,
+      "carb": 47.6,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 4.95,
+      "difficulty": 3,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-13T10:25:59.961Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x0ac300qrwlw0kq9hje1r",
+     "planId": "cms6x0ac100qlwlw0tgfcwyza",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 1,
+     "recipeId": "cmrul79wy008iwl80vlvcivmq",
+     "proteinScale": 2,
+     "sidesScale": 2,
+     "ingredients": [
+      {
+       "foodId": "cmrfoyrjh0009wl08cmcid51m",
+       "name": "Turkey breast, low salt, prepackaged or deli, luncheon meat",
+       "role": "protein",
+       "grams": 340
+      },
+      {
+       "foodId": "cmrj2t88z0087wlwsmsmchxzb",
+       "name": "Quinoa",
+       "role": "carb",
+       "grams": 220
+      },
+      {
+       "foodId": "cmrevpcnl000jwl5gnqnk630b",
+       "name": "Cucumber",
+       "role": "veg",
+       "grams": 180
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 697.5999999999999,
+     "protein": 84.86200000000001,
+     "fat": 12.334,
+     "carb": 62.682,
+     "warning": "Tried 5 recipe(s) for this slot, none fit within tolerance — closest was \"High-Protein Turkey & Cucumber with Quinoa\" (landed 698 kcal vs a 909 target).",
+     "locked": false,
+     "recipe": {
+      "id": "cmrul79wy008iwl80vlvcivmq",
+      "name": "High-Protein Turkey & Cucumber with Quinoa",
+      "description": null,
+      "steps": [
+       "Cook the turkey.",
+       "Serve over quinoa with cucumber."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 371.3,
+      "protein": 42.4,
+      "fat": 8.7,
+      "carb": 31.3,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 7.32,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:45:29.842Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x0ac300qtwlw06cd2g8pn",
+     "planId": "cms6x0ac100qlwlw0tgfcwyza",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 2,
+     "recipeId": "cmrj2tx4t059dwlwsq2m2igyb",
+     "proteinScale": 2,
+     "sidesScale": 0.5,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t9z700f1wlwsb36u0abl",
+       "name": "Lamb",
+       "role": "protein",
+       "grams": 500
+      },
+      {
+       "foodId": "cmrg8zxar000lwli0qy2ovmx4",
+       "name": "Onion",
+       "role": "veg",
+       "grams": 30
+      },
+      {
+       "foodId": "cmrj2ta1w00fbwlws69su3wpp",
+       "name": "Garlic Bulb",
+       "role": "veg",
+       "grams": 13
+      },
+      {
+       "foodId": "cmrj2t7ws006owlwsp3fhnnvo",
+       "name": "Garam Masala",
+       "role": null,
+       "grams": 7
+      },
+      {
+       "foodId": "cmrj2t74b0031wlwsgf5ra3ry",
+       "name": "Coriander",
+       "role": null,
+       "grams": 13
+      },
+      {
+       "foodId": "cmrj2ta2600fcwlwse2x6iklf",
+       "name": "Chilli Sauce",
+       "role": "carb",
+       "grams": 1
+      },
+      {
+       "foodId": "cmrj2t7jl004zwlwsrm2hcuhy",
+       "name": "Pita Bread",
+       "role": "carb",
+       "grams": 100
+      },
+      {
+       "foodId": "cmrj2t6ik000dwlwsj8e736h1",
+       "name": "Tomato",
+       "role": "veg",
+       "grams": 15
+      },
+      {
+       "foodId": "cmrj2ta2f00fdwlwsyvft4812",
+       "name": "Red Cabbage",
+       "role": "veg",
+       "grams": 6
+      },
+      {
+       "foodId": "cmrj2t6vv0021wlwsx5wv83r4",
+       "name": "Red Onions",
+       "role": "veg",
+       "grams": 4
+      },
+      {
+       "foodId": "cmrj2t87g0080wlwso959mcx5",
+       "name": "Yogurt",
+       "role": null,
+       "grams": 13
+      }
+     ],
+     "kcal": 1366.41,
+     "protein": 116.0383,
+     "fat": 65.0527,
+     "carb": 80.4044,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrj2tx4t059dwlwsq2m2igyb",
+      "name": "kofta burgers",
+      "description": null,
+      "steps": [
+       "step 1",
+       "Tip the mince into a large bowl (use a clean washing-up bowl if you don’t have anything big enough) with all the other burger ingredients and a good pinch of salt. Roll up your sleeves, get your hands into the mix and squelch everything together through your fingers until completely mixed. Pat the mix into 16 small burgers. These may now be frozen for up to 1 month or chilled up to a day ahead.",
+       "step 2",
+       "To cook, heat grill to its highest setting and lay the burgers in a single layer on a baking tray (you may need to do this in batches, depending on how big your tray is). Grill on the highest shelf for 5-6 mins on each side until browned and cooked through. Pile burgers onto a platter and serve with all the accompaniments, so everyone can construct their own sandwich."
+      ],
+      "slotType": "meal",
+      "cuisine": "middle-eastern",
+      "prepTimeMin": 26,
+      "source": "themealdb-import",
+      "mealCategory": null,
+      "kcal": 1282.4,
+      "protein": 79.7,
+      "fat": 37.1,
+      "carb": 160.1,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 14.97,
+      "difficulty": 4,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-13T10:25:45.725Z",
+      "createdByUserId": null
+     }
+    }
+   ],
+   "groceryList": null,
+   "meta": {
+    "matchPct": 93,
+    "attempts": 5,
+    "score": {
+     "daysInTolerance": 1,
+     "avgMatch": 93,
+     "days": [
+      {
+       "dayOfWeek": 2,
+       "dayName": "Wednesday",
+       "matchPct": 93,
+       "totals": {
+        "kcal": 2886,
+        "protein": 286,
+        "fat": 106,
+        "carb": 197
+       },
+       "kcalDeltaPct": 3.9,
+       "proteinShortPct": 0,
+       "fatOk": true,
+       "carbOk": true,
+       "inTolerance": true,
+       "miss": null,
+       "unfilledSlots": 0,
+       "warnedSlots": 1,
+       "windowIndex": 0,
+       "dayIndex": 0,
+       "key": "0:2"
+      }
+     ],
+     "totalDays": 1
+    },
+    "days": [
+     {
+      "dayOfWeek": 2,
+      "dayName": "Wednesday",
+      "matchPct": 93,
+      "totals": {
+       "kcal": 2886,
+       "protein": 286,
+       "fat": 106,
+       "carb": 197
+      },
+      "kcalDeltaPct": 3.9,
+      "proteinShortPct": 0,
+      "fatOk": true,
+      "carbOk": true,
+      "inTolerance": true,
+      "miss": null,
+      "unfilledSlots": 0,
+      "warnedSlots": 1,
+      "windowIndex": 0,
+      "dayIndex": 0,
+      "key": "0:2"
+     }
+    ],
+    "diagnosis": null,
+    "poolCounts": {
+     "raw": 889,
+     "afterDiet": 649,
+     "afterPrep": 448,
+     "afterStack": 448,
+     "stackExplain": null
+    },
+    "variety": {
+     "mealEligible": 372,
+     "usableForSlot": 78,
+     "slotKcal": 926,
+     "snackEligible": 6,
+     "weeklyMealSlots": 21,
+     "weeklySnackSlots": 0,
+     "repeatCap": 2,
+     "distinctWeeks": 3.7,
+     "horizonWeeks": 1,
+     "sustainsHorizon": true,
+     "notes": [
+      "1 day: 3 distinct dish(es) across 3 filled slot(s); most-repeated dish appears 1x against a 2x cap for this horizon (2x per week)."
+     ],
+     "horizon": {
+      "weeks": 1,
+      "days": 1,
+      "perWeekCap": 2,
+      "horizonRepeatCap": 2,
+      "mealSlots": 3,
+      "snackSlots": 0,
+      "totalSlots": 3,
+      "distinctFloor": 2,
+      "distinctRecipes": 3,
+      "maxRepeat": 1,
+      "maxRepeatRecipeId": "cmrj2u84807p6wlwsltuavhf7",
+      "lockedRepeatsOfMax": 0,
+      "filledSlots": 3,
+      "unfilledSlots": 0,
+      "requiredDistinct": 2,
+      "capHeld": true,
+      "floorHeld": true
+     }
+    },
+    "priorWeeksConsidered": 0,
+    "horizon": {
+     "key": "day",
+     "label": "1 day",
+     "days": 1,
+     "kind": "days",
+     "weeks": 1,
+     "custom": false,
+     "startDate": "2026-07-29",
+     "endDate": "2026-07-29",
+     "startDayOfWeek": 2,
+     "weeksWritten": 1,
+     "solveMs": 7,
+     "weekPlans": [
+      {
+       "startDate": "2026-07-27",
+       "dayIndices": [
+        2
+       ],
+       "days": 1,
+       "daysInTolerance": 1,
+       "avgMatch": 93,
+       "unfilledSlots": 0,
+       "poolSize": 448
+      }
+     ]
+    }
+   }
+  }
+ }
+}

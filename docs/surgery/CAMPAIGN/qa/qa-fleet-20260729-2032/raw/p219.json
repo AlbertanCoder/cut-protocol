@@ -1,0 +1,655 @@
+{
+ "persona": {
+  "idx": 219,
+  "id": "p219",
+  "tier": "IMPOSSIBLE",
+  "displayName": "electrician, 68",
+  "story": "wants 2 lb/wk off a small frame at the calorie floor, with gluten, dairy and soy all walled off and nothing over 15 minutes to cook",
+  "profile": {
+   "sex": "M",
+   "age": 68,
+   "heightCm": 193,
+   "startWeightKg": 161.9,
+   "goalWeightKg": 173.9,
+   "occupationKey": "electrician",
+   "trainingStyle": "weights",
+   "minutesPerSession": 45,
+   "sessionsPerWeek": 3,
+   "rateLbPerWeek": 2,
+   "dietaryStyle": "vegan",
+   "excludedFoods": [
+    "gluten",
+    "dairy",
+    "soy"
+   ],
+   "mealsPerDay": 5,
+   "snacksPerDay": 1,
+   "unitPref": "imperial",
+   "bodyFatPct": 20,
+   "bodyFatSource": "visual-estimate",
+   "rateAcknowledged": true,
+   "floorKcal": 1500
+  },
+  "filters": {
+   "maxPrepMin": 15,
+   "proteinPriority": true
+  },
+  "horizon": "day",
+  "walls": [
+   "gluten",
+   "dairy",
+   "soy"
+  ],
+  "freeTextExclusions": [],
+  "dietaryStyle": "vegan",
+  "bmi": 43.5,
+  "goalKind": "lean bulk",
+  "macroStyle": "low-carb",
+  "requestedButUnsupported": [
+   "wanted a low-carb split without full keto; carbs are the leftover after LBM-derived protein and fat, and only dietaryStyle:\"keto\" changes that",
+   "this request is mathematically unsatisfiable by design — a clear, fast, honest refusal is the pass condition, and a confident plan is a critical honesty defect"
+  ],
+  "impossibleKind": "floor-vs-rate",
+  "tupleKey": "[\"IMPOSSIBLE\",\"M\",68,193,161.9,173.9,\"electrician\",\"weights\",2,\"vegan\",[\"dairy\",\"gluten\",\"soy\"],5,1,\"low-carb\",\"day\",15,null,true,null,\"floor-vs-rate\"]"
+ },
+ "request": {
+  "horizon": "day",
+  "filters": {
+   "maxPrepMin": 15,
+   "proteinPriority": true
+  }
+ },
+ "profileResponse": {
+  "id": "cms6x1rqj05fbwlw0ly4zrq3q",
+  "userId": "cms6x1rhw005xwl2oww2a3pwg",
+  "sex": "M",
+  "age": 68,
+  "heightCm": 193,
+  "bodyFatPct": 20,
+  "bodyFatSource": "visual-estimate",
+  "occupationKey": "electrician",
+  "activityOverride": null,
+  "sessionsPerWeek": 3,
+  "trainingStyle": "weights",
+  "minutesPerSession": 45,
+  "startWeightKg": 161.9,
+  "goalWeightKg": 173.9,
+  "startDate": "2026-07-29",
+  "unitPref": "imperial",
+  "rateLbPerWeek": 2,
+  "rateAcknowledged": false,
+  "floorKcal": 1500,
+  "excludedFormulas": [],
+  "targetKcal": 3302,
+  "mealsPerDay": 5,
+  "snacksPerDay": 1,
+  "excludedFoods": [
+   "gluten",
+   "dairy",
+   "soy"
+  ],
+  "dietaryStyle": "vegan",
+  "cuisinePreferences": [],
+  "mealPreferencesNote": null,
+  "maxPrepMin": null,
+  "budgetTier": null,
+  "allowBatch": null,
+  "maxComplexity": null,
+  "adaptiveTdee": true,
+  "proteinPriorityMode": false,
+  "updatedAt": "2026-07-30T02:50:22.712Z"
+ },
+ "generate": {
+  "status": 200,
+  "ms": 247,
+  "body": {
+   "id": "cms6x1s6t05ftwlw00q81alny",
+   "userId": "cms6x1rhw005xwl2oww2a3pwg",
+   "startDate": "2026-07-27",
+   "createdAt": "2026-07-30T02:50:23.094Z",
+   "slots": [
+    {
+     "id": "cms6x1s6v05fvwlw0bx3trcap",
+     "planId": "cms6x1s6t05ftwlw00q81alny",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 0,
+     "recipeId": "cmrujkwrx005cwl9onadkd1nk",
+     "proteinScale": 2,
+     "sidesScale": 0.5,
+     "ingredients": [
+      {
+       "foodId": "cmrj2tblh00l9wlws3etotpfc",
+       "name": "Lentils",
+       "role": "protein",
+       "grams": 360
+      },
+      {
+       "foodId": "cmrj2t7fb004fwlws8ezof2dp",
+       "name": "Russet Potato",
+       "role": "carb",
+       "grams": 90
+      },
+      {
+       "foodId": "cmrg8zxar000lwli0qy2ovmx4",
+       "name": "Onion",
+       "role": "veg",
+       "grams": 30
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 10
+      }
+     ],
+     "kcal": 785.1,
+     "protein": 32.865,
+     "fat": 34.843,
+     "carb": 89.38199999999999,
+     "warning": "Tried 5 recipe(s) for this slot, none fit within tolerance — closest was \"Spiced Lentils & Onions with Potato\" (landed 785 kcal vs a 545 target; delivered 33g protein vs a 56g target).",
+     "locked": false,
+     "recipe": {
+      "id": "cmrujkwrx005cwl9onadkd1nk",
+      "name": "Spiced Lentils & Onions with Potato",
+      "description": null,
+      "steps": [
+       "Cook the lentils.",
+       "Serve with potato and onions."
+      ],
+      "slotType": "meal",
+      "cuisine": "indian",
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 583.8,
+      "protein": 20.5,
+      "fat": 22.6,
+      "carb": 77.8,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 1.47,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:00:06.766Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x1s6w05fxwlw02yhbwd4o",
+     "planId": "cms6x1s6t05ftwlw00q81alny",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 1,
+     "recipeId": "cmrujhgxn000iwlbogvmutbp7",
+     "proteinScale": 2,
+     "sidesScale": 0.5,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t6hy000awlwshh4r4w95",
+       "name": "Black Beans",
+       "role": "protein",
+       "grams": 380
+      },
+      {
+       "foodId": "cmrevpcn2000ewl5gmlyzu0vd",
+       "name": "White rice, cooked",
+       "role": "carb",
+       "grams": 75
+      },
+      {
+       "foodId": "cmrevpcnh000iwl5gh2zjhyqe",
+       "name": "Bell peppers",
+       "role": "veg",
+       "grams": 40
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 4
+      }
+     ],
+     "kcal": 833.6999999999999,
+     "protein": 33.699,
+     "fat": 30.983,
+     "carb": 107,
+     "warning": "Tried 5 recipe(s) for this slot, none fit within tolerance — closest was \"Black Bean Burrito Bowl\" (landed 834 kcal vs a 553 target; delivered 34g protein vs a 68g target).",
+     "locked": false,
+     "recipe": {
+      "id": "cmrujhgxn000iwlbogvmutbp7",
+      "name": "Black Bean Burrito Bowl",
+      "description": null,
+      "steps": [
+       "Warm the beans and peppers.",
+       "Pile over rice."
+      ],
+      "slotType": "meal",
+      "cuisine": "mexican",
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 635.7,
+      "protein": 20.5,
+      "fat": 22,
+      "carb": 88.6,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 1.76,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T10:57:26.267Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x1s6w05fzwlw0rmbd3ybu",
+     "planId": "cms6x1s6t05ftwlw00q81alny",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 2,
+     "recipeId": "cmrujhgyk001ywlbomxh6qzyb",
+     "proteinScale": 2,
+     "sidesScale": 0.5,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t88z0087wlwsmsmchxzb",
+       "name": "Quinoa",
+       "role": "carb",
+       "grams": 75
+      },
+      {
+       "foodId": "cmrj2t6hy000awlwshh4r4w95",
+       "name": "Black Beans",
+       "role": "protein",
+       "grams": 300
+      },
+      {
+       "foodId": "cmrevpcnh000iwl5gh2zjhyqe",
+       "name": "Bell peppers",
+       "role": "veg",
+       "grams": 40
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 690.4,
+     "protein": 28.39,
+     "fat": 27.59,
+     "carb": 84.375,
+     "warning": "Tried 5 recipe(s) for this slot, none fit within tolerance — closest was \"Quinoa & Black Bean Salad\" (landed 690 kcal vs a 474 target; delivered 28g protein vs a 77g target).",
+     "locked": false,
+     "recipe": {
+      "id": "cmrujhgyk001ywlbomxh6qzyb",
+      "name": "Quinoa & Black Bean Salad",
+      "description": null,
+      "steps": [
+       "Combine cooled quinoa and beans.",
+       "Fold in peppers and dress."
+      ],
+      "slotType": "meal",
+      "cuisine": "mexican",
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 566.3,
+      "protein": 19.7,
+      "fat": 23.6,
+      "carb": 69.8,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 2.7,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T10:57:26.301Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x1s6x05g1wlw0fhmvg7fl",
+     "planId": "cms6x1s6t05ftwlw00q81alny",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 3,
+     "recipeId": "cmrujhgxv000uwlbogy85v7mn",
+     "proteinScale": 0.93,
+     "sidesScale": 0.93,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t9dj00cswlwsn2mrylyl",
+       "name": "Oats",
+       "role": "carb",
+       "grams": 75
+      },
+      {
+       "foodId": "cmrj2t9my00drwlwsm6w2cud1",
+       "name": "Blueberries",
+       "role": "fruit",
+       "grams": 75
+      },
+      {
+       "foodId": "cmrevpco3000nwl5g1d51b3it",
+       "name": "Almonds",
+       "role": "fat",
+       "grams": 17
+      }
+     ],
+     "kcal": 428.96,
+     "protein": 13.995,
+     "fat": 14.0325,
+     "carb": 65.29500000000002,
+     "warning": "Tried 5 recipe(s) for this slot, none fit within tolerance — closest was \"Overnight Oats, Blueberries & Almonds\" (delivered 14g protein vs a 81g target).",
+     "locked": false,
+     "recipe": {
+      "id": "cmrujhgxv000uwlbogy85v7mn",
+      "name": "Overnight Oats, Blueberries & Almonds",
+      "description": null,
+      "steps": [
+       "Soak oats overnight.",
+       "Top with berries and almonds."
+      ],
+      "slotType": "meal",
+      "cuisine": "american",
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 456.8,
+      "protein": 14.9,
+      "fat": 14.9,
+      "carb": 69.6,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 1.56,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T10:57:26.275Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x1s6y05g3wlw0twwsoj6q",
+     "planId": "cms6x1s6t05ftwlw00q81alny",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 4,
+     "recipeId": "cmrujkwrt0056wl9otf9oitr5",
+     "proteinScale": 2,
+     "sidesScale": 0.5,
+     "ingredients": [
+      {
+       "foodId": "cmrj2tblh00l9wlws3etotpfc",
+       "name": "Lentils",
+       "role": "protein",
+       "grams": 360
+      },
+      {
+       "foodId": "cmrevpcn2000ewl5gmlyzu0vd",
+       "name": "White rice, cooked",
+       "role": "carb",
+       "grams": 80
+      },
+      {
+       "foodId": "cmrevpcnh000iwl5gh2zjhyqe",
+       "name": "Bell peppers",
+       "role": "veg",
+       "grams": 40
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 10
+      }
+     ],
+     "kcal": 804,
+     "protein": 32.728,
+     "fat": 35.056,
+     "carb": 92.12,
+     "warning": "Tried 5 recipe(s) for this slot, none fit within tolerance — closest was \"Spiced Lentils & Bell Peppers with Rice\" (landed 804 kcal vs a 488 target; delivered 33g protein vs a 94g target).",
+     "locked": false,
+     "recipe": {
+      "id": "cmrujkwrt0056wl9otf9oitr5",
+      "name": "Spiced Lentils & Bell Peppers with Rice",
+      "description": null,
+      "steps": [
+       "Cook the lentils.",
+       "Serve with white rice and bell peppers."
+      ],
+      "slotType": "meal",
+      "cuisine": "indian",
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 621.6,
+      "protein": 20.2,
+      "fat": 23.1,
+      "carb": 83.3,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 1.78,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:00:06.762Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x1s6y05g5wlw0mzfj0u1q",
+     "planId": "cms6x1s6t05ftwlw00q81alny",
+     "dayOfWeek": 2,
+     "slotType": "snack",
+     "slotIndex": 0,
+     "recipeId": null,
+     "proteinScale": 1,
+     "sidesScale": 1,
+     "ingredients": [],
+     "kcal": 0,
+     "protein": 0,
+     "fat": 0,
+     "carb": 0,
+     "warning": "No eligible snack recipe left for this slot.",
+     "locked": false,
+     "recipe": null
+    }
+   ],
+   "groceryList": null,
+   "meta": {
+    "matchPct": 48,
+    "attempts": 5,
+    "score": {
+     "daysInTolerance": 0,
+     "avgMatch": 48,
+     "days": [
+      {
+       "dayOfWeek": 2,
+       "dayName": "Wednesday",
+       "matchPct": 48,
+       "totals": {
+        "kcal": 3542,
+        "protein": 142,
+        "fat": 143,
+        "carb": 438
+       },
+       "kcalDeltaPct": 7.3,
+       "proteinShortPct": 58.5,
+       "fatOk": false,
+       "carbOk": false,
+       "inTolerance": false,
+       "miss": "142 g protein vs 342 g — 200 g short; 143 g fat vs a 97–114 g range — 29 g over; 438 g carbs vs a 210–234 g range — 204 g over",
+       "unfilledSlots": 1,
+       "warnedSlots": 6,
+       "proteinFloor": {
+        "met": false,
+        "floorG": 326,
+        "achievedG": 141.7,
+        "shortG": 184.3,
+        "shortPct": 56.5,
+        "reason": "184.3 g short of the 326 g protein floor (57% under) — the compliant pool couldn't scale up to close the gap within the 0.5-2x portion limit."
+       },
+       "windowIndex": 0,
+       "dayIndex": 0,
+       "key": "0:2"
+      }
+     ],
+     "totalDays": 1,
+     "floorDaysMet": 0,
+     "floorDaysTotal": 1
+    },
+    "days": [
+     {
+      "dayOfWeek": 2,
+      "dayName": "Wednesday",
+      "matchPct": 48,
+      "totals": {
+       "kcal": 3542,
+       "protein": 142,
+       "fat": 143,
+       "carb": 438
+      },
+      "kcalDeltaPct": 7.3,
+      "proteinShortPct": 58.5,
+      "fatOk": false,
+      "carbOk": false,
+      "inTolerance": false,
+      "miss": "142 g protein vs 342 g — 200 g short; 143 g fat vs a 97–114 g range — 29 g over; 438 g carbs vs a 210–234 g range — 204 g over",
+      "unfilledSlots": 1,
+      "warnedSlots": 6,
+      "proteinFloor": {
+       "met": false,
+       "floorG": 326,
+       "achievedG": 141.7,
+       "shortG": 184.3,
+       "shortPct": 56.5,
+       "reason": "184.3 g short of the 326 g protein floor (57% under) — the compliant pool couldn't scale up to close the gap within the 0.5-2x portion limit."
+      },
+      "windowIndex": 0,
+      "dayIndex": 0,
+      "key": "0:2"
+     }
+    ],
+    "diagnosis": {
+     "feasible": false,
+     "reasons": [
+      "1 of 6 slots over 1 days came back empty — no compliant recipe was left that could fill them.",
+      "Protein-priority mode: the 326g/day floor wasn't met on 1 day(s) — only 0 of 16 compliant recipes carry enough protein density to close the gap within the 0.5-2x portion limit.",
+      "Max prep 15 min cuts the compliant pool from 44 to 16 recipes (28 removed).",
+      "Your library has no snack-sized recipe that fits your rules — all 1 snack slots this week come back empty.",
+      "Your targets need ~10.3g protein per 100 kcal; only 0 of 16 eligible recipes come close (20+ needed for a full varied week).",
+      "1 day(s) landed outside your 97–114 g fat range, and 1 day(s) landed outside your 210–234 g carb range — portion scaling moves a dish's calories, not its fat/carb ratio, so the pool's composition is what binds here."
+     ],
+     "suggestions": [
+      "AI-generate a few high-protein compliant recipes, set the protein-preference filter, or allow batch-cooking repeats of the densest dishes.",
+      "Raise max prep time (each step back adds recipes — without the cap you have 44).",
+      "Set snacks per day to 0 and fold those calories into your meals, or AI-generate a few compliant snacks on the Recipes tab.",
+      "Set the protein-preference filter, or AI-generate a few high-protein recipes to deepen the pool.",
+      "Add (or AI-generate) a few recipes built around the macro you keep missing, or drop the cuisine/protein preference so the solver can reach dishes that carry it."
+     ],
+     "binding": {
+      "key": "snack-pool",
+      "label": "your snack-eligible recipe pool",
+      "detail": "no snack-sized recipe fits your rules, so all 1 snack slot(s) come back empty."
+     }
+    },
+    "poolCounts": {
+     "raw": 889,
+     "afterDiet": 44,
+     "afterPrep": 16,
+     "afterStack": 16,
+     "stackExplain": null
+    },
+    "variety": {
+     "mealEligible": 16,
+     "usableForSlot": 0,
+     "slotKcal": 612,
+     "snackEligible": 0,
+     "weeklyMealSlots": 35,
+     "weeklySnackSlots": 7,
+     "repeatCap": 2,
+     "distinctWeeks": 0,
+     "horizonWeeks": 1,
+     "sustainsHorizon": false,
+     "notes": [
+      "0 of your 16 compliant recipes can be portioned to a 612 kcal meal — about 0 week(s) of 35 meals before dishes start repeating, so over 1 weeks you will see favourites come back.",
+      "Your library has no snack-sized recipe that fits your rules — snack slots stay empty until you add one.",
+      "1 day: 5 distinct dish(es) across 5 filled slot(s); most-repeated dish appears 1x against a 2x cap for this horizon (2x per week)."
+     ],
+     "horizon": {
+      "weeks": 1,
+      "days": 1,
+      "perWeekCap": 2,
+      "horizonRepeatCap": 2,
+      "mealSlots": 5,
+      "snackSlots": 1,
+      "totalSlots": 6,
+      "distinctFloor": 3,
+      "distinctRecipes": 5,
+      "maxRepeat": 1,
+      "maxRepeatRecipeId": "cmrujkwrx005cwl9onadkd1nk",
+      "lockedRepeatsOfMax": 0,
+      "filledSlots": 5,
+      "unfilledSlots": 1,
+      "requiredDistinct": 3,
+      "capHeld": true,
+      "floorHeld": true
+     }
+    },
+    "priorWeeksConsidered": 0,
+    "horizon": {
+     "key": "day",
+     "label": "1 day",
+     "days": 1,
+     "kind": "days",
+     "weeks": 1,
+     "custom": false,
+     "startDate": "2026-07-29",
+     "endDate": "2026-07-29",
+     "startDayOfWeek": 2,
+     "weeksWritten": 1,
+     "solveMs": 1,
+     "weekPlans": [
+      {
+       "startDate": "2026-07-27",
+       "dayIndices": [
+        2
+       ],
+       "days": 1,
+       "daysInTolerance": 0,
+       "avgMatch": 48,
+       "unfilledSlots": 1,
+       "poolSize": 16
+      }
+     ]
+    }
+   }
+  }
+ }
+}

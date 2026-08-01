@@ -1,0 +1,597 @@
+{
+ "persona": {
+  "idx": 233,
+  "id": "p233",
+  "tier": "ROBUSTNESS",
+  "displayName": "restaurant chef, 70",
+  "story": "restaurant chef, 70, male, 179 cm / 70.8 kg (BMI 22.1), recomp, none diet, avoiding shellfish, dairy, low-carb, 3 meals + 0 snacks, wants a single day",
+  "profile": {
+   "sex": "M",
+   "age": 70,
+   "heightCm": 179,
+   "startWeightKg": 70.8,
+   "goalWeightKg": 70.8,
+   "occupationKey": "chef-kitchen",
+   "trainingStyle": "mixed",
+   "minutesPerSession": 30,
+   "sessionsPerWeek": 2,
+   "rateLbPerWeek": 0.25,
+   "dietaryStyle": "none",
+   "excludedFoods": [
+    "shellfish",
+    "dairy"
+   ],
+   "mealsPerDay": 0,
+   "snacksPerDay": 0,
+   "unitPref": "imperial",
+   "bodyFatPct": 31,
+   "bodyFatSource": "visual-estimate",
+   "cuisinePreferences": [
+    "indian",
+    "mediterranean"
+   ]
+  },
+  "filters": {
+   "cuisines": [
+    "indian",
+    "mediterranean"
+   ]
+  },
+  "horizon": "day",
+  "walls": [
+   "shellfish",
+   "dairy"
+  ],
+  "freeTextExclusions": [],
+  "dietaryStyle": "none",
+  "bmi": 22.1,
+  "goalKind": "recomp",
+  "macroStyle": "low-carb",
+  "requestedButUnsupported": [
+   "wanted a low-carb split without full keto; carbs are the leftover after LBM-derived protein and fat, and only dietaryStyle:\"keto\" changes that"
+  ],
+  "robustKind": "zero-meals",
+  "expectRejection": {
+   "field": "mealsPerDay",
+   "why": "validator requires 1-8"
+  },
+  "tupleKey": "[\"ROBUSTNESS\",\"M\",70,179,70.8,70.8,\"chef-kitchen\",\"mixed\",0.25,\"none\",[\"dairy\",\"shellfish\"],0,0,\"low-carb\",\"day\",null,null,null,\"zero-meals\",null]"
+ },
+ "request": {
+  "horizon": "day",
+  "filters": {
+   "cuisines": [
+    "indian",
+    "mediterranean"
+   ]
+  }
+ },
+ "profileResponse": {
+  "id": "cms6x1uyl05q9wlw0az234q8b",
+  "userId": "cms6x1ut6006bwl2oadsk5ypm",
+  "sex": "M",
+  "age": 70,
+  "heightCm": 179,
+  "bodyFatPct": 31,
+  "bodyFatSource": "visual-estimate",
+  "occupationKey": "chef-kitchen",
+  "activityOverride": null,
+  "sessionsPerWeek": 2,
+  "trainingStyle": "mixed",
+  "minutesPerSession": 30,
+  "startWeightKg": 70.8,
+  "goalWeightKg": 70.8,
+  "startDate": "2026-07-29",
+  "unitPref": "imperial",
+  "rateLbPerWeek": 0.25,
+  "rateAcknowledged": false,
+  "floorKcal": null,
+  "excludedFormulas": [],
+  "targetKcal": 2038,
+  "mealsPerDay": 3,
+  "snacksPerDay": 0,
+  "excludedFoods": [
+   "shellfish",
+   "dairy"
+  ],
+  "dietaryStyle": "none",
+  "cuisinePreferences": [
+   "indian",
+   "mediterranean"
+  ],
+  "mealPreferencesNote": null,
+  "maxPrepMin": null,
+  "budgetTier": null,
+  "allowBatch": null,
+  "maxComplexity": null,
+  "adaptiveTdee": true,
+  "proteinPriorityMode": false,
+  "updatedAt": "2026-07-30T02:50:26.923Z"
+ },
+ "generate": {
+  "status": 200,
+  "ms": 949,
+  "body": {
+   "id": "cms6x1vvd05vfwlw073ihymiw",
+   "userId": "cms6x1ut6006bwl2oadsk5ypm",
+   "startDate": "2026-07-27",
+   "createdAt": "2026-07-30T02:50:27.865Z",
+   "slots": [
+    {
+     "id": "cms6x1vvg05vhwlw0df50ovmk",
+     "planId": "cms6x1vvd05vfwlw073ihymiw",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 0,
+     "recipeId": "cmrj2ulbg0almwlwsw7uxhqd3",
+     "proteinScale": 0.5,
+     "sidesScale": 0.5,
+     "ingredients": [
+      {
+       "foodId": "cmrj2tcd000o6wlws0tqp873k",
+       "name": "Goat Meat",
+       "role": null,
+       "grams": 125
+      },
+      {
+       "foodId": "cmrj2t7ur006fwlwsfbomilbd",
+       "name": "Corn Flour",
+       "role": "carb",
+       "grams": 125
+      },
+      {
+       "foodId": "cmrj2t7jf004ywlwsm5ob5a0u",
+       "name": "Tomatoes",
+       "role": "veg",
+       "grams": 30
+      },
+      {
+       "foodId": "cmrj2t6gd0003wlwss7jf3wzf",
+       "name": "Salt",
+       "role": null,
+       "grams": 1
+      },
+      {
+       "foodId": "cmrg8zxar000lwli0qy2ovmx4",
+       "name": "Onion",
+       "role": "veg",
+       "grams": 14
+      },
+      {
+       "foodId": "cmrj2t71e002qwlwsb69x7exz",
+       "name": "Green Chilli",
+       "role": null,
+       "grams": 2
+      },
+      {
+       "foodId": "cmrj2t7m7005bwlwsu7g3o8f3",
+       "name": "Coriander Leaves",
+       "role": null,
+       "grams": 13
+      }
+     ],
+     "kcal": 689.6700000000001,
+     "protein": 40.6547,
+     "fat": 7.717919999999999,
+     "carb": 120.0467,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrj2ulbg0almwlwsw7uxhqd3",
+      "name": "Mbuzi Choma (Roasted Goat)",
+      "description": null,
+      "steps": [
+       "Steps for the Meat:",
+       "Roast meat over medium heat for 50 minutes and salt it as you turn it.",
+       "Steps for Ugali:",
+       "Bring the water and salt to a boil in a heavy-bottomed saucepan. Stir in the cornmeal slowly, letting it fall through the fingers of your hand.",
+       "Reduce heat to medium-low and continue stirring regularly, smashing any lumps with a spoon, until the mush pulls away from the sides of the pot and becomes very thick, about 10 minutes.",
+       "Remove from heat and allow to cool.",
+       "Place the ugali into a large serving bowl. Wet your hands with water, form a ball and serve.",
+       "Steps for Kachumbari: Mix the tomatoes, onions, chili and coriander leaves in a bowl.",
+       "Serve and enjoy!"
+      ],
+      "slotType": "meal",
+      "cuisine": "western-comfort",
+      "prepTimeMin": 37,
+      "source": "themealdb-import",
+      "mealCategory": null,
+      "kcal": 1383.37625,
+      "protein": 81.4843625,
+      "fat": 15.539195,
+      "carb": 241.156075,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 15.19,
+      "difficulty": 5,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-13T10:26:17.069Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x1vvh05vjwlw0qi6891to",
+     "planId": "cms6x1vvd05vfwlw073ihymiw",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 1,
+     "recipeId": "cmrj2tkwo02jqwlwsbk01c600",
+     "proteinScale": 0.5,
+     "sidesScale": 1.4,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t84f007mwlws3l8rub2z",
+       "name": "Chicken Thighs",
+       "role": "protein",
+       "grams": 115
+      },
+      {
+       "foodId": "cmrj2t7k10051wlwsghd1hb86",
+       "name": "Curry Powder",
+       "role": null,
+       "grams": 8
+      },
+      {
+       "foodId": "cmrj2t8d8008rwlws51a28g0q",
+       "name": "All-purpose Seasoning",
+       "role": null,
+       "grams": 1
+      },
+      {
+       "foodId": "cmrg8zxar000lwli0qy2ovmx4",
+       "name": "Onion",
+       "role": "veg",
+       "grams": 40
+      },
+      {
+       "foodId": "cmrj2t6w20022wlws8tukrt3u",
+       "name": "Spring Onions",
+       "role": "veg",
+       "grams": 115
+      },
+      {
+       "foodId": "cmrj2t6tb001qwlwsb78om24m",
+       "name": "Green Pepper",
+       "role": null,
+       "grams": 1
+      },
+      {
+       "foodId": "cmrj2t6ft0001wlwstiofk9on",
+       "name": "Garlic",
+       "role": "veg",
+       "grams": 4
+      },
+      {
+       "foodId": "cmrj2t7rb005zwlws4bfn6rn7",
+       "name": "Scotch Bonnet",
+       "role": null,
+       "grams": 35
+      },
+      {
+       "foodId": "cmrj2t6oj0014wlwsaw8ffg0k",
+       "name": "Thyme",
+       "role": null,
+       "grams": 105
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "carb",
+       "grams": 14
+      },
+      {
+       "foodId": "cmrj2t6hb0007wlwsh6l6ynal",
+       "name": "Water",
+       "role": null,
+       "grams": 20
+      },
+      {
+       "foodId": "cmrj2t7fb004fwlws8ezof2dp",
+       "name": "Russet Potato",
+       "role": "veg",
+       "grams": 60
+      },
+      {
+       "foodId": "cmrj2t6gd0003wlwss7jf3wzf",
+       "name": "Salt",
+       "role": null,
+       "grams": 1
+      },
+      {
+       "foodId": "cmrj2t6gl0004wlws73buybhw",
+       "name": "Pepper",
+       "role": null,
+       "grams": 1
+      }
+     ],
+     "kcal": 632.0600000000001,
+     "protein": 42.10205000000001,
+     "fat": 29.86106,
+     "carb": 60.41429999999999,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrj2tkwo02jqwlwsbk01c600",
+      "name": "Jamaican Curry Chicken Recipe",
+      "description": null,
+      "steps": [
+       "Equipment",
+       "Dutch Oven",
+       "Instructions",
+       "Add chicken thighs, all-purpose seasoning, 1 tablespoon of curry powder, onion, green onions, green pepper, garlic cloves, scotch bonnet pepper (if using), and thyme to a large bowl and combine, making sure all chicken pieces are covered with the seasoning. Cover and refrigerate for at least 1 hour or up to overnight.",
+       "One the chicken is done marinating, remove onions, peppers, and garlic cloves from chicken and set aside.",
+       "Heat olive oil in a large heavy bottom pot over medium heat. Add remaining curry powder and stir, cooking for about 20-30 seconds. Add onions, green pepper, garlic cloves, thyme, and scotch bonnet pepper (if using) to pot and stir until onions have softened, about 3-5 minutes. If your onions and peppers are looking dry, add about 1 tablespoon of water.",
+       "Add chicken and ¼ cup of water to the pot. Cover and reduce heat to medium low. Cook, stirring occasionally, for 30-35 minutes.",
+       "When there is about 15 minutes remaining, stir in potato and continue to cook covered.",
+       "Once chicken is cooked and potatoes are softened, remove from heat. Salt and pepper to taste."
+      ],
+      "slotType": "meal",
+      "cuisine": "indian",
+      "prepTimeMin": 42,
+      "source": "themealdb-import",
+      "mealCategory": null,
+      "kcal": 756.6,
+      "protein": 67.7,
+      "fat": 37.3,
+      "carb": 43.3,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 9.62,
+      "difficulty": 7,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-13T10:25:29.881Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x1vvi05vnwlw0zqffml8c",
+     "planId": "cms6x1vvd05vfwlw073ihymiw",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 2,
+     "recipeId": "cmrtz3lhd004ewlooi2tyek8b",
+     "proteinScale": 0.57,
+     "sidesScale": 0.74,
+     "ingredients": [
+      {
+       "foodId": "cmrg8zw95000gwli0jpbtrdlp",
+       "name": "Cod fillet",
+       "role": "protein",
+       "grams": 105
+      },
+      {
+       "foodId": "cmrj2tbwr00mhwlwssr2nohq4",
+       "name": "Cannellini Beans",
+       "role": "carb",
+       "grams": 80
+      },
+      {
+       "foodId": "cmrj2t7jf004ywlwsm5ob5a0u",
+       "name": "Tomatoes",
+       "role": "veg",
+       "grams": 75
+      },
+      {
+       "foodId": "cmrfoyqn10006wl080mnva73o",
+       "name": "Oil, corn, peanut, and olive",
+       "role": "fat",
+       "grams": 13
+      },
+      {
+       "foodId": "cmrj2t6ft0001wlwstiofk9on",
+       "name": "Garlic",
+       "role": "other",
+       "grams": 6
+      },
+      {
+       "foodId": "cmrj2t7ve006iwlwsr3tyleyw",
+       "name": "Lemon Juice",
+       "role": "other",
+       "grams": 15
+      },
+      {
+       "foodId": "cmrg8zurc0009wli0xe26wiz1",
+       "name": "Parsley, fresh",
+       "role": "veg",
+       "grams": 5
+      },
+      {
+       "foodId": "cmrihxagh00iiwli0uvzabv6q",
+       "name": "Salt and pepper",
+       "role": "other",
+       "grams": 1
+      }
+     ],
+     "kcal": 717.1999999999999,
+     "protein": 46.24319999999999,
+     "fat": 15.9233,
+     "carb": 106.9085,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrtz3lhd004ewlooi2tyek8b",
+      "name": "Lemon Garlic Baked Cod with White Beans",
+      "description": "Flaky baked cod over garlicky cannellini beans and blistered tomatoes — light, high-protein, and quick.",
+      "steps": [
+       "Heat oven to 200C. Toss beans and tomatoes with half the olive oil, garlic, salt and pepper in a baking dish.",
+       "Pat cod dry, set on top, drizzle with remaining oil and squeeze over lemon.",
+       "Bake 15-18 min until cod flakes easily.",
+       "Scatter with parsley and serve straight from the dish."
+      ],
+      "slotType": "meal",
+      "cuisine": "western-comfort",
+      "prepTimeMin": 25,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 961.8,
+      "protein": 70.2,
+      "fat": 17.3,
+      "carb": 143.5,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 8.49,
+      "difficulty": 3,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T01:26:46.657Z",
+      "createdByUserId": null
+     }
+    }
+   ],
+   "groceryList": null,
+   "meta": {
+    "matchPct": 86,
+    "attempts": 5,
+    "score": {
+     "daysInTolerance": 0,
+     "avgMatch": 86,
+     "days": [
+      {
+       "dayOfWeek": 2,
+       "dayName": "Wednesday",
+       "matchPct": 86,
+       "totals": {
+        "kcal": 2039,
+        "protein": 129,
+        "fat": 54,
+        "carb": 287
+       },
+       "kcalDeltaPct": 0,
+       "proteinShortPct": 0,
+       "fatOk": false,
+       "carbOk": true,
+       "inTolerance": false,
+       "miss": "54 g fat vs a 37–43 g range — 11 g over",
+       "unfilledSlots": 0,
+       "warnedSlots": 0,
+       "windowIndex": 0,
+       "dayIndex": 0,
+       "key": "0:2"
+      }
+     ],
+     "totalDays": 1
+    },
+    "days": [
+     {
+      "dayOfWeek": 2,
+      "dayName": "Wednesday",
+      "matchPct": 86,
+      "totals": {
+       "kcal": 2039,
+       "protein": 129,
+       "fat": 54,
+       "carb": 287
+      },
+      "kcalDeltaPct": 0,
+      "proteinShortPct": 0,
+      "fatOk": false,
+      "carbOk": true,
+      "inTolerance": false,
+      "miss": "54 g fat vs a 37–43 g range — 11 g over",
+      "unfilledSlots": 0,
+      "warnedSlots": 0,
+      "windowIndex": 0,
+      "dayIndex": 0,
+      "key": "0:2"
+     }
+    ],
+    "diagnosis": {
+     "feasible": false,
+     "reasons": [
+      "1 day(s) landed outside your 37–43 g fat range — portion scaling moves a dish's calories, not its fat/carb ratio, so the pool's composition is what binds here."
+     ],
+     "suggestions": [
+      "Add (or AI-generate) a few recipes built around the macro you keep missing, or drop the cuisine/protein preference so the solver can reach dishes that carry it."
+     ],
+     "binding": {
+      "key": "macro-composition",
+      "label": "fat in your recipe pool",
+      "detail": "1 of 1 day(s) landed outside your 37-43 g fat range. Portion scaling moves a dish's calories, not its fat/carb ratio, so what binds here is which dishes your rules leave in the pool. Calories and protein landed on target on every day — it is composition, not portion size, that is short."
+     }
+    },
+    "poolCounts": {
+     "raw": 889,
+     "afterDiet": 481,
+     "afterPrep": 481,
+     "afterStack": 481,
+     "stackExplain": null
+    },
+    "variety": {
+     "mealEligible": 452,
+     "usableForSlot": 324,
+     "slotKcal": 679,
+     "snackEligible": 5,
+     "weeklyMealSlots": 21,
+     "weeklySnackSlots": 0,
+     "repeatCap": 2,
+     "distinctWeeks": 15.4,
+     "horizonWeeks": 1,
+     "sustainsHorizon": true,
+     "notes": [
+      "1 day: 3 distinct dish(es) across 3 filled slot(s); most-repeated dish appears 1x against a 2x cap for this horizon (2x per week)."
+     ],
+     "horizon": {
+      "weeks": 1,
+      "days": 1,
+      "perWeekCap": 2,
+      "horizonRepeatCap": 2,
+      "mealSlots": 3,
+      "snackSlots": 0,
+      "totalSlots": 3,
+      "distinctFloor": 2,
+      "distinctRecipes": 3,
+      "maxRepeat": 1,
+      "maxRepeatRecipeId": "cmrj2ulbg0almwlwsw7uxhqd3",
+      "lockedRepeatsOfMax": 0,
+      "filledSlots": 3,
+      "unfilledSlots": 0,
+      "requiredDistinct": 2,
+      "capHeld": true,
+      "floorHeld": true
+     }
+    },
+    "priorWeeksConsidered": 0,
+    "horizon": {
+     "key": "day",
+     "label": "1 day",
+     "days": 1,
+     "kind": "days",
+     "weeks": 1,
+     "custom": false,
+     "startDate": "2026-07-29",
+     "endDate": "2026-07-29",
+     "startDayOfWeek": 2,
+     "weeksWritten": 1,
+     "solveMs": 4,
+     "weekPlans": [
+      {
+       "startDate": "2026-07-27",
+       "dayIndices": [
+        2
+       ],
+       "days": 1,
+       "daysInTolerance": 0,
+       "avgMatch": 86,
+       "unfilledSlots": 0,
+       "poolSize": 481
+      }
+     ]
+    }
+   }
+  }
+ }
+}

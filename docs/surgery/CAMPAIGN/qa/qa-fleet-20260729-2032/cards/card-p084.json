@@ -1,0 +1,58 @@
+{
+  "personaId": "p084",
+  "satisfaction": 3,
+  "wouldRecommend": false,
+  "criteria": {
+    "macrosInRange": 2,
+    "worksEndToEnd": 7,
+    "mealsAreGood": 3,
+    "affordableAdjustable": 7,
+    "tasty": 4
+  },
+  "allergenRespect": {
+    "ok": true,
+    "leaks": []
+  },
+  "delights": [
+    "It admitted when it could not hit a slot instead of hiding it: 'Tried 5 recipe(s) for this slot, none fit within tolerance - closest was \"Classic Ground Beef & Bell Peppers with Potato\" (landed 475 kcal vs a 393 target).' I trust a plan more when it tells me where it fell short.",
+    "All five of my walls held. 91 g of protein across 'High-Protein Turkey & Broccoli with Potato', 'Classic Ground Beef & Bell Peppers with Potato' and 'Beef & Broccoli with Rice' with no dairy, no egg, no gluten, no soy and no fish anywhere - that is not easy and it got it right.",
+    "Alternates came back instantly with three real options, including a ground beef, cabbage, cumin and apple cider vinegar hash I would genuinely cook on a work night - and every one of them was still clean against my walls."
+  ],
+  "defects": [
+    {
+      "what": "I asked to GAIN 2 lb a week and it prescribed 1200 kcal a day - a deficit below my own BMR. This is the whole reason I would buy the app and it is backwards.",
+      "snippet": "\"startWeightKg\":46.7,\"goalWeightKg\":49.2,\"rateLbPerWeek\":2,\"targetKcal\":1200 - and /api/profile/meta says \"safeFloor\":{\"M\":1500,\"F\":1200}, so it landed exactly on the women's floor"
+    },
+    {
+      "what": "The day totals 1282 kcal. At 160 cm and 46.7 kg working a till, that makes me lose weight while the app thinks it is bulking me.",
+      "snippet": "DAY TOTAL: kcal 1282 | P 91 g | C 97 g | F 59 g"
+    },
+    {
+      "what": "Meal 1 is not a breakfast. Deli turkey with 185 g of plain potato and 135 g of broccoli is not something a 19-year-old eats before a shift.",
+      "snippet": "High-Protein Turkey & Broccoli with Potato - Turkey breast, low salt, prepackaged or deli, luncheon meat 85 g, Russet Potato 185 g, Broccoli 135 g, Olive Oil 5 g"
+    },
+    {
+      "what": "For a single three-meal day it repeats itself badly: ground beef in 2 of 3 meals, potato in 2 of 3, broccoli in 2 of 3. It reads like one meal rearranged.",
+      "snippet": "\"Classic Ground Beef & Bell Peppers with Potato\" then \"Beef & Broccoli with Rice\""
+    },
+    {
+      "what": "I think about food low-carb and nothing reflected that - 275 g of potato plus rice, 97 g of carbs and 30% of my calories from starch. There was no visible place to say so either.",
+      "snippet": "Russet Potato | carb | 185 g  (plus Russet Potato 90 g and White rice, cooked 75 g)"
+    },
+    {
+      "what": "Expectation trap, NOT an allergen leak: the top alternate offered me prawns while my profile says no fish. The app is technically correct - /api/profile/meta lists 'shellfish' and 'fish' as two separate toggles and I only ticked fish - but anyone who says 'no fish' will read Raw King Prawns as a violation and lose trust in the whole plan.",
+      "snippet": "Raw King Prawns | 105 g"
+    },
+    {
+      "what": "The plan object came back with groceryList null, so the shopping list I need is not part of reading my plan - it takes a separate call I would not know to make.",
+      "snippet": "\"groceryList\": null"
+    }
+  ],
+  "followUp": {
+    "action": "Asked for alternates on meal 1, because I would not eat deli turkey with plain potato and broccoli for breakfast",
+    "endpoint": "POST /api/plans/cms6x0t9b02d1wlw0g51zlxks/slots/cms6x0t9c02d3wlw0ozbyuv49/alternates",
+    "status": 200,
+    "howItWent": "Fast and genuinely useful - three alternates at roughly the same calories (354, 358 and 460 kcal), all clean against my dairy, egg, gluten, soy and fish walls, and the beef-cabbage hash is one I would actually swap in. Two caveats: the top suggestion was Raw King Prawns, which startled me even though shellfish is a separate toggle I never ticked, and the third option dropped to 19 g protein against 80 g carbs, which is the wrong direction for someone trying to put on weight."
+  },
+  "verdict": "It respected all five of my medical walls and shops and cooks like real food on a cashier's budget, but it told an underweight 19-year-old asking to gain 2 lb a week to eat 1200 calories a day, and no amount of good ingredient work survives getting that one number backwards."
+}

@@ -17,6 +17,10 @@ const { prisma } = require("./prisma.js");
 const { computeMacros } = require("./bmrEngine.js");
 const { getWeightNowKg } = require("./weightNow.js");
 const { reconcileTarget } = require("./profileTarget.js");
+// Adjuster resolution (see loadAdjusters below) needs the shared gate and the
+// macro-trust check — deliberately the SAME ones every recipe surface uses.
+const { isExcluded, FOOD_GATE_SELECT } = require("./exclusionGate.js");
+const { macroTrustIssue } = require("./foodValidation.js");
 // The exclusion decision is NOT made here anymore. It lives in exclusionGate.js
 // so the library browse, the cart, the brain pool and this pool answer the same
 // question with the same evidence — see that file's header for the 210 recipe/
@@ -150,6 +154,66 @@ async function loadRecipePool(profile) {
   return { pool: [...pool], rawPoolCount: rows.length };
 }
 
+// ── macro adjusters ─────────────────────────────────────────────────────────
+//
+// The small, ordinary components the solver may ADD to a day when portion scaling
+// alone cannot land it — see macroCloser.js for the measurement that motivated it
+// (68.3% of missing slots were pinned at a 0.5x/2.0x scale bound).
+//
+// Ordered by preference within each role, plainest first. Every candidate is passed
+// through the SAME exclusion gate as every recipe, so a dairy wall removes the
+// yogurt and butter, a vegan style removes all four animal rows, and a customer with
+// no safe option in a role simply gets no adjuster in that role.
+const ADJUSTER_CANDIDATES = [
+  { name: "Olive Oil", role: "fat" },
+  { name: "Butter", role: "fat" },
+  { name: "Avocado", role: "fat" },
+  { name: "White rice, cooked", role: "carb" },
+  { name: "Potatoes", role: "carb" },
+  { name: "Oats", role: "carb" },
+  { name: "Chicken breast, cooked, skinless", role: "protein" },
+  { name: "Greek Yogurt", role: "protein" },
+  { name: "Tofu", role: "protein" },
+  { name: "Lentils", role: "protein" },
+];
+
+let _adjusterFoods = null;
+async function loadAdjusterFoods() {
+  if (_adjusterFoods) return _adjusterFoods;
+  const rows = await prisma.food.findMany({
+    where: { name: { in: ADJUSTER_CANDIDATES.map((a) => a.name) } },
+    select: FOOD_GATE_SELECT,
+  });
+  const byLower = new Map();
+  for (const f of rows) {
+    const k = f.name.trim().toLowerCase();
+    if (!byLower.has(k)) byLower.set(k, f);
+  }
+  _adjusterFoods = byLower;
+  return _adjusterFoods;
+}
+
+/**
+ * The adjusters THIS profile may be offered. Allergy safety is structural: the food
+ * goes through explainFoodExclusion, the same call every recipe surface uses, so
+ * there is no second vocabulary here to drift from the first.
+ *
+ * A row whose macros are not trustworthy is also refused — adding an unverified food
+ * to close a macro gap would be closing it with a number nobody can stand behind.
+ */
+async function loadAdjusters(profile) {
+  const foods = await loadAdjusterFoods();
+  const out = [];
+  for (const cand of ADJUSTER_CANDIDATES) {
+    const food = foods.get(cand.name.trim().toLowerCase());
+    if (!food) continue;
+    if (macroTrustIssue(food)) continue;
+    if (isExcluded(food, profile)) continue;
+    out.push({ role: cand.role, food });
+  }
+  return out;
+}
+
 async function planContext(userId) {
   const profile = await prisma.profile.findUnique({ where: { userId } });
   if (!profile) throw Object.assign(new Error("no profile set up yet"), { status: 404 });
@@ -167,7 +231,8 @@ async function planContext(userId) {
   // soft re-rank only — hard diet/allergy filtering already happened above.
   const ratingRows = await prisma.recipeRating.findMany({ where: { userId }, select: { recipeId: true, rating: true } });
   const ratings = new Map(ratingRows.map((r) => [r.recipeId, r.rating]));
-  return { profile, dailyTarget, mealConfig, recipePool, rawPoolCount, ratings };
+  const adjusters = await loadAdjusters(profile);
+  return { profile, dailyTarget, mealConfig, recipePool, rawPoolCount, ratings, adjusters };
 }
 
 // The generation filters the Phase 4 UI sends. Cuisine/protein/budget are

@@ -1,0 +1,735 @@
+{
+ "persona": {
+  "idx": 21,
+  "id": "p021",
+  "tier": "EASY",
+  "displayName": "shift worker, 2 a.m. meals, 60",
+  "story": "shift worker, 2 a.m. meals, 60, male, 176 cm / 130 kg (BMI 42), cut at 0.5 lb/wk, none diet, avoiding dairy, sesame, low-carb, 4 meals + 1 snacks, wants a single day",
+  "profile": {
+   "sex": "M",
+   "age": 60,
+   "heightCm": 176,
+   "startWeightKg": 130,
+   "goalWeightKg": 116.3,
+   "occupationKey": "warehouse",
+   "trainingStyle": "weights",
+   "minutesPerSession": 45,
+   "sessionsPerWeek": 3,
+   "rateLbPerWeek": 0.5,
+   "dietaryStyle": "none",
+   "excludedFoods": [
+    "dairy",
+    "sesame"
+   ],
+   "mealsPerDay": 4,
+   "snacksPerDay": 1,
+   "unitPref": "metric"
+  },
+  "filters": {},
+  "horizon": "day",
+  "walls": [
+   "dairy",
+   "sesame"
+  ],
+  "freeTextExclusions": [],
+  "dietaryStyle": "none",
+  "bmi": 42,
+  "goalKind": "cut",
+  "macroStyle": "low-carb",
+  "requestedButUnsupported": [
+   "wanted a low-carb split without full keto; carbs are the leftover after LBM-derived protein and fat, and only dietaryStyle:\"keto\" changes that"
+  ],
+  "tupleKey": "[\"EASY\",\"M\",60,176,130,116.3,\"warehouse\",\"weights\",0.5,\"none\",[\"dairy\",\"sesame\"],4,1,\"low-carb\",\"day\",null,null,null,null,null]"
+ },
+ "request": {
+  "horizon": "day",
+  "filters": {}
+ },
+ "profileResponse": {
+  "id": "cms6x0clw00vrwlw09a88vse2",
+  "userId": "cms6x0cgi000fwl2ol4ga4u4f",
+  "sex": "M",
+  "age": 60,
+  "heightCm": 176,
+  "bodyFatPct": 0,
+  "bodyFatSource": null,
+  "occupationKey": "warehouse",
+  "activityOverride": null,
+  "sessionsPerWeek": 3,
+  "trainingStyle": "weights",
+  "minutesPerSession": 45,
+  "startWeightKg": 130,
+  "goalWeightKg": 116.3,
+  "startDate": "2026-07-29",
+  "unitPref": "metric",
+  "rateLbPerWeek": 0.5,
+  "rateAcknowledged": false,
+  "floorKcal": null,
+  "excludedFormulas": [],
+  "targetKcal": 3140,
+  "mealsPerDay": 4,
+  "snacksPerDay": 1,
+  "excludedFoods": [
+   "dairy",
+   "sesame"
+  ],
+  "dietaryStyle": "none",
+  "cuisinePreferences": [],
+  "mealPreferencesNote": null,
+  "maxPrepMin": null,
+  "budgetTier": null,
+  "allowBatch": null,
+  "maxComplexity": null,
+  "adaptiveTdee": true,
+  "proteinPriorityMode": false,
+  "updatedAt": "2026-07-30T02:49:16.450Z"
+ },
+ "generate": {
+  "status": 200,
+  "ms": 796,
+  "body": {
+   "id": "cms6x0d9t00yvwlw0gbgvcovn",
+   "userId": "cms6x0cgi000fwl2ol4ga4u4f",
+   "startDate": "2026-07-27",
+   "createdAt": "2026-07-30T02:49:17.106Z",
+   "slots": [
+    {
+     "id": "cms6x0dey00yxwlw0noc20x14",
+     "planId": "cms6x0d9t00yvwlw0gbgvcovn",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 0,
+     "recipeId": "cmrj2u6qo07dwwlws2rct0b0b",
+     "proteinScale": 1.69,
+     "sidesScale": 1.66,
+     "ingredients": [
+      {
+       "foodId": "cmrj2tb0x00j2wlwsjzrofelh",
+       "name": "Shrimp",
+       "role": "protein",
+       "grams": 170
+      },
+      {
+       "foodId": "cmrj2t6ls000rwlwsf7bu3ffs",
+       "name": "Soy Sauce",
+       "role": "carb",
+       "grams": 8
+      },
+      {
+       "foodId": "cmrj2t6pz001bwlwsbarwpyy1",
+       "name": "Tomato Puree",
+       "role": "veg",
+       "grams": 2
+      },
+      {
+       "foodId": "cmrj2t7ur006fwlwsfbomilbd",
+       "name": "Corn Flour",
+       "role": "carb",
+       "grams": 1
+      },
+      {
+       "foodId": "cmrj2t8sa00akwlwsds8o16yq",
+       "name": "Caster Sugar",
+       "role": "carb",
+       "grams": 2
+      },
+      {
+       "foodId": "cmrj2t7ng005hwlwsm31zcv8k",
+       "name": "Sunflower Oil",
+       "role": "carb",
+       "grams": 2
+      },
+      {
+       "foodId": "cmrj2t8go0097wlwsir7zztto",
+       "name": "Peanuts",
+       "role": "carb",
+       "grams": 35
+      },
+      {
+       "foodId": "cmrj2t7lb0057wlws13ompczm",
+       "name": "Chilli",
+       "role": null,
+       "grams": 20
+      },
+      {
+       "foodId": "cmrj2t7ms005ewlwsa4b4sslc",
+       "name": "Brown Sugar",
+       "role": "carb",
+       "grams": 6
+      },
+      {
+       "foodId": "cmrj2t6rr001jwlwsqfi60fyj",
+       "name": "Garlic Clove",
+       "role": null,
+       "grams": 7
+      },
+      {
+       "foodId": "cmrj2t8gg0096wlwss9lyo6sz",
+       "name": "Water Chestnut",
+       "role": null,
+       "grams": 185
+      },
+      {
+       "foodId": "cmrj2t6ye002dwlwssjv94yyn",
+       "name": "Ginger",
+       "role": "veg",
+       "grams": 1
+      }
+     ],
+     "kcal": 632.82,
+     "protein": 54.7108,
+     "fat": 18.8123,
+     "carb": 67.56819999999999,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrj2u6qo07dwwlws2rct0b0b",
+      "name": "Kung Po Prawns",
+      "description": null,
+      "steps": [
+       "Mix the cornflour and 1 tbsp soy sauce, toss in the prawns and set aside for 10 mins. Stir the vinegar, remaining soy sauce, tomato purée, sugar and 2 tbsp water together to make a sauce.",
+       "When you’re ready to cook, heat a large frying pan or wok until very hot, then add 1 tbsp oil. Fry the prawns until they are golden in places and have opened out– then tip them out of the pan.",
+       "Heat the remaining oil and add the peanuts, chillies and water chestnuts. Stir-fry for 2 mins or until the peanuts start to colour, then add the ginger and garlic and fry for 1 more min. Tip in the prawns and sauce and simmer for 2 mins until thickened slightly. Serve with rice."
+      ],
+      "slotType": "meal",
+      "cuisine": "western-comfort",
+      "prepTimeMin": 24,
+      "source": "themealdb-import",
+      "mealCategory": null,
+      "kcal": 380.7,
+      "protein": 32.6,
+      "fat": 11.4,
+      "carb": 40.9,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 7.14,
+      "difficulty": 4,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-13T10:25:58.176Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x0dez00yzwlw0z9hdect6",
+     "planId": "cms6x0d9t00yvwlw0gbgvcovn",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 1,
+     "recipeId": "cmrj2tn90032jwlwsuv3efjkb",
+     "proteinScale": 1.54,
+     "sidesScale": 1.42,
+     "ingredients": [
+      {
+       "foodId": "cmrg8zxar000lwli0qy2ovmx4",
+       "name": "Onion",
+       "role": "veg",
+       "grams": 20
+      },
+      {
+       "foodId": "cmrj2t6u6001uwlwsseysgkv2",
+       "name": "Celery",
+       "role": "veg",
+       "grams": 20
+      },
+      {
+       "foodId": "cmrj2t7lj0058wlwsk4i51m8h",
+       "name": "Cilantro",
+       "role": null,
+       "grams": 18
+      },
+      {
+       "foodId": "cmrj2t6h10006wlwslufza94y",
+       "name": "Parsley",
+       "role": null,
+       "grams": 18
+      },
+      {
+       "foodId": "cmrj2t8dg008swlws9uhv1fo5",
+       "name": "Turmeric",
+       "role": null,
+       "grams": 1
+      },
+      {
+       "foodId": "cmrj2t7ch0042wlwsj8arrl7o",
+       "name": "Ground Cumin",
+       "role": null,
+       "grams": 1
+      },
+      {
+       "foodId": "cmrj2t6jp000iwlwsli2ckg55",
+       "name": "Paprika",
+       "role": null,
+       "grams": 1
+      },
+      {
+       "foodId": "cmrj2t7l40056wlws69opouvc",
+       "name": "Ground Ginger",
+       "role": "veg",
+       "grams": 1
+      },
+      {
+       "foodId": "cmrj2t7pt005swlwszhtld1bv",
+       "name": "Cayenne Pepper",
+       "role": null,
+       "grams": 1
+      },
+      {
+       "foodId": "cmrj2t6gd0003wlwss7jf3wzf",
+       "name": "Salt",
+       "role": null,
+       "grams": 1
+      },
+      {
+       "foodId": "cmrj2t6mf000uwlwsne5kc5wl",
+       "name": "Black Pepper",
+       "role": null,
+       "grams": 1
+      },
+      {
+       "foodId": "cmrj2t84f007mwlws3l8rub2z",
+       "name": "Chicken Thighs",
+       "role": "protein",
+       "grams": 200
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "carb",
+       "grams": 2
+      },
+      {
+       "foodId": "cmrj2t8a9008dwlwsqq2x7f4q",
+       "name": "Raisins",
+       "role": null,
+       "grams": 13
+      },
+      {
+       "foodId": "cmrj2t6n2000xwlwsqltep2pn",
+       "name": "Chicken Stock",
+       "role": "protein",
+       "grams": 90
+      },
+      {
+       "foodId": "cmrj2t8p300a8wlwsn9jlocey",
+       "name": "Sweet Potatoes",
+       "role": "veg",
+       "grams": 60
+      },
+      {
+       "foodId": "cmrj2t6oc0013wlwsjzlwoln2",
+       "name": "Carrots",
+       "role": "veg",
+       "grams": 30
+      },
+      {
+       "foodId": "cmrj2t78y003lwlwsf2r4we56",
+       "name": "Prunes",
+       "role": null,
+       "grams": 13
+      }
+     ],
+     "kcal": 708.49,
+     "protein": 60.85980000000001,
+     "fat": 26.6114,
+     "carb": 59.028,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrj2tn90032jwlwsuv3efjkb",
+      "name": "Tajine de Poulet aux Carottes et Patates Douces (Chicken and Sweet Potato Tagine)",
+      "description": null,
+      "steps": [
+       "Combine onions, celery, cilantro, and parsley in a large pot. Stir in turmeric, cumin, paprika, ginger, cayenne pepper, salt, and pepper. Place chicken thighs on top. Drizzle olive oil over chicken. Cover and simmer over low heat until chicken is tender, about 40 minutes.",
+       "Place raisins in a small bowl and cover with hot water; let soak for 10 minutes. Drain.",
+       "Preheat oven to 400 degrees F (200 degrees C).",
+       "Transfer chicken mixture into an oven-safe tagine or casserole dish. Add sweet potato and carrots. Cover with lid or aluminum foil.",
+       "Bake in the preheated oven until sweet potato is soft, about 40 minutes. Add drained raisins and prunes. Continue baking, covered, until raisins and prunes are heated through, about 10 minutes."
+      ],
+      "slotType": "meal",
+      "cuisine": "middle-eastern",
+      "prepTimeMin": 34,
+      "source": "themealdb-import",
+      "mealCategory": null,
+      "kcal": 473,
+      "protein": 39.8,
+      "fat": 17.1,
+      "carb": 41.6,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 4.52,
+      "difficulty": 5,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-13T10:25:32.917Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x0df000z1wlw0ac3pxrz6",
+     "planId": "cms6x0d9t00yvwlw0gbgvcovn",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 2,
+     "recipeId": "cmrtz3nsx004ywloo16x6g1bj",
+     "proteinScale": 1.24,
+     "sidesScale": 0.84,
+     "ingredients": [
+      {
+       "foodId": "cmrfoyrjh0009wl08cmcid51m",
+       "name": "Turkey breast, low salt, prepackaged or deli, luncheon meat",
+       "role": "protein",
+       "grams": 185
+      },
+      {
+       "foodId": "cmrj2t6t4001pwlwsxeja9565",
+       "name": "Potatoes",
+       "role": "carb",
+       "grams": 140
+      },
+      {
+       "foodId": "cmrfp2w4d000awlj0ivrenezk",
+       "name": "Beans, snap, green, microwaved",
+       "role": "veg",
+       "grams": 85
+      },
+      {
+       "foodId": "cmrfoyqn10006wl080mnva73o",
+       "name": "Oil, corn, peanut, and olive",
+       "role": "fat",
+       "grams": 10
+      },
+      {
+       "foodId": "cmrj2t6jp000iwlwsli2ckg55",
+       "name": "Paprika",
+       "role": "other",
+       "grams": 1
+      },
+      {
+       "foodId": "cmrj2t6j9000gwlwstmjp6mv2",
+       "name": "Cumin",
+       "role": "other",
+       "grams": 1
+      },
+      {
+       "foodId": "cmrj2t6ft0001wlwstiofk9on",
+       "name": "Garlic",
+       "role": "other",
+       "grams": 1
+      },
+      {
+       "foodId": "cmrihxagh00iiwli0uvzabv6q",
+       "name": "Salt and pepper",
+       "role": "other",
+       "grams": 1
+      }
+     ],
+     "kcal": 698.4999999999999,
+     "protein": 60.17870000000001,
+     "fat": 16.6983,
+     "carb": 79.14599999999999,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrtz3nsx004ywloo16x6g1bj",
+      "name": "Blackened Turkey Breast with Roasted Potatoes",
+      "description": "Spice-crusted turkey breast with crisp roasted potatoes and snappy green beans — lean and filling.",
+      "steps": [
+       "Heat oven to 210C. Toss diced potatoes with half the oil and salt, roast 20 min.",
+       "Rub turkey with paprika, cumin, garlic powder, salt and pepper.",
+       "Sear turkey in remaining oil 3-4 min per side until cooked through.",
+       "Add green beans to the pan for the last 3 min, tossing to coat. Slice turkey and plate with potatoes and beans."
+      ],
+      "slotType": "meal",
+      "cuisine": "western-comfort",
+      "prepTimeMin": 30,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 745.1,
+      "protein": 56.6352,
+      "fat": 17.3768,
+      "carb": 92.98400000000001,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 6.12,
+      "difficulty": 4,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T01:26:49.665Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x0df100z5wlw0415pipaz",
+     "planId": "cms6x0d9t00yvwlw0gbgvcovn",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 3,
+     "recipeId": "cmrul4e6r006iwl68jlxv377f",
+     "proteinScale": 1.2,
+     "sidesScale": 1.54,
+     "ingredients": [
+      {
+       "foodId": "cmrj2tay100irwlwsiujfz75h",
+       "name": "White Fish",
+       "role": "protein",
+       "grams": 230
+      },
+      {
+       "foodId": "cmrukzaeh0005wlbwrbkygio0",
+       "name": "Chickpea pasta, dry",
+       "role": "carb",
+       "grams": 155
+      },
+      {
+       "foodId": "cmrevpcnh000iwl5gh2zjhyqe",
+       "name": "Bell peppers",
+       "role": "veg",
+       "grams": 125
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 822.35,
+     "protein": 70.89,
+     "fat": 18.461,
+     "carb": 92.75,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrul4e6r006iwl68jlxv377f",
+      "name": "High-Protein White Fish & Bell Peppers with Chickpea Pasta",
+      "description": null,
+      "steps": [
+       "Cook the white fish.",
+       "Serve over chickpea pasta with bell peppers."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 584.6,
+      "protein": 52.7,
+      "fat": 14.6,
+      "carb": 59.8,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 8.33,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:43:15.412Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x0df100z7wlw0vehk5onf",
+     "planId": "cms6x0d9t00yvwlw0gbgvcovn",
+     "dayOfWeek": 2,
+     "slotType": "snack",
+     "slotIndex": 0,
+     "recipeId": "cmrevpcyt004lwl5gx6bidm0z",
+     "proteinScale": 0.68,
+     "sidesScale": 0.68,
+     "ingredients": [
+      {
+       "foodId": "cmrevpcma0007wl5gfj59j5mk",
+       "name": "Beef jerky",
+       "role": "protein",
+       "grams": 40
+      },
+      {
+       "foodId": "cmrevpcmq000bwl5g2mbd0jsv",
+       "name": "Pork rinds",
+       "role": "protein",
+       "grams": 20
+      }
+     ],
+     "kcal": 272.8,
+     "protein": 25.4,
+     "fat": 16.6,
+     "carb": 4.4,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrevpcyt004lwl5gx6bidm0z",
+      "name": "Jerky & Pork Rinds Snack Plate",
+      "description": "Closer / site valve — his words.",
+      "steps": [
+       "No cooking — portion and eat."
+      ],
+      "slotType": "snack",
+      "cuisine": "western-comfort",
+      "prepTimeMin": 0,
+      "source": "curated",
+      "mealCategory": null,
+      "kcal": 409.2,
+      "protein": 38.1,
+      "fat": 24.9,
+      "carb": 6.6,
+      "tasteTier": "really_good",
+      "tasteTierSource": "curated",
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 6.75,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-10T11:55:10.950Z",
+      "createdByUserId": null
+     }
+    }
+   ],
+   "groceryList": null,
+   "meta": {
+    "matchPct": 96,
+    "attempts": 1,
+    "score": {
+     "daysInTolerance": 1,
+     "avgMatch": 96,
+     "days": [
+      {
+       "dayOfWeek": 2,
+       "dayName": "Wednesday",
+       "matchPct": 96,
+       "totals": {
+        "kcal": 3135,
+        "protein": 272,
+        "fat": 97,
+        "carb": 303
+       },
+       "kcalDeltaPct": -0.2,
+       "proteinShortPct": 0,
+       "fatOk": true,
+       "carbOk": true,
+       "inTolerance": true,
+       "miss": null,
+       "unfilledSlots": 0,
+       "warnedSlots": 0,
+       "windowIndex": 0,
+       "dayIndex": 0,
+       "key": "0:2"
+      }
+     ],
+     "totalDays": 1
+    },
+    "days": [
+     {
+      "dayOfWeek": 2,
+      "dayName": "Wednesday",
+      "matchPct": 96,
+      "totals": {
+       "kcal": 3135,
+       "protein": 272,
+       "fat": 97,
+       "carb": 303
+      },
+      "kcalDeltaPct": -0.2,
+      "proteinShortPct": 0,
+      "fatOk": true,
+      "carbOk": true,
+      "inTolerance": true,
+      "miss": null,
+      "unfilledSlots": 0,
+      "warnedSlots": 0,
+      "windowIndex": 0,
+      "dayIndex": 0,
+      "key": "0:2"
+     }
+    ],
+    "diagnosis": null,
+    "poolCounts": {
+     "raw": 889,
+     "afterDiet": 507,
+     "afterPrep": 507,
+     "afterStack": 507,
+     "stackExplain": null
+    },
+    "variety": {
+     "mealEligible": 479,
+     "usableForSlot": 282,
+     "slotKcal": 714,
+     "snackEligible": 5,
+     "weeklyMealSlots": 28,
+     "weeklySnackSlots": 7,
+     "repeatCap": 2,
+     "distinctWeeks": 10.1,
+     "horizonWeeks": 1,
+     "sustainsHorizon": true,
+     "notes": [
+      "1 day: 5 distinct dish(es) across 5 filled slot(s); most-repeated dish appears 1x against a 2x cap for this horizon (2x per week)."
+     ],
+     "horizon": {
+      "weeks": 1,
+      "days": 1,
+      "perWeekCap": 2,
+      "horizonRepeatCap": 2,
+      "mealSlots": 4,
+      "snackSlots": 1,
+      "totalSlots": 5,
+      "distinctFloor": 3,
+      "distinctRecipes": 5,
+      "maxRepeat": 1,
+      "maxRepeatRecipeId": "cmrj2u6qo07dwwlws2rct0b0b",
+      "lockedRepeatsOfMax": 0,
+      "filledSlots": 5,
+      "unfilledSlots": 0,
+      "requiredDistinct": 3,
+      "capHeld": true,
+      "floorHeld": true
+     }
+    },
+    "priorWeeksConsidered": 0,
+    "horizon": {
+     "key": "day",
+     "label": "1 day",
+     "days": 1,
+     "kind": "days",
+     "weeks": 1,
+     "custom": false,
+     "startDate": "2026-07-29",
+     "endDate": "2026-07-29",
+     "startDayOfWeek": 2,
+     "weeksWritten": 1,
+     "solveMs": 1,
+     "weekPlans": [
+      {
+       "startDate": "2026-07-27",
+       "dayIndices": [
+        2
+       ],
+       "days": 1,
+       "daysInTolerance": 1,
+       "avgMatch": 96,
+       "unfilledSlots": 0,
+       "poolSize": 507
+      }
+     ]
+    }
+   }
+  }
+ }
+}

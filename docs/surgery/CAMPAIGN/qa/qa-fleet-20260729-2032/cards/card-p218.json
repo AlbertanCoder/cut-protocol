@@ -1,0 +1,71 @@
+{
+  "personaId": "p218",
+  "sessionCrossed": false,
+  "satisfaction": 2,
+  "wouldRecommend": false,
+  "criteria": {
+    "macrosInRange": 1,
+    "worksEndToEnd": 3,
+    "mealsAreGood": 3,
+    "affordableAdjustable": 4,
+    "tasty": 4
+  },
+  "allergenRespect": {
+    "ok": true,
+    "leaks": []
+  },
+  "delights": [
+    "My two walls held perfectly across six dishes and about thirty distinct ingredients — not one trace of soy or egg, and nothing animal anywhere. I checked every ingredient name myself: Seitan, White rice, Lentils, Chickpeas, Broccoli, Russet Potato, Harissa Spice, Vegetable Stock. At 77 with medical exclusions, this is the only thing I truly cannot forgive being wrong, and it was right.",
+    "It admits when it fails instead of quietly handing me a bad plate: 'Tried 5 recipe(s) for this slot, none fit within tolerance — closest was \"Corba\" (delivered 35g protein vs a 43g target).' I would far rather be told the solver came up short than be flattered.",
+    "The shopping list is honest about its own limits and still practical: 'costCoverageNote: 8 of 30 item(s) have no price match and are excluded from the total (rough CAD estimates for the rest, not sourced data)', with real store units like '1 head' / '≈300 g each' for broccoli and '2 potatoes' / '≈170 g each'."
+  ],
+  "defects": [
+    {
+      "what": "I asked for 3 meals and 2 snacks. Both snacks came back completely empty — 40% of my eating shape simply missing, and it stayed empty after regenerating.",
+      "snippet": "\"slotType\":\"snack\",\"recipeId\":null,\"ingredients\":[],\"kcal\":0,\"warning\":\"No eligible snack recipe left for this slot.\""
+    },
+    {
+      "what": "The calorie and protein numbers are not real. The Potatoes food record carries another food's macros and says so in its own record, so 115 g of potato is billed to me as 306 kcal and 14.4 g protein instead of about 89 kcal and 2.3 g.",
+      "snippet": "\"name\":\"Potatoes\",\"kcal\":266,\"protein\":12.5 — dataQuality: \"carried fdcId 167943 (\\\"Bread, potato\\\"), whose description does not denote this food; this row's macros are that record's values verbatim and are therefore NOT this food's numbers\""
+    },
+    {
+      "what": "More broken macro records inflate the same day: Carrots at 341 kcal/100g turns 50 g into 171 kcal instead of ~21, Tinned Tomatos at 302 kcal/100g is roughly nine times real, and 795 g of Vegetable Stock is credited with 15.7 g of protein. Recomputed honestly my day is nearer 1,000 kcal and ~53 g protein, not the 1,631 kcal / 91.7 g it shows me.",
+      "snippet": "\"name\":\"Carrots\",\"kcal\":341,\"protein\":8.1 · \"name\":\"Tinned Tomatos\",\"kcal\":302,\"protein\":12.9 · \"name\":\"Vegetable Stock\",\"protein\":1.97 × 795 g"
+    },
+    {
+      "what": "Even taking its own inflated numbers at face value, the day is 426 kcal (21%) under my target — and my goal is maintain, not loss. Understated as it is, the true gap is far worse.",
+      "snippet": "day total 1,631 kcal vs \"targetKcal\": 2057"
+    },
+    {
+      "what": "My first meal of the day is potatoes in tomato sauce with no protein source in it at all, and the app knows it fell 11 g short.",
+      "snippet": "\"Patatas bravas\" — Olive Oil 9g | Onion 14g | Garlic 1g | Tinned Tomatos 30g | Tomato Puree 1g | Paprika 1g | Chilli Powder 1g | Sugar 1g | Parsley 13g | Potatoes 115g — warning: \"delivered 19g protein vs a 30g target\""
+    },
+    {
+      "what": "I asked for a single day and pressed regenerate. It did not replace my day — it appended a second one. My plan now holds 10 slots across two days with the old day still sitting there, summing to 3,355 kcal.",
+      "snippet": "GET /api/plans/current after regenerate: \"persisted slot count: 10\" — dayOfWeek 2 (Patatas bravas, Seitan & Rice, Corba, 2 empty) + dayOfWeek 3 (Seitan & Potato, Leblebi Soup, Seitan & Lentil Pasta, 2 empty)"
+    },
+    {
+      "what": "Asking for alternates on the empty snack slot returned nothing at all, with no explanation of why — the one place the app owed me a reason, it went silent.",
+      "snippet": "{\"alternates\":[]}"
+    },
+    {
+      "what": "The recipe instructions contain leftover placeholder junk presented to me as cooking steps.",
+      "snippet": "\"steps\":[\"step 1\",\"Heat the oil in a pan and fry the onion...\",\"step 2\",\"Heat oven to 200C...\"]"
+    },
+    {
+      "what": "The shopping list tells me to buy 195 g of water, files my only real protein under 'other' while the PROTEIN and DAIRY aisles sit empty, and lists staples in cooked/prepared weight it admits I cannot shop from.",
+      "snippet": "\"Water — 195g [section other]\" · PROTEIN: (empty), Seitan 290g under OTHER · \"White rice, cooked\" with \"form\":\"as-prepared (state unrecorded) — NOT a raw/dry purchase quantity\""
+    },
+    {
+      "what": "A customer-facing price note tells me to go edit the developers' source file.",
+      "snippet": "\"rough manually-entered CAD estimate, not sourced pricing data — edit src/lib/groceryPrices.js to correct\""
+    }
+  ],
+  "followUp": {
+    "action": "Tried to fill one of my two empty snack slots by asking for alternates for it — the obvious thing to do when a slot on your plan is blank. When that came back with nothing I gave the app a fair second chance and regenerated the day.",
+    "endpoint": "POST /api/plans/cms6x1rw705fdwlw021wau3lx/slots/cms6x1rwa05fnwlw0qu0x1pdm/alternates",
+    "status": 200,
+    "howItWent": "A 200 that contained nothing useful: {\"alternates\":[]} — no snack, and no word on why, which is the one moment the app owed me an explanation. Regenerating (POST /api/plans/generate {\"horizon\":\"day\"}, also 200) did not fix it either: both snacks came back empty a second time, and instead of replacing my single day it appended a whole second day beside it, leaving me with a 10-slot two-day plan I never asked for."
+  },
+  "verdict": "It kept my medical walls faultlessly and it is candid about its own failures, but it left 2 of my 5 slots empty, priced my food with macros it openly admits belong to other foods, and left a 77-year-old training six days a week on a maintenance plan that is hundreds of calories short of maintenance — I cannot eat from this yet."
+}

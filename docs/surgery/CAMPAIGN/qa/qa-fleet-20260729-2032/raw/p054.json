@@ -1,0 +1,3604 @@
+{
+ "persona": {
+  "idx": 54,
+  "id": "p054",
+  "tier": "EASY",
+  "displayName": "student athlete, 63",
+  "story": "student athlete, 63, male, 177 cm / 128.4 kg (BMI 41), maintain, vegan diet, no exclusions, high-protein, 5 meals + 1 snacks, wants a full week",
+  "profile": {
+   "sex": "M",
+   "age": 63,
+   "heightCm": 177,
+   "startWeightKg": 128.4,
+   "goalWeightKg": 128.4,
+   "occupationKey": "student",
+   "trainingStyle": "sport",
+   "minutesPerSession": 100,
+   "sessionsPerWeek": 6,
+   "rateLbPerWeek": 0.25,
+   "dietaryStyle": "vegan",
+   "excludedFoods": [],
+   "mealsPerDay": 5,
+   "snacksPerDay": 1,
+   "unitPref": "metric"
+  },
+  "filters": {
+   "proteinPriority": true
+  },
+  "horizon": "week",
+  "walls": [],
+  "freeTextExclusions": [],
+  "dietaryStyle": "vegan",
+  "bmi": 41,
+  "goalKind": "maintain",
+  "macroStyle": "high-protein",
+  "requestedButUnsupported": [
+   "wanted protein set explicitly in g/lb; the API derives the protein band from LBM (1.14-1.25 g/lb) and accepts no client protein target — only the per-request proteinPriority filter"
+  ],
+  "tupleKey": "[\"EASY\",\"M\",63,177,128.4,128.4,\"student\",\"sport\",0.25,\"vegan\",[],5,1,\"high-protein\",\"week\",null,null,true,null,null]"
+ },
+ "request": {
+  "horizon": "week",
+  "filters": {
+   "proteinPriority": true
+  }
+ },
+ "profileResponse": {
+  "id": "cms6x0l9k01pjwlw0z02rejwp",
+  "userId": "cms6x0kz4001cwl2ok1mkxkr7",
+  "sex": "M",
+  "age": 63,
+  "heightCm": 177,
+  "bodyFatPct": 0,
+  "bodyFatSource": null,
+  "occupationKey": "student",
+  "activityOverride": null,
+  "sessionsPerWeek": 6,
+  "trainingStyle": "sport",
+  "minutesPerSession": 100,
+  "startWeightKg": 128.4,
+  "goalWeightKg": 128.4,
+  "startDate": "2026-07-29",
+  "unitPref": "metric",
+  "rateLbPerWeek": 0.25,
+  "rateAcknowledged": false,
+  "floorKcal": null,
+  "excludedFormulas": [],
+  "targetKcal": 3788,
+  "mealsPerDay": 5,
+  "snacksPerDay": 1,
+  "excludedFoods": [],
+  "dietaryStyle": "vegan",
+  "cuisinePreferences": [],
+  "mealPreferencesNote": null,
+  "maxPrepMin": null,
+  "budgetTier": null,
+  "allowBatch": null,
+  "maxComplexity": null,
+  "adaptiveTdee": true,
+  "proteinPriorityMode": false,
+  "updatedAt": "2026-07-30T20:33:16.956Z"
+ },
+ "generate": {
+  "status": 200,
+  "ms": 465,
+  "body": {
+   "id": "cms7z0os0014zwlgwvmbvlhrs",
+   "userId": "cms6x0kz4001cwl2ok1mkxkr7",
+   "startDate": "2026-07-27",
+   "createdAt": "2026-07-30T20:33:17.424Z",
+   "slots": [
+    {
+     "id": "cms7z0os20151wlgwqsyhvuvi",
+     "planId": "cms7z0os0014zwlgwvmbvlhrs",
+     "dayOfWeek": 0,
+     "slotType": "meal",
+     "slotIndex": 0,
+     "recipeId": "cmrul4e4e002iwl68c2njrgq9",
+     "proteinScale": 1.8,
+     "sidesScale": 1.13,
+     "ingredients": [
+      {
+       "foodId": "cmrukzae50002wlbwr9bq9oa7",
+       "name": "Edamame, shelled, cooked",
+       "role": "protein",
+       "grams": 325
+      },
+      {
+       "foodId": "cmrj2t7fb004fwlws8ezof2dp",
+       "name": "Russet Potato",
+       "role": "carb",
+       "grams": 170
+      },
+      {
+       "foodId": "cmrevpcnh000iwl5gh2zjhyqe",
+       "name": "Bell peppers",
+       "role": "veg",
+       "grams": 90
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 627.65,
+     "protein": 44.371,
+     "fat": 21.741,
+     "carb": 71.03,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrul4e4e002iwl68c2njrgq9",
+      "name": "High-Protein Edamame & Bell Peppers with Potato",
+      "description": null,
+      "steps": [
+       "Cook the edamame.",
+       "Serve over potato with bell peppers."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 430.1,
+      "protein": 26.345,
+      "fat": 14.435,
+      "carb": 53.09999999999999,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 3.93,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:43:15.327Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z0os30153wlgwlc4bnb3p",
+     "planId": "cms7z0os0014zwlgwvmbvlhrs",
+     "dayOfWeek": 0,
+     "slotType": "meal",
+     "slotIndex": 1,
+     "recipeId": "cmrul4e2n0000wl68oom44dco",
+     "proteinScale": 0.5,
+     "sidesScale": 1.56,
+     "ingredients": [
+      {
+       "foodId": "cmrukzadw0000wlbwara3md10",
+       "name": "Seitan",
+       "role": "protein",
+       "grams": 85
+      },
+      {
+       "foodId": "cmrukzaeh0005wlbwrbkygio0",
+       "name": "Chickpea pasta, dry",
+       "role": "carb",
+       "grams": 155
+      },
+      {
+       "foodId": "cmrevpcnh000iwl5gh2zjhyqe",
+       "name": "Bell peppers",
+       "role": "veg",
+       "grams": 125
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 712.75,
+     "protein": 53.5,
+     "fat": 14.825,
+     "carb": 96.15,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrul4e2n0000wl68oom44dco",
+      "name": "High-Protein Seitan & Bell Peppers with Chickpea Pasta",
+      "description": null,
+      "steps": [
+       "Cook the seitan.",
+       "Serve over chickpea pasta with bell peppers."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 613.8,
+      "protein": 63.3,
+      "fat": 13.6,
+      "carb": 66.6,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 4.73,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:43:15.263Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z0os40155wlgw8tmo60ix",
+     "planId": "cms7z0os0014zwlgwvmbvlhrs",
+     "dayOfWeek": 0,
+     "slotType": "meal",
+     "slotIndex": 2,
+     "recipeId": "cmrul1dpj000owlk41m8hxi3g",
+     "proteinScale": 1.36,
+     "sidesScale": 2,
+     "ingredients": [
+      {
+       "foodId": "cmrukzae20001wlbwgdjqlh3f",
+       "name": "Textured vegetable protein, dry",
+       "role": "protein",
+       "grams": 75
+      },
+      {
+       "foodId": "cmrevpcn2000ewl5gmlyzu0vd",
+       "name": "White rice, cooked",
+       "role": "carb",
+       "grams": 220
+      },
+      {
+       "foodId": "cmrevpcnh000iwl5gh2zjhyqe",
+       "name": "Bell peppers",
+       "role": "veg",
+       "grams": 160
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 628.1,
+     "protein": 46.54,
+     "fat": 6.890000000000001,
+     "carb": 93.70000000000002,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrul1dpj000owlk41m8hxi3g",
+      "name": "High-Protein TVP & Bell Peppers with Rice",
+      "description": null,
+      "steps": [
+       "Cook the tvp.",
+       "Serve over white rice with bell peppers."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 394.3,
+      "protein": 32.4,
+      "fat": 6.1,
+      "carb": 52.1,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 1.7,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:40:54.824Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z0os50157wlgwi92jxoqj",
+     "planId": "cms7z0os0014zwlgwvmbvlhrs",
+     "dayOfWeek": 0,
+     "slotType": "meal",
+     "slotIndex": 3,
+     "recipeId": "cmrul79u60040wl80vvjxw36x",
+     "proteinScale": 1.71,
+     "sidesScale": 2,
+     "ingredients": [
+      {
+       "foodId": "cmrukzae50002wlbwr9bq9oa7",
+       "name": "Edamame, shelled, cooked",
+       "role": "protein",
+       "grams": 310
+      },
+      {
+       "foodId": "cmrj2t88z0087wlwsmsmchxzb",
+       "name": "Quinoa",
+       "role": "carb",
+       "grams": 220
+      },
+      {
+       "foodId": "cmrevpcnl000jwl5gnqnk630b",
+       "name": "Cucumber",
+       "role": "veg",
+       "grams": 180
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 702.1,
+     "protein": 47.942,
+     "fat": 25.012,
+     "carb": 78.64800000000001,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrul79u60040wl80vvjxw36x",
+      "name": "High-Protein Edamame & Cucumber with Quinoa",
+      "description": null,
+      "steps": [
+       "Cook the edamame.",
+       "Serve over quinoa with cucumber."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 403.8,
+      "protein": 26.971,
+      "fat": 16.256,
+      "carb": 41.574,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 4.42,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:45:29.742Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z0oxd0159wlgwlwr1hczh",
+     "planId": "cms7z0os0014zwlgwvmbvlhrs",
+     "dayOfWeek": 0,
+     "slotType": "meal",
+     "slotIndex": 4,
+     "recipeId": "cmrul79sc0010wl805v7o2aw0",
+     "proteinScale": 0.5,
+     "sidesScale": 2,
+     "ingredients": [
+      {
+       "foodId": "cmrukzae20001wlbwgdjqlh3f",
+       "name": "Textured vegetable protein, dry",
+       "role": "protein",
+       "grams": 30
+      },
+      {
+       "foodId": "cmrukzaed0004wlbwdxnybljb",
+       "name": "Lentil pasta, dry",
+       "role": "carb",
+       "grams": 200
+      },
+      {
+       "foodId": "cmrevpcnh000iwl5gh2zjhyqe",
+       "name": "Bell peppers",
+       "role": "veg",
+       "grams": 160
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 893.6,
+     "protein": 67.19999999999999,
+     "fat": 9.78,
+     "carb": 128.6,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrul79sc0010wl805v7o2aw0",
+      "name": "High-Protein TVP & Bell Peppers with Lentil Pasta",
+      "description": null,
+      "steps": [
+       "Cook the tvp.",
+       "Serve over lentil pasta with bell peppers."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 601.3,
+      "protein": 54.4,
+      "fat": 7.8,
+      "carb": 76.3,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 2.27,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:45:29.676Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z0oxe015bwlgwrcbf8aib",
+     "planId": "cms7z0os0014zwlgwvmbvlhrs",
+     "dayOfWeek": 0,
+     "slotType": "snack",
+     "slotIndex": 0,
+     "recipeId": "cms7pjmkf0035wlbkw9gwdm3s",
+     "proteinScale": 0.56,
+     "sidesScale": 0.56,
+     "ingredients": [
+      {
+       "foodId": "cmrviimf0044qwl1km752wwyb",
+       "name": "Bread, whole-wheat, commercially prepared",
+       "role": "carb",
+       "grams": 35
+      },
+      {
+       "foodId": "cmrj2t6tj001rwlwszp26qdc2",
+       "name": "Peanut Butter",
+       "role": "fat",
+       "grams": 16
+      },
+      {
+       "foodId": "cmrj2t8zr00bbwlwsdb7085qg",
+       "name": "Banana",
+       "role": "carb",
+       "grams": 50
+      }
+     ],
+     "kcal": 228.38,
+     "protein": 8.437,
+     "fat": 9.613999999999999,
+     "carb": 29.913,
+     "warning": "Tried 4 recipe(s) for this slot, none fit within tolerance — closest was \"Peanut Butter Banana Toast\" (delivered 8g protein vs a 14g target).",
+     "locked": false,
+     "recipe": {
+      "id": "cms7pjmkf0035wlbkw9gwdm3s",
+      "name": "Peanut Butter Banana Toast",
+      "description": null,
+      "steps": [
+       "Toast the bread.",
+       "Spread the peanut butter while it is warm so it melts in, then top with sliced banana."
+      ],
+      "slotType": "snack",
+      "cuisine": "american",
+      "prepTimeMin": 5,
+      "source": "curated",
+      "mealCategory": null,
+      "kcal": 398.74,
+      "protein": 14.637,
+      "fat": 16.789,
+      "carb": 52.384,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": null,
+      "difficulty": 1,
+      "filterProvenance": null,
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-30T16:08:04.863Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z0oxf015dwlgw1pe93f8i",
+     "planId": "cms7z0os0014zwlgwvmbvlhrs",
+     "dayOfWeek": 1,
+     "slotType": "meal",
+     "slotIndex": 0,
+     "recipeId": "cmrul79sg0016wl80337jb3da",
+     "proteinScale": 0.61,
+     "sidesScale": 1.29,
+     "ingredients": [
+      {
+       "foodId": "cmrukzae20001wlbwgdjqlh3f",
+       "name": "Textured vegetable protein, dry",
+       "role": "protein",
+       "grams": 35
+      },
+      {
+       "foodId": "cmrukzaeh0005wlbwrbkygio0",
+       "name": "Chickpea pasta, dry",
+       "role": "carb",
+       "grams": 130
+      },
+      {
+       "foodId": "cmrevpcnh000iwl5gh2zjhyqe",
+       "name": "Bell peppers",
+       "role": "veg",
+       "grams": 105
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 635.05,
+     "protein": 45.25,
+     "fat": 12.165,
+     "carb": 88.3,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrul79sg0016wl80337jb3da",
+      "name": "High-Protein TVP & Bell Peppers with Chickpea Pasta",
+      "description": null,
+      "steps": [
+       "Cook the tvp.",
+       "Serve over chickpea pasta with bell peppers."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 591.3,
+      "protein": 49.4,
+      "fat": 10.8,
+      "carb": 76.3,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 2.27,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:45:29.680Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z0oxg015fwlgw3o14e0tp",
+     "planId": "cms7z0os0014zwlgwvmbvlhrs",
+     "dayOfWeek": 1,
+     "slotType": "meal",
+     "slotIndex": 1,
+     "recipeId": "cmrul4e440020wl68cn3wmtsm",
+     "proteinScale": 0.5,
+     "sidesScale": 1.5,
+     "ingredients": [
+      {
+       "foodId": "cmrukzae50002wlbwr9bq9oa7",
+       "name": "Edamame, shelled, cooked",
+       "role": "protein",
+       "grams": 90
+      },
+      {
+       "foodId": "cmrukzaed0004wlbwdxnybljb",
+       "name": "Lentil pasta, dry",
+       "role": "carb",
+       "grams": 150
+      },
+      {
+       "foodId": "cmrj2t6na000ywlws9jek4w4z",
+       "name": "Broccoli",
+       "role": "veg",
+       "grams": 165
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 730.05,
+     "protein": 52.54049999999999,
+     "fat": 13.061,
+     "carb": 100.9455,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrul4e440020wl68cn3wmtsm",
+      "name": "High-Protein Edamame & Broccoli with Lentil Pasta",
+      "description": null,
+      "steps": [
+       "Cook the edamame.",
+       "Serve over lentil pasta with broccoli."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 646.9,
+      "protein": 49.4,
+      "fat": 16.4,
+      "carb": 78.1,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 4.46,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:43:15.316Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z0oxg015hwlgwyub2hnoo",
+     "planId": "cms7z0os0014zwlgwvmbvlhrs",
+     "dayOfWeek": 1,
+     "slotType": "meal",
+     "slotIndex": 2,
+     "recipeId": "cms7pjmj90025wlbke02jmm0u",
+     "proteinScale": 0.8,
+     "sidesScale": 1.36,
+     "ingredients": [
+      {
+       "foodId": "cmrukzadw0000wlbwara3md10",
+       "name": "Seitan",
+       "role": "protein",
+       "grams": 145
+      },
+      {
+       "foodId": "cmrevpcn2000ewl5gmlyzu0vd",
+       "name": "White rice, cooked",
+       "role": "carb",
+       "grams": 245
+      },
+      {
+       "foodId": "cmrj2t6na000ywlws9jek4w4z",
+       "name": "Broccoli",
+       "role": "veg",
+       "grams": 190
+      },
+      {
+       "foodId": "cmrj2t6ft0001wlwstiofk9on",
+       "name": "Garlic",
+       "role": "veg",
+       "grams": 5
+      },
+      {
+       "foodId": "cmrj2t6ye002dwlwssjv94yyn",
+       "name": "Ginger",
+       "role": "other",
+       "grams": 4
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 14
+      }
+     ],
+     "kcal": 687.75,
+     "protein": 48.15180000000001,
+     "fat": 18.33,
+     "carb": 88.435,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cms7pjmj90025wlbke02jmm0u",
+      "name": "Seitan Stir-Fry with Broccoli and Rice",
+      "description": null,
+      "steps": [
+       "Slice the seitan thin.",
+       "Stir-fry it in a very hot pan for 3 minutes until the edges catch.",
+       "Add the broccoli, garlic and ginger with a splash of water and cover for 2 minutes to steam through.",
+       "Serve on the rice."
+      ],
+      "slotType": "meal",
+      "cuisine": "asian",
+      "prepTimeMin": 20,
+      "source": "curated",
+      "mealCategory": null,
+      "kcal": 593.75,
+      "protein": 53.8618,
+      "fat": 14.665,
+      "carb": 68.5,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": null,
+      "difficulty": 2,
+      "filterProvenance": null,
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-30T16:08:04.821Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z0oxh015lwlgwgko8c1wd",
+     "planId": "cms7z0os0014zwlgwvmbvlhrs",
+     "dayOfWeek": 1,
+     "slotType": "meal",
+     "slotIndex": 3,
+     "recipeId": "cmrul1dpg000iwlk4gucmabph",
+     "proteinScale": 0.51,
+     "sidesScale": 1.45,
+     "ingredients": [
+      {
+       "foodId": "cmrukzae20001wlbwgdjqlh3f",
+       "name": "Textured vegetable protein, dry",
+       "role": "protein",
+       "grams": 30
+      },
+      {
+       "foodId": "cmrukzaeh0005wlbwrbkygio0",
+       "name": "Chickpea pasta, dry",
+       "role": "carb",
+       "grams": 145
+      },
+      {
+       "foodId": "cmrj2t6na000ywlws9jek4w4z",
+       "name": "Broccoli",
+       "role": "veg",
+       "grams": 160
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 686.6,
+     "protein": 48.712,
+     "fat": 13.094,
+     "carb": 98.782,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrul1dpg000iwlk4gucmabph",
+      "name": "High-Protein TVP & Broccoli with Chickpea Pasta",
+      "description": null,
+      "steps": [
+       "Cook the tvp.",
+       "Serve over chickpea pasta with broccoli."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 600.6,
+      "protein": 51.4,
+      "fat": 10.9,
+      "carb": 78.4,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 2.35,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:40:54.820Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z0oxi015nwlgwgo5t01sc",
+     "planId": "cms7z0os0014zwlgwvmbvlhrs",
+     "dayOfWeek": 1,
+     "slotType": "meal",
+     "slotIndex": 4,
+     "recipeId": "cmrul4e4l002uwl68xgkdhmrh",
+     "proteinScale": 0.55,
+     "sidesScale": 1.54,
+     "ingredients": [
+      {
+       "foodId": "cmrj2tapd00htwlwsd6ggixb6",
+       "name": "Tofu",
+       "role": "protein",
+       "grams": 110
+      },
+      {
+       "foodId": "cmrukzaeh0005wlbwrbkygio0",
+       "name": "Chickpea pasta, dry",
+       "role": "carb",
+       "grams": 155
+      },
+      {
+       "foodId": "cmrj2t6na000ywlws9jek4w4z",
+       "name": "Broccoli",
+       "role": "veg",
+       "grams": 170
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 783.1,
+     "protein": 54.399,
+     "fat": 22.92,
+     "carb": 98.96699999999998,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrul4e4l002uwl68xgkdhmrh",
+      "name": "High-Protein Tofu & Broccoli with Chickpea Pasta",
+      "description": null,
+      "steps": [
+       "Cook the tofu.",
+       "Serve over chickpea pasta with broccoli."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 707.1,
+      "protein": 57.427,
+      "fat": 27.814,
+      "carb": 67.457,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 3.98,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:43:15.334Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z0oxi015pwlgwibs1lom5",
+     "planId": "cms7z0os0014zwlgwvmbvlhrs",
+     "dayOfWeek": 1,
+     "slotType": "snack",
+     "slotIndex": 0,
+     "recipeId": "cms7pjmju002swlbktsksba9r",
+     "proteinScale": 1.46,
+     "sidesScale": 1.46,
+     "ingredients": [
+      {
+       "foodId": "cmrukzae50002wlbwr9bq9oa7",
+       "name": "Edamame, shelled, cooked",
+       "role": "protein",
+       "grams": 220
+      },
+      {
+       "foodId": "cmrj2t6gd0003wlwss7jf3wzf",
+       "name": "Salt",
+       "role": "other",
+       "grams": 1
+      }
+     ],
+     "kcal": 266.2,
+     "protein": 26.4,
+     "fat": 11,
+     "carb": 19.8,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cms7pjmju002swlbktsksba9r",
+      "name": "Edamame with Sea Salt",
+      "description": null,
+      "steps": [
+       "Boil the pods 4 minutes in well-salted water.",
+       "Drain and salt again while hot. Eat from the pod."
+      ],
+      "slotType": "snack",
+      "cuisine": "japanese",
+      "prepTimeMin": 6,
+      "source": "curated",
+      "mealCategory": null,
+      "kcal": 181.5,
+      "protein": 18,
+      "fat": 7.5,
+      "carb": 13.5,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": null,
+      "difficulty": 1,
+      "filterProvenance": null,
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-30T16:08:04.843Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z0oxj015rwlgwl9br41b7",
+     "planId": "cms7z0os0014zwlgwvmbvlhrs",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 0,
+     "recipeId": "cmrul79ud004cwl808rgh68b3",
+     "proteinScale": 0.5,
+     "sidesScale": 1.33,
+     "ingredients": [
+      {
+       "foodId": "cmrj2tapd00htwlwsd6ggixb6",
+       "name": "Tofu",
+       "role": "protein",
+       "grams": 100
+      },
+      {
+       "foodId": "cmrukzaed0004wlbwdxnybljb",
+       "name": "Lentil pasta, dry",
+       "role": "carb",
+       "grams": 135
+      },
+      {
+       "foodId": "cmrevpcnh000iwl5gh2zjhyqe",
+       "name": "Bell peppers",
+       "role": "veg",
+       "grams": 105
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 694.05,
+     "protein": 52.09999999999999,
+     "fat": 16.735,
+     "carb": 83.33,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrul79ud004cwl808rgh68b3",
+      "name": "High-Protein Tofu & Bell Peppers with Lentil Pasta",
+      "description": null,
+      "steps": [
+       "Cook the tofu.",
+       "Serve over lentil pasta with bell peppers."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 707.8,
+      "protein": 60.4,
+      "fat": 24.68,
+      "carb": 65.36,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 3.9,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:45:29.749Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z0oxj015twlgwv1gxshde",
+     "planId": "cms7z0os0014zwlgwvmbvlhrs",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 1,
+     "recipeId": "cmrul4e4l002uwl68xgkdhmrh",
+     "proteinScale": 0.5,
+     "sidesScale": 1.31,
+     "ingredients": [
+      {
+       "foodId": "cmrj2tapd00htwlwsd6ggixb6",
+       "name": "Tofu",
+       "role": "protein",
+       "grams": 100
+      },
+      {
+       "foodId": "cmrukzaeh0005wlbwrbkygio0",
+       "name": "Chickpea pasta, dry",
+       "role": "carb",
+       "grams": 130
+      },
+      {
+       "foodId": "cmrj2t6na000ywlws9jek4w4z",
+       "name": "Broccoli",
+       "role": "veg",
+       "grams": 145
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 675.95,
+     "protein": 47.0265,
+     "fat": 20.713,
+     "carb": 83.3715,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrul4e4l002uwl68xgkdhmrh",
+      "name": "High-Protein Tofu & Broccoli with Chickpea Pasta",
+      "description": null,
+      "steps": [
+       "Cook the tofu.",
+       "Serve over chickpea pasta with broccoli."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 707.1,
+      "protein": 57.427,
+      "fat": 27.814,
+      "carb": 67.457,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 3.98,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:43:15.334Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z0oxk015vwlgwzukbpzj8",
+     "planId": "cms7z0os0014zwlgwvmbvlhrs",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 2,
+     "recipeId": "cmrul4e36000owl68vosgueia",
+     "proteinScale": 0.5,
+     "sidesScale": 1.59,
+     "ingredients": [
+      {
+       "foodId": "cmrukzae20001wlbwgdjqlh3f",
+       "name": "Textured vegetable protein, dry",
+       "role": "protein",
+       "grams": 30
+      },
+      {
+       "foodId": "cmrukzaed0004wlbwdxnybljb",
+       "name": "Lentil pasta, dry",
+       "role": "carb",
+       "grams": 160
+      },
+      {
+       "foodId": "cmrg8zxar000lwli0qy2ovmx4",
+       "name": "Onion",
+       "role": "veg",
+       "grams": 95
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 742,
+     "protein": 56.645,
+     "fat": 8.595,
+     "carb": 105.873,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrul4e36000owl68vosgueia",
+      "name": "High-Protein TVP & Onions with Lentil Pasta",
+      "description": null,
+      "steps": [
+       "Cook the tvp.",
+       "Serve over lentil pasta with onions."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 600.5,
+      "protein": 54.3,
+      "fat": 7.6,
+      "carb": 77.1,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 1.89,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:43:15.283Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z0oxk015xwlgwnenx5dnq",
+     "planId": "cms7z0os0014zwlgwvmbvlhrs",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 3,
+     "recipeId": "cmrul79tz003owl804bn422us",
+     "proteinScale": 0.98,
+     "sidesScale": 1.09,
+     "ingredients": [
+      {
+       "foodId": "cmrukzae50002wlbwr9bq9oa7",
+       "name": "Edamame, shelled, cooked",
+       "role": "protein",
+       "grams": 175
+      },
+      {
+       "foodId": "cmrukzaeh0005wlbwrbkygio0",
+       "name": "Chickpea pasta, dry",
+       "role": "carb",
+       "grams": 110
+      },
+      {
+       "foodId": "cmrg8zxar000lwli0qy2ovmx4",
+       "name": "Onion",
+       "role": "veg",
+       "grams": 65
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 656.75,
+     "protein": 43.715,
+     "fat": 19.315,
+     "carb": 82.321,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrul79tz003owl804bn422us",
+      "name": "High-Protein Edamame & Onions with Chickpea Pasta",
+      "description": null,
+      "steps": [
+       "Cook the edamame.",
+       "Serve over chickpea pasta with onions."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 626.8,
+      "protein": 42.3,
+      "fat": 19.1,
+      "carb": 76.8,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 4.01,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:45:29.735Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z0oxl015zwlgwfxhjm4vf",
+     "planId": "cms7z0os0014zwlgwvmbvlhrs",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 4,
+     "recipeId": "cmrul79rr0006wl80t78qmq8h",
+     "proteinScale": 0.5,
+     "sidesScale": 1.77,
+     "ingredients": [
+      {
+       "foodId": "cmrukzadw0000wlbwara3md10",
+       "name": "Seitan",
+       "role": "protein",
+       "grams": 85
+      },
+      {
+       "foodId": "cmrukzaeh0005wlbwrbkygio0",
+       "name": "Chickpea pasta, dry",
+       "role": "carb",
+       "grams": 175
+      },
+      {
+       "foodId": "cmrg8zxar000lwli0qy2ovmx4",
+       "name": "Onion",
+       "role": "veg",
+       "grams": 105
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 784,
+     "protein": 57.405,
+     "fat": 15.555,
+     "carb": 109.457,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrul79rr0006wl80t78qmq8h",
+      "name": "High-Protein Seitan & Onions with Chickpea Pasta",
+      "description": null,
+      "steps": [
+       "Cook the seitan.",
+       "Serve over chickpea pasta with onions."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 613,
+      "protein": 63.2,
+      "fat": 13.5,
+      "carb": 67.4,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 4.36,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:45:29.655Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z0oxl0161wlgwbbmg3fke",
+     "planId": "cms7z0os0014zwlgwvmbvlhrs",
+     "dayOfWeek": 2,
+     "slotType": "snack",
+     "slotIndex": 0,
+     "recipeId": "cms7pjmjn002nwlbky6jaa8pr",
+     "proteinScale": 1.36,
+     "sidesScale": 0.5,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t8130077wlws41hxskn2",
+       "name": "Chickpeas",
+       "role": "protein",
+       "grams": 165
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 4
+      },
+      {
+       "foodId": "cmrj2t6jp000iwlwsli2ckg55",
+       "name": "Paprika",
+       "role": "other",
+       "grams": 2
+      }
+     ],
+     "kcal": 389.79,
+     "protein": 13.8615,
+     "fat": 18.9595,
+     "carb": 43.15499999999999,
+     "warning": "Tried 3 recipe(s) for this slot, none fit within tolerance — closest was \"Roasted Chickpeas with Paprika\" (landed 390 kcal vs a 235 target).",
+     "locked": false,
+     "recipe": {
+      "id": "cms7pjmjn002nwlbky6jaa8pr",
+      "name": "Roasted Chickpeas with Paprika",
+      "description": null,
+      "steps": [
+       "Dry the chickpeas thoroughly — wet ones steam instead of crisping.",
+       "Toss with oil and paprika and roast at 200C for 25 minutes, shaking once."
+      ],
+      "slotType": "snack",
+      "cuisine": "mediterranean",
+      "prepTimeMin": 30,
+      "source": "curated",
+      "mealCategory": null,
+      "kcal": 321.84,
+      "protein": 10.158,
+      "fat": 17.95,
+      "carb": 31.68,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": null,
+      "difficulty": 1,
+      "filterProvenance": null,
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-30T16:08:04.836Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z0oxm0163wlgwda761gya",
+     "planId": "cms7z0os0014zwlgwvmbvlhrs",
+     "dayOfWeek": 3,
+     "slotType": "meal",
+     "slotIndex": 0,
+     "recipeId": "cmrul4e4i002owl68yvn6t5sv",
+     "proteinScale": 0.5,
+     "sidesScale": 1.33,
+     "ingredients": [
+      {
+       "foodId": "cmrj2tapd00htwlwsd6ggixb6",
+       "name": "Tofu",
+       "role": "protein",
+       "grams": 100
+      },
+      {
+       "foodId": "cmrukzaed0004wlbwdxnybljb",
+       "name": "Lentil pasta, dry",
+       "role": "carb",
+       "grams": 135
+      },
+      {
+       "foodId": "cmrg8zxar000lwli0qy2ovmx4",
+       "name": "Onion",
+       "role": "veg",
+       "grams": 80
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 693.5,
+     "protein": 51.93,
+     "fat": 16.5,
+     "carb": 84.502,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrul4e4i002owl68yvn6t5sv",
+      "name": "High-Protein Tofu & Onions with Lentil Pasta",
+      "description": null,
+      "steps": [
+       "Cook the tofu.",
+       "Serve over lentil pasta with onions."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 707,
+      "protein": 60.26,
+      "fat": 24.5,
+      "carb": 66.164,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 3.53,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:43:15.330Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z0oxm0165wlgwv3lfdg6v",
+     "planId": "cms7z0os0014zwlgwvmbvlhrs",
+     "dayOfWeek": 3,
+     "slotType": "meal",
+     "slotIndex": 1,
+     "recipeId": "cmrul1dpz0016wlk4duydrt1u",
+     "proteinScale": 1.22,
+     "sidesScale": 1.01,
+     "ingredients": [
+      {
+       "foodId": "cmrukzae50002wlbwr9bq9oa7",
+       "name": "Edamame, shelled, cooked",
+       "role": "protein",
+       "grams": 220
+      },
+      {
+       "foodId": "cmrukzaeh0005wlbwrbkygio0",
+       "name": "Chickpea pasta, dry",
+       "role": "carb",
+       "grams": 100
+      },
+      {
+       "foodId": "cmrevpcnh000iwl5gh2zjhyqe",
+       "name": "Bell peppers",
+       "role": "veg",
+       "grams": 80
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 676,
+     "protein": 47.2,
+     "fat": 21.24,
+     "carb": 79.6,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrul1dpz0016wlk4duydrt1u",
+      "name": "High-Protein Edamame & Bell Peppers with Chickpea Pasta",
+      "description": null,
+      "steps": [
+       "Cook the edamame.",
+       "Serve over chickpea pasta with bell peppers."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 627.6,
+      "protein": 42.4,
+      "fat": 19.2,
+      "carb": 76,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 4.38,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:40:54.840Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z0oxn0167wlgwg8nk4s2x",
+     "planId": "cms7z0os0014zwlgwvmbvlhrs",
+     "dayOfWeek": 3,
+     "slotType": "meal",
+     "slotIndex": 2,
+     "recipeId": "cmrul79sr001owl80dqc054hi",
+     "proteinScale": 1.34,
+     "sidesScale": 2,
+     "ingredients": [
+      {
+       "foodId": "cmrukzae20001wlbwgdjqlh3f",
+       "name": "Textured vegetable protein, dry",
+       "role": "protein",
+       "grams": 75
+      },
+      {
+       "foodId": "cmrevpcn2000ewl5gmlyzu0vd",
+       "name": "White rice, cooked",
+       "role": "carb",
+       "grams": 220
+      },
+      {
+       "foodId": "cmrevpcnl000jwl5gnqnk630b",
+       "name": "Cucumber",
+       "role": "veg",
+       "grams": 180
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 596.5,
+     "protein": 46.002,
+     "fat": 6.698,
+     "carb": 87.98800000000001,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrul79sr001owl80dqc054hi",
+      "name": "High-Protein TVP & Cucumber with Rice",
+      "description": null,
+      "steps": [
+       "Cook the tvp.",
+       "Serve over white rice with cucumber."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 378.5,
+      "protein": 32.101,
+      "fat": 6.024,
+      "carb": 49.24400000000001,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 1.54,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:45:29.692Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z0oxn0169wlgwbmndccst",
+     "planId": "cms7z0os0014zwlgwvmbvlhrs",
+     "dayOfWeek": 3,
+     "slotType": "meal",
+     "slotIndex": 3,
+     "recipeId": "cmrul79tr003cwl80ve3i5nmh",
+     "proteinScale": 1.22,
+     "sidesScale": 1.76,
+     "ingredients": [
+      {
+       "foodId": "cmrj2tclc00pqwlws0vlepf5r",
+       "name": "Tempeh, cooked",
+       "role": "protein",
+       "grams": 195
+      },
+      {
+       "foodId": "cmrj2t7fb004fwlws8ezof2dp",
+       "name": "Russet Potato",
+       "role": "carb",
+       "grams": 265
+      },
+      {
+       "foodId": "cmrevpcnh000iwl5gh2zjhyqe",
+       "name": "Bell peppers",
+       "role": "veg",
+       "grams": 140
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 714.55,
+     "protein": 47.9545,
+     "fat": 26.8245,
+     "carb": 79.92999999999998,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrul79tr003cwl80ve3i5nmh",
+      "name": "High-Protein Tempeh & Bell Peppers with Potato",
+      "description": null,
+      "steps": [
+       "Cook the tempeh.",
+       "Serve over potato with bell peppers."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 519.5,
+      "protein": 37.225,
+      "fat": 22.715,
+      "carb": 49.05999999999999,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 3.93,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:45:29.728Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z0oxo016bwlgwzwd53164",
+     "planId": "cms7z0os0014zwlgwvmbvlhrs",
+     "dayOfWeek": 3,
+     "slotType": "meal",
+     "slotIndex": 4,
+     "recipeId": "cmrul79s8000uwl806ukbo5xx",
+     "proteinScale": 0.5,
+     "sidesScale": 2,
+     "ingredients": [
+      {
+       "foodId": "cmrukzae20001wlbwgdjqlh3f",
+       "name": "Textured vegetable protein, dry",
+       "role": "protein",
+       "grams": 30
+      },
+      {
+       "foodId": "cmrukzaed0004wlbwdxnybljb",
+       "name": "Lentil pasta, dry",
+       "role": "carb",
+       "grams": 200
+      },
+      {
+       "foodId": "cmrj2t6na000ywlws9jek4w4z",
+       "name": "Broccoli",
+       "role": "veg",
+       "grams": 220
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 912.2,
+     "protein": 71.25399999999999,
+     "fat": 10.048,
+     "carb": 132.794,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrul79s8000uwl806ukbo5xx",
+      "name": "High-Protein TVP & Broccoli with Lentil Pasta",
+      "description": null,
+      "steps": [
+       "Cook the tvp.",
+       "Serve over lentil pasta with broccoli."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 610.6,
+      "protein": 56.4,
+      "fat": 7.9,
+      "carb": 78.4,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 2.35,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:45:29.672Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z0oxp016dwlgwax4spu5w",
+     "planId": "cms7z0os0014zwlgwvmbvlhrs",
+     "dayOfWeek": 3,
+     "slotType": "snack",
+     "slotIndex": 0,
+     "recipeId": "cms7pjmk1002wwlbknnq20wmp",
+     "proteinScale": 0.5,
+     "sidesScale": 0.5,
+     "ingredients": [
+      {
+       "foodId": "cmrviina7090twl1khugx9t9d",
+       "name": "Apple, dried",
+       "role": "carb",
+       "grams": 75
+      },
+      {
+       "foodId": "cmrviin3307r2wl1kd0jwa0ft",
+       "name": "Almond butter",
+       "role": "fat",
+       "grams": 15
+      }
+     ],
+     "kcal": 278.4,
+     "protein": 3.8025,
+     "fat": 8.145,
+     "carb": 52.59,
+     "warning": "Tried 3 recipe(s) for this slot, none fit within tolerance — closest was \"Apple with Almond Butter\" (landed 278 kcal vs a 195 target; delivered 4g protein vs a 14g target).",
+     "locked": false,
+     "recipe": {
+      "id": "cms7pjmk1002wwlbknnq20wmp",
+      "name": "Apple with Almond Butter",
+      "description": null,
+      "steps": [
+       "Slice the apple.",
+       "Serve with the almond butter for dipping."
+      ],
+      "slotType": "snack",
+      "cuisine": "american",
+      "prepTimeMin": 3,
+      "source": "curated",
+      "mealCategory": null,
+      "kcal": 556.8,
+      "protein": 7.605,
+      "fat": 16.29,
+      "carb": 105.18,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": null,
+      "difficulty": 1,
+      "filterProvenance": null,
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-30T16:08:04.850Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z0oxq016fwlgwznm2wzzo",
+     "planId": "cms7z0os0014zwlgwvmbvlhrs",
+     "dayOfWeek": 4,
+     "slotType": "meal",
+     "slotIndex": 0,
+     "recipeId": "cmrul4e440020wl68cn3wmtsm",
+     "proteinScale": 0.5,
+     "sidesScale": 1.31,
+     "ingredients": [
+      {
+       "foodId": "cmrukzae50002wlbwr9bq9oa7",
+       "name": "Edamame, shelled, cooked",
+       "role": "protein",
+       "grams": 90
+      },
+      {
+       "foodId": "cmrukzaed0004wlbwdxnybljb",
+       "name": "Lentil pasta, dry",
+       "role": "carb",
+       "grams": 130
+      },
+      {
+       "foodId": "cmrj2t6na000ywlws9jek4w4z",
+       "name": "Broccoli",
+       "role": "veg",
+       "grams": 145
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 653.85,
+     "protein": 47.0265,
+     "fat": 12.593,
+     "carb": 88.69149999999999,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrul4e440020wl68cn3wmtsm",
+      "name": "High-Protein Edamame & Broccoli with Lentil Pasta",
+      "description": null,
+      "steps": [
+       "Cook the edamame.",
+       "Serve over lentil pasta with broccoli."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 646.9,
+      "protein": 49.4,
+      "fat": 16.4,
+      "carb": 78.1,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 4.46,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:43:15.316Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z0oxq016hwlgw0m1fy0pn",
+     "planId": "cms7z0os0014zwlgwvmbvlhrs",
+     "dayOfWeek": 4,
+     "slotType": "meal",
+     "slotIndex": 1,
+     "recipeId": "cmrul4e4i002owl68yvn6t5sv",
+     "proteinScale": 0.5,
+     "sidesScale": 1.5,
+     "ingredients": [
+      {
+       "foodId": "cmrj2tapd00htwlwsd6ggixb6",
+       "name": "Tofu",
+       "role": "protein",
+       "grams": 100
+      },
+      {
+       "foodId": "cmrukzaed0004wlbwdxnybljb",
+       "name": "Lentil pasta, dry",
+       "role": "carb",
+       "grams": 150
+      },
+      {
+       "foodId": "cmrg8zxar000lwli0qy2ovmx4",
+       "name": "Onion",
+       "role": "veg",
+       "grams": 90
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 750,
+     "protein": 55.79,
+     "fat": 16.81,
+     "carb": 93.686,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrul4e4i002owl68yvn6t5sv",
+      "name": "High-Protein Tofu & Onions with Lentil Pasta",
+      "description": null,
+      "steps": [
+       "Cook the tofu.",
+       "Serve over lentil pasta with onions."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 707,
+      "protein": 60.26,
+      "fat": 24.5,
+      "carb": 66.164,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 3.53,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:43:15.330Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z0oxr016jwlgwfmrkvyw6",
+     "planId": "cms7z0os0014zwlgwvmbvlhrs",
+     "dayOfWeek": 4,
+     "slotType": "meal",
+     "slotIndex": 2,
+     "recipeId": "cmrul4e2n0000wl68oom44dco",
+     "proteinScale": 0.5,
+     "sidesScale": 1.52,
+     "ingredients": [
+      {
+       "foodId": "cmrukzadw0000wlbwara3md10",
+       "name": "Seitan",
+       "role": "protein",
+       "grams": 85
+      },
+      {
+       "foodId": "cmrukzaeh0005wlbwrbkygio0",
+       "name": "Chickpea pasta, dry",
+       "role": "carb",
+       "grams": 150
+      },
+      {
+       "foodId": "cmrevpcnh000iwl5gh2zjhyqe",
+       "name": "Bell peppers",
+       "role": "veg",
+       "grams": 120
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 694.2,
+     "protein": 52.45,
+     "fat": 14.56,
+     "carb": 93.10000000000001,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrul4e2n0000wl68oom44dco",
+      "name": "High-Protein Seitan & Bell Peppers with Chickpea Pasta",
+      "description": null,
+      "steps": [
+       "Cook the seitan.",
+       "Serve over chickpea pasta with bell peppers."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 613.8,
+      "protein": 63.3,
+      "fat": 13.6,
+      "carb": 66.6,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 4.73,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:43:15.263Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z0oxr016lwlgwsg0j0cah",
+     "planId": "cms7z0os0014zwlgwvmbvlhrs",
+     "dayOfWeek": 4,
+     "slotType": "meal",
+     "slotIndex": 3,
+     "recipeId": "cmrul79uz005cwl80egh79sud",
+     "proteinScale": 1,
+     "sidesScale": 1.97,
+     "ingredients": [
+      {
+       "foodId": "cmrj2tapd00htwlwsd6ggixb6",
+       "name": "Tofu",
+       "role": "protein",
+       "grams": 200
+      },
+      {
+       "foodId": "cmrj2t7fb004fwlws8ezof2dp",
+       "name": "Russet Potato",
+       "role": "carb",
+       "grams": 295
+      },
+      {
+       "foodId": "cmrevpcnh000iwl5gh2zjhyqe",
+       "name": "Bell peppers",
+       "role": "veg",
+       "grams": 155
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 661.3,
+     "protein": 43.9085,
+     "fat": 23.2885,
+     "carb": 77.99,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrul79uz005cwl80egh79sud",
+      "name": "High-Protein Tofu & Bell Peppers with Potato",
+      "description": null,
+      "steps": [
+       "Cook the tofu.",
+       "Serve over potato with bell peppers."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 500.3,
+      "protein": 39.345,
+      "fat": 22.875,
+      "carb": 42.45999999999999,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 3.45,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:45:29.771Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z0oxs016nwlgwcrqso516",
+     "planId": "cms7z0os0014zwlgwvmbvlhrs",
+     "dayOfWeek": 4,
+     "slotType": "meal",
+     "slotIndex": 4,
+     "recipeId": "cmrul1dp00000wlk415rwnz4x",
+     "proteinScale": 0.5,
+     "sidesScale": 1.9,
+     "ingredients": [
+      {
+       "foodId": "cmrukzadw0000wlbwara3md10",
+       "name": "Seitan",
+       "role": "protein",
+       "grams": 85
+      },
+      {
+       "foodId": "cmrukzaed0004wlbwdxnybljb",
+       "name": "Lentil pasta, dry",
+       "role": "carb",
+       "grams": 190
+      },
+      {
+       "foodId": "cmrj2t6na000ywlws9jek4w4z",
+       "name": "Broccoli",
+       "role": "veg",
+       "grams": 210
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 877.1,
+     "protein": 74.147,
+     "fat": 11.214,
+     "carb": 121.067,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrul1dp00000wlk415rwnz4x",
+      "name": "High-Protein Seitan & Broccoli with Lentil Pasta",
+      "description": null,
+      "steps": [
+       "Cook the seitan.",
+       "Serve over lentil pasta with broccoli."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 633.1,
+      "protein": 70.3,
+      "fat": 10.8,
+      "carb": 68.7,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 4.81,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:40:54.805Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z0oxs016pwlgw2e78m842",
+     "planId": "cms7z0os0014zwlgwvmbvlhrs",
+     "dayOfWeek": 4,
+     "slotType": "snack",
+     "slotIndex": 0,
+     "recipeId": "cms7pjmju002swlbktsksba9r",
+     "proteinScale": 1.07,
+     "sidesScale": 1.07,
+     "ingredients": [
+      {
+       "foodId": "cmrukzae50002wlbwr9bq9oa7",
+       "name": "Edamame, shelled, cooked",
+       "role": "protein",
+       "grams": 160
+      },
+      {
+       "foodId": "cmrj2t6gd0003wlwss7jf3wzf",
+       "name": "Salt",
+       "role": "other",
+       "grams": 1
+      }
+     ],
+     "kcal": 193.6,
+     "protein": 19.2,
+     "fat": 8,
+     "carb": 14.4,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cms7pjmju002swlbktsksba9r",
+      "name": "Edamame with Sea Salt",
+      "description": null,
+      "steps": [
+       "Boil the pods 4 minutes in well-salted water.",
+       "Drain and salt again while hot. Eat from the pod."
+      ],
+      "slotType": "snack",
+      "cuisine": "japanese",
+      "prepTimeMin": 6,
+      "source": "curated",
+      "mealCategory": null,
+      "kcal": 181.5,
+      "protein": 18,
+      "fat": 7.5,
+      "carb": 13.5,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": null,
+      "difficulty": 1,
+      "filterProvenance": null,
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-30T16:08:04.843Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z0oxt016rwlgw77ymztok",
+     "planId": "cms7z0os0014zwlgwvmbvlhrs",
+     "dayOfWeek": 5,
+     "slotType": "meal",
+     "slotIndex": 0,
+     "recipeId": "cmrul1dpg000iwlk4gucmabph",
+     "proteinScale": 0.5,
+     "sidesScale": 1.31,
+     "ingredients": [
+      {
+       "foodId": "cmrukzae20001wlbwgdjqlh3f",
+       "name": "Textured vegetable protein, dry",
+       "role": "protein",
+       "grams": 30
+      },
+      {
+       "foodId": "cmrukzaeh0005wlbwrbkygio0",
+       "name": "Chickpea pasta, dry",
+       "role": "carb",
+       "grams": 130
+      },
+      {
+       "foodId": "cmrj2t6na000ywlws9jek4w4z",
+       "name": "Broccoli",
+       "role": "veg",
+       "grams": 145
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      },
+      {
+       "foodId": "cmrj2tapd00htwlwsd6ggixb6",
+       "name": "Tofu",
+       "role": "protein",
+       "grams": 20,
+       "adjuster": true
+      }
+     ],
+     "kcal": 659.75,
+     "protein": 48.7865,
+     "fat": 14.037,
+     "carb": 90.1475,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrul1dpg000iwlk4gucmabph",
+      "name": "High-Protein TVP & Broccoli with Chickpea Pasta",
+      "description": null,
+      "steps": [
+       "Cook the tvp.",
+       "Serve over chickpea pasta with broccoli."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 600.6,
+      "protein": 51.4,
+      "fat": 10.9,
+      "carb": 78.4,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 2.35,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:40:54.820Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z0oxt016twlgw69ybuca5",
+     "planId": "cms7z0os0014zwlgwvmbvlhrs",
+     "dayOfWeek": 5,
+     "slotType": "meal",
+     "slotIndex": 1,
+     "recipeId": "cmrul79sg0016wl80337jb3da",
+     "proteinScale": 0.65,
+     "sidesScale": 1.46,
+     "ingredients": [
+      {
+       "foodId": "cmrukzae20001wlbwgdjqlh3f",
+       "name": "Textured vegetable protein, dry",
+       "role": "protein",
+       "grams": 35
+      },
+      {
+       "foodId": "cmrukzaeh0005wlbwrbkygio0",
+       "name": "Chickpea pasta, dry",
+       "role": "carb",
+       "grams": 145
+      },
+      {
+       "foodId": "cmrevpcnh000iwl5gh2zjhyqe",
+       "name": "Bell peppers",
+       "role": "veg",
+       "grams": 115
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 689.15,
+     "protein": 48.35,
+     "fat": 12.945,
+     "carb": 97.15,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrul79sg0016wl80337jb3da",
+      "name": "High-Protein TVP & Bell Peppers with Chickpea Pasta",
+      "description": null,
+      "steps": [
+       "Cook the tvp.",
+       "Serve over chickpea pasta with bell peppers."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 591.3,
+      "protein": 49.4,
+      "fat": 10.8,
+      "carb": 76.3,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 2.27,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:45:29.680Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z0oxu016vwlgwnlyg3gcm",
+     "planId": "cms7z0os0014zwlgwvmbvlhrs",
+     "dayOfWeek": 5,
+     "slotType": "meal",
+     "slotIndex": 2,
+     "recipeId": "cmrul4e3k0016wl689dcx0f3n",
+     "proteinScale": 0.5,
+     "sidesScale": 1.43,
+     "ingredients": [
+      {
+       "foodId": "cmrj2tclc00pqwlws0vlepf5r",
+       "name": "Tempeh, cooked",
+       "role": "protein",
+       "grams": 80
+      },
+      {
+       "foodId": "cmrukzaed0004wlbwdxnybljb",
+       "name": "Lentil pasta, dry",
+       "role": "carb",
+       "grams": 145
+      },
+      {
+       "foodId": "cmrevpcnh000iwl5gh2zjhyqe",
+       "name": "Bell peppers",
+       "role": "veg",
+       "grams": 115
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 741.75,
+     "protein": 53.64,
+     "fat": 16.885,
+     "carb": 92.73,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrul4e3k0016wl689dcx0f3n",
+      "name": "High-Protein Tempeh & Bell Peppers with Lentil Pasta",
+      "description": null,
+      "steps": [
+       "Cook the tempeh.",
+       "Serve over lentil pasta with bell peppers."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 727,
+      "protein": 58.3,
+      "fat": 24.5,
+      "carb": 72,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 4.38,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:43:15.296Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z0oxu016xwlgwjo95j1qc",
+     "planId": "cms7z0os0014zwlgwvmbvlhrs",
+     "dayOfWeek": 5,
+     "slotType": "meal",
+     "slotIndex": 3,
+     "recipeId": "cms7pjmj90025wlbke02jmm0u",
+     "proteinScale": 0.78,
+     "sidesScale": 1.35,
+     "ingredients": [
+      {
+       "foodId": "cmrukzadw0000wlbwara3md10",
+       "name": "Seitan",
+       "role": "protein",
+       "grams": 140
+      },
+      {
+       "foodId": "cmrevpcn2000ewl5gmlyzu0vd",
+       "name": "White rice, cooked",
+       "role": "carb",
+       "grams": 245
+      },
+      {
+       "foodId": "cmrj2t6na000ywlws9jek4w4z",
+       "name": "Broccoli",
+       "role": "veg",
+       "grams": 190
+      },
+      {
+       "foodId": "cmrj2t6ft0001wlwstiofk9on",
+       "name": "Garlic",
+       "role": "veg",
+       "grams": 5
+      },
+      {
+       "foodId": "cmrj2t6ye002dwlwssjv94yyn",
+       "name": "Ginger",
+       "role": "other",
+       "grams": 4
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 14
+      }
+     ],
+     "kcal": 681.75,
+     "protein": 46.90180000000001,
+     "fat": 18.23,
+     "carb": 88.235,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cms7pjmj90025wlbke02jmm0u",
+      "name": "Seitan Stir-Fry with Broccoli and Rice",
+      "description": null,
+      "steps": [
+       "Slice the seitan thin.",
+       "Stir-fry it in a very hot pan for 3 minutes until the edges catch.",
+       "Add the broccoli, garlic and ginger with a splash of water and cover for 2 minutes to steam through.",
+       "Serve on the rice."
+      ],
+      "slotType": "meal",
+      "cuisine": "asian",
+      "prepTimeMin": 20,
+      "source": "curated",
+      "mealCategory": null,
+      "kcal": 593.75,
+      "protein": 53.8618,
+      "fat": 14.665,
+      "carb": 68.5,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": null,
+      "difficulty": 2,
+      "filterProvenance": null,
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-30T16:08:04.821Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z0oxv016zwlgwrdbl849h",
+     "planId": "cms7z0os0014zwlgwvmbvlhrs",
+     "dayOfWeek": 5,
+     "slotType": "meal",
+     "slotIndex": 4,
+     "recipeId": "cmrul79ud004cwl808rgh68b3",
+     "proteinScale": 0.5,
+     "sidesScale": 1.73,
+     "ingredients": [
+      {
+       "foodId": "cmrj2tapd00htwlwsd6ggixb6",
+       "name": "Tofu",
+       "role": "protein",
+       "grams": 100
+      },
+      {
+       "foodId": "cmrukzaed0004wlbwdxnybljb",
+       "name": "Lentil pasta, dry",
+       "role": "carb",
+       "grams": 175
+      },
+      {
+       "foodId": "cmrevpcnh000iwl5gh2zjhyqe",
+       "name": "Bell peppers",
+       "role": "veg",
+       "grams": 140
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 844.9,
+     "protein": 62.45,
+     "fat": 17.64,
+     "carb": 107.43,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrul79ud004cwl808rgh68b3",
+      "name": "High-Protein Tofu & Bell Peppers with Lentil Pasta",
+      "description": null,
+      "steps": [
+       "Cook the tofu.",
+       "Serve over lentil pasta with bell peppers."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 707.8,
+      "protein": 60.4,
+      "fat": 24.68,
+      "carb": 65.36,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 3.9,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:45:29.749Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z0oxv0171wlgwkkio52nj",
+     "planId": "cms7z0os0014zwlgwvmbvlhrs",
+     "dayOfWeek": 5,
+     "slotType": "snack",
+     "slotIndex": 0,
+     "recipeId": "cms7pjmkf0035wlbkw9gwdm3s",
+     "proteinScale": 0.5,
+     "sidesScale": 0.5,
+     "ingredients": [
+      {
+       "foodId": "cmrviimf0044qwl1km752wwyb",
+       "name": "Bread, whole-wheat, commercially prepared",
+       "role": "carb",
+       "grams": 30
+      },
+      {
+       "foodId": "cmrj2t6tj001rwlwszp26qdc2",
+       "name": "Peanut Butter",
+       "role": "fat",
+       "grams": 14
+      },
+      {
+       "foodId": "cmrj2t8zr00bbwlwsdb7085qg",
+       "name": "Banana",
+       "role": "carb",
+       "grams": 45
+      }
+     ],
+     "kcal": 199.37,
+     "protein": 7.318499999999999,
+     "fat": 8.3945,
+     "carb": 26.192,
+     "warning": "Tried 4 recipe(s) for this slot, none fit within tolerance — closest was \"Peanut Butter Banana Toast\" (delivered 7g protein vs a 14g target).",
+     "locked": false,
+     "recipe": {
+      "id": "cms7pjmkf0035wlbkw9gwdm3s",
+      "name": "Peanut Butter Banana Toast",
+      "description": null,
+      "steps": [
+       "Toast the bread.",
+       "Spread the peanut butter while it is warm so it melts in, then top with sliced banana."
+      ],
+      "slotType": "snack",
+      "cuisine": "american",
+      "prepTimeMin": 5,
+      "source": "curated",
+      "mealCategory": null,
+      "kcal": 398.74,
+      "protein": 14.637,
+      "fat": 16.789,
+      "carb": 52.384,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": null,
+      "difficulty": 1,
+      "filterProvenance": null,
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-30T16:08:04.863Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z0oxw0173wlgw26c4okf2",
+     "planId": "cms7z0os0014zwlgwvmbvlhrs",
+     "dayOfWeek": 6,
+     "slotType": "meal",
+     "slotIndex": 0,
+     "recipeId": "cmrul79tv003iwl803qmc3v3s",
+     "proteinScale": 0.64,
+     "sidesScale": 1.18,
+     "ingredients": [
+      {
+       "foodId": "cmrukzae50002wlbwr9bq9oa7",
+       "name": "Edamame, shelled, cooked",
+       "role": "protein",
+       "grams": 115
+      },
+      {
+       "foodId": "cmrukzaed0004wlbwdxnybljb",
+       "name": "Lentil pasta, dry",
+       "role": "carb",
+       "grams": 120
+      },
+      {
+       "foodId": "cmrevpcnh000iwl5gh2zjhyqe",
+       "name": "Bell peppers",
+       "role": "veg",
+       "grams": 95
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 633.6,
+     "protein": 44.75,
+     "fat": 13.435,
+     "carb": 82.05,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrul79tv003iwl803qmc3v3s",
+      "name": "High-Protein Edamame & Bell Peppers with Lentil Pasta",
+      "description": null,
+      "steps": [
+       "Cook the edamame.",
+       "Serve over lentil pasta with bell peppers."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 637.6,
+      "protein": 47.4,
+      "fat": 16.2,
+      "carb": 76,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 4.38,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:45:29.732Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z0oxw0175wlgwt6jpl6ba",
+     "planId": "cms7z0os0014zwlgwvmbvlhrs",
+     "dayOfWeek": 6,
+     "slotType": "meal",
+     "slotIndex": 1,
+     "recipeId": "cmrul79ua0046wl8072er41ze",
+     "proteinScale": 1.82,
+     "sidesScale": 1.43,
+     "ingredients": [
+      {
+       "foodId": "cmrukzae50002wlbwr9bq9oa7",
+       "name": "Edamame, shelled, cooked",
+       "role": "protein",
+       "grams": 325
+      },
+      {
+       "foodId": "cmrj2t7fb004fwlws8ezof2dp",
+       "name": "Russet Potato",
+       "role": "carb",
+       "grams": 215
+      },
+      {
+       "foodId": "cmrj2t6na000ywlws9jek4w4z",
+       "name": "Broccoli",
+       "role": "veg",
+       "grams": 155
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 690.55,
+     "protein": 48.638,
+     "fat": 22.0565,
+     "carb": 84.9785,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrul79ua0046wl8072er41ze",
+      "name": "High-Protein Edamame & Broccoli with Potato",
+      "description": null,
+      "steps": [
+       "Cook the edamame.",
+       "Serve over potato with broccoli."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 439.4,
+      "protein": 28.372,
+      "fat": 14.569,
+      "carb": 55.19699999999999,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 4.01,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:45:29.746Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z0oxx0177wlgw1t197kl5",
+     "planId": "cms7z0os0014zwlgwvmbvlhrs",
+     "dayOfWeek": 6,
+     "slotType": "meal",
+     "slotIndex": 2,
+     "recipeId": "cmrul79sj001cwl80hhwt236x",
+     "proteinScale": 0.67,
+     "sidesScale": 1.45,
+     "ingredients": [
+      {
+       "foodId": "cmrukzae20001wlbwgdjqlh3f",
+       "name": "Textured vegetable protein, dry",
+       "role": "protein",
+       "grams": 35
+      },
+      {
+       "foodId": "cmrukzaeh0005wlbwrbkygio0",
+       "name": "Chickpea pasta, dry",
+       "role": "carb",
+       "grams": 145
+      },
+      {
+       "foodId": "cmrg8zxar000lwli0qy2ovmx4",
+       "name": "Onion",
+       "role": "veg",
+       "grams": 85
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 687.5,
+     "protein": 48.13500000000001,
+     "fat": 12.685,
+     "carb": 98.189,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrul79sj001cwl80hhwt236x",
+      "name": "High-Protein TVP & Onions with Chickpea Pasta",
+      "description": null,
+      "steps": [
+       "Cook the tvp.",
+       "Serve over chickpea pasta with onions."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 590.5,
+      "protein": 49.3,
+      "fat": 10.6,
+      "carb": 77.1,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 1.89,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:45:29.684Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z0oxx0179wlgwsytlrh8g",
+     "planId": "cms7z0os0014zwlgwvmbvlhrs",
+     "dayOfWeek": 6,
+     "slotType": "meal",
+     "slotIndex": 3,
+     "recipeId": "cmrul79rr0006wl80t78qmq8h",
+     "proteinScale": 0.5,
+     "sidesScale": 1.57,
+     "ingredients": [
+      {
+       "foodId": "cmrukzadw0000wlbwara3md10",
+       "name": "Seitan",
+       "role": "protein",
+       "grams": 85
+      },
+      {
+       "foodId": "cmrukzaeh0005wlbwrbkygio0",
+       "name": "Chickpea pasta, dry",
+       "role": "carb",
+       "grams": 155
+      },
+      {
+       "foodId": "cmrg8zxar000lwli0qy2ovmx4",
+       "name": "Onion",
+       "role": "veg",
+       "grams": 95
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 712,
+     "protein": 53.295,
+     "fat": 14.545,
+     "carb": 97.52300000000001,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrul79rr0006wl80t78qmq8h",
+      "name": "High-Protein Seitan & Onions with Chickpea Pasta",
+      "description": null,
+      "steps": [
+       "Cook the seitan.",
+       "Serve over chickpea pasta with onions."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 613,
+      "protein": 63.2,
+      "fat": 13.5,
+      "carb": 67.4,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 4.36,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:45:29.655Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z0oxy017bwlgw3qvb30e8",
+     "planId": "cms7z0os0014zwlgwvmbvlhrs",
+     "dayOfWeek": 6,
+     "slotType": "meal",
+     "slotIndex": 4,
+     "recipeId": "cmrul79sc0010wl805v7o2aw0",
+     "proteinScale": 0.5,
+     "sidesScale": 1.91,
+     "ingredients": [
+      {
+       "foodId": "cmrukzae20001wlbwgdjqlh3f",
+       "name": "Textured vegetable protein, dry",
+       "role": "protein",
+       "grams": 30
+      },
+      {
+       "foodId": "cmrukzaed0004wlbwdxnybljb",
+       "name": "Lentil pasta, dry",
+       "role": "carb",
+       "grams": 190
+      },
+      {
+       "foodId": "cmrevpcnh000iwl5gh2zjhyqe",
+       "name": "Bell peppers",
+       "role": "veg",
+       "grams": 155
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 857.05,
+     "protein": 64.65,
+     "fat": 9.565,
+     "carb": 122.8,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrul79sc0010wl805v7o2aw0",
+      "name": "High-Protein TVP & Bell Peppers with Lentil Pasta",
+      "description": null,
+      "steps": [
+       "Cook the tvp.",
+       "Serve over lentil pasta with bell peppers."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 601.3,
+      "protein": 54.4,
+      "fat": 7.8,
+      "carb": 76.3,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 2.27,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:45:29.676Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z0oxy017dwlgwp1brluu7",
+     "planId": "cms7z0os0014zwlgwvmbvlhrs",
+     "dayOfWeek": 6,
+     "slotType": "snack",
+     "slotIndex": 0,
+     "recipeId": "cms7pjmjn002nwlbky6jaa8pr",
+     "proteinScale": 1.36,
+     "sidesScale": 0.5,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t8130077wlws41hxskn2",
+       "name": "Chickpeas",
+       "role": "protein",
+       "grams": 165
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 4
+      },
+      {
+       "foodId": "cmrj2t6jp000iwlwsli2ckg55",
+       "name": "Paprika",
+       "role": "other",
+       "grams": 2
+      }
+     ],
+     "kcal": 389.79,
+     "protein": 13.8615,
+     "fat": 18.9595,
+     "carb": 43.15499999999999,
+     "warning": "Tried 3 recipe(s) for this slot, none fit within tolerance — closest was \"Roasted Chickpeas with Paprika\" (landed 390 kcal vs a 207 target).",
+     "locked": false,
+     "recipe": {
+      "id": "cms7pjmjn002nwlbky6jaa8pr",
+      "name": "Roasted Chickpeas with Paprika",
+      "description": null,
+      "steps": [
+       "Dry the chickpeas thoroughly — wet ones steam instead of crisping.",
+       "Toss with oil and paprika and roast at 200C for 25 minutes, shaking once."
+      ],
+      "slotType": "snack",
+      "cuisine": "mediterranean",
+      "prepTimeMin": 30,
+      "source": "curated",
+      "mealCategory": null,
+      "kcal": 321.84,
+      "protein": 10.158,
+      "fat": 17.95,
+      "carb": 31.68,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": null,
+      "difficulty": 1,
+      "filterProvenance": null,
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-30T16:08:04.836Z",
+      "createdByUserId": null
+     }
+    }
+   ],
+   "groceryList": null,
+   "meta": {
+    "matchPct": 96,
+    "attempts": 2,
+    "score": {
+     "daysInTolerance": 7,
+     "avgMatch": 96,
+     "days": [
+      {
+       "dayOfWeek": 0,
+       "dayName": "Monday",
+       "matchPct": 98,
+       "totals": {
+        "kcal": 3793,
+        "protein": 268,
+        "fat": 88,
+        "carb": 498
+       },
+       "kcalDeltaPct": 0.1,
+       "proteinShortPct": 0,
+       "fatOk": true,
+       "carbOk": true,
+       "inTolerance": true,
+       "miss": null,
+       "unfilledSlots": 0,
+       "warnedSlots": 1,
+       "proteinFloor": {
+        "met": true,
+        "floorG": 255,
+        "achievedG": 268,
+        "shortG": 0,
+        "shortPct": 0,
+        "reason": null
+       },
+       "windowIndex": 0,
+       "dayIndex": 0,
+       "key": "0:0"
+      },
+      {
+       "dayOfWeek": 1,
+       "dayName": "Tuesday",
+       "matchPct": 98,
+       "totals": {
+        "kcal": 3789,
+        "protein": 275,
+        "fat": 91,
+        "carb": 495
+       },
+       "kcalDeltaPct": 0,
+       "proteinShortPct": 0,
+       "fatOk": true,
+       "carbOk": true,
+       "inTolerance": true,
+       "miss": null,
+       "unfilledSlots": 0,
+       "warnedSlots": 0,
+       "proteinFloor": {
+        "met": true,
+        "floorG": 255,
+        "achievedG": 275.5,
+        "shortG": 0,
+        "shortPct": 0,
+        "reason": null
+       },
+       "windowIndex": 0,
+       "dayIndex": 1,
+       "key": "0:1"
+      },
+      {
+       "dayOfWeek": 2,
+       "dayName": "Wednesday",
+       "matchPct": 90,
+       "totals": {
+        "kcal": 3943,
+        "protein": 271,
+        "fat": 100,
+        "carb": 508
+       },
+       "kcalDeltaPct": 4.1,
+       "proteinShortPct": 0,
+       "fatOk": true,
+       "carbOk": true,
+       "inTolerance": true,
+       "miss": null,
+       "unfilledSlots": 0,
+       "warnedSlots": 1,
+       "proteinFloor": {
+        "met": true,
+        "floorG": 255,
+        "achievedG": 270.8,
+        "shortG": 0,
+        "shortPct": 0,
+        "reason": null
+       },
+       "windowIndex": 0,
+       "dayIndex": 2,
+       "key": "0:2"
+      },
+      {
+       "dayOfWeek": 3,
+       "dayName": "Thursday",
+       "matchPct": 95,
+       "totals": {
+        "kcal": 3871,
+        "protein": 268,
+        "fat": 89,
+        "carb": 517
+       },
+       "kcalDeltaPct": 2.2,
+       "proteinShortPct": 0,
+       "fatOk": true,
+       "carbOk": true,
+       "inTolerance": true,
+       "miss": null,
+       "unfilledSlots": 0,
+       "warnedSlots": 1,
+       "proteinFloor": {
+        "met": true,
+        "floorG": 255,
+        "achievedG": 268.1,
+        "shortG": 0,
+        "shortPct": 0,
+        "reason": null
+       },
+       "windowIndex": 0,
+       "dayIndex": 3,
+       "key": "0:3"
+      },
+      {
+       "dayOfWeek": 4,
+       "dayName": "Friday",
+       "matchPct": 99,
+       "totals": {
+        "kcal": 3830,
+        "protein": 293,
+        "fat": 86,
+        "carb": 489
+       },
+       "kcalDeltaPct": 1.1,
+       "proteinShortPct": 0,
+       "fatOk": true,
+       "carbOk": true,
+       "inTolerance": true,
+       "miss": null,
+       "unfilledSlots": 0,
+       "warnedSlots": 0,
+       "proteinFloor": {
+        "met": true,
+        "floorG": 255,
+        "achievedG": 292.5,
+        "shortG": 0,
+        "shortPct": 0,
+        "reason": null
+       },
+       "windowIndex": 0,
+       "dayIndex": 4,
+       "key": "0:4"
+      },
+      {
+       "dayOfWeek": 5,
+       "dayName": "Saturday",
+       "matchPct": 98,
+       "totals": {
+        "kcal": 3817,
+        "protein": 267,
+        "fat": 88,
+        "carb": 502
+       },
+       "kcalDeltaPct": 0.8,
+       "proteinShortPct": 0,
+       "fatOk": true,
+       "carbOk": true,
+       "inTolerance": true,
+       "miss": null,
+       "unfilledSlots": 0,
+       "warnedSlots": 1,
+       "proteinFloor": {
+        "met": true,
+        "floorG": 255,
+        "achievedG": 267.4,
+        "shortG": 0,
+        "shortPct": 0,
+        "reason": null
+       },
+       "windowIndex": 0,
+       "dayIndex": 5,
+       "key": "0:5"
+      },
+      {
+       "dayOfWeek": 6,
+       "dayName": "Sunday",
+       "matchPct": 92,
+       "totals": {
+        "kcal": 3970,
+        "protein": 273,
+        "fat": 91,
+        "carb": 529
+       },
+       "kcalDeltaPct": 4.8,
+       "proteinShortPct": 0,
+       "fatOk": true,
+       "carbOk": true,
+       "inTolerance": true,
+       "miss": null,
+       "unfilledSlots": 0,
+       "warnedSlots": 1,
+       "proteinFloor": {
+        "met": true,
+        "floorG": 255,
+        "achievedG": 273.3,
+        "shortG": 0,
+        "shortPct": 0,
+        "reason": null
+       },
+       "windowIndex": 0,
+       "dayIndex": 6,
+       "key": "0:6"
+      }
+     ],
+     "totalDays": 7,
+     "floorDaysMet": 7,
+     "floorDaysTotal": 7
+    },
+    "days": [
+     {
+      "dayOfWeek": 0,
+      "dayName": "Monday",
+      "matchPct": 98,
+      "totals": {
+       "kcal": 3793,
+       "protein": 268,
+       "fat": 88,
+       "carb": 498
+      },
+      "kcalDeltaPct": 0.1,
+      "proteinShortPct": 0,
+      "fatOk": true,
+      "carbOk": true,
+      "inTolerance": true,
+      "miss": null,
+      "unfilledSlots": 0,
+      "warnedSlots": 1,
+      "proteinFloor": {
+       "met": true,
+       "floorG": 255,
+       "achievedG": 268,
+       "shortG": 0,
+       "shortPct": 0,
+       "reason": null
+      },
+      "windowIndex": 0,
+      "dayIndex": 0,
+      "key": "0:0"
+     },
+     {
+      "dayOfWeek": 1,
+      "dayName": "Tuesday",
+      "matchPct": 98,
+      "totals": {
+       "kcal": 3789,
+       "protein": 275,
+       "fat": 91,
+       "carb": 495
+      },
+      "kcalDeltaPct": 0,
+      "proteinShortPct": 0,
+      "fatOk": true,
+      "carbOk": true,
+      "inTolerance": true,
+      "miss": null,
+      "unfilledSlots": 0,
+      "warnedSlots": 0,
+      "proteinFloor": {
+       "met": true,
+       "floorG": 255,
+       "achievedG": 275.5,
+       "shortG": 0,
+       "shortPct": 0,
+       "reason": null
+      },
+      "windowIndex": 0,
+      "dayIndex": 1,
+      "key": "0:1"
+     },
+     {
+      "dayOfWeek": 2,
+      "dayName": "Wednesday",
+      "matchPct": 90,
+      "totals": {
+       "kcal": 3943,
+       "protein": 271,
+       "fat": 100,
+       "carb": 508
+      },
+      "kcalDeltaPct": 4.1,
+      "proteinShortPct": 0,
+      "fatOk": true,
+      "carbOk": true,
+      "inTolerance": true,
+      "miss": null,
+      "unfilledSlots": 0,
+      "warnedSlots": 1,
+      "proteinFloor": {
+       "met": true,
+       "floorG": 255,
+       "achievedG": 270.8,
+       "shortG": 0,
+       "shortPct": 0,
+       "reason": null
+      },
+      "windowIndex": 0,
+      "dayIndex": 2,
+      "key": "0:2"
+     },
+     {
+      "dayOfWeek": 3,
+      "dayName": "Thursday",
+      "matchPct": 95,
+      "totals": {
+       "kcal": 3871,
+       "protein": 268,
+       "fat": 89,
+       "carb": 517
+      },
+      "kcalDeltaPct": 2.2,
+      "proteinShortPct": 0,
+      "fatOk": true,
+      "carbOk": true,
+      "inTolerance": true,
+      "miss": null,
+      "unfilledSlots": 0,
+      "warnedSlots": 1,
+      "proteinFloor": {
+       "met": true,
+       "floorG": 255,
+       "achievedG": 268.1,
+       "shortG": 0,
+       "shortPct": 0,
+       "reason": null
+      },
+      "windowIndex": 0,
+      "dayIndex": 3,
+      "key": "0:3"
+     },
+     {
+      "dayOfWeek": 4,
+      "dayName": "Friday",
+      "matchPct": 99,
+      "totals": {
+       "kcal": 3830,
+       "protein": 293,
+       "fat": 86,
+       "carb": 489
+      },
+      "kcalDeltaPct": 1.1,
+      "proteinShortPct": 0,
+      "fatOk": true,
+      "carbOk": true,
+      "inTolerance": true,
+      "miss": null,
+      "unfilledSlots": 0,
+      "warnedSlots": 0,
+      "proteinFloor": {
+       "met": true,
+       "floorG": 255,
+       "achievedG": 292.5,
+       "shortG": 0,
+       "shortPct": 0,
+       "reason": null
+      },
+      "windowIndex": 0,
+      "dayIndex": 4,
+      "key": "0:4"
+     },
+     {
+      "dayOfWeek": 5,
+      "dayName": "Saturday",
+      "matchPct": 98,
+      "totals": {
+       "kcal": 3817,
+       "protein": 267,
+       "fat": 88,
+       "carb": 502
+      },
+      "kcalDeltaPct": 0.8,
+      "proteinShortPct": 0,
+      "fatOk": true,
+      "carbOk": true,
+      "inTolerance": true,
+      "miss": null,
+      "unfilledSlots": 0,
+      "warnedSlots": 1,
+      "proteinFloor": {
+       "met": true,
+       "floorG": 255,
+       "achievedG": 267.4,
+       "shortG": 0,
+       "shortPct": 0,
+       "reason": null
+      },
+      "windowIndex": 0,
+      "dayIndex": 5,
+      "key": "0:5"
+     },
+     {
+      "dayOfWeek": 6,
+      "dayName": "Sunday",
+      "matchPct": 92,
+      "totals": {
+       "kcal": 3970,
+       "protein": 273,
+       "fat": 91,
+       "carb": 529
+      },
+      "kcalDeltaPct": 4.8,
+      "proteinShortPct": 0,
+      "fatOk": true,
+      "carbOk": true,
+      "inTolerance": true,
+      "miss": null,
+      "unfilledSlots": 0,
+      "warnedSlots": 1,
+      "proteinFloor": {
+       "met": true,
+       "floorG": 255,
+       "achievedG": 273.3,
+       "shortG": 0,
+       "shortPct": 0,
+       "reason": null
+      },
+      "windowIndex": 0,
+      "dayIndex": 6,
+      "key": "0:6"
+     }
+    ],
+    "diagnosis": null,
+    "poolCounts": {
+     "raw": 910,
+     "afterDiet": 169,
+     "afterPrep": 169,
+     "afterStack": 169,
+     "stackExplain": null
+    },
+    "variety": {
+     "mealEligible": 145,
+     "usableForSlot": 90,
+     "slotKcal": 702,
+     "snackEligible": 5,
+     "weeklyMealSlots": 35,
+     "weeklySnackSlots": 7,
+     "repeatCap": 2,
+     "distinctWeeks": 2.6,
+     "horizonWeeks": 1,
+     "sustainsHorizon": true,
+     "notes": [
+      "1 week: 29 distinct dish(es) across 42 filled slot(s); most-repeated dish appears 2x against a 2x cap for this horizon (2x per week)."
+     ],
+     "horizon": {
+      "weeks": 1,
+      "days": 7,
+      "perWeekCap": 2,
+      "horizonRepeatCap": 2,
+      "mealSlots": 35,
+      "snackSlots": 7,
+      "totalSlots": 42,
+      "distinctFloor": 21,
+      "distinctRecipes": 29,
+      "maxRepeat": 2,
+      "maxRepeatRecipeId": "cmrul4e2n0000wl68oom44dco",
+      "lockedRepeatsOfMax": 0,
+      "filledSlots": 42,
+      "unfilledSlots": 0,
+      "requiredDistinct": 21,
+      "capHeld": true,
+      "floorHeld": true
+     }
+    },
+    "priorWeeksConsidered": 0,
+    "horizon": {
+     "key": "week",
+     "label": "1 week",
+     "days": 7,
+     "kind": "days",
+     "weeks": 1,
+     "custom": false,
+     "startDate": "2026-07-27",
+     "endDate": "2026-08-02",
+     "startDayOfWeek": 0,
+     "weeksWritten": 1,
+     "solveMs": 17,
+     "weekPlans": [
+      {
+       "startDate": "2026-07-27",
+       "dayIndices": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+       ],
+       "days": 7,
+       "daysInTolerance": 7,
+       "avgMatch": 96,
+       "unfilledSlots": 0,
+       "poolSize": 169
+      }
+     ]
+    }
+   }
+  }
+ }
+}

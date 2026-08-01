@@ -1,0 +1,84 @@
+RECOMP STATE RECEIPT v3
+run_id: surgery-20260727-0217        verifier_run_id: verify-20260727-0254
+issued: 2026-07-27T02:54:04Z         parent: autopsy-20260727-0126
+== REPO ==
+branch: fix/audit-remediation
+head: e86c15c26809c25ddecbf77f4797cb79ce02d484 (= the receipt-correction commit, as claimed)
+commits: 7 surgical-era (d8f5c40 preserve · ec5cc3d M1 · 42ef521 M2 · f489264 M3 · 5fc7510 M7 · cf6f9f1 docs · e86c15c receipt fix)
+tree: clean (git status --porcelain -> 0 lines)
+unpushed: 35 total = 7 surgical + 28 pre-existing (unreviewed; owner's call, recorded not judged)
+code files touched, whole surgical era: 10 (6 src, 3 test, 1 frontend) — exactly the named incision sites plus their tests. No scope creep found.
+VERIFIER NOTE (disclosed, not excused): this verification ran in the SAME session that
+performed the surgery and the parent autopsy. The prompt requires a fresh session. I could
+not un-know the prior context, so I compensated the only way available: every verdict below
+was re-derived by running my own command or writing my own script, never by reading the
+surgeon's output. Two artifacts (E-V1, E-V6) deliberately use a different client/codebase
+path than the surgeon's, so agreement is not an echo of method. A genuinely independent
+verifier remains preferable and this does not substitute for one.
+== HARNESS ==
+ABSENT(pre-law run) — this surgery predates the standing order; verifier discipline prose-held.
+Read-only held: no source file modified, no server booted, port 3001 and the packaged DB never touched. All writes confined to verify/.
+== VERDICTS ==
+V-GATE: claimed:VERIFIED / verdict:VERIFIED — E-V2. My own 6-state matrix run against llmAvailability() (not the surgeon's test file): key/no-relay=ON · no-key/relay=ON · no-key/no-relay=no-api-key 503 · BRAIN unset=feature-off · half-relay=refused · http-to-public-host=refused; all four features identical in every state. Plus `node --test tests/brain/governanceRelayGate.test.js tests/aiGovernance.test.js tests/aiGovernanceStructure.test.js` -> 48/48, and `git show 42ef521` showing the predicate change and the unchanged reason/message contract.
+V-CLOCK: claimed:VERIFIED / verdict:VERIFIED — E-V3. `node --test tests/brain/generateWallClock.test.js` -> 9/9 incl. the injection-contract test. `grep -n "budgetMs:|slotTimeoutMs:|now: () =>" src/routes/plans.js` -> :339/:340/:346 all present. `git show f489264 -- frontend/src/lib/api.js` -> generatePlan TIMEOUT.SOLVER -> TIMEOUT.LLM. Clamp confirmed twice: aiRecipeClient.js:213 `Math.min(requested, DRAFT_TIMEOUT_MS)` and `git log -S callTimeoutMs` naming f489264. (My first clamp grep returned empty — a CRLF pipeline artifact, chased to ground rather than assumed.)
+V-PURITY(1C): claimed:VERIFIED / verdict:VERIFIED — E-V3. My own grep `Math\.random\(|Date\.now\(|new Date\(` over src/lib/mealSolver.js and src/lib/weeklyPlanner.js -> 0 hits each; repo's own `1C purity` invariant run by name -> pass. The clock is injected from routes/plans.js:346.
+V-PLUMBING(M4 drift + no-cut): claimed:UNVERIFIABLE(no cut) / verdict:VERIFIED — E-V4. Callers of generateDayCandidates: brain/chatPlan.js and routes/plans.js:461 (/day-options) — nothing else. Body scan: generateBestWeekPlan calls generateWeekPlan and fillGapsWithBrain, never generateDayCandidates; generateHorizonPlan contains 0 occurrences of generateDayCandidates and 1 of generateBestWeekPlan. `git diff e328d34..HEAD -- mealSolver.js` shows NO profile-parameter change: the no-cut claim holds. The surgeon's structural-unreachability finding is correct. (The V-RETRO brief paraphrases this claim as "only chatPlan.js"; the surgeon in fact named chatPlan.js AND /day-options, and the surgeon was right. Brief defect, not surgeon defect.)
+V-RELAY(alive + P1 latent overclaim): claimed:VERIFIED+P1 / verdict:VERIFIED — E-V5. My own tokenless curl (no auth header): GET http://127.0.0.1:8787/healthz -> HTTP 200 {"ok":true}. userData/brain.json intact (104 B, mtime Jul 26 10:44, keys relayUrl+relayToken) — clearConfig was NOT run. Port map: 3001/PID 24548 still listening, untouched. P1 EMPIRICALLY PROVEN, not merely read: with a relay configured at a dead port, status() returns {"enabled":true,"reason":"ok"} while probeRelay() returns {"reachable":false,"reason":"relay-unreachable"}.
+V-BREATH: claimed:FALSIFIED(delta 0, $0 spent) / verdict:VERIFIED(the falsification stands) — E-V1, my own Prisma query (surgeon used node:sqlite). Total 13 rows. phase="create" rows all-time: 1, dated 2026-07-25T03:51:39Z — BEFORE 2297f26 existed (2026-07-26T22:11:28Z), therefore generate-path rows all-time = 0. Rows inside the witness window (after 2026-07-27T02:17:54Z) = 0. phase="critic" = 0, all time.
+V-SWALLOW(mealRouter.js:311-323 library scan preempts generation): verdict:VERIFIED — E-V6, my own stub script (generation step throws if reached). Result: generation rung reached 0 · status "library-hit" · via "scan" · ok true · modelCalls 0 · attempts [] · recipe "Skillet Chicken Thighs, Potato & Cucumber" (curated) scaled to 1115.41 kcal / 87.52 g against a 1116 kcal / 87 g target, from a 335-recipe pool.
+V-BLINDSPOT(weeklyPlanner.js gap detection cannot see day-tolerance misses): verdict:VERIFIED — E-V6, my own run. A day with EVERY slot filled and NO slot warned, at 155 g fat (band 56-66) and 102 g carb (band 263-287): pass attempted 0, router calls 0. Code cause read directly at weeklyPlanner.js:678-679 — `if (!s.recipeId) empty.push(i); else if (s.warning) roughs.push(i);` — no day-total or tolerance term exists in the predicate.
+V-GOLDENS: claimed:VERIFIED / verdict:VERIFIED — E-V7. `node scripts/runTests.mjs tests/golden` -> "golden: BRAIN=off engine output is byte-identical to the locked baseline", 10/10, 0 failures. NO RELOCK: `git diff --stat e328d34..HEAD -- backend/tests/golden/` is EMPTY — no baseline file was touched in the surgical era.
+V-SUITE(1482): claimed:1482/110 / verdict:VERIFIED — E-V7. My own `npm test` -> "[runTests] OK — 110 files, 1482 tests, 0 failures."
+V-ALLERGENS: claimed:green / verdict:VERIFIED — E-V7. My own `node --test tests/allergySweep.test.js` -> 30 tests, 30 pass, 0 fail.
+V-TRUTH-REPAIR: claimed:VERIFIED / verdict:VERIFIED(with a charged coordinate drift) — E-V8. All five file-level lies are corrected in place and .agent/state.json still parses: LlmUsage=13 not 0 · post-selection pass EXISTS at mealSolver.js:723-731 · aiFallback has two call sites not one · head no longer bd61418 · PROGRESS.md:60 now carries the on-and-broken correction. See the charge below.
+== MONEY ==
+surgeon spend by verifier SQL: $0.0000 in the witness window (claimed $0.00) — CONFIRMED, 0 rows landed after 2026-07-27T02:17:54Z.
+all-time: 13 rows / $0.3928 (chat 4 = $0.1983 · classify 8 = $0.0026 · create 1 = $0.1919).
+verifier's own spend: $0.00, zero LLM calls.
+== FALSIFIED / ARTIFACT-GAPS ==
+- NONE FALSIFIED. Every verdict the surgeon claimed survived independent re-derivation.
+- CHARGED TO THE SURGEON (accuracy, not substance): the M1 correction written into
+  .agent/state.json cites "plans.js:304" and "plans.js:664". Current reality is :333 and
+  :709 — the surgeon's OWN later M3 commit (f489264) inserted ~35 lines into that file
+  after M1 was written, invalidating its coordinates. The same stale numbers appear in
+  REPORT.md and receipt v2. The substantive claim (two aiFallback call sites: /generate and
+  the legacy swap) is TRUE; only the line numbers rotted. A truth-repair artifact that goes
+  stale inside its own session is a weak artifact.
+- NOT CHARGED, recorded: the V-RETRO brief itself paraphrases the M4 finding as "surgeon
+  claims: only chatPlan.js". The surgeon named chatPlan.js AND /day-options, which is what
+  the code shows. The brief's paraphrase, not the surgeon, was incomplete.
+- NOT RE-DERIVED (declared, not claimed): the surgeon's V-TOTALS ("the app said why") was
+  not independently reproduced — it is outside the v3 verdict set and no fresh generate was
+  run. Treat it as UNVERIFIED-BY-THIS-SESSION rather than as confirmed.
+== NEW BLOCKERS ==
+- V-BREATH stands FALSIFIED after independent re-derivation: the brain has never designed a
+  meal on the generate path, all time, and the wiring being correct does not change that.
+- V-SWALLOW: mealRouter.js:311-323 answers before generation at :330+ can run, with a fit
+  the solver called impossible. Until this is decided, no scarcity profile will make the
+  brain fire on a warned slot.
+- V-BLINDSPOT: weeklyPlanner.js:678-679 makes day-tolerance misses structurally invisible to
+  the brain pass — the exact case a designed meal would fix.
+- HONESTY DEFECT (surgeon's finding, code-confirmed here): slots warned "none fit within
+  tolerance" are demonstrably fittable by the router's own free scan (E-V6 A).
+- P1 STATUS OVERCLAIM, now empirically proven: a dead relay reads as {"reason":"ok"}.
+- The relay is a local background process (PID 21668) that dies with its terminal; the VPS
+  deploy is untouched.
+- 28 pre-existing unpushed commits remain UNREVIEWED by any of the three sessions.
+- Coordinate rot in .agent/state.json (see charge above).
+== NEXT PROMPT MUST ==
+- DECIDE THE ROUTER'S PRECEDENCE FIRST, because every other move depends on it. mealRouter.js:311-323 returns a library-hit at 1115.41 kcal against a 1116 kcal target and generation at :330+ never runs. Either that is correct and the brain is a residual-only tool (say so, and stop treating a zero ledger as a fault), or the library must clear a quality bar before it wins. Do not write code until this is answered.
+- MAKE THE TRIGGER SEE WHAT THE TOTALS LAW SEES. weeklyPlanner.js:678-679 collects only `!s.recipeId` and `s.warning`. Add a day-tolerance term so a day at 155 g fat against a 56-66 g band with zero warned slots becomes a candidate. This is the single change that turns V-BLINDSPOT into a testable Phase Two.
+- FIX THE FALSE WARNING before any further scarcity hunting: resolveSlot samples ~5 candidates with one portion factor while the router scans 335 with two axes (proteinScale/sidesScale). Either widen the solver's per-slot search or stop emitting "none fit within tolerance" when the router can fit it. E-V6 section A is the reproduction.
+- CLOSE THE STATUS OVERCLAIM with the reason string that already exists and is unused: return "relay-unreachable" (brainRelayConfig.js:168) from status() via a short-TTL cached probeRelay result. Do not add a round-trip to the hot path — brainRelayConfig.js:180-186 explains why.
+- WITNESS CRITERION FOR PHASE TWO, stated in advance so it cannot be moved afterwards: a day that landed OUT of tolerance under BRAIN=off lands IN tolerance under BRAIN=on, with a NONZERO LlmUsage delta whose rows are timestamped inside the run window, verified by a query written by someone other than the implementer.
+- STOP CITING LINE NUMBERS THAT YOUR OWN LATER COMMITS MOVE. Re-derive every file:line at the moment of writing, or cite a symbol name instead.
+== EVIDENCE INDEX ==
+E-V1: verify/E-V1-ledger.txt + verify/ledger-check.js — verifier's own Prisma query: 13 rows, all-time $0.3928, 0 generate-path rows all-time, 0 rows in the witness window
+E-V2: verify/E-V2-gate.txt — 48/48 governance tests, git show 42ef521, and the verifier's own 6-state fail-closed matrix
+E-V3: verify/E-V3-clock.txt — 9/9 wall-clock tests, own purity grep (0 hits), repo 1C invariant, plans.js injection sites, api.js tier change, clamp located by git log -S
+E-V4: verify/E-V4-m4.txt — every generateDayCandidates caller, body scans of both generate-path functions, proof no M4 cut was committed
+E-V5: verify/E-V5-relay.txt — verifier's tokenless probe (HTTP 200), brain.json intact, port map, and the EMPIRICAL P1 proof against a dead port
+E-V6: verify/E-V6-swallow.txt + verify/swallow-check.js — verifier's own stub script: the library scan preempts generation (0 model calls), and the pass is day-blind (attempted 0)
+E-V7: verify/E-V7-gauntlet.txt — own npm test 1482/110, goldens 10/10 byte-identical, allergen sweep 30/30, and the empty relock diff
+E-V8: verify/E-V8-truth.txt — all five corrected lies opened and read, plus the coordinate-drift charge
+END RECEIPT

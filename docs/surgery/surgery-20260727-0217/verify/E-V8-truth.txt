@@ -1,0 +1,38 @@
+E-V8 — TRUTH REPAIR (verifier opens the files)
+
+### .agent/state.json — is it still valid JSON?
+  parses OK. head = d8f5c40 (was 'bd61418' — STALE by two commits; corrected 2026-07-27 per autopsy-20260727-0126, E1)
+
+### lie 1 — LlmUsage = 0 rows
+0.4 ledger truth — CORRECTED 2026-07-27 per autopsy-20260727-0126 (E6): LlmUsage = 13 rows (~$0.393) in backend/prisma/dev.db, NOT 0. Zero is true only of the packaged userData/cutprotocol.db. Brain tables all present, so not a migration gap. Rows outside chat: exactly 1 (phase 'create', 2026-07-2
+
+### lie 2 — no post-selection pass
+CORRECTED 2026-07-27 per autopsy-20260727-0126 (E7): all three breaks were repaired by commit 2297f26 seven minutes after this file was last written. The post-selection pass EXISTS at mealSolver.js:723-731 and calls weeklyPlanner.fillGapsWithBrain. NOTE: the p
+
+### lie 3 — aiFallback set only at :626
+set only at plans.js:626' is FALSE — /generate sets aiFallback at plans.js:304, and the legacy swap site has moved to plans.js:664.
+
+
+### lie 4 — stale head
+"head": "d8f5c40 (was 'bd61418' — STALE by two commits; corrected 2026-07-27 per autopsy-20260727-0126, E1)"
+
+### lie 5 — PROGRESS.md keys-absent claim
+60:  API keys simply absent in a shared build → brain off, app works fully offline.
+61-  **CORRECTION (2026-07-27, autopsy-20260727-0126 E5):** true only while no
+62-  `<userData>/brain.json` exists. Once one is written from Settings, the packaged
+63-  app reports `isBrainEnabled() === true` and `status()` `{"enabled":true,
+64-  "reason":"ok"}` — the brain is not off, it is ON and refusing every governed
+65-  call. On-and-broken, not off.
+66-- **Config:** extraResources ships only the clean `dev.db.template` (no `.env`);
+
+### DRIFT CHECK on the M1 correction's own line numbers
+  state.json claims: aiFallback set at plans.js:304, legacy swap at plans.js:664
+  CURRENT reality:
+    313:    // `aiFallback` — and the ONLY caller that ever did was the legacy one-shot
+    333:            aiFallback: {
+    709:      { aiFallback: { enabled: true, maxCalls: 1, profile } }
+
+  -> the /generate aiFallback block now begins at the line shown above,
+     not :304; M3 (f489264) inserted ~35 lines into this file AFTER M1 wrote
+     the correction. The CLAIM (there are two call sites, /generate and the
+     legacy swap) remains true; only the coordinates drifted.

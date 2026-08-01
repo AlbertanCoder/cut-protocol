@@ -1,0 +1,478 @@
+{
+ "persona": {
+  "idx": 188,
+  "id": "p188",
+  "tier": "HARD",
+  "displayName": "warehouse picker, 40",
+  "story": "warehouse picker, 40, female, 180 cm / 64 kg (BMI 19.8), cut at 2 lb/wk, none diet, avoiding peanut, nightshade, pork, egg, balanced, 3 meals + 0 snacks, wants a single day",
+  "profile": {
+   "sex": "F",
+   "age": 40,
+   "heightCm": 180,
+   "startWeightKg": 64,
+   "goalWeightKg": 53.8,
+   "occupationKey": "warehouse",
+   "trainingStyle": "mixed",
+   "minutesPerSession": 30,
+   "sessionsPerWeek": 2,
+   "rateLbPerWeek": 2,
+   "dietaryStyle": "none",
+   "excludedFoods": [
+    "peanuts",
+    "nightshades",
+    "pork",
+    "eggs"
+   ],
+   "mealsPerDay": 3,
+   "snacksPerDay": 0,
+   "unitPref": "metric",
+   "bodyFatPct": 33,
+   "bodyFatSource": "measured",
+   "rateAcknowledged": true,
+   "goalWeightAcknowledged": true
+  },
+  "filters": {
+   "proteinPriority": true,
+   "maxPrepMin": 15
+  },
+  "horizon": "day",
+  "walls": [
+   "peanut",
+   "nightshade",
+   "pork",
+   "egg"
+  ],
+  "freeTextExclusions": [
+   "nightshades",
+   "pork"
+  ],
+  "dietaryStyle": "none",
+  "bmi": 19.8,
+  "goalKind": "cut",
+  "macroStyle": "balanced",
+  "requestedButUnsupported": [],
+  "goalBmi": 16.6,
+  "tupleKey": "[\"HARD\",\"F\",40,180,64,53.8,\"warehouse\",\"mixed\",2,\"none\",[\"eggs\",\"nightshades\",\"peanuts\",\"pork\"],3,0,\"balanced\",\"day\",15,null,true,null,null]"
+ },
+ "request": {
+  "horizon": "day",
+  "filters": {
+   "proteinPriority": true,
+   "maxPrepMin": 15
+  }
+ },
+ "profileResponse": {
+  "id": "cms6x1jhz04qdwlw0z36cdaik",
+  "userId": "cms6x1jcm0052wl2o4fz8t72f",
+  "sex": "F",
+  "age": 40,
+  "heightCm": 180,
+  "bodyFatPct": 33,
+  "bodyFatSource": "measured",
+  "occupationKey": "warehouse",
+  "activityOverride": null,
+  "sessionsPerWeek": 2,
+  "trainingStyle": "mixed",
+  "minutesPerSession": 30,
+  "startWeightKg": 64,
+  "goalWeightKg": 53.8,
+  "startDate": "2026-07-29",
+  "unitPref": "metric",
+  "rateLbPerWeek": 2,
+  "rateAcknowledged": true,
+  "floorKcal": null,
+  "excludedFormulas": [],
+  "targetKcal": 1306,
+  "mealsPerDay": 3,
+  "snacksPerDay": 0,
+  "excludedFoods": [
+   "peanuts",
+   "nightshades",
+   "pork",
+   "eggs"
+  ],
+  "dietaryStyle": "none",
+  "cuisinePreferences": [],
+  "mealPreferencesNote": null,
+  "maxPrepMin": null,
+  "budgetTier": null,
+  "allowBatch": null,
+  "maxComplexity": null,
+  "adaptiveTdee": true,
+  "proteinPriorityMode": false,
+  "updatedAt": "2026-07-30T02:50:12.096Z"
+ },
+ "generate": {
+  "status": 200,
+  "ms": 284,
+  "body": {
+   "id": "cms6x1jxa04r1wlw0105xuif5",
+   "userId": "cms6x1jcm0052wl2o4fz8t72f",
+   "startDate": "2026-07-27",
+   "createdAt": "2026-07-30T02:50:12.383Z",
+   "slots": [
+    {
+     "id": "cms6x1jxb04r3wlw0gbh3idbi",
+     "planId": "cms6x1jxa04r1wlw0105xuif5",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 0,
+     "recipeId": "cmrul4e7p0080wl68qri7g8q9",
+     "proteinScale": 1.11,
+     "sidesScale": 0.5,
+     "ingredients": [
+      {
+       "foodId": "cmrj2tbym00mowlwszf3qi0d8",
+       "name": "Cottage Cheese",
+       "role": "protein",
+       "grams": 220
+      },
+      {
+       "foodId": "cmrukzaeh0005wlbwrbkygio0",
+       "name": "Chickpea pasta, dry",
+       "role": "carb",
+       "grams": 50
+      },
+      {
+       "foodId": "cmrg8zxar000lwli0qy2ovmx4",
+       "name": "Onion",
+       "role": "veg",
+       "grams": 30
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 407.4,
+     "protein": 34.53,
+     "fat": 12.59,
+     "carb": 39.784,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrul4e7p0080wl68qri7g8q9",
+      "name": "High-Protein Cottage Cheese & Onions with Chickpea Pasta",
+      "description": null,
+      "steps": [
+       "Cook the cottage cheese.",
+       "Serve over chickpea pasta with onions."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 573,
+      "protein": 42.7,
+      "fat": 14.7,
+      "carb": 69.2,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 2.93,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:43:15.445Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x1jxd04r5wlw0zpgkcqnd",
+     "planId": "cms6x1jxa04r1wlw0105xuif5",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 1,
+     "recipeId": "cmrul79wy008iwl80vlvcivmq",
+     "proteinScale": 0.74,
+     "sidesScale": 1.67,
+     "ingredients": [
+      {
+       "foodId": "cmrfoyrjh0009wl08cmcid51m",
+       "name": "Turkey breast, low salt, prepackaged or deli, luncheon meat",
+       "role": "protein",
+       "grams": 125
+      },
+      {
+       "foodId": "cmrj2t88z0087wlwsmsmchxzb",
+       "name": "Quinoa",
+       "role": "carb",
+       "grams": 185
+      },
+      {
+       "foodId": "cmrevpcnl000jwl5gnqnk630b",
+       "name": "Cucumber",
+       "role": "veg",
+       "grams": 150
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 418.25,
+     "protein": 36.275,
+     "fat": 9.8295,
+     "carb": 47.03250000000001,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrul79wy008iwl80vlvcivmq",
+      "name": "High-Protein Turkey & Cucumber with Quinoa",
+      "description": null,
+      "steps": [
+       "Cook the turkey.",
+       "Serve over quinoa with cucumber."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 371.3,
+      "protein": 42.4,
+      "fat": 8.7,
+      "carb": 31.3,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 7.32,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:45:29.842Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x1jxe04r7wlw0b2awqq15",
+     "planId": "cms6x1jxa04r1wlw0105xuif5",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 2,
+     "recipeId": "cmrul4e7s0086wl68eznlavgl",
+     "proteinScale": 1.68,
+     "sidesScale": 0.9,
+     "ingredients": [
+      {
+       "foodId": "cmrj2tbym00mowlwszf3qi0d8",
+       "name": "Cottage Cheese",
+       "role": "protein",
+       "grams": 335
+      },
+      {
+       "foodId": "cmrevpcn2000ewl5gmlyzu0vd",
+       "name": "White rice, cooked",
+       "role": "carb",
+       "grams": 100
+      },
+      {
+       "foodId": "cmrj2t6na000ywlws9jek4w4z",
+       "name": "Broccoli",
+       "role": "veg",
+       "grams": 100
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 480.7,
+     "protein": 42.12,
+     "fat": 13.345,
+     "carb": 48.7085,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrul4e7s0086wl68eznlavgl",
+      "name": "High-Protein Cottage Cheese & Broccoli with Rice",
+      "description": null,
+      "steps": [
+       "Cook the cottage cheese.",
+       "Serve over white rice with broccoli."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 386.1,
+      "protein": 27.8,
+      "fat": 10.3,
+      "carb": 46.3,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 2.81,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:43:15.448Z",
+      "createdByUserId": null
+     }
+    }
+   ],
+   "groceryList": null,
+   "meta": {
+    "matchPct": 94,
+    "attempts": 5,
+    "score": {
+     "daysInTolerance": 1,
+     "avgMatch": 94,
+     "days": [
+      {
+       "dayOfWeek": 2,
+       "dayName": "Wednesday",
+       "matchPct": 94,
+       "totals": {
+        "kcal": 1306,
+        "protein": 113,
+        "fat": 36,
+        "carb": 136
+       },
+       "kcalDeltaPct": 0,
+       "proteinShortPct": 0.1,
+       "fatOk": true,
+       "carbOk": true,
+       "inTolerance": true,
+       "miss": null,
+       "unfilledSlots": 0,
+       "warnedSlots": 0,
+       "proteinFloor": {
+        "met": true,
+        "floorG": 108,
+        "achievedG": 112.9,
+        "shortG": 0,
+        "shortPct": 0,
+        "reason": null
+       },
+       "windowIndex": 0,
+       "dayIndex": 0,
+       "key": "0:2"
+      }
+     ],
+     "totalDays": 1,
+     "floorDaysMet": 1,
+     "floorDaysTotal": 1
+    },
+    "days": [
+     {
+      "dayOfWeek": 2,
+      "dayName": "Wednesday",
+      "matchPct": 94,
+      "totals": {
+       "kcal": 1306,
+       "protein": 113,
+       "fat": 36,
+       "carb": 136
+      },
+      "kcalDeltaPct": 0,
+      "proteinShortPct": 0.1,
+      "fatOk": true,
+      "carbOk": true,
+      "inTolerance": true,
+      "miss": null,
+      "unfilledSlots": 0,
+      "warnedSlots": 0,
+      "proteinFloor": {
+       "met": true,
+       "floorG": 108,
+       "achievedG": 112.9,
+       "shortG": 0,
+       "shortPct": 0,
+       "reason": null
+      },
+      "windowIndex": 0,
+      "dayIndex": 0,
+      "key": "0:2"
+     }
+    ],
+    "diagnosis": null,
+    "poolCounts": {
+     "raw": 889,
+     "afterDiet": 270,
+     "afterPrep": 141,
+     "afterStack": 141,
+     "stackExplain": null
+    },
+    "variety": {
+     "mealEligible": 135,
+     "usableForSlot": 110,
+     "slotKcal": 435,
+     "snackEligible": 5,
+     "weeklyMealSlots": 21,
+     "weeklySnackSlots": 0,
+     "repeatCap": 2,
+     "distinctWeeks": 5.2,
+     "horizonWeeks": 1,
+     "sustainsHorizon": true,
+     "notes": [
+      "1 day: 3 distinct dish(es) across 3 filled slot(s); most-repeated dish appears 1x against a 2x cap for this horizon (2x per week)."
+     ],
+     "horizon": {
+      "weeks": 1,
+      "days": 1,
+      "perWeekCap": 2,
+      "horizonRepeatCap": 2,
+      "mealSlots": 3,
+      "snackSlots": 0,
+      "totalSlots": 3,
+      "distinctFloor": 2,
+      "distinctRecipes": 3,
+      "maxRepeat": 1,
+      "maxRepeatRecipeId": "cmrul4e7p0080wl68qri7g8q9",
+      "lockedRepeatsOfMax": 0,
+      "filledSlots": 3,
+      "unfilledSlots": 0,
+      "requiredDistinct": 2,
+      "capHeld": true,
+      "floorHeld": true
+     }
+    },
+    "priorWeeksConsidered": 0,
+    "horizon": {
+     "key": "day",
+     "label": "1 day",
+     "days": 1,
+     "kind": "days",
+     "weeks": 1,
+     "custom": false,
+     "startDate": "2026-07-29",
+     "endDate": "2026-07-29",
+     "startDayOfWeek": 2,
+     "weeksWritten": 1,
+     "solveMs": 1,
+     "weekPlans": [
+      {
+       "startDate": "2026-07-27",
+       "dayIndices": [
+        2
+       ],
+       "days": 1,
+       "daysInTolerance": 1,
+       "avgMatch": 94,
+       "unfilledSlots": 0,
+       "poolSize": 141
+      }
+     ]
+    }
+   }
+  }
+ }
+}

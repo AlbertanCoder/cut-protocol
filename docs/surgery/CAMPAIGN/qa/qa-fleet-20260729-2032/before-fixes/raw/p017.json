@@ -1,0 +1,772 @@
+{
+ "persona": {
+  "idx": 17,
+  "id": "p017",
+  "tier": "HARD",
+  "displayName": "electrician, 24",
+  "story": "electrician, 24, female, 157 cm / 104 kg (BMI 42.2), cut at 2 lb/wk, paleo diet, avoiding beef, egg, dairy, soy, gluten, low-carb, 5 meals + 1 snacks, wants a single day",
+  "profile": {
+   "sex": "F",
+   "age": 24,
+   "heightCm": 157,
+   "startWeightKg": 104,
+   "goalWeightKg": 93.6,
+   "occupationKey": "electrician",
+   "trainingStyle": "weights",
+   "minutesPerSession": 45,
+   "sessionsPerWeek": 3,
+   "rateLbPerWeek": 2,
+   "dietaryStyle": "paleo",
+   "excludedFoods": [
+    "beef",
+    "eggs",
+    "dairy",
+    "soy",
+    "gluten"
+   ],
+   "mealsPerDay": 5,
+   "snacksPerDay": 1,
+   "unitPref": "metric",
+   "bodyFatPct": 18,
+   "bodyFatSource": "visual-estimate",
+   "cuisinePreferences": [
+    "japanese",
+    "mexican"
+   ],
+   "rateAcknowledged": true
+  },
+  "filters": {
+   "maxPrepMin": 45,
+   "cuisines": [
+    "japanese",
+    "mexican"
+   ],
+   "proteinPriority": true
+  },
+  "horizon": "day",
+  "walls": [
+   "beef",
+   "egg",
+   "dairy",
+   "soy",
+   "gluten"
+  ],
+  "freeTextExclusions": [
+   "beef"
+  ],
+  "dietaryStyle": "paleo",
+  "bmi": 42.2,
+  "goalKind": "cut",
+  "macroStyle": "low-carb",
+  "requestedButUnsupported": [
+   "wanted a low-carb split without full keto; carbs are the leftover after LBM-derived protein and fat, and only dietaryStyle:\"keto\" changes that"
+  ],
+  "tupleKey": "[\"HARD\",\"F\",24,157,104,93.6,\"electrician\",\"weights\",2,\"paleo\",[\"beef\",\"dairy\",\"eggs\",\"gluten\",\"soy\"],5,1,\"low-carb\",\"day\",45,null,true,null,null]"
+ },
+ "request": {
+  "horizon": "day",
+  "filters": {
+   "maxPrepMin": 45,
+   "cuisines": [
+    "japanese",
+    "mexican"
+   ],
+   "proteinPriority": true
+  }
+ },
+ "profileResponse": {
+  "id": "cms6x0byl00t1wlw04oaq8ts4",
+  "userId": "cms6x0bfu000bwl2o58qd6xzp",
+  "sex": "F",
+  "age": 24,
+  "heightCm": 157,
+  "bodyFatPct": 18,
+  "bodyFatSource": "visual-estimate",
+  "occupationKey": "electrician",
+  "activityOverride": null,
+  "sessionsPerWeek": 3,
+  "trainingStyle": "weights",
+  "minutesPerSession": 45,
+  "startWeightKg": 104,
+  "goalWeightKg": 93.6,
+  "startDate": "2026-07-29",
+  "unitPref": "metric",
+  "rateLbPerWeek": 2,
+  "rateAcknowledged": false,
+  "floorKcal": null,
+  "excludedFormulas": [],
+  "targetKcal": 1979,
+  "mealsPerDay": 5,
+  "snacksPerDay": 1,
+  "excludedFoods": [
+   "beef",
+   "eggs",
+   "dairy",
+   "soy",
+   "gluten"
+  ],
+  "dietaryStyle": "paleo",
+  "cuisinePreferences": [
+   "japanese",
+   "mexican"
+  ],
+  "mealPreferencesNote": null,
+  "maxPrepMin": null,
+  "budgetTier": null,
+  "allowBatch": null,
+  "maxComplexity": null,
+  "adaptiveTdee": true,
+  "proteinPriorityMode": false,
+  "updatedAt": "2026-07-30T02:49:15.412Z"
+ },
+ "generate": {
+  "status": 200,
+  "ms": 353,
+  "body": {
+   "id": "cms6x0c3700tjwlw0wscoi750",
+   "userId": "cms6x0bfu000bwl2o58qd6xzp",
+   "startDate": "2026-07-27",
+   "createdAt": "2026-07-30T02:49:15.572Z",
+   "slots": [
+    {
+     "id": "cms6x0c8c00tlwlw0l0b0q89a",
+     "planId": "cms6x0c3700tjwlw0wscoi750",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 0,
+     "recipeId": "cmrg943yg0000wl74sz88wxh4",
+     "proteinScale": 0.51,
+     "sidesScale": 0.55,
+     "ingredients": [
+      {
+       "foodId": "cmrevpclw0004wl5gzdq3m2ge",
+       "name": "Ground pack (elk/game), cooked",
+       "role": "protein",
+       "grams": 130
+      },
+      {
+       "foodId": "cmrevpcn5000fwl5g0j42i9os",
+       "name": "Potato, baked with skin",
+       "role": "carb",
+       "grams": 135
+      },
+      {
+       "foodId": "cmrevpcnl000jwl5gnqnk630b",
+       "name": "Cucumber",
+       "role": "veg",
+       "grams": 80
+      }
+     ],
+     "kcal": 328.55,
+     "protein": 37.64700000000001,
+     "fat": 5.463,
+     "carb": 30.078,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrg943yg0000wl74sz88wxh4",
+      "name": "Ground Elk & Potato",
+      "description": null,
+      "steps": [
+       "Brown the elk quickly over high heat.",
+       "Serve with baked potato and cold cucumber."
+      ],
+      "slotType": "meal",
+      "cuisine": "western-comfort",
+      "prepTimeMin": 25,
+      "source": "curated",
+      "mealCategory": null,
+      "kcal": 622.5,
+      "protein": 72.1,
+      "fat": 10.5,
+      "carb": 55.7,
+      "tasteTier": "really_good",
+      "tasteTierSource": "curated",
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 16.35,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-11T10:58:20.296Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x0c8d00tnwlw05lcttphk",
+     "planId": "cms6x0c3700tjwlw0wscoi750",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 1,
+     "recipeId": "cmrul1drc003cwlk4zubbgxpt",
+     "proteinScale": 1.19,
+     "sidesScale": 0.66,
+     "ingredients": [
+      {
+       "foodId": "cmrj2tay100irwlwsiujfz75h",
+       "name": "White Fish",
+       "role": "protein",
+       "grams": 225
+      },
+      {
+       "foodId": "cmrj2t7fb004fwlws8ezof2dp",
+       "name": "Russet Potato",
+       "role": "carb",
+       "grams": 100
+      },
+      {
+       "foodId": "cmrg8zxar000lwli0qy2ovmx4",
+       "name": "Onion",
+       "role": "veg",
+       "grams": 40
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 363,
+     "protein": 40.87,
+     "fat": 10.39,
+     "carb": 25.136,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrul1drc003cwlk4zubbgxpt",
+      "name": "High-Protein White Fish & Onions with Potato",
+      "description": null,
+      "steps": [
+       "Cook the white fish.",
+       "Serve over potato with onions."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 386.3,
+      "protein": 36.5,
+      "fat": 9.7,
+      "carb": 37.7,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 7.52,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:40:54.888Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x0c8e00tpwlw0nzue5kz4",
+     "planId": "cms6x0c3700tjwlw0wscoi750",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 2,
+     "recipeId": "cmrul79xu00a0wl808sfjerjt",
+     "proteinScale": 0.89,
+     "sidesScale": 1,
+     "ingredients": [
+      {
+       "foodId": "cmrj2tb0x00j2wlwsjzrofelh",
+       "name": "Shrimp",
+       "role": "protein",
+       "grams": 150
+      },
+      {
+       "foodId": "cmrj2t7fb004fwlws8ezof2dp",
+       "name": "Russet Potato",
+       "role": "carb",
+       "grams": 150
+      },
+      {
+       "foodId": "cmrevpcnh000iwl5gh2zjhyqe",
+       "name": "Bell peppers",
+       "role": "veg",
+       "grams": 80
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 360.8,
+     "protein": 40.745,
+     "fat": 5.855,
+     "carb": 37.19999999999999,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrul79xu00a0wl808sfjerjt",
+      "name": "High-Protein Shrimp & Bell Peppers with Potato",
+      "description": null,
+      "steps": [
+       "Cook the shrimp.",
+       "Serve over potato with bell peppers."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 380.6,
+      "protein": 45.5,
+      "fat": 5.9,
+      "carb": 37.2,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 10.39,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:45:29.875Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x0c8f00ttwlw0g0aytkv1",
+     "planId": "cms6x0c3700tjwlw0wscoi750",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 3,
+     "recipeId": "cmrj2u6jq07cgwlwscxyfa2lx",
+     "proteinScale": 1.27,
+     "sidesScale": 0.9,
+     "ingredients": [
+      {
+       "foodId": "cmrj2tb5000jiwlwsws0k5ufd",
+       "name": "Jumbo Shrimp",
+       "role": "protein",
+       "grams": 145
+      },
+      {
+       "foodId": "cmrj2tb5a00jjwlws3mfl8w2q",
+       "name": "Jamaican Curry Powder",
+       "role": null,
+       "grams": 5
+      },
+      {
+       "foodId": "cmrj2t8d8008rwlws51a28g0q",
+       "name": "All-purpose Seasoning",
+       "role": null,
+       "grams": 1
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "carb",
+       "grams": 6
+      },
+      {
+       "foodId": "cmrg8zxar000lwli0qy2ovmx4",
+       "name": "Onion",
+       "role": "veg",
+       "grams": 7
+      },
+      {
+       "foodId": "cmrj2t6j0000fwlwsog8rz1h6",
+       "name": "Red Pepper",
+       "role": null,
+       "grams": 7
+      },
+      {
+       "foodId": "cmrj2t6tb001qwlwsb78om24m",
+       "name": "Green Pepper",
+       "role": null,
+       "grams": 7
+      },
+      {
+       "foodId": "cmrj2t7rb005zwlws4bfn6rn7",
+       "name": "Scotch Bonnet",
+       "role": null,
+       "grams": 7
+      },
+      {
+       "foodId": "cmrj2t6ft0001wlwstiofk9on",
+       "name": "Garlic",
+       "role": "veg",
+       "grams": 2
+      },
+      {
+       "foodId": "cmrj2tb5j00jkwlwsmtz30ocg",
+       "name": "Unsweetened Coconut Milk",
+       "role": null,
+       "grams": 85
+      },
+      {
+       "foodId": "cmrj2t7bn003ywlws0phcxl0w",
+       "name": "Tomato Ketchup",
+       "role": "veg",
+       "grams": 1
+      },
+      {
+       "foodId": "cmrj2t6oj0014wlwsaw8ffg0k",
+       "name": "Thyme",
+       "role": null,
+       "grams": 90
+      },
+      {
+       "foodId": "cmrj2t6gd0003wlwss7jf3wzf",
+       "name": "Salt",
+       "role": null,
+       "grams": 1
+      },
+      {
+       "foodId": "cmrj2t6gl0004wlws73buybhw",
+       "name": "Pepper",
+       "role": null,
+       "grams": 1
+      }
+     ],
+     "kcal": 361.71,
+     "protein": 41.35586999999999,
+     "fat": 9.51214,
+     "carb": 36.6091,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrj2u6jq07cgwlwscxyfa2lx",
+      "name": "Jamaican Curry Shrimp Recipe",
+      "description": null,
+      "steps": [
+       "Season shrimp with 1 Tablespoon of curry powder and all-purpose seasoning and set aside for about 10 minutes while you prepare the other ingredients like chopping your onions, peppers, and garlic.",
+       "Heat 2 Tablespoons of olive oil in a large skillet over medium heat. Add sliced yellow onion, red bell pepper, green bell pepper, scotch bonnet pepper, if using, and chopped garlic and stir for 5 minutes, until peppers are slightly softened.",
+       "Add 1.5 Tablespoons of curry powder to the skillet and stir for an additional minute.",
+       "Then add coconut milk, seasoned shrimp, ketchup, and thyme, making sure the shrimp is covered in the sauce.",
+       "Allow the sauce to come to a simmer and continue to cook over medium heat, stirring occasionally and flipping the shrimp halfway, until the shrimp is fully cooked on both sides. This should take about 5-6 minutes. Salt and pepper to taste."
+      ],
+      "slotType": "meal",
+      "cuisine": "indian",
+      "prepTimeMin": 31,
+      "source": "themealdb-import",
+      "mealCategory": null,
+      "kcal": 355.9,
+      "protein": 34.5,
+      "fat": 10.6,
+      "carb": 40.5,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 10.48,
+      "difficulty": 5,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-13T10:25:57.927Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x0c8f00tvwlw0qwtutmet",
+     "planId": "cms6x0c3700tjwlw0wscoi750",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 4,
+     "recipeId": "cmrul4e720070wl688wh3ur8e",
+     "proteinScale": 1.36,
+     "sidesScale": 0.81,
+     "ingredients": [
+      {
+       "foodId": "cmrj2tay100irwlwsiujfz75h",
+       "name": "White Fish",
+       "role": "protein",
+       "grams": 260
+      },
+      {
+       "foodId": "cmrj2t7fb004fwlws8ezof2dp",
+       "name": "Russet Potato",
+       "role": "carb",
+       "grams": 120
+      },
+      {
+       "foodId": "cmrevpcnh000iwl5gh2zjhyqe",
+       "name": "Bell peppers",
+       "role": "veg",
+       "grams": 65
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 418.35,
+     "protein": 47.486,
+     "fat": 11.383,
+     "carb": 29.58,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrul4e720070wl688wh3ur8e",
+      "name": "High-Protein White Fish & Bell Peppers with Potato",
+      "description": null,
+      "steps": [
+       "Cook the white fish.",
+       "Serve over potato with bell peppers."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 387.1,
+      "protein": 36.7,
+      "fat": 9.8,
+      "carb": 36.9,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 7.89,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:43:15.422Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x0c8g00txwlw0zrx5d45y",
+     "planId": "cms6x0c3700tjwlw0wscoi750",
+     "dayOfWeek": 2,
+     "slotType": "snack",
+     "slotIndex": 0,
+     "recipeId": "cmrevpd040052wl5g22ebc08z",
+     "proteinScale": 2,
+     "sidesScale": 0.5,
+     "ingredients": [
+      {
+       "foodId": "cmrevpcmy000dwl5gj9ecuo6k",
+       "name": "Pepperoni",
+       "role": "protein",
+       "grams": 60
+      },
+      {
+       "foodId": "cmrj2t92r00bnwlwsgrowd5zv",
+       "name": "Pistachio",
+       "role": "fat",
+       "grams": 15
+      }
+     ],
+     "kcal": 386.4,
+     "protein": 15.63,
+     "fat": 33.195,
+     "carb": 5.88,
+     "warning": "Tried 1 recipe(s) for this slot, none fit within tolerance — closest was \"Pepperoni & Pistachios Plate\" (landed 386 kcal vs a 147 target).",
+     "locked": false,
+     "recipe": {
+      "id": "cmrevpd040052wl5g22ebc08z",
+      "name": "Pepperoni & Pistachios Plate",
+      "description": null,
+      "steps": [
+       "No cooking — portion and eat."
+      ],
+      "slotType": "snack",
+      "cuisine": "western-comfort",
+      "prepTimeMin": 0,
+      "source": "curated",
+      "mealCategory": null,
+      "kcal": 319.2,
+      "protein": 12.4,
+      "fat": 26.8,
+      "carb": 9.1,
+      "tasteTier": "really_good",
+      "tasteTierSource": "curated",
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 2.04,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-10T11:55:10.996Z",
+      "createdByUserId": null
+     }
+    }
+   ],
+   "groceryList": null,
+   "meta": {
+    "matchPct": 83,
+    "attempts": 5,
+    "score": {
+     "daysInTolerance": 0,
+     "avgMatch": 83,
+     "days": [
+      {
+       "dayOfWeek": 2,
+       "dayName": "Wednesday",
+       "matchPct": 83,
+       "totals": {
+        "kcal": 2219,
+        "protein": 224,
+        "fat": 76,
+        "carb": 164
+       },
+       "kcalDeltaPct": 12.1,
+       "proteinShortPct": 0.3,
+       "fatOk": true,
+       "carbOk": false,
+       "inTolerance": false,
+       "miss": "164 g carbs vs a 77–101 g range — 63 g over",
+       "unfilledSlots": 0,
+       "warnedSlots": 1,
+       "proteinFloor": {
+        "met": true,
+        "floorG": 214,
+        "achievedG": 223.7,
+        "shortG": 0,
+        "shortPct": 0,
+        "reason": null
+       },
+       "windowIndex": 0,
+       "dayIndex": 0,
+       "key": "0:2"
+      }
+     ],
+     "totalDays": 1,
+     "floorDaysMet": 1,
+     "floorDaysTotal": 1
+    },
+    "days": [
+     {
+      "dayOfWeek": 2,
+      "dayName": "Wednesday",
+      "matchPct": 83,
+      "totals": {
+       "kcal": 2219,
+       "protein": 224,
+       "fat": 76,
+       "carb": 164
+      },
+      "kcalDeltaPct": 12.1,
+      "proteinShortPct": 0.3,
+      "fatOk": true,
+      "carbOk": false,
+      "inTolerance": false,
+      "miss": "164 g carbs vs a 77–101 g range — 63 g over",
+      "unfilledSlots": 0,
+      "warnedSlots": 1,
+      "proteinFloor": {
+       "met": true,
+       "floorG": 214,
+       "achievedG": 223.7,
+       "shortG": 0,
+       "shortPct": 0,
+       "reason": null
+      },
+      "windowIndex": 0,
+      "dayIndex": 0,
+      "key": "0:2"
+     }
+    ],
+    "diagnosis": {
+     "feasible": false,
+     "reasons": [
+      "Your targets need ~11.3g protein per 100 kcal; only 18 of 69 eligible recipes come close (20+ needed for a full varied week).",
+      "1 day(s) landed outside your 77–101 g carb range — portion scaling moves a dish's calories, not its fat/carb ratio, so the pool's composition is what binds here."
+     ],
+     "suggestions": [
+      "Set the protein-preference filter, or AI-generate a few high-protein recipes to deepen the pool.",
+      "Add (or AI-generate) a few recipes built around the macro you keep missing, or drop the cuisine/protein preference so the solver can reach dishes that carry it."
+     ],
+     "binding": {
+      "key": "protein-density",
+      "label": "protein density in your recipe pool",
+      "detail": "your targets need ~11.3 g protein per 100 kcal and only 18 of 69 compliant recipes come close."
+     }
+    },
+    "poolCounts": {
+     "raw": 889,
+     "afterDiet": 72,
+     "afterPrep": 69,
+     "afterStack": 69,
+     "stackExplain": null
+    },
+    "variety": {
+     "mealEligible": 63,
+     "usableForSlot": 31,
+     "slotKcal": 367,
+     "snackEligible": 1,
+     "weeklyMealSlots": 35,
+     "weeklySnackSlots": 7,
+     "repeatCap": 2,
+     "distinctWeeks": 0.9,
+     "horizonWeeks": 1,
+     "sustainsHorizon": false,
+     "notes": [
+      "31 of your 63 compliant recipes can be portioned to a 367 kcal meal — about 0.8 week(s) of 35 meals before dishes start repeating, so over 1 weeks you will see favourites come back.",
+      "Only 1 snack recipe(s) fit your rules, so the same snacks come back every week.",
+      "1 day: 6 distinct dish(es) across 6 filled slot(s); most-repeated dish appears 1x against a 2x cap for this horizon (2x per week)."
+     ],
+     "horizon": {
+      "weeks": 1,
+      "days": 1,
+      "perWeekCap": 2,
+      "horizonRepeatCap": 2,
+      "mealSlots": 5,
+      "snackSlots": 1,
+      "totalSlots": 6,
+      "distinctFloor": 3,
+      "distinctRecipes": 6,
+      "maxRepeat": 1,
+      "maxRepeatRecipeId": "cmrg943yg0000wl74sz88wxh4",
+      "lockedRepeatsOfMax": 0,
+      "filledSlots": 6,
+      "unfilledSlots": 0,
+      "requiredDistinct": 3,
+      "capHeld": true,
+      "floorHeld": true
+     }
+    },
+    "priorWeeksConsidered": 0,
+    "horizon": {
+     "key": "day",
+     "label": "1 day",
+     "days": 1,
+     "kind": "days",
+     "weeks": 1,
+     "custom": false,
+     "startDate": "2026-07-29",
+     "endDate": "2026-07-29",
+     "startDayOfWeek": 2,
+     "weeksWritten": 1,
+     "solveMs": 2,
+     "weekPlans": [
+      {
+       "startDate": "2026-07-27",
+       "dayIndices": [
+        2
+       ],
+       "days": 1,
+       "daysInTolerance": 0,
+       "avgMatch": 83,
+       "unfilledSlots": 0,
+       "poolSize": 69
+      }
+     ]
+    }
+   }
+  }
+ }
+}

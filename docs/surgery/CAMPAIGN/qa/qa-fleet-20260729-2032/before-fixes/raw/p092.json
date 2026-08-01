@@ -1,0 +1,602 @@
+{
+ "persona": {
+  "idx": 92,
+  "id": "p092",
+  "tier": "EASY",
+  "displayName": "student athlete, 70",
+  "story": "student athlete, 70, female, 175 cm / 75.6 kg (BMI 24.7), lean bulk at 0.25 lb/wk, low-FODMAP diet, avoiding tree nut, shellfish, low-fat, 3 meals + 1 snacks, wants a single day",
+  "profile": {
+   "sex": "F",
+   "age": 70,
+   "heightCm": 175,
+   "startWeightKg": 75.6,
+   "goalWeightKg": 81.9,
+   "occupationKey": "student",
+   "trainingStyle": "sport",
+   "minutesPerSession": 100,
+   "sessionsPerWeek": 6,
+   "rateLbPerWeek": 0.25,
+   "dietaryStyle": null,
+   "excludedFoods": [
+    "tree nuts",
+    "shellfish"
+   ],
+   "mealsPerDay": 3,
+   "snacksPerDay": 1,
+   "unitPref": "metric",
+   "cuisinePreferences": [
+    "thai"
+   ]
+  },
+  "filters": {
+   "maxPrepMin": 30,
+   "cuisines": [
+    "thai"
+   ]
+  },
+  "horizon": "day",
+  "walls": [
+   "tree nut",
+   "shellfish"
+  ],
+  "freeTextExclusions": [],
+  "dietaryStyle": null,
+  "bmi": 24.7,
+  "goalKind": "lean bulk",
+  "macroStyle": "low-fat",
+  "requestedButUnsupported": [
+   "low-FODMAP is not a dietary style; expressed instead as free-text exclusions (onion, garlic, wheat)",
+   "wanted a low-fat split; the fat band is fixed at LBM x0.34-0.40 and is not client-settable"
+  ],
+  "tupleKey": "[\"EASY\",\"F\",70,175,75.6,81.9,\"student\",\"sport\",0.25,null,[\"shellfish\",\"tree nuts\"],3,1,\"low-fat\",\"day\",30,null,null,null,null]"
+ },
+ "request": {
+  "horizon": "day",
+  "filters": {
+   "maxPrepMin": 30,
+   "cuisines": [
+    "thai"
+   ]
+  }
+ },
+ "profileResponse": {
+  "id": "cms6x0uyi02jbwlw0l9h9x3yt",
+  "userId": "cms6x0ut8002ewl2oxngzni4x",
+  "sex": "F",
+  "age": 70,
+  "heightCm": 175,
+  "bodyFatPct": 0,
+  "bodyFatSource": null,
+  "occupationKey": "student",
+  "activityOverride": null,
+  "sessionsPerWeek": 6,
+  "trainingStyle": "sport",
+  "minutesPerSession": 100,
+  "startWeightKg": 75.6,
+  "goalWeightKg": 81.9,
+  "startDate": "2026-07-29",
+  "unitPref": "metric",
+  "rateLbPerWeek": 0.25,
+  "rateAcknowledged": false,
+  "floorKcal": null,
+  "excludedFormulas": [],
+  "targetKcal": 2246,
+  "mealsPerDay": 3,
+  "snacksPerDay": 1,
+  "excludedFoods": [
+   "tree nuts",
+   "shellfish"
+  ],
+  "dietaryStyle": null,
+  "cuisinePreferences": [
+   "thai"
+  ],
+  "mealPreferencesNote": null,
+  "maxPrepMin": null,
+  "budgetTier": null,
+  "allowBatch": null,
+  "maxComplexity": null,
+  "adaptiveTdee": true,
+  "proteinPriorityMode": false,
+  "updatedAt": "2026-07-30T02:49:40.051Z"
+ },
+ "generate": {
+  "status": 200,
+  "ms": 481,
+  "body": {
+   "id": "cms6x0vcc02jfwlw06kd7orgp",
+   "userId": "cms6x0ut8002ewl2oxngzni4x",
+   "startDate": "2026-07-27",
+   "createdAt": "2026-07-30T02:49:40.524Z",
+   "slots": [
+    {
+     "id": "cms6x0vce02jjwlw0ijyszbp4",
+     "planId": "cms6x0vcc02jfwlw06kd7orgp",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 0,
+     "recipeId": "cmrj2tx4t059dwlwsq2m2igyb",
+     "proteinScale": 0.5,
+     "sidesScale": 0.5,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t9z700f1wlwsb36u0abl",
+       "name": "Lamb",
+       "role": "protein",
+       "grams": 125
+      },
+      {
+       "foodId": "cmrg8zxar000lwli0qy2ovmx4",
+       "name": "Onion",
+       "role": "veg",
+       "grams": 30
+      },
+      {
+       "foodId": "cmrj2ta1w00fbwlws69su3wpp",
+       "name": "Garlic Bulb",
+       "role": "veg",
+       "grams": 13
+      },
+      {
+       "foodId": "cmrj2t7ws006owlwsp3fhnnvo",
+       "name": "Garam Masala",
+       "role": null,
+       "grams": 7
+      },
+      {
+       "foodId": "cmrj2t74b0031wlwsgf5ra3ry",
+       "name": "Coriander",
+       "role": null,
+       "grams": 13
+      },
+      {
+       "foodId": "cmrj2ta2600fcwlwse2x6iklf",
+       "name": "Chilli Sauce",
+       "role": "carb",
+       "grams": 1
+      },
+      {
+       "foodId": "cmrj2t7jl004zwlwsrm2hcuhy",
+       "name": "Pita Bread",
+       "role": "carb",
+       "grams": 100
+      },
+      {
+       "foodId": "cmrj2t6ik000dwlwsj8e736h1",
+       "name": "Tomato",
+       "role": "veg",
+       "grams": 15
+      },
+      {
+       "foodId": "cmrj2ta2f00fdwlwsyvft4812",
+       "name": "Red Cabbage",
+       "role": "veg",
+       "grams": 6
+      },
+      {
+       "foodId": "cmrj2t6vv0021wlwsx5wv83r4",
+       "name": "Red Onions",
+       "role": "veg",
+       "grams": 4
+      },
+      {
+       "foodId": "cmrj2t87g0080wlwso959mcx5",
+       "name": "Yogurt",
+       "role": null,
+       "grams": 13
+      }
+     ],
+     "kcal": 642.66,
+     "protein": 39.9133,
+     "fat": 18.5527,
+     "carb": 80.4044,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrj2tx4t059dwlwsq2m2igyb",
+      "name": "kofta burgers",
+      "description": null,
+      "steps": [
+       "step 1",
+       "Tip the mince into a large bowl (use a clean washing-up bowl if you don’t have anything big enough) with all the other burger ingredients and a good pinch of salt. Roll up your sleeves, get your hands into the mix and squelch everything together through your fingers until completely mixed. Pat the mix into 16 small burgers. These may now be frozen for up to 1 month or chilled up to a day ahead.",
+       "step 2",
+       "To cook, heat grill to its highest setting and lay the burgers in a single layer on a baking tray (you may need to do this in batches, depending on how big your tray is). Grill on the highest shelf for 5-6 mins on each side until browned and cooked through. Pile burgers onto a platter and serve with all the accompaniments, so everyone can construct their own sandwich."
+      ],
+      "slotType": "meal",
+      "cuisine": "middle-eastern",
+      "prepTimeMin": 26,
+      "source": "themealdb-import",
+      "mealCategory": null,
+      "kcal": 1282.4,
+      "protein": 79.7,
+      "fat": 37.1,
+      "carb": 160.1,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 14.97,
+      "difficulty": 4,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-13T10:25:45.725Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x0vcf02jnwlw0jm3dxy3p",
+     "planId": "cms6x0vcc02jfwlw06kd7orgp",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 1,
+     "recipeId": "cmrj2td8j00umwlwsz2zyol7o",
+     "proteinScale": 1.09,
+     "sidesScale": 1.51,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t6rc001hwlwsjpk7hg92",
+       "name": "Rice",
+       "role": "carb",
+       "grams": 40
+      },
+      {
+       "foodId": "cmrg8zxar000lwli0qy2ovmx4",
+       "name": "Onion",
+       "role": "veg",
+       "grams": 40
+      },
+      {
+       "foodId": "cmrj2t6rj001iwlwsv6losppt",
+       "name": "Lime",
+       "role": "veg",
+       "grams": 17
+      },
+      {
+       "foodId": "cmrj2t6rr001jwlwsqfi60fyj",
+       "name": "Garlic Clove",
+       "role": null,
+       "grams": 3
+      },
+      {
+       "foodId": "cmrevpcnl000jwl5gnqnk630b",
+       "name": "Cucumber",
+       "role": "veg",
+       "grams": 40
+      },
+      {
+       "foodId": "cmrj2t6oc0013wlwsjzlwoln2",
+       "name": "Carrots",
+       "role": "veg",
+       "grams": 30
+      },
+      {
+       "foodId": "cmrj2t6fj0000wlwsdedjzth2",
+       "name": "Ground Beef",
+       "role": "protein",
+       "grams": 125
+      },
+      {
+       "foodId": "cmrj2t6ls000rwlwsf7bu3ffs",
+       "name": "Soy Sauce",
+       "role": "carb",
+       "grams": 20
+      }
+     ],
+     "kcal": 635.12,
+     "protein": 41.045,
+     "fat": 23.714,
+     "carb": 65.28399999999999,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrj2td8j00umwlwsz2zyol7o",
+      "name": "Beef Banh Mi Bowls with Sriracha Mayo, Carrot & Pickled Cucumber",
+      "description": null,
+      "steps": [
+       "Add'l ingredients: mayonnaise, siracha",
+       "Place rice in a fine-mesh sieve and rinse until water runs clear. Add to a small pot with 1 cup water (2 cups for 4 servings) and a pinch of salt. Bring to a boil, then cover and reduce heat to low. Cook until rice is tender, 15 minutes. Keep covered off heat for at least 10 minutes or until ready to serve.",
+       "Meanwhile, wash and dry all produce. Peel and finely chop garlic. Zest and quarter lime (for 4 servings, zest 1 lime and quarter both). Trim and halve cucumber lengthwise; thinly slice crosswise into half-moons. Halve, peel, and medium dice onion. Trim, peel, and grate carrot.",
+       "In a medium bowl, combine cucumber, juice from half the lime, ¼ tsp sugar (½ tsp for 4 servings), and a pinch of salt. In a small bowl, combine mayonnaise, a pinch of garlic, a squeeze of lime juice, and as much sriracha as you’d like. Season with salt and pepper.",
+       "Heat a drizzle of oil in a large pan over medium-high heat. Add onion and cook, stirring, until softened, 4-5 minutes. Add beef, remaining garlic, and 2 tsp sugar (4 tsp for 4 servings). Cook, breaking up meat into pieces, until beef is browned and cooked through, 4-5 minutes. Stir in soy sauce. Turn off heat; taste and season with salt and pepper.",
+       "Fluff rice with a fork; stir in lime zest and 1 TBSP butter. Divide rice between bowls. Arrange beef, grated carrot, and pickled cucumber on top. Top with a squeeze of lime juice. Drizzle with sriracha mayo."
+      ],
+      "slotType": "meal",
+      "cuisine": "asian",
+      "prepTimeMin": 29,
+      "source": "themealdb-import",
+      "mealCategory": null,
+      "kcal": 500.1,
+      "protein": 35.1,
+      "fat": 20.8,
+      "carb": 43.3,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 4.43,
+      "difficulty": 4,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-13T10:25:19.940Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x0vcg02jpwlw0bfukavyo",
+     "planId": "cms6x0vcc02jfwlw06kd7orgp",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 2,
+     "recipeId": "cmrul1dpz0016wlk4duydrt1u",
+     "proteinScale": 0.87,
+     "sidesScale": 1.33,
+     "ingredients": [
+      {
+       "foodId": "cmrukzae50002wlbwr9bq9oa7",
+       "name": "Edamame, shelled, cooked",
+       "role": "protein",
+       "grams": 155
+      },
+      {
+       "foodId": "cmrukzaeh0005wlbwrbkygio0",
+       "name": "Chickpea pasta, dry",
+       "role": "carb",
+       "grams": 135
+      },
+      {
+       "foodId": "cmrevpcnh000iwl5gh2zjhyqe",
+       "name": "Bell peppers",
+       "role": "veg",
+       "grams": 105
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 724.1,
+     "protein": 46.65,
+     "fat": 19.815,
+     "carb": 94.5,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrul1dpz0016wlk4duydrt1u",
+      "name": "High-Protein Edamame & Bell Peppers with Chickpea Pasta",
+      "description": null,
+      "steps": [
+       "Cook the edamame.",
+       "Serve over chickpea pasta with bell peppers."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 627.6,
+      "protein": 42.4,
+      "fat": 19.2,
+      "carb": 76,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 4.38,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:40:54.840Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x0vcg02jrwlw0b4jadtxg",
+     "planId": "cms6x0vcc02jfwlw06kd7orgp",
+     "dayOfWeek": 2,
+     "slotType": "snack",
+     "slotIndex": 0,
+     "recipeId": "cmrevpcyt004lwl5gx6bidm0z",
+     "proteinScale": 0.6,
+     "sidesScale": 0.6,
+     "ingredients": [
+      {
+       "foodId": "cmrevpcma0007wl5gfj59j5mk",
+       "name": "Beef jerky",
+       "role": "protein",
+       "grams": 35
+      },
+      {
+       "foodId": "cmrevpcmq000bwl5g2mbd0jsv",
+       "name": "Pork rinds",
+       "role": "protein",
+       "grams": 18
+      }
+     ],
+     "kcal": 241.42,
+     "protein": 22.53,
+     "fat": 14.68,
+     "carb": 3.85,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrevpcyt004lwl5gx6bidm0z",
+      "name": "Jerky & Pork Rinds Snack Plate",
+      "description": "Closer / site valve — his words.",
+      "steps": [
+       "No cooking — portion and eat."
+      ],
+      "slotType": "snack",
+      "cuisine": "western-comfort",
+      "prepTimeMin": 0,
+      "source": "curated",
+      "mealCategory": null,
+      "kcal": 409.2,
+      "protein": 38.1,
+      "fat": 24.9,
+      "carb": 6.6,
+      "tasteTier": "really_good",
+      "tasteTierSource": "curated",
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 6.75,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-10T11:55:10.950Z",
+      "createdByUserId": null
+     }
+    }
+   ],
+   "groceryList": null,
+   "meta": {
+    "matchPct": 82,
+    "attempts": 5,
+    "score": {
+     "daysInTolerance": 0,
+     "avgMatch": 82,
+     "days": [
+      {
+       "dayOfWeek": 2,
+       "dayName": "Wednesday",
+       "matchPct": 82,
+       "totals": {
+        "kcal": 2243,
+        "protein": 150,
+        "fat": 77,
+        "carb": 244
+       },
+       "kcalDeltaPct": -0.1,
+       "proteinShortPct": 0,
+       "fatOk": false,
+       "carbOk": true,
+       "inTolerance": false,
+       "miss": "77 g fat vs a 41–48 g range — 29 g over",
+       "unfilledSlots": 0,
+       "warnedSlots": 0,
+       "windowIndex": 0,
+       "dayIndex": 0,
+       "key": "0:2"
+      }
+     ],
+     "totalDays": 1
+    },
+    "days": [
+     {
+      "dayOfWeek": 2,
+      "dayName": "Wednesday",
+      "matchPct": 82,
+      "totals": {
+       "kcal": 2243,
+       "protein": 150,
+       "fat": 77,
+       "carb": 244
+      },
+      "kcalDeltaPct": -0.1,
+      "proteinShortPct": 0,
+      "fatOk": false,
+      "carbOk": true,
+      "inTolerance": false,
+      "miss": "77 g fat vs a 41–48 g range — 29 g over",
+      "unfilledSlots": 0,
+      "warnedSlots": 0,
+      "windowIndex": 0,
+      "dayIndex": 0,
+      "key": "0:2"
+     }
+    ],
+    "diagnosis": {
+     "feasible": false,
+     "reasons": [
+      "1 day(s) landed outside your 41–48 g fat range — portion scaling moves a dish's calories, not its fat/carb ratio, so the pool's composition is what binds here."
+     ],
+     "suggestions": [
+      "Add (or AI-generate) a few recipes built around the macro you keep missing, or drop the cuisine/protein preference so the solver can reach dishes that carry it."
+     ],
+     "binding": {
+      "key": "macro-composition",
+      "label": "fat in your recipe pool",
+      "detail": "1 of 1 day(s) landed outside your 41-48 g fat range. Portion scaling moves a dish's calories, not its fat/carb ratio, so what binds here is which dishes your rules leave in the pool. Calories and protein landed on target on every day — it is composition, not portion size, that is short."
+     }
+    },
+    "poolCounts": {
+     "raw": 889,
+     "afterDiet": 731,
+     "afterPrep": 490,
+     "afterStack": 490,
+     "stackExplain": null
+    },
+    "variety": {
+     "mealEligible": 424,
+     "usableForSlot": 320,
+     "slotKcal": 662,
+     "snackEligible": 4,
+     "weeklyMealSlots": 21,
+     "weeklySnackSlots": 7,
+     "repeatCap": 2,
+     "distinctWeeks": 15.2,
+     "horizonWeeks": 1,
+     "sustainsHorizon": true,
+     "notes": [
+      "1 day: 4 distinct dish(es) across 4 filled slot(s); most-repeated dish appears 1x against a 2x cap for this horizon (2x per week)."
+     ],
+     "horizon": {
+      "weeks": 1,
+      "days": 1,
+      "perWeekCap": 2,
+      "horizonRepeatCap": 2,
+      "mealSlots": 3,
+      "snackSlots": 1,
+      "totalSlots": 4,
+      "distinctFloor": 2,
+      "distinctRecipes": 4,
+      "maxRepeat": 1,
+      "maxRepeatRecipeId": "cmrj2tx4t059dwlwsq2m2igyb",
+      "lockedRepeatsOfMax": 0,
+      "filledSlots": 4,
+      "unfilledSlots": 0,
+      "requiredDistinct": 2,
+      "capHeld": true,
+      "floorHeld": true
+     }
+    },
+    "priorWeeksConsidered": 0,
+    "horizon": {
+     "key": "day",
+     "label": "1 day",
+     "days": 1,
+     "kind": "days",
+     "weeks": 1,
+     "custom": false,
+     "startDate": "2026-07-29",
+     "endDate": "2026-07-29",
+     "startDayOfWeek": 2,
+     "weeksWritten": 1,
+     "solveMs": 6,
+     "weekPlans": [
+      {
+       "startDate": "2026-07-27",
+       "dayIndices": [
+        2
+       ],
+       "days": 1,
+       "daysInTolerance": 0,
+       "avgMatch": 82,
+       "unfilledSlots": 0,
+       "poolSize": 490
+      }
+     ]
+    }
+   }
+  }
+ }
+}

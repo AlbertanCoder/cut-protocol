@@ -1,0 +1,557 @@
+{
+ "persona": {
+  "idx": 123,
+  "id": "p123",
+  "tier": "EASY",
+  "displayName": "shift worker, 2 a.m. meals, 24",
+  "story": "shift worker, 2 a.m. meals, 24, male, 189 cm / 128.9 kg (BMI 36.1), cut at 2 lb/wk, none diet, avoiding soy, shellfish, balanced, 3 meals + 1 snacks, wants a single day",
+  "profile": {
+   "sex": "M",
+   "age": 24,
+   "heightCm": 189,
+   "startWeightKg": 128.9,
+   "goalWeightKg": 118.2,
+   "occupationKey": "warehouse",
+   "trainingStyle": "weights",
+   "minutesPerSession": 45,
+   "sessionsPerWeek": 3,
+   "rateLbPerWeek": 2,
+   "dietaryStyle": "none",
+   "excludedFoods": [
+    "soy",
+    "shellfish"
+   ],
+   "mealsPerDay": 3,
+   "snacksPerDay": 1,
+   "unitPref": "metric",
+   "rateAcknowledged": true
+  },
+  "filters": {},
+  "horizon": "day",
+  "walls": [
+   "soy",
+   "shellfish"
+  ],
+  "freeTextExclusions": [],
+  "dietaryStyle": "none",
+  "bmi": 36.1,
+  "goalKind": "cut",
+  "macroStyle": "balanced",
+  "requestedButUnsupported": [],
+  "tupleKey": "[\"EASY\",\"M\",24,189,128.9,118.2,\"warehouse\",\"weights\",2,\"none\",[\"shellfish\",\"soy\"],3,1,\"balanced\",\"day\",null,null,null,null,null]"
+ },
+ "request": {
+  "horizon": "day",
+  "filters": {}
+ },
+ "profileResponse": {
+  "id": "cms6x12m40347wlw0i91h5npo",
+  "userId": "cms6x12bq0039wl2og37932d3",
+  "sex": "M",
+  "age": 24,
+  "heightCm": 189,
+  "bodyFatPct": 0,
+  "bodyFatSource": null,
+  "occupationKey": "warehouse",
+  "activityOverride": null,
+  "sessionsPerWeek": 3,
+  "trainingStyle": "weights",
+  "minutesPerSession": 45,
+  "startWeightKg": 128.9,
+  "goalWeightKg": 118.2,
+  "startDate": "2026-07-29",
+  "unitPref": "metric",
+  "rateLbPerWeek": 2,
+  "rateAcknowledged": false,
+  "floorKcal": null,
+  "excludedFormulas": [],
+  "targetKcal": 2843,
+  "mealsPerDay": 3,
+  "snacksPerDay": 1,
+  "excludedFoods": [
+   "soy",
+   "shellfish"
+  ],
+  "dietaryStyle": "none",
+  "cuisinePreferences": [],
+  "mealPreferencesNote": null,
+  "maxPrepMin": null,
+  "budgetTier": null,
+  "allowBatch": null,
+  "maxComplexity": null,
+  "adaptiveTdee": true,
+  "proteinPriorityMode": false,
+  "updatedAt": "2026-07-30T20:33:38.933Z"
+ },
+ "generate": {
+  "status": 200,
+  "ms": 328,
+  "body": {
+   "id": "cms7z15ny02fzwlgw1g1kvuda",
+   "userId": "cms6x12bq0039wl2og37932d3",
+   "startDate": "2026-07-27",
+   "createdAt": "2026-07-30T20:33:39.311Z",
+   "slots": [
+    {
+     "id": "cms7z15o002g1wlgws79c1amc",
+     "planId": "cms7z15ny02fzwlgw1g1kvuda",
+     "dayOfWeek": 3,
+     "slotType": "meal",
+     "slotIndex": 0,
+     "recipeId": "cmrj2tisd022uwlwsj9ss5frl",
+     "proteinScale": 1.59,
+     "sidesScale": 2,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 14
+      },
+      {
+       "foodId": "cmrg8zxar000lwli0qy2ovmx4",
+       "name": "Onion",
+       "role": "veg",
+       "grams": 110
+      },
+      {
+       "foodId": "cmrj2t7wh006nwlwsiiln85f1",
+       "name": "Ginger Garlic Paste",
+       "role": "veg",
+       "grams": 5
+      },
+      {
+       "foodId": "cmrj2t6ik000dwlwsj8e736h1",
+       "name": "Tomato",
+       "role": "veg",
+       "grams": 125
+      },
+      {
+       "foodId": "cmrj2t7pt005swlwszhtld1bv",
+       "name": "Cayenne Pepper",
+       "role": null,
+       "grams": 1
+      },
+      {
+       "foodId": "cmrj2t7k10051wlwsghd1hb86",
+       "name": "Curry Powder",
+       "role": null,
+       "grams": 1
+      },
+      {
+       "foodId": "cmrj2t7ws006owlwsp3fhnnvo",
+       "name": "Garam Masala",
+       "role": null,
+       "grams": 1
+      },
+      {
+       "foodId": "cmrj2t7x0006pwlws1r36lnn9",
+       "name": "Ground Turmeric",
+       "role": null,
+       "grams": 1
+      },
+      {
+       "foodId": "cmrj2t7ch0042wlwsj8arrl7o",
+       "name": "Ground Cumin",
+       "role": null,
+       "grams": 1
+      },
+      {
+       "foodId": "cmrj2t7w3006lwlws4zdhow4d",
+       "name": "Chicken Breast",
+       "role": "protein",
+       "grams": 275
+      },
+      {
+       "foodId": "cmrj2t7xa006qwlwsdbkeil1k",
+       "name": "Red Potatoes",
+       "role": "veg",
+       "grams": 175
+      },
+      {
+       "foodId": "cmrj2t7lj0058wlwsk4i51m8h",
+       "name": "Cilantro",
+       "role": null,
+       "grams": 2
+      }
+     ],
+     "kcal": 715.2,
+     "protein": 69.3834,
+     "fat": 23.9424,
+     "carb": 54.5859,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrj2tisd022uwlwsj9ss5frl",
+      "name": "Bengali Chicken Curry with Potatoes",
+      "description": null,
+      "steps": [
+       "Heat the olive oil in a large skillet over medium-high heat. Cook and stir the onions in the hot oil until translucent, about 5 minutes. Add the ginger-garlic paste and continue cooking another 5 minutes. Reduce heat to medium; stir the tomatoes into the mixture and cook until the tomatoes are pulpy, 5 to 10 minutes. Season with the cayenne pepper, curry powder, garam masala, turmeric, and cumin; cook and stir another 5 minutes.",
+       "Add the chicken and potatoes to the mixture in the skillet; simmer, stirring occasionally, until the potatoes are tender and the chicken is no longer pink in the center, about 20 minutes. Sprinkle the cilantro over the mixture and continue simmering another 10 minutes. Serve hot."
+      ],
+      "slotType": "meal",
+      "cuisine": "indian",
+      "prepTimeMin": 21,
+      "source": "themealdb-import",
+      "mealCategory": null,
+      "kcal": 403.01775,
+      "protein": 43.06742,
+      "fat": 12.9105125,
+      "carb": 27.7617,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 6.16,
+      "difficulty": 3,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-13T10:25:27.134Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z15o102g3wlgwcssovlu6",
+     "planId": "cms7z15ny02fzwlgw1g1kvuda",
+     "dayOfWeek": 3,
+     "slotType": "meal",
+     "slotIndex": 1,
+     "recipeId": "cmrevpcr6001swl5get7ijrk9",
+     "proteinScale": 1.1,
+     "sidesScale": 0.96,
+     "ingredients": [
+      {
+       "foodId": "cmrevpcls0003wl5g6uhs17yp",
+       "name": "Extra-lean ground beef, cooked",
+       "role": "protein",
+       "grams": 275
+      },
+      {
+       "foodId": "cmrevpcn2000ewl5gmlyzu0vd",
+       "name": "White rice, cooked",
+       "role": "carb",
+       "grams": 190
+      },
+      {
+       "foodId": "cmrevpcnh000iwl5gh2zjhyqe",
+       "name": "Bell peppers",
+       "role": "veg",
+       "grams": 145
+      },
+      {
+       "foodId": "cmrevpcnz000mwl5g62fmfzqk",
+       "name": "Butter",
+       "role": "fat",
+       "grams": 10
+      }
+     ],
+     "kcal": 836.6500000000001,
+     "protein": 78.17,
+     "fat": 28.355,
+     "carb": 61.90999999999999,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrevpcr6001swl5get7ijrk9",
+      "name": "Ground Beef & Rice Skillet",
+      "description": null,
+      "steps": [
+       "Brown the beef in a hot skillet, breaking it up as it cooks.",
+       "Drain excess fat if needed.",
+       "Toss in peppers for the last 2 minutes.",
+       "Serve over rice, butter stirred through."
+      ],
+      "slotType": "meal",
+      "cuisine": "western-comfort",
+      "prepTimeMin": 20,
+      "source": "curated",
+      "mealCategory": null,
+      "kcal": 808.2,
+      "protein": 71.99000000000001,
+      "fat": 26.65,
+      "carb": 65.01,
+      "tasteTier": "really_good",
+      "tasteTierSource": "curated",
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 10.44,
+      "difficulty": 2,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-10T11:55:10.675Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z15o302g7wlgw8a2eiwiv",
+     "planId": "cms7z15ny02fzwlgw1g1kvuda",
+     "dayOfWeek": 3,
+     "slotType": "meal",
+     "slotIndex": 2,
+     "recipeId": "cmrujkwqi002uwl9ob1bgrck4",
+     "proteinScale": 2,
+     "sidesScale": 1.9,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t7w3006lwlws4zdhow4d",
+       "name": "Chicken Breast",
+       "role": "protein",
+       "grams": 340
+      },
+      {
+       "foodId": "cmrevpcn2000ewl5gmlyzu0vd",
+       "name": "White rice, cooked",
+       "role": "carb",
+       "grams": 305
+      },
+      {
+       "foodId": "cmrg8zxar000lwli0qy2ovmx4",
+       "name": "Onion",
+       "role": "veg",
+       "grams": 115
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 10
+      }
+     ],
+     "kcal": 940.5,
+     "protein": 86,
+     "fat": 19.938,
+     "carb": 96.14099999999999,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrujkwqi002uwl9ob1bgrck4",
+      "name": "Fiesta Chicken & Onions with Rice",
+      "description": null,
+      "steps": [
+       "Cook the chicken.",
+       "Serve with white rice and onions."
+      ],
+      "slotType": "meal",
+      "cuisine": "mexican",
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 526,
+      "protein": 43.23,
+      "fat": 14.994,
+      "carb": 50.404,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 5.88,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:00:06.715Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z15o402gbwlgwjhesqp7e",
+     "planId": "cms7z15ny02fzwlgw1g1kvuda",
+     "dayOfWeek": 3,
+     "slotType": "snack",
+     "slotIndex": 0,
+     "recipeId": "cms7pjml6003owlbka29p8yee",
+     "proteinScale": 1.82,
+     "sidesScale": 1.01,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t7p5005pwlws4acmktnt",
+       "name": "Greek Yogurt",
+       "role": "protein",
+       "grams": 310
+      },
+      {
+       "foodId": "cmrj2t8ka009owlwsm3jj99p5",
+       "name": "Walnuts",
+       "role": "fat",
+       "grams": 20
+      },
+      {
+       "foodId": "cmrfoyp7m0002wl0851se2p2b",
+       "name": "Honey",
+       "role": "carb",
+       "grams": 12
+      }
+     ],
+     "kcal": 350.1800000000001,
+     "protein": 35.00600000000001,
+     "fat": 14.249,
+     "carb": 23.788,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cms7pjml6003owlbka29p8yee",
+      "name": "Greek Yogurt with Walnuts and Honey",
+      "description": null,
+      "steps": [
+       "Spoon the yogurt into a bowl.",
+       "Scatter the walnuts and trickle honey over."
+      ],
+      "slotType": "snack",
+      "cuisine": "mediterranean",
+      "prepTimeMin": 3,
+      "source": "curated",
+      "mealCategory": null,
+      "kcal": 267.58,
+      "protein": 20.586,
+      "fat": 13.703,
+      "carb": 18.748,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": null,
+      "difficulty": 1,
+      "filterProvenance": null,
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-30T16:08:04.890Z",
+      "createdByUserId": null
+     }
+    }
+   ],
+   "groceryList": null,
+   "meta": {
+    "matchPct": 100,
+    "attempts": 1,
+    "score": {
+     "daysInTolerance": 1,
+     "avgMatch": 100,
+     "days": [
+      {
+       "dayOfWeek": 3,
+       "dayName": "Thursday",
+       "matchPct": 100,
+       "totals": {
+        "kcal": 2843,
+        "protein": 269,
+        "fat": 86,
+        "carb": 236
+       },
+       "kcalDeltaPct": 0,
+       "proteinShortPct": 0,
+       "fatOk": true,
+       "carbOk": true,
+       "inTolerance": true,
+       "miss": null,
+       "unfilledSlots": 0,
+       "warnedSlots": 0,
+       "windowIndex": 0,
+       "dayIndex": 0,
+       "key": "0:3"
+      }
+     ],
+     "totalDays": 1
+    },
+    "days": [
+     {
+      "dayOfWeek": 3,
+      "dayName": "Thursday",
+      "matchPct": 100,
+      "totals": {
+       "kcal": 2843,
+       "protein": 269,
+       "fat": 86,
+       "carb": 236
+      },
+      "kcalDeltaPct": 0,
+      "proteinShortPct": 0,
+      "fatOk": true,
+      "carbOk": true,
+      "inTolerance": true,
+      "miss": null,
+      "unfilledSlots": 0,
+      "warnedSlots": 0,
+      "windowIndex": 0,
+      "dayIndex": 0,
+      "key": "0:3"
+     }
+    ],
+    "diagnosis": null,
+    "poolCounts": {
+     "raw": 910,
+     "afterDiet": 687,
+     "afterPrep": 687,
+     "afterStack": 687,
+     "stackExplain": null
+    },
+    "variety": {
+     "mealEligible": 512,
+     "usableForSlot": 222,
+     "slotKcal": 838,
+     "snackEligible": 16,
+     "weeklyMealSlots": 21,
+     "weeklySnackSlots": 7,
+     "repeatCap": 2,
+     "distinctWeeks": 10.6,
+     "horizonWeeks": 1,
+     "sustainsHorizon": true,
+     "notes": [
+      "1 day: 4 distinct dish(es) across 4 filled slot(s); most-repeated dish appears 1x against a 2x cap for this horizon (2x per week)."
+     ],
+     "horizon": {
+      "weeks": 1,
+      "days": 1,
+      "perWeekCap": 2,
+      "horizonRepeatCap": 2,
+      "mealSlots": 3,
+      "snackSlots": 1,
+      "totalSlots": 4,
+      "distinctFloor": 2,
+      "distinctRecipes": 4,
+      "maxRepeat": 1,
+      "maxRepeatRecipeId": "cmrj2tisd022uwlwsj9ss5frl",
+      "lockedRepeatsOfMax": 0,
+      "filledSlots": 4,
+      "unfilledSlots": 0,
+      "requiredDistinct": 2,
+      "capHeld": true,
+      "floorHeld": true
+     }
+    },
+    "priorWeeksConsidered": 0,
+    "horizon": {
+     "key": "day",
+     "label": "1 day",
+     "days": 1,
+     "kind": "days",
+     "weeks": 1,
+     "custom": false,
+     "startDate": "2026-07-30",
+     "endDate": "2026-07-30",
+     "startDayOfWeek": 3,
+     "weeksWritten": 1,
+     "solveMs": 2,
+     "weekPlans": [
+      {
+       "startDate": "2026-07-27",
+       "dayIndices": [
+        3
+       ],
+       "days": 1,
+       "daysInTolerance": 1,
+       "avgMatch": 100,
+       "unfilledSlots": 0,
+       "poolSize": 687
+      }
+     ]
+    }
+   }
+  }
+ }
+}

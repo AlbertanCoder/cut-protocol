@@ -1,0 +1,473 @@
+{
+ "persona": {
+  "idx": 209,
+  "id": "p209",
+  "tier": "HARD",
+  "displayName": "formwork carpenter, 55",
+  "story": "formwork carpenter, 55, male, 177 cm / 78.5 kg (BMI 25.1), recomp, none diet, avoiding dairy, egg, cilantro, soy, gluten, low-carb, 3 meals + 0 snacks, wants a single day",
+  "profile": {
+   "sex": "M",
+   "age": 55,
+   "heightCm": 177,
+   "startWeightKg": 78.5,
+   "goalWeightKg": 78.6,
+   "occupationKey": "formwork-concrete",
+   "trainingStyle": "weights",
+   "minutesPerSession": 60,
+   "sessionsPerWeek": 4,
+   "rateLbPerWeek": 1.5,
+   "dietaryStyle": "none",
+   "excludedFoods": [
+    "dairy",
+    "eggs",
+    "cilantro",
+    "soy",
+    "gluten"
+   ],
+   "mealsPerDay": 3,
+   "snacksPerDay": 0,
+   "unitPref": "imperial",
+   "rateAcknowledged": true
+  },
+  "filters": {
+   "proteinPriority": true,
+   "maxPrepMin": 15
+  },
+  "horizon": "day",
+  "walls": [
+   "dairy",
+   "egg",
+   "cilantro",
+   "soy",
+   "gluten"
+  ],
+  "freeTextExclusions": [
+   "cilantro"
+  ],
+  "dietaryStyle": "none",
+  "bmi": 25.1,
+  "goalKind": "recomp",
+  "macroStyle": "low-carb",
+  "requestedButUnsupported": [
+   "wanted a low-carb split without full keto; carbs are the leftover after LBM-derived protein and fat, and only dietaryStyle:\"keto\" changes that"
+  ],
+  "tupleKey": "[\"HARD\",\"M\",55,177,78.5,78.6,\"formwork-concrete\",\"weights\",1.5,\"none\",[\"cilantro\",\"dairy\",\"eggs\",\"gluten\",\"soy\"],3,0,\"low-carb\",\"day\",15,null,true,null,null]"
+ },
+ "request": {
+  "horizon": "day",
+  "filters": {
+   "proteinPriority": true,
+   "maxPrepMin": 15
+  }
+ },
+ "profileResponse": {
+  "id": "cms6x1p7n05arwlw07l4bs9ef",
+  "userId": "cms6x1ory005nwl2oyo3who68",
+  "sex": "M",
+  "age": 55,
+  "heightCm": 177,
+  "bodyFatPct": 0,
+  "bodyFatSource": null,
+  "occupationKey": "formwork-concrete",
+  "activityOverride": null,
+  "sessionsPerWeek": 4,
+  "trainingStyle": "weights",
+  "minutesPerSession": 60,
+  "startWeightKg": 78.5,
+  "goalWeightKg": 78.6,
+  "startDate": "2026-07-29",
+  "unitPref": "imperial",
+  "rateLbPerWeek": 1.5,
+  "rateAcknowledged": false,
+  "floorKcal": null,
+  "excludedFormulas": [],
+  "targetKcal": 2042,
+  "mealsPerDay": 3,
+  "snacksPerDay": 0,
+  "excludedFoods": [
+   "dairy",
+   "eggs",
+   "cilantro",
+   "soy",
+   "gluten"
+  ],
+  "dietaryStyle": "none",
+  "cuisinePreferences": [],
+  "mealPreferencesNote": null,
+  "maxPrepMin": null,
+  "budgetTier": null,
+  "allowBatch": null,
+  "maxComplexity": null,
+  "adaptiveTdee": true,
+  "proteinPriorityMode": false,
+  "updatedAt": "2026-07-30T02:50:19.242Z"
+ },
+ "generate": {
+  "status": 200,
+  "ms": 367,
+  "body": {
+   "id": "cms6x1pht05axwlw075pjpkjf",
+   "userId": "cms6x1ory005nwl2oyo3who68",
+   "startDate": "2026-07-27",
+   "createdAt": "2026-07-30T02:50:19.602Z",
+   "slots": [
+    {
+     "id": "cms6x1phx05azwlw0tchlxr86",
+     "planId": "cms6x1pht05axwlw075pjpkjf",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 0,
+     "recipeId": "cmrul79x2008owl805bim7ce9",
+     "proteinScale": 0.79,
+     "sidesScale": 2,
+     "ingredients": [
+      {
+       "foodId": "cmrfoyrjh0009wl08cmcid51m",
+       "name": "Turkey breast, low salt, prepackaged or deli, luncheon meat",
+       "role": "protein",
+       "grams": 135
+      },
+      {
+       "foodId": "cmrj2t88z0087wlwsmsmchxzb",
+       "name": "Quinoa",
+       "role": "carb",
+       "grams": 220
+      },
+      {
+       "foodId": "cmrj2t6na000ywlws9jek4w4z",
+       "name": "Broccoli",
+       "role": "veg",
+       "grams": 220
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 524.3499999999999,
+     "protein": 44.76400000000001,
+     "fat": 11.0925,
+     "carb": 65.39250000000001,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrul79x2008owl805bim7ce9",
+      "name": "High-Protein Turkey & Broccoli with Quinoa",
+      "description": null,
+      "steps": [
+       "Cook the turkey.",
+       "Serve over quinoa with broccoli."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 396.4,
+      "protein": 44.7,
+      "fat": 8.9,
+      "carb": 36.3,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 7.56,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:45:29.846Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x1phz05b1wlw0z249960w",
+     "planId": "cms6x1pht05axwlw075pjpkjf",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 1,
+     "recipeId": "cmrevpctw002twl5gdov5q7ka",
+     "proteinScale": 0.58,
+     "sidesScale": 1.53,
+     "ingredients": [
+      {
+       "foodId": "cmrevpclb0000wl5ghnno9i5f",
+       "name": "Chicken breast, cooked, skinless",
+       "role": "protein",
+       "grams": 145
+      },
+      {
+       "foodId": "cmrevpcn2000ewl5gmlyzu0vd",
+       "name": "White rice, cooked",
+       "role": "carb",
+       "grams": 305
+      },
+      {
+       "foodId": "cmrevpcnh000iwl5gh2zjhyqe",
+       "name": "Bell peppers",
+       "role": "veg",
+       "grams": 230
+      }
+     ],
+     "kcal": 707.05,
+     "protein": 55.48499999999999,
+     "fat": 6.824999999999999,
+     "carb": 99.19999999999999,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrevpctw002twl5gdov5q7ka",
+      "name": "Grilled Chicken Breast, Rice & Peppers",
+      "description": "The site-lunch template.",
+      "steps": [
+       "Grill or pan-sear seasoned chicken breast until 165°F internal.",
+       "Rest, slice.",
+       "Serve over rice with peppers — packs well for a lunch box."
+      ],
+      "slotType": "meal",
+      "cuisine": "western-comfort",
+      "prepTimeMin": 15,
+      "source": "curated",
+      "mealCategory": null,
+      "kcal": 719,
+      "protein": 84.4,
+      "fat": 10.05,
+      "carb": 65,
+      "tasteTier": "really_good",
+      "tasteTierSource": "curated",
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 9.07,
+      "difficulty": 2,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-10T11:55:10.772Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x1pi005b3wlw0iksmufgy",
+     "planId": "cms6x1pht05axwlw075pjpkjf",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 2,
+     "recipeId": "cmrujkwur00acwl9otwtkb6j1",
+     "proteinScale": 1.64,
+     "sidesScale": 0.59,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t6fj0000wlwsdedjzth2",
+       "name": "Ground Beef",
+       "role": "protein",
+       "grams": 230
+      },
+      {
+       "foodId": "cmrj2t7fb004fwlws8ezof2dp",
+       "name": "Russet Potato",
+       "role": "carb",
+       "grams": 105
+      },
+      {
+       "foodId": "cmrj2t6na000ywlws9jek4w4z",
+       "name": "Broccoli",
+       "role": "veg",
+       "grams": 65
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 10
+      }
+     ],
+     "kcal": 810.1999999999999,
+     "protein": 63.31199999999999,
+     "fat": 48.9975,
+     "carb": 26.5455,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrujkwur00acwl9otwtkb6j1",
+      "name": "Classic Ground Beef & Broccoli with Potato",
+      "description": null,
+      "steps": [
+       "Cook the ground beef.",
+       "Serve with potato and broccoli."
+      ],
+      "slotType": "meal",
+      "cuisine": "american",
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 660.5,
+      "protein": 43.4,
+      "fat": 34.1,
+      "carb": 45.4,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 6.2,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:00:06.867Z",
+      "createdByUserId": null
+     }
+    }
+   ],
+   "groceryList": null,
+   "meta": {
+    "matchPct": 88,
+    "attempts": 5,
+    "score": {
+     "daysInTolerance": 1,
+     "avgMatch": 88,
+     "days": [
+      {
+       "dayOfWeek": 2,
+       "dayName": "Wednesday",
+       "matchPct": 88,
+       "totals": {
+        "kcal": 2042,
+        "protein": 164,
+        "fat": 67,
+        "carb": 191
+       },
+       "kcalDeltaPct": 0,
+       "proteinShortPct": 0,
+       "fatOk": true,
+       "carbOk": true,
+       "inTolerance": true,
+       "miss": null,
+       "unfilledSlots": 0,
+       "warnedSlots": 0,
+       "proteinFloor": {
+        "met": true,
+        "floorG": 156,
+        "achievedG": 163.6,
+        "shortG": 0,
+        "shortPct": 0,
+        "reason": null
+       },
+       "windowIndex": 0,
+       "dayIndex": 0,
+       "key": "0:2"
+      }
+     ],
+     "totalDays": 1,
+     "floorDaysMet": 1,
+     "floorDaysTotal": 1
+    },
+    "days": [
+     {
+      "dayOfWeek": 2,
+      "dayName": "Wednesday",
+      "matchPct": 88,
+      "totals": {
+       "kcal": 2042,
+       "protein": 164,
+       "fat": 67,
+       "carb": 191
+      },
+      "kcalDeltaPct": 0,
+      "proteinShortPct": 0,
+      "fatOk": true,
+      "carbOk": true,
+      "inTolerance": true,
+      "miss": null,
+      "unfilledSlots": 0,
+      "warnedSlots": 0,
+      "proteinFloor": {
+       "met": true,
+       "floorG": 156,
+       "achievedG": 163.6,
+       "shortG": 0,
+       "shortPct": 0,
+       "reason": null
+      },
+      "windowIndex": 0,
+      "dayIndex": 0,
+      "key": "0:2"
+     }
+    ],
+    "diagnosis": null,
+    "poolCounts": {
+     "raw": 889,
+     "afterDiet": 198,
+     "afterPrep": 96,
+     "afterStack": 96,
+     "stackExplain": null
+    },
+    "variety": {
+     "mealEligible": 92,
+     "usableForSlot": 74,
+     "slotKcal": 681,
+     "snackEligible": 4,
+     "weeklyMealSlots": 21,
+     "weeklySnackSlots": 0,
+     "repeatCap": 2,
+     "distinctWeeks": 3.5,
+     "horizonWeeks": 1,
+     "sustainsHorizon": true,
+     "notes": [
+      "1 day: 3 distinct dish(es) across 3 filled slot(s); most-repeated dish appears 1x against a 2x cap for this horizon (2x per week)."
+     ],
+     "horizon": {
+      "weeks": 1,
+      "days": 1,
+      "perWeekCap": 2,
+      "horizonRepeatCap": 2,
+      "mealSlots": 3,
+      "snackSlots": 0,
+      "totalSlots": 3,
+      "distinctFloor": 2,
+      "distinctRecipes": 3,
+      "maxRepeat": 1,
+      "maxRepeatRecipeId": "cmrul79x2008owl805bim7ce9",
+      "lockedRepeatsOfMax": 0,
+      "filledSlots": 3,
+      "unfilledSlots": 0,
+      "requiredDistinct": 2,
+      "capHeld": true,
+      "floorHeld": true
+     }
+    },
+    "priorWeeksConsidered": 0,
+    "horizon": {
+     "key": "day",
+     "label": "1 day",
+     "days": 1,
+     "kind": "days",
+     "weeks": 1,
+     "custom": false,
+     "startDate": "2026-07-29",
+     "endDate": "2026-07-29",
+     "startDayOfWeek": 2,
+     "weeksWritten": 1,
+     "solveMs": 1,
+     "weekPlans": [
+      {
+       "startDate": "2026-07-27",
+       "dayIndices": [
+        2
+       ],
+       "days": 1,
+       "daysInTolerance": 1,
+       "avgMatch": 88,
+       "unfilledSlots": 0,
+       "poolSize": 96
+      }
+     ]
+    }
+   }
+  }
+ }
+}

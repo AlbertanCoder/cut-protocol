@@ -1,0 +1,683 @@
+{
+ "persona": {
+  "idx": 49,
+  "id": "p049",
+  "tier": "EASY",
+  "displayName": "long-haul trucker, 25",
+  "story": "long-haul trucker, 25, male, 173 cm / 116.9 kg (BMI 39.1), cut at 1.5 lb/wk, vegetarian diet, avoiding peanut, pork, gluten, low-carb, 4 meals + 2 snacks, wants a single day",
+  "profile": {
+   "sex": "M",
+   "age": 25,
+   "heightCm": 173,
+   "startWeightKg": 116.9,
+   "goalWeightKg": 110.8,
+   "occupationKey": "driver-truck",
+   "trainingStyle": "weights",
+   "minutesPerSession": 30,
+   "sessionsPerWeek": 2,
+   "rateLbPerWeek": 1.5,
+   "dietaryStyle": "vegetarian",
+   "excludedFoods": [
+    "peanuts",
+    "pork",
+    "gluten"
+   ],
+   "mealsPerDay": 4,
+   "snacksPerDay": 2,
+   "unitPref": "metric",
+   "bodyFatPct": 8,
+   "bodyFatSource": "visual-estimate",
+   "rateAcknowledged": true
+  },
+  "filters": {},
+  "horizon": "day",
+  "walls": [
+   "peanut",
+   "pork",
+   "gluten"
+  ],
+  "freeTextExclusions": [
+   "pork"
+  ],
+  "dietaryStyle": "vegetarian",
+  "bmi": 39.1,
+  "goalKind": "cut",
+  "macroStyle": "low-carb",
+  "requestedButUnsupported": [
+   "wanted a low-carb split without full keto; carbs are the leftover after LBM-derived protein and fat, and only dietaryStyle:\"keto\" changes that"
+  ],
+  "tupleKey": "[\"EASY\",\"M\",25,173,116.9,110.8,\"driver-truck\",\"weights\",1.5,\"vegetarian\",[\"gluten\",\"peanuts\",\"pork\"],4,2,\"low-carb\",\"day\",null,null,null,null,null]"
+ },
+ "request": {
+  "horizon": "day",
+  "filters": {}
+ },
+ "profileResponse": {
+  "id": "cms6x0ju101l9wlw0korsfn4d",
+  "userId": "cms6x0jni0017wl2o7omkylil",
+  "sex": "M",
+  "age": 25,
+  "heightCm": 173,
+  "bodyFatPct": 8,
+  "bodyFatSource": "visual-estimate",
+  "occupationKey": "driver-truck",
+  "activityOverride": null,
+  "sessionsPerWeek": 2,
+  "trainingStyle": "weights",
+  "minutesPerSession": 30,
+  "startWeightKg": 116.9,
+  "goalWeightKg": 110.8,
+  "startDate": "2026-07-29",
+  "unitPref": "metric",
+  "rateLbPerWeek": 1.5,
+  "rateAcknowledged": false,
+  "floorKcal": null,
+  "excludedFormulas": [],
+  "targetKcal": 2415,
+  "mealsPerDay": 4,
+  "snacksPerDay": 2,
+  "excludedFoods": [
+   "peanuts",
+   "pork",
+   "gluten"
+  ],
+  "dietaryStyle": "vegetarian",
+  "cuisinePreferences": [],
+  "mealPreferencesNote": null,
+  "maxPrepMin": null,
+  "budgetTier": null,
+  "allowBatch": null,
+  "maxComplexity": null,
+  "adaptiveTdee": true,
+  "proteinPriorityMode": false,
+  "updatedAt": "2026-07-30T20:33:15.381Z"
+ },
+ "generate": {
+  "status": 200,
+  "ms": 550,
+  "body": {
+   "id": "cms7z0nsn011hwlgwiitfttnw",
+   "userId": "cms6x0jni0017wl2o7omkylil",
+   "startDate": "2026-07-27",
+   "createdAt": "2026-07-30T20:33:16.151Z",
+   "slots": [
+    {
+     "id": "cms7z0nsp011lwlgw3775thqf",
+     "planId": "cms7z0nsn011hwlgwiitfttnw",
+     "dayOfWeek": 3,
+     "slotType": "meal",
+     "slotIndex": 0,
+     "recipeId": "cmrul79zo00cuwl80i55ngt34",
+     "proteinScale": 2,
+     "sidesScale": 0.5,
+     "ingredients": [
+      {
+       "foodId": "cmrj2tbym00mowlwszf3qi0d8",
+       "name": "Cottage Cheese",
+       "role": "protein",
+       "grams": 400
+      },
+      {
+       "foodId": "cmrj2t88z0087wlwsmsmchxzb",
+       "name": "Quinoa",
+       "role": "carb",
+       "grams": 55
+      },
+      {
+       "foodId": "cmrevpcnl000jwl5gnqnk630b",
+       "name": "Cucumber",
+       "role": "veg",
+       "grams": 45
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 25,
+       "adjuster": true
+      },
+      {
+       "foodId": "cmrevpcnz000mwl5g62fmfzqk",
+       "name": "Butter",
+       "role": "fat",
+       "grams": 6,
+       "adjuster": true
+      }
+     ],
+     "kcal": 711.52,
+     "protein": 46.73950000000001,
+     "fat": 45.188,
+     "carb": 29.933,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrul79zo00cuwl80i55ngt34",
+      "name": "High-Protein Cottage Cheese & Cucumber with Quinoa",
+      "description": null,
+      "steps": [
+       "Cook the cottage cheese.",
+       "Serve over quinoa with cucumber."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 350,
+      "protein": 27.371,
+      "fat": 11.856,
+      "carb": 33.994,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 3.34,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:45:29.940Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z0nsq011nwlgweuuyrjy6",
+     "planId": "cms7z0nsn011hwlgwiitfttnw",
+     "dayOfWeek": 3,
+     "slotType": "meal",
+     "slotIndex": 1,
+     "recipeId": "cmrul79sy0020wl801ylpoo3w",
+     "proteinScale": 1.92,
+     "sidesScale": 0.63,
+     "ingredients": [
+      {
+       "foodId": "cmrukzae20001wlbwgdjqlh3f",
+       "name": "Textured vegetable protein, dry",
+       "role": "protein",
+       "grams": 105
+      },
+      {
+       "foodId": "cmrj2t88z0087wlwsmsmchxzb",
+       "name": "Quinoa",
+       "role": "carb",
+       "grams": 70
+      },
+      {
+       "foodId": "cmrj2t6na000ywlws9jek4w4z",
+       "name": "Broccoli",
+       "role": "veg",
+       "grams": 70
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 497.2,
+     "protein": 59.479,
+     "fat": 7.632,
+     "carb": 50.79899999999999,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrul79sy0020wl801ylpoo3w",
+      "name": "High-Protein TVP & Broccoli with Quinoa",
+      "description": null,
+      "steps": [
+       "Cook the tvp.",
+       "Serve over quinoa with broccoli."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 392.6,
+      "protein": 36.3,
+      "fat": 8,
+      "carb": 46.8,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 2.55,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:45:29.699Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z0nsq011pwlgwiv9cv7jx",
+     "planId": "cms7z0nsn011hwlgwiitfttnw",
+     "dayOfWeek": 3,
+     "slotType": "meal",
+     "slotIndex": 2,
+     "recipeId": "cmrul79z000buwl80q9shge3z",
+     "proteinScale": 1.91,
+     "sidesScale": 1.29,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t7t00067wlwsj23ngikm",
+       "name": "Egg White",
+       "role": "protein",
+       "grams": 495
+      },
+      {
+       "foodId": "cmrj2t88z0087wlwsmsmchxzb",
+       "name": "Quinoa",
+       "role": "carb",
+       "grams": 140
+      },
+      {
+       "foodId": "cmrevpcnl000jwl5gnqnk630b",
+       "name": "Cucumber",
+       "role": "veg",
+       "grams": 115
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 496.75,
+     "protein": 59.8035,
+     "fat": 7.872,
+     "carb": 43.986,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrul79z000buwl80q9shge3z",
+      "name": "High-Protein Egg White & Cucumber with Quinoa",
+      "description": null,
+      "steps": [
+       "Cook the egg white.",
+       "Serve over quinoa with cucumber."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 329,
+      "protein": 33.191,
+      "fat": 7.256,
+      "carb": 31.51000000000001,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 3.62,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:45:29.916Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z0nsr011rwlgwgglh84js",
+     "planId": "cms7z0nsn011hwlgwiitfttnw",
+     "dayOfWeek": 3,
+     "slotType": "meal",
+     "slotIndex": 3,
+     "recipeId": "cmrul4e7l007uwl68g96btgat",
+     "proteinScale": 2,
+     "sidesScale": 1.25,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t7t00067wlwsj23ngikm",
+       "name": "Egg White",
+       "role": "protein",
+       "grams": 520
+      },
+      {
+       "foodId": "cmrj2t7fb004fwlws8ezof2dp",
+       "name": "Russet Potato",
+       "role": "carb",
+       "grams": 185
+      },
+      {
+       "foodId": "cmrj2t6na000ywlws9jek4w4z",
+       "name": "Broccoli",
+       "role": "veg",
+       "grams": 135
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 548.6,
+     "protein": 63.97499999999999,
+     "fat": 5.6995,
+     "carb": 60.3265,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrul4e7l007uwl68g96btgat",
+      "name": "High-Protein Egg White & Broccoli with Potato",
+      "description": null,
+      "steps": [
+       "Cook the egg white.",
+       "Serve over potato with broccoli."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 364.6,
+      "protein": 34.592,
+      "fat": 5.569,
+      "carb": 45.133,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 3.21,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:43:15.441Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z0nss011twlgwfyxsft7l",
+     "planId": "cms7z0nsn011hwlgwiitfttnw",
+     "dayOfWeek": 3,
+     "slotType": "snack",
+     "slotIndex": 0,
+     "recipeId": "cms7pjml6003owlbka29p8yee",
+     "proteinScale": 1.44,
+     "sidesScale": 0.5,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t7p5005pwlws4acmktnt",
+       "name": "Greek Yogurt",
+       "role": "protein",
+       "grams": 245
+      },
+      {
+       "foodId": "cmrj2t8ka009owlwsm3jj99p5",
+       "name": "Walnuts",
+       "role": "fat",
+       "grams": 10
+      },
+      {
+       "foodId": "cmrfoyp7m0002wl0851se2p2b",
+       "name": "Honey",
+       "role": "carb",
+       "grams": 6
+      }
+     ],
+     "kcal": 228.19,
+     "protein": 26.773,
+     "fat": 7.4755,
+     "carb": 15.134,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cms7pjml6003owlbka29p8yee",
+      "name": "Greek Yogurt with Walnuts and Honey",
+      "description": null,
+      "steps": [
+       "Spoon the yogurt into a bowl.",
+       "Scatter the walnuts and trickle honey over."
+      ],
+      "slotType": "snack",
+      "cuisine": "mediterranean",
+      "prepTimeMin": 3,
+      "source": "curated",
+      "mealCategory": null,
+      "kcal": 267.58,
+      "protein": 20.586,
+      "fat": 13.703,
+      "carb": 18.748,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": null,
+      "difficulty": 1,
+      "filterProvenance": null,
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-30T16:08:04.890Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z0nss011vwlgwt85pvi3e",
+     "planId": "cms7z0nsn011hwlgwiitfttnw",
+     "dayOfWeek": 3,
+     "slotType": "snack",
+     "slotIndex": 1,
+     "recipeId": "cms7pjml6003owlbka29p8yee",
+     "proteinScale": 1.44,
+     "sidesScale": 0.5,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t7p5005pwlws4acmktnt",
+       "name": "Greek Yogurt",
+       "role": "protein",
+       "grams": 245
+      },
+      {
+       "foodId": "cmrj2t8ka009owlwsm3jj99p5",
+       "name": "Walnuts",
+       "role": "fat",
+       "grams": 10
+      },
+      {
+       "foodId": "cmrfoyp7m0002wl0851se2p2b",
+       "name": "Honey",
+       "role": "carb",
+       "grams": 6
+      }
+     ],
+     "kcal": 228.19,
+     "protein": 26.773,
+     "fat": 7.4755,
+     "carb": 15.134,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cms7pjml6003owlbka29p8yee",
+      "name": "Greek Yogurt with Walnuts and Honey",
+      "description": null,
+      "steps": [
+       "Spoon the yogurt into a bowl.",
+       "Scatter the walnuts and trickle honey over."
+      ],
+      "slotType": "snack",
+      "cuisine": "mediterranean",
+      "prepTimeMin": 3,
+      "source": "curated",
+      "mealCategory": null,
+      "kcal": 267.58,
+      "protein": 20.586,
+      "fat": 13.703,
+      "carb": 18.748,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": null,
+      "difficulty": 1,
+      "filterProvenance": null,
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-30T16:08:04.890Z",
+      "createdByUserId": null
+     }
+    }
+   ],
+   "groceryList": null,
+   "meta": {
+    "matchPct": 82,
+    "attempts": 5,
+    "score": {
+     "daysInTolerance": 0,
+     "avgMatch": 82,
+     "days": [
+      {
+       "dayOfWeek": 3,
+       "dayName": "Thursday",
+       "matchPct": 82,
+       "totals": {
+        "kcal": 2710,
+        "protein": 284,
+        "fat": 81,
+        "carb": 215
+       },
+       "kcalDeltaPct": 12.2,
+       "proteinShortPct": 0,
+       "fatOk": true,
+       "carbOk": false,
+       "inTolerance": false,
+       "miss": "215 g carbs vs a 86–110 g range — 105 g over",
+       "unfilledSlots": 0,
+       "warnedSlots": 0,
+       "windowIndex": 0,
+       "dayIndex": 0,
+       "key": "0:3"
+      }
+     ],
+     "totalDays": 1
+    },
+    "days": [
+     {
+      "dayOfWeek": 3,
+      "dayName": "Thursday",
+      "matchPct": 82,
+      "totals": {
+       "kcal": 2710,
+       "protein": 284,
+       "fat": 81,
+       "carb": 215
+      },
+      "kcalDeltaPct": 12.2,
+      "proteinShortPct": 0,
+      "fatOk": true,
+      "carbOk": false,
+      "inTolerance": false,
+      "miss": "215 g carbs vs a 86–110 g range — 105 g over",
+      "unfilledSlots": 0,
+      "warnedSlots": 0,
+      "windowIndex": 0,
+      "dayIndex": 0,
+      "key": "0:3"
+     }
+    ],
+    "diagnosis": {
+     "feasible": false,
+     "reasons": [
+      "Your targets need ~11.7g protein per 100 kcal; only 15 of 171 eligible recipes come close (16+ needed for a full varied week).",
+      "1 day(s) landed outside your 86–110 g carb range — portion scaling moves a dish's calories, not its fat/carb ratio, so the pool's composition is what binds here."
+     ],
+     "suggestions": [
+      "Set the protein-preference filter, or AI-generate a few high-protein recipes to deepen the pool.",
+      "Add (or AI-generate) a few recipes built around the macro you keep missing, or drop the cuisine/protein preference so the solver can reach dishes that carry it."
+     ],
+     "binding": {
+      "key": "protein-density",
+      "label": "protein density in your recipe pool",
+      "detail": "your targets need ~11.7 g protein per 100 kcal and only 15 of 171 compliant recipes come close."
+     }
+    },
+    "poolCounts": {
+     "raw": 910,
+     "afterDiet": 171,
+     "afterPrep": 171,
+     "afterStack": 171,
+     "stackExplain": null
+    },
+    "variety": {
+     "mealEligible": 133,
+     "usableForSlot": 60,
+     "slotKcal": 504,
+     "snackEligible": 10,
+     "weeklyMealSlots": 28,
+     "weeklySnackSlots": 14,
+     "repeatCap": 2,
+     "distinctWeeks": 2.1,
+     "horizonWeeks": 1,
+     "sustainsHorizon": true,
+     "notes": [
+      "1 day: 5 distinct dish(es) across 6 filled slot(s); most-repeated dish appears 2x against a 2x cap for this horizon (2x per week)."
+     ],
+     "horizon": {
+      "weeks": 1,
+      "days": 1,
+      "perWeekCap": 2,
+      "horizonRepeatCap": 2,
+      "mealSlots": 4,
+      "snackSlots": 2,
+      "totalSlots": 6,
+      "distinctFloor": 3,
+      "distinctRecipes": 5,
+      "maxRepeat": 2,
+      "maxRepeatRecipeId": "cms7pjml6003owlbka29p8yee",
+      "lockedRepeatsOfMax": 0,
+      "filledSlots": 6,
+      "unfilledSlots": 0,
+      "requiredDistinct": 3,
+      "capHeld": true,
+      "floorHeld": true
+     }
+    },
+    "priorWeeksConsidered": 0,
+    "horizon": {
+     "key": "day",
+     "label": "1 day",
+     "days": 1,
+     "kind": "days",
+     "weeks": 1,
+     "custom": false,
+     "startDate": "2026-07-30",
+     "endDate": "2026-07-30",
+     "startDayOfWeek": 3,
+     "weeksWritten": 1,
+     "solveMs": 5,
+     "weekPlans": [
+      {
+       "startDate": "2026-07-27",
+       "dayIndices": [
+        3
+       ],
+       "days": 1,
+       "daysInTolerance": 0,
+       "avgMatch": 82,
+       "unfilledSlots": 0,
+       "poolSize": 171
+      }
+     ]
+    }
+   }
+  }
+ }
+}

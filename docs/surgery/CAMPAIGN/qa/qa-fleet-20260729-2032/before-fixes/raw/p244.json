@@ -1,0 +1,642 @@
+{
+ "persona": {
+  "idx": 244,
+  "id": "p244",
+  "tier": "EASY",
+  "displayName": "electrician, 52",
+  "story": "electrician, 52, male, 182 cm / 127.6 kg (BMI 38.5), cut at 0.5 lb/wk, halal diet, no exclusions, high-protein, 5 meals + 0 snacks, wants a single day",
+  "profile": {
+   "sex": "M",
+   "age": 52,
+   "heightCm": 182,
+   "startWeightKg": 127.6,
+   "goalWeightKg": 113.3,
+   "occupationKey": "electrician",
+   "trainingStyle": "weights",
+   "minutesPerSession": 45,
+   "sessionsPerWeek": 3,
+   "rateLbPerWeek": 0.5,
+   "dietaryStyle": "halal",
+   "excludedFoods": [],
+   "mealsPerDay": 5,
+   "snacksPerDay": 0,
+   "unitPref": "imperial",
+   "cuisinePreferences": [
+    "mediterranean",
+    "japanese"
+   ]
+  },
+  "filters": {
+   "proteinPriority": true,
+   "maxPrepMin": 20,
+   "cuisines": [
+    "mediterranean",
+    "japanese"
+   ]
+  },
+  "horizon": "day",
+  "walls": [],
+  "freeTextExclusions": [],
+  "dietaryStyle": "halal",
+  "bmi": 38.5,
+  "goalKind": "cut",
+  "macroStyle": "high-protein",
+  "requestedButUnsupported": [
+   "wanted protein set explicitly in g/lb; the API derives the protein band from LBM (1.14-1.25 g/lb) and accepts no client protein target — only the per-request proteinPriority filter"
+  ],
+  "tupleKey": "[\"EASY\",\"M\",52,182,127.6,113.3,\"electrician\",\"weights\",0.5,\"halal\",[],5,0,\"high-protein\",\"day\",20,null,true,null,null]"
+ },
+ "request": {
+  "horizon": "day",
+  "filters": {
+   "proteinPriority": true,
+   "maxPrepMin": 20,
+   "cuisines": [
+    "mediterranean",
+    "japanese"
+   ]
+  }
+ },
+ "profileResponse": {
+  "id": "cms6x1y45063vwlw0e5jtutiy",
+  "userId": "cms6x1xq8006mwl2oztvv2qn3",
+  "sex": "M",
+  "age": 52,
+  "heightCm": 182,
+  "bodyFatPct": 0,
+  "bodyFatSource": null,
+  "occupationKey": "electrician",
+  "activityOverride": null,
+  "sessionsPerWeek": 3,
+  "trainingStyle": "weights",
+  "minutesPerSession": 45,
+  "startWeightKg": 127.6,
+  "goalWeightKg": 113.3,
+  "startDate": "2026-07-29",
+  "unitPref": "imperial",
+  "rateLbPerWeek": 0.5,
+  "rateAcknowledged": false,
+  "floorKcal": null,
+  "excludedFormulas": [],
+  "targetKcal": 3194,
+  "mealsPerDay": 5,
+  "snacksPerDay": 0,
+  "excludedFoods": [],
+  "dietaryStyle": "halal",
+  "cuisinePreferences": [
+   "mediterranean",
+   "japanese"
+  ],
+  "mealPreferencesNote": null,
+  "maxPrepMin": null,
+  "budgetTier": null,
+  "allowBatch": null,
+  "maxComplexity": null,
+  "adaptiveTdee": true,
+  "proteinPriorityMode": false,
+  "updatedAt": "2026-07-30T02:50:30.811Z"
+ },
+ "generate": {
+  "status": 200,
+  "ms": 404,
+  "body": {
+   "id": "cms6x1yhr0645wlw0e4ws0q6h",
+   "userId": "cms6x1xq8006mwl2oztvv2qn3",
+   "startDate": "2026-07-27",
+   "createdAt": "2026-07-30T02:50:31.264Z",
+   "slots": [
+    {
+     "id": "cms6x1yht0649wlw0tde3851j",
+     "planId": "cms6x1yhr0645wlw0e4ws0q6h",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 0,
+     "recipeId": "cmrul79z000buwl80q9shge3z",
+     "proteinScale": 1.22,
+     "sidesScale": 2,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t7t00067wlwsj23ngikm",
+       "name": "Egg White",
+       "role": "protein",
+       "grams": 320
+      },
+      {
+       "foodId": "cmrj2t88z0087wlwsmsmchxzb",
+       "name": "Quinoa",
+       "role": "carb",
+       "grams": 220
+      },
+      {
+       "foodId": "cmrevpcnl000jwl5gnqnk630b",
+       "name": "Cucumber",
+       "role": "veg",
+       "grams": 180
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 503,
+     "protein": 44.982,
+     "fat": 9.512,
+     "carb": 58.3,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrul79z000buwl80q9shge3z",
+      "name": "High-Protein Egg White & Cucumber with Quinoa",
+      "description": null,
+      "steps": [
+       "Cook the egg white.",
+       "Serve over quinoa with cucumber."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 329,
+      "protein": 33.2,
+      "fat": 7.3,
+      "carb": 31.5,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 3.62,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:45:29.916Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x1yhu064bwlw0n0x8q3h8",
+     "planId": "cms6x1yhr0645wlw0e4ws0q6h",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 1,
+     "recipeId": "cmrj2th2101oowlwsp7untu4c",
+     "proteinScale": 1.07,
+     "sidesScale": 0.54,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t6is000ewlwsmzadlvxo",
+       "name": "Beef",
+       "role": "protein",
+       "grams": 135
+      },
+      {
+       "foodId": "cmrj2t7gt004mwlwsi9ouzdgd",
+       "name": "Aubergine",
+       "role": null,
+       "grams": 13
+      },
+      {
+       "foodId": "cmrj2t7p5005pwlws4acmktnt",
+       "name": "Greek Yogurt",
+       "role": null,
+       "grams": 20
+      },
+      {
+       "foodId": "cmrj2t6wp0025wlwsvl5esd2h",
+       "name": "Egg",
+       "role": "protein",
+       "grams": 13
+      },
+      {
+       "foodId": "cmrj2t7pc005qwlws0b3s9ri3",
+       "name": "Parmesan",
+       "role": null,
+       "grams": 3
+      },
+      {
+       "foodId": "cmrj2t6ik000dwlwsj8e736h1",
+       "name": "Tomato",
+       "role": "veg",
+       "grams": 55
+      },
+      {
+       "foodId": "cmrj2t6pz001bwlwsbarwpyy1",
+       "name": "Tomato Puree",
+       "role": "veg",
+       "grams": 6
+      },
+      {
+       "foodId": "cmrj2t6t4001pwlwsxeja9565",
+       "name": "Potatoes",
+       "role": "veg",
+       "grams": 45
+      }
+     ],
+     "kcal": 650.71,
+     "protein": 53.46319999999999,
+     "fat": 21.3568,
+     "carb": 66.5948,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrj2th2101oowlwsp7untu4c",
+      "name": "Moussaka",
+      "description": null,
+      "steps": [
+       "Heat the grill to high. Brown the beef in a deep ovenproof frying pan over a high heat for 5 mins. Meanwhile, prick the aubergine with a fork, then microwave on High for 3-5 mins until soft. Mix the yogurt, egg and parmesan together, then add a little seasoning.",
+       "Stir the tomatoes, purée and potatoes in with the beef with some seasoning and heat through. Smooth the surface of the beef mixture with the back of a spoon, then slice the cooked aubergine and arrange on top. Pour the yogurt mixture over the aubergines, smooth out evenly, then grill until the topping has set and turned golden."
+      ],
+      "slotType": "meal",
+      "cuisine": "mediterranean",
+      "prepTimeMin": 18,
+      "source": "themealdb-import",
+      "mealCategory": null,
+      "kcal": 902.3,
+      "protein": 63.8,
+      "fat": 22.1,
+      "carb": 123.8,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 7.06,
+      "difficulty": 2,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-13T10:25:24.890Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x1yhu064dwlw0l7v11uva",
+     "planId": "cms6x1yhr0645wlw0e4ws0q6h",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 2,
+     "recipeId": "cmrul4e6y006uwl68r96b54pe",
+     "proteinScale": 1.06,
+     "sidesScale": 2,
+     "ingredients": [
+      {
+       "foodId": "cmrj2tay100irwlwsiujfz75h",
+       "name": "White Fish",
+       "role": "protein",
+       "grams": 200
+      },
+      {
+       "foodId": "cmrj2t88z0087wlwsmsmchxzb",
+       "name": "Quinoa",
+       "role": "carb",
+       "grams": 220
+      },
+      {
+       "foodId": "cmrj2t6na000ywlws9jek4w4z",
+       "name": "Broccoli",
+       "role": "veg",
+       "grams": 220
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 561.2,
+     "protein": 48.934,
+     "fat": 14.612,
+     "carb": 60.65400000000001,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrul4e6y006uwl68r96b54pe",
+      "name": "High-Protein White Fish & Broccoli with Quinoa",
+      "description": null,
+      "steps": [
+       "Cook the white fish.",
+       "Serve over quinoa with broccoli."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 385.9,
+      "protein": 39.6,
+      "fat": 11.9,
+      "carb": 30.3,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 8.62,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:43:15.419Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x1yhv064fwlw0r3uf3d05",
+     "planId": "cms6x1yhr0645wlw0e4ws0q6h",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 3,
+     "recipeId": "cmrevpcr6001swl5get7ijrk9",
+     "proteinScale": 0.74,
+     "sidesScale": 0.98,
+     "ingredients": [
+      {
+       "foodId": "cmrevpcls0003wl5g6uhs17yp",
+       "name": "Extra-lean ground beef, cooked",
+       "role": "protein",
+       "grams": 185
+      },
+      {
+       "foodId": "cmrevpcn2000ewl5gmlyzu0vd",
+       "name": "White rice, cooked",
+       "role": "carb",
+       "grams": 195
+      },
+      {
+       "foodId": "cmrevpcnh000iwl5gh2zjhyqe",
+       "name": "Bell peppers",
+       "role": "veg",
+       "grams": 145
+      },
+      {
+       "foodId": "cmrevpcnz000mwl5g62fmfzqk",
+       "name": "Butter",
+       "role": "fat",
+       "grams": 10
+      }
+     ],
+     "kcal": 688.3500000000001,
+     "protein": 54.90500000000001,
+     "fat": 22.07,
+     "carb": 63.31,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrevpcr6001swl5get7ijrk9",
+      "name": "Ground Beef & Rice Skillet",
+      "description": null,
+      "steps": [
+       "Brown the beef in a hot skillet, breaking it up as it cooks.",
+       "Drain excess fat if needed.",
+       "Toss in peppers for the last 2 minutes.",
+       "Serve over rice, butter stirred through."
+      ],
+      "slotType": "meal",
+      "cuisine": "western-comfort",
+      "prepTimeMin": 20,
+      "source": "curated",
+      "mealCategory": null,
+      "kcal": 808.2,
+      "protein": 71.99000000000001,
+      "fat": 26.65,
+      "carb": 65.01,
+      "tasteTier": "really_good",
+      "tasteTierSource": "curated",
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 10.44,
+      "difficulty": 2,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-10T11:55:10.675Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x1yhw064hwlw0wrwtm11y",
+     "planId": "cms6x1yhr0645wlw0e4ws0q6h",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 4,
+     "recipeId": "cmrul79sg0016wl80337jb3da",
+     "proteinScale": 1.13,
+     "sidesScale": 1.48,
+     "ingredients": [
+      {
+       "foodId": "cmrukzae20001wlbwgdjqlh3f",
+       "name": "Textured vegetable protein, dry",
+       "role": "protein",
+       "grams": 60
+      },
+      {
+       "foodId": "cmrukzaeh0005wlbwrbkygio0",
+       "name": "Chickpea pasta, dry",
+       "role": "carb",
+       "grams": 150
+      },
+      {
+       "foodId": "cmrevpcnh000iwl5gh2zjhyqe",
+       "name": "Bell peppers",
+       "role": "veg",
+       "grams": 120
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 790.2,
+     "protein": 62.40000000000001,
+     "fat": 13.46,
+     "carb": 107.7,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrul79sg0016wl80337jb3da",
+      "name": "High-Protein TVP & Bell Peppers with Chickpea Pasta",
+      "description": null,
+      "steps": [
+       "Cook the tvp.",
+       "Serve over chickpea pasta with bell peppers."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 591.3,
+      "protein": 49.4,
+      "fat": 10.8,
+      "carb": 76.3,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 2.27,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:45:29.680Z",
+      "createdByUserId": null
+     }
+    }
+   ],
+   "groceryList": null,
+   "meta": {
+    "matchPct": 96,
+    "attempts": 2,
+    "score": {
+     "daysInTolerance": 1,
+     "avgMatch": 96,
+     "days": [
+      {
+       "dayOfWeek": 2,
+       "dayName": "Wednesday",
+       "matchPct": 96,
+       "totals": {
+        "kcal": 3193,
+        "protein": 265,
+        "fat": 81,
+        "carb": 357
+       },
+       "kcalDeltaPct": 0,
+       "proteinShortPct": 0.3,
+       "fatOk": true,
+       "carbOk": true,
+       "inTolerance": true,
+       "miss": null,
+       "unfilledSlots": 0,
+       "warnedSlots": 0,
+       "proteinFloor": {
+        "met": true,
+        "floorG": 253,
+        "achievedG": 264.7,
+        "shortG": 0,
+        "shortPct": 0,
+        "reason": null
+       },
+       "windowIndex": 0,
+       "dayIndex": 0,
+       "key": "0:2"
+      }
+     ],
+     "totalDays": 1,
+     "floorDaysMet": 1,
+     "floorDaysTotal": 1
+    },
+    "days": [
+     {
+      "dayOfWeek": 2,
+      "dayName": "Wednesday",
+      "matchPct": 96,
+      "totals": {
+       "kcal": 3193,
+       "protein": 265,
+       "fat": 81,
+       "carb": 357
+      },
+      "kcalDeltaPct": 0,
+      "proteinShortPct": 0.3,
+      "fatOk": true,
+      "carbOk": true,
+      "inTolerance": true,
+      "miss": null,
+      "unfilledSlots": 0,
+      "warnedSlots": 0,
+      "proteinFloor": {
+       "met": true,
+       "floorG": 253,
+       "achievedG": 264.7,
+       "shortG": 0,
+       "shortPct": 0,
+       "reason": null
+      },
+      "windowIndex": 0,
+      "dayIndex": 0,
+      "key": "0:2"
+     }
+    ],
+    "diagnosis": null,
+    "poolCounts": {
+     "raw": 889,
+     "afterDiet": 737,
+     "afterPrep": 322,
+     "afterStack": 322,
+     "stackExplain": null
+    },
+    "variety": {
+     "mealEligible": 309,
+     "usableForSlot": 237,
+     "slotKcal": 639,
+     "snackEligible": 6,
+     "weeklyMealSlots": 35,
+     "weeklySnackSlots": 0,
+     "repeatCap": 2,
+     "distinctWeeks": 6.8,
+     "horizonWeeks": 1,
+     "sustainsHorizon": true,
+     "notes": [
+      "1 day: 5 distinct dish(es) across 5 filled slot(s); most-repeated dish appears 1x against a 2x cap for this horizon (2x per week)."
+     ],
+     "horizon": {
+      "weeks": 1,
+      "days": 1,
+      "perWeekCap": 2,
+      "horizonRepeatCap": 2,
+      "mealSlots": 5,
+      "snackSlots": 0,
+      "totalSlots": 5,
+      "distinctFloor": 3,
+      "distinctRecipes": 5,
+      "maxRepeat": 1,
+      "maxRepeatRecipeId": "cmrul79z000buwl80q9shge3z",
+      "lockedRepeatsOfMax": 0,
+      "filledSlots": 5,
+      "unfilledSlots": 0,
+      "requiredDistinct": 3,
+      "capHeld": true,
+      "floorHeld": true
+     }
+    },
+    "priorWeeksConsidered": 0,
+    "horizon": {
+     "key": "day",
+     "label": "1 day",
+     "days": 1,
+     "kind": "days",
+     "weeks": 1,
+     "custom": false,
+     "startDate": "2026-07-29",
+     "endDate": "2026-07-29",
+     "startDayOfWeek": 2,
+     "weeksWritten": 1,
+     "solveMs": 3,
+     "weekPlans": [
+      {
+       "startDate": "2026-07-27",
+       "dayIndices": [
+        2
+       ],
+       "days": 1,
+       "daysInTolerance": 1,
+       "avgMatch": 96,
+       "unfilledSlots": 0,
+       "poolSize": 322
+      }
+     ]
+    }
+   }
+  }
+ }
+}

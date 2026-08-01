@@ -1,0 +1,440 @@
+{
+ "persona": {
+  "idx": 149,
+  "id": "p149",
+  "tier": "HARD",
+  "displayName": "rideshare driver, 47",
+  "story": "rideshare driver, 47, male, 191 cm / 70.9 kg (BMI 19.4), lean bulk at 2 lb/wk, keto diet, avoiding fish, soy, sesame, tree nut, low-carb, 2 meals + 1 snacks, wants a single day",
+  "profile": {
+   "sex": "M",
+   "age": 47,
+   "heightCm": 191,
+   "startWeightKg": 70.9,
+   "goalWeightKg": 79.1,
+   "occupationKey": "driver-rideshare",
+   "trainingStyle": "cardio",
+   "minutesPerSession": 30,
+   "sessionsPerWeek": 3,
+   "rateLbPerWeek": 2,
+   "dietaryStyle": "keto",
+   "excludedFoods": [
+    "fish",
+    "soy",
+    "sesame",
+    "tree nuts"
+   ],
+   "mealsPerDay": 2,
+   "snacksPerDay": 1,
+   "unitPref": "metric",
+   "bodyFatPct": 25,
+   "bodyFatSource": "visual-estimate",
+   "rateAcknowledged": true
+  },
+  "filters": {
+   "maxPrepMin": 15,
+   "budget": "cheap",
+   "proteinPriority": true
+  },
+  "horizon": "day",
+  "walls": [
+   "fish",
+   "soy",
+   "sesame",
+   "tree nut"
+  ],
+  "freeTextExclusions": [],
+  "dietaryStyle": "keto",
+  "bmi": 19.4,
+  "goalKind": "lean bulk",
+  "macroStyle": "low-carb",
+  "requestedButUnsupported": [],
+  "tupleKey": "[\"HARD\",\"M\",47,191,70.9,79.1,\"driver-rideshare\",\"cardio\",2,\"keto\",[\"fish\",\"sesame\",\"soy\",\"tree nuts\"],2,1,\"low-carb\",\"day\",15,\"cheap\",true,null,null]"
+ },
+ "request": {
+  "horizon": "day",
+  "filters": {
+   "maxPrepMin": 15,
+   "budget": "cheap",
+   "proteinPriority": true
+  }
+ },
+ "profileResponse": {
+  "id": "cms6x1a5u0401wlw0fbo7s3wu",
+  "userId": "cms6x19m9003zwl2oiowfiic8",
+  "sex": "M",
+  "age": 47,
+  "heightCm": 191,
+  "bodyFatPct": 25,
+  "bodyFatSource": "visual-estimate",
+  "occupationKey": "driver-rideshare",
+  "activityOverride": null,
+  "sessionsPerWeek": 3,
+  "trainingStyle": "cardio",
+  "minutesPerSession": 30,
+  "startWeightKg": 70.9,
+  "goalWeightKg": 79.1,
+  "startDate": "2026-07-29",
+  "unitPref": "metric",
+  "rateLbPerWeek": 2,
+  "rateAcknowledged": true,
+  "floorKcal": null,
+  "excludedFormulas": [],
+  "targetKcal": 1557,
+  "mealsPerDay": 2,
+  "snacksPerDay": 1,
+  "excludedFoods": [
+   "fish",
+   "soy",
+   "sesame",
+   "tree nuts"
+  ],
+  "dietaryStyle": "keto",
+  "cuisinePreferences": [],
+  "mealPreferencesNote": null,
+  "maxPrepMin": null,
+  "budgetTier": null,
+  "allowBatch": null,
+  "maxComplexity": null,
+  "adaptiveTdee": true,
+  "proteinPriorityMode": false,
+  "updatedAt": "2026-07-30T02:49:59.739Z"
+ },
+ "generate": {
+  "status": 200,
+  "ms": 60,
+  "body": {
+   "id": "cms6x1a7h0407wlw06o52jt7h",
+   "userId": "cms6x19m9003zwl2oiowfiic8",
+   "startDate": "2026-07-27",
+   "createdAt": "2026-07-30T02:49:59.789Z",
+   "slots": [
+    {
+     "id": "cms6x1a7n0409wlw0y1ocvweo",
+     "planId": "cms6x1a7h0407wlw06o52jt7h",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 0,
+     "recipeId": "cmrevpcyh004gwl5gnni3al5q",
+     "proteinScale": 1.03,
+     "sidesScale": 1.03,
+     "ingredients": [
+      {
+       "foodId": "cmrevpcmu000cwl5gfljr1l1o",
+       "name": "Bacon, cooked",
+       "role": "protein",
+       "grams": 60
+      },
+      {
+       "foodId": "cmrevpcm50006wl5g2u2bcspd",
+       "name": "Eggs, whole, cooked",
+       "role": "protein",
+       "grams": 155
+      }
+     ],
+     "kcal": 564.8499999999999,
+     "protein": 42.35,
+     "fat": 42.25,
+     "carb": 2.545,
+     "warning": "Tried 2 recipe(s) for this slot, none fit within tolerance — closest was \"Bacon & Eggs\" (delivered 42g protein vs a 52g target).",
+     "locked": false,
+     "recipe": {
+      "id": "cmrevpcyh004gwl5gnni3al5q",
+      "name": "Bacon & Eggs",
+      "description": "Weekend breakfast-style plate.",
+      "steps": [
+       "Cook bacon until crisp, set aside.",
+       "Fry or scramble eggs in the bacon fat."
+      ],
+      "slotType": "either",
+      "cuisine": "western-comfort",
+      "prepTimeMin": 15,
+      "source": "curated",
+      "mealCategory": null,
+      "kcal": 557.0999999999999,
+      "protein": 41.7,
+      "fat": 41.7,
+      "carb": 2.49,
+      "tasteTier": "really_good",
+      "tasteTierSource": "curated",
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 3.38,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-10T11:55:10.938Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x1a7o040bwlw01tu07fmk",
+     "planId": "cms6x1a7h0407wlw06o52jt7h",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 1,
+     "recipeId": "cmrevpcyh004gwl5gnni3al5q",
+     "proteinScale": 1.32,
+     "sidesScale": 1.32,
+     "ingredients": [
+      {
+       "foodId": "cmrevpcmu000cwl5gfljr1l1o",
+       "name": "Bacon, cooked",
+       "role": "protein",
+       "grams": 80
+      },
+      {
+       "foodId": "cmrevpcm50006wl5g2u2bcspd",
+       "name": "Eggs, whole, cooked",
+       "role": "protein",
+       "grams": 200
+      }
+     ],
+     "kcal": 742.8,
+     "protein": 55.6,
+     "fat": 55.6,
+     "carb": 3.32,
+     "warning": "Tried 2 recipe(s) for this slot, none fit within tolerance — closest was \"Bacon & Eggs\" (delivered 56g protein vs a 73g target).",
+     "locked": false,
+     "recipe": {
+      "id": "cmrevpcyh004gwl5gnni3al5q",
+      "name": "Bacon & Eggs",
+      "description": "Weekend breakfast-style plate.",
+      "steps": [
+       "Cook bacon until crisp, set aside.",
+       "Fry or scramble eggs in the bacon fat."
+      ],
+      "slotType": "either",
+      "cuisine": "western-comfort",
+      "prepTimeMin": 15,
+      "source": "curated",
+      "mealCategory": null,
+      "kcal": 557.0999999999999,
+      "protein": 41.7,
+      "fat": 41.7,
+      "carb": 2.49,
+      "tasteTier": "really_good",
+      "tasteTierSource": "curated",
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 3.38,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-10T11:55:10.938Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x1a7p040dwlw0brgz27b3",
+     "planId": "cms6x1a7h0407wlw06o52jt7h",
+     "dayOfWeek": 2,
+     "slotType": "snack",
+     "slotIndex": 0,
+     "recipeId": "cmrevpcyt004lwl5gx6bidm0z",
+     "proteinScale": 0.61,
+     "sidesScale": 0.61,
+     "ingredients": [
+      {
+       "foodId": "cmrevpcma0007wl5gfj59j5mk",
+       "name": "Beef jerky",
+       "role": "protein",
+       "grams": 35
+      },
+      {
+       "foodId": "cmrevpcmq000bwl5g2mbd0jsv",
+       "name": "Pork rinds",
+       "role": "protein",
+       "grams": 18
+      }
+     ],
+     "kcal": 241.42,
+     "protein": 22.53,
+     "fat": 14.68,
+     "carb": 3.85,
+     "warning": "Tried 1 recipe(s) for this slot, none fit within tolerance — closest was \"Jerky & Pork Rinds Snack Plate\" (delivered 23g protein vs a 30g target).",
+     "locked": false,
+     "recipe": {
+      "id": "cmrevpcyt004lwl5gx6bidm0z",
+      "name": "Jerky & Pork Rinds Snack Plate",
+      "description": "Closer / site valve — his words.",
+      "steps": [
+       "No cooking — portion and eat."
+      ],
+      "slotType": "snack",
+      "cuisine": "western-comfort",
+      "prepTimeMin": 0,
+      "source": "curated",
+      "mealCategory": null,
+      "kcal": 409.2,
+      "protein": 38.1,
+      "fat": 24.9,
+      "carb": 6.6,
+      "tasteTier": "really_good",
+      "tasteTierSource": "curated",
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 6.75,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-10T11:55:10.950Z",
+      "createdByUserId": null
+     }
+    }
+   ],
+   "groceryList": null,
+   "meta": {
+    "matchPct": 92,
+    "attempts": 5,
+    "score": {
+     "daysInTolerance": 1,
+     "avgMatch": 92,
+     "days": [
+      {
+       "dayOfWeek": 2,
+       "dayName": "Wednesday",
+       "matchPct": 92,
+       "totals": {
+        "kcal": 1549,
+        "protein": 120,
+        "fat": 113,
+        "carb": 10
+       },
+       "kcalDeltaPct": -0.5,
+       "proteinShortPct": 14.2,
+       "fatOk": true,
+       "carbOk": true,
+       "inTolerance": true,
+       "miss": null,
+       "unfilledSlots": 0,
+       "warnedSlots": 3,
+       "proteinFloor": {
+        "met": false,
+        "floorG": 134,
+        "achievedG": 120.5,
+        "shortG": 13.5,
+        "shortPct": 10.1,
+        "reason": "13.5 g short of the 134 g protein floor (10% under) — the compliant pool couldn't scale up to close the gap within the 0.5-2x portion limit."
+       },
+       "windowIndex": 0,
+       "dayIndex": 0,
+       "key": "0:2"
+      }
+     ],
+     "totalDays": 1,
+     "floorDaysMet": 0,
+     "floorDaysTotal": 1
+    },
+    "days": [
+     {
+      "dayOfWeek": 2,
+      "dayName": "Wednesday",
+      "matchPct": 92,
+      "totals": {
+       "kcal": 1549,
+       "protein": 120,
+       "fat": 113,
+       "carb": 10
+      },
+      "kcalDeltaPct": -0.5,
+      "proteinShortPct": 14.2,
+      "fatOk": true,
+      "carbOk": true,
+      "inTolerance": true,
+      "miss": null,
+      "unfilledSlots": 0,
+      "warnedSlots": 3,
+      "proteinFloor": {
+       "met": false,
+       "floorG": 134,
+       "achievedG": 120.5,
+       "shortG": 13.5,
+       "shortPct": 10.1,
+       "reason": "13.5 g short of the 134 g protein floor (10% under) — the compliant pool couldn't scale up to close the gap within the 0.5-2x portion limit."
+      },
+      "windowIndex": 0,
+      "dayIndex": 0,
+      "key": "0:2"
+     }
+    ],
+    "diagnosis": null,
+    "poolCounts": {
+     "raw": 889,
+     "afterDiet": 24,
+     "afterPrep": 3,
+     "afterStack": 3,
+     "stackExplain": null
+    },
+    "variety": {
+     "mealEligible": 2,
+     "usableForSlot": 1,
+     "slotKcal": 651,
+     "snackEligible": 2,
+     "weeklyMealSlots": 14,
+     "weeklySnackSlots": 7,
+     "repeatCap": 2,
+     "distinctWeeks": 0.1,
+     "horizonWeeks": 1,
+     "sustainsHorizon": false,
+     "notes": [
+      "1 of your 2 compliant recipes can be portioned to a 651 kcal meal — about 0 week(s) of 14 meals before dishes start repeating, so over 1 weeks you will see favourites come back.",
+      "Only 2 snack recipe(s) fit your rules, so the same snacks come back every week.",
+      "1 day: 2 distinct dish(es) across 3 filled slot(s); most-repeated dish appears 2x against a 2x cap for this horizon (2x per week)."
+     ],
+     "horizon": {
+      "weeks": 1,
+      "days": 1,
+      "perWeekCap": 2,
+      "horizonRepeatCap": 2,
+      "mealSlots": 2,
+      "snackSlots": 1,
+      "totalSlots": 3,
+      "distinctFloor": 2,
+      "distinctRecipes": 2,
+      "maxRepeat": 2,
+      "maxRepeatRecipeId": "cmrevpcyh004gwl5gnni3al5q",
+      "lockedRepeatsOfMax": 0,
+      "filledSlots": 3,
+      "unfilledSlots": 0,
+      "requiredDistinct": 2,
+      "capHeld": true,
+      "floorHeld": true
+     }
+    },
+    "priorWeeksConsidered": 0,
+    "horizon": {
+     "key": "day",
+     "label": "1 day",
+     "days": 1,
+     "kind": "days",
+     "weeks": 1,
+     "custom": false,
+     "startDate": "2026-07-29",
+     "endDate": "2026-07-29",
+     "startDayOfWeek": 2,
+     "weeksWritten": 1,
+     "solveMs": 1,
+     "weekPlans": [
+      {
+       "startDate": "2026-07-27",
+       "dayIndices": [
+        2
+       ],
+       "days": 1,
+       "daysInTolerance": 1,
+       "avgMatch": 92,
+       "unfilledSlots": 0,
+       "poolSize": 3
+      }
+     ]
+    }
+   }
+  }
+ }
+}

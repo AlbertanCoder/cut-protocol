@@ -1,0 +1,70 @@
+{
+  "personaId": "p004",
+  "satisfaction": 4,
+  "wouldRecommend": false,
+  "criteria": {
+    "macrosInRange": 7,
+    "worksEndToEnd": 3,
+    "mealsAreGood": 4,
+    "affordableAdjustable": 2,
+    "tasty": 4
+  },
+  "allergenRespect": {
+    "ok": true,
+    "leaks": []
+  },
+  "delights": [
+    "My four walls held everywhere I looked. GET /api/recipes told me \"hiddenCount\": 687 of 889 recipes removed, and across all 202 that remained I found zero ingredients naming dairy, egg, gluten or soy. Nothing on my plate, and nothing on my shopping list, broke a wall. For a coeliac that is the whole ballgame and this app got it right.",
+    "The day adds up. My four slots total 2226 kcal against my 2221 target — 5 kcal off — with 259 g protein, which is exactly the high-protein shape I asked for.",
+    "It tells me when it failed instead of pretending: \"Tried 5 recipe(s) for this slot, none fit within tolerance — closest was \"Classic Salmon & Broccoli with Potato\" (landed 817 kcal vs a 579 target).\" I would much rather be told that than be handed a silent miss."
+  ],
+  "defects": [
+    {
+      "what": "The shopping list is not my plan. It omits the salmon and the chicken — 2 of my 3 main meals — so if I shopped from it I would come home unable to cook dinner or lunch.",
+      "snippet": "POST /plans/<id>/grocery-list returned 57 items; Salmon and \"Chicken breast, cooked, skinless\" are both absent, while my plan calls for 300 g and 255 g of them."
+    },
+    {
+      "what": "The same list adds 47 foods I never agreed to eat, including meats and booze that appear nowhere in my day.",
+      "snippet": "Goat Meat 695 g | Chorizo | Pepperoni | \"Ground pack (elk/game), cooked\" | Dry White Wine 120 g | Scotch Bonnet | Avocado chips | Jamaican Curry Powder"
+    },
+    {
+      "what": "Quantities on the list are wildly larger than the day needs, and the total price is unusable for one day of food for one person.",
+      "snippet": "Shrimp 1545 g (I need 340 g), Quinoa 1100 g (I need 170 g), Beef jerky 320 g (I need 35 g); \"totalEstimatedCostCad\": 248.57"
+    },
+    {
+      "what": "It admits it cannot tell me how much to actually buy, on every single line. For rice and quinoa cooked-vs-dry is a threefold difference at the till.",
+      "snippet": "\"form\": \"as-prepared (state unrecorded) — NOT a raw/dry purchase quantity\""
+    },
+    {
+      "what": "The list has duplicate and nonsense entries, and one price note tells me, the customer, to go edit a source file.",
+      "snippet": "\"Bay Leaf\" (spices) and \"Bay Leaves\" (other) as two items; \"Water\" and \"Boiling Water\" (/usr/bin/bash.92); three oils — \"Oil\", \"Vegetable Oil\", \"Oil, corn, peanut, and olive\"; note: \"edit src/lib/groceryPrices.js to correct\""
+    },
+    {
+      "what": "Two of the three AI-written dishes are not recipes. I am 74 and I have cooked for fifty years, but this tells a beginner nothing — no heat, no time, no seasoning, no lemon.",
+      "snippet": "\"steps\": [\"Cook the shrimp.\",\"Serve over quinoa with cucumber.\"]"
+    },
+    {
+      "what": "My vegetables were halved while protein doubled. 55 g of broccoli is about three florets sitting next to a 300 g salmon fillet. When I am cutting, veg is the one thing that should not shrink.",
+      "snippet": "proteinScale 2, sidesScale 0.5 — Salmon 300 g, Russet Potato 90 g, Broccoli 55 g"
+    },
+    {
+      "what": "The snack is beef jerky and pork rinds. At 74 that is leathery, salty and genuinely hard to chew, and it is also the one processed multi-ingredient item on my plan carrying no allergen data at all — commercial jerky is usually marinated in soy sauce, which is both soy and wheat. I would have to stand in the shop reading labels because the app has nothing to tell me.",
+      "snippet": "\"Jerky & Pork Rinds Snack Plate\" — Beef jerky 35 g, Pork rinds 17 g; food record shows \"allergenTags\": null, \"mayContain\": null"
+    },
+    {
+      "what": "I said nothing over 15 minutes to cook and that never got saved, so the 15-minute prep times I got are luck rather than a rule the app is holding to.",
+      "snippet": "GET /api/profile → \"maxPrepMin\": null"
+    },
+    {
+      "what": "My snack slot has effectively one recipe in the entire app once my walls are applied, so there is nothing to swap to.",
+      "snippet": "\"Tried 1 recipe(s) for this slot, none fit within tolerance\""
+    }
+  ],
+  "followUp": {
+    "action": "I did not want the jerky-and-pork-rinds snack — it is hard to chew at my age and it under-delivered protein — so I asked for alternates for that slot, the way a customer would tap \"show me something else\".",
+    "endpoint": "POST /api/plans/cms6wyfeo00b1wlw0mmbnfdfu/slots/cms6wyfer00b9wlw0oe8dzhqe/alternates",
+    "status": 200,
+    "howItWent": "The call worked but offered exactly one alternative, \"Pistachios & Jerky\", which is more of the very thing I was trying to get away from — 80 g of beef jerky, up from 35 g — and it blows the budget at 412 kcal against a 258 kcal target. I left the original in place because the only option on offer was worse."
+  },
+  "verdict": "It protected my coeliac and my allergies flawlessly and hit my calorie target within 5 kcal, but the shopping list left out the salmon and the chicken while telling me to buy goat meat and white wine for 48 — so I cannot actually get this day of food into my kitchen."
+}

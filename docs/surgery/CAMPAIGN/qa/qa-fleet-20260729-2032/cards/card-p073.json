@@ -1,0 +1,62 @@
+{
+  "personaId": "p073",
+  "satisfaction": 2,
+  "wouldRecommend": false,
+  "criteria": {
+    "macrosInRange": 1,
+    "worksEndToEnd": 3,
+    "mealsAreGood": 1,
+    "affordableAdjustable": 3,
+    "tasty": 2
+  },
+  "allergenRespect": {
+    "ok": true,
+    "leaks": []
+  },
+  "delights": [
+    "My walls held. Across all four dishes I was served (Patatas bravas, Air fryer patatas bravas, Boulangere Potatoes) and every one of the 13 distinct ingredients - Potatoes, Olive Oil, Onion, Garlic, Tinned Tomatos, Tomato Puree, Paprika, Chilli Powder, Sugar, Parsley, Basil Leaves, Thyme, Vegetable Stock - nothing broke vegan, gluten, soy, peanut, tree nut, sesame or pork. That is the thing I would have reported above all else and it is clean.",
+    "The plan tells me it failed instead of faking a success: 'Tried 5 recipe(s) for this slot, none fit within tolerance - closest was \"Patatas bravas\" (delivered 22g protein vs a 68g target).' I would much rather be told the number was missed than be shown a comfortable lie.",
+    "The recipes carry real cooking steps and an honest prep time - Patatas bravas is prepTimeMin 26 with actual method text ('Heat oven to 200C/180C fan/gas 6. Pat the potatoes dry... Roast for 40-50 mins until crisp and golden'). That genuinely fits around a desk job and my 45-minute training."
+  ],
+  "defects": [
+    {
+      "what": "The food database numbers are wrong by roughly 3x, so every calorie and protein figure shown to me is fiction. My day displays as 1,264 kcal / 51g protein but the food I would actually cook - 305g potato, 18g olive oil, 80g tinned tomato, some onion and herbs - is about 470 kcal and under 10g protein. Following this plan means eating a starvation day at 71 and believing I hit my target.",
+      "snippet": "GET /api/foods: Potatoes = 266 kcal, 12.5g protein, 47.1g carb, 3.13g fat per 100g (a potato is ~77 kcal / 2g protein); Tinned Tomatos = 302 kcal, 12.9g protein, 74.7g carb per 100g (~32 kcal / 1.6g protein in reality)"
+    },
+    {
+      "what": "My snack slot is empty. I asked for 2 meals plus 1 snack and got 2 meals plus nothing - on my original day and again on the regenerated day. No suggestion of what I could do about it.",
+      "snippet": "snack #0 | (EMPTY) | kcal 0 P 0 - warning: \"No eligible snack recipe left for this slot.\""
+    },
+    {
+      "what": "Both of my two meals are the same dish. One is roasted, one is air-fried, same potatoes and same tomato sauce. That is one meal served twice, not a day of eating.",
+      "snippet": "meal #0 \"Patatas bravas\" (Potatoes 130g, Olive Oil 10g, Onion 16g, Tinned Tomatos 35g...) and meal #1 \"Air fryer patatas bravas\" (Potatoes 175g, Olive Oil 8g, Onion 20g, Tinned Tomatos 45g...)"
+    },
+    {
+      "what": "The engine set a protein target it can never reach given my own restrictions, and never says so. 68g plus 113g is 181g of protein on a 1,512 kcal budget - 48% of my calories - while I am vegan with soy, legumes, gluten and all nuts excluded. There is no food left that can do that. It reports the shortfall slot by slot but never tells me at the day level that my restrictions and this target are incompatible, or offers me the choice.",
+      "snippet": "\"delivered 22g protein vs a 68g target\" and \"delivered 29g protein vs a 113g target\" against profile targetKcal 1512 and excludedFoods [\"tree nuts\",\"pork\",\"soy\",\"gluten\",\"peanuts\",\"sesame\",\"legumes\"]"
+    },
+    {
+      "what": "Regenerating a day appended a second day instead of replacing mine. I asked for one day and my plan became more confusing, not better: GET /api/plans/current now returns 6 slots across dayOfWeek 2 and 3 totalling 2,950 kcal, with no field telling me which day is today.",
+      "snippet": "POST /api/plans/generate {\"horizon\":\"day\"} -> 200, same planId cms6x0r0f02a3wlw06yy2eijz, slot count 6: meal#0/meal#1/snack#0 on dow 2 plus meal#0/meal#1/snack#0 on dow 3"
+    },
+    {
+      "what": "An ingredient quantity nobody could eat. The regenerated meal lists 25g of thyme in a single serving - about eight tablespoons of dried thyme against 375g of potato.",
+      "snippet": "Boulangere Potatoes ingredients: Onion 55g, Thyme 25g, Olive Oil 7g, Potatoes 375g, Vegetable Stock 105g"
+    },
+    {
+      "what": "Unmanaged coeliac risk, not a proven leak: 'Vegetable Stock' is listed as a bare ingredient with no gluten-free flag or guidance. Many supermarket stock cubes contain wheat or barley. I can buy a GF stock so I am not calling this a leak, but an app that knows I am coeliac should not hand me an ingredient like that silently.",
+      "snippet": "Boulangere Potatoes ingredient: {\"name\":\"Vegetable Stock\",\"grams\":105}"
+    },
+    {
+      "what": "Olive Oil is classified as a carb source by the solver while its own food record is 100g fat and 0g carb, so my carb allowance is being filled with oil.",
+      "snippet": "{\"foodId\":\"cmrj2t6r4001gwlws4txccjsf\",\"name\":\"Olive Oil\",\"role\":\"carb\",\"grams\":10}"
+    }
+  ],
+  "followUp": {
+    "action": "Regenerated my single day, because my snack slot was empty and both my meals were the same potato dish",
+    "endpoint": "POST /api/plans/generate with {\"horizon\":\"day\"}",
+    "status": 200,
+    "howItWent": "Badly. It appended a whole new day rather than replacing mine, leaving my plan with two days and six slots and nothing marking which is current. Meal #1 came back as Patatas bravas again, the new second meal was Boulangere Potatoes (a third potato dish, no protein in it at all, overshooting at 1,121 kcal against its own 703 kcal target), and the snack slot was empty a second time with the same 'No eligible snack recipe left' message. The one lever I pulled made the plan worse."
+  },
+  "verdict": "My allergies and my coeliac walls were respected perfectly and I am grateful for that, but the plan is three potato dishes with no snack, no protein and calorie figures overstated nearly threefold - a day that would have me eating about 470 real calories while the app told me 1,264, which I cannot use and would not trust."
+}

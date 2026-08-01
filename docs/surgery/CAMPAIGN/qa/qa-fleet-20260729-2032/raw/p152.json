@@ -1,0 +1,536 @@
+{
+ "persona": {
+  "idx": 152,
+  "id": "p152",
+  "tier": "EASY",
+  "displayName": "commercial fisher, 33",
+  "story": "commercial fisher, 33, male, 180 cm / 106.9 kg (BMI 33), cut at 0.5 lb/wk, keto diet, no exclusions, high-protein, 3 meals + 1 snacks, wants a single day",
+  "profile": {
+   "sex": "M",
+   "age": 33,
+   "heightCm": 180,
+   "startWeightKg": 106.9,
+   "goalWeightKg": 93.9,
+   "occupationKey": "commercial-fishing",
+   "trainingStyle": "weights",
+   "minutesPerSession": 30,
+   "sessionsPerWeek": 2,
+   "rateLbPerWeek": 0.5,
+   "dietaryStyle": "keto",
+   "excludedFoods": [],
+   "mealsPerDay": 3,
+   "snacksPerDay": 1,
+   "unitPref": "imperial",
+   "bodyFatPct": 26,
+   "bodyFatSource": "measured"
+  },
+  "filters": {
+   "proteinPriority": true,
+   "maxPrepMin": 30
+  },
+  "horizon": "day",
+  "walls": [],
+  "freeTextExclusions": [],
+  "dietaryStyle": "keto",
+  "bmi": 33,
+  "goalKind": "cut",
+  "macroStyle": "high-protein",
+  "requestedButUnsupported": [
+   "wanted protein set explicitly in g/lb; the API derives the protein band from LBM (1.14-1.25 g/lb) and accepts no client protein target — only the per-request proteinPriority filter"
+  ],
+  "tupleKey": "[\"EASY\",\"M\",33,180,106.9,93.9,\"commercial-fishing\",\"weights\",0.5,\"keto\",[],3,1,\"high-protein\",\"day\",30,null,true,null,null]"
+ },
+ "request": {
+  "horizon": "day",
+  "filters": {
+   "proteinPriority": true,
+   "maxPrepMin": 30
+  }
+ },
+ "profileResponse": {
+  "id": "cms6x1aot0417wlw0dh055uew",
+  "userId": "cms6x1a850042wl2oukefyf12",
+  "sex": "M",
+  "age": 33,
+  "heightCm": 180,
+  "bodyFatPct": 26,
+  "bodyFatSource": "measured",
+  "occupationKey": "commercial-fishing",
+  "activityOverride": null,
+  "sessionsPerWeek": 2,
+  "trainingStyle": "weights",
+  "minutesPerSession": 30,
+  "startWeightKg": 106.9,
+  "goalWeightKg": 93.9,
+  "startDate": "2026-07-29",
+  "unitPref": "imperial",
+  "rateLbPerWeek": 0.5,
+  "rateAcknowledged": false,
+  "floorKcal": null,
+  "excludedFormulas": [],
+  "targetKcal": 3421,
+  "mealsPerDay": 3,
+  "snacksPerDay": 1,
+  "excludedFoods": [],
+  "dietaryStyle": "keto",
+  "cuisinePreferences": [],
+  "mealPreferencesNote": null,
+  "maxPrepMin": null,
+  "budgetTier": null,
+  "allowBatch": null,
+  "maxComplexity": null,
+  "adaptiveTdee": true,
+  "proteinPriorityMode": false,
+  "updatedAt": "2026-07-30T20:33:47.849Z"
+ },
+ "generate": {
+  "status": 200,
+  "ms": 431,
+  "body": {
+   "id": "cms7z1cai037bwlgwj3uay6ho",
+   "userId": "cms6x1a850042wl2oukefyf12",
+   "startDate": "2026-07-27",
+   "createdAt": "2026-07-30T20:33:47.899Z",
+   "slots": [
+    {
+     "id": "cms7z1cak037dwlgwqzqw1b6r",
+     "planId": "cms7z1cai037bwlgwj3uay6ho",
+     "dayOfWeek": 3,
+     "slotType": "meal",
+     "slotIndex": 0,
+     "recipeId": "cmrevpcyh004gwl5gnni3al5q",
+     "proteinScale": 1.6,
+     "sidesScale": 1.6,
+     "ingredients": [
+      {
+       "foodId": "cmrevpcmu000cwl5gfljr1l1o",
+       "name": "Bacon, cooked",
+       "role": "protein",
+       "grams": 95
+      },
+      {
+       "foodId": "cmrevpcm50006wl5g2u2bcspd",
+       "name": "Eggs, whole, cooked",
+       "role": "protein",
+       "grams": 240
+      }
+     ],
+     "kcal": 885.9499999999999,
+     "protein": 66.35,
+     "fat": 66.3,
+     "carb": 3.97,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrevpcyh004gwl5gnni3al5q",
+      "name": "Bacon & Eggs",
+      "description": "Weekend breakfast-style plate.",
+      "steps": [
+       "Cook bacon until crisp, set aside.",
+       "Fry or scramble eggs in the bacon fat."
+      ],
+      "slotType": "either",
+      "cuisine": "western-comfort",
+      "prepTimeMin": 15,
+      "source": "curated",
+      "mealCategory": null,
+      "kcal": 557.0999999999999,
+      "protein": 41.7,
+      "fat": 41.7,
+      "carb": 2.49,
+      "tasteTier": "really_good",
+      "tasteTierSource": "curated",
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 3.38,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-10T11:55:10.938Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z1cak037fwlgw2xgufy90",
+     "planId": "cms7z1cai037bwlgwj3uay6ho",
+     "dayOfWeek": 3,
+     "slotType": "meal",
+     "slotIndex": 1,
+     "recipeId": "cmrj2u8pt07tzwlws9h0lxepi",
+     "proteinScale": 1.75,
+     "sidesScale": 1.75,
+     "ingredients": [
+      {
+       "foodId": "cmrj2tbdg00kewlwsk3jyuawz",
+       "name": "Herring",
+       "role": null,
+       "grams": 350
+      },
+      {
+       "foodId": "cmrg8zxar000lwli0qy2ovmx4",
+       "name": "Onion",
+       "role": "veg",
+       "grams": 13
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 50
+      },
+      {
+       "foodId": "cmrj2t7at003uwlwsq3e1ii9n",
+       "name": "Allspice",
+       "role": null,
+       "grams": 1
+      },
+      {
+       "foodId": "cmrj2t6gl0004wlws73buybhw",
+       "name": "Pepper",
+       "role": null,
+       "grams": 1
+      },
+      {
+       "foodId": "cmrj2t6qh001dwlws2ramsws8",
+       "name": "Bay Leaf",
+       "role": null,
+       "grams": 1
+      }
+     ],
+     "kcal": 1016.47,
+     "protein": 63.3839,
+     "fat": 81.71650000000001,
+     "carb": 3.3252,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrj2u8pt07tzwlws9h0lxepi",
+      "name": "Sledz w Oleju (Polish Herrings)",
+      "description": null,
+      "steps": [
+       "Soak herring in cold water for at least 1 hour. If very salty, repeat, changing the water each time.",
+       "Drain thoroughly and slice herring into bite-size pieces.",
+       "Place in a jar large enough to accommodate the pieces and cover with oil, allspice, peppercorns, and bay leaf. Close the jar.",
+       "Refrigerate for 2 to 3 days before eating. This will keep refrigerated up to 2 weeks.",
+       "Serve with finely chopped onion or onion slices, lemon, and parsley or dill."
+      ],
+      "slotType": "meal",
+      "cuisine": "western-comfort",
+      "prepTimeMin": 25,
+      "source": "themealdb-import",
+      "mealCategory": null,
+      "kcal": 568.46825,
+      "protein": 36.2159975,
+      "fat": 45.3564125,
+      "carb": 1.811525,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 6.46,
+      "difficulty": 3,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-13T10:26:00.738Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z1cal037hwlgwl5jdyllv",
+     "planId": "cms7z1cai037bwlgwj3uay6ho",
+     "dayOfWeek": 3,
+     "slotType": "meal",
+     "slotIndex": 2,
+     "recipeId": "cms7pjmi80013wlbkwughu7bl",
+     "proteinScale": 0.86,
+     "sidesScale": 1.95,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t84f007mwlws3l8rub2z",
+       "name": "Chicken Thighs",
+       "role": "protein",
+       "grams": 170
+      },
+      {
+       "foodId": "cmrj2t8jp009lwlwsggitwh7i",
+       "name": "Spinach",
+       "role": "veg",
+       "grams": 390
+      },
+      {
+       "foodId": "cmrj2t85a007qwlwsxtbrgxs0",
+       "name": "Double Cream",
+       "role": "fat",
+       "grams": 115
+      },
+      {
+       "foodId": "cmrj2t6ft0001wlwstiofk9on",
+       "name": "Garlic",
+       "role": "veg",
+       "grams": 5
+      },
+      {
+       "foodId": "cmrevpcnz000mwl5g62fmfzqk",
+       "name": "Butter",
+       "role": "fat",
+       "grams": 20
+      },
+      {
+       "foodId": "cmrj2t7ko0054wlws30ku5e0c",
+       "name": "Nutmeg",
+       "role": "other",
+       "grams": 1
+      }
+     ],
+     "kcal": 1117.15,
+     "protein": 58.03399999999999,
+     "fat": 91.872,
+     "carb": 19.068,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cms7pjmi80013wlbkwughu7bl",
+      "name": "Chicken Thighs with Creamed Spinach",
+      "description": null,
+      "steps": [
+       "Brown the thighs skin-side down until the skin renders and crisps, then finish them through.",
+       "Wilt the spinach in butter with the garlic and squeeze out the water.",
+       "Stir in the cream and a scrape of nutmeg, reduce for 2 minutes."
+      ],
+      "slotType": "meal",
+      "cuisine": "french",
+      "prepTimeMin": 30,
+      "source": "curated",
+      "mealCategory": null,
+      "kcal": 817.5,
+      "protein": 59.29900000000001,
+      "fat": 59.882,
+      "carb": 10.733,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": null,
+      "difficulty": 2,
+      "filterProvenance": null,
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-30T16:08:04.785Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z1cam037jwlgwotp1vpg1",
+     "planId": "cms7z1cai037bwlgwj3uay6ho",
+     "dayOfWeek": 3,
+     "slotType": "snack",
+     "slotIndex": 0,
+     "recipeId": "cmrevpcyh004gwl5gnni3al5q",
+     "proteinScale": 0.72,
+     "sidesScale": 0.72,
+     "ingredients": [
+      {
+       "foodId": "cmrevpcmu000cwl5gfljr1l1o",
+       "name": "Bacon, cooked",
+       "role": "protein",
+       "grams": 45
+      },
+      {
+       "foodId": "cmrevpcm50006wl5g2u2bcspd",
+       "name": "Eggs, whole, cooked",
+       "role": "protein",
+       "grams": 110
+      }
+     ],
+     "kcal": 413.95,
+     "protein": 30.95,
+     "fat": 31,
+     "carb": 1.84,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrevpcyh004gwl5gnni3al5q",
+      "name": "Bacon & Eggs",
+      "description": "Weekend breakfast-style plate.",
+      "steps": [
+       "Cook bacon until crisp, set aside.",
+       "Fry or scramble eggs in the bacon fat."
+      ],
+      "slotType": "either",
+      "cuisine": "western-comfort",
+      "prepTimeMin": 15,
+      "source": "curated",
+      "mealCategory": null,
+      "kcal": 557.0999999999999,
+      "protein": 41.7,
+      "fat": 41.7,
+      "carb": 2.49,
+      "tasteTier": "really_good",
+      "tasteTierSource": "curated",
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 3.38,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-10T11:55:10.938Z",
+      "createdByUserId": null
+     }
+    }
+   ],
+   "groceryList": null,
+   "meta": {
+    "matchPct": 100,
+    "attempts": 4,
+    "score": {
+     "daysInTolerance": 1,
+     "avgMatch": 100,
+     "days": [
+      {
+       "dayOfWeek": 3,
+       "dayName": "Thursday",
+       "matchPct": 100,
+       "totals": {
+        "kcal": 3434,
+        "protein": 219,
+        "fat": 271,
+        "carb": 28
+       },
+       "kcalDeltaPct": 0.4,
+       "proteinShortPct": 0,
+       "fatOk": true,
+       "carbOk": true,
+       "inTolerance": true,
+       "miss": null,
+       "unfilledSlots": 0,
+       "warnedSlots": 0,
+       "proteinFloor": {
+        "met": true,
+        "floorG": 199,
+        "achievedG": 218.7,
+        "shortG": 0,
+        "shortPct": 0,
+        "reason": null
+       },
+       "windowIndex": 0,
+       "dayIndex": 0,
+       "key": "0:3"
+      }
+     ],
+     "totalDays": 1,
+     "floorDaysMet": 1,
+     "floorDaysTotal": 1
+    },
+    "days": [
+     {
+      "dayOfWeek": 3,
+      "dayName": "Thursday",
+      "matchPct": 100,
+      "totals": {
+       "kcal": 3434,
+       "protein": 219,
+       "fat": 271,
+       "carb": 28
+      },
+      "kcalDeltaPct": 0.4,
+      "proteinShortPct": 0,
+      "fatOk": true,
+      "carbOk": true,
+      "inTolerance": true,
+      "miss": null,
+      "unfilledSlots": 0,
+      "warnedSlots": 0,
+      "proteinFloor": {
+       "met": true,
+       "floorG": 199,
+       "achievedG": 218.7,
+       "shortG": 0,
+       "shortPct": 0,
+       "reason": null
+      },
+      "windowIndex": 0,
+      "dayIndex": 0,
+      "key": "0:3"
+     }
+    ],
+    "diagnosis": null,
+    "poolCounts": {
+     "raw": 910,
+     "afterDiet": 53,
+     "afterPrep": 33,
+     "afterStack": 33,
+     "stackExplain": null
+    },
+    "variety": {
+     "mealEligible": 29,
+     "usableForSlot": 16,
+     "slotKcal": 1008,
+     "snackEligible": 4,
+     "weeklyMealSlots": 21,
+     "weeklySnackSlots": 7,
+     "repeatCap": 2,
+     "distinctWeeks": 0.8,
+     "horizonWeeks": 1,
+     "sustainsHorizon": false,
+     "notes": [
+      "16 of your 29 compliant recipes can be portioned to a 1,008 kcal meal — about 0.7 week(s) of 21 meals before dishes start repeating, so over 1 weeks you will see favourites come back.",
+      "1 day: 3 distinct dish(es) across 4 filled slot(s); most-repeated dish appears 2x against a 2x cap for this horizon (2x per week)."
+     ],
+     "horizon": {
+      "weeks": 1,
+      "days": 1,
+      "perWeekCap": 2,
+      "horizonRepeatCap": 2,
+      "mealSlots": 3,
+      "snackSlots": 1,
+      "totalSlots": 4,
+      "distinctFloor": 2,
+      "distinctRecipes": 3,
+      "maxRepeat": 2,
+      "maxRepeatRecipeId": "cmrevpcyh004gwl5gnni3al5q",
+      "lockedRepeatsOfMax": 0,
+      "filledSlots": 4,
+      "unfilledSlots": 0,
+      "requiredDistinct": 2,
+      "capHeld": true,
+      "floorHeld": true
+     }
+    },
+    "priorWeeksConsidered": 0,
+    "horizon": {
+     "key": "day",
+     "label": "1 day",
+     "days": 1,
+     "kind": "days",
+     "weeks": 1,
+     "custom": false,
+     "startDate": "2026-07-30",
+     "endDate": "2026-07-30",
+     "startDayOfWeek": 3,
+     "weeksWritten": 1,
+     "solveMs": 0,
+     "weekPlans": [
+      {
+       "startDate": "2026-07-27",
+       "dayIndices": [
+        3
+       ],
+       "days": 1,
+       "daysInTolerance": 1,
+       "avgMatch": 100,
+       "unfilledSlots": 0,
+       "poolSize": 33
+      }
+     ]
+    }
+   }
+  }
+ }
+}

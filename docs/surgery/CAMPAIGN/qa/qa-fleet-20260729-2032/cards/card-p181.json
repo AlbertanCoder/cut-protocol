@@ -1,0 +1,76 @@
+{
+  "personaId": "p181",
+  "sessionCrossed": false,
+  "satisfaction": 3,
+  "wouldRecommend": false,
+  "criteria": {
+    "macrosInRange": 4,
+    "worksEndToEnd": 6,
+    "mealsAreGood": 3,
+    "affordableAdjustable": 3,
+    "tasty": 3
+  },
+  "allergenRespect": { "ok": true, "leaks": [] },
+  "delights": [
+    "It tells me when it failed instead of pretending: \"Tried 5 recipe(s) for this slot, none fit within tolerance - closest was \\\"Seswaa\\\" (landed 508 kcal vs a 319 target).\" I would rather be told than be handed a tidy lie.",
+    "Gluten-free by construction, not by luck: across 97 distinct ingredients in 35 slots there is no wheat, bread, pasta, flour, barley or rye anywhere - every starch is rice, quinoa or potato. And it correctly kept \"Egg Plants 200g\" in the Baba Ghanoush rather than stripping aubergine because the word looks like my egg allergy.",
+    "The one swap that landed was exactly right: \"High-Protein Shrimp & Onions with Potato\" replaced the sherry breakfast and took that meal from 15.6g fat to 5.6g, with no warning attached."
+  ],
+  "defects": [
+    {
+      "what": "There is no breakfast anywhere in the week. Day 0 opened with prawns and cooking sherry as my first meal of the day - I am postpartum and will not drink that at 7am.",
+      "snippet": "Garlicky prawns with sherry - ing: Olive Oil 15g, Garlic 3g, Shrimp 150g, Dry sherry 7g, Parsley 11g"
+    },
+    {
+      "what": "Other 'breakfasts' are a courgette-and-bean soup and a plate of meatballs; nothing in seven days reads as a morning meal.",
+      "snippet": "day 2: Summer Pistou / day 3: Algerian Kefta (Meatballs)"
+    },
+    {
+      "what": "I asked for recomp with a goal weight 0.1 kg below my current weight, and the engine gave me a 2 lb/week cut at 1533 kcal - at or below my resting burn. That is not a recomp.",
+      "snippet": "startWeightKg: 96.5, goalWeightKg: 96.4, rateLbPerWeek: 2, targetKcal: 1533"
+    },
+    {
+      "what": "Half the week does not fit its own numbers: 18 of 35 slots carry a tolerance warning, and the days run 1549-1860 kcal against a 1533 target (mean 1664, Day 2 is +327).",
+      "snippet": "closest was \"Avocado Chips & Jerky\" (landed 352 kcal vs a 96 target)"
+    },
+    {
+      "what": "My stated cuisine preferences were ignored - japanese and thai got exactly one dish out of 35, and 13 slots are the same nameless formula plate with cuisine None.",
+      "snippet": "High-Protein TVP & Onions with Rice / High-Protein Shrimp & Bell Peppers with Quinoa / High-Protein White Fish & Cucumber with Quinoa (cuisine=None)"
+    },
+    {
+      "what": "Hidden-gluten items are served with no warning for a coeliac. Most supermarket oyster sauce is thickened with wheat, and stock cubes and marinated jerky are the classic traps.",
+      "snippet": "Thai beef stir-fry - ing: Vegetable Oil 3g, Beef 150g, Red Chilli 4g, Oyster Sauce 25g, Basil Leaves 4g"
+    },
+    {
+      "what": "I said low-fat, and the snack rotation is pork rinds, beef jerky and avocado chips - Cacik is 60% fat, Avocado Chips & Jerky 58%, Jerky & Pork Rinds 55%.",
+      "snippet": "Jerky & Pork Rinds Snack Plate - ing: Beef jerky 30g, Pork rinds 15g"
+    },
+    {
+      "what": "Two dinners are dips eaten as a meal - a bowl of watered-down yogurt, which the app itself scores as a protein miss.",
+      "snippet": "Jajek - ing: Yogurt 285g, Cold Water 135g, Garlic 2g, Salt 1g, Dried Mint 1g, Cucumber 60g ... (delivered 20g protein vs a 61g target)"
+    },
+    {
+      "what": "Not affordable for someone at home between jobs: $221.31 of servings for the week, $31.62 a day, including a specialty-butcher goat trip.",
+      "snippet": "Jamaican Curry Goat - $21.62 per serving; Seswaa $11.34 x2; four shrimp dishes at $10-11"
+    },
+    {
+      "what": "The swap call rejected the obvious payload - the recipeId the alternates call had just handed me - with a message about ingredients I never sent.",
+      "snippet": "PUT /apply {\"recipeId\":\"cmrul4e6k0066wl6862s2m9jl\"} -> 400 {\"error\":\"a slot needs at least one ingredient\"}"
+    },
+    {
+      "what": "Cooking load is five separate dishes every single day with no leftovers or batch cooking - 120 minutes on Day 1.",
+      "snippet": "day 1: 120 min across 5 separate dishes"
+    },
+    {
+      "what": "No shopping list came with the week; the plan's groceryList is empty.",
+      "snippet": "GET /api/plans/current -> \"groceryList\": null"
+    }
+  ],
+  "followUp": {
+    "action": "Asked for alternates to replace the prawns-and-sherry breakfast on Day 0, then swapped one in",
+    "endpoint": "POST /api/plans/cms6x1ie304k9wlw02qlsjb17/slots/cms6x1ie404kbwlw0jwtfc3qt/alternates, then PUT .../apply",
+    "status": 200,
+    "howItWent": "Alternates returned 200 but offered me three shrimp dishes - Shrimp & Onions with Potato, Shrimp & Bell Peppers with Potato, Shrimp & Bell Peppers with Rice - differing only by which vegetable, and two of them already appear elsewhere in my week; all three were matchPct 100, so the macros were perfect and the choice was meaningless. The apply then 400'd on {\"recipeId\":...} with \"a slot needs at least one ingredient\" and only worked when I posted the whole alternate object back, after which the swap persisted correctly and dropped that meal from 15.6g fat to 5.6g."
+  },
+  "verdict": "My coeliac and egg walls were genuinely respected - not one gram of wheat or egg in 97 ingredients, and it was smart enough to know aubergine is not egg - but the week has no breakfast, serves me cooking sherry at dawn and pork rinds as a low-fat snack, ignores the japanese and thai food I said I liked, runs 8% over my calories on a target that was wrong for a recomp to begin with, and costs $31 a day."
+}

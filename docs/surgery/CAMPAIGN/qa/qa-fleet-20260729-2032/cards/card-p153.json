@@ -1,0 +1,70 @@
+{
+  "personaId": "p153",
+  "satisfaction": 4,
+  "wouldRecommend": false,
+  "criteria": {
+    "macrosInRange": 3,
+    "worksEndToEnd": 7,
+    "mealsAreGood": 5,
+    "affordableAdjustable": 4,
+    "tasty": 6
+  },
+  "allergenRespect": {
+    "ok": true,
+    "leaks": []
+  },
+  "delights": [
+    "The salmon dish volunteered that it was safe for me before I asked - description: \"No butter - the fish carries its own fat.\" I avoid dairy, and that one line told me the recipe had already thought about it.",
+    "It did not hide a bad day from me. Slot 2 said: \"Tried 5 recipe(s) for this slot, none fit within tolerance - closest was \\\"Ground Beef & Potato Hash\\\" (landed 1418 kcal vs a 2645 target; delivered 146g protein vs a 196g target).\" Naming the exact miss is worth more to me than a fake number.",
+    "Regenerating gave me a real mediterranean meal - \"Lemon Garlic Baked Cod with White Beans\" (cod, cannellini, tomatoes, olive oil, lemon, parsley) - and reported \"totals\": {\"kcal\": 4205 ...} against my 4206 target with \"warnedSlots\": 0."
+  ],
+  "defects": [
+    {
+      "what": "The day I was actually handed came in 1,227 kcal under my target - 2,979 vs 4,206. I am lean bulking; that is not a small miss, that is a deficit pointed the wrong way.",
+      "snippet": "\"warning\": \"Tried 5 recipe(s) for this slot, none fit within tolerance - closest was \\\"Ground Beef & Potato Hash\\\" (landed 1418 kcal vs a 2645 target; delivered 146g protein vs a 196g target).\""
+    },
+    {
+      "what": "The regenerated cod slot's macros do not match its own printed ingredients. Priced from the app's own food numbers, the list as written totals about 1,190 kcal and 142 g carb - the slot claims 1,758 kcal and 284 g carb. If I cook exactly what it prints I eat ~570 kcal less than it counted toward my bulk.",
+      "snippet": "Cod fillet 325 g / Cannellini Beans 220 g / Tomatoes 200 g / oil 13 g / garlic 6 g / lemon 15 g / parsley 5 g -> slot says \"kcal\": 1758.1, \"carb\": 284.0035000000001"
+    },
+    {
+      "what": "Same gap in the second regenerated slot: Red Peas Soup claims 2,446.7 kcal / 262.5 g carb, but its printed ingredients come to roughly 2,150 kcal / ~157 g carb. Both new slots overstate carbs by 100-140 g, which is how a 'perfect 4,205 vs 4,206' day is really a ~3,400 kcal day on the plate.",
+      "snippet": "\"Red Peas Soup\" ... \"kcal\": 2446.739999999999, \"carb\": 262.474"
+    },
+    {
+      "what": "The 'Cannellini Beans' row carries DRY bean data (345 kcal, 59.8 g carb per 100 g) and the app admits it in the row itself - but it is used as \"Cannellini Beans 220 g\" in a BAKED cod dish. Nobody bakes 220 g of dry, unsoaked beans. Open a can instead, as any cook would, and I lose 513 kcal and 90 g of carbs the plan already counted.",
+      "snippet": "Cannellini Beans | per100g kcal 345 P 21.6 F 2.2 C 59.8 | dq: exception:provenance-cleared - carried fdcId 2644281 (\"Beans, cannellini, dry\")"
+    },
+    {
+      "what": "Red Peas Soup calls for 150 g of thyme. That is an enormous bundle of fresh herb in one pot - it would be bitter and woody and inedible - and it is quietly contributing ~151 kcal and ~37 g of carbs to my day.",
+      "snippet": "Thyme 150 g ( None )  [Thyme | per100g kcal 101 P 5.56 F 1.68 C 24.4]"
+    },
+    {
+      "what": "The grocery list cannot be shopped. Every line is a cooked/as-prepared weight and the list says so itself, then still formats it as a purchase quantity. It tells me to buy 400 g of cooked white rice and 500 g of cooked ground beef - I have to do every raw-to-cooked conversion myself.",
+      "snippet": "\"form\": \"as-prepared (state unrecorded) - NOT a raw/dry purchase quantity\" on \"White rice, cooked\" preparedGrams 400"
+    },
+    {
+      "what": "A developer instruction is printed to me, the customer, on every price line of my shopping list.",
+      "snippet": "\"note\": \"rough manually-entered CAD estimate, not sourced pricing data - edit src/lib/groceryPrices.js to correct\""
+    },
+    {
+      "what": "Regenerating a day APPENDED a second day instead of replacing mine. My profile says 2 meals + 0 snacks and I asked for a single day; GET /api/plans/current now returns 4 meals across two days totalling 7,183 kcal, with no indication which day I am supposed to eat.",
+      "snippet": "current plan: idx 0 dow 2 Pan-Seared Salmon / idx 1 dow 2 Ground Beef & Potato Hash / idx 0 dow 3 Lemon Garlic Baked Cod / idx 1 dow 3 Red Peas Soup = TOTAL 7183.4 kcal vs target 4206"
+    },
+    {
+      "what": "I set my diet pattern to mediterranean and every single recipe I was given is tagged western-comfort - including the cod dish that genuinely IS mediterranean. Red Peas Soup (allspice, coconut milk, kidney beans) is Caribbean, not mediterranean.",
+      "snippet": "\"dietaryStyle\": \"mediterranean\" -> all four slots: \"cuisine\": \"western-comfort\""
+    },
+    {
+      "what": "Six hundred grams of bell peppers a day, and bell peppers are the only vegetable in both meals of day one. For a mediterranean high-protein plan there is no olive oil, no greens, no legumes anywhere in the day I was handed.",
+      "snippet": "Bell peppers 300 g in slot 0 and Bell peppers 300 g in slot 1; grocery list \"Bell peppers\" preparedGrams 600, \"display\": \"5 peppers\""
+    }
+  ],
+  "followUp": {
+    "action": "My day was 1,227 kcal short of a bulk target, so I did what any customer would and asked it to build the day again.",
+    "endpoint": "POST /api/plans/generate with {\"horizon\":\"day\"}",
+    "status": 200,
+    "howItWent": "It worked and it was fast - the new day reported 4,205 kcal against my 4,206 target, 311 g protein, 97% match, zero warned slots, and one of the two dishes was finally properly mediterranean. Two problems: it added the new day alongside my old one instead of replacing it, so my plan now shows four meals and 7,183 kcal; and when I checked the new dishes against the app's own food numbers, their macros are inflated by ~570 and ~290 kcal, so the perfect-looking total is not what I would actually eat."
+  },
+  "verdict": "It respected both of my walls without being asked and it never lied to me about a bad day, but the first day it gave me was 1,227 kcal under my bulk target and the day that finally hit my number is built on slot macros its own ingredient lists do not support - so I cannot trust the one thing I came here for."
+}

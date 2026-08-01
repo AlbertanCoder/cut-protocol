@@ -1,0 +1,381 @@
+{
+ "persona": {
+  "idx": 58,
+  "id": "p058",
+  "tier": "ROBUSTNESS",
+  "displayName": "schoolteacher, 65",
+  "story": "schoolteacher, 65, female, 150 cm / 57.9 kg (BMI 25.7), cut at 1 lb/wk, vegetarian diet, avoiding tree nut, soy, shellfish, balanced, 2 meals + 0 snacks, wants a single day",
+  "profile": {
+   "sex": "F",
+   "age": 65,
+   "heightCm": 150,
+   "startWeightKg": 57.9,
+   "goalWeightKg": 53,
+   "occupationKey": "teacher",
+   "trainingStyle": "mixed",
+   "minutesPerSession": 40,
+   "sessionsPerWeek": 3,
+   "rateLbPerWeek": 1,
+   "dietaryStyle": "vegetarian",
+   "excludedFoods": [
+    "tree nuts",
+    "soy",
+    "shellfish"
+   ],
+   "mealsPerDay": 2,
+   "snacksPerDay": 0,
+   "unitPref": "imperial",
+   "mealPreferencesNote": "Ólafur Þórðarson — no 🥜 please"
+  },
+  "filters": {},
+  "horizon": "day",
+  "walls": [
+   "tree nut",
+   "soy",
+   "shellfish"
+  ],
+  "freeTextExclusions": [],
+  "dietaryStyle": "vegetarian",
+  "bmi": 25.7,
+  "goalKind": "cut",
+  "macroStyle": "balanced",
+  "requestedButUnsupported": [],
+  "robustKind": "unicode-name",
+  "unicodeName": "Ólafur Þórðarson",
+  "tupleKey": "[\"ROBUSTNESS\",\"F\",65,150,57.9,53,\"teacher\",\"mixed\",1,\"vegetarian\",[\"shellfish\",\"soy\",\"tree nuts\"],2,0,\"balanced\",\"day\",null,null,null,\"unicode-name\",null]"
+ },
+ "request": {
+  "horizon": "day",
+  "filters": {}
+ },
+ "profileResponse": {
+  "id": "cms6x0m0r01w7wlw0gm7ufm3s",
+  "userId": "cms6x0lqg001gwl2ojzd8dqrq",
+  "sex": "F",
+  "age": 65,
+  "heightCm": 150,
+  "bodyFatPct": 0,
+  "bodyFatSource": null,
+  "occupationKey": "teacher",
+  "activityOverride": null,
+  "sessionsPerWeek": 3,
+  "trainingStyle": "mixed",
+  "minutesPerSession": 40,
+  "startWeightKg": 57.9,
+  "goalWeightKg": 53,
+  "startDate": "2026-07-29",
+  "unitPref": "imperial",
+  "rateLbPerWeek": 1,
+  "rateAcknowledged": true,
+  "floorKcal": null,
+  "excludedFormulas": [],
+  "targetKcal": 1200,
+  "mealsPerDay": 2,
+  "snacksPerDay": 0,
+  "excludedFoods": [
+   "tree nuts",
+   "soy",
+   "shellfish"
+  ],
+  "dietaryStyle": "vegetarian",
+  "cuisinePreferences": [],
+  "mealPreferencesNote": "Ólafur Þórðarson — no 🥜 please",
+  "maxPrepMin": null,
+  "budgetTier": null,
+  "allowBatch": null,
+  "maxComplexity": null,
+  "adaptiveTdee": true,
+  "proteinPriorityMode": false,
+  "updatedAt": "2026-07-30T20:33:18.310Z"
+ },
+ "generate": {
+  "status": 200,
+  "ms": 284,
+  "body": {
+   "id": "cms7z0ptq01anwlgw54its8v3",
+   "userId": "cms6x0lqg001gwl2ojzd8dqrq",
+   "startDate": "2026-07-27",
+   "createdAt": "2026-07-30T20:33:18.782Z",
+   "slots": [
+    {
+     "id": "cms7z0pts01apwlgw0varep0t",
+     "planId": "cms7z0ptq01anwlgw54its8v3",
+     "dayOfWeek": 3,
+     "slotType": "meal",
+     "slotIndex": 0,
+     "recipeId": "cmrul1drt0046wlk4gs9buhsu",
+     "proteinScale": 1.41,
+     "sidesScale": 0.67,
+     "ingredients": [
+      {
+       "foodId": "cmrj2tbym00mowlwszf3qi0d8",
+       "name": "Cottage Cheese",
+       "role": "protein",
+       "grams": 280
+      },
+      {
+       "foodId": "cmrukzaed0004wlbwdxnybljb",
+       "name": "Lentil pasta, dry",
+       "role": "carb",
+       "grams": 65
+      },
+      {
+       "foodId": "cmrevpcnh000iwl5gh2zjhyqe",
+       "name": "Bell peppers",
+       "role": "veg",
+       "grams": 55
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      },
+      {
+       "foodId": "cmrj2t7p5005pwlws4acmktnt",
+       "name": "Greek Yogurt",
+       "role": "protein",
+       "grams": 17,
+       "adjuster": true
+      }
+     ],
+     "kcal": 529.1800000000001,
+     "protein": 49.35099999999999,
+     "fat": 12.9713,
+     "carb": 51.73,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrul1drt0046wlk4gs9buhsu",
+      "name": "High-Protein Cottage Cheese & Bell Peppers with Lentil Pasta",
+      "description": null,
+      "steps": [
+       "Cook the cottage cheese.",
+       "Serve over lentil pasta with bell peppers."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 583.8,
+      "protein": 47.8,
+      "fat": 11.8,
+      "carb": 68.4,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 3.3,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:40:54.906Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z0pts01arwlgwfjj9epm7",
+     "planId": "cms7z0ptq01anwlgw54its8v3",
+     "dayOfWeek": 3,
+     "slotType": "meal",
+     "slotIndex": 1,
+     "recipeId": "cmrul79zc00ccwl803tcj53z3",
+     "proteinScale": 2,
+     "sidesScale": 0.81,
+     "ingredients": [
+      {
+       "foodId": "cmrj2tbym00mowlwszf3qi0d8",
+       "name": "Cottage Cheese",
+       "role": "protein",
+       "grams": 400
+      },
+      {
+       "foodId": "cmrukzaeh0005wlbwrbkygio0",
+       "name": "Chickpea pasta, dry",
+       "role": "carb",
+       "grams": 80
+      },
+      {
+       "foodId": "cmrevpcnh000iwl5gh2zjhyqe",
+       "name": "Bell peppers",
+       "role": "veg",
+       "grams": 65
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 665.15,
+     "protein": 60.65,
+     "fat": 18.395,
+     "carb": 65.14,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrul79zc00ccwl803tcj53z3",
+      "name": "High-Protein Cottage Cheese & Bell Peppers with Chickpea Pasta",
+      "description": null,
+      "steps": [
+       "Cook the cottage cheese.",
+       "Serve over chickpea pasta with bell peppers."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 573.8,
+      "protein": 42.8,
+      "fat": 14.8,
+      "carb": 68.4,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 3.3,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:45:29.928Z",
+      "createdByUserId": null
+     }
+    }
+   ],
+   "groceryList": null,
+   "meta": {
+    "matchPct": 91,
+    "attempts": 5,
+    "score": {
+     "daysInTolerance": 1,
+     "avgMatch": 91,
+     "days": [
+      {
+       "dayOfWeek": 3,
+       "dayName": "Thursday",
+       "matchPct": 91,
+       "totals": {
+        "kcal": 1194,
+        "protein": 110,
+        "fat": 31,
+        "carb": 117
+       },
+       "kcalDeltaPct": -0.5,
+       "proteinShortPct": 0,
+       "fatOk": true,
+       "carbOk": true,
+       "inTolerance": true,
+       "miss": null,
+       "unfilledSlots": 0,
+       "warnedSlots": 0,
+       "windowIndex": 0,
+       "dayIndex": 0,
+       "key": "0:3"
+      }
+     ],
+     "totalDays": 1
+    },
+    "days": [
+     {
+      "dayOfWeek": 3,
+      "dayName": "Thursday",
+      "matchPct": 91,
+      "totals": {
+       "kcal": 1194,
+       "protein": 110,
+       "fat": 31,
+       "carb": 117
+      },
+      "kcalDeltaPct": -0.5,
+      "proteinShortPct": 0,
+      "fatOk": true,
+      "carbOk": true,
+      "inTolerance": true,
+      "miss": null,
+      "unfilledSlots": 0,
+      "warnedSlots": 0,
+      "windowIndex": 0,
+      "dayIndex": 0,
+      "key": "0:3"
+     }
+    ],
+    "diagnosis": null,
+    "poolCounts": {
+     "raw": 910,
+     "afterDiet": 286,
+     "afterPrep": 286,
+     "afterStack": 286,
+     "stackExplain": null
+    },
+    "variety": {
+     "mealEligible": 169,
+     "usableForSlot": 54,
+     "slotKcal": 600,
+     "snackEligible": 6,
+     "weeklyMealSlots": 14,
+     "weeklySnackSlots": 0,
+     "repeatCap": 2,
+     "distinctWeeks": 3.9,
+     "horizonWeeks": 1,
+     "sustainsHorizon": true,
+     "notes": [
+      "1 day: 2 distinct dish(es) across 2 filled slot(s); most-repeated dish appears 1x against a 2x cap for this horizon (2x per week)."
+     ],
+     "horizon": {
+      "weeks": 1,
+      "days": 1,
+      "perWeekCap": 2,
+      "horizonRepeatCap": 2,
+      "mealSlots": 2,
+      "snackSlots": 0,
+      "totalSlots": 2,
+      "distinctFloor": 1,
+      "distinctRecipes": 2,
+      "maxRepeat": 1,
+      "maxRepeatRecipeId": "cmrul1drt0046wlk4gs9buhsu",
+      "lockedRepeatsOfMax": 0,
+      "filledSlots": 2,
+      "unfilledSlots": 0,
+      "requiredDistinct": 1,
+      "capHeld": true,
+      "floorHeld": true
+     }
+    },
+    "priorWeeksConsidered": 0,
+    "horizon": {
+     "key": "day",
+     "label": "1 day",
+     "days": 1,
+     "kind": "days",
+     "weeks": 1,
+     "custom": false,
+     "startDate": "2026-07-30",
+     "endDate": "2026-07-30",
+     "startDayOfWeek": 3,
+     "weeksWritten": 1,
+     "solveMs": 4,
+     "weekPlans": [
+      {
+       "startDate": "2026-07-27",
+       "dayIndices": [
+        3
+       ],
+       "days": 1,
+       "daysInTolerance": 1,
+       "avgMatch": 91,
+       "unfilledSlots": 0,
+       "poolSize": 286
+      }
+     ]
+    }
+   }
+  }
+ }
+}

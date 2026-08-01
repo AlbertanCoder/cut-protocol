@@ -1,0 +1,67 @@
+{
+  "personaId": "p190",
+  "satisfaction": 4,
+  "wouldRecommend": false,
+  "criteria": {
+    "macrosInRange": 7,
+    "worksEndToEnd": 6,
+    "mealsAreGood": 3,
+    "affordableAdjustable": 6,
+    "tasty": 4
+  },
+  "allergenRespect": { "ok": true, "leaks": [] },
+  "delights": [
+    "It told me when it failed instead of hiding it: \"Tried 5 recipe(s) for this slot, none fit within tolerance - closest was \\\"Tortang Talong\\\" (landed 208 kcal vs a 504 target; delivered 17g protein vs a 43g target).\" I have never had a meal planner admit that.",
+    "The day arithmetic is genuinely tight: 6 slots summed to 2398 kcal against my 2400 target with 189 g protein, which is exactly what I want on a 0.5 lb/wk cut at 101.9 kg.",
+    "The shopping list is honest about what it does not know - \"5 of 24 item(s) have no price match and are excluded from the total (rough CAD estimates for the rest, not sourced data)\" - and it correctly rebuilt itself after my swap, dropping the beef jerky and pork rinds."
+  ],
+  "defects": [
+    {
+      "what": "My shopping list tells me to buy eggs instead of aubergines, and files the vegetable under the protein aisle. If I shop from this list I cannot make the dish at all - Tortang Talong IS grilled aubergine.",
+      "snippet": "{\"name\":\"Egg Plants\",\"section\":\"protein\",\"preparedGrams\":100,\"purchaseUnits\":{\"display\":\"2 eggs\",\"approx\":\"~50 g each\"}}"
+    },
+    {
+      "what": "I asked for mediterranean and balanced, and one of my three snacks was deep-fried pig skin and dried beef. Nothing about that is either.",
+      "snippet": "Jerky & Pork Rinds Snack Plate - Beef jerky 40 g, Pork rinds 20 g"
+    },
+    {
+      "what": "One of my three main meals is 41% of the size it was supposed to be. One egg and an aubergine is not lunch for a 193 cm, 102 kg man - the app knew and shipped it anyway.",
+      "snippet": "Tortang Talong - 208 kcal, 17.0 g protein (vs a 504 kcal / 43 g target)"
+    },
+    {
+      "what": "No variety in the snack slots: the same dish twice in one day, and when I asked for replacements the three alternates were two more jerky plates and a third yogurt-and-almonds. After my swap all three snacks are yogurt + almonds.",
+      "snippet": "snack 0 \"Greek Yogurt, Almonds & Berries\" / snack 1 \"Greek Yogurt, Almonds & Berries\" -> alternates offered: \"Greek Yogurt, Honey & Almonds\", \"Pistachios & Jerky\", \"Avocado Chips & Jerky\""
+    },
+    {
+      "what": "The swap button is broken on first press. I sent back exactly the recipeId and scales the alternates list handed me and it refused with a message about a problem I did not cause; it only worked when I re-sent the ingredient list the server had already given me.",
+      "snippet": "PUT /api/plans/<planId>/slots/<slotId>/apply -> 400 {\"error\":\"a slot needs at least one ingredient\"}"
+    },
+    {
+      "what": "A developer instruction is printed to me, the customer, on every single line of my shopping list. I am not going to edit anybody's source file to fix my grocery prices.",
+      "snippet": "rough manually-entered CAD estimate, not sourced pricing data - edit src/lib/groceryPrices.js to correct"
+    },
+    {
+      "what": "Cannot realistically cook this on a work night: my lunch needs a lit barbecue AND a deep fryer run at two oil temperatures, and no slot reports a prep time so I could not have known before shopping.",
+      "snippet": "\"Heat the oil in a deep fryer ... to 130C ... Reheat the oil to 180C\" / \"get your barbecue to the stage where the coals are glowing\" - prepTimeMin: null"
+    },
+    {
+      "what": "The recipe instructions are written for a different number of servings than the grams I was given, so I cannot follow them literally.",
+      "snippet": "\"Cut the tenderloins into 5 equal-size pieces\" - while my ingredient line reads Pork 100 g"
+    },
+    {
+      "what": "A mediterranean day with no fish, no legumes and no whole grains. I avoid shellfish, not fish - nobody asked and I got none. My own swap-in came back tagged as a different cuisine entirely.",
+      "snippet": "cuisine tags across my day: mediterranean, western-comfort, middle-eastern, mediterranean, mediterranean, american"
+    },
+    {
+      "what": "Lemon is double-counted as two separate line items, each telling me to buy a whole lemon, for a recipe that uses half of one.",
+      "snippet": "produce | Lemon | 15 g | 1 lemon (~85 g each)  +  produce | Lemon Juice | 4 g | 1 lemon (~85 g each)"
+    }
+  ],
+  "followUp": {
+    "action": "I did not want the pork rinds, so I asked for alternates on that snack slot and tried to swap in the one non-jerky option (Greek Yogurt, Honey & Almonds), then pulled a shopping list for the day.",
+    "endpoint": "POST /api/plans/cms6x1k6v04rnwlw0h90r8zs8/slots/cms6x1k7004rzwlw08nj7sgvf/alternates (200), then PUT /api/plans/cms6x1k6v04rnwlw0h90r8zs8/slots/cms6x1k7004rzwlw08nj7sgvf/apply, then POST /api/plans/cms6x1k6v04rnwlw0h90r8zs8/grocery-list (200)",
+    "status": 400,
+    "howItWent": "Alternates came back fast and the pork rinds are gone, but the swap failed with 400 \"a slot needs at least one ingredient\" when I sent the alternate exactly as offered, and only succeeded on a second attempt where I echoed the ingredients back myself. The rest held up: the day re-totalled to 2353 kcal (47 under target) and the shopping list correctly rebuilt without the jerky - though the only alternates on offer were more jerky or more yogurt, so my day now has yogurt and almonds three times."
+  },
+  "verdict": "It does the arithmetic better than anything I have used - 2398 against a 2400 target, and it admits it out loud when a slot misses - but it does not appear to have read that I asked for mediterranean and balanced, it served me the same yogurt twice plus a pork-rind plate, one of my three meals is under half size, and the shopping list would send me home with two eggs instead of the aubergine the dish is made of."
+}

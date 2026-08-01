@@ -1,0 +1,498 @@
+{
+ "persona": {
+  "idx": 221,
+  "id": "p221",
+  "tier": "ROBUSTNESS",
+  "displayName": "powerlifter, 37",
+  "story": "powerlifter, 37 (managing meals for a 15-year-old), male, 168 cm / 56.7 kg (BMI 20.1), cut at 1 lb/wk, none diet, avoiding cilantro, shellfish, low-fat, 3 meals + 0 snacks, wants a single day",
+  "profile": {
+   "sex": "M",
+   "age": 37,
+   "heightCm": 168,
+   "startWeightKg": 56.7,
+   "goalWeightKg": 46.9,
+   "occupationKey": "trades-general",
+   "trainingStyle": "weights",
+   "minutesPerSession": 90,
+   "sessionsPerWeek": 5,
+   "rateLbPerWeek": 1,
+   "dietaryStyle": "none",
+   "excludedFoods": [
+    "cilantro",
+    "shellfish"
+   ],
+   "mealsPerDay": 9,
+   "snacksPerDay": 0,
+   "unitPref": "metric",
+   "goalWeightAcknowledged": true
+  },
+  "filters": {},
+  "horizon": "day",
+  "walls": [
+   "cilantro",
+   "shellfish"
+  ],
+  "freeTextExclusions": [
+   "cilantro"
+  ],
+  "dietaryStyle": "none",
+  "bmi": 20.1,
+  "goalKind": "cut",
+  "macroStyle": "low-fat",
+  "requestedButUnsupported": [
+   "managing meals for a 15-year-old; the app has no parent-managed or dependent flag (adultGate refuses under-18 outright), so only the adult's own plan can be built",
+   "wanted a low-fat split; the fat band is fixed at LBM x0.34-0.40 and is not client-settable"
+  ],
+  "parentManaged": {
+   "kidAge": 15,
+   "note": "managing meals for a 15-year-old"
+  },
+  "robustKind": "nine-meals",
+  "expectRejection": {
+   "field": "mealsPerDay",
+   "why": "validator requires 1-8"
+  },
+  "goalBmi": 16.6,
+  "tupleKey": "[\"ROBUSTNESS\",\"M\",37,168,56.7,46.9,\"trades-general\",\"weights\",1,\"none\",[\"cilantro\",\"shellfish\"],9,0,\"low-fat\",\"day\",null,null,null,\"nine-meals\",null]"
+ },
+ "request": {
+  "horizon": "day",
+  "filters": {}
+ },
+ "profileResponse": {
+  "id": "cms6x1s2105frwlw0mws7jxl8",
+  "userId": "cms6x1rwn005zwl2otykhfsy8",
+  "sex": "M",
+  "age": 37,
+  "heightCm": 168,
+  "bodyFatPct": 0,
+  "bodyFatSource": null,
+  "occupationKey": "trades-general",
+  "activityOverride": null,
+  "sessionsPerWeek": 5,
+  "trainingStyle": "weights",
+  "minutesPerSession": 90,
+  "startWeightKg": 56.7,
+  "goalWeightKg": 46.9,
+  "startDate": "2026-07-29",
+  "unitPref": "metric",
+  "rateLbPerWeek": 1,
+  "rateAcknowledged": false,
+  "floorKcal": null,
+  "excludedFormulas": [],
+  "targetKcal": 1783,
+  "mealsPerDay": 3,
+  "snacksPerDay": 0,
+  "excludedFoods": [
+   "cilantro",
+   "shellfish"
+  ],
+  "dietaryStyle": "none",
+  "cuisinePreferences": [],
+  "mealPreferencesNote": null,
+  "maxPrepMin": null,
+  "budgetTier": null,
+  "allowBatch": null,
+  "maxComplexity": null,
+  "adaptiveTdee": true,
+  "proteinPriorityMode": false,
+  "updatedAt": "2026-07-30T20:34:10.103Z"
+ },
+ "generate": {
+  "status": 200,
+  "ms": 589,
+  "body": {
+   "id": "cms7z1u1j04l7wlgwgg8bgpa4",
+   "userId": "cms6x1rwn005zwl2otykhfsy8",
+   "startDate": "2026-07-27",
+   "createdAt": "2026-07-30T20:34:10.903Z",
+   "slots": [
+    {
+     "id": "cms7z1u1k04l9wlgw1j9nnycl",
+     "planId": "cms7z1u1j04l7wlgwgg8bgpa4",
+     "dayOfWeek": 3,
+     "slotType": "meal",
+     "slotIndex": 0,
+     "recipeId": "cmrujkwq40026wl9omfjtefzu",
+     "proteinScale": 1.56,
+     "sidesScale": 1.29,
+     "ingredients": [
+      {
+       "foodId": "cmrj2tbsj00m1wlwsfeuh3jsf",
+       "name": "flax eggs",
+       "role": "protein",
+       "grams": 235
+      },
+      {
+       "foodId": "cmrevpcn2000ewl5gmlyzu0vd",
+       "name": "White rice, cooked",
+       "role": "carb",
+       "grams": 205
+      },
+      {
+       "foodId": "cmrevpcnh000iwl5gh2zjhyqe",
+       "name": "Bell peppers",
+       "role": "veg",
+       "grams": 105
+      },
+      {
+       "foodId": "cmrj2t95b00bxwlwsoefzd8s1",
+       "name": "Cashew Nuts",
+       "role": "fat",
+       "grams": 18
+      },
+      {
+       "foodId": "cmrevpclb0000wl5ghnno9i5f",
+       "name": "Chicken breast, cooked, skinless",
+       "role": "protein",
+       "grams": 7,
+       "adjuster": true
+      }
+     ],
+     "kcal": 535.79,
+     "protein": 37.032,
+     "fat": 8.184,
+     "carb": 75.78,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrujkwq40026wl9omfjtefzu",
+      "name": "Stir-Fried Eggs & Bell Peppers with Rice",
+      "description": null,
+      "steps": [
+       "Cook the eggs.",
+       "Serve with white rice and bell peppers."
+      ],
+      "slotType": "meal",
+      "cuisine": "asian",
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 411.2,
+      "protein": 24.3,
+      "fat": 7.7,
+      "carb": 59.7,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 3.2,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:00:06.701Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z1u1l04lbwlgwaj4jhhkh",
+     "planId": "cms7z1u1j04l7wlgwgg8bgpa4",
+     "dayOfWeek": 3,
+     "slotType": "meal",
+     "slotIndex": 1,
+     "recipeId": "cmrujkwtr008iwl9oka15usv5",
+     "proteinScale": 0.65,
+     "sidesScale": 0.61,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t7w3006lwlws4zdhow4d",
+       "name": "Chicken Breast",
+       "role": "protein",
+       "grams": 110
+      },
+      {
+       "foodId": "cmrj2t80e0074wlws89ldq9y0",
+       "name": "bowtie pasta",
+       "role": "carb",
+       "grams": 90
+      },
+      {
+       "foodId": "cmrj2t6na000ywlws9jek4w4z",
+       "name": "Broccoli",
+       "role": "veg",
+       "grams": 65
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 10
+      }
+     ],
+     "kcal": 576.05,
+     "protein": 38.1205,
+     "fat": 14.462,
+     "carb": 71.30550000000001,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrujkwtr008iwl9oka15usv5",
+      "name": "Rustic Chicken & Broccoli with Pasta",
+      "description": null,
+      "steps": [
+       "Cook the chicken.",
+       "Serve with pasta and broccoli."
+      ],
+      "slotType": "meal",
+      "cuisine": "italian",
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 884.6,
+      "protein": 60.577,
+      "fat": 17.093,
+      "carb": 118.947,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 6.46,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:00:06.832Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z1u1m04lfwlgw4ontkaoq",
+     "planId": "cms7z1u1j04l7wlgwgg8bgpa4",
+     "dayOfWeek": 3,
+     "slotType": "meal",
+     "slotIndex": 2,
+     "recipeId": "cmrj2tf8301a0wlwshrp0eyw7",
+     "proteinScale": 1.02,
+     "sidesScale": 2,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t6is000ewlwsmzadlvxo",
+       "name": "Beef",
+       "role": "protein",
+       "grams": 125
+      },
+      {
+       "foodId": "cmrg8zxar000lwli0qy2ovmx4",
+       "name": "Onion",
+       "role": "veg",
+       "grams": 55
+      },
+      {
+       "foodId": "cmrj2t6oc0013wlwsjzlwoln2",
+       "name": "Carrots",
+       "role": "veg",
+       "grams": 60
+      },
+      {
+       "foodId": "cmrj2t6t4001pwlwsxeja9565",
+       "name": "Potatoes",
+       "role": "veg",
+       "grams": 175
+      },
+      {
+       "foodId": "cmrj2t7d60045wlws61vk9336",
+       "name": "Pumpkin",
+       "role": null,
+       "grams": 50
+      },
+      {
+       "foodId": "cmrj2t7dd0046wlwsv1n07o5v",
+       "name": "Dried Apricots",
+       "role": null,
+       "grams": 50
+      },
+      {
+       "foodId": "cmrj2t6jx000jwlws245wvtmm",
+       "name": "Beef Stock",
+       "role": "other",
+       "grams": 100
+      },
+      {
+       "foodId": "cmrj2t6gd0003wlwss7jf3wzf",
+       "name": "Salt",
+       "role": null,
+       "grams": 1
+      },
+      {
+       "foodId": "cmrj2t6gl0004wlws73buybhw",
+       "name": "Pepper",
+       "role": null,
+       "grams": 1
+      }
+     ],
+     "kcal": 619.11,
+     "protein": 42.89449999999999,
+     "fat": 17.0341,
+     "carb": 77.9,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrj2tf8301a0wlwshrp0eyw7",
+      "name": "Carbonada Criolla",
+      "description": null,
+      "steps": [
+       "Brown the Beef: In a large pot, brown the beef cubes. Remove and set aside.",
+       "Sauté Vegetables: In the same pot, cook the onion until translucent. Add carrots, potatoes, and pumpkin, cooking for a few minutes.",
+       "Simmer: Return the beef to the pot. Add broth and dried apricots. Season with salt and pepper. Simmer for 1-2 hours, until the beef is tender.",
+       "Serve: Enjoy hot, with a crusty piece of bread.",
+       "Pro Tips:",
+       "Brown the beef in batches to ensure it gets a good sear, which adds depth to the stew's flavor.",
+       "Adding the fruits towards the end of cooking preserves their texture and adds a subtle sweetness to the dish."
+      ],
+      "slotType": "meal",
+      "cuisine": "western-comfort",
+      "prepTimeMin": 33,
+      "source": "themealdb-import",
+      "mealCategory": null,
+      "kcal": 452.7375,
+      "protein": 38.34289999999999,
+      "fat": 16.6342,
+      "carb": 38.6629,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 6.61,
+      "difficulty": 4,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-13T10:25:22.515Z",
+      "createdByUserId": null
+     }
+    }
+   ],
+   "groceryList": null,
+   "meta": {
+    "matchPct": 99,
+    "attempts": 1,
+    "score": {
+     "daysInTolerance": 1,
+     "avgMatch": 99,
+     "days": [
+      {
+       "dayOfWeek": 3,
+       "dayName": "Thursday",
+       "matchPct": 99,
+       "totals": {
+        "kcal": 1731,
+        "protein": 118,
+        "fat": 40,
+        "carb": 225
+       },
+       "kcalDeltaPct": -2.9,
+       "proteinShortPct": 0,
+       "fatOk": true,
+       "carbOk": true,
+       "inTolerance": true,
+       "miss": null,
+       "unfilledSlots": 0,
+       "warnedSlots": 0,
+       "windowIndex": 0,
+       "dayIndex": 0,
+       "key": "0:3"
+      }
+     ],
+     "totalDays": 1
+    },
+    "days": [
+     {
+      "dayOfWeek": 3,
+      "dayName": "Thursday",
+      "matchPct": 99,
+      "totals": {
+       "kcal": 1731,
+       "protein": 118,
+       "fat": 40,
+       "carb": 225
+      },
+      "kcalDeltaPct": -2.9,
+      "proteinShortPct": 0,
+      "fatOk": true,
+      "carbOk": true,
+      "inTolerance": true,
+      "miss": null,
+      "unfilledSlots": 0,
+      "warnedSlots": 0,
+      "windowIndex": 0,
+      "dayIndex": 0,
+      "key": "0:3"
+     }
+    ],
+    "diagnosis": null,
+    "poolCounts": {
+     "raw": 910,
+     "afterDiet": 797,
+     "afterPrep": 797,
+     "afterStack": 797,
+     "stackExplain": null
+    },
+    "variety": {
+     "mealEligible": 621,
+     "usableForSlot": 449,
+     "slotKcal": 594,
+     "snackEligible": 17,
+     "weeklyMealSlots": 21,
+     "weeklySnackSlots": 0,
+     "repeatCap": 2,
+     "distinctWeeks": 21.4,
+     "horizonWeeks": 1,
+     "sustainsHorizon": true,
+     "notes": [
+      "1 day: 3 distinct dish(es) across 3 filled slot(s); most-repeated dish appears 1x against a 2x cap for this horizon (2x per week)."
+     ],
+     "horizon": {
+      "weeks": 1,
+      "days": 1,
+      "perWeekCap": 2,
+      "horizonRepeatCap": 2,
+      "mealSlots": 3,
+      "snackSlots": 0,
+      "totalSlots": 3,
+      "distinctFloor": 2,
+      "distinctRecipes": 3,
+      "maxRepeat": 1,
+      "maxRepeatRecipeId": "cmrujkwq40026wl9omfjtefzu",
+      "lockedRepeatsOfMax": 0,
+      "filledSlots": 3,
+      "unfilledSlots": 0,
+      "requiredDistinct": 2,
+      "capHeld": true,
+      "floorHeld": true
+     }
+    },
+    "priorWeeksConsidered": 0,
+    "horizon": {
+     "key": "day",
+     "label": "1 day",
+     "days": 1,
+     "kind": "days",
+     "weeks": 1,
+     "custom": false,
+     "startDate": "2026-07-30",
+     "endDate": "2026-07-30",
+     "startDayOfWeek": 3,
+     "weeksWritten": 1,
+     "solveMs": 4,
+     "weekPlans": [
+      {
+       "startDate": "2026-07-27",
+       "dayIndices": [
+        3
+       ],
+       "days": 1,
+       "daysInTolerance": 1,
+       "avgMatch": 99,
+       "unfilledSlots": 0,
+       "poolSize": 797
+      }
+     ]
+    }
+   }
+  }
+ }
+}

@@ -1,0 +1,365 @@
+{
+ "persona": {
+  "idx": 111,
+  "id": "p111",
+  "tier": "EASY",
+  "displayName": "nurse on 12s, 57",
+  "story": "nurse on 12s, 57, female, 154 cm / 86.7 kg (BMI 36.6), cut at 0.5 lb/wk, carnivore diet, avoiding nightshade, low-carb, 2 meals + 0 snacks, wants a single day",
+  "profile": {
+   "sex": "F",
+   "age": 57,
+   "heightCm": 154,
+   "startWeightKg": 86.7,
+   "goalWeightKg": 81.5,
+   "occupationKey": "nurse-healthcare",
+   "trainingStyle": "mixed",
+   "minutesPerSession": 30,
+   "sessionsPerWeek": 2,
+   "rateLbPerWeek": 0.5,
+   "dietaryStyle": "carnivore",
+   "excludedFoods": [
+    "nightshades"
+   ],
+   "mealsPerDay": 2,
+   "snacksPerDay": 0,
+   "unitPref": "imperial",
+   "bodyFatPct": 43,
+   "bodyFatSource": "visual-estimate"
+  },
+  "filters": {},
+  "horizon": "day",
+  "walls": [
+   "nightshade"
+  ],
+  "freeTextExclusions": [
+   "nightshades"
+  ],
+  "dietaryStyle": "carnivore",
+  "bmi": 36.6,
+  "goalKind": "cut",
+  "macroStyle": "low-carb",
+  "requestedButUnsupported": [
+   "wanted a low-carb split without full keto; carbs are the leftover after LBM-derived protein and fat, and only dietaryStyle:\"keto\" changes that"
+  ],
+  "tupleKey": "[\"EASY\",\"F\",57,154,86.7,81.5,\"nurse-healthcare\",\"mixed\",0.5,\"carnivore\",[\"nightshades\"],2,0,\"low-carb\",\"day\",null,null,null,null,null]"
+ },
+ "request": {
+  "horizon": "day",
+  "filters": {}
+ },
+ "profileResponse": {
+  "id": "cms6x0zwk02uvwlw05uu4rvja",
+  "userId": "cms6x0zg6002xwl2o03wok7cl",
+  "sex": "F",
+  "age": 57,
+  "heightCm": 154,
+  "bodyFatPct": 43,
+  "bodyFatSource": "visual-estimate",
+  "occupationKey": "nurse-healthcare",
+  "activityOverride": null,
+  "sessionsPerWeek": 2,
+  "trainingStyle": "mixed",
+  "minutesPerSession": 30,
+  "startWeightKg": 86.7,
+  "goalWeightKg": 81.5,
+  "startDate": "2026-07-29",
+  "unitPref": "imperial",
+  "rateLbPerWeek": 0.5,
+  "rateAcknowledged": false,
+  "floorKcal": null,
+  "excludedFormulas": [],
+  "targetKcal": 1984,
+  "mealsPerDay": 2,
+  "snacksPerDay": 0,
+  "excludedFoods": [
+   "nightshades"
+  ],
+  "dietaryStyle": "carnivore",
+  "cuisinePreferences": [],
+  "mealPreferencesNote": null,
+  "maxPrepMin": null,
+  "budgetTier": null,
+  "allowBatch": null,
+  "maxComplexity": null,
+  "adaptiveTdee": true,
+  "proteinPriorityMode": false,
+  "updatedAt": "2026-07-30T20:33:35.016Z"
+ },
+ "generate": {
+  "status": 200,
+  "ms": 274,
+  "body": {
+   "id": "cms7z12po0241wlgw725p9141",
+   "userId": "cms6x0zg6002xwl2o03wok7cl",
+   "startDate": "2026-07-27",
+   "createdAt": "2026-07-30T20:33:35.485Z",
+   "slots": [
+    {
+     "id": "cms7z12pq0243wlgwm0e91g4m",
+     "planId": "cms7z12po0241wlgw725p9141",
+     "dayOfWeek": 3,
+     "slotType": "meal",
+     "slotIndex": 0,
+     "recipeId": "cmrevpcyh004gwl5gnni3al5q",
+     "proteinScale": 1.56,
+     "sidesScale": 1.56,
+     "ingredients": [
+      {
+       "foodId": "cmrevpcmu000cwl5gfljr1l1o",
+       "name": "Bacon, cooked",
+       "role": "protein",
+       "grams": 95
+      },
+      {
+       "foodId": "cmrevpcm50006wl5g2u2bcspd",
+       "name": "Eggs, whole, cooked",
+       "role": "protein",
+       "grams": 235
+      }
+     ],
+     "kcal": 878.1999999999999,
+     "protein": 65.7,
+     "fat": 65.75,
+     "carb": 3.915,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrevpcyh004gwl5gnni3al5q",
+      "name": "Bacon & Eggs",
+      "description": "Weekend breakfast-style plate.",
+      "steps": [
+       "Cook bacon until crisp, set aside.",
+       "Fry or scramble eggs in the bacon fat."
+      ],
+      "slotType": "either",
+      "cuisine": "western-comfort",
+      "prepTimeMin": 15,
+      "source": "curated",
+      "mealCategory": null,
+      "kcal": 557.0999999999999,
+      "protein": 41.7,
+      "fat": 41.7,
+      "carb": 2.49,
+      "tasteTier": "really_good",
+      "tasteTierSource": "curated",
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 3.38,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-10T11:55:10.938Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z12pr0245wlgwmydwlgoo",
+     "planId": "cms7z12po0241wlgw725p9141",
+     "dayOfWeek": 3,
+     "slotType": "meal",
+     "slotIndex": 1,
+     "recipeId": "cmrevpcyh004gwl5gnni3al5q",
+     "proteinScale": 1.98,
+     "sidesScale": 1.98,
+     "ingredients": [
+      {
+       "foodId": "cmrevpcmu000cwl5gfljr1l1o",
+       "name": "Bacon, cooked",
+       "role": "protein",
+       "grams": 120
+      },
+      {
+       "foodId": "cmrevpcm50006wl5g2u2bcspd",
+       "name": "Eggs, whole, cooked",
+       "role": "protein",
+       "grams": 300
+      }
+     ],
+     "kcal": 1114.2,
+     "protein": 83.4,
+     "fat": 83.4,
+     "carb": 4.98,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrevpcyh004gwl5gnni3al5q",
+      "name": "Bacon & Eggs",
+      "description": "Weekend breakfast-style plate.",
+      "steps": [
+       "Cook bacon until crisp, set aside.",
+       "Fry or scramble eggs in the bacon fat."
+      ],
+      "slotType": "either",
+      "cuisine": "western-comfort",
+      "prepTimeMin": 15,
+      "source": "curated",
+      "mealCategory": null,
+      "kcal": 557.0999999999999,
+      "protein": 41.7,
+      "fat": 41.7,
+      "carb": 2.49,
+      "tasteTier": "really_good",
+      "tasteTierSource": "curated",
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 3.38,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-10T11:55:10.938Z",
+      "createdByUserId": null
+     }
+    }
+   ],
+   "groceryList": null,
+   "meta": {
+    "matchPct": 76,
+    "attempts": 5,
+    "score": {
+     "daysInTolerance": 0,
+     "avgMatch": 76,
+     "days": [
+      {
+       "dayOfWeek": 3,
+       "dayName": "Thursday",
+       "matchPct": 76,
+       "totals": {
+        "kcal": 1992,
+        "protein": 149,
+        "fat": 149,
+        "carb": 9
+       },
+       "kcalDeltaPct": 0.4,
+       "proteinShortPct": 0,
+       "fatOk": false,
+       "carbOk": false,
+       "inTolerance": false,
+       "miss": "149 g fat vs a 37–44 g range — 105 g over; 9 g carbs vs a 238–262 g range — 229 g short",
+       "unfilledSlots": 0,
+       "warnedSlots": 0,
+       "windowIndex": 0,
+       "dayIndex": 0,
+       "key": "0:3"
+      }
+     ],
+     "totalDays": 1
+    },
+    "days": [
+     {
+      "dayOfWeek": 3,
+      "dayName": "Thursday",
+      "matchPct": 76,
+      "totals": {
+       "kcal": 1992,
+       "protein": 149,
+       "fat": 149,
+       "carb": 9
+      },
+      "kcalDeltaPct": 0.4,
+      "proteinShortPct": 0,
+      "fatOk": false,
+      "carbOk": false,
+      "inTolerance": false,
+      "miss": "149 g fat vs a 37–44 g range — 105 g over; 9 g carbs vs a 238–262 g range — 229 g short",
+      "unfilledSlots": 0,
+      "warnedSlots": 0,
+      "windowIndex": 0,
+      "dayIndex": 0,
+      "key": "0:3"
+     }
+    ],
+    "diagnosis": {
+     "feasible": false,
+     "reasons": [
+      "1 meal-eligible recipes × max 2 servings/week = 2 servings for 2 meal slots — the back half of the week will run on poor fits.",
+      "Your targets need ~6.6g protein per 100 kcal; only 1 of 1 eligible recipes come close (10+ needed for a full varied week).",
+      "1 day(s) landed outside your 37–44 g fat range, and 1 day(s) landed outside your 238–262 g carb range — portion scaling moves a dish's calories, not its fat/carb ratio, so the pool's composition is what binds here."
+     ],
+     "suggestions": [
+      "Allow batch-cooking repeats, reduce meals per day, or AI-generate more compliant recipes.",
+      "Set the protein-preference filter, or AI-generate a few high-protein recipes to deepen the pool.",
+      "Add (or AI-generate) a few recipes built around the macro you keep missing, or drop the cuisine/protein preference so the solver can reach dishes that carry it."
+     ],
+     "binding": {
+      "key": "protein-density",
+      "label": "protein density in your recipe pool",
+      "detail": "your targets need ~6.6 g protein per 100 kcal and only 1 of 1 compliant recipes come close."
+     }
+    },
+    "poolCounts": {
+     "raw": 910,
+     "afterDiet": 1,
+     "afterPrep": 1,
+     "afterStack": 1,
+     "stackExplain": null
+    },
+    "variety": {
+     "mealEligible": 1,
+     "usableForSlot": 1,
+     "slotKcal": 992,
+     "snackEligible": 1,
+     "weeklyMealSlots": 14,
+     "weeklySnackSlots": 0,
+     "repeatCap": 2,
+     "distinctWeeks": 0.1,
+     "horizonWeeks": 1,
+     "sustainsHorizon": false,
+     "notes": [
+      "1 of your 1 compliant recipes can be portioned to a 992 kcal meal — about 0 week(s) of 14 meals before dishes start repeating, so over 1 weeks you will see favourites come back.",
+      "1 day: 1 distinct dish(es) across 2 filled slot(s); most-repeated dish appears 2x against a 2x cap for this horizon (2x per week)."
+     ],
+     "horizon": {
+      "weeks": 1,
+      "days": 1,
+      "perWeekCap": 2,
+      "horizonRepeatCap": 2,
+      "mealSlots": 2,
+      "snackSlots": 0,
+      "totalSlots": 2,
+      "distinctFloor": 1,
+      "distinctRecipes": 1,
+      "maxRepeat": 2,
+      "maxRepeatRecipeId": "cmrevpcyh004gwl5gnni3al5q",
+      "lockedRepeatsOfMax": 0,
+      "filledSlots": 2,
+      "unfilledSlots": 0,
+      "requiredDistinct": 1,
+      "capHeld": true,
+      "floorHeld": true
+     }
+    },
+    "priorWeeksConsidered": 0,
+    "horizon": {
+     "key": "day",
+     "label": "1 day",
+     "days": 1,
+     "kind": "days",
+     "weeks": 1,
+     "custom": false,
+     "startDate": "2026-07-30",
+     "endDate": "2026-07-30",
+     "startDayOfWeek": 3,
+     "weeksWritten": 1,
+     "solveMs": 0,
+     "weekPlans": [
+      {
+       "startDate": "2026-07-27",
+       "dayIndices": [
+        3
+       ],
+       "days": 1,
+       "daysInTolerance": 0,
+       "avgMatch": 76,
+       "unfilledSlots": 0,
+       "poolSize": 1
+      }
+     ]
+    }
+   }
+  }
+ }
+}

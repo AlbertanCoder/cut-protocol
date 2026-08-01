@@ -1,0 +1,75 @@
+{
+  "personaId": "p105",
+  "sessionCrossed": false,
+  "satisfaction": 2,
+  "wouldRecommend": false,
+  "criteria": {
+    "macrosInRange": 2,
+    "worksEndToEnd": 3,
+    "mealsAreGood": 3,
+    "affordableAdjustable": 3,
+    "tasty": 3
+  },
+  "allergenRespect": {
+    "ok": true,
+    "leaks": []
+  },
+  "delights": [
+    "It refuses to pretend it succeeded. On my second meal: \"Tried 5 recipe(s) for this slot, none fit within tolerance — closest was \"Mediterranean Tuna & Onions with Bulgur\" (landed 802 kcal vs a 1296 target; delivered 50g protein vs a 67g target).\" I have never had a meal app tell me the exact size of its own miss. I trust that more than a clean-looking screen.",
+    "My walls held on all four slots. I read every one of the 14 ingredient names myself — Chicken Breast, Quinoa, Bell peppers, Olive Oil, Tuna, Bulgur, Onion, Almonds, Tuna, bowtie pasta, Cucumber, Olive Oil, Pistachio, Beef jerky — and there is no pork and no dairy anywhere. It also kept the day kosher in shape: a fin-and-scale fish, no shellfish, and it never once put meat and dairy in the same meal.",
+    "The food database confesses its own errors in plain language, which is the only reason I caught the real bug: \"this row's macros are that record's values verbatim and are therefore NOT this food's numbers; no FDC record matches this name unambiguously, so no replacement was guessed.\" Honest to a fault — it published the receipt for its own mistake."
+  ],
+  "defects": [
+    {
+      "what": "The food row for the chicken carrying a third of my day's protein holds a BREADED CHICKEN TENDER's macros — 14.7 g protein and 15 g carb per 100 g. Real chicken breast is ~31 g protein and zero carb. The app thinks my 390 g of chicken is 61 g of protein; it is actually ~121 g.",
+      "snippet": "\"name\":\"Chicken Breast\",\"kcal\":263,\"protein\":14.7,\"fat\":15.8,\"carb\":15 — \"exception:provenance-cleared — carried fdcId 171515 (\\\"Chicken breast tenders, breaded, uncooked\\\"), whose description does not denote this food; this row's macros are that record's values verbatim and are therefore NOT this food's numbers\""
+    },
+    {
+      "what": "The Tuna row — used TWICE in one day, 470 g total — holds MAYONNAISE-BASED TUNA SALAD's macros: 9.26 g fat and 9.41 g carb per 100 g. Plain tuna has ~1 g fat and zero carb. That single bad row is why my day reads 188 g of fat.",
+      "snippet": "\"name\":\"Tuna\",\"kcal\":187,\"protein\":16,\"fat\":9.26,\"carb\":9.41 — \"carried fdcId 175160 (\\\"Fish, tuna salad\\\"), whose description does not denote this food\""
+    },
+    {
+      "what": "Net effect, and this is the one that matters at 75: the plan reads 4,253 kcal against my 4,483 target — a comfortable 5% under. Corrected for the two bad rows I am actually eating ~3,538 kcal and ~330 g protein. That is a 716 kcal and 111 g protein error, and it silently puts me at a ~2.9 lb/week cut when I asked for 1.0. The screen would show me on target the whole way down.",
+      "snippet": "stated day 4253 kcal / 219 g protein vs target 4483 — real day ~3538 kcal / ~330 g protein"
+    },
+    {
+      "what": "The swap feature is completely dead. Alternates returned 200 with three fully-specified dishes, then apply rejected ALL THREE with the same 400 — including the Beef & Broccoli it had just offered me with four ingredients listed (220 g Ground Beef, 240 g Broccoli, 300 g White rice, 16 g Sesame Seed Oil).",
+      "snippet": "PUT /api/plans/.../slots/.../apply → 400 {\"error\":\"a slot needs at least one ingredient\"}"
+    },
+    {
+      "what": "Two of my three main meals are tuna, and every alternate offered to fix the third was more fish. 470 g of tuna in one day is a mercury dose I should not be taking at 75, and nothing in the app mentioned it.",
+      "snippet": "\"Mediterranean Tuna & Onions with Bulgur\" (230 g Tuna) and \"Tuna & Pasta Salad\" (240 g Tuna); alternates offered \"Tuna and Egg Briks\" and \"Fresh sardines\""
+    },
+    {
+      "what": "Its own scoring prefers the least edible dish. The alternate it ranked HIGHEST — 96% match, the only one with no warning — is 500 grams of sardines with flour, oil and salt. That is not a meal, and the model that called it the best fit is not modelling food.",
+      "snippet": "\"recipeName\": \"Fresh sardines\", \"matchPct\": 96, \"warning\": null — 500 g Sardines, 1 g Vegetable Oil, 100 g Flour, 1 g Salt"
+    },
+    {
+      "what": "I told it I like thai and mexican. I got mediterranean, mediterranean, western-comfort and one dish with no cuisine at all. Zero of the two things I asked for.",
+      "snippet": "profile \"cuisinePreferences\":[\"thai\",\"mexican\"] vs plan cuisines: null, mediterranean, mediterranean, western-comfort"
+    },
+    {
+      "what": "These are not recipes. I am 75 and I train 150 minutes a day — I need to actually cook this, and there is no temperature, no time, no seasoning, no method.",
+      "snippet": "\"steps\":[\"Cook the chicken.\",\"Serve over quinoa with bell peppers.\"]"
+    },
+    {
+      "what": "Portions nobody eats: 390 g of chicken breast at one sitting, and 285 g of dry pasta (three normal servings) in the tuna salad. The 75 g of cooked quinoa next to that 390 g of chicken is a garnish, not a side.",
+      "snippet": "390 g Chicken Breast / 75 g Quinoa in one meal; 285 g bowtie pasta in another"
+    },
+    {
+      "what": "It told a 75-year-old man at BMI 37 to eat 4,483 kcal a day to lose weight and never once flagged it. It accepted 150 min x 9 sessions/week — 22.5 hours of cardio weekly at my age — without a word of caution, with rateAcknowledged still false and no calorie floor set.",
+      "snippet": "\"age\":75,\"startWeightKg\":111.9,\"targetKcal\":4483,\"rateAcknowledged\":false,\"floorKcal\":null,\"sessionsPerWeek\":9,\"minutesPerSession\":150"
+    },
+    {
+      "what": "Kosher sourcing is left entirely to me. Nothing forbidden was served, but generic 'Beef jerky' at 60 g every day is the single hardest item on this list to buy with certification, and the plain chicken and beef all need kosher slaughter. The app knows my diet is kosher and says nothing about any of it.",
+      "snippet": "\"dietaryStyle\":\"kosher\" — snack: 60 g Pistachio, 60 g Beef jerky"
+    }
+  ],
+  "followUp": {
+    "action": "Two of my three meals were tuna, so I asked for alternates on the third one (\"Tuna & Pasta Salad\") and tried to swap in the only non-fish option it offered, Beef & Broccoli with Rice.",
+    "endpoint": "POST /api/plans/cms6x0y9e02ptwlw0c2wnkm8m/slots/cms6x0y9h02pzwlw09qg5h5sp/alternates (200), then PUT /api/plans/cms6x0y9e02ptwlw0c2wnkm8m/slots/cms6x0y9h02pzwlw09qg5h5sp/apply (400)",
+    "status": 400,
+    "howItWent": "Half of it worked beautifully and half of it is broken: alternates came back instantly with three real dishes, match percentages and honest warnings, but every single one of them was rejected on apply with {\"error\":\"a slot needs at least one ingredient\"} — including the one whose four ingredients and gram weights the app had just handed me. I tried all three and got the identical 400 each time. My plan is at least undamaged, still four intact slots, but I cannot change one meal in it, and two of the three alternates were more fish anyway."
+  },
+  "verdict": "It kept every promise about what it would not feed me — no pork, no dairy, kosher in shape all day — and then got the numbers wrong in the one direction that hurts: two bad food rows understate my protein by 111 g and overstate my intake by 716 kcal, which would quietly cut a 75-year-old at 2.9 lb/week instead of the 1.0 I asked for, and the swap button that might have let me fix any of it returns 400 on every alternate it offers me."
+}

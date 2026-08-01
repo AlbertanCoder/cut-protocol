@@ -1,0 +1,70 @@
+{
+  "personaId": "p002",
+  "satisfaction": 3,
+  "wouldRecommend": false,
+  "criteria": {
+    "macrosInRange": 3,
+    "worksEndToEnd": 7,
+    "mealsAreGood": 2,
+    "affordableAdjustable": 6,
+    "tasty": 3
+  },
+  "allergenRespect": {
+    "ok": true,
+    "leaks": []
+  },
+  "delights": [
+    "It did not confuse the one herb that would have hurt me: Spanish Chicken lists \"Parsley\", not cilantro. Across all 22 ingredient lines in my day there was no peanut, no dairy, no shellfish and no cilantro anywhere, and no dish mixed meat with dairy.",
+    "It admits when it fails instead of quietly serving me the wrong thing: \"Tried 5 recipe(s) for this slot, none fit within tolerance — closest was \\\"Fårikål (Norwegian National Dish)\\\" (landed 428 kcal vs a 342 target).\" I would rather be told.",
+    "The alternates were fast and genuinely better: \"High-Protein Turkey & Onions with Lentil Pasta\", matchPct 93, \"warning\": null — it took that slot from a 2-3 hour difficulty-5 lamb braise at $16.63/serving down to a 15-minute difficulty-1 meal at $6.91."
+  ],
+  "defects": [
+    {
+      "what": "A dish lies about what is in it — the name promises egg and spinach and the ingredients contain neither.",
+      "snippet": "\"Egg & Spinach Scramble\" — ingredients: {\"name\":\"flax eggs\",\"grams\":300}, {\"name\":\"Broccoli\",\"grams\":40}, {\"name\":\"White rice, cooked\",\"grams\":60}, {\"name\":\"Olive Oil\",\"grams\":4}; steps: [\"Scramble eggs with greens.\",\"Serve with rice.\"]"
+    },
+    {
+      "what": "The app states in its own data that this food's numbers belong to a different food, then counts them as 35g of my day's protein anyway. 300g of a flaxseed product cannot contain 0g of fat.",
+      "snippet": "\"dataQuality\": \"exception:provenance-cleared — carried fdcId 747997 (\\\"Eggs, Grade A, Large, egg white\\\"), whose description does not denote this food; this row's macros are that record's values verbatim and are therefore NOT this food's numbers\" — flax eggs: kcal 55, protein 10.7, fat 0"
+    },
+    {
+      "what": "465 g of egg white as a single sitting — about 15 egg whites — is not a meal for a 71-year-old, and the recipe is two sentences long.",
+      "snippet": "\"High-Protein Egg White & Onions with Rice\" — {\"name\":\"Egg White\",\"grams\":465}; steps: [\"Cook the egg white.\",\"Serve over white rice with onions.\"]"
+    },
+    {
+      "what": "Raw scraped junk is shown to me as cooking steps.",
+      "snippet": "Spanish Chicken steps: [\"step 1\",\"Heat oven to 190C/170C fan/gas 5...\",\"step 2\",\"Bake for 45 mins...\"] · Fårikål steps: [\"▢\",\"Cut the lamb into large pieces.\",\"▢\",...]"
+    },
+    {
+      "what": "An instruction is missing the thing it is telling me to measure.",
+      "snippet": "\"Optional: Sprinkle a couple of tablespoons on top of the lamb for a thicker stew.\" — a couple of tablespoons of WHAT?"
+    },
+    {
+      "what": "My snack says in its own description that it is a weekend food, and it was scheduled on a weekday while overshooting its slot by 162%.",
+      "snippet": "\"Avocado Chips & Jerky\", \"description\": \"Weekends only.\", \"dayOfWeek\": 2 — \"landed 291 kcal vs a 111 target.\" Also 13 g of avocado chips is about four chips."
+    },
+    {
+      "what": "The day runs over the cut target the app itself set for me, and it is not the balanced day I asked for.",
+      "snippet": "targetKcal 1543 · day totalled 1722 kcal (+11.6%) as delivered, still 1678 (+8.8%) after my own swap. Protein 186 g = 44% of calories, carbs 25%."
+    },
+    {
+      "what": "My saved cuisine preferences were ignored — not one Mexican dish, and two dishes have no cuisine at all.",
+      "snippet": "profile cuisinePreferences: [\"mexican\",\"mediterranean\"] · day served cuisine: \"mediterranean\", \"western-comfort\", \"american\", null, null"
+    },
+    {
+      "what": "My medical allergies appear to be screened on food names only — there is no allergen data behind the check, including on a packaged product.",
+      "snippet": "every food row I opened returned \"allergenTags\": null, \"mayContain\": null — including \"Avocado chips\" (\"source\":\"manual\", no brand, no UPC)"
+    },
+    {
+      "what": "A dairy-free egg substitute is filed under a dairy category label, which is frightening to read when dairy is your medical wall (the ingredient itself is safe).",
+      "snippet": "\"name\":\"flax eggs\",\"category\":\"dairy-eggs\""
+    }
+  ],
+  "followUp": {
+    "action": "I refused the Fårikål slot — a 2-3 hour, difficulty-5, $16.63-per-serving Norwegian lamb braise is not something I will cook on a weekday after a 50-minute weights session — so I asked for alternates for that slot and swapped one in.",
+    "endpoint": "POST /api/plans/cms6wyes00057wlw07t0tsaxv/slots/cms6wyes2005bwlw0z9yaj8o2/alternates (200), then PUT .../apply (400, then 200)",
+    "status": 200,
+    "howItWent": "The best part of the whole experience: three alternates came back instantly, two of them at 93-94% match with no warning, and the swap dropped that meal to 15 minutes, difficulty 1, and $6.91 — taking my day from three warned slots to two and from 1722 kcal to 1678. But applying it failed the obvious way first: sending just {\"recipeId\":\"...\"} returned 400 \"a slot needs at least one ingredient\", which reads like my plan is broken rather than like my request was incomplete; it only worked when I sent the entire alternate object back verbatim."
+  },
+  "verdict": "It kept all four of my walls and it swaps meals well, but it fed me a scramble with no egg in it, fifteen egg whites as a dinner, and a protein number it admits in its own data belongs to a different food — I cannot trust the arithmetic, so I would not rely on it to lose weight."
+}

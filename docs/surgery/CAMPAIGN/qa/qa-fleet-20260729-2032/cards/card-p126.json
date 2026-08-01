@@ -1,0 +1,68 @@
+{
+  "personaId": "p126",
+  "sessionCrossed": false,
+  "satisfaction": 4,
+  "wouldRecommend": false,
+  "criteria": {
+    "macrosInRange": 5,
+    "worksEndToEnd": 7,
+    "mealsAreGood": 3,
+    "affordableAdjustable": 7,
+    "tasty": 4
+  },
+  "allergenRespect": { "ok": true, "leaks": [] },
+  "delights": [
+    "It admitted when it couldn't hit a number instead of quietly missing: snack 2 came with 'Tried 5 recipe(s) for this slot, none fit within tolerance - closest was \"Turkey & Swiss Roll-Ups\" (landed 168 kcal vs a 142 target).' I would rather be told 26 kcal than have it hidden.",
+    "'Turkey & Swiss Roll-Ups' is exactly right for my job - 6 min prep, 27.2 g protein, 168 kcal, 3.3 g fat. I can build that at 5am and eat it in the van.",
+    "The totals actually land: 1,432 kcal against my 1,399 target (+33), 126 g protein (1.68 g/kg), and fat at only 25% of calories - which is the low-fat shape I asked for. Nothing with shellfish, fish, pork, sesame or soy in any of the 17 ingredients."
+  ],
+  "defects": [
+    {
+      "what": "My biggest meal was called 'Classic Eggs & Broccoli with Potato' and told me to 'Cook the eggs.', but the ingredient was 245 g of 'flax eggs' - and the app's own food record says its numbers belong to a different food entirely. The 33.4 g protein it credited me was fiction; real flax-and-water is roughly 6 g protein and 14 g fat.",
+      "snippet": "\"name\":\"flax eggs\" ... \"protein\":10.7,\"fat\":0 ... \"dataQuality\":\"exception:provenance-cleared - carried fdcId 747997 (\\\"Eggs, Grade A, Large, egg white\\\"), whose description does not denote this food; this row's macros are that record's values verbatim and are therefore NOT this food's numbers\""
+    },
+    {
+      "what": "You do not cook cottage cheese. This same instruction appeared in my first meal AND in the replacement I swapped in, so it is not a one-off typo.",
+      "snippet": "\"steps\":[\"Cook the cottage cheese.\",\"Serve over quinoa with bell peppers.\"]"
+    },
+    {
+      "what": "The 'Aussie Burgers' recipe still has unfinished placeholder lines shipped as instructions, interleaved with the real ones.",
+      "snippet": "\"steps\":[\"step 1\",\"Make the burgers: Tip the meat into a bowl...\",\"step 2\",\"Sort out your ingredients...\",\"step 3\""
+    },
+    {
+      "what": "That same burger recipe tells me to make four burgers and serve them with sides and wine that are nowhere in my 364 kcal slot - I was given 90 g of mince. On a cut day that reads like an invitation to eat three times my portion.",
+      "snippet": "\"Divide into four with your hands and shape into burgers.\" ... \"serve immediately with a big green salad and chips.\""
+    },
+    {
+      "what": "A second ingredient in my day carries the same admitted data problem - the dip in my burger is priced off plain sour cream.",
+      "snippet": "\"name\":\"Soured cream and chive dip\" ... \"exception:provenance-cleared - carried fdcId 171257 (\\\"Cream, sour, cultured\\\"), whose description does not denote this food\""
+    },
+    {
+      "what": "Every food I checked has empty allergen fields, including the deli meat - and packaged deli turkey is one of the most common places hidden soy shows up. My soy and sesame walls are being kept by matching words in names, with no allergen data behind them. Nothing leaked today, but nothing would have caught it if it had.",
+      "snippet": "\"name\":\"Turkey breast, low salt, prepackaged or deli, luncheon meat\" ... \"allergenTags\":null,\"mayContain\":null"
+    },
+    {
+      "what": "After the swap I have cottage cheese in two of three meals (200 g + 145 g) - and cottage cheese again was the top-scoring alternate it offered me at 99%. It does not seem to notice repeats inside one day.",
+      "snippet": "meal 1 'High-Protein Cottage Cheese & Bell Peppers with Quinoa' / meal 3 'High-Protein Cottage Cheese & Bell Peppers with Lentil Pasta'"
+    },
+    {
+      "what": "I asked for a single day and got one dated three days in the past, so it is not the day I am about to eat.",
+      "snippet": "\"startDate\":\"2026-07-27\" with every slot on \"dayOfWeek\":2"
+    },
+    {
+      "what": "My profile says I am 43% body fat at 181 cm / 74.7 kg, which is not remotely me, and that guess drags the calorie maths down. 1,399 kcal for a woman my height pulling wire all day and lifting three times a week is brutal - and it set that aggressive rate without my having acknowledged it.",
+      "snippet": "\"bodyFatPct\":43,\"bodyFatSource\":\"visual-estimate\" ... \"targetKcal\":1399 ... \"rateAcknowledged\":false"
+    },
+    {
+      "what": "Swapping a meal failed the obvious way first - sending the alternate's recipe id was rejected, and I had to hand back the entire ingredient list it had just given me.",
+      "snippet": "{\"error\":\"a slot needs at least one ingredient\"}"
+    }
+  ],
+  "followUp": {
+    "action": "I would not eat a dish called 'Classic Eggs' that is really 245 g of flax slurry, so I asked for alternates on that slot and swapped one in.",
+    "endpoint": "POST /api/plans/cms6x14a303bdwlw0urwldf8x/slots/cms6x14a703bjwlw0m1nvll5y/alternates then PUT .../apply",
+    "status": 200,
+    "howItWent": "Alternates came back fast with three real options, all clean of my allergens, the best at 99% match - and the swap held at 426 kcal / 34 g protein / 9.9 g fat, which is better and leaner than what it replaced. Two gripes: the apply call 400'd with 'a slot needs at least one ingredient' until I resent the whole ingredient list, and the 99% pick was cottage cheese again when I already had cottage cheese at breakfast, plus it still says 'Cook the cottage cheese.'"
+  },
+  "verdict": "The numbers land, my allergies were respected, and the swap worked - but a dish sold to me as eggs was really flax with another food's macros pasted on, two recipes tell me to cook cottage cheese, and one still has 'step 1' in the instructions, so I do not trust the plate even where I trust the arithmetic."
+}

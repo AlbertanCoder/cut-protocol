@@ -1,0 +1,3538 @@
+{
+ "persona": {
+  "idx": 229,
+  "id": "p229",
+  "tier": "EASY",
+  "displayName": "retail cashier, 56",
+  "story": "retail cashier, 56, male, 187 cm / 72.8 kg (BMI 20.8), cut at 1 lb/wk, vegan diet, avoiding gluten, shellfish, fish, low-carb, 5 meals + 1 snacks, wants a full week",
+  "profile": {
+   "sex": "M",
+   "age": 56,
+   "heightCm": 187,
+   "startWeightKg": 72.8,
+   "goalWeightKg": 58,
+   "occupationKey": "cashier",
+   "trainingStyle": "cardio",
+   "minutesPerSession": 25,
+   "sessionsPerWeek": 2,
+   "rateLbPerWeek": 1,
+   "dietaryStyle": "vegan",
+   "excludedFoods": [
+    "gluten",
+    "shellfish",
+    "fish"
+   ],
+   "mealsPerDay": 5,
+   "snacksPerDay": 1,
+   "unitPref": "metric",
+   "cuisinePreferences": [
+    "american",
+    "indian"
+   ],
+   "goalWeightAcknowledged": true
+  },
+  "filters": {
+   "cuisines": [
+    "american",
+    "indian"
+   ]
+  },
+  "horizon": "week",
+  "walls": [
+   "gluten",
+   "shellfish",
+   "fish"
+  ],
+  "freeTextExclusions": [],
+  "dietaryStyle": "vegan",
+  "bmi": 20.8,
+  "goalKind": "cut",
+  "macroStyle": "low-carb",
+  "requestedButUnsupported": [
+   "wanted a low-carb split without full keto; carbs are the leftover after LBM-derived protein and fat, and only dietaryStyle:\"keto\" changes that"
+  ],
+  "goalBmi": 16.6,
+  "tupleKey": "[\"EASY\",\"M\",56,187,72.8,58,\"cashier\",\"cardio\",1,\"vegan\",[\"fish\",\"gluten\",\"shellfish\"],5,1,\"low-carb\",\"week\",null,null,null,null,null]"
+ },
+ "request": {
+  "horizon": "week",
+  "filters": {
+   "cuisines": [
+    "american",
+    "indian"
+   ]
+  }
+ },
+ "profileResponse": {
+  "id": "cms6x1ue305njwlw0n0g4oreu",
+  "userId": "cms6x1txl0067wl2o70cppi9q",
+  "sex": "M",
+  "age": 56,
+  "heightCm": 187,
+  "bodyFatPct": 0,
+  "bodyFatSource": null,
+  "occupationKey": "cashier",
+  "activityOverride": null,
+  "sessionsPerWeek": 2,
+  "trainingStyle": "cardio",
+  "minutesPerSession": 25,
+  "startWeightKg": 72.8,
+  "goalWeightKg": 58,
+  "startDate": "2026-07-29",
+  "unitPref": "metric",
+  "rateLbPerWeek": 1,
+  "rateAcknowledged": false,
+  "floorKcal": null,
+  "excludedFormulas": [],
+  "targetKcal": 1709,
+  "mealsPerDay": 5,
+  "snacksPerDay": 1,
+  "excludedFoods": [
+   "gluten",
+   "shellfish",
+   "fish"
+  ],
+  "dietaryStyle": "vegan",
+  "cuisinePreferences": [
+   "american",
+   "indian"
+  ],
+  "mealPreferencesNote": null,
+  "maxPrepMin": null,
+  "budgetTier": null,
+  "allowBatch": null,
+  "maxComplexity": null,
+  "adaptiveTdee": true,
+  "proteinPriorityMode": false,
+  "updatedAt": "2026-07-30T20:34:12.387Z"
+ },
+ "generate": {
+  "status": 200,
+  "ms": 692,
+  "body": {
+   "id": "cms7z1vp304q7wlgw2hqcmrnt",
+   "userId": "cms6x1txl0067wl2o70cppi9q",
+   "startDate": "2026-07-27",
+   "createdAt": "2026-07-30T20:34:13.048Z",
+   "slots": [
+    {
+     "id": "cms7z1vp504q9wlgw7husrxx5",
+     "planId": "cms7z1vp304q7wlgw2hqcmrnt",
+     "dayOfWeek": 0,
+     "slotType": "meal",
+     "slotIndex": 0,
+     "recipeId": "cmrul79uk004owl80v1qay4ta",
+     "proteinScale": 0.7,
+     "sidesScale": 0.5,
+     "ingredients": [
+      {
+       "foodId": "cmrj2tapd00htwlwsd6ggixb6",
+       "name": "Tofu",
+       "role": "protein",
+       "grams": 140
+      },
+      {
+       "foodId": "cmrevpcn2000ewl5gmlyzu0vd",
+       "name": "White rice, cooked",
+       "role": "carb",
+       "grams": 55
+      },
+      {
+       "foodId": "cmrg8zxar000lwli0qy2ovmx4",
+       "name": "Onion",
+       "role": "veg",
+       "grams": 30
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 330.1,
+     "protein": 26.035,
+     "fat": 17.403,
+     "carb": 22.094,
+     "warning": "Tried 8 recipe(s) for this slot, none fit within tolerance — closest was \"High-Protein Tofu & Onions with Rice\" (landed 330 kcal vs a 282 target).",
+     "locked": false,
+     "recipe": {
+      "id": "cmrul79uk004owl80v1qay4ta",
+      "name": "High-Protein Tofu & Onions with Rice",
+      "description": null,
+      "steps": [
+       "Cook the tofu.",
+       "Serve over white rice with onions."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 500,
+      "protein": 38.23,
+      "fat": 22.83,
+      "carb": 41.96400000000001,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 2.96,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:45:29.757Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z1vp604qbwlgwqefpdala",
+     "planId": "cms7z1vp304q7wlgw2hqcmrnt",
+     "dayOfWeek": 0,
+     "slotType": "meal",
+     "slotIndex": 1,
+     "recipeId": "cmrul4e4s0036wl680eke6rsx",
+     "proteinScale": 0.76,
+     "sidesScale": 0.5,
+     "ingredients": [
+      {
+       "foodId": "cmrj2tapd00htwlwsd6ggixb6",
+       "name": "Tofu",
+       "role": "protein",
+       "grams": 150
+      },
+      {
+       "foodId": "cmrj2t88z0087wlwsmsmchxzb",
+       "name": "Quinoa",
+       "role": "carb",
+       "grams": 55
+      },
+      {
+       "foodId": "cmrg8zxar000lwli0qy2ovmx4",
+       "name": "Onion",
+       "role": "veg",
+       "grams": 30
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 339,
+     "protein": 28.7,
+     "fat": 19.166,
+     "carb": 18.687,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrul4e4s0036wl680eke6rsx",
+      "name": "High-Protein Tofu & Onions with Quinoa",
+      "description": null,
+      "steps": [
+       "Cook the tofu.",
+       "Serve over quinoa with onions."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 489,
+      "protein": 40.1,
+      "fat": 24.612,
+      "carb": 34.594,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 3.73,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:43:15.340Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z1vp704qdwlgw5xl9t7k8",
+     "planId": "cms7z1vp304q7wlgw2hqcmrnt",
+     "dayOfWeek": 0,
+     "slotType": "meal",
+     "slotIndex": 2,
+     "recipeId": "cmrul4e3g0010wl68z63se003",
+     "proteinScale": 0.82,
+     "sidesScale": 0.56,
+     "ingredients": [
+      {
+       "foodId": "cmrukzae20001wlbwgdjqlh3f",
+       "name": "Textured vegetable protein, dry",
+       "role": "protein",
+       "grams": 45
+      },
+      {
+       "foodId": "cmrj2t7fb004fwlws8ezof2dp",
+       "name": "Russet Potato",
+       "role": "carb",
+       "grams": 85
+      },
+      {
+       "foodId": "cmrj2t6na000ywlws9jek4w4z",
+       "name": "Broccoli",
+       "role": "veg",
+       "grams": 60
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 292.85,
+     "protein": 27.1775,
+     "fat": 5.7645,
+     "carb": 35.452,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrul4e3g0010wl68z63se003",
+      "name": "High-Protein TVP & Broccoli with Potato",
+      "description": null,
+      "steps": [
+       "Cook the tvp.",
+       "Serve over potato with broccoli."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 403.1,
+      "protein": 35.372,
+      "fat": 6.119,
+      "carb": 55.49699999999999,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 1.9,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:43:15.292Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z1vp804qfwlgw61f3pnms",
+     "planId": "cms7z1vp304q7wlgw2hqcmrnt",
+     "dayOfWeek": 0,
+     "slotType": "meal",
+     "slotIndex": 3,
+     "recipeId": "cmrujhgxr000owlbolur7lecj",
+     "proteinScale": 0.73,
+     "sidesScale": 0.5,
+     "ingredients": [
+      {
+       "foodId": "cmrj2tapd00htwlwsd6ggixb6",
+       "name": "Tofu",
+       "role": "protein",
+       "grams": 145
+      },
+      {
+       "foodId": "cmrj2t6na000ywlws9jek4w4z",
+       "name": "Broccoli",
+       "role": "veg",
+       "grams": 60
+      },
+      {
+       "foodId": "cmrevpcn2000ewl5gmlyzu0vd",
+       "name": "White rice, cooked",
+       "role": "carb",
+       "grams": 75
+      },
+      {
+       "foodId": "cmrj2t6xc0028wlwszh51pa6i",
+       "name": "Sesame Seed Oil",
+       "role": "fat",
+       "grams": 4
+      }
+     ],
+     "kcal": 360.26,
+     "protein": 28.652,
+     "fat": 17.073,
+     "carb": 28.793,
+     "warning": "Tried 8 recipe(s) for this slot, none fit within tolerance — closest was \"Tofu & Broccoli Stir-Fry\" (landed 360 kcal vs a 293 target).",
+     "locked": false,
+     "recipe": {
+      "id": "cmrujhgxr000owlbolur7lecj",
+      "name": "Tofu & Broccoli Stir-Fry",
+      "description": null,
+      "steps": [
+       "Crisp the tofu.",
+       "Stir-fry with broccoli, serve over rice."
+      ],
+      "slotType": "meal",
+      "cuisine": "asian",
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 590.92,
+      "protein": 41.734,
+      "fat": 26.298,
+      "carb": 55.084,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 3.69,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T10:57:26.271Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z1vub04qhwlgwsuf4697q",
+     "planId": "cms7z1vp304q7wlgw2hqcmrnt",
+     "dayOfWeek": 0,
+     "slotType": "meal",
+     "slotIndex": 4,
+     "recipeId": "cmrul79tg002uwl80f5k10o5u",
+     "proteinScale": 1.02,
+     "sidesScale": 0.5,
+     "ingredients": [
+      {
+       "foodId": "cmrj2tclc00pqwlws0vlepf5r",
+       "name": "Tempeh, cooked",
+       "role": "protein",
+       "grams": 165
+      },
+      {
+       "foodId": "cmrj2t88z0087wlwsmsmchxzb",
+       "name": "Quinoa",
+       "role": "carb",
+       "grams": 55
+      },
+      {
+       "foodId": "cmrevpcnl000jwl5gnqnk630b",
+       "name": "Cucumber",
+       "role": "veg",
+       "grams": 45
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 432.3,
+     "protein": 36.1805,
+     "fat": 23.948,
+     "carb": 25.227,
+     "warning": "Tried 8 recipe(s) for this slot, none fit within tolerance — closest was \"High-Protein Tempeh & Cucumber with Quinoa\" (landed 432 kcal vs a 287 target).",
+     "locked": false,
+     "recipe": {
+      "id": "cmrul79tg002uwl80f5k10o5u",
+      "name": "High-Protein Tempeh & Cucumber with Quinoa",
+      "description": null,
+      "steps": [
+       "Cook the tempeh.",
+       "Serve over quinoa with cucumber."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 493.2,
+      "protein": 37.85100000000001,
+      "fat": 24.536,
+      "carb": 37.53400000000001,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 4.42,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:45:29.716Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z1vuc04qjwlgwzzh763ox",
+     "planId": "cms7z1vp304q7wlgw2hqcmrnt",
+     "dayOfWeek": 0,
+     "slotType": "snack",
+     "slotIndex": 0,
+     "recipeId": "cms7pjmjn002nwlbky6jaa8pr",
+     "proteinScale": 0.76,
+     "sidesScale": 0.5,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t8130077wlws41hxskn2",
+       "name": "Chickpeas",
+       "role": "protein",
+       "grams": 90
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 4
+      },
+      {
+       "foodId": "cmrj2t6jp000iwlwsli2ckg55",
+       "name": "Paprika",
+       "role": "other",
+       "grams": 2
+      }
+     ],
+     "kcal": 231.54,
+     "protein": 7.689000000000001,
+     "fat": 12.277,
+     "carb": 24.03,
+     "warning": "Tried 3 recipe(s) for this slot, none fit within tolerance — closest was \"Roasted Chickpeas with Paprika\" (landed 232 kcal vs a 88 target).",
+     "locked": false,
+     "recipe": {
+      "id": "cms7pjmjn002nwlbky6jaa8pr",
+      "name": "Roasted Chickpeas with Paprika",
+      "description": null,
+      "steps": [
+       "Dry the chickpeas thoroughly — wet ones steam instead of crisping.",
+       "Toss with oil and paprika and roast at 200C for 25 minutes, shaking once."
+      ],
+      "slotType": "snack",
+      "cuisine": "mediterranean",
+      "prepTimeMin": 30,
+      "source": "curated",
+      "mealCategory": null,
+      "kcal": 321.84,
+      "protein": 10.158,
+      "fat": 17.95,
+      "carb": 31.68,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": null,
+      "difficulty": 1,
+      "filterProvenance": null,
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-30T16:08:04.836Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z1vud04qlwlgw992dqlif",
+     "planId": "cms7z1vp304q7wlgw2hqcmrnt",
+     "dayOfWeek": 1,
+     "slotType": "meal",
+     "slotIndex": 0,
+     "recipeId": "cmrul4e3b000uwl68bghko61o",
+     "proteinScale": 0.75,
+     "sidesScale": 0.65,
+     "ingredients": [
+      {
+       "foodId": "cmrukzae20001wlbwgdjqlh3f",
+       "name": "Textured vegetable protein, dry",
+       "role": "protein",
+       "grams": 40
+      },
+      {
+       "foodId": "cmrj2t88z0087wlwsmsmchxzb",
+       "name": "Quinoa",
+       "role": "carb",
+       "grams": 70
+      },
+      {
+       "foodId": "cmrg8zxar000lwli0qy2ovmx4",
+       "name": "Onion",
+       "role": "veg",
+       "grams": 40
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      },
+      {
+       "foodId": "cmrj2tapd00htwlwsd6ggixb6",
+       "name": "Tofu",
+       "role": "protein",
+       "grams": 40,
+       "adjuster": true
+      }
+     ],
+     "kcal": 334.6,
+     "protein": 31.24000000000001,
+     "fat": 10.272,
+     "carb": 31.758,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrul4e3b000uwl68bghko61o",
+      "name": "High-Protein TVP & Onions with Quinoa",
+      "description": null,
+      "steps": [
+       "Cook the tvp.",
+       "Serve over quinoa with onions."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 382.5,
+      "protein": 34.1,
+      "fat": 7.7,
+      "carb": 45.5,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 2.1,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:43:15.288Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z1vue04qnwlgwb0ftyv53",
+     "planId": "cms7z1vp304q7wlgw2hqcmrnt",
+     "dayOfWeek": 1,
+     "slotType": "meal",
+     "slotIndex": 1,
+     "recipeId": "cmrujhgz1002swlboxyyd77qg",
+     "proteinScale": 0.81,
+     "sidesScale": 0.5,
+     "ingredients": [
+      {
+       "foodId": "cmrj2tapd00htwlwsd6ggixb6",
+       "name": "Tofu",
+       "role": "protein",
+       "grams": 145
+      },
+      {
+       "foodId": "cmrevpcn2000ewl5gmlyzu0vd",
+       "name": "White rice, cooked",
+       "role": "carb",
+       "grams": 80
+      },
+      {
+       "foodId": "cmrevpcnh000iwl5gh2zjhyqe",
+       "name": "Bell peppers",
+       "role": "veg",
+       "grams": 40
+      },
+      {
+       "foodId": "cmrj2t95b00bxwlwsoefzd8s1",
+       "name": "Cashew Nuts",
+       "role": "fat",
+       "grams": 10
+      }
+     ],
+     "kcal": 378.4999999999999,
+     "protein": 29.385,
+     "fat": 16.894,
+     "carb": 32.46100000000001,
+     "warning": "Tried 8 recipe(s) for this slot, none fit within tolerance — closest was \"Cashew Tofu Rice Bowl\" (landed 378 kcal vs a 315 target).",
+     "locked": false,
+     "recipe": {
+      "id": "cmrujhgz1002swlboxyyd77qg",
+      "name": "Cashew Tofu Rice Bowl",
+      "description": null,
+      "steps": [
+       "Pan-fry tofu.",
+       "Toss with peppers and cashews over rice."
+      ],
+      "slotType": "meal",
+      "cuisine": "asian",
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 598.6,
+      "protein": 39.74,
+      "fat": 24.196,
+      "carb": 61.864,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 3.6,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T10:57:26.317Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z1vue04qrwlgwsm8vx9zx",
+     "planId": "cms7z1vp304q7wlgw2hqcmrnt",
+     "dayOfWeek": 1,
+     "slotType": "meal",
+     "slotIndex": 2,
+     "recipeId": "cmrul79us0050wl8097ky9fit",
+     "proteinScale": 0.76,
+     "sidesScale": 0.5,
+     "ingredients": [
+      {
+       "foodId": "cmrj2tapd00htwlwsd6ggixb6",
+       "name": "Tofu",
+       "role": "protein",
+       "grams": 150
+      },
+      {
+       "foodId": "cmrj2t88z0087wlwsmsmchxzb",
+       "name": "Quinoa",
+       "role": "carb",
+       "grams": 55
+      },
+      {
+       "foodId": "cmrevpcnl000jwl5gnqnk630b",
+       "name": "Cucumber",
+       "role": "veg",
+       "grams": 45
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 331.5,
+     "protein": 28.6355,
+     "fat": 19.208,
+     "carb": 16.857,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrul79us0050wl8097ky9fit",
+      "name": "High-Protein Tofu & Cucumber with Quinoa",
+      "description": null,
+      "steps": [
+       "Cook the tofu.",
+       "Serve over quinoa with cucumber."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 474,
+      "protein": 39.971,
+      "fat": 24.696,
+      "carb": 30.934,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 3.94,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:45:29.764Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z1vuf04qtwlgw0au1m34f",
+     "planId": "cms7z1vp304q7wlgw2hqcmrnt",
+     "dayOfWeek": 1,
+     "slotType": "meal",
+     "slotIndex": 3,
+     "recipeId": "cmrul79sr001owl80dqc054hi",
+     "proteinScale": 0.89,
+     "sidesScale": 0.51,
+     "ingredients": [
+      {
+       "foodId": "cmrukzae20001wlbwgdjqlh3f",
+       "name": "Textured vegetable protein, dry",
+       "role": "protein",
+       "grams": 50
+      },
+      {
+       "foodId": "cmrevpcn2000ewl5gmlyzu0vd",
+       "name": "White rice, cooked",
+       "role": "carb",
+       "grams": 55
+      },
+      {
+       "foodId": "cmrevpcnl000jwl5gnqnk630b",
+       "name": "Cucumber",
+       "role": "veg",
+       "grams": 45
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 286,
+     "protein": 27.7505,
+     "fat": 5.737,
+     "carb": 31.372,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrul79sr001owl80dqc054hi",
+      "name": "High-Protein TVP & Cucumber with Rice",
+      "description": null,
+      "steps": [
+       "Cook the tvp.",
+       "Serve over white rice with cucumber."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 378.5,
+      "protein": 32.101,
+      "fat": 6.024,
+      "carb": 49.24400000000001,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 1.54,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:45:29.692Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z1vug04qvwlgwa564kmgx",
+     "planId": "cms7z1vp304q7wlgw2hqcmrnt",
+     "dayOfWeek": 1,
+     "slotType": "meal",
+     "slotIndex": 4,
+     "recipeId": "cmrul1dpj000owlk41m8hxi3g",
+     "proteinScale": 1,
+     "sidesScale": 0.58,
+     "ingredients": [
+      {
+       "foodId": "cmrukzae20001wlbwgdjqlh3f",
+       "name": "Textured vegetable protein, dry",
+       "role": "protein",
+       "grams": 55
+      },
+      {
+       "foodId": "cmrevpcn2000ewl5gmlyzu0vd",
+       "name": "White rice, cooked",
+       "role": "carb",
+       "grams": 65
+      },
+      {
+       "foodId": "cmrevpcnh000iwl5gh2zjhyqe",
+       "name": "Bell peppers",
+       "role": "veg",
+       "grams": 45
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 324.95,
+     "protein": 30.805,
+     "fat": 5.88,
+     "carb": 37.40000000000001,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrul1dpj000owlk41m8hxi3g",
+      "name": "High-Protein TVP & Bell Peppers with Rice",
+      "description": null,
+      "steps": [
+       "Cook the tvp.",
+       "Serve over white rice with bell peppers."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 394.3,
+      "protein": 32.4,
+      "fat": 6.1,
+      "carb": 52.1,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 1.7,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:40:54.824Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z1vug04qxwlgw8ca35h7o",
+     "planId": "cms7z1vp304q7wlgw2hqcmrnt",
+     "dayOfWeek": 1,
+     "slotType": "snack",
+     "slotIndex": 0,
+     "recipeId": "cms7pjmk1002wwlbknnq20wmp",
+     "proteinScale": 0.5,
+     "sidesScale": 0.5,
+     "ingredients": [
+      {
+       "foodId": "cmrviina7090twl1khugx9t9d",
+       "name": "Apple, dried",
+       "role": "carb",
+       "grams": 75
+      },
+      {
+       "foodId": "cmrviin3307r2wl1kd0jwa0ft",
+       "name": "Almond butter",
+       "role": "fat",
+       "grams": 15
+      }
+     ],
+     "kcal": 278.4,
+     "protein": 3.8025,
+     "fat": 8.145,
+     "carb": 52.59,
+     "warning": "Tried 3 recipe(s) for this slot, none fit within tolerance — closest was \"Apple with Almond Butter\" (landed 278 kcal vs a 111 target; delivered 4g protein vs a 11g target).",
+     "locked": false,
+     "recipe": {
+      "id": "cms7pjmk1002wwlbknnq20wmp",
+      "name": "Apple with Almond Butter",
+      "description": null,
+      "steps": [
+       "Slice the apple.",
+       "Serve with the almond butter for dipping."
+      ],
+      "slotType": "snack",
+      "cuisine": "american",
+      "prepTimeMin": 3,
+      "source": "curated",
+      "mealCategory": null,
+      "kcal": 556.8,
+      "protein": 7.605,
+      "fat": 16.29,
+      "carb": 105.18,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": null,
+      "difficulty": 1,
+      "filterProvenance": null,
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-30T16:08:04.850Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z1vuh04qzwlgwp7bbe8mq",
+     "planId": "cms7z1vp304q7wlgw2hqcmrnt",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 0,
+     "recipeId": "cmrul79sv001uwl80m4kyr7ig",
+     "proteinScale": 0.74,
+     "sidesScale": 0.73,
+     "ingredients": [
+      {
+       "foodId": "cmrukzae20001wlbwgdjqlh3f",
+       "name": "Textured vegetable protein, dry",
+       "role": "protein",
+       "grams": 40
+      },
+      {
+       "foodId": "cmrj2t88z0087wlwsmsmchxzb",
+       "name": "Quinoa",
+       "role": "carb",
+       "grams": 80
+      },
+      {
+       "foodId": "cmrevpcnl000jwl5gnqnk630b",
+       "name": "Cucumber",
+       "role": "veg",
+       "grams": 65
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 279.5,
+     "protein": 24.7035,
+     "fat": 7.04,
+     "carb": 30.444,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrul79sv001uwl80m4kyr7ig",
+      "name": "High-Protein TVP & Cucumber with Quinoa",
+      "description": null,
+      "steps": [
+       "Cook the tvp.",
+       "Serve over quinoa with cucumber."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 367.5,
+      "protein": 33.971,
+      "fat": 7.806,
+      "carb": 41.874,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 2.31,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:45:29.695Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z1vuh04r1wlgwwlb90xgf",
+     "planId": "cms7z1vp304q7wlgw2hqcmrnt",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 1,
+     "recipeId": "cmrul4e4s0036wl680eke6rsx",
+     "proteinScale": 0.75,
+     "sidesScale": 0.5,
+     "ingredients": [
+      {
+       "foodId": "cmrj2tapd00htwlwsd6ggixb6",
+       "name": "Tofu",
+       "role": "protein",
+       "grams": 150
+      },
+      {
+       "foodId": "cmrj2t88z0087wlwsmsmchxzb",
+       "name": "Quinoa",
+       "role": "carb",
+       "grams": 55
+      },
+      {
+       "foodId": "cmrg8zxar000lwli0qy2ovmx4",
+       "name": "Onion",
+       "role": "veg",
+       "grams": 30
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 339,
+     "protein": 28.7,
+     "fat": 19.166,
+     "carb": 18.687,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrul4e4s0036wl680eke6rsx",
+      "name": "High-Protein Tofu & Onions with Quinoa",
+      "description": null,
+      "steps": [
+       "Cook the tofu.",
+       "Serve over quinoa with onions."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 489,
+      "protein": 40.1,
+      "fat": 24.612,
+      "carb": 34.594,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 3.73,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:43:15.340Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z1vui04r3wlgwu7xiiztk",
+     "planId": "cms7z1vp304q7wlgw2hqcmrnt",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 2,
+     "recipeId": "cmrul79t20026wl80wuogryrp",
+     "proteinScale": 0.86,
+     "sidesScale": 0.63,
+     "ingredients": [
+      {
+       "foodId": "cmrukzae20001wlbwgdjqlh3f",
+       "name": "Textured vegetable protein, dry",
+       "role": "protein",
+       "grams": 45
+      },
+      {
+       "foodId": "cmrj2t7fb004fwlws8ezof2dp",
+       "name": "Russet Potato",
+       "role": "carb",
+       "grams": 95
+      },
+      {
+       "foodId": "cmrevpcnh000iwl5gh2zjhyqe",
+       "name": "Bell peppers",
+       "role": "veg",
+       "grams": 50
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 299.25,
+     "protein": 26.3985,
+     "fat": 5.7235,
+     "carb": 36.83,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrul79t20026wl80wuogryrp",
+      "name": "High-Protein TVP & Bell Peppers with Potato",
+      "description": null,
+      "steps": [
+       "Cook the tvp.",
+       "Serve over potato with bell peppers."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 393.8000000000001,
+      "protein": 33.345,
+      "fat": 5.985,
+      "carb": 53.39999999999999,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 1.82,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:45:29.702Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z1vui04r5wlgwuvejyuxi",
+     "planId": "cms7z1vp304q7wlgw2hqcmrnt",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 3,
+     "recipeId": "cmrul79uo004uwl8016sm2siz",
+     "proteinScale": 0.79,
+     "sidesScale": 0.5,
+     "ingredients": [
+      {
+       "foodId": "cmrj2tapd00htwlwsd6ggixb6",
+       "name": "Tofu",
+       "role": "protein",
+       "grams": 155
+      },
+      {
+       "foodId": "cmrevpcn2000ewl5gmlyzu0vd",
+       "name": "White rice, cooked",
+       "role": "carb",
+       "grams": 55
+      },
+      {
+       "foodId": "cmrevpcnl000jwl5gnqnk630b",
+       "name": "Cucumber",
+       "role": "veg",
+       "grams": 45
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 344.2,
+     "protein": 28.5655,
+     "fat": 18.753,
+     "carb": 20.681,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrul79uo004uwl8016sm2siz",
+      "name": "High-Protein Tofu & Cucumber with Rice",
+      "description": null,
+      "steps": [
+       "Cook the tofu.",
+       "Serve over white rice with cucumber."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 485,
+      "protein": 38.101,
+      "fat": 22.914,
+      "carb": 38.30400000000001,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 3.17,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:45:29.761Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z1vuj04r7wlgwmgvnjryd",
+     "planId": "cms7z1vp304q7wlgw2hqcmrnt",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 4,
+     "recipeId": "cmrj2ucsg08pewlws564i92mo",
+     "proteinScale": 2,
+     "sidesScale": 2,
+     "ingredients": [
+      {
+       "foodId": "cmrevpcnl000jwl5gnqnk630b",
+       "name": "Cucumber",
+       "role": "veg",
+       "grams": 200
+      },
+      {
+       "foodId": "cmrj2t6gd0003wlwss7jf3wzf",
+       "name": "Salt",
+       "role": null,
+       "grams": 1
+      },
+      {
+       "foodId": "cmrj2t6xc0028wlwszh51pa6i",
+       "name": "Sesame Seed Oil",
+       "role": "fat",
+       "grams": 9
+      },
+      {
+       "foodId": "cmrj2t7su0066wlwsdhqirahi",
+       "name": "Rice Vinegar",
+       "role": "carb",
+       "grams": 25
+      },
+      {
+       "foodId": "cmrj2t7ix004wwlws9hj2ol5a",
+       "name": "Basil Leaves",
+       "role": null,
+       "grams": 600
+      },
+      {
+       "foodId": "cmrj2tbo100ljwlwsobbhocj4",
+       "name": "Red Chilli Flakes",
+       "role": null,
+       "grams": 2
+      },
+      {
+       "foodId": "cmrj2t8b2008hwlws22k4btzf",
+       "name": "Sesame Seed",
+       "role": "carb",
+       "grams": 6
+      }
+     ],
+     "kcal": 286.9,
+     "protein": 21.783,
+     "fat": 16.6012,
+     "carb": 23.07550000000001,
+     "warning": "Tried 8 recipe(s) for this slot, none fit within tolerance — closest was \"Sesame Cucumber Salad\" (delivered 22g protein vs a 32g target).",
+     "locked": false,
+     "recipe": {
+      "id": "cmrj2ucsg08pewlws564i92mo",
+      "name": "Sesame Cucumber Salad",
+      "description": null,
+      "steps": [
+       "Prep the cucumbers:",
+       "Peel the cucumbers. Cut them into quarters, lengthwise. (If the seeds are bitter, scrape out the seeds and discard.) Cut the cucumbers again, crosswise, into 1/2-inch thick pieces.",
+       "Toss the salad:",
+       "Place cucumbers into a serving bowl. Sprinkle with salt. Toss with sesame oil, seasoned rice vinegar, basil (if using), and chili flakes. Sprinkle with toasted sesame seeds if using."
+      ],
+      "slotType": "meal",
+      "cuisine": "western-comfort",
+      "prepTimeMin": 23,
+      "source": "themealdb-import",
+      "mealCategory": null,
+      "kcal": 143.9695,
+      "protein": 10.9042,
+      "fat": 8.441479999999999,
+      "carb": 11.381575,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 7.24,
+      "difficulty": 3,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-13T10:26:06.017Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z1vuk04r9wlgwcydwusop",
+     "planId": "cms7z1vp304q7wlgw2hqcmrnt",
+     "dayOfWeek": 2,
+     "slotType": "snack",
+     "slotIndex": 0,
+     "recipeId": "cms7pjmk80030wlbkykqmlu59",
+     "proteinScale": 2,
+     "sidesScale": 0.5,
+     "ingredients": [
+      {
+       "foodId": "cmrj2tbvx00mewlws4x17n3as",
+       "name": "Hummus",
+       "role": "protein",
+       "grams": 180
+      },
+      {
+       "foodId": "cmrj2t6oc0013wlwsjzlwoln2",
+       "name": "Carrots",
+       "role": "veg",
+       "grams": 45
+      },
+      {
+       "foodId": "cmrevpcnl000jwl5gnqnk630b",
+       "name": "Cucumber",
+       "role": "veg",
+       "grams": 45
+      }
+     ],
+     "kcal": 449.55,
+     "protein": 14.688,
+     "fat": 32.22,
+     "carb": 32.283,
+     "warning": "Tried 1 recipe(s) for this slot, none fit within tolerance — closest was \"Hummus with Carrot and Cucumber\" (landed 450 kcal vs a 160 target).",
+     "locked": false,
+     "recipe": {
+      "id": "cms7pjmk80030wlbkykqmlu59",
+      "name": "Hummus with Carrot and Cucumber",
+      "description": null,
+      "steps": [
+       "Cut the carrot and cucumber into batons.",
+       "Serve with the hummus."
+      ],
+      "slotType": "snack",
+      "cuisine": "mediterranean",
+      "prepTimeMin": 5,
+      "source": "curated",
+      "mealCategory": null,
+      "kcal": 259.2,
+      "protein": 8.370000000000001,
+      "fat": 16.38,
+      "carb": 24.066,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": null,
+      "difficulty": 1,
+      "filterProvenance": null,
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-30T16:08:04.856Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z1vuk04rbwlgwzpizr8ak",
+     "planId": "cms7z1vp304q7wlgw2hqcmrnt",
+     "dayOfWeek": 3,
+     "slotType": "meal",
+     "slotIndex": 0,
+     "recipeId": "cmrul79sy0020wl801ylpoo3w",
+     "proteinScale": 0.7,
+     "sidesScale": 0.67,
+     "ingredients": [
+      {
+       "foodId": "cmrukzae20001wlbwgdjqlh3f",
+       "name": "Textured vegetable protein, dry",
+       "role": "protein",
+       "grams": 40
+      },
+      {
+       "foodId": "cmrj2t88z0087wlwsmsmchxzb",
+       "name": "Quinoa",
+       "role": "carb",
+       "grams": 75
+      },
+      {
+       "foodId": "cmrj2t6na000ywlws9jek4w4z",
+       "name": "Broccoli",
+       "role": "veg",
+       "grams": 75
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 290.25,
+     "protein": 26.0275,
+     "fat": 7.095,
+     "carb": 32.6775,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrul79sy0020wl801ylpoo3w",
+      "name": "High-Protein TVP & Broccoli with Quinoa",
+      "description": null,
+      "steps": [
+       "Cook the tvp.",
+       "Serve over quinoa with broccoli."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 392.6,
+      "protein": 36.3,
+      "fat": 8,
+      "carb": 46.8,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 2.55,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:45:29.699Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z1vul04rdwlgw0nxeiufx",
+     "planId": "cms7z1vp304q7wlgw2hqcmrnt",
+     "dayOfWeek": 3,
+     "slotType": "meal",
+     "slotIndex": 1,
+     "recipeId": "cmrul4e4w003cwl68cvoxeq0l",
+     "proteinScale": 0.74,
+     "sidesScale": 0.5,
+     "ingredients": [
+      {
+       "foodId": "cmrj2tapd00htwlwsd6ggixb6",
+       "name": "Tofu",
+       "role": "protein",
+       "grams": 145
+      },
+      {
+       "foodId": "cmrj2t7fb004fwlws8ezof2dp",
+       "name": "Russet Potato",
+       "role": "carb",
+       "grams": 75
+      },
+      {
+       "foodId": "cmrj2t6na000ywlws9jek4w4z",
+       "name": "Broccoli",
+       "role": "veg",
+       "grams": 55
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 342.1,
+     "protein": 28.471,
+     "fat": 17.9285,
+     "carb": 23.5295,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrul4e4w003cwl68cvoxeq0l",
+      "name": "High-Protein Tofu & Broccoli with Potato",
+      "description": null,
+      "steps": [
+       "Cook the tofu.",
+       "Serve over potato with broccoli."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 509.6,
+      "protein": 41.372,
+      "fat": 23.009,
+      "carb": 44.557,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 3.53,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:43:15.344Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z1vul04rfwlgw8o3ldgh0",
+     "planId": "cms7z1vp304q7wlgw2hqcmrnt",
+     "dayOfWeek": 3,
+     "slotType": "meal",
+     "slotIndex": 2,
+     "recipeId": "cmrul79t20026wl80wuogryrp",
+     "proteinScale": 0.85,
+     "sidesScale": 0.62,
+     "ingredients": [
+      {
+       "foodId": "cmrukzae20001wlbwgdjqlh3f",
+       "name": "Textured vegetable protein, dry",
+       "role": "protein",
+       "grams": 45
+      },
+      {
+       "foodId": "cmrj2t7fb004fwlws8ezof2dp",
+       "name": "Russet Potato",
+       "role": "carb",
+       "grams": 95
+      },
+      {
+       "foodId": "cmrevpcnh000iwl5gh2zjhyqe",
+       "name": "Bell peppers",
+       "role": "veg",
+       "grams": 50
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 299.25,
+     "protein": 26.3985,
+     "fat": 5.7235,
+     "carb": 36.83,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrul79t20026wl80wuogryrp",
+      "name": "High-Protein TVP & Bell Peppers with Potato",
+      "description": null,
+      "steps": [
+       "Cook the tvp.",
+       "Serve over potato with bell peppers."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 393.8000000000001,
+      "protein": 33.345,
+      "fat": 5.985,
+      "carb": 53.39999999999999,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 1.82,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:45:29.702Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z1vum04rhwlgwna5p2xtc",
+     "planId": "cms7z1vp304q7wlgw2hqcmrnt",
+     "dayOfWeek": 3,
+     "slotType": "meal",
+     "slotIndex": 3,
+     "recipeId": "cmrul4e40001uwl68g1hx9pwt",
+     "proteinScale": 0.85,
+     "sidesScale": 0.5,
+     "ingredients": [
+      {
+       "foodId": "cmrj2tclc00pqwlws0vlepf5r",
+       "name": "Tempeh, cooked",
+       "role": "protein",
+       "grams": 135
+      },
+      {
+       "foodId": "cmrj2t7fb004fwlws8ezof2dp",
+       "name": "Russet Potato",
+       "role": "carb",
+       "grams": 75
+      },
+      {
+       "foodId": "cmrg8zxar000lwli0qy2ovmx4",
+       "name": "Onion",
+       "role": "veg",
+       "grams": 30
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 387.45,
+     "protein": 29.7075,
+     "fat": 19.7075,
+     "carb": 29.11199999999999,
+     "warning": "Tried 8 recipe(s) for this slot, none fit within tolerance — closest was \"High-Protein Tempeh & Onions with Potato\" (landed 387 kcal vs a 305 target).",
+     "locked": false,
+     "recipe": {
+      "id": "cmrul4e40001uwl68g1hx9pwt",
+      "name": "High-Protein Tempeh & Onions with Potato",
+      "description": null,
+      "steps": [
+       "Cook the tempeh.",
+       "Serve over potato with onions."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 518.7,
+      "protein": 37.085,
+      "fat": 22.535,
+      "carb": 49.86399999999999,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 3.56,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:43:15.313Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z1vum04rjwlgwzha1ri0i",
+     "planId": "cms7z1vp304q7wlgw2hqcmrnt",
+     "dayOfWeek": 3,
+     "slotType": "meal",
+     "slotIndex": 4,
+     "recipeId": "cmrul79us0050wl8097ky9fit",
+     "proteinScale": 0.89,
+     "sidesScale": 0.5,
+     "ingredients": [
+      {
+       "foodId": "cmrj2tapd00htwlwsd6ggixb6",
+       "name": "Tofu",
+       "role": "protein",
+       "grams": 180
+      },
+      {
+       "foodId": "cmrj2t88z0087wlwsmsmchxzb",
+       "name": "Quinoa",
+       "role": "carb",
+       "grams": 55
+      },
+      {
+       "foodId": "cmrevpcnl000jwl5gnqnk630b",
+       "name": "Cucumber",
+       "role": "veg",
+       "grams": 45
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 374.7,
+     "protein": 33.82550000000001,
+     "fat": 21.824,
+     "carb": 17.691,
+     "warning": "Tried 8 recipe(s) for this slot, none fit within tolerance — closest was \"High-Protein Tofu & Cucumber with Quinoa\" (landed 375 kcal vs a 289 target).",
+     "locked": false,
+     "recipe": {
+      "id": "cmrul79us0050wl8097ky9fit",
+      "name": "High-Protein Tofu & Cucumber with Quinoa",
+      "description": null,
+      "steps": [
+       "Cook the tofu.",
+       "Serve over quinoa with cucumber."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 474,
+      "protein": 39.971,
+      "fat": 24.696,
+      "carb": 30.934,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 3.94,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:45:29.764Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z1vun04rlwlgw6cz72334",
+     "planId": "cms7z1vp304q7wlgw2hqcmrnt",
+     "dayOfWeek": 3,
+     "slotType": "snack",
+     "slotIndex": 0,
+     "recipeId": "cms7pjmjn002nwlbky6jaa8pr",
+     "proteinScale": 0.76,
+     "sidesScale": 0.5,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t8130077wlws41hxskn2",
+       "name": "Chickpeas",
+       "role": "protein",
+       "grams": 90
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 4
+      },
+      {
+       "foodId": "cmrj2t6jp000iwlwsli2ckg55",
+       "name": "Paprika",
+       "role": "other",
+       "grams": 2
+      }
+     ],
+     "kcal": 231.54,
+     "protein": 7.689000000000001,
+     "fat": 12.277,
+     "carb": 24.03,
+     "warning": "Tried 3 recipe(s) for this slot, none fit within tolerance — closest was \"Roasted Chickpeas with Paprika\" (landed 232 kcal vs a 88 target).",
+     "locked": false,
+     "recipe": {
+      "id": "cms7pjmjn002nwlbky6jaa8pr",
+      "name": "Roasted Chickpeas with Paprika",
+      "description": null,
+      "steps": [
+       "Dry the chickpeas thoroughly — wet ones steam instead of crisping.",
+       "Toss with oil and paprika and roast at 200C for 25 minutes, shaking once."
+      ],
+      "slotType": "snack",
+      "cuisine": "mediterranean",
+      "prepTimeMin": 30,
+      "source": "curated",
+      "mealCategory": null,
+      "kcal": 321.84,
+      "protein": 10.158,
+      "fat": 17.95,
+      "carb": 31.68,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": null,
+      "difficulty": 1,
+      "filterProvenance": null,
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-30T16:08:04.836Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z1vun04rnwlgwfryh69h2",
+     "planId": "cms7z1vp304q7wlgw2hqcmrnt",
+     "dayOfWeek": 4,
+     "slotType": "meal",
+     "slotIndex": 0,
+     "recipeId": "cmrul79sr001owl80dqc054hi",
+     "proteinScale": 0.8,
+     "sidesScale": 0.6,
+     "ingredients": [
+      {
+       "foodId": "cmrukzae20001wlbwgdjqlh3f",
+       "name": "Textured vegetable protein, dry",
+       "role": "protein",
+       "grams": 45
+      },
+      {
+       "foodId": "cmrevpcn2000ewl5gmlyzu0vd",
+       "name": "White rice, cooked",
+       "role": "carb",
+       "grams": 65
+      },
+      {
+       "foodId": "cmrevpcnl000jwl5gnqnk630b",
+       "name": "Cucumber",
+       "role": "veg",
+       "grams": 55
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 283.5,
+     "protein": 25.4795,
+     "fat": 5.733,
+     "carb": 32.888,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrul79sr001owl80dqc054hi",
+      "name": "High-Protein TVP & Cucumber with Rice",
+      "description": null,
+      "steps": [
+       "Cook the tvp.",
+       "Serve over white rice with cucumber."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 378.5,
+      "protein": 32.101,
+      "fat": 6.024,
+      "carb": 49.24400000000001,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 1.54,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:45:29.692Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z1vuo04rpwlgwlv10g70o",
+     "planId": "cms7z1vp304q7wlgw2hqcmrnt",
+     "dayOfWeek": 4,
+     "slotType": "meal",
+     "slotIndex": 1,
+     "recipeId": "cmrujhgxr000owlbolur7lecj",
+     "proteinScale": 0.73,
+     "sidesScale": 0.5,
+     "ingredients": [
+      {
+       "foodId": "cmrj2tapd00htwlwsd6ggixb6",
+       "name": "Tofu",
+       "role": "protein",
+       "grams": 145
+      },
+      {
+       "foodId": "cmrj2t6na000ywlws9jek4w4z",
+       "name": "Broccoli",
+       "role": "veg",
+       "grams": 60
+      },
+      {
+       "foodId": "cmrevpcn2000ewl5gmlyzu0vd",
+       "name": "White rice, cooked",
+       "role": "carb",
+       "grams": 75
+      },
+      {
+       "foodId": "cmrj2t6xc0028wlwszh51pa6i",
+       "name": "Sesame Seed Oil",
+       "role": "fat",
+       "grams": 4
+      }
+     ],
+     "kcal": 360.26,
+     "protein": 28.652,
+     "fat": 17.073,
+     "carb": 28.793,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrujhgxr000owlbolur7lecj",
+      "name": "Tofu & Broccoli Stir-Fry",
+      "description": null,
+      "steps": [
+       "Crisp the tofu.",
+       "Stir-fry with broccoli, serve over rice."
+      ],
+      "slotType": "meal",
+      "cuisine": "asian",
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 590.92,
+      "protein": 41.734,
+      "fat": 26.298,
+      "carb": 55.084,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 3.69,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T10:57:26.271Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z1vuo04rrwlgwz91l64cn",
+     "planId": "cms7z1vp304q7wlgw2hqcmrnt",
+     "dayOfWeek": 4,
+     "slotType": "meal",
+     "slotIndex": 2,
+     "recipeId": "cmrul4e4o0030wl688m8mtuxy",
+     "proteinScale": 0.77,
+     "sidesScale": 0.5,
+     "ingredients": [
+      {
+       "foodId": "cmrj2tapd00htwlwsd6ggixb6",
+       "name": "Tofu",
+       "role": "protein",
+       "grams": 155
+      },
+      {
+       "foodId": "cmrevpcn2000ewl5gmlyzu0vd",
+       "name": "White rice, cooked",
+       "role": "carb",
+       "grams": 55
+      },
+      {
+       "foodId": "cmrevpcnh000iwl5gh2zjhyqe",
+       "name": "Bell peppers",
+       "role": "veg",
+       "grams": 40
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 352.1,
+     "protein": 28.7,
+     "fat": 18.801,
+     "carb": 22.109,
+     "warning": "Tried 8 recipe(s) for this slot, none fit within tolerance — closest was \"High-Protein Tofu & Bell Peppers with Rice\" (landed 352 kcal vs a 300 target).",
+     "locked": false,
+     "recipe": {
+      "id": "cmrul4e4o0030wl688m8mtuxy",
+      "name": "High-Protein Tofu & Bell Peppers with Rice",
+      "description": null,
+      "steps": [
+       "Cook the tofu.",
+       "Serve over white rice with bell peppers."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 500.8,
+      "protein": 38.37,
+      "fat": 23.01,
+      "carb": 41.16000000000001,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 3.33,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:43:15.337Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z1vup04rtwlgwezilrpuy",
+     "planId": "cms7z1vp304q7wlgw2hqcmrnt",
+     "dayOfWeek": 4,
+     "slotType": "meal",
+     "slotIndex": 3,
+     "recipeId": "cmrj2ucsg08pewlws564i92mo",
+     "proteinScale": 1.94,
+     "sidesScale": 1.94,
+     "ingredients": [
+      {
+       "foodId": "cmrevpcnl000jwl5gnqnk630b",
+       "name": "Cucumber",
+       "role": "veg",
+       "grams": 195
+      },
+      {
+       "foodId": "cmrj2t6gd0003wlwss7jf3wzf",
+       "name": "Salt",
+       "role": null,
+       "grams": 1
+      },
+      {
+       "foodId": "cmrj2t6xc0028wlwszh51pa6i",
+       "name": "Sesame Seed Oil",
+       "role": "fat",
+       "grams": 9
+      },
+      {
+       "foodId": "cmrj2t7su0066wlwsdhqirahi",
+       "name": "Rice Vinegar",
+       "role": "carb",
+       "grams": 20
+      },
+      {
+       "foodId": "cmrj2t7ix004wwlws9hj2ol5a",
+       "name": "Basil Leaves",
+       "role": null,
+       "grams": 585
+      },
+      {
+       "foodId": "cmrj2tbo100ljwlwsobbhocj4",
+       "name": "Red Chilli Flakes",
+       "role": null,
+       "grams": 2
+      },
+      {
+       "foodId": "cmrj2t8b2008hwlws22k4btzf",
+       "name": "Sesame Seed",
+       "role": "carb",
+       "grams": 6
+      }
+     ],
+     "kcal": 282.05,
+     "protein": 21.2735,
+     "fat": 16.5032,
+     "carb": 22.525,
+     "warning": "Tried 8 recipe(s) for this slot, none fit within tolerance — closest was \"Sesame Cucumber Salad\" (delivered 21g protein vs a 27g target).",
+     "locked": false,
+     "recipe": {
+      "id": "cmrj2ucsg08pewlws564i92mo",
+      "name": "Sesame Cucumber Salad",
+      "description": null,
+      "steps": [
+       "Prep the cucumbers:",
+       "Peel the cucumbers. Cut them into quarters, lengthwise. (If the seeds are bitter, scrape out the seeds and discard.) Cut the cucumbers again, crosswise, into 1/2-inch thick pieces.",
+       "Toss the salad:",
+       "Place cucumbers into a serving bowl. Sprinkle with salt. Toss with sesame oil, seasoned rice vinegar, basil (if using), and chili flakes. Sprinkle with toasted sesame seeds if using."
+      ],
+      "slotType": "meal",
+      "cuisine": "western-comfort",
+      "prepTimeMin": 23,
+      "source": "themealdb-import",
+      "mealCategory": null,
+      "kcal": 143.9695,
+      "protein": 10.9042,
+      "fat": 8.441479999999999,
+      "carb": 11.381575,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 7.24,
+      "difficulty": 3,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-13T10:26:06.017Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z1vup04rvwlgw66l4iss9",
+     "planId": "cms7z1vp304q7wlgw2hqcmrnt",
+     "dayOfWeek": 4,
+     "slotType": "meal",
+     "slotIndex": 4,
+     "recipeId": "cmrul1dpn000uwlk46n19bre7",
+     "proteinScale": 1.18,
+     "sidesScale": 0.5,
+     "ingredients": [
+      {
+       "foodId": "cmrj2tclc00pqwlws0vlepf5r",
+       "name": "Tempeh, cooked",
+       "role": "protein",
+       "grams": 190
+      },
+      {
+       "foodId": "cmrj2t88z0087wlwsmsmchxzb",
+       "name": "Quinoa",
+       "role": "carb",
+       "grams": 55
+      },
+      {
+       "foodId": "cmrg8zxar000lwli0qy2ovmx4",
+       "name": "Onion",
+       "role": "veg",
+       "grams": 30
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 487.8,
+     "protein": 41.32,
+     "fat": 26.606,
+     "carb": 28.957,
+     "warning": "Tried 8 recipe(s) for this slot, none fit within tolerance — closest was \"High-Protein Tempeh & Onions with Quinoa\" (landed 488 kcal vs a 320 target).",
+     "locked": false,
+     "recipe": {
+      "id": "cmrul1dpn000uwlk46n19bre7",
+      "name": "High-Protein Tempeh & Onions with Quinoa",
+      "description": null,
+      "steps": [
+       "Cook the tempeh.",
+       "Serve over quinoa with onions."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 508.2,
+      "protein": 38,
+      "fat": 24.5,
+      "carb": 41.2,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 4.21,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:40:54.828Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z1vuq04rxwlgw4npv73ih",
+     "planId": "cms7z1vp304q7wlgw2hqcmrnt",
+     "dayOfWeek": 4,
+     "slotType": "snack",
+     "slotIndex": 0,
+     "recipeId": "cms7pjmju002swlbktsksba9r",
+     "proteinScale": 0.5,
+     "sidesScale": 0.5,
+     "ingredients": [
+      {
+       "foodId": "cmrukzae50002wlbwr9bq9oa7",
+       "name": "Edamame, shelled, cooked",
+       "role": "protein",
+       "grams": 75
+      },
+      {
+       "foodId": "cmrj2t6gd0003wlwss7jf3wzf",
+       "name": "Salt",
+       "role": "other",
+       "grams": 1
+      }
+     ],
+     "kcal": 90.75,
+     "protein": 9,
+     "fat": 3.75,
+     "carb": 6.75,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cms7pjmju002swlbktsksba9r",
+      "name": "Edamame with Sea Salt",
+      "description": null,
+      "steps": [
+       "Boil the pods 4 minutes in well-salted water.",
+       "Drain and salt again while hot. Eat from the pod."
+      ],
+      "slotType": "snack",
+      "cuisine": "japanese",
+      "prepTimeMin": 6,
+      "source": "curated",
+      "mealCategory": null,
+      "kcal": 181.5,
+      "protein": 18,
+      "fat": 7.5,
+      "carb": 13.5,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": null,
+      "difficulty": 1,
+      "filterProvenance": null,
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-30T16:08:04.843Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z1vuq04rzwlgwss900oix",
+     "planId": "cms7z1vp304q7wlgw2hqcmrnt",
+     "dayOfWeek": 5,
+     "slotType": "meal",
+     "slotIndex": 0,
+     "recipeId": "cmrul4e4w003cwl68cvoxeq0l",
+     "proteinScale": 0.68,
+     "sidesScale": 0.5,
+     "ingredients": [
+      {
+       "foodId": "cmrj2tapd00htwlwsd6ggixb6",
+       "name": "Tofu",
+       "role": "protein",
+       "grams": 135
+      },
+      {
+       "foodId": "cmrj2t7fb004fwlws8ezof2dp",
+       "name": "Russet Potato",
+       "role": "carb",
+       "grams": 75
+      },
+      {
+       "foodId": "cmrj2t6na000ywlws9jek4w4z",
+       "name": "Broccoli",
+       "role": "veg",
+       "grams": 55
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 327.7,
+     "protein": 26.741,
+     "fat": 17.0565,
+     "carb": 23.2515,
+     "warning": "Tried 8 recipe(s) for this slot, none fit within tolerance — closest was \"High-Protein Tofu & Broccoli with Potato\" (landed 328 kcal vs a 282 target).",
+     "locked": false,
+     "recipe": {
+      "id": "cmrul4e4w003cwl68cvoxeq0l",
+      "name": "High-Protein Tofu & Broccoli with Potato",
+      "description": null,
+      "steps": [
+       "Cook the tofu.",
+       "Serve over potato with broccoli."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 509.6,
+      "protein": 41.372,
+      "fat": 23.009,
+      "carb": 44.557,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 3.53,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:43:15.344Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z1vur04s1wlgw5nx8lp99",
+     "planId": "cms7z1vp304q7wlgw2hqcmrnt",
+     "dayOfWeek": 5,
+     "slotType": "meal",
+     "slotIndex": 1,
+     "recipeId": "cmrul4e3b000uwl68bghko61o",
+     "proteinScale": 0.82,
+     "sidesScale": 0.7,
+     "ingredients": [
+      {
+       "foodId": "cmrukzae20001wlbwgdjqlh3f",
+       "name": "Textured vegetable protein, dry",
+       "role": "protein",
+       "grams": 45
+      },
+      {
+       "foodId": "cmrj2t88z0087wlwsmsmchxzb",
+       "name": "Quinoa",
+       "role": "carb",
+       "grams": 75
+      },
+      {
+       "foodId": "cmrg8zxar000lwli0qy2ovmx4",
+       "name": "Onion",
+       "role": "veg",
+       "grams": 40
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 299.5,
+     "protein": 27.14,
+     "fat": 6.93,
+     "carb": 33.211,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrul4e3b000uwl68bghko61o",
+      "name": "High-Protein TVP & Onions with Quinoa",
+      "description": null,
+      "steps": [
+       "Cook the tvp.",
+       "Serve over quinoa with onions."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 382.5,
+      "protein": 34.1,
+      "fat": 7.7,
+      "carb": 45.5,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 2.1,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:43:15.288Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z1vus04s3wlgwa51b2i4u",
+     "planId": "cms7z1vp304q7wlgw2hqcmrnt",
+     "dayOfWeek": 5,
+     "slotType": "meal",
+     "slotIndex": 2,
+     "recipeId": "cmrul79so001iwl80gh84rze6",
+     "proteinScale": 0.89,
+     "sidesScale": 0.59,
+     "ingredients": [
+      {
+       "foodId": "cmrukzae20001wlbwgdjqlh3f",
+       "name": "Textured vegetable protein, dry",
+       "role": "protein",
+       "grams": 50
+      },
+      {
+       "foodId": "cmrevpcn2000ewl5gmlyzu0vd",
+       "name": "White rice, cooked",
+       "role": "carb",
+       "grams": 65
+      },
+      {
+       "foodId": "cmrg8zxar000lwli0qy2ovmx4",
+       "name": "Onion",
+       "role": "veg",
+       "grams": 35
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 308.5,
+     "protein": 28.14,
+     "fat": 5.73,
+     "carb": 36.469,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrul79so001iwl80gh84rze6",
+      "name": "High-Protein TVP & Onions with Rice",
+      "description": null,
+      "steps": [
+       "Cook the tvp.",
+       "Serve over white rice with onions."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 393.5,
+      "protein": 32.2,
+      "fat": 5.9,
+      "carb": 52.9,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 1.33,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:45:29.688Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z1vus04s5wlgw2cbwuubu",
+     "planId": "cms7z1vp304q7wlgw2hqcmrnt",
+     "dayOfWeek": 5,
+     "slotType": "meal",
+     "slotIndex": 3,
+     "recipeId": "cmrul79uo004uwl8016sm2siz",
+     "proteinScale": 0.76,
+     "sidesScale": 0.5,
+     "ingredients": [
+      {
+       "foodId": "cmrj2tapd00htwlwsd6ggixb6",
+       "name": "Tofu",
+       "role": "protein",
+       "grams": 150
+      },
+      {
+       "foodId": "cmrevpcn2000ewl5gmlyzu0vd",
+       "name": "White rice, cooked",
+       "role": "carb",
+       "grams": 55
+      },
+      {
+       "foodId": "cmrevpcnl000jwl5gnqnk630b",
+       "name": "Cucumber",
+       "role": "veg",
+       "grams": 45
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 337,
+     "protein": 27.7005,
+     "fat": 18.317,
+     "carb": 20.542,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrul79uo004uwl8016sm2siz",
+      "name": "High-Protein Tofu & Cucumber with Rice",
+      "description": null,
+      "steps": [
+       "Cook the tofu.",
+       "Serve over white rice with cucumber."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 485,
+      "protein": 38.101,
+      "fat": 22.914,
+      "carb": 38.30400000000001,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 3.17,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:45:29.761Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z1vut04s7wlgwz87lbmsu",
+     "planId": "cms7z1vp304q7wlgw2hqcmrnt",
+     "dayOfWeek": 5,
+     "slotType": "meal",
+     "slotIndex": 4,
+     "recipeId": "cmrul79sv001uwl80m4kyr7ig",
+     "proteinScale": 0.94,
+     "sidesScale": 0.77,
+     "ingredients": [
+      {
+       "foodId": "cmrukzae20001wlbwgdjqlh3f",
+       "name": "Textured vegetable protein, dry",
+       "role": "protein",
+       "grams": 50
+      },
+      {
+       "foodId": "cmrj2t88z0087wlwsmsmchxzb",
+       "name": "Quinoa",
+       "role": "carb",
+       "grams": 85
+      },
+      {
+       "foodId": "cmrevpcnl000jwl5gnqnk630b",
+       "name": "Cucumber",
+       "role": "veg",
+       "grams": 70
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 319,
+     "protein": 30.153,
+     "fat": 7.244,
+     "carb": 34.617,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrul79sv001uwl80m4kyr7ig",
+      "name": "High-Protein TVP & Cucumber with Quinoa",
+      "description": null,
+      "steps": [
+       "Cook the tvp.",
+       "Serve over quinoa with cucumber."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 367.5,
+      "protein": 33.971,
+      "fat": 7.806,
+      "carb": 41.874,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 2.31,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:45:29.695Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z1vut04s9wlgwcioyesai",
+     "planId": "cms7z1vp304q7wlgw2hqcmrnt",
+     "dayOfWeek": 5,
+     "slotType": "snack",
+     "slotIndex": 0,
+     "recipeId": "cms7pjmju002swlbktsksba9r",
+     "proteinScale": 0.65,
+     "sidesScale": 0.65,
+     "ingredients": [
+      {
+       "foodId": "cmrukzae50002wlbwr9bq9oa7",
+       "name": "Edamame, shelled, cooked",
+       "role": "protein",
+       "grams": 95
+      },
+      {
+       "foodId": "cmrj2t6gd0003wlwss7jf3wzf",
+       "name": "Salt",
+       "role": "other",
+       "grams": 1
+      }
+     ],
+     "kcal": 114.95,
+     "protein": 11.4,
+     "fat": 4.75,
+     "carb": 8.549999999999999,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cms7pjmju002swlbktsksba9r",
+      "name": "Edamame with Sea Salt",
+      "description": null,
+      "steps": [
+       "Boil the pods 4 minutes in well-salted water.",
+       "Drain and salt again while hot. Eat from the pod."
+      ],
+      "slotType": "snack",
+      "cuisine": "japanese",
+      "prepTimeMin": 6,
+      "source": "curated",
+      "mealCategory": null,
+      "kcal": 181.5,
+      "protein": 18,
+      "fat": 7.5,
+      "carb": 13.5,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": null,
+      "difficulty": 1,
+      "filterProvenance": null,
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-30T16:08:04.843Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z1vuu04sbwlgwkfnabzod",
+     "planId": "cms7z1vp304q7wlgw2hqcmrnt",
+     "dayOfWeek": 6,
+     "slotType": "meal",
+     "slotIndex": 0,
+     "recipeId": "cmrul1dpj000owlk41m8hxi3g",
+     "proteinScale": 0.8,
+     "sidesScale": 0.55,
+     "ingredients": [
+      {
+       "foodId": "cmrukzae20001wlbwgdjqlh3f",
+       "name": "Textured vegetable protein, dry",
+       "role": "protein",
+       "grams": 45
+      },
+      {
+       "foodId": "cmrevpcn2000ewl5gmlyzu0vd",
+       "name": "White rice, cooked",
+       "role": "carb",
+       "grams": 60
+      },
+      {
+       "foodId": "cmrevpcnh000iwl5gh2zjhyqe",
+       "name": "Bell peppers",
+       "role": "veg",
+       "grams": 45
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 285.45,
+     "protein": 25.47,
+     "fat": 5.765,
+     "carb": 33,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrul1dpj000owlk41m8hxi3g",
+      "name": "High-Protein TVP & Bell Peppers with Rice",
+      "description": null,
+      "steps": [
+       "Cook the tvp.",
+       "Serve over white rice with bell peppers."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 394.3,
+      "protein": 32.4,
+      "fat": 6.1,
+      "carb": 52.1,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 1.7,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:40:54.824Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z1vuu04sdwlgwuyszrvey",
+     "planId": "cms7z1vp304q7wlgw2hqcmrnt",
+     "dayOfWeek": 6,
+     "slotType": "meal",
+     "slotIndex": 1,
+     "recipeId": "cmrul79sy0020wl801ylpoo3w",
+     "proteinScale": 0.76,
+     "sidesScale": 0.78,
+     "ingredients": [
+      {
+       "foodId": "cmrukzae20001wlbwgdjqlh3f",
+       "name": "Textured vegetable protein, dry",
+       "role": "protein",
+       "grams": 40
+      },
+      {
+       "foodId": "cmrj2t88z0087wlwsmsmchxzb",
+       "name": "Quinoa",
+       "role": "carb",
+       "grams": 85
+      },
+      {
+       "foodId": "cmrj2t6na000ywlws9jek4w4z",
+       "name": "Broccoli",
+       "role": "veg",
+       "grams": 85
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 305.35,
+     "protein": 26.7245,
+     "fat": 7.321,
+     "carb": 35.4345,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrul79sy0020wl801ylpoo3w",
+      "name": "High-Protein TVP & Broccoli with Quinoa",
+      "description": null,
+      "steps": [
+       "Cook the tvp.",
+       "Serve over quinoa with broccoli."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 392.6,
+      "protein": 36.3,
+      "fat": 8,
+      "carb": 46.8,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 2.55,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:45:29.699Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z1vuv04sfwlgw6y2u04sr",
+     "planId": "cms7z1vp304q7wlgw2hqcmrnt",
+     "dayOfWeek": 6,
+     "slotType": "meal",
+     "slotIndex": 2,
+     "recipeId": "cmrul79uz005cwl80egh79sud",
+     "proteinScale": 0.77,
+     "sidesScale": 0.5,
+     "ingredients": [
+      {
+       "foodId": "cmrj2tapd00htwlwsd6ggixb6",
+       "name": "Tofu",
+       "role": "protein",
+       "grams": 155
+      },
+      {
+       "foodId": "cmrj2t7fb004fwlws8ezof2dp",
+       "name": "Russet Potato",
+       "role": "carb",
+       "grams": 75
+      },
+      {
+       "foodId": "cmrevpcnh000iwl5gh2zjhyqe",
+       "name": "Bell peppers",
+       "role": "veg",
+       "grams": 40
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 351.85,
+     "protein": 29.1875,
+     "fat": 18.7335,
+     "carb": 22.759,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrul79uz005cwl80egh79sud",
+      "name": "High-Protein Tofu & Bell Peppers with Potato",
+      "description": null,
+      "steps": [
+       "Cook the tofu.",
+       "Serve over potato with bell peppers."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 500.3,
+      "protein": 39.345,
+      "fat": 22.875,
+      "carb": 42.45999999999999,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 3.45,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:45:29.771Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z1vuw04shwlgwb4yu76g7",
+     "planId": "cms7z1vp304q7wlgw2hqcmrnt",
+     "dayOfWeek": 6,
+     "slotType": "meal",
+     "slotIndex": 3,
+     "recipeId": "cmrul79tr003cwl80ve3i5nmh",
+     "proteinScale": 0.85,
+     "sidesScale": 0.5,
+     "ingredients": [
+      {
+       "foodId": "cmrj2tclc00pqwlws0vlepf5r",
+       "name": "Tempeh, cooked",
+       "role": "protein",
+       "grams": 135
+      },
+      {
+       "foodId": "cmrj2t7fb004fwlws8ezof2dp",
+       "name": "Russet Potato",
+       "role": "carb",
+       "grams": 75
+      },
+      {
+       "foodId": "cmrevpcnh000iwl5gh2zjhyqe",
+       "name": "Bell peppers",
+       "role": "veg",
+       "grams": 40
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 387.85,
+     "protein": 29.7775,
+     "fat": 19.7975,
+     "carb": 28.70999999999999,
+     "warning": "Tried 8 recipe(s) for this slot, none fit within tolerance — closest was \"High-Protein Tempeh & Bell Peppers with Potato\" (landed 388 kcal vs a 301 target).",
+     "locked": false,
+     "recipe": {
+      "id": "cmrul79tr003cwl80ve3i5nmh",
+      "name": "High-Protein Tempeh & Bell Peppers with Potato",
+      "description": null,
+      "steps": [
+       "Cook the tempeh.",
+       "Serve over potato with bell peppers."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 519.5,
+      "protein": 37.225,
+      "fat": 22.715,
+      "carb": 49.05999999999999,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 3.93,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:45:29.728Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z1vuw04sjwlgwa309onpa",
+     "planId": "cms7z1vp304q7wlgw2hqcmrnt",
+     "dayOfWeek": 6,
+     "slotType": "meal",
+     "slotIndex": 4,
+     "recipeId": "cmrul4e470026wl68kyx7r5z9",
+     "proteinScale": 1.47,
+     "sidesScale": 0.5,
+     "ingredients": [
+      {
+       "foodId": "cmrukzae50002wlbwr9bq9oa7",
+       "name": "Edamame, shelled, cooked",
+       "role": "protein",
+       "grams": 265
+      },
+      {
+       "foodId": "cmrevpcn2000ewl5gmlyzu0vd",
+       "name": "White rice, cooked",
+       "role": "carb",
+       "grams": 55
+      },
+      {
+       "foodId": "cmrg8zxar000lwli0qy2ovmx4",
+       "name": "Onion",
+       "role": "veg",
+       "grams": 30
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 449.15,
+     "protein": 33.61499999999999,
+     "fat": 18.445,
+     "carb": 42.052,
+     "warning": "Tried 8 recipe(s) for this slot, none fit within tolerance — closest was \"High-Protein Edamame & Onions with Rice\" (landed 449 kcal vs a 281 target).",
+     "locked": false,
+     "recipe": {
+      "id": "cmrul4e470026wl68kyx7r5z9",
+      "name": "High-Protein Edamame & Onions with Rice",
+      "description": null,
+      "steps": [
+       "Cook the edamame.",
+       "Serve over white rice with onions."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 429.8,
+      "protein": 25.2,
+      "fat": 14.4,
+      "carb": 52.6,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 3.44,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:43:15.319Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z1vux04slwlgwtlvba46q",
+     "planId": "cms7z1vp304q7wlgw2hqcmrnt",
+     "dayOfWeek": 6,
+     "slotType": "snack",
+     "slotIndex": 0,
+     "recipeId": "cms7pjmk1002wwlbknnq20wmp",
+     "proteinScale": 0.5,
+     "sidesScale": 0.5,
+     "ingredients": [
+      {
+       "foodId": "cmrviina7090twl1khugx9t9d",
+       "name": "Apple, dried",
+       "role": "carb",
+       "grams": 75
+      },
+      {
+       "foodId": "cmrviin3307r2wl1kd0jwa0ft",
+       "name": "Almond butter",
+       "role": "fat",
+       "grams": 15
+      }
+     ],
+     "kcal": 278.4,
+     "protein": 3.8025,
+     "fat": 8.145,
+     "carb": 52.59,
+     "warning": "Tried 2 recipe(s) for this slot, none fit within tolerance — closest was \"Apple with Almond Butter\" (landed 278 kcal vs a 88 target; delivered 4g protein vs a 8g target).",
+     "locked": false,
+     "recipe": {
+      "id": "cms7pjmk1002wwlbknnq20wmp",
+      "name": "Apple with Almond Butter",
+      "description": null,
+      "steps": [
+       "Slice the apple.",
+       "Serve with the almond butter for dipping."
+      ],
+      "slotType": "snack",
+      "cuisine": "american",
+      "prepTimeMin": 3,
+      "source": "curated",
+      "mealCategory": null,
+      "kcal": 556.8,
+      "protein": 7.605,
+      "fat": 16.29,
+      "carb": 105.18,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": null,
+      "difficulty": 1,
+      "filterProvenance": null,
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-30T16:08:04.850Z",
+      "createdByUserId": null
+     }
+    }
+   ],
+   "groceryList": null,
+   "meta": {
+    "matchPct": 78,
+    "attempts": 5,
+    "score": {
+     "daysInTolerance": 1,
+     "avgMatch": 78,
+     "days": [
+      {
+       "dayOfWeek": 0,
+       "dayName": "Monday",
+       "matchPct": 81,
+       "totals": {
+        "kcal": 1986,
+        "protein": 154,
+        "fat": 96,
+        "carb": 154
+       },
+       "kcalDeltaPct": 16.2,
+       "proteinShortPct": 0,
+       "fatOk": false,
+       "carbOk": true,
+       "inTolerance": false,
+       "miss": "1,986 kcal vs a 1,709 target — 277 over; 96 g fat vs a 43–51 g range — 45 g over",
+       "unfilledSlots": 0,
+       "warnedSlots": 4,
+       "windowIndex": 0,
+       "dayIndex": 0,
+       "key": "0:0"
+      },
+      {
+       "dayOfWeek": 1,
+       "dayName": "Tuesday",
+       "matchPct": 70,
+       "totals": {
+        "kcal": 1934,
+        "protein": 152,
+        "fat": 66,
+        "carb": 202
+       },
+       "kcalDeltaPct": 13.2,
+       "proteinShortPct": 0,
+       "fatOk": false,
+       "carbOk": false,
+       "inTolerance": false,
+       "miss": "66 g fat vs a 43–51 g range — 15 g over; 202 g carbs vs a 133–157 g range — 45 g over",
+       "unfilledSlots": 0,
+       "warnedSlots": 2,
+       "windowIndex": 0,
+       "dayIndex": 1,
+       "key": "0:1"
+      },
+      {
+       "dayOfWeek": 2,
+       "dayName": "Wednesday",
+       "matchPct": 77,
+       "totals": {
+        "kcal": 1998,
+        "protein": 145,
+        "fat": 100,
+        "carb": 162
+       },
+       "kcalDeltaPct": 16.9,
+       "proteinShortPct": 4.4,
+       "fatOk": false,
+       "carbOk": true,
+       "inTolerance": false,
+       "miss": "1,998 kcal vs a 1,709 target — 289 over; 100 g fat vs a 43–51 g range — 49 g over",
+       "unfilledSlots": 0,
+       "warnedSlots": 2,
+       "windowIndex": 0,
+       "dayIndex": 2,
+       "key": "0:2"
+      },
+      {
+       "dayOfWeek": 3,
+       "dayName": "Thursday",
+       "matchPct": 80,
+       "totals": {
+        "kcal": 1925,
+        "protein": 152,
+        "fat": 85,
+        "carb": 164
+       },
+       "kcalDeltaPct": 12.7,
+       "proteinShortPct": 0,
+       "fatOk": false,
+       "carbOk": true,
+       "inTolerance": false,
+       "miss": "85 g fat vs a 43–51 g range — 34 g over",
+       "unfilledSlots": 0,
+       "warnedSlots": 3,
+       "windowIndex": 0,
+       "dayIndex": 3,
+       "key": "0:3"
+      },
+      {
+       "dayOfWeek": 4,
+       "dayName": "Friday",
+       "matchPct": 84,
+       "totals": {
+        "kcal": 1856,
+        "protein": 154,
+        "fat": 88,
+        "carb": 142
+       },
+       "kcalDeltaPct": 8.6,
+       "proteinShortPct": 0,
+       "fatOk": false,
+       "carbOk": true,
+       "inTolerance": false,
+       "miss": "88 g fat vs a 43–51 g range — 37 g over",
+       "unfilledSlots": 0,
+       "warnedSlots": 3,
+       "windowIndex": 0,
+       "dayIndex": 4,
+       "key": "0:4"
+      },
+      {
+       "dayOfWeek": 5,
+       "dayName": "Saturday",
+       "matchPct": 91,
+       "totals": {
+        "kcal": 1707,
+        "protein": 151,
+        "fat": 60,
+        "carb": 157
+       },
+       "kcalDeltaPct": -0.1,
+       "proteinShortPct": 0.1,
+       "fatOk": true,
+       "carbOk": true,
+       "inTolerance": true,
+       "miss": null,
+       "unfilledSlots": 0,
+       "warnedSlots": 1,
+       "windowIndex": 0,
+       "dayIndex": 5,
+       "key": "0:5"
+      },
+      {
+       "dayOfWeek": 6,
+       "dayName": "Sunday",
+       "matchPct": 66,
+       "totals": {
+        "kcal": 2058,
+        "protein": 149,
+        "fat": 78,
+        "carb": 215
+       },
+       "kcalDeltaPct": 20.4,
+       "proteinShortPct": 1.9,
+       "fatOk": false,
+       "carbOk": false,
+       "inTolerance": false,
+       "miss": "2,058 kcal vs a 1,709 target — 349 over; 78 g fat vs a 43–51 g range — 27 g over; 215 g carbs vs a 133–157 g range — 58 g over",
+       "unfilledSlots": 0,
+       "warnedSlots": 3,
+       "windowIndex": 0,
+       "dayIndex": 6,
+       "key": "0:6"
+      }
+     ],
+     "totalDays": 7
+    },
+    "days": [
+     {
+      "dayOfWeek": 0,
+      "dayName": "Monday",
+      "matchPct": 81,
+      "totals": {
+       "kcal": 1986,
+       "protein": 154,
+       "fat": 96,
+       "carb": 154
+      },
+      "kcalDeltaPct": 16.2,
+      "proteinShortPct": 0,
+      "fatOk": false,
+      "carbOk": true,
+      "inTolerance": false,
+      "miss": "1,986 kcal vs a 1,709 target — 277 over; 96 g fat vs a 43–51 g range — 45 g over",
+      "unfilledSlots": 0,
+      "warnedSlots": 4,
+      "windowIndex": 0,
+      "dayIndex": 0,
+      "key": "0:0"
+     },
+     {
+      "dayOfWeek": 1,
+      "dayName": "Tuesday",
+      "matchPct": 70,
+      "totals": {
+       "kcal": 1934,
+       "protein": 152,
+       "fat": 66,
+       "carb": 202
+      },
+      "kcalDeltaPct": 13.2,
+      "proteinShortPct": 0,
+      "fatOk": false,
+      "carbOk": false,
+      "inTolerance": false,
+      "miss": "66 g fat vs a 43–51 g range — 15 g over; 202 g carbs vs a 133–157 g range — 45 g over",
+      "unfilledSlots": 0,
+      "warnedSlots": 2,
+      "windowIndex": 0,
+      "dayIndex": 1,
+      "key": "0:1"
+     },
+     {
+      "dayOfWeek": 2,
+      "dayName": "Wednesday",
+      "matchPct": 77,
+      "totals": {
+       "kcal": 1998,
+       "protein": 145,
+       "fat": 100,
+       "carb": 162
+      },
+      "kcalDeltaPct": 16.9,
+      "proteinShortPct": 4.4,
+      "fatOk": false,
+      "carbOk": true,
+      "inTolerance": false,
+      "miss": "1,998 kcal vs a 1,709 target — 289 over; 100 g fat vs a 43–51 g range — 49 g over",
+      "unfilledSlots": 0,
+      "warnedSlots": 2,
+      "windowIndex": 0,
+      "dayIndex": 2,
+      "key": "0:2"
+     },
+     {
+      "dayOfWeek": 3,
+      "dayName": "Thursday",
+      "matchPct": 80,
+      "totals": {
+       "kcal": 1925,
+       "protein": 152,
+       "fat": 85,
+       "carb": 164
+      },
+      "kcalDeltaPct": 12.7,
+      "proteinShortPct": 0,
+      "fatOk": false,
+      "carbOk": true,
+      "inTolerance": false,
+      "miss": "85 g fat vs a 43–51 g range — 34 g over",
+      "unfilledSlots": 0,
+      "warnedSlots": 3,
+      "windowIndex": 0,
+      "dayIndex": 3,
+      "key": "0:3"
+     },
+     {
+      "dayOfWeek": 4,
+      "dayName": "Friday",
+      "matchPct": 84,
+      "totals": {
+       "kcal": 1856,
+       "protein": 154,
+       "fat": 88,
+       "carb": 142
+      },
+      "kcalDeltaPct": 8.6,
+      "proteinShortPct": 0,
+      "fatOk": false,
+      "carbOk": true,
+      "inTolerance": false,
+      "miss": "88 g fat vs a 43–51 g range — 37 g over",
+      "unfilledSlots": 0,
+      "warnedSlots": 3,
+      "windowIndex": 0,
+      "dayIndex": 4,
+      "key": "0:4"
+     },
+     {
+      "dayOfWeek": 5,
+      "dayName": "Saturday",
+      "matchPct": 91,
+      "totals": {
+       "kcal": 1707,
+       "protein": 151,
+       "fat": 60,
+       "carb": 157
+      },
+      "kcalDeltaPct": -0.1,
+      "proteinShortPct": 0.1,
+      "fatOk": true,
+      "carbOk": true,
+      "inTolerance": true,
+      "miss": null,
+      "unfilledSlots": 0,
+      "warnedSlots": 1,
+      "windowIndex": 0,
+      "dayIndex": 5,
+      "key": "0:5"
+     },
+     {
+      "dayOfWeek": 6,
+      "dayName": "Sunday",
+      "matchPct": 66,
+      "totals": {
+       "kcal": 2058,
+       "protein": 149,
+       "fat": 78,
+       "carb": 215
+      },
+      "kcalDeltaPct": 20.4,
+      "proteinShortPct": 1.9,
+      "fatOk": false,
+      "carbOk": false,
+      "inTolerance": false,
+      "miss": "2,058 kcal vs a 1,709 target — 349 over; 78 g fat vs a 43–51 g range — 27 g over; 215 g carbs vs a 133–157 g range — 58 g over",
+      "unfilledSlots": 0,
+      "warnedSlots": 3,
+      "windowIndex": 0,
+      "dayIndex": 6,
+      "key": "0:6"
+     }
+    ],
+    "diagnosis": {
+     "feasible": false,
+     "reasons": [
+      "3 day(s) missed the calorie window: within the 0.5–2× portion bounds, the compliant pool's dishes can't stretch/shrink to your slot sizes.",
+      "6 day(s) landed outside your 43–51 g fat range, and 2 day(s) landed outside your 133–157 g carb range — portion scaling moves a dish's calories, not its fat/carb ratio, so the pool's composition is what binds here."
+     ],
+     "suggestions": [
+      "Adjust meals/snacks per day so slot sizes better match the pool's typical dishes, or allow batch-cooking repeats.",
+      "Add (or AI-generate) a few recipes built around the macro you keep missing, or drop the cuisine/protein preference so the solver can reach dishes that carry it."
+     ],
+     "binding": {
+      "key": "macro-composition",
+      "label": "fat in your recipe pool",
+      "detail": "6 of 7 day(s) landed outside your 43-51 g fat range, and 2 of 7 day(s) landed outside your 133-157 g carb range. Portion scaling moves a dish's calories, not its fat/carb ratio, so what binds here is which dishes your rules leave in the pool."
+     }
+    },
+    "poolCounts": {
+     "raw": 910,
+     "afterDiet": 89,
+     "afterPrep": 89,
+     "afterStack": 89,
+     "stackExplain": null
+    },
+    "variety": {
+     "mealEligible": 78,
+     "usableForSlot": 48,
+     "slotKcal": 317,
+     "snackEligible": 4,
+     "weeklyMealSlots": 35,
+     "weeklySnackSlots": 7,
+     "repeatCap": 2,
+     "distinctWeeks": 1.4,
+     "horizonWeeks": 1,
+     "sustainsHorizon": true,
+     "notes": [
+      "1 week: 27 distinct dish(es) across 42 filled slot(s); most-repeated dish appears 2x against a 2x cap for this horizon (2x per week)."
+     ],
+     "horizon": {
+      "weeks": 1,
+      "days": 7,
+      "perWeekCap": 2,
+      "horizonRepeatCap": 2,
+      "mealSlots": 35,
+      "snackSlots": 7,
+      "totalSlots": 42,
+      "distinctFloor": 21,
+      "distinctRecipes": 27,
+      "maxRepeat": 2,
+      "maxRepeatRecipeId": "cmrul4e4s0036wl680eke6rsx",
+      "lockedRepeatsOfMax": 0,
+      "filledSlots": 42,
+      "unfilledSlots": 0,
+      "requiredDistinct": 21,
+      "capHeld": true,
+      "floorHeld": true
+     }
+    },
+    "priorWeeksConsidered": 0,
+    "horizon": {
+     "key": "week",
+     "label": "1 week",
+     "days": 7,
+     "kind": "days",
+     "weeks": 1,
+     "custom": false,
+     "startDate": "2026-07-27",
+     "endDate": "2026-08-02",
+     "startDayOfWeek": 0,
+     "weeksWritten": 1,
+     "solveMs": 11,
+     "weekPlans": [
+      {
+       "startDate": "2026-07-27",
+       "dayIndices": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+       ],
+       "days": 7,
+       "daysInTolerance": 1,
+       "avgMatch": 78,
+       "unfilledSlots": 0,
+       "poolSize": 89
+      }
+     ]
+    }
+   }
+  }
+ }
+}

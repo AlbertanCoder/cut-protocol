@@ -1,0 +1,640 @@
+{
+ "persona": {
+  "idx": 94,
+  "id": "p094",
+  "tier": "EASY",
+  "displayName": "security guard, 42",
+  "story": "security guard, 42, male, 192 cm / 156.2 kg (BMI 42.4), lean bulk at 0.25 lb/wk, pescatarian diet, avoiding tree nut, pork, beef, low-fat, 2 meals + 2 snacks, wants a single day",
+  "profile": {
+   "sex": "M",
+   "age": 42,
+   "heightCm": 192,
+   "startWeightKg": 156.2,
+   "goalWeightKg": 161.6,
+   "occupationKey": "security-guard",
+   "trainingStyle": "weights",
+   "minutesPerSession": 40,
+   "sessionsPerWeek": 3,
+   "rateLbPerWeek": 0.25,
+   "dietaryStyle": null,
+   "excludedFoods": [
+    "tree nuts",
+    "pork",
+    "beef"
+   ],
+   "mealsPerDay": 2,
+   "snacksPerDay": 2,
+   "unitPref": "imperial",
+   "bodyFatPct": 8,
+   "bodyFatSource": "visual-estimate",
+   "cuisinePreferences": [
+    "chinese",
+    "japanese"
+   ]
+  },
+  "filters": {
+   "cuisines": [
+    "chinese",
+    "japanese"
+   ]
+  },
+  "horizon": "day",
+  "walls": [
+   "tree nut",
+   "pork",
+   "beef"
+  ],
+  "freeTextExclusions": [
+   "pork",
+   "beef"
+  ],
+  "dietaryStyle": null,
+  "bmi": 42.4,
+  "goalKind": "lean bulk",
+  "macroStyle": "low-fat",
+  "requestedButUnsupported": [
+   "pescatarian is not one of the 9 dietary styles; expressed instead as walls on pork+beef, which is not the same promise",
+   "wanted a low-fat split; the fat band is fixed at LBM x0.34-0.40 and is not client-settable"
+  ],
+  "tupleKey": "[\"EASY\",\"M\",42,192,156.2,161.6,\"security-guard\",\"weights\",0.25,null,[\"beef\",\"pork\",\"tree nuts\"],2,2,\"low-fat\",\"day\",null,null,null,null,null]"
+ },
+ "request": {
+  "horizon": "day",
+  "filters": {
+   "cuisines": [
+    "chinese",
+    "japanese"
+   ]
+  }
+ },
+ "profileResponse": {
+  "id": "cms6x0vi402jtwlw0j34ghrgr",
+  "userId": "cms6x0vcu002gwl2oi0qclulw",
+  "sex": "M",
+  "age": 42,
+  "heightCm": 192,
+  "bodyFatPct": 8,
+  "bodyFatSource": "visual-estimate",
+  "occupationKey": "security-guard",
+  "activityOverride": null,
+  "sessionsPerWeek": 3,
+  "trainingStyle": "weights",
+  "minutesPerSession": 40,
+  "startWeightKg": 156.2,
+  "goalWeightKg": 161.6,
+  "startDate": "2026-07-29",
+  "unitPref": "imperial",
+  "rateLbPerWeek": 0.25,
+  "rateAcknowledged": false,
+  "floorKcal": null,
+  "excludedFormulas": [],
+  "targetKcal": 3946,
+  "mealsPerDay": 2,
+  "snacksPerDay": 2,
+  "excludedFoods": [
+   "tree nuts",
+   "pork",
+   "beef"
+  ],
+  "dietaryStyle": null,
+  "cuisinePreferences": [
+   "chinese",
+   "japanese"
+  ],
+  "mealPreferencesNote": null,
+  "maxPrepMin": null,
+  "budgetTier": null,
+  "allowBatch": null,
+  "maxComplexity": null,
+  "adaptiveTdee": true,
+  "proteinPriorityMode": false,
+  "updatedAt": "2026-07-30T02:49:40.791Z"
+ },
+ "generate": {
+  "status": 200,
+  "ms": 725,
+  "body": {
+   "id": "cms6x0w3j02mbwlw028tjoi30",
+   "userId": "cms6x0vcu002gwl2oi0qclulw",
+   "startDate": "2026-07-27",
+   "createdAt": "2026-07-30T02:49:41.504Z",
+   "slots": [
+    {
+     "id": "cms6x0w3r02mdwlw0ptf9f17e",
+     "planId": "cms6x0w3j02mbwlw028tjoi30",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 0,
+     "recipeId": "cmrj2u84807p6wlwsltuavhf7",
+     "proteinScale": 1.36,
+     "sidesScale": 1.97,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "carb",
+       "grams": 25
+      },
+      {
+       "foodId": "cmrg8zxar000lwli0qy2ovmx4",
+       "name": "Onion",
+       "role": "veg",
+       "grams": 55
+      },
+      {
+       "foodId": "cmrj2t8nb00a1wlwslv2l5bf2",
+       "name": "Jersey Royal Potatoes",
+       "role": "veg",
+       "grams": 150
+      },
+      {
+       "foodId": "cmrj2t6ft0001wlwstiofk9on",
+       "name": "Garlic",
+       "role": "veg",
+       "grams": 3
+      },
+      {
+       "foodId": "cmrj2t6wp0025wlwsvl5esd2h",
+       "name": "Egg",
+       "role": "protein",
+       "grams": 135
+      },
+      {
+       "foodId": "cmrj2t6h10006wlwslufza94y",
+       "name": "Parsley",
+       "role": null,
+       "grams": 5
+      },
+      {
+       "foodId": "cmrj2tax800iowlwsnqv5ylcj",
+       "name": "Salt Cod",
+       "role": "protein",
+       "grams": 100
+      }
+     ],
+     "kcal": 1229.64,
+     "protein": 118.7121,
+     "fat": 40.9759,
+     "carb": 94.69449999999999,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrj2u84807p6wlwsltuavhf7",
+      "name": "Salt cod tortilla",
+      "description": null,
+      "steps": [
+       "step 1",
+       "Heat half the oil in a frying pan, and sauté the onion over a medium heat until soft and pale gold – this will take about 8 mins. Remove from the pan, set aside, and add the potatoes to the pan. Cook until they are tender but not falling apart, carefully turning every so often. Cover the pan some of the time to help the slices cook through. Add the onions back to the pan along with the garlic and cook for another 4 mins. Tip into a bowl with the eggs, parsley and some seasoning and mix together. Leave to sit for half an hour.",
+       "step 2",
+       "Meanwhile, put the cod in a saucepan and cover with water. Bring up to a simmer. Remove from the heat, cover and leave for 10 mins. Drain, leave to cool and remove the skin and any bones. Break into large flakes and add to the potato and egg mixture.",
+       "step 3",
+       "Heat the rest of the oil in a non-stick frying pan. Pour in the tortilla mix and cook over a medium-low heat until it is just set and coming away from the sides of the pan. You might need to cover it to help the centre set. Be careful not to overcook it. Put a spatula underneath the tortilla every so often to make sure it isn’t sticking. Slide the tortilla onto a plate, then put the pan on top and flip the tortilla into it, uncooked side-down. Cook over a low heat until golden, or grill until just set. Leave to cool a little before serving."
+      ],
+      "slotType": "meal",
+      "cuisine": "western-comfort",
+      "prepTimeMin": 29,
+      "source": "themealdb-import",
+      "mealCategory": null,
+      "kcal": 743.9,
+      "protein": 79.1,
+      "fat": 25.3,
+      "carb": 47.6,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 4.95,
+      "difficulty": 3,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-13T10:25:59.961Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x0w3s02mfwlw02nwqz9le",
+     "planId": "cms6x0w3j02mbwlw028tjoi30",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 1,
+     "recipeId": "cmrj2u60u0785wlws5mxsdqni",
+     "proteinScale": 2,
+     "sidesScale": 2,
+     "ingredients": [
+      {
+       "foodId": "cmrj2tb0x00j2wlwsjzrofelh",
+       "name": "Shrimp",
+       "role": "protein",
+       "grams": 300
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "carb",
+       "grams": 20
+      },
+      {
+       "foodId": "cmrj2tabp00gcwlwspk69j20a",
+       "name": "Dry White Wine",
+       "role": null,
+       "grams": 75
+      },
+      {
+       "foodId": "cmrj2tb1o00j5wlws7706a36s",
+       "name": "Fish Stock",
+       "role": "protein",
+       "grams": 100
+      },
+      {
+       "foodId": "cmrj2tab700gawlwsmp3bxndy",
+       "name": "Fennel",
+       "role": null,
+       "grams": 50
+      },
+      {
+       "foodId": "cmrg8zxar000lwli0qy2ovmx4",
+       "name": "Onion",
+       "role": "veg",
+       "grams": 55
+      },
+      {
+       "foodId": "cmrj2t6ft0001wlwstiofk9on",
+       "name": "Garlic",
+       "role": "veg",
+       "grams": 4
+      },
+      {
+       "foodId": "cmrj2t6t4001pwlwsxeja9565",
+       "name": "Potatoes",
+       "role": "veg",
+       "grams": 85
+      },
+      {
+       "foodId": "cmrj2t8ao008fwlwsygj9bgg1",
+       "name": "Orange",
+       "role": "veg",
+       "grams": 65
+      },
+      {
+       "foodId": "cmrj2t72s002vwlwsw9c3ovn9",
+       "name": "Star Anise",
+       "role": null,
+       "grams": 50
+      },
+      {
+       "foodId": "cmrj2t6qh001dwlws2ramsws8",
+       "name": "Bay Leaf",
+       "role": null,
+       "grams": 1
+      },
+      {
+       "foodId": "cmrj2t80w0076wlwsw1o7e51u",
+       "name": "Harissa Spice",
+       "role": null,
+       "grams": 2
+      },
+      {
+       "foodId": "cmrj2t6pz001bwlwsbarwpyy1",
+       "name": "Tomato Puree",
+       "role": "veg",
+       "grams": 11
+      },
+      {
+       "foodId": "cmrj2tag100gtwlwsn382zemc",
+       "name": "Chopped Tomatoes",
+       "role": "veg",
+       "grams": 200
+      },
+      {
+       "foodId": "cmrj2tb2700j7wlwsq70yyopd",
+       "name": "Mussels",
+       "role": null,
+       "grams": 15
+      },
+      {
+       "foodId": "cmrj2tay100irwlwsiujfz75h",
+       "name": "White Fish",
+       "role": "protein",
+       "grams": 100
+      },
+      {
+       "foodId": "cmrj2t6oj0014wlwsaw8ffg0k",
+       "name": "Thyme",
+       "role": null,
+       "grams": 100
+      },
+      {
+       "foodId": "cmrj2t7dl0047wlwsorfmmmbn",
+       "name": "Bread",
+       "role": "carb",
+       "grams": 50
+      }
+     ],
+     "kcal": 1482.26,
+     "protein": 127.6658,
+     "fat": 48.05685,
+     "carb": 142.5859,
+     "warning": "Tried 5 recipe(s) for this slot, none fit within tolerance — closest was \"Fish Stew with Rouille\" (delivered 128g protein vs a 153g target).",
+     "locked": false,
+     "recipe": {
+      "id": "cmrj2u60u0785wlws5mxsdqni",
+      "name": "Fish Stew with Rouille",
+      "description": null,
+      "steps": [
+       "Twist the heads from the prawns, then peel away the legs and shells, but leave the tails intact. Devein each prawn. Fry the shells in 1 tbsp oil for 5 mins, until dark pink and golden in patches. Add the wine, boil down by two thirds, then pour in the stock. Strain into a jug, discarding the shells.",
+       "Heat the rest of the oil in a deep frying pan or casserole. Add the fennel, onion and garlic, season, then cover and gently cook for 10 mins until softened. Meanwhile, peel the potato and cut into 2cm-ish chunks. Put into a pan of cold water, bring to the boil and cook for 5 mins until almost tender. Drain in a colander.",
+       "Peel a strip of zest from the orange. Put the zest, star anise, bay and ½ tsp harissa into the pan. Fry gently, uncovered, for 5-10 mins, until the vegetables are soft, sweet and golden.",
+       "Stir in the tomato purée, cook for 2 mins, then add the tomatoes and stock. Simmer for 10 mins until the sauce thickens slightly. Season to taste. The sauce can be made ahead, then reheated later in the day. Meantime, scrub the mussels or clams and pull away any stringy beards. Any that are open should be tapped sharply on the worktop – if they don’t close after a few seconds, discard them.",
+       "Reheat the sauce if necessary, then stir the potato, chunks of fish and prawns very gently into the stew. Bring back to the boil, then cover and gently simmer for 3 mins. Scatter the mussels or clams over the stew, then cover and cook for 2 mins more or until the shells have opened wide. Discard any that remain closed. The chunks of fish should flake easily and the prawns should be pink through. Scatter with the thyme leaves.",
+       "To make the quick rouille, stir the rest of the harissa through the mayonnaise. Serve the stew in bowls, topped with spoonfuls of rouille, which will melt into the sauce and enrich it. Have some good bread ready, as you’ll definitely want to mop up the juices."
+      ],
+      "slotType": "meal",
+      "cuisine": "western-comfort",
+      "prepTimeMin": 36,
+      "source": "themealdb-import",
+      "mealCategory": null,
+      "kcal": 744.9,
+      "protein": 63.9,
+      "fat": 24.3,
+      "carb": 71.6,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 14.46,
+      "difficulty": 6,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-13T10:25:57.246Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x0w3u02mhwlw04kqssj25",
+     "planId": "cms6x0w3j02mbwlw028tjoi30",
+     "dayOfWeek": 2,
+     "slotType": "snack",
+     "slotIndex": 0,
+     "recipeId": "cmrevpcyh004gwl5gnni3al5q",
+     "proteinScale": 1.11,
+     "sidesScale": 1.11,
+     "ingredients": [
+      {
+       "foodId": "cmrevpcmu000cwl5gfljr1l1o",
+       "name": "Bacon, cooked",
+       "role": "protein",
+       "grams": 65
+      },
+      {
+       "foodId": "cmrevpcm50006wl5g2u2bcspd",
+       "name": "Eggs, whole, cooked",
+       "role": "protein",
+       "grams": 165
+      }
+     ],
+     "kcal": 607.4000000000001,
+     "protein": 45.5,
+     "fat": 45.45,
+     "carb": 2.725,
+     "warning": "Tried 3 recipe(s) for this slot, none fit within tolerance — closest was \"Bacon & Eggs\" (delivered 46g protein vs a 66g target).",
+     "locked": false,
+     "recipe": {
+      "id": "cmrevpcyh004gwl5gnni3al5q",
+      "name": "Bacon & Eggs",
+      "description": "Weekend breakfast-style plate.",
+      "steps": [
+       "Cook bacon until crisp, set aside.",
+       "Fry or scramble eggs in the bacon fat."
+      ],
+      "slotType": "either",
+      "cuisine": "western-comfort",
+      "prepTimeMin": 15,
+      "source": "curated",
+      "mealCategory": null,
+      "kcal": 557.0999999999999,
+      "protein": 41.7,
+      "fat": 41.7,
+      "carb": 2.49,
+      "tasteTier": "really_good",
+      "tasteTierSource": "curated",
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 3.38,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-10T11:55:10.938Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x0w3v02mjwlw0a18dfahp",
+     "planId": "cms6x0w3j02mbwlw028tjoi30",
+     "dayOfWeek": 2,
+     "slotType": "snack",
+     "slotIndex": 1,
+     "recipeId": "cmrevpcyh004gwl5gnni3al5q",
+     "proteinScale": 1.12,
+     "sidesScale": 1.12,
+     "ingredients": [
+      {
+       "foodId": "cmrevpcmu000cwl5gfljr1l1o",
+       "name": "Bacon, cooked",
+       "role": "protein",
+       "grams": 65
+      },
+      {
+       "foodId": "cmrevpcm50006wl5g2u2bcspd",
+       "name": "Eggs, whole, cooked",
+       "role": "protein",
+       "grams": 170
+      }
+     ],
+     "kcal": 615.1500000000001,
+     "protein": 46.15,
+     "fat": 46,
+     "carb": 2.78,
+     "warning": "Tried 3 recipe(s) for this slot, none fit within tolerance — closest was \"Bacon & Eggs\" (delivered 46g protein vs a 69g target).",
+     "locked": false,
+     "recipe": {
+      "id": "cmrevpcyh004gwl5gnni3al5q",
+      "name": "Bacon & Eggs",
+      "description": "Weekend breakfast-style plate.",
+      "steps": [
+       "Cook bacon until crisp, set aside.",
+       "Fry or scramble eggs in the bacon fat."
+      ],
+      "slotType": "either",
+      "cuisine": "western-comfort",
+      "prepTimeMin": 15,
+      "source": "curated",
+      "mealCategory": null,
+      "kcal": 557.0999999999999,
+      "protein": 41.7,
+      "fat": 41.7,
+      "carb": 2.49,
+      "tasteTier": "really_good",
+      "tasteTierSource": "curated",
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 3.38,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-10T11:55:10.938Z",
+      "createdByUserId": null
+     }
+    }
+   ],
+   "groceryList": null,
+   "meta": {
+    "matchPct": 75,
+    "attempts": 5,
+    "score": {
+     "daysInTolerance": 0,
+     "avgMatch": 75,
+     "days": [
+      {
+       "dayOfWeek": 2,
+       "dayName": "Wednesday",
+       "matchPct": 75,
+       "totals": {
+        "kcal": 3934,
+        "protein": 338,
+        "fat": 180,
+        "carb": 243
+       },
+       "kcalDeltaPct": -0.3,
+       "proteinShortPct": 10.7,
+       "fatOk": false,
+       "carbOk": true,
+       "inTolerance": false,
+       "miss": "180 g fat vs a 108–127 g range — 53 g over",
+       "unfilledSlots": 0,
+       "warnedSlots": 3,
+       "windowIndex": 0,
+       "dayIndex": 0,
+       "key": "0:2"
+      }
+     ],
+     "totalDays": 1
+    },
+    "days": [
+     {
+      "dayOfWeek": 2,
+      "dayName": "Wednesday",
+      "matchPct": 75,
+      "totals": {
+       "kcal": 3934,
+       "protein": 338,
+       "fat": 180,
+       "carb": 243
+      },
+      "kcalDeltaPct": -0.3,
+      "proteinShortPct": 10.7,
+      "fatOk": false,
+      "carbOk": true,
+      "inTolerance": false,
+      "miss": "180 g fat vs a 108–127 g range — 53 g over",
+      "unfilledSlots": 0,
+      "warnedSlots": 3,
+      "windowIndex": 0,
+      "dayIndex": 0,
+      "key": "0:2"
+     }
+    ],
+    "diagnosis": {
+     "feasible": false,
+     "reasons": [
+      "1 day(s) landed outside your 108–127 g fat range — portion scaling moves a dish's calories, not its fat/carb ratio, so the pool's composition is what binds here."
+     ],
+     "suggestions": [
+      "Add (or AI-generate) a few recipes built around the macro you keep missing, or drop the cuisine/protein preference so the solver can reach dishes that carry it."
+     ],
+     "binding": {
+      "key": "macro-composition",
+      "label": "fat in your recipe pool",
+      "detail": "1 of 1 day(s) landed outside your 108-127 g fat range. Portion scaling moves a dish's calories, not its fat/carb ratio, so what binds here is which dishes your rules leave in the pool. Calories and protein landed on target on every day — it is composition, not portion size, that is short."
+     }
+    },
+    "poolCounts": {
+     "raw": 889,
+     "afterDiet": 692,
+     "afterPrep": 692,
+     "afterStack": 692,
+     "stackExplain": null
+    },
+    "variety": {
+     "mealEligible": 575,
+     "usableForSlot": 50,
+     "slotKcal": 1419,
+     "snackEligible": 3,
+     "weeklyMealSlots": 14,
+     "weeklySnackSlots": 14,
+     "repeatCap": 2,
+     "distinctWeeks": 3.6,
+     "horizonWeeks": 1,
+     "sustainsHorizon": false,
+     "notes": [
+      "Only 3 snack recipe(s) fit your rules, so the same snacks come back every week.",
+      "1 day: 3 distinct dish(es) across 4 filled slot(s); most-repeated dish appears 2x against a 2x cap for this horizon (2x per week)."
+     ],
+     "horizon": {
+      "weeks": 1,
+      "days": 1,
+      "perWeekCap": 2,
+      "horizonRepeatCap": 2,
+      "mealSlots": 2,
+      "snackSlots": 2,
+      "totalSlots": 4,
+      "distinctFloor": 2,
+      "distinctRecipes": 3,
+      "maxRepeat": 2,
+      "maxRepeatRecipeId": "cmrevpcyh004gwl5gnni3al5q",
+      "lockedRepeatsOfMax": 0,
+      "filledSlots": 4,
+      "unfilledSlots": 0,
+      "requiredDistinct": 2,
+      "capHeld": true,
+      "floorHeld": true
+     }
+    },
+    "priorWeeksConsidered": 0,
+    "horizon": {
+     "key": "day",
+     "label": "1 day",
+     "days": 1,
+     "kind": "days",
+     "weeks": 1,
+     "custom": false,
+     "startDate": "2026-07-29",
+     "endDate": "2026-07-29",
+     "startDayOfWeek": 2,
+     "weeksWritten": 1,
+     "solveMs": 6,
+     "weekPlans": [
+      {
+       "startDate": "2026-07-27",
+       "dayIndices": [
+        2
+       ],
+       "days": 1,
+       "daysInTolerance": 0,
+       "avgMatch": 75,
+       "unfilledSlots": 0,
+       "poolSize": 692
+      }
+     ]
+    }
+   }
+  }
+ }
+}

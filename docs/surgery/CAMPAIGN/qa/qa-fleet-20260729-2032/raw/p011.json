@@ -1,0 +1,441 @@
+{
+ "persona": {
+  "idx": 11,
+  "id": "p011",
+  "tier": "EASY",
+  "displayName": "office worker, 76",
+  "story": "office worker, 76, male, 171 cm / 127.6 kg (BMI 43.6), cut at 0.5 lb/wk, low-FODMAP diet, avoiding soy, beef, balanced, 3 meals + 0 snacks, wants a single day",
+  "profile": {
+   "sex": "M",
+   "age": 76,
+   "heightCm": 171,
+   "startWeightKg": 127.6,
+   "goalWeightKg": 115.8,
+   "occupationKey": "desk-office",
+   "trainingStyle": "weights",
+   "minutesPerSession": 45,
+   "sessionsPerWeek": 3,
+   "rateLbPerWeek": 0.5,
+   "dietaryStyle": null,
+   "excludedFoods": [
+    "soy",
+    "beef"
+   ],
+   "mealsPerDay": 3,
+   "snacksPerDay": 0,
+   "unitPref": "imperial",
+   "bodyFatPct": 15,
+   "bodyFatSource": "visual-estimate"
+  },
+  "filters": {
+   "maxPrepMin": 30,
+   "budget": "premium"
+  },
+  "horizon": "day",
+  "walls": [
+   "soy",
+   "beef"
+  ],
+  "freeTextExclusions": [
+   "beef"
+  ],
+  "dietaryStyle": null,
+  "bmi": 43.6,
+  "goalKind": "cut",
+  "macroStyle": "balanced",
+  "requestedButUnsupported": [
+   "low-FODMAP is not a dietary style; expressed instead as free-text exclusions (onion, garlic, wheat)"
+  ],
+  "tupleKey": "[\"EASY\",\"M\",76,171,127.6,115.8,\"desk-office\",\"weights\",0.5,null,[\"beef\",\"soy\"],3,0,\"balanced\",\"day\",30,\"premium\",null,null,null]"
+ },
+ "request": {
+  "horizon": "day",
+  "filters": {
+   "maxPrepMin": 30,
+   "budget": "premium"
+  }
+ },
+ "profileResponse": {
+  "id": "cms6x0a3800q7wlw0cepqsjjs",
+  "userId": "cms6x09st0005wl2o9a81u8ba",
+  "sex": "M",
+  "age": 76,
+  "heightCm": 171,
+  "bodyFatPct": 15,
+  "bodyFatSource": "visual-estimate",
+  "occupationKey": "desk-office",
+  "activityOverride": null,
+  "sessionsPerWeek": 3,
+  "trainingStyle": "weights",
+  "minutesPerSession": 45,
+  "startWeightKg": 127.6,
+  "goalWeightKg": 115.8,
+  "startDate": "2026-07-29",
+  "unitPref": "imperial",
+  "rateLbPerWeek": 0.5,
+  "rateAcknowledged": false,
+  "floorKcal": null,
+  "excludedFormulas": [],
+  "targetKcal": 2777,
+  "mealsPerDay": 3,
+  "snacksPerDay": 0,
+  "excludedFoods": [
+   "soy",
+   "beef"
+  ],
+  "dietaryStyle": null,
+  "cuisinePreferences": [],
+  "mealPreferencesNote": null,
+  "maxPrepMin": null,
+  "budgetTier": null,
+  "allowBatch": null,
+  "maxComplexity": null,
+  "adaptiveTdee": true,
+  "proteinPriorityMode": false,
+  "updatedAt": "2026-07-30T20:33:03.400Z"
+ },
+ "generate": {
+  "status": 200,
+  "ms": 497,
+  "body": {
+   "id": "cms7z0ee700atwlgwfl0pps1x",
+   "userId": "cms6x09st0005wl2o9a81u8ba",
+   "startDate": "2026-07-27",
+   "createdAt": "2026-07-30T20:33:03.967Z",
+   "slots": [
+    {
+     "id": "cms7z0ee800avwlgw6g821qho",
+     "planId": "cms7z0ee700atwlgwfl0pps1x",
+     "dayOfWeek": 3,
+     "slotType": "meal",
+     "slotIndex": 0,
+     "recipeId": "cmrujkws4005owl9o5ilc9tvd",
+     "proteinScale": 1.85,
+     "sidesScale": 2,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t7w3006lwlws4zdhow4d",
+       "name": "Chicken Breast",
+       "role": "protein",
+       "grams": 315
+      },
+      {
+       "foodId": "cmrg8zuft0008wli0etz5grtf",
+       "name": "Bulgur, cooked",
+       "role": "carb",
+       "grams": 260
+      },
+      {
+       "foodId": "cmrevpcnl000jwl5gnqnk630b",
+       "name": "Cucumber",
+       "role": "veg",
+       "grams": 160
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 10
+      }
+     ],
+     "kcal": 699.8,
+     "protein": 79.827,
+     "fat": 19.133,
+     "carb": 51.81600000000001,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrujkws4005owl9o5ilc9tvd",
+      "name": "Mediterranean Chicken & Cucumber with Bulgur",
+      "description": null,
+      "steps": [
+       "Cook the chicken.",
+       "Serve with bulgur and cucumber."
+      ],
+      "slotType": "meal",
+      "cuisine": "mediterranean",
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 409.9,
+      "protein": 42.726,
+      "fat": 14.894,
+      "carb": 25.908,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 6.16,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:00:06.772Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z0eeo00axwlgw6xntjmsh",
+     "planId": "cms7z0ee700atwlgwfl0pps1x",
+     "dayOfWeek": 3,
+     "slotType": "meal",
+     "slotIndex": 1,
+     "recipeId": "cmrj2ubmo08g6wlwsgup6pmvt",
+     "proteinScale": 1.37,
+     "sidesScale": 1.37,
+     "ingredients": [
+      {
+       "foodId": "cmrj2tb4s00jhwlwsle21jd6d",
+       "name": "Sardines",
+       "role": null,
+       "grams": 340
+      },
+      {
+       "foodId": "cmrj2t7hg004pwlwsioxvv8bh",
+       "name": "Vegetable Oil",
+       "role": "fat",
+       "grams": 1
+      },
+      {
+       "foodId": "cmrj2t7ho004qwlws8t7qsudo",
+       "name": "Flour",
+       "role": "carb",
+       "grams": 70
+      },
+      {
+       "foodId": "cmrj2t6gd0003wlwss7jf3wzf",
+       "name": "Salt",
+       "role": null,
+       "grams": 1
+      }
+     ],
+     "kcal": 972.3999999999999,
+     "protein": 91.27,
+     "fat": 41.136,
+     "carb": 54.10999999999999,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrj2ubmo08g6wlwsgup6pmvt",
+      "name": "Fresh sardines",
+      "description": null,
+      "steps": [
+       "Wash the fish under the cold tap.",
+       "Roll in the flour and deep fry in oil until crispy.",
+       "Lay on kitchen towel to get rid of the excess oil and serve hot or cold with a slice of lemon."
+      ],
+      "slotType": "meal",
+      "cuisine": "western-comfort",
+      "prepTimeMin": 18,
+      "source": "themealdb-import",
+      "mealCategory": null,
+      "kcal": 705.25,
+      "protein": 66.95,
+      "fat": 29.74,
+      "carb": 38.65,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 7.08,
+      "difficulty": 2,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-13T10:26:04.512Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z0eep00azwlgw8hchtnp8",
+     "planId": "cms7z0ee700atwlgwfl0pps1x",
+     "dayOfWeek": 3,
+     "slotType": "meal",
+     "slotIndex": 2,
+     "recipeId": "cmrfn2w780030wlg49qus3ftp",
+     "proteinScale": 1.62,
+     "sidesScale": 0.95,
+     "ingredients": [
+      {
+       "foodId": "cmrevpclb0000wl5ghnno9i5f",
+       "name": "Chicken breast, cooked, skinless",
+       "role": "protein",
+       "grams": 325
+      },
+      {
+       "foodId": "cmrevpcn9000gwl5gw6adqo4o",
+       "name": "Perogies, boiled",
+       "role": "carb",
+       "grams": 285
+      }
+     ],
+     "kcal": 1106.25,
+     "protein": 115,
+     "fat": 25.95,
+     "carb": 94.05,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrfn2w780030wlg49qus3ftp",
+      "name": "Grilled Chicken Breast & Perogies",
+      "description": null,
+      "steps": [
+       "Grill or pan-sear chicken breast.",
+       "Boil perogies 4-5 min until they float, or pan-fry in a little butter for crisp edges."
+      ],
+      "slotType": "meal",
+      "cuisine": "western-comfort",
+      "prepTimeMin": 15,
+      "source": "curated",
+      "mealCategory": null,
+      "kcal": 930,
+      "protein": 77,
+      "fat": 22.2,
+      "carb": 99,
+      "tasteTier": "really_good",
+      "tasteTierSource": "curated",
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 8.7,
+      "difficulty": 2,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-11T00:41:32.037Z",
+      "createdByUserId": null
+     }
+    }
+   ],
+   "groceryList": null,
+   "meta": {
+    "matchPct": 99,
+    "attempts": 1,
+    "score": {
+     "daysInTolerance": 1,
+     "avgMatch": 99,
+     "days": [
+      {
+       "dayOfWeek": 3,
+       "dayName": "Thursday",
+       "matchPct": 99,
+       "totals": {
+        "kcal": 2778,
+        "protein": 286,
+        "fat": 86,
+        "carb": 200
+       },
+       "kcalDeltaPct": 0.1,
+       "proteinShortPct": 0,
+       "fatOk": true,
+       "carbOk": true,
+       "inTolerance": true,
+       "miss": null,
+       "unfilledSlots": 0,
+       "warnedSlots": 0,
+       "windowIndex": 0,
+       "dayIndex": 0,
+       "key": "0:3"
+      }
+     ],
+     "totalDays": 1
+    },
+    "days": [
+     {
+      "dayOfWeek": 3,
+      "dayName": "Thursday",
+      "matchPct": 99,
+      "totals": {
+       "kcal": 2778,
+       "protein": 286,
+       "fat": 86,
+       "carb": 200
+      },
+      "kcalDeltaPct": 0.1,
+      "proteinShortPct": 0,
+      "fatOk": true,
+      "carbOk": true,
+      "inTolerance": true,
+      "miss": null,
+      "unfilledSlots": 0,
+      "warnedSlots": 0,
+      "windowIndex": 0,
+      "dayIndex": 0,
+      "key": "0:3"
+     }
+    ],
+    "diagnosis": null,
+    "poolCounts": {
+     "raw": 910,
+     "afterDiet": 659,
+     "afterPrep": 462,
+     "afterStack": 462,
+     "stackExplain": null
+    },
+    "variety": {
+     "mealEligible": 371,
+     "usableForSlot": 96,
+     "slotKcal": 926,
+     "snackEligible": 14,
+     "weeklyMealSlots": 21,
+     "weeklySnackSlots": 0,
+     "repeatCap": 2,
+     "distinctWeeks": 4.6,
+     "horizonWeeks": 1,
+     "sustainsHorizon": true,
+     "notes": [
+      "1 day: 3 distinct dish(es) across 3 filled slot(s); most-repeated dish appears 1x against a 2x cap for this horizon (2x per week)."
+     ],
+     "horizon": {
+      "weeks": 1,
+      "days": 1,
+      "perWeekCap": 2,
+      "horizonRepeatCap": 2,
+      "mealSlots": 3,
+      "snackSlots": 0,
+      "totalSlots": 3,
+      "distinctFloor": 2,
+      "distinctRecipes": 3,
+      "maxRepeat": 1,
+      "maxRepeatRecipeId": "cmrujkws4005owl9o5ilc9tvd",
+      "lockedRepeatsOfMax": 0,
+      "filledSlots": 3,
+      "unfilledSlots": 0,
+      "requiredDistinct": 2,
+      "capHeld": true,
+      "floorHeld": true
+     }
+    },
+    "priorWeeksConsidered": 0,
+    "horizon": {
+     "key": "day",
+     "label": "1 day",
+     "days": 1,
+     "kind": "days",
+     "weeks": 1,
+     "custom": false,
+     "startDate": "2026-07-30",
+     "endDate": "2026-07-30",
+     "startDayOfWeek": 3,
+     "weeksWritten": 1,
+     "solveMs": 5,
+     "weekPlans": [
+      {
+       "startDate": "2026-07-27",
+       "dayIndices": [
+        3
+       ],
+       "days": 1,
+       "daysInTolerance": 1,
+       "avgMatch": 99,
+       "unfilledSlots": 0,
+       "poolSize": 462
+      }
+     ]
+    }
+   }
+  }
+ }
+}

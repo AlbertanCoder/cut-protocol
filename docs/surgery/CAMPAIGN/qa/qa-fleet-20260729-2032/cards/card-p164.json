@@ -1,0 +1,65 @@
+{
+  "personaId": "p164",
+  "satisfaction": 1,
+  "wouldRecommend": false,
+  "criteria": {
+    "macrosInRange": 3,
+    "worksEndToEnd": 4,
+    "mealsAreGood": 2,
+    "affordableAdjustable": 3,
+    "tasty": 3
+  },
+  "allergenRespect": {
+    "ok": false,
+    "leaks": [
+      "Pepperoni 60 g in the snack slot \"Pepperoni & Pistachios Plate\" — pepperoni is cured pork AND beef, and both pork and beef are saved on my profile as excluded. One dish breaks two of my five walls.",
+      "Same \"Pepperoni & Pistachios Plate\" (Pepperoni 60 g) returned again in the freshly regenerated day — the leak is reproducible, not a one-off."
+    ]
+  },
+  "delights": [
+    "The solver told the truth about its own failure instead of hiding it: 'Tried 1 recipe(s) for this slot, none fit within tolerance — closest was \"Pepperoni & Pistachios Plate\" (landed 386 kcal vs a 147 target).' I knew the snack was wrong before I did any math.",
+    "The calorie floor genuinely held. My profile came back with targetKcal 1200 and /api/profile/meta shows safeFloor.F = 1200 plus goalBmi.refusedBelow = 16 — at 46.3 kg cutting 1.5 lb/wk it clamped instead of quietly prescribing me 900 kcal.",
+    "Meal 1, \"Salmon, Couscous & Cucumber\" — Salmon 95 g, Couscous 75 g, Cucumber 40 g, Olive Oil 4 g, 322 kcal for 22.5 g protein, prepTimeMin 15, difficulty 1, steps 'Bake salmon.' / 'Serve on couscous with cucumber.' That one I would actually cook and eat tonight."
+  ],
+  "defects": [
+    {
+      "what": "Snack slot serves cured pork-and-beef sausage to an account that excludes both pork and beef.",
+      "snippet": "\"name\":\"Pepperoni\",\"role\":\"protein\",\"grams\":60 — recipe \"Pepperoni & Pistachios Plate\""
+    },
+    {
+      "what": "The food database itself knows pepperoni is pork and beef, but the record used in my plan carries no allergen tags, so the exclusion filter had nothing to match on.",
+      "snippet": "plan ingredient: {\"name\":\"Pepperoni\",\"category\":\"protein\",\"source\":\"manual\",\"allergenTags\":null} — while the same food search returns \"Pepperoni, beef and pork, sliced\" (fdcId 174575)"
+    },
+    {
+      "what": "There is no way to repair the offending slot: asking for alternates on the pepperoni snack returns an empty list with a 200, so the one meal I medically must remove is the one meal I cannot change.",
+      "snippet": "{\"alternates\":[]}"
+    },
+    {
+      "what": "The snack is 2.6x its own calorie budget and carries over half the day's fat, which is what pushes the whole day over target.",
+      "snippet": "SNACK: 386 kcal | P 15.6 F 33.2 C 5.9 — against 'a 147 target'"
+    },
+    {
+      "what": "The day does not add up to the cut it promised: 1439 kcal against my saved targetKcal of 1200 (+20%), and the regenerated day was 1494 (+25%).",
+      "snippet": "DAY TOTAL: 1439 kcal | P 89.8g F 64.4g C 125.9g vs targetKcal 1200"
+    },
+    {
+      "what": "Two of my three meals are the same dish wearing a different side — TVP twice in one day, both built as protein + starch + one vegetable + 5 g olive oil, with no seasoning listed at all.",
+      "snippet": "\"High-Protein TVP & Bell Peppers with Potato\" ('Cook the tvp. Serve over potato with bell peppers.') and \"High-Protein TVP & Onions with Quinoa\" ('Cook the tvp. Serve over quinoa with onions.')"
+    },
+    {
+      "what": "Regenerating filled the new day with red meat and deli poultry, so nothing anywhere captured that I eat fish and not meat — my profile's dietaryStyle is simply null, it was never asked or stored.",
+      "snippet": "\"Tunisian Lamb Soup\" — Lamb Mince 65g, Chicken Stock 125g; and \"High-Protein Turkey & Cucumber with Quinoa\" — Turkey breast, low salt, prepackaged or deli, luncheon meat 85g"
+    },
+    {
+      "what": "No shopping list came with the plan — the field is just empty, so I cannot see what to buy.",
+      "snippet": "\"groceryList\": null"
+    }
+  ],
+  "followUp": {
+    "action": "Tried to get the pepperoni out of my day the way any customer would: asked the slot for alternates, and when nothing came back, regenerated the day.",
+    "endpoint": "POST /api/plans/cms6x1dku0469wlw0cuyzzphz/slots/cms6x1dqf046jwlw0o2o1fkx1/alternates",
+    "status": 200,
+    "howItWent": "It answered 200 with {\"alternates\":[]} — a polite nothing, no substitute offered for the one slot I cannot eat. So I regenerated (POST /api/plans/generate {\"horizon\":\"day\"}, also 200), which built a clean new day rather than damaging my old one, but handed me the identical \"Pepperoni & Pistachios Plate\" a second time along with Lamb Mince and turkey luncheon meat. Two honest attempts, and the pork-and-beef snack is still sitting on my plan."
+  },
+  "verdict": "The engine is transparent and its calorie floor is trustworthy, but it put 60 g of pork-and-beef pepperoni in front of someone who excluded both, offered zero alternates to remove it, and served it again on regeneration — until that is fixed nothing else about the product matters."
+}

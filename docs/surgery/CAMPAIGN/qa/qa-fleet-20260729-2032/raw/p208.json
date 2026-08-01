@@ -1,0 +1,476 @@
+{
+ "persona": {
+  "idx": 208,
+  "id": "p208",
+  "tier": "IMPOSSIBLE",
+  "displayName": "triathlete, 22",
+  "story": "vegan, celiac, and allergic to soy, peanuts, tree nuts and sesame, cutting at 2 lb/wk on a protein-priority plan",
+  "profile": {
+   "sex": "M",
+   "age": 22,
+   "heightCm": 188,
+   "startWeightKg": 124.8,
+   "goalWeightKg": 109.9,
+   "occupationKey": "software-tech",
+   "trainingStyle": "cardio",
+   "minutesPerSession": 150,
+   "sessionsPerWeek": 9,
+   "rateLbPerWeek": 2,
+   "dietaryStyle": "vegan",
+   "excludedFoods": [
+    "soy",
+    "gluten",
+    "peanuts",
+    "tree nuts",
+    "sesame",
+    "legumes"
+   ],
+   "mealsPerDay": 2,
+   "snacksPerDay": 1,
+   "unitPref": "metric",
+   "cuisinePreferences": [
+    "american"
+   ],
+   "rateAcknowledged": true
+  },
+  "filters": {
+   "cuisines": [
+    "american"
+   ],
+   "proteinPriority": true
+  },
+  "horizon": "day",
+  "walls": [
+   "soy",
+   "gluten",
+   "peanut",
+   "tree nut",
+   "sesame"
+  ],
+  "freeTextExclusions": [
+   "legumes"
+  ],
+  "dietaryStyle": "vegan",
+  "bmi": 35.3,
+  "goalKind": "cut",
+  "macroStyle": "low-carb",
+  "requestedButUnsupported": [
+   "wanted a low-carb split without full keto; carbs are the leftover after LBM-derived protein and fat, and only dietaryStyle:\"keto\" changes that",
+   "this request is mathematically unsatisfiable by design — a clear, fast, honest refusal is the pass condition, and a confident plan is a critical honesty defect"
+  ],
+  "impossibleKind": "every-protein-walled",
+  "tupleKey": "[\"IMPOSSIBLE\",\"M\",22,188,124.8,109.9,\"software-tech\",\"cardio\",2,\"vegan\",[\"gluten\",\"legumes\",\"peanuts\",\"sesame\",\"soy\",\"tree nuts\"],2,1,\"low-carb\",\"day\",null,null,true,null,\"every-protein-walled\"]"
+ },
+ "request": {
+  "horizon": "day",
+  "filters": {
+   "cuisines": [
+    "american"
+   ],
+   "proteinPriority": true
+  }
+ },
+ "profileResponse": {
+  "id": "cms6x1om3059fwlw0j16mb76s",
+  "userId": "cms6x1obj005mwl2ofko0k59p",
+  "sex": "M",
+  "age": 22,
+  "heightCm": 188,
+  "bodyFatPct": 0,
+  "bodyFatSource": null,
+  "occupationKey": "software-tech",
+  "activityOverride": null,
+  "sessionsPerWeek": 9,
+  "trainingStyle": "cardio",
+  "minutesPerSession": 150,
+  "startWeightKg": 124.8,
+  "goalWeightKg": 109.9,
+  "startDate": "2026-07-29",
+  "unitPref": "metric",
+  "rateLbPerWeek": 2,
+  "rateAcknowledged": false,
+  "floorKcal": null,
+  "excludedFormulas": [],
+  "targetKcal": 4939,
+  "mealsPerDay": 2,
+  "snacksPerDay": 1,
+  "excludedFoods": [
+   "soy",
+   "gluten",
+   "peanuts",
+   "tree nuts",
+   "sesame",
+   "legumes"
+  ],
+  "dietaryStyle": "vegan",
+  "cuisinePreferences": [
+   "american"
+  ],
+  "mealPreferencesNote": null,
+  "maxPrepMin": null,
+  "budgetTier": null,
+  "allowBatch": null,
+  "maxComplexity": null,
+  "adaptiveTdee": true,
+  "proteinPriorityMode": false,
+  "updatedAt": "2026-07-30T20:34:06.188Z"
+ },
+ "generate": {
+  "status": 200,
+  "ms": 34,
+  "body": {
+   "id": "cms7z1qff04drwlgwv1pajcuw",
+   "userId": "cms6x1obj005mwl2ofko0k59p",
+   "startDate": "2026-07-27",
+   "createdAt": "2026-07-30T20:34:06.219Z",
+   "slots": [
+    {
+     "id": "cms7z1qfg04dtwlgwx33y1cid",
+     "planId": "cms7z1qff04drwlgwv1pajcuw",
+     "dayOfWeek": 3,
+     "slotType": "meal",
+     "slotIndex": 0,
+     "recipeId": "cmrj2ul500ak9wlwskp59bqxx",
+     "proteinScale": 2,
+     "sidesScale": 2,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t6hb0007wlwsh6l6ynal",
+       "name": "Water",
+       "role": null,
+       "grams": 475
+      },
+      {
+       "foodId": "cmrj2tcch00o4wlwsy857ai4x",
+       "name": "White Cornmeal",
+       "role": "carb",
+       "grams": 225
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 25,
+       "adjuster": true
+      },
+      {
+       "foodId": "cmrevpcn2000ewl5gmlyzu0vd",
+       "name": "White rice, cooked",
+       "role": "carb",
+       "grams": 160,
+       "adjuster": true
+      },
+      {
+       "foodId": "cmrj2t6t4001pwlwsxeja9565",
+       "name": "Potatoes",
+       "role": "carb",
+       "grams": 160,
+       "adjuster": true
+      }
+     ],
+     "kcal": 1451.7,
+     "protein": 32.35,
+     "fat": 36.964,
+     "carb": 246.275,
+     "warning": "Tried 5 recipe(s) for this slot, none fit within tolerance — closest was \"Ugali – Kenyan cornmeal\" (landed 896 kcal vs a 1814 target; delivered 25g protein vs a 96g target).",
+     "locked": false,
+     "recipe": {
+      "id": "cmrj2ul500ak9wlwskp59bqxx",
+      "name": "Ugali – Kenyan cornmeal",
+      "description": null,
+      "steps": [
+       "Bring the water to a boil in a medium saucepan.",
+       "Reduce the heat to low, and stirring constantly with a whisk, slowly add the cornmeal to the boiling water. The ugali will begin to thicken quite quickly.",
+       "Continue cooking on low heat, stirring constantly with a sturdy wooden spoon, until the ugali begins to pull away from the sides of the pan, hold together, and takes on the aroma of roasted corn. Turn it out immediately onto a serving plate. If you would like, using a spoon or spatula, quickly shape it into a thick disk or round.",
+       "The ugali will continue to firm as it cools and will be thick enough to cut with a knife (similar to firm polenta)."
+      ],
+      "slotType": "meal",
+      "cuisine": "western-comfort",
+      "prepTimeMin": 20,
+      "source": "themealdb-import",
+      "mealCategory": "breakfast_only",
+      "kcal": 447.8,
+      "protein": 12.4,
+      "fat": 5.7,
+      "carb": 86.7,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 0.34,
+      "difficulty": 2,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-13T10:26:16.837Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z1qfj04dvwlgwujg7szx7",
+     "planId": "cms7z1qff04drwlgwv1pajcuw",
+     "dayOfWeek": 3,
+     "slotType": "meal",
+     "slotIndex": 1,
+     "recipeId": "cmrj2uaj8087gwlwsssnykonm",
+     "proteinScale": 2,
+     "sidesScale": 2,
+     "ingredients": [
+      {
+       "foodId": "cmrg8zxar000lwli0qy2ovmx4",
+       "name": "Onion",
+       "role": "veg",
+       "grams": 220
+      },
+      {
+       "foodId": "cmrj2t6oj0014wlwsaw8ffg0k",
+       "name": "Thyme",
+       "role": null,
+       "grams": 100
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 25
+      },
+      {
+       "foodId": "cmrj2t6t4001pwlwsxeja9565",
+       "name": "Potatoes",
+       "role": "veg",
+       "grams": 1500
+      },
+      {
+       "foodId": "cmrj2ta2r00fewlwsu3015yzh",
+       "name": "Vegetable Stock",
+       "role": "other",
+       "grams": 425
+      }
+     ],
+     "kcal": 1594.5,
+     "protein": 40.005,
+     "fat": 28.675,
+     "carb": 311.698,
+     "warning": "Tried 5 recipe(s) for this slot, none fit within tolerance — closest was \"Boulangère Potatoes\" (landed 1595 kcal vs a 3000 target; delivered 40g protein vs a 159g target).",
+     "locked": false,
+     "recipe": {
+      "id": "cmrj2uaj8087gwlwsssnykonm",
+      "name": "Boulangère Potatoes",
+      "description": null,
+      "steps": [
+       "Heat oven to 200C/fan 180C/gas 6. Fry the onions and thyme sprigs in the oil until softened and lightly coloured (about 5 mins).",
+       "Spread a layer of potatoes over the base of a 1.5-litre oiled gratin dish. Sprinkle over a few onions (see picture, above) and continue layering, finishing with a layer of potatoes. Pour over the stock and bake for 50-60 mins until the potatoes are cooked and the top is golden and crisp."
+      ],
+      "slotType": "meal",
+      "cuisine": "western-comfort",
+      "prepTimeMin": 16,
+      "source": "themealdb-import",
+      "mealCategory": null,
+      "kcal": 807.6,
+      "protein": 20.0025,
+      "fat": 15.4875,
+      "carb": 155.849,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 4.67,
+      "difficulty": 2,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-13T10:26:03.093Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z1qfj04dxwlgwx5xtcrsm",
+     "planId": "cms7z1qff04drwlgwv1pajcuw",
+     "dayOfWeek": 3,
+     "slotType": "snack",
+     "slotIndex": 0,
+     "recipeId": null,
+     "proteinScale": 1,
+     "sidesScale": 1,
+     "ingredients": [],
+     "kcal": 0,
+     "protein": 0,
+     "fat": 0,
+     "carb": 0,
+     "warning": "No eligible snack recipe left for this slot.",
+     "locked": false,
+     "recipe": null
+    }
+   ],
+   "groceryList": null,
+   "meta": {
+    "matchPct": 39,
+    "attempts": 5,
+    "score": {
+     "daysInTolerance": 0,
+     "avgMatch": 39,
+     "days": [
+      {
+       "dayOfWeek": 3,
+       "dayName": "Thursday",
+       "matchPct": 39,
+       "totals": {
+        "kcal": 3046,
+        "protein": 72,
+        "fat": 66,
+        "carb": 558
+       },
+       "kcalDeltaPct": -38.3,
+       "proteinShortPct": 72.2,
+       "fatOk": true,
+       "carbOk": false,
+       "inTolerance": false,
+       "miss": "3,046 kcal vs a 4,939 target — 1,893 under; 72 g protein vs 260 g — 188 g short; 558 g carbs vs a 757–781 g range — 199 g short",
+       "unfilledSlots": 1,
+       "warnedSlots": 3,
+       "proteinFloor": {
+        "met": false,
+        "floorG": 248,
+        "achievedG": 72.4,
+        "shortG": 175.6,
+        "shortPct": 70.8,
+        "reason": "175.6 g short of the 248 g protein floor (71% under) — the compliant pool couldn't scale up to close the gap within the 0.5-2x portion limit."
+       },
+       "windowIndex": 0,
+       "dayIndex": 0,
+       "key": "0:3"
+      }
+     ],
+     "totalDays": 1,
+     "floorDaysMet": 0,
+     "floorDaysTotal": 1
+    },
+    "days": [
+     {
+      "dayOfWeek": 3,
+      "dayName": "Thursday",
+      "matchPct": 39,
+      "totals": {
+       "kcal": 3046,
+       "protein": 72,
+       "fat": 66,
+       "carb": 558
+      },
+      "kcalDeltaPct": -38.3,
+      "proteinShortPct": 72.2,
+      "fatOk": true,
+      "carbOk": false,
+      "inTolerance": false,
+      "miss": "3,046 kcal vs a 4,939 target — 1,893 under; 72 g protein vs 260 g — 188 g short; 558 g carbs vs a 757–781 g range — 199 g short",
+      "unfilledSlots": 1,
+      "warnedSlots": 3,
+      "proteinFloor": {
+       "met": false,
+       "floorG": 248,
+       "achievedG": 72.4,
+       "shortG": 175.6,
+       "shortPct": 70.8,
+       "reason": "175.6 g short of the 248 g protein floor (71% under) — the compliant pool couldn't scale up to close the gap within the 0.5-2x portion limit."
+      },
+      "windowIndex": 0,
+      "dayIndex": 0,
+      "key": "0:3"
+     }
+    ],
+    "diagnosis": {
+     "feasible": false,
+     "reasons": [
+      "1 of 3 slots over 1 days came back empty — no compliant recipe was left that could fill them.",
+      "Protein-priority mode: the 248g/day floor wasn't met on 1 day(s) — only 3 of 20 compliant recipes carry enough protein density to close the gap within the 0.5-2x portion limit.",
+      "Your library has no snack-sized recipe that fits your rules — all 1 snack slots this week come back empty.",
+      "Your targets need ~5.3g protein per 100 kcal; only 2 of 20 eligible recipes come close (10+ needed for a full varied week).",
+      "1 day(s) landed outside your 757–781 g carb range — portion scaling moves a dish's calories, not its fat/carb ratio, so the pool's composition is what binds here."
+     ],
+     "suggestions": [
+      "AI-generate a few high-protein compliant recipes, set the protein-preference filter, or allow batch-cooking repeats of the densest dishes.",
+      "Set snacks per day to 0 and fold those calories into your meals, or AI-generate a few compliant snacks on the Recipes tab.",
+      "Set the protein-preference filter, or AI-generate a few high-protein recipes to deepen the pool.",
+      "Add (or AI-generate) a few recipes built around the macro you keep missing, or drop the cuisine/protein preference so the solver can reach dishes that carry it."
+     ],
+     "binding": {
+      "key": "snack-pool",
+      "label": "your snack-eligible recipe pool",
+      "detail": "no snack-sized recipe fits your rules, so all 1 snack slot(s) come back empty."
+     }
+    },
+    "poolCounts": {
+     "raw": 910,
+     "afterDiet": 20,
+     "afterPrep": 20,
+     "afterStack": 20,
+     "stackExplain": null
+    },
+    "variety": {
+     "mealEligible": 15,
+     "usableForSlot": 0,
+     "slotKcal": 2066,
+     "snackEligible": 0,
+     "weeklyMealSlots": 14,
+     "weeklySnackSlots": 7,
+     "repeatCap": 2,
+     "distinctWeeks": 0,
+     "horizonWeeks": 1,
+     "sustainsHorizon": false,
+     "notes": [
+      "0 of your 15 compliant recipes can be portioned to a 2,066 kcal meal — about 0 week(s) of 14 meals before dishes start repeating, so over 1 weeks you will see favourites come back.",
+      "Your library has no snack-sized recipe that fits your rules — snack slots stay empty until you add one.",
+      "1 day: 2 distinct dish(es) across 2 filled slot(s); most-repeated dish appears 1x against a 2x cap for this horizon (2x per week)."
+     ],
+     "horizon": {
+      "weeks": 1,
+      "days": 1,
+      "perWeekCap": 2,
+      "horizonRepeatCap": 2,
+      "mealSlots": 2,
+      "snackSlots": 1,
+      "totalSlots": 3,
+      "distinctFloor": 2,
+      "distinctRecipes": 2,
+      "maxRepeat": 1,
+      "maxRepeatRecipeId": "cmrj2ul500ak9wlwskp59bqxx",
+      "lockedRepeatsOfMax": 0,
+      "filledSlots": 2,
+      "unfilledSlots": 1,
+      "requiredDistinct": 1,
+      "capHeld": true,
+      "floorHeld": true
+     }
+    },
+    "priorWeeksConsidered": 0,
+    "horizon": {
+     "key": "day",
+     "label": "1 day",
+     "days": 1,
+     "kind": "days",
+     "weeks": 1,
+     "custom": false,
+     "startDate": "2026-07-30",
+     "endDate": "2026-07-30",
+     "startDayOfWeek": 3,
+     "weeksWritten": 1,
+     "solveMs": 1,
+     "weekPlans": [
+      {
+       "startDate": "2026-07-27",
+       "dayIndices": [
+        3
+       ],
+       "days": 1,
+       "daysInTolerance": 0,
+       "avgMatch": 39,
+       "unfilledSlots": 1,
+       "poolSize": 20
+      }
+     ]
+    }
+   }
+  }
+ }
+}

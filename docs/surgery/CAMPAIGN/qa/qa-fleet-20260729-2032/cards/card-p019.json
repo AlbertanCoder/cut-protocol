@@ -1,0 +1,62 @@
+{
+  "personaId": "p019",
+  "satisfaction": 4,
+  "wouldRecommend": false,
+  "criteria": {
+    "macrosInRange": 7,
+    "worksEndToEnd": 7,
+    "mealsAreGood": 3,
+    "affordableAdjustable": 4,
+    "tasty": 4
+  },
+  "allergenRespect": {
+    "ok": true,
+    "leaks": []
+  },
+  "delights": [
+    "It told me when it failed instead of hiding it: slot 3 shipped with \"Tried 5 recipe(s) for this slot, none fit within tolerance — closest was \\\"Chilli ginger lamb chops\\\" (landed 839 kcal vs a 722 target).\" I trust a planner that admits a miss.",
+    "Keto and my five walls were both genuinely respected: the day landed 2589 kcal against a 2608 target with carbs at 30g (5% of kcal), and not one of the 14 ingredients across all 5 slots names egg, dairy, gluten, peanut or soy.",
+    "The alternates were real, labelled with an honest match %, and one was a dish I would actually cook: \"Chicken with saffron, raisins & pine nuts\" at matchPct 99 — 797 kcal, 40g protein, and the slot warning cleared when I took it."
+  ],
+  "defects": [
+    {
+      "what": "I asked for a SINGLE day and the first meal of it cannot be eaten for two to three days — it is a cured dish, not a breakfast.",
+      "snippet": "Sledz w Oleju (Polish Herrings): \"Soak herring in cold water for at least 1 hour.\" ... \"Refrigerate for 2 to 3 days before eating.\""
+    },
+    {
+      "what": "Both of my snack slots are the exact same dish, and before I swapped, meals 2 and 3 were also the same dish — so my day was 3 distinct recipes across 5 slots.",
+      "snippet": "snack#0 \"Jerky & Pork Rinds Snack Plate\" — Beef jerky 30g | Pork rinds 15g / snack#1 \"Jerky & Pork Rinds Snack Plate\" — Beef jerky 30g | Pork rinds 15g"
+    },
+    {
+      "what": "35 grams of vegetables in an entire 2589 kcal day, with essentially zero fibre. I train 150 minutes nine times a week on keto — no greens means cramps and no potassium or magnesium.",
+      "snippet": "Onion 8g | Garlic 3g | Ginger 13g | Lemon Juice 7g | Parsley 4g (the complete plant total for the day)"
+    },
+    {
+      "what": "Every food record carries empty allergen data, so my coeliac and soy walls rest entirely on whether a banned word appears in the food's NAME. \"Beef jerky\" (eaten twice a day here) and \"Chicken Stock\" are the two most common hidden soy-sauce and wheat vectors in a supermarket, and neither carries a gluten-free or soy-free flag.",
+      "snippet": "{\"name\":\"Beef jerky\",\"source\":\"usda-verified\",\"allergenTags\":null,\"mayContain\":null}"
+    },
+    {
+      "what": "My profile contradicts itself and nothing flagged it: my goal weight is 0.1 kg ABOVE my current weight (maintain), yet it has a 1.5 lb-per-week loss rate applied. You cannot cut 1.5 lb/wk toward a goal above your start weight, and 2608 kcal is several hundred under what 22.5 hours of weekly cardio costs me.",
+      "snippet": "\"startWeightKg\":64.4,\"goalWeightKg\":64.5,\"rateLbPerWeek\":1.5,\"rateAcknowledged\":true,\"targetKcal\":2608"
+    },
+    {
+      "what": "The swap endpoint rejected the recipeId it had just handed me, with an error describing a problem I did not cause.",
+      "snippet": "HTTP 400 {\"error\":\"a slot needs at least one ingredient\"}"
+    },
+    {
+      "what": "$43.49 for one day of food — about $1,300 a month for one person — driven by two lamb-chop servings and a $6.75 snack that is 45g of dried meat.",
+      "snippet": "\"name\":\"Chilli ginger lamb chops\",\"costPerServing\":12.83 / \"Jerky & Pork Rinds Snack Plate\",\"costPerServing\":6.75"
+    },
+    {
+      "what": "The plan arrived with no shopping list attached, so I could not see what to buy without generating one separately.",
+      "snippet": "\"groceryList\": null"
+    }
+  ],
+  "followUp": {
+    "action": "Asked for alternates on the third meal — the duplicate lamb chops that also carried the tolerance warning — and swapped in the one I liked",
+    "endpoint": "POST /api/plans/cms6x0c1i00t7wlw0odyjepjb/slots/cms6x0c1m00tdwlw0e99pyoye/alternates (200), then PUT /api/plans/.../slots/.../apply (400, then 200)",
+    "status": 200,
+    "howItWent": "Alternates were genuinely good — three options, all clean of my five walls, each with an honest match % and its own warning where it did not fit, and I took \"Chicken with saffron, raisins & pine nuts\" at 99%. The apply call first threw a 400 saying \"a slot needs at least one ingredient\" when I sent the recipeId it gave me; resending the full alternate object worked, the warning cleared, and a fresh read of the plan confirmed the swap held at 2589 kcal for the day."
+  },
+  "verdict": "Nothing on this plan can make me ill and the keto maths is genuinely accurate, but as a day of eating it is barely food — a breakfast I cannot touch for three days, the same jerky plate twice, 35 grams of vegetables, and $43 spent to get there."
+}

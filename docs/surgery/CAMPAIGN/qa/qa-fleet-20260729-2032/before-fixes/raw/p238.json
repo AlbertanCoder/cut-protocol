@@ -1,0 +1,578 @@
+{
+ "persona": {
+  "idx": 238,
+  "id": "p238",
+  "tier": "EASY",
+  "displayName": "cyclist, 46",
+  "story": "cyclist, 46, male, 171 cm / 122 kg (BMI 41.7), cut at 0.5 lb/wk, vegan diet, avoiding shellfish, soy, high-protein, 3 meals + 3 snacks, wants a single day",
+  "profile": {
+   "sex": "M",
+   "age": 46,
+   "heightCm": 171,
+   "startWeightKg": 122,
+   "goalWeightKg": 109.3,
+   "occupationKey": "desk-office",
+   "trainingStyle": "cardio",
+   "minutesPerSession": 120,
+   "sessionsPerWeek": 6,
+   "rateLbPerWeek": 0.5,
+   "dietaryStyle": "vegan",
+   "excludedFoods": [
+    "shellfish",
+    "soy"
+   ],
+   "mealsPerDay": 3,
+   "snacksPerDay": 3,
+   "unitPref": "metric"
+  },
+  "filters": {
+   "proteinPriority": true
+  },
+  "horizon": "day",
+  "walls": [
+   "shellfish",
+   "soy"
+  ],
+  "freeTextExclusions": [],
+  "dietaryStyle": "vegan",
+  "bmi": 41.7,
+  "goalKind": "cut",
+  "macroStyle": "high-protein",
+  "requestedButUnsupported": [
+   "wanted protein set explicitly in g/lb; the API derives the protein band from LBM (1.14-1.25 g/lb) and accepts no client protein target — only the per-request proteinPriority filter"
+  ],
+  "tupleKey": "[\"EASY\",\"M\",46,171,122,109.3,\"desk-office\",\"cardio\",0.5,\"vegan\",[\"shellfish\",\"soy\"],3,3,\"high-protein\",\"day\",null,null,true,null,null]"
+ },
+ "request": {
+  "horizon": "day",
+  "filters": {
+   "proteinPriority": true
+  }
+ },
+ "profileResponse": {
+  "id": "cms6x1we105w5wlw0eihj7xgl",
+  "userId": "cms6x1w60006gwl2orpturt7w",
+  "sex": "M",
+  "age": 46,
+  "heightCm": 171,
+  "bodyFatPct": 0,
+  "bodyFatSource": null,
+  "occupationKey": "desk-office",
+  "activityOverride": null,
+  "sessionsPerWeek": 6,
+  "trainingStyle": "cardio",
+  "minutesPerSession": 120,
+  "startWeightKg": 122,
+  "goalWeightKg": 109.3,
+  "startDate": "2026-07-29",
+  "unitPref": "metric",
+  "rateLbPerWeek": 0.5,
+  "rateAcknowledged": false,
+  "floorKcal": null,
+  "excludedFormulas": [],
+  "targetKcal": 3970,
+  "mealsPerDay": 3,
+  "snacksPerDay": 3,
+  "excludedFoods": [
+   "shellfish",
+   "soy"
+  ],
+  "dietaryStyle": "vegan",
+  "cuisinePreferences": [],
+  "mealPreferencesNote": null,
+  "maxPrepMin": null,
+  "budgetTier": null,
+  "allowBatch": null,
+  "maxComplexity": null,
+  "adaptiveTdee": true,
+  "proteinPriorityMode": false,
+  "updatedAt": "2026-07-30T02:50:28.743Z"
+ },
+ "generate": {
+  "status": 200,
+  "ms": 417,
+  "body": {
+   "id": "cms6x1wx40617wlw09oynh7md",
+   "userId": "cms6x1w60006gwl2orpturt7w",
+   "startDate": "2026-07-27",
+   "createdAt": "2026-07-30T02:50:29.224Z",
+   "slots": [
+    {
+     "id": "cms6x1wx50619wlw0a9lffosl",
+     "planId": "cms6x1wx40617wlw09oynh7md",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 0,
+     "recipeId": "cmrj2ug1j09ffwlws4us85irt",
+     "proteinScale": 0.79,
+     "sidesScale": 0.79,
+     "ingredients": [
+      {
+       "foodId": "cmrj2taz400ivwlwsjkz53tz4",
+       "name": "Butter Beans",
+       "role": null,
+       "grams": 80
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "carb",
+       "grams": 8
+      },
+      {
+       "foodId": "cmrg8zxar000lwli0qy2ovmx4",
+       "name": "Onion",
+       "role": "veg",
+       "grams": 20
+      },
+      {
+       "foodId": "cmrj2t6rr001jwlwsqfi60fyj",
+       "name": "Garlic Clove",
+       "role": null,
+       "grams": 1
+      },
+      {
+       "foodId": "cmrj2t6pz001bwlwsbarwpyy1",
+       "name": "Tomato Puree",
+       "role": "veg",
+       "grams": 4
+      },
+      {
+       "foodId": "cmrj2t7jf004ywlwsm5ob5a0u",
+       "name": "Tomatoes",
+       "role": "veg",
+       "grams": 155
+      },
+      {
+       "foodId": "cmrj2t6z2002gwlwsjklhz848",
+       "name": "Sugar",
+       "role": "carb",
+       "grams": 2
+      },
+      {
+       "foodId": "cmrj2t6wa0023wlwskt9lv52i",
+       "name": "Dried Oregano",
+       "role": null,
+       "grams": 2
+      },
+      {
+       "foodId": "cmrj2t88a0084wlwsn57isrce",
+       "name": "Cinnamon",
+       "role": null,
+       "grams": 1
+      },
+      {
+       "foodId": "cmrj2ta6600frwlwsrxamcv2w",
+       "name": "Chopped Parsley",
+       "role": null,
+       "grams": 1
+      }
+     ],
+     "kcal": 837.68,
+     "protein": 37.82239999999999,
+     "fat": 9.590399999999999,
+     "carb": 172.9029,
+     "warning": "Tried 5 recipe(s) for this slot, none fit within tolerance — closest was \"Gigantes Plaki\" (delivered 38g protein vs a 54g target).",
+     "locked": false,
+     "recipe": {
+      "id": "cmrj2ug1j09ffwlws4us85irt",
+      "name": "Gigantes Plaki",
+      "description": null,
+      "steps": [
+       "Soak the beans overnight in plenty of water. Drain, rinse, then place in a pan covered with water. Bring to the boil, reduce the heat, then simmer for approx 50 mins until slightly tender but not soft. Drain, then set aside.",
+       "Heat oven to 180C/160C fan/gas 4. Heat the olive oil in a large frying pan, tip in the onion and garlic, then cook over a medium heat for 10 mins until softened but not browned. Add the tomato purée, cook for a further min, add remaining ingredients, then simmer for 2-3 mins. Season generously, then stir in the beans. Tip into a large ovenproof dish, then bake for approximately 1 hr, uncovered and without stirring, until the beans are tender. The beans will absorb all the fabulous flavours and the sauce will thicken. Allow to cool, then scatter with parsley and drizzle with a little more olive oil to serve."
+      ],
+      "slotType": "meal",
+      "cuisine": "western-comfort",
+      "prepTimeMin": 20,
+      "source": "themealdb-import",
+      "mealCategory": null,
+      "kcal": 1069.1,
+      "protein": 48.1,
+      "fat": 12.2,
+      "carb": 221.2,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 1.74,
+      "difficulty": 3,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-13T10:26:10.231Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x1wx6061bwlw0dx8b4p0k",
+     "planId": "cms6x1wx40617wlw09oynh7md",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 1,
+     "recipeId": "cmrj2uaj8087gwlwsssnykonm",
+     "proteinScale": 0.5,
+     "sidesScale": 0.5,
+     "ingredients": [
+      {
+       "foodId": "cmrg8zxar000lwli0qy2ovmx4",
+       "name": "Onion",
+       "role": "veg",
+       "grams": 55
+      },
+      {
+       "foodId": "cmrj2t6oj0014wlwsaw8ffg0k",
+       "name": "Thyme",
+       "role": null,
+       "grams": 25
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "carb",
+       "grams": 7
+      },
+      {
+       "foodId": "cmrj2t6t4001pwlwsxeja9565",
+       "name": "Potatoes",
+       "role": "veg",
+       "grams": 375
+      },
+      {
+       "foodId": "cmrj2ta2r00fewlwsu3015yzh",
+       "name": "Vegetable Stock",
+       "role": "carb",
+       "grams": 105
+      }
+     ],
+     "kcal": 1121.4,
+     "protein": 50.9385,
+     "fat": 19.307,
+     "carb": 189.122,
+     "warning": "Tried 5 recipe(s) for this slot, none fit within tolerance — closest was \"Boulangère Potatoes\" (landed 1121 kcal vs a 935 target; delivered 51g protein vs a 65g target).",
+     "locked": false,
+     "recipe": {
+      "id": "cmrj2uaj8087gwlwsssnykonm",
+      "name": "Boulangère Potatoes",
+      "description": null,
+      "steps": [
+       "Heat oven to 200C/fan 180C/gas 6. Fry the onions and thyme sprigs in the oil until softened and lightly coloured (about 5 mins).",
+       "Spread a layer of potatoes over the base of a 1.5-litre oiled gratin dish. Sprinkle over a few onions (see picture, above) and continue layering, finishing with a layer of potatoes. Pour over the stock and bake for 50-60 mins until the potatoes are cooked and the top is golden and crisp."
+      ],
+      "slotType": "meal",
+      "cuisine": "western-comfort",
+      "prepTimeMin": 16,
+      "source": "themealdb-import",
+      "mealCategory": null,
+      "kcal": 2240,
+      "protein": 101.9,
+      "fat": 38.3,
+      "carb": 378.3,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 4.67,
+      "difficulty": 2,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-13T10:26:03.093Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x1wx6061dwlw0gvvroidh",
+     "planId": "cms6x1wx40617wlw09oynh7md",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 2,
+     "recipeId": "cmrujkwtd007uwl9omq96usvg",
+     "proteinScale": 2,
+     "sidesScale": 0.5,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t8130077wlws41hxskn2",
+       "name": "Chickpeas",
+       "role": "protein",
+       "grams": 380
+      },
+      {
+       "foodId": "cmrg8zuft0008wli0etz5grtf",
+       "name": "Bulgur, cooked",
+       "role": "carb",
+       "grams": 65
+      },
+      {
+       "foodId": "cmrg8zxar000lwli0qy2ovmx4",
+       "name": "Onion",
+       "role": "veg",
+       "grams": 30
+      },
+      {
+       "foodId": "cmrevpco3000nwl5g1d51b3it",
+       "name": "Almonds",
+       "role": "fat",
+       "grams": 18
+      }
+     ],
+     "kcal": 975.39,
+     "protein": 37.386,
+     "fat": 43.494,
+     "carb": 115.572,
+     "warning": "Tried 5 recipe(s) for this slot, none fit within tolerance — closest was \"Mediterranean Chickpeas & Onions with Bulgur\" (delivered 37g protein vs a 81g target).",
+     "locked": false,
+     "recipe": {
+      "id": "cmrujkwtd007uwl9omq96usvg",
+      "name": "Mediterranean Chickpeas & Onions with Bulgur",
+      "description": null,
+      "steps": [
+       "Cook the chickpeas.",
+       "Serve with bulgur and onions."
+      ],
+      "slotType": "meal",
+      "cuisine": "mediterranean",
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 640.4,
+      "protein": 24.1,
+      "fat": 26.8,
+      "carb": 82,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 1.82,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:00:06.817Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x1wx7061fwlw0gmwq6xzh",
+     "planId": "cms6x1wx40617wlw09oynh7md",
+     "dayOfWeek": 2,
+     "slotType": "snack",
+     "slotIndex": 0,
+     "recipeId": null,
+     "proteinScale": 1,
+     "sidesScale": 1,
+     "ingredients": [],
+     "kcal": 0,
+     "protein": 0,
+     "fat": 0,
+     "carb": 0,
+     "warning": "No eligible snack recipe left for this slot.",
+     "locked": false,
+     "recipe": null
+    },
+    {
+     "id": "cms6x1wx7061hwlw00woptcsu",
+     "planId": "cms6x1wx40617wlw09oynh7md",
+     "dayOfWeek": 2,
+     "slotType": "snack",
+     "slotIndex": 1,
+     "recipeId": null,
+     "proteinScale": 1,
+     "sidesScale": 1,
+     "ingredients": [],
+     "kcal": 0,
+     "protein": 0,
+     "fat": 0,
+     "carb": 0,
+     "warning": "No eligible snack recipe left for this slot.",
+     "locked": false,
+     "recipe": null
+    },
+    {
+     "id": "cms6x1wx8061jwlw0182tmrxu",
+     "planId": "cms6x1wx40617wlw09oynh7md",
+     "dayOfWeek": 2,
+     "slotType": "snack",
+     "slotIndex": 2,
+     "recipeId": null,
+     "proteinScale": 1,
+     "sidesScale": 1,
+     "ingredients": [],
+     "kcal": 0,
+     "protein": 0,
+     "fat": 0,
+     "carb": 0,
+     "warning": "No eligible snack recipe left for this slot.",
+     "locked": false,
+     "recipe": null
+    }
+   ],
+   "groceryList": null,
+   "meta": {
+    "matchPct": 65,
+    "attempts": 5,
+    "score": {
+     "daysInTolerance": 0,
+     "avgMatch": 65,
+     "days": [
+      {
+       "dayOfWeek": 2,
+       "dayName": "Wednesday",
+       "matchPct": 65,
+       "totals": {
+        "kcal": 2934,
+        "protein": 126,
+        "fat": 72,
+        "carb": 478
+       },
+       "kcalDeltaPct": -26.1,
+       "proteinShortPct": 50.3,
+       "fatOk": true,
+       "carbOk": true,
+       "inTolerance": false,
+       "miss": "2,934 kcal vs a 3,970 target — 1,036 under; 126 g protein vs 254 g — 128 g short",
+       "unfilledSlots": 3,
+       "warnedSlots": 6,
+       "proteinFloor": {
+        "met": false,
+        "floorG": 242,
+        "achievedG": 126.1,
+        "shortG": 115.9,
+        "shortPct": 47.9,
+        "reason": "115.9 g short of the 242 g protein floor (48% under) — the compliant pool couldn't scale up to close the gap within the 0.5-2x portion limit."
+       },
+       "windowIndex": 0,
+       "dayIndex": 0,
+       "key": "0:2"
+      }
+     ],
+     "totalDays": 1,
+     "floorDaysMet": 0,
+     "floorDaysTotal": 1
+    },
+    "days": [
+     {
+      "dayOfWeek": 2,
+      "dayName": "Wednesday",
+      "matchPct": 65,
+      "totals": {
+       "kcal": 2934,
+       "protein": 126,
+       "fat": 72,
+       "carb": 478
+      },
+      "kcalDeltaPct": -26.1,
+      "proteinShortPct": 50.3,
+      "fatOk": true,
+      "carbOk": true,
+      "inTolerance": false,
+      "miss": "2,934 kcal vs a 3,970 target — 1,036 under; 126 g protein vs 254 g — 128 g short",
+      "unfilledSlots": 3,
+      "warnedSlots": 6,
+      "proteinFloor": {
+       "met": false,
+       "floorG": 242,
+       "achievedG": 126.1,
+       "shortG": 115.9,
+       "shortPct": 47.9,
+       "reason": "115.9 g short of the 242 g protein floor (48% under) — the compliant pool couldn't scale up to close the gap within the 0.5-2x portion limit."
+      },
+      "windowIndex": 0,
+      "dayIndex": 0,
+      "key": "0:2"
+     }
+    ],
+    "diagnosis": {
+     "feasible": false,
+     "reasons": [
+      "3 of 6 slots over 1 days came back empty — no compliant recipe was left that could fill them.",
+      "Protein-priority mode: the 242g/day floor wasn't met on 1 day(s) — only 18 of 92 compliant recipes carry enough protein density to close the gap within the 0.5-2x portion limit.",
+      "Your library has no snack-sized recipe that fits your rules — all 3 snack slots this week come back empty."
+     ],
+     "suggestions": [
+      "AI-generate a few high-protein compliant recipes, set the protein-preference filter, or allow batch-cooking repeats of the densest dishes.",
+      "Set snacks per day to 0 and fold those calories into your meals, or AI-generate a few compliant snacks on the Recipes tab."
+     ],
+     "binding": {
+      "key": "snack-pool",
+      "label": "your snack-eligible recipe pool",
+      "detail": "no snack-sized recipe fits your rules, so all 3 snack slot(s) come back empty."
+     }
+    },
+    "poolCounts": {
+     "raw": 889,
+     "afterDiet": 92,
+     "afterPrep": 92,
+     "afterStack": 92,
+     "stackExplain": null
+    },
+    "variety": {
+     "mealEligible": 76,
+     "usableForSlot": 16,
+     "slotKcal": 950,
+     "snackEligible": 0,
+     "weeklyMealSlots": 21,
+     "weeklySnackSlots": 21,
+     "repeatCap": 2,
+     "distinctWeeks": 0.8,
+     "horizonWeeks": 1,
+     "sustainsHorizon": false,
+     "notes": [
+      "16 of your 76 compliant recipes can be portioned to a 950 kcal meal — about 0.7 week(s) of 21 meals before dishes start repeating, so over 1 weeks you will see favourites come back.",
+      "Your library has no snack-sized recipe that fits your rules — snack slots stay empty until you add one.",
+      "1 day: 3 distinct dish(es) across 3 filled slot(s); most-repeated dish appears 1x against a 2x cap for this horizon (2x per week)."
+     ],
+     "horizon": {
+      "weeks": 1,
+      "days": 1,
+      "perWeekCap": 2,
+      "horizonRepeatCap": 2,
+      "mealSlots": 3,
+      "snackSlots": 3,
+      "totalSlots": 6,
+      "distinctFloor": 3,
+      "distinctRecipes": 3,
+      "maxRepeat": 1,
+      "maxRepeatRecipeId": "cmrj2ug1j09ffwlws4us85irt",
+      "lockedRepeatsOfMax": 0,
+      "filledSlots": 3,
+      "unfilledSlots": 3,
+      "requiredDistinct": 2,
+      "capHeld": true,
+      "floorHeld": true
+     }
+    },
+    "priorWeeksConsidered": 0,
+    "horizon": {
+     "key": "day",
+     "label": "1 day",
+     "days": 1,
+     "kind": "days",
+     "weeks": 1,
+     "custom": false,
+     "startDate": "2026-07-29",
+     "endDate": "2026-07-29",
+     "startDayOfWeek": 2,
+     "weeksWritten": 1,
+     "solveMs": 1,
+     "weekPlans": [
+      {
+       "startDate": "2026-07-27",
+       "dayIndices": [
+        2
+       ],
+       "days": 1,
+       "daysInTolerance": 0,
+       "avgMatch": 65,
+       "unfilledSlots": 3,
+       "poolSize": 92
+      }
+     ]
+    }
+   }
+  }
+ }
+}

@@ -1,0 +1,476 @@
+{
+ "persona": {
+  "idx": 98,
+  "id": "p098",
+  "tier": "EASY",
+  "displayName": "powerlifter, 22",
+  "story": "powerlifter, 22, male, 197 cm / 115.4 kg (BMI 29.7), cut at 0.5 lb/wk, vegetarian diet, avoiding gluten, balanced, 3 meals + 0 snacks, wants a single day",
+  "profile": {
+   "sex": "M",
+   "age": 22,
+   "heightCm": 197,
+   "startWeightKg": 115.4,
+   "goalWeightKg": 92,
+   "occupationKey": "trades-general",
+   "trainingStyle": "weights",
+   "minutesPerSession": 90,
+   "sessionsPerWeek": 5,
+   "rateLbPerWeek": 0.5,
+   "dietaryStyle": "vegetarian",
+   "excludedFoods": [
+    "gluten"
+   ],
+   "mealsPerDay": 3,
+   "snacksPerDay": 0,
+   "unitPref": "metric"
+  },
+  "filters": {
+   "maxPrepMin": 15
+  },
+  "horizon": "day",
+  "walls": [
+   "gluten"
+  ],
+  "freeTextExclusions": [],
+  "dietaryStyle": "vegetarian",
+  "bmi": 29.7,
+  "goalKind": "cut",
+  "macroStyle": "balanced",
+  "requestedButUnsupported": [],
+  "tupleKey": "[\"EASY\",\"M\",22,197,115.4,92,\"trades-general\",\"weights\",0.5,\"vegetarian\",[\"gluten\"],3,0,\"balanced\",\"day\",15,null,null,null,null]"
+ },
+ "request": {
+  "horizon": "day",
+  "filters": {
+   "maxPrepMin": 15
+  }
+ },
+ "profileResponse": {
+  "id": "cms6x0wfa02mzwlw0fjut7p79",
+  "userId": "cms6x0w4y002kwl2ob0l6rd1e",
+  "sex": "M",
+  "age": 22,
+  "heightCm": 197,
+  "bodyFatPct": 0,
+  "bodyFatSource": null,
+  "occupationKey": "trades-general",
+  "activityOverride": null,
+  "sessionsPerWeek": 5,
+  "trainingStyle": "weights",
+  "minutesPerSession": 90,
+  "startWeightKg": 115.4,
+  "goalWeightKg": 92,
+  "startDate": "2026-07-29",
+  "unitPref": "metric",
+  "rateLbPerWeek": 0.5,
+  "rateAcknowledged": false,
+  "floorKcal": null,
+  "excludedFormulas": [],
+  "targetKcal": 3596,
+  "mealsPerDay": 3,
+  "snacksPerDay": 0,
+  "excludedFoods": [
+   "gluten"
+  ],
+  "dietaryStyle": "vegetarian",
+  "cuisinePreferences": [],
+  "mealPreferencesNote": null,
+  "maxPrepMin": null,
+  "budgetTier": null,
+  "allowBatch": null,
+  "maxComplexity": null,
+  "adaptiveTdee": true,
+  "proteinPriorityMode": false,
+  "updatedAt": "2026-07-30T20:33:31.300Z"
+ },
+ "generate": {
+  "status": 200,
+  "ms": 855,
+  "body": {
+   "id": "cms7z0zzv01xhwlgwvlhm0f29",
+   "userId": "cms6x0w4y002kwl2ob0l6rd1e",
+   "startDate": "2026-07-27",
+   "createdAt": "2026-07-30T20:33:31.963Z",
+   "slots": [
+    {
+     "id": "cms7z100201xjwlgwb23gpk86",
+     "planId": "cms7z0zzv01xhwlgwvlhm0f29",
+     "dayOfWeek": 3,
+     "slotType": "meal",
+     "slotIndex": 0,
+     "recipeId": "cmrujkww700d0wl9o2q23yey4",
+     "proteinScale": 1.56,
+     "sidesScale": 2,
+     "ingredients": [
+      {
+       "foodId": "cmrj2tapd00htwlwsd6ggixb6",
+       "name": "Tofu",
+       "role": "protein",
+       "grams": 295
+      },
+      {
+       "foodId": "cmrevpcn2000ewl5gmlyzu0vd",
+       "name": "White rice, cooked",
+       "role": "carb",
+       "grams": 320
+      },
+      {
+       "foodId": "cmrj2t6na000ywlws9jek4w4z",
+       "name": "Broccoli",
+       "role": "veg",
+       "grams": 220
+      },
+      {
+       "foodId": "cmrj2t6tj001rwlwszp26qdc2",
+       "name": "Peanut Butter",
+       "role": "fat",
+       "grams": 18
+      },
+      {
+       "foodId": "cmrevpcn2000ewl5gmlyzu0vd",
+       "name": "White rice, cooked",
+       "role": "carb",
+       "grams": 160,
+       "adjuster": true
+      },
+      {
+       "foodId": "cmrj2t6t4001pwlwsxeja9565",
+       "name": "Potatoes",
+       "role": "carb",
+       "grams": 160,
+       "adjuster": true
+      },
+      {
+       "foodId": "cmrj2t9dj00cswlwsn2mrylyl",
+       "name": "Oats",
+       "role": "carb",
+       "grams": 105,
+       "adjuster": true
+      }
+     ],
+     "kcal": 1745.79,
+     "protein": 90.78500000000001,
+     "fat": 44.133,
+     "carb": 259.494,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrujkww700d0wl9o2q23yey4",
+      "name": "Thai Tofu & Broccoli with Rice",
+      "description": null,
+      "steps": [
+       "Cook the tofu.",
+       "Serve with white rice and broccoli."
+      ],
+      "slotType": "meal",
+      "cuisine": "thai",
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 623.3399999999999,
+      "protein": 44.013,
+      "fat": 26.674,
+      "carb": 60.993,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 3.53,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:00:06.920Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z100301xlwlgwdtu8zseo",
+     "planId": "cms7z0zzv01xhwlgwvlhm0f29",
+     "dayOfWeek": 3,
+     "slotType": "meal",
+     "slotIndex": 1,
+     "recipeId": "cmrujkwwa00d6wl9oss3v9faw",
+     "proteinScale": 2,
+     "sidesScale": 2,
+     "ingredients": [
+      {
+       "foodId": "cmrj2tapd00htwlwsd6ggixb6",
+       "name": "Tofu",
+       "role": "protein",
+       "grams": 380
+      },
+      {
+       "foodId": "cmrevpcn2000ewl5gmlyzu0vd",
+       "name": "White rice, cooked",
+       "role": "carb",
+       "grams": 320
+      },
+      {
+       "foodId": "cmrevpcnh000iwl5gh2zjhyqe",
+       "name": "Bell peppers",
+       "role": "veg",
+       "grams": 160
+      },
+      {
+       "foodId": "cmrj2t6xc0028wlwszh51pa6i",
+       "name": "Sesame Seed Oil",
+       "role": "fat",
+       "grams": 8
+      }
+     ],
+     "kcal": 1083.52,
+     "protein": 75.97999999999999,
+     "fat": 42.576,
+     "carb": 109.764,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrujkwwa00d6wl9oss3v9faw",
+      "name": "Thai Tofu & Bell Peppers with Rice",
+      "description": null,
+      "steps": [
+       "Cook the tofu.",
+       "Serve with white rice and bell peppers."
+      ],
+      "slotType": "meal",
+      "cuisine": "thai",
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 577.1199999999999,
+      "protein": 37.98999999999999,
+      "fat": 25.288,
+      "carb": 54.88200000000001,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 3.46,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:00:06.922Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z100401xnwlgw4wiy457c",
+     "planId": "cms7z0zzv01xhwlgwvlhm0f29",
+     "dayOfWeek": 3,
+     "slotType": "meal",
+     "slotIndex": 2,
+     "recipeId": "cmrul4e4w003cwl68cvoxeq0l",
+     "proteinScale": 1.66,
+     "sidesScale": 2,
+     "ingredients": [
+      {
+       "foodId": "cmrj2tapd00htwlwsd6ggixb6",
+       "name": "Tofu",
+       "role": "protein",
+       "grams": 330
+      },
+      {
+       "foodId": "cmrj2t7fb004fwlws8ezof2dp",
+       "name": "Russet Potato",
+       "role": "carb",
+       "grams": 300
+      },
+      {
+       "foodId": "cmrj2t6na000ywlws9jek4w4z",
+       "name": "Broccoli",
+       "role": "veg",
+       "grams": 220
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 873.4000000000001,
+     "protein": 70.63399999999999,
+     "fat": 34.914,
+     "carb": 87.16799999999999,
+     "warning": "Tried 9 recipe(s) for this slot, none fit within tolerance — closest was \"High-Protein Tofu & Broccoli with Potato\" (landed 873 kcal vs a 1496 target; delivered 71g protein vs a 95g target).",
+     "locked": false,
+     "recipe": {
+      "id": "cmrul4e4w003cwl68cvoxeq0l",
+      "name": "High-Protein Tofu & Broccoli with Potato",
+      "description": null,
+      "steps": [
+       "Cook the tofu.",
+       "Serve over potato with broccoli."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 509.6,
+      "protein": 41.372,
+      "fat": 23.009,
+      "carb": 44.557,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 3.53,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:43:15.344Z",
+      "createdByUserId": null
+     }
+    }
+   ],
+   "groceryList": null,
+   "meta": {
+    "matchPct": 86,
+    "attempts": 5,
+    "score": {
+     "daysInTolerance": 0,
+     "avgMatch": 86,
+     "days": [
+      {
+       "dayOfWeek": 3,
+       "dayName": "Thursday",
+       "matchPct": 86,
+       "totals": {
+        "kcal": 3703,
+        "protein": 237,
+        "fat": 122,
+        "carb": 456
+       },
+       "kcalDeltaPct": 3,
+       "proteinShortPct": 1.1,
+       "fatOk": false,
+       "carbOk": true,
+       "inTolerance": false,
+       "miss": "122 g fat vs a 68–80 g range — 42 g over",
+       "unfilledSlots": 0,
+       "warnedSlots": 1,
+       "windowIndex": 0,
+       "dayIndex": 0,
+       "key": "0:3"
+      }
+     ],
+     "totalDays": 1
+    },
+    "days": [
+     {
+      "dayOfWeek": 3,
+      "dayName": "Thursday",
+      "matchPct": 86,
+      "totals": {
+       "kcal": 3703,
+       "protein": 237,
+       "fat": 122,
+       "carb": 456
+      },
+      "kcalDeltaPct": 3,
+      "proteinShortPct": 1.1,
+      "fatOk": false,
+      "carbOk": true,
+      "inTolerance": false,
+      "miss": "122 g fat vs a 68–80 g range — 42 g over",
+      "unfilledSlots": 0,
+      "warnedSlots": 1,
+      "windowIndex": 0,
+      "dayIndex": 0,
+      "key": "0:3"
+     }
+    ],
+    "diagnosis": {
+     "feasible": false,
+     "reasons": [
+      "1 day(s) landed outside your 68–80 g fat range — portion scaling moves a dish's calories, not its fat/carb ratio, so the pool's composition is what binds here."
+     ],
+     "suggestions": [
+      "Add (or AI-generate) a few recipes built around the macro you keep missing, or drop the cuisine/protein preference so the solver can reach dishes that carry it."
+     ],
+     "binding": {
+      "key": "macro-composition",
+      "label": "fat in your recipe pool",
+      "detail": "1 of 1 day(s) landed outside your 68-80 g fat range. Portion scaling moves a dish's calories, not its fat/carb ratio, so what binds here is which dishes your rules leave in the pool. Calories and protein landed on target on every day — it is composition, not portion size, that is short."
+     }
+    },
+    "poolCounts": {
+     "raw": 910,
+     "afterDiet": 174,
+     "afterPrep": 90,
+     "afterStack": 90,
+     "stackExplain": null
+    },
+    "variety": {
+     "mealEligible": 79,
+     "usableForSlot": 2,
+     "slotKcal": 1199,
+     "snackEligible": 9,
+     "weeklyMealSlots": 21,
+     "weeklySnackSlots": 0,
+     "repeatCap": 2,
+     "distinctWeeks": 0.1,
+     "horizonWeeks": 1,
+     "sustainsHorizon": false,
+     "notes": [
+      "2 of your 79 compliant recipes can be portioned to a 1,199 kcal meal — about 0 week(s) of 21 meals before dishes start repeating, so over 1 weeks you will see favourites come back.",
+      "1 day: 3 distinct dish(es) across 3 filled slot(s); most-repeated dish appears 1x against a 2x cap for this horizon (2x per week)."
+     ],
+     "horizon": {
+      "weeks": 1,
+      "days": 1,
+      "perWeekCap": 2,
+      "horizonRepeatCap": 2,
+      "mealSlots": 3,
+      "snackSlots": 0,
+      "totalSlots": 3,
+      "distinctFloor": 2,
+      "distinctRecipes": 3,
+      "maxRepeat": 1,
+      "maxRepeatRecipeId": "cmrujkww700d0wl9o2q23yey4",
+      "lockedRepeatsOfMax": 0,
+      "filledSlots": 3,
+      "unfilledSlots": 0,
+      "requiredDistinct": 2,
+      "capHeld": true,
+      "floorHeld": true
+     }
+    },
+    "priorWeeksConsidered": 0,
+    "horizon": {
+     "key": "day",
+     "label": "1 day",
+     "days": 1,
+     "kind": "days",
+     "weeks": 1,
+     "custom": false,
+     "startDate": "2026-07-30",
+     "endDate": "2026-07-30",
+     "startDayOfWeek": 3,
+     "weeksWritten": 1,
+     "solveMs": 2,
+     "weekPlans": [
+      {
+       "startDate": "2026-07-27",
+       "dayIndices": [
+        3
+       ],
+       "days": 1,
+       "daysInTolerance": 0,
+       "avgMatch": 86,
+       "unfilledSlots": 0,
+       "poolSize": 90
+      }
+     ]
+    }
+   }
+  }
+ }
+}

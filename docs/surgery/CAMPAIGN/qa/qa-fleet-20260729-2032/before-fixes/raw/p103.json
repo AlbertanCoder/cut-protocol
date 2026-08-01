@@ -1,0 +1,581 @@
+{
+ "persona": {
+  "idx": 103,
+  "id": "p103",
+  "tier": "IMPOSSIBLE",
+  "displayName": "electrician, 45",
+  "story": "wants 2 lb/wk off a small frame at the calorie floor, with gluten, dairy and soy all walled off and nothing over 15 minutes to cook",
+  "profile": {
+   "sex": "F",
+   "age": 45,
+   "heightCm": 164,
+   "startWeightKg": 69.5,
+   "goalWeightKg": 52.3,
+   "occupationKey": "electrician",
+   "trainingStyle": "weights",
+   "minutesPerSession": 45,
+   "sessionsPerWeek": 3,
+   "rateLbPerWeek": 2,
+   "dietaryStyle": "keto",
+   "excludedFoods": [
+    "shellfish",
+    "gluten",
+    "dairy",
+    "soy"
+   ],
+   "mealsPerDay": 4,
+   "snacksPerDay": 1,
+   "unitPref": "metric",
+   "rateAcknowledged": true,
+   "floorKcal": 1200
+  },
+  "filters": {
+   "proteinPriority": true,
+   "maxPrepMin": 15
+  },
+  "horizon": "day",
+  "walls": [
+   "shellfish",
+   "gluten",
+   "dairy",
+   "soy"
+  ],
+  "freeTextExclusions": [],
+  "dietaryStyle": "keto",
+  "bmi": 25.8,
+  "goalKind": "cut",
+  "macroStyle": "balanced",
+  "requestedButUnsupported": [
+   "this request is mathematically unsatisfiable by design — a clear, fast, honest refusal is the pass condition, and a confident plan is a critical honesty defect"
+  ],
+  "impossibleKind": "floor-vs-rate",
+  "tupleKey": "[\"IMPOSSIBLE\",\"F\",45,164,69.5,52.3,\"electrician\",\"weights\",2,\"keto\",[\"dairy\",\"gluten\",\"shellfish\",\"soy\"],4,1,\"balanced\",\"day\",15,null,true,null,\"floor-vs-rate\"]"
+ },
+ "request": {
+  "horizon": "day",
+  "filters": {
+   "proteinPriority": true,
+   "maxPrepMin": 15
+  }
+ },
+ "profileResponse": {
+  "id": "cms6x0xrf02ovwlw0x5a9ahd0",
+  "userId": "cms6x0xkb002pwl2o574ab7ia",
+  "sex": "F",
+  "age": 45,
+  "heightCm": 164,
+  "bodyFatPct": 0,
+  "bodyFatSource": null,
+  "occupationKey": "electrician",
+  "activityOverride": null,
+  "sessionsPerWeek": 3,
+  "trainingStyle": "weights",
+  "minutesPerSession": 45,
+  "startWeightKg": 69.5,
+  "goalWeightKg": 52.3,
+  "startDate": "2026-07-29",
+  "unitPref": "metric",
+  "rateLbPerWeek": 2,
+  "rateAcknowledged": true,
+  "floorKcal": 1200,
+  "excludedFormulas": [],
+  "targetKcal": 1311,
+  "mealsPerDay": 4,
+  "snacksPerDay": 1,
+  "excludedFoods": [
+   "shellfish",
+   "gluten",
+   "dairy",
+   "soy"
+  ],
+  "dietaryStyle": "keto",
+  "cuisinePreferences": [],
+  "mealPreferencesNote": null,
+  "maxPrepMin": null,
+  "budgetTier": null,
+  "allowBatch": null,
+  "maxComplexity": null,
+  "adaptiveTdee": true,
+  "proteinPriorityMode": false,
+  "updatedAt": "2026-07-30T02:49:43.680Z"
+ },
+ "generate": {
+  "status": 200,
+  "ms": 221,
+  "body": {
+   "id": "cms6x0xxx02p3wlw02ywgfwfv",
+   "userId": "cms6x0xkb002pwl2o574ab7ia",
+   "startDate": "2026-07-27",
+   "createdAt": "2026-07-30T02:49:43.894Z",
+   "slots": [
+    {
+     "id": "cms6x0xxz02p7wlw0yv1o4ikz",
+     "planId": "cms6x0xxx02p3wlw02ywgfwfv",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 0,
+     "recipeId": "cmrevpcyh004gwl5gnni3al5q",
+     "proteinScale": 0.5,
+     "sidesScale": 0.5,
+     "ingredients": [
+      {
+       "foodId": "cmrevpcmu000cwl5gfljr1l1o",
+       "name": "Bacon, cooked",
+       "role": "protein",
+       "grams": 30
+      },
+      {
+       "foodId": "cmrevpcm50006wl5g2u2bcspd",
+       "name": "Eggs, whole, cooked",
+       "role": "protein",
+       "grams": 75
+      }
+     ],
+     "kcal": 278.55,
+     "protein": 20.85,
+     "fat": 20.85,
+     "carb": 1.245,
+     "warning": "Tried 2 recipe(s) for this slot, none fit within tolerance — closest was \"Bacon & Eggs\" (delivered 21g protein vs a 27g target).",
+     "locked": false,
+     "recipe": {
+      "id": "cmrevpcyh004gwl5gnni3al5q",
+      "name": "Bacon & Eggs",
+      "description": "Weekend breakfast-style plate.",
+      "steps": [
+       "Cook bacon until crisp, set aside.",
+       "Fry or scramble eggs in the bacon fat."
+      ],
+      "slotType": "either",
+      "cuisine": "western-comfort",
+      "prepTimeMin": 15,
+      "source": "curated",
+      "mealCategory": null,
+      "kcal": 557.0999999999999,
+      "protein": 41.7,
+      "fat": 41.7,
+      "carb": 2.49,
+      "tasteTier": "really_good",
+      "tasteTierSource": "curated",
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 3.38,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-10T11:55:10.938Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x0xxz02p9wlw0908g0o82",
+     "planId": "cms6x0xxx02p3wlw02ywgfwfv",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 1,
+     "recipeId": "cmrevpcyh004gwl5gnni3al5q",
+     "proteinScale": 0.52,
+     "sidesScale": 0.52,
+     "ingredients": [
+      {
+       "foodId": "cmrevpcmu000cwl5gfljr1l1o",
+       "name": "Bacon, cooked",
+       "role": "protein",
+       "grams": 30
+      },
+      {
+       "foodId": "cmrevpcm50006wl5g2u2bcspd",
+       "name": "Eggs, whole, cooked",
+       "role": "protein",
+       "grams": 80
+      }
+     ],
+     "kcal": 286.3,
+     "protein": 21.5,
+     "fat": 21.4,
+     "carb": 1.3,
+     "warning": "Tried 2 recipe(s) for this slot, none fit within tolerance — closest was \"Bacon & Eggs\" (delivered 22g protein vs a 31g target).",
+     "locked": false,
+     "recipe": {
+      "id": "cmrevpcyh004gwl5gnni3al5q",
+      "name": "Bacon & Eggs",
+      "description": "Weekend breakfast-style plate.",
+      "steps": [
+       "Cook bacon until crisp, set aside.",
+       "Fry or scramble eggs in the bacon fat."
+      ],
+      "slotType": "either",
+      "cuisine": "western-comfort",
+      "prepTimeMin": 15,
+      "source": "curated",
+      "mealCategory": null,
+      "kcal": 557.0999999999999,
+      "protein": 41.7,
+      "fat": 41.7,
+      "carb": 2.49,
+      "tasteTier": "really_good",
+      "tasteTierSource": "curated",
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 3.38,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-10T11:55:10.938Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x0xy002pbwlw0y79136wy",
+     "planId": "cms6x0xxx02p3wlw02ywgfwfv",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 2,
+     "recipeId": "cmrj2tyok05m2wlwst1uh8vwt",
+     "proteinScale": 0.5,
+     "sidesScale": 0.5,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t7hg004pwlwsioxvv8bh",
+       "name": "Vegetable Oil",
+       "role": "carb",
+       "grams": 55
+      },
+      {
+       "foodId": "cmrj2ta7g00fwwlwsu9z4zhyn",
+       "name": "Achiote Seeds",
+       "role": "carb",
+       "grams": 5
+      }
+     ],
+     "kcal": 503.4,
+     "protein": 0.265,
+     "fat": 55.11500000000001,
+     "carb": 1.6,
+     "warning": "Tried 1 recipe(s) for this slot, none fit within tolerance — closest was \"Achiote Oil (Aceite Achiotado) Recipe\" (landed 503 kcal vs a 293 target; delivered 0g protein vs a 35g target).",
+     "locked": false,
+     "recipe": {
+      "id": "cmrj2tyok05m2wlwst1uh8vwt",
+      "name": "Achiote Oil (Aceite Achiotado) Recipe",
+      "description": null,
+      "steps": [
+       "Heat the vegetable or olive oil and Achiote seeds in a small skillet over medium heat for about 2 to 3 minutes.",
+       "Don't let the seeds turn black. Remove the skillet from the heat and let stand for 5 minutes more. Strain the oil and store for up to 15 days at room temperature in a jar with a tight lid."
+      ],
+      "slotType": "meal",
+      "cuisine": "western-comfort",
+      "prepTimeMin": 14,
+      "source": "themealdb-import",
+      "mealCategory": null,
+      "kcal": 996.8,
+      "protein": 0.5,
+      "fat": 109.2,
+      "carb": 3,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 1.1,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-13T10:25:47.733Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x0xy102pdwlw0xso7juac",
+     "planId": "cms6x0xxx02p3wlw02ywgfwfv",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 3,
+     "recipeId": "cmrj2tyok05m2wlwst1uh8vwt",
+     "proteinScale": 0.5,
+     "sidesScale": 0.5,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t7hg004pwlwsioxvv8bh",
+       "name": "Vegetable Oil",
+       "role": "carb",
+       "grams": 55
+      },
+      {
+       "foodId": "cmrj2ta7g00fwwlwsu9z4zhyn",
+       "name": "Achiote Seeds",
+       "role": "carb",
+       "grams": 5
+      }
+     ],
+     "kcal": 503.4,
+     "protein": 0.265,
+     "fat": 55.11500000000001,
+     "carb": 1.6,
+     "warning": "Tried 1 recipe(s) for this slot, none fit within tolerance — closest was \"Achiote Oil (Aceite Achiotado) Recipe\" (landed 503 kcal vs a 237 target; delivered 0g protein vs a 44g target).",
+     "locked": false,
+     "recipe": {
+      "id": "cmrj2tyok05m2wlwst1uh8vwt",
+      "name": "Achiote Oil (Aceite Achiotado) Recipe",
+      "description": null,
+      "steps": [
+       "Heat the vegetable or olive oil and Achiote seeds in a small skillet over medium heat for about 2 to 3 minutes.",
+       "Don't let the seeds turn black. Remove the skillet from the heat and let stand for 5 minutes more. Strain the oil and store for up to 15 days at room temperature in a jar with a tight lid."
+      ],
+      "slotType": "meal",
+      "cuisine": "western-comfort",
+      "prepTimeMin": 14,
+      "source": "themealdb-import",
+      "mealCategory": null,
+      "kcal": 996.8,
+      "protein": 0.5,
+      "fat": 109.2,
+      "carb": 3,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 1.1,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-13T10:25:47.733Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x0xy202pfwlw0nae8vdrs",
+     "planId": "cms6x0xxx02p3wlw02ywgfwfv",
+     "dayOfWeek": 2,
+     "slotType": "snack",
+     "slotIndex": 0,
+     "recipeId": "cmrevpcyt004lwl5gx6bidm0z",
+     "proteinScale": 0.5,
+     "sidesScale": 0.5,
+     "ingredients": [
+      {
+       "foodId": "cmrevpcma0007wl5gfj59j5mk",
+       "name": "Beef jerky",
+       "role": "protein",
+       "grams": 30
+      },
+      {
+       "foodId": "cmrevpcmq000bwl5g2mbd0jsv",
+       "name": "Pork rinds",
+       "role": "protein",
+       "grams": 15
+      }
+     ],
+     "kcal": 204.6,
+     "protein": 19.05,
+     "fat": 12.45,
+     "carb": 3.3,
+     "warning": "Tried 1 recipe(s) for this slot, none fit within tolerance — closest was \"Jerky & Pork Rinds Snack Plate\" (landed 205 kcal vs a 82 target).",
+     "locked": false,
+     "recipe": {
+      "id": "cmrevpcyt004lwl5gx6bidm0z",
+      "name": "Jerky & Pork Rinds Snack Plate",
+      "description": "Closer / site valve — his words.",
+      "steps": [
+       "No cooking — portion and eat."
+      ],
+      "slotType": "snack",
+      "cuisine": "western-comfort",
+      "prepTimeMin": 0,
+      "source": "curated",
+      "mealCategory": null,
+      "kcal": 409.2,
+      "protein": 38.1,
+      "fat": 24.9,
+      "carb": 6.6,
+      "tasteTier": "really_good",
+      "tasteTierSource": "curated",
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 6.75,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-10T11:55:10.950Z",
+      "createdByUserId": null
+     }
+    }
+   ],
+   "groceryList": null,
+   "meta": {
+    "matchPct": 51,
+    "attempts": 5,
+    "score": {
+     "daysInTolerance": 0,
+     "avgMatch": 51,
+     "days": [
+      {
+       "dayOfWeek": 2,
+       "dayName": "Wednesday",
+       "matchPct": 51,
+       "totals": {
+        "kcal": 1776,
+        "protein": 62,
+        "fat": 165,
+        "carb": 9
+       },
+       "kcalDeltaPct": 35.5,
+       "proteinShortPct": 53.1,
+       "fatOk": false,
+       "carbOk": true,
+       "inTolerance": false,
+       "miss": "1,776 kcal vs a 1,311 target — 465 over; 62 g protein vs 132 g — 70 g short; 165 g fat vs a 68–85 g range — 80 g over",
+       "unfilledSlots": 0,
+       "warnedSlots": 5,
+       "proteinFloor": {
+        "met": false,
+        "floorG": 126,
+        "achievedG": 61.9,
+        "shortG": 64.1,
+        "shortPct": 50.8,
+        "reason": "64.1 g short of the 126 g protein floor (51% under) — the compliant pool couldn't scale up to close the gap within the 0.5-2x portion limit."
+       },
+       "windowIndex": 0,
+       "dayIndex": 0,
+       "key": "0:2"
+      }
+     ],
+     "totalDays": 1,
+     "floorDaysMet": 0,
+     "floorDaysTotal": 1
+    },
+    "days": [
+     {
+      "dayOfWeek": 2,
+      "dayName": "Wednesday",
+      "matchPct": 51,
+      "totals": {
+       "kcal": 1776,
+       "protein": 62,
+       "fat": 165,
+       "carb": 9
+      },
+      "kcalDeltaPct": 35.5,
+      "proteinShortPct": 53.1,
+      "fatOk": false,
+      "carbOk": true,
+      "inTolerance": false,
+      "miss": "1,776 kcal vs a 1,311 target — 465 over; 62 g protein vs 132 g — 70 g short; 165 g fat vs a 68–85 g range — 80 g over",
+      "unfilledSlots": 0,
+      "warnedSlots": 5,
+      "proteinFloor": {
+       "met": false,
+       "floorG": 126,
+       "achievedG": 61.9,
+       "shortG": 64.1,
+       "shortPct": 50.8,
+       "reason": "64.1 g short of the 126 g protein floor (51% under) — the compliant pool couldn't scale up to close the gap within the 0.5-2x portion limit."
+      },
+      "windowIndex": 0,
+      "dayIndex": 0,
+      "key": "0:2"
+     }
+    ],
+    "diagnosis": {
+     "feasible": false,
+     "reasons": [
+      "Protein-priority mode: the 126g/day floor wasn't met on 1 day(s) — only 2 of 3 compliant recipes carry enough protein density to close the gap within the 0.5-2x portion limit.",
+      "Max prep 15 min cuts the compliant pool from 14 to 3 recipes (11 removed).",
+      "2 meal-eligible recipes × max 2 servings/week = 4 servings for 4 meal slots — the back half of the week will run on poor fits.",
+      "Your targets need ~10.1g protein per 100 kcal; only 1 of 3 eligible recipes come close (16+ needed for a full varied week).",
+      "1 day(s) landed outside your 68–85 g fat range — portion scaling moves a dish's calories, not its fat/carb ratio, so the pool's composition is what binds here."
+     ],
+     "suggestions": [
+      "AI-generate a few high-protein compliant recipes, set the protein-preference filter, or allow batch-cooking repeats of the densest dishes.",
+      "Raise max prep time (each step back adds recipes — without the cap you have 14).",
+      "Allow batch-cooking repeats, reduce meals per day, or AI-generate more compliant recipes.",
+      "Set the protein-preference filter, or AI-generate a few high-protein recipes to deepen the pool.",
+      "Add (or AI-generate) a few recipes built around the macro you keep missing, or drop the cuisine/protein preference so the solver can reach dishes that carry it."
+     ],
+     "binding": {
+      "key": "protein-density",
+      "label": "protein density in your recipe pool",
+      "detail": "your targets need ~10.1 g protein per 100 kcal and only 1 of 3 compliant recipes come close."
+     }
+    },
+    "poolCounts": {
+     "raw": 889,
+     "afterDiet": 14,
+     "afterPrep": 3,
+     "afterStack": 3,
+     "stackExplain": null
+    },
+    "variety": {
+     "mealEligible": 2,
+     "usableForSlot": 1,
+     "slotKcal": 298,
+     "snackEligible": 2,
+     "weeklyMealSlots": 28,
+     "weeklySnackSlots": 7,
+     "repeatCap": 2,
+     "distinctWeeks": 0,
+     "horizonWeeks": 1,
+     "sustainsHorizon": false,
+     "notes": [
+      "1 of your 2 compliant recipes can be portioned to a 298 kcal meal — about 0 week(s) of 28 meals before dishes start repeating, so over 1 weeks you will see favourites come back.",
+      "Only 2 snack recipe(s) fit your rules, so the same snacks come back every week.",
+      "1 day: 3 distinct dish(es) across 5 filled slot(s); most-repeated dish appears 2x against a 2x cap for this horizon (2x per week)."
+     ],
+     "horizon": {
+      "weeks": 1,
+      "days": 1,
+      "perWeekCap": 2,
+      "horizonRepeatCap": 2,
+      "mealSlots": 4,
+      "snackSlots": 1,
+      "totalSlots": 5,
+      "distinctFloor": 3,
+      "distinctRecipes": 3,
+      "maxRepeat": 2,
+      "maxRepeatRecipeId": "cmrevpcyh004gwl5gnni3al5q",
+      "lockedRepeatsOfMax": 0,
+      "filledSlots": 5,
+      "unfilledSlots": 0,
+      "requiredDistinct": 3,
+      "capHeld": true,
+      "floorHeld": true
+     }
+    },
+    "priorWeeksConsidered": 0,
+    "horizon": {
+     "key": "day",
+     "label": "1 day",
+     "days": 1,
+     "kind": "days",
+     "weeks": 1,
+     "custom": false,
+     "startDate": "2026-07-29",
+     "endDate": "2026-07-29",
+     "startDayOfWeek": 2,
+     "weeksWritten": 1,
+     "solveMs": 1,
+     "weekPlans": [
+      {
+       "startDate": "2026-07-27",
+       "dayIndices": [
+        2
+       ],
+       "days": 1,
+       "daysInTolerance": 0,
+       "avgMatch": 51,
+       "unfilledSlots": 0,
+       "poolSize": 3
+      }
+     ]
+    }
+   }
+  }
+ }
+}

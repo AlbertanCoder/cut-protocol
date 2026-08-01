@@ -1,0 +1,70 @@
+{
+  "personaId": "p146",
+  "satisfaction": 4,
+  "wouldRecommend": false,
+  "criteria": {
+    "macrosInRange": 6,
+    "worksEndToEnd": 7,
+    "mealsAreGood": 3,
+    "affordableAdjustable": 7,
+    "tasty": 3
+  },
+  "allergenRespect": {
+    "ok": true,
+    "leaks": []
+  },
+  "delights": [
+    "It admitted when it could not hit my numbers instead of quietly missing: \"Tried 5 recipe(s) for this slot, none fit within tolerance - closest was \\\"Turkey & Swiss Roll-Ups\\\" (landed 168 kcal vs a 136 target).\" I trust a tool more when it says that out loud.",
+    "The alternates were instant and genuinely appetising - \"High-Protein White Fish & Onions with Rice\" at matchPct 100, and \"Bangladeshi fish curry with daikon\" (daikon, turmeric, green chilli, coriander leaves, lime) also at 100. That is the first thing all day I actually wanted to eat.",
+    "Not one of my 17 ingredients broke a wall: no gluten grain, no soy, no beef, no sesame. The one dish tagged cuisine \"asian\" carried no soy sauce at all, and my starches were rice, quinoa and potato - all naturally safe for a coeliac."
+  ],
+  "defects": [
+    {
+      "what": "Three of my five meals were built on a vegan egg substitute while my diet is set to \"none\" - and the dish title claims real eggs, so nothing warns you",
+      "snippet": "\"Classic Eggs & Broccoli with Potato\" - ingredients: 215 g \"flax eggs\""
+    },
+    {
+      "what": "The day put 420 g of flax eggs in front of me even after I swapped one slot out; flax is a laxative in ~30 g doses, so this is a genuine digestive hazard for a man working fire shifts",
+      "snippet": "grocery list line: \"flax eggs  protein  420g\""
+    },
+    {
+      "what": "The flax-eggs macros are arithmetically impossible, so I cannot trust the protein total that my whole high-protein goal rests on - the slot reports 10.5 g fat while containing 10 g of olive oil, leaving roughly 0 g of fat for 215 g of a seed that is about 42% fat (those look like egg-white numbers on a flax row)",
+      "snippet": "215 g flax eggs + 160 g Russet Potato + 100 g Broccoli + 10 g Olive Oil -> \"fat\": 10.5"
+    },
+    {
+      "what": "The shopping list itself cannot tell whether flax eggs are eggs - it sends me to buy a dozen eggs for them",
+      "snippet": "\"flax eggs\" ... purchaseUnits: \"1 dozen\" (approx \"12 eggs each\")"
+    },
+    {
+      "what": "Two of my three snacks are the identical dish on the same day",
+      "snippet": "snack slot 1 and snack slot 2 are both \"Greek Yogurt, Honey & Almonds\" (85 g Greek Yogurt, 8 g Almonds, 5 g Honey)"
+    },
+    {
+      "what": "The swap endpoint rejects the recipeId it had just offered me one call earlier, with an error about a problem I did not cause; it only worked when I resent the entire alternate object including its ingredient array",
+      "snippet": "PUT .../slots/.../apply with {\"recipeId\":\"cmrul4e6v006owl6849588n2z\"} -> 400 {\"error\":\"a slot needs at least one ingredient\"}"
+    },
+    {
+      "what": "Customer-facing text tells me, the user, to go edit a source code file",
+      "snippet": "\"rough manually-entered CAD estimate, not sourced pricing data - edit src/lib/groceryPrices.js to correct\""
+    },
+    {
+      "what": "These are not recipes - the entire method for a main meal is two short sentences, and \"cook\" makes no sense for a flax slurry",
+      "snippet": "steps: [\"Cook the eggs.\", \"Serve with potato and bell peppers.\"]"
+    },
+    {
+      "what": "Prepackaged deli luncheon meat is the one item on this plan a coeliac who also avoids soy has to label-check, because binders in that category routinely carry wheat starch and soy protein - the plan picks it twice and never flags it, where plain roast turkey breast would have been safe",
+      "snippet": "\"Turkey breast, low salt, prepackaged or deli, luncheon meat\" - 100 g in a meal plus 55 g in a snack"
+    },
+    {
+      "what": "The shopping quantities are in cooked/as-prepared weight, which I cannot buy - honest about it, but it leaves me doing the dry-weight conversion myself",
+      "snippet": "\"White rice, cooked  pantry  225g\" with form \"as-prepared (state unrecorded) - NOT a raw/dry purchase quantity\""
+    }
+  ],
+  "followUp": {
+    "action": "Asked for alternates on the breakfast slot because I did not want 160 g of flax eggs, then swapped in the white fish option",
+    "endpoint": "POST /api/plans/cms6x19lf03xjwlw0x6idybiq/slots/cms6x19lh03xlwlw01l6cdlje/alternates, then PUT /api/plans/cms6x19lf03xjwlw0x6idybiq/slots/cms6x19lh03xlwlw01l6cdlje/apply",
+    "status": 200,
+    "howItWent": "The alternates call was the best moment of the session - three options in one shot, two at 100% match, all safe for my walls, including a real spiced fish curry. The swap then failed with 400 \"a slot needs at least one ingredient\" when I sent just the recipeId it had given me, and only went through when I resent the whole alternate object; after that the plan re-read correctly with White Fish in place and the day still landed at 2,154 kcal against my 2,129 target."
+  },
+  "verdict": "My allergies and my coeliac disease were respected and the day hits 2,154 kcal against a 2,129 target with 174 g of protein, but three of five meals were a vegan flax egg substitute mislabelled as \"Classic Eggs\" with fat numbers that cannot be true, my snack repeated verbatim, and the only food I actually wanted was an alternate I had to hunt down myself."
+}

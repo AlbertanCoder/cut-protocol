@@ -1,0 +1,543 @@
+{
+ "persona": {
+  "idx": 4,
+  "id": "p004",
+  "tier": "IMPOSSIBLE",
+  "displayName": "landscaper, 74",
+  "story": "wants 2 lb/wk off a small frame at the calorie floor, with gluten, dairy and soy all walled off and nothing over 15 minutes to cook",
+  "profile": {
+   "sex": "F",
+   "age": 74,
+   "heightCm": 183,
+   "startWeightKg": 144.2,
+   "goalWeightKg": 134.6,
+   "occupationKey": "landscaper",
+   "trainingStyle": "weights",
+   "minutesPerSession": 45,
+   "sessionsPerWeek": 3,
+   "rateLbPerWeek": 2,
+   "dietaryStyle": "none",
+   "excludedFoods": [
+    "dairy",
+    "eggs",
+    "gluten",
+    "soy"
+   ],
+   "mealsPerDay": 3,
+   "snacksPerDay": 1,
+   "unitPref": "metric",
+   "rateAcknowledged": true,
+   "floorKcal": 1200
+  },
+  "filters": {
+   "proteinPriority": true,
+   "maxPrepMin": 15
+  },
+  "horizon": "day",
+  "walls": [
+   "dairy",
+   "egg",
+   "gluten",
+   "soy"
+  ],
+  "freeTextExclusions": [],
+  "dietaryStyle": "none",
+  "bmi": 43.1,
+  "goalKind": "cut",
+  "macroStyle": "high-protein",
+  "requestedButUnsupported": [
+   "wanted protein set explicitly in g/lb; the API derives the protein band from LBM (1.14-1.25 g/lb) and accepts no client protein target — only the per-request proteinPriority filter",
+   "this request is mathematically unsatisfiable by design — a clear, fast, honest refusal is the pass condition, and a confident plan is a critical honesty defect"
+  ],
+  "impossibleKind": "floor-vs-rate",
+  "tupleKey": "[\"IMPOSSIBLE\",\"F\",74,183,144.2,134.6,\"landscaper\",\"weights\",2,\"none\",[\"dairy\",\"eggs\",\"gluten\",\"soy\"],3,1,\"high-protein\",\"day\",15,null,true,null,\"floor-vs-rate\"]"
+ },
+ "request": {
+  "horizon": "day",
+  "filters": {
+   "proteinPriority": true,
+   "maxPrepMin": 15
+  }
+ },
+ "profileResponse": {
+  "id": "cms6wyf600089wlw0cbtomxeq",
+  "userId": "cms6wyf0c0003wlpc5575p8a7",
+  "sex": "F",
+  "age": 74,
+  "heightCm": 183,
+  "bodyFatPct": 0,
+  "bodyFatSource": null,
+  "occupationKey": "landscaper",
+  "activityOverride": null,
+  "sessionsPerWeek": 3,
+  "trainingStyle": "weights",
+  "minutesPerSession": 45,
+  "startWeightKg": 144.2,
+  "goalWeightKg": 134.6,
+  "startDate": "2026-07-29",
+  "unitPref": "metric",
+  "rateLbPerWeek": 2,
+  "rateAcknowledged": false,
+  "floorKcal": 1200,
+  "excludedFormulas": [],
+  "targetKcal": 2221,
+  "mealsPerDay": 3,
+  "snacksPerDay": 1,
+  "excludedFoods": [
+   "dairy",
+   "eggs",
+   "gluten",
+   "soy"
+  ],
+  "dietaryStyle": "none",
+  "cuisinePreferences": [],
+  "mealPreferencesNote": null,
+  "maxPrepMin": null,
+  "budgetTier": null,
+  "allowBatch": null,
+  "maxComplexity": null,
+  "adaptiveTdee": true,
+  "proteinPriorityMode": false,
+  "updatedAt": "2026-07-30T02:49:11.100Z"
+ },
+ "generate": {
+  "status": 200,
+  "ms": 498,
+  "body": {
+   "id": "cms6wyfeo00b1wlw0mmbnfdfu",
+   "userId": "cms6wyf0c0003wlpc5575p8a7",
+   "startDate": "2026-07-27",
+   "createdAt": "2026-07-30T02:47:46.561Z",
+   "slots": [
+    {
+     "id": "cms6wyfep00b3wlw0qn98ikrl",
+     "planId": "cms6wyfeo00b1wlw0mmbnfdfu",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 0,
+     "recipeId": "cmrujkwv400b0wl9o92br7q6l",
+     "proteinScale": 2,
+     "sidesScale": 0.5,
+     "ingredients": [
+      {
+       "foodId": "cmrj2tawx00inwlwszmjkw5hv",
+       "name": "Salmon",
+       "role": "protein",
+       "grams": 300
+      },
+      {
+       "foodId": "cmrj2t7fb004fwlws8ezof2dp",
+       "name": "Russet Potato",
+       "role": "carb",
+       "grams": 90
+      },
+      {
+       "foodId": "cmrj2t6na000ywlws9jek4w4z",
+       "name": "Broccoli",
+       "role": "veg",
+       "grams": 55
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 10
+      }
+     ],
+     "kcal": 816.55,
+     "protein": 64.98049999999999,
+     "fat": 50.504,
+     "carb": 22.7085,
+     "warning": "Tried 5 recipe(s) for this slot, none fit within tolerance — closest was \"Classic Salmon & Broccoli with Potato\" (landed 817 kcal vs a 579 target).",
+     "locked": false,
+     "recipe": {
+      "id": "cmrujkwv400b0wl9o92br7q6l",
+      "name": "Classic Salmon & Broccoli with Potato",
+      "description": null,
+      "steps": [
+       "Cook the salmon.",
+       "Serve with potato and broccoli."
+      ],
+      "slotType": "meal",
+      "cuisine": "american",
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 607.1,
+      "protein": 38.2,
+      "fat": 30.7,
+      "carb": 45.4,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 9.55,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:00:06.880Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6wyfeq00b5wlw0pvupypbw",
+     "planId": "cms6wyfeo00b1wlw0mmbnfdfu",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 1,
+     "recipeId": "cmrevpctw002twl5gdov5q7ka",
+     "proteinScale": 1.02,
+     "sidesScale": 0.5,
+     "ingredients": [
+      {
+       "foodId": "cmrevpclb0000wl5ghnno9i5f",
+       "name": "Chicken breast, cooked, skinless",
+       "role": "protein",
+       "grams": 255
+      },
+      {
+       "foodId": "cmrevpcn2000ewl5gmlyzu0vd",
+       "name": "White rice, cooked",
+       "role": "carb",
+       "grams": 100
+      },
+      {
+       "foodId": "cmrevpcnh000iwl5gh2zjhyqe",
+       "name": "Bell peppers",
+       "role": "veg",
+       "grams": 75
+      }
+     ],
+     "kcal": 574,
+     "protein": 82.5,
+     "fat": 9.705,
+     "carb": 32.5,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrevpctw002twl5gdov5q7ka",
+      "name": "Grilled Chicken Breast, Rice & Peppers",
+      "description": "The site-lunch template.",
+      "steps": [
+       "Grill or pan-sear seasoned chicken breast until 165°F internal.",
+       "Rest, slice.",
+       "Serve over rice with peppers — packs well for a lunch box."
+      ],
+      "slotType": "meal",
+      "cuisine": "western-comfort",
+      "prepTimeMin": 15,
+      "source": "curated",
+      "mealCategory": null,
+      "kcal": 719,
+      "protein": 84.4,
+      "fat": 10.05,
+      "carb": 65,
+      "tasteTier": "really_good",
+      "tasteTierSource": "curated",
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 9.07,
+      "difficulty": 2,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-10T11:55:10.772Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6wyfer00b7wlw0bkamknu2",
+     "planId": "cms6wyfeo00b1wlw0mmbnfdfu",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 2,
+     "recipeId": "cmrul79xn009owl808u5ysb5x",
+     "proteinScale": 2,
+     "sidesScale": 1.56,
+     "ingredients": [
+      {
+       "foodId": "cmrj2tb0x00j2wlwsjzrofelh",
+       "name": "Shrimp",
+       "role": "protein",
+       "grams": 340
+      },
+      {
+       "foodId": "cmrj2t88z0087wlwsmsmchxzb",
+       "name": "Quinoa",
+       "role": "carb",
+       "grams": 170
+      },
+      {
+       "foodId": "cmrevpcnl000jwl5gnqnk630b",
+       "name": "Cucumber",
+       "role": "veg",
+       "grams": 140
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 599.5999999999999,
+     "protein": 89.90599999999999,
+     "fat": 9.440000000000001,
+     "carb": 39.914,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrul79xn009owl808u5ysb5x",
+      "name": "High-Protein Shrimp & Cucumber with Quinoa",
+      "description": null,
+      "steps": [
+       "Cook the shrimp.",
+       "Serve over quinoa with cucumber."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 354.3,
+      "protein": 46.2,
+      "fat": 7.7,
+      "carb": 25.7,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 10.88,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:45:29.868Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6wyfer00b9wlw0oe8dzhqe",
+     "planId": "cms6wyfeo00b1wlw0mmbnfdfu",
+     "dayOfWeek": 2,
+     "slotType": "snack",
+     "slotIndex": 0,
+     "recipeId": "cmrevpcyt004lwl5gx6bidm0z",
+     "proteinScale": 0.56,
+     "sidesScale": 0.56,
+     "ingredients": [
+      {
+       "foodId": "cmrevpcma0007wl5gfj59j5mk",
+       "name": "Beef jerky",
+       "role": "protein",
+       "grams": 35
+      },
+      {
+       "foodId": "cmrevpcmq000bwl5g2mbd0jsv",
+       "name": "Pork rinds",
+       "role": "protein",
+       "grams": 17
+      }
+     ],
+     "kcal": 235.98,
+     "protein": 21.92,
+     "fat": 14.37,
+     "carb": 3.85,
+     "warning": "Tried 4 recipe(s) for this slot, none fit within tolerance — closest was \"Jerky & Pork Rinds Snack Plate\" (delivered 22g protein vs a 36g target).",
+     "locked": false,
+     "recipe": {
+      "id": "cmrevpcyt004lwl5gx6bidm0z",
+      "name": "Jerky & Pork Rinds Snack Plate",
+      "description": "Closer / site valve — his words.",
+      "steps": [
+       "No cooking — portion and eat."
+      ],
+      "slotType": "snack",
+      "cuisine": "western-comfort",
+      "prepTimeMin": 0,
+      "source": "curated",
+      "mealCategory": null,
+      "kcal": 409.2,
+      "protein": 38.1,
+      "fat": 24.9,
+      "carb": 6.6,
+      "tasteTier": "really_good",
+      "tasteTierSource": "curated",
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 6.75,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-10T11:55:10.950Z",
+      "createdByUserId": null
+     }
+    }
+   ],
+   "groceryList": null,
+   "meta": {
+    "matchPct": 86,
+    "attempts": 5,
+    "score": {
+     "daysInTolerance": 0,
+     "avgMatch": 86,
+     "days": [
+      {
+       "dayOfWeek": 2,
+       "dayName": "Wednesday",
+       "matchPct": 86,
+       "totals": {
+        "kcal": 2226,
+        "protein": 259,
+        "fat": 84,
+        "carb": 99
+       },
+       "kcalDeltaPct": 0.2,
+       "proteinShortPct": 5.2,
+       "fatOk": true,
+       "carbOk": false,
+       "inTolerance": false,
+       "miss": "99 g carbs vs a 54–78 g range — 21 g over",
+       "unfilledSlots": 0,
+       "warnedSlots": 2,
+       "proteinFloor": {
+        "met": true,
+        "floorG": 261,
+        "achievedG": 259.3,
+        "shortG": 1.7,
+        "shortPct": 0.6,
+        "reason": null
+       },
+       "windowIndex": 0,
+       "dayIndex": 0,
+       "key": "0:2"
+      }
+     ],
+     "totalDays": 1,
+     "floorDaysMet": 1,
+     "floorDaysTotal": 1
+    },
+    "days": [
+     {
+      "dayOfWeek": 2,
+      "dayName": "Wednesday",
+      "matchPct": 86,
+      "totals": {
+       "kcal": 2226,
+       "protein": 259,
+       "fat": 84,
+       "carb": 99
+      },
+      "kcalDeltaPct": 0.2,
+      "proteinShortPct": 5.2,
+      "fatOk": true,
+      "carbOk": false,
+      "inTolerance": false,
+      "miss": "99 g carbs vs a 54–78 g range — 21 g over",
+      "unfilledSlots": 0,
+      "warnedSlots": 2,
+      "proteinFloor": {
+       "met": true,
+       "floorG": 261,
+       "achievedG": 259.3,
+       "shortG": 1.7,
+       "shortPct": 0.6,
+       "reason": null
+      },
+      "windowIndex": 0,
+      "dayIndex": 0,
+      "key": "0:2"
+     }
+    ],
+    "diagnosis": {
+     "feasible": false,
+     "reasons": [
+      "1 day(s) landed outside your 54–78 g carb range — portion scaling moves a dish's calories, not its fat/carb ratio, so the pool's composition is what binds here."
+     ],
+     "suggestions": [
+      "Add (or AI-generate) a few recipes built around the macro you keep missing, or drop the cuisine/protein preference so the solver can reach dishes that carry it."
+     ],
+     "binding": {
+      "key": "macro-composition",
+      "label": "carbs in your recipe pool",
+      "detail": "1 of 1 day(s) landed outside your 54-78 g carb range. Portion scaling moves a dish's calories, not its fat/carb ratio, so what binds here is which dishes your rules leave in the pool. Calories and protein landed on target on every day — it is composition, not portion size, that is short."
+     }
+    },
+    "poolCounts": {
+     "raw": 889,
+     "afterDiet": 202,
+     "afterPrep": 96,
+     "afterStack": 96,
+     "stackExplain": null
+    },
+    "variety": {
+     "mealEligible": 92,
+     "usableForSlot": 46,
+     "slotKcal": 654,
+     "snackEligible": 4,
+     "weeklyMealSlots": 21,
+     "weeklySnackSlots": 7,
+     "repeatCap": 2,
+     "distinctWeeks": 2.2,
+     "horizonWeeks": 1,
+     "sustainsHorizon": true,
+     "notes": [
+      "1 day: 4 distinct dish(es) across 4 filled slot(s); most-repeated dish appears 1x against a 2x cap for this horizon (2x per week)."
+     ],
+     "horizon": {
+      "weeks": 1,
+      "days": 1,
+      "perWeekCap": 2,
+      "horizonRepeatCap": 2,
+      "mealSlots": 3,
+      "snackSlots": 1,
+      "totalSlots": 4,
+      "distinctFloor": 2,
+      "distinctRecipes": 4,
+      "maxRepeat": 1,
+      "maxRepeatRecipeId": "cmrujkwv400b0wl9o92br7q6l",
+      "lockedRepeatsOfMax": 0,
+      "filledSlots": 4,
+      "unfilledSlots": 0,
+      "requiredDistinct": 2,
+      "capHeld": true,
+      "floorHeld": true
+     }
+    },
+    "priorWeeksConsidered": 0,
+    "horizon": {
+     "key": "day",
+     "label": "1 day",
+     "days": 1,
+     "kind": "days",
+     "weeks": 1,
+     "custom": false,
+     "startDate": "2026-07-29",
+     "endDate": "2026-07-29",
+     "startDayOfWeek": 2,
+     "weeksWritten": 1,
+     "solveMs": 1,
+     "weekPlans": [
+      {
+       "startDate": "2026-07-27",
+       "dayIndices": [
+        2
+       ],
+       "days": 1,
+       "daysInTolerance": 0,
+       "avgMatch": 86,
+       "unfilledSlots": 0,
+       "poolSize": 96
+      }
+     ]
+    }
+   }
+  }
+ }
+}

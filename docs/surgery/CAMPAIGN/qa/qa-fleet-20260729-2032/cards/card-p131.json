@@ -1,0 +1,70 @@
+{
+  "personaId": "p131",
+  "satisfaction": 4,
+  "wouldRecommend": false,
+  "criteria": {
+    "macrosInRange": 5,
+    "worksEndToEnd": 7,
+    "mealsAreGood": 3,
+    "affordableAdjustable": 6,
+    "tasty": 3
+  },
+  "allergenRespect": {
+    "ok": true,
+    "leaks": []
+  },
+  "delights": [
+    "The calorie arithmetic is uncanny. My six slots totalled 2295.92 kcal against my saved \"targetKcal\": 2296 — eight hundredths of a calorie off. After I swapped a meal it re-landed at 2292. Whatever else is wrong, it can hit a number.",
+    "The swap actually worked and made my day better. Alternates on the goat curry returned \"recipeName\":\"Ground Beef & Rice Skillet\" at \"matchPct\":100, and applying it dropped the day from $43.57 to $32.39 and my longest cook from 42 minutes to 20, while moving calories by 4. That is the one place the product felt like it was on my side.",
+    "Turkey & Swiss Roll-Ups is a real snack written by someone who has made food: \"Lay turkey slices flat.\",\"Place a strip of Swiss and a cucumber spear on each.\",\"Roll tightly.\" — 27 g protein for 168 kcal and six minutes."
+  ],
+  "defects": [
+    {
+      "what": "A cooking instruction that is physically wrong — cottage cheese curdles and weeps if you heat it; you do not cook it. This is one of my four main meals and 275 g of it.",
+      "snippet": "\"steps\":[\"Cook the cottage cheese.\",\"Serve over chickpea pasta with bell peppers.\"]"
+    },
+    {
+      "what": "My target looks like maintenance, not a lean bulk. I told it I weigh 97.9 kg and want 110.5 kg at 0.25 lb/wk. Using the app's own published numbers (occupation multiplier 1.2 for \"unemployed-home\", MET 7 for cardio) plus Mifflin-St Jeor, I burn roughly 2,310 kcal/day; a 0.25 lb/wk gain needs about +125, so ~2,435. It gave me 2,296 — slightly UNDER maintenance. Eating that, I gain nothing, and I am the one who asked to gain 12.6 kg.",
+      "snippet": "\"startWeightKg\": 97.9, \"goalWeightKg\": 110.5, \"rateLbPerWeek\": 0.25, \"targetKcal\": 2296"
+    },
+    {
+      "what": "There is no way to check that number. Nothing in the profile response shows BMR, TDEE, or how the target was derived, and /api/profile/engine, /api/engine and /api/profile/tdee all 404. I am asked to trust 2,296 with no visible math.",
+      "snippet": "/api/profile/engine -> 404 {\"error\":\"not found\"}"
+    },
+    {
+      "what": "Sixty grams of thyme in one portion. That is a whole supermarket bunch, or roughly twenty tablespoons dried, in a single serving of curry — more thyme by weight than onion, potato and garlic combined. Reads like a scaled 'sprigs of thyme' line nobody sanity-checked.",
+      "snippet": "Goat Meat 270g | Jamaican Curry Powder 5g | Ground Ginger 1g | All-purpose Seasoning 1g | Allspice 1g | Onion 20g | Garlic 4g | Thyme 60g"
+    },
+    {
+      "what": "Half my main meals are the same sentence with the nouns swapped, and quinoa shows up in both. Add 300 g of cucumber across the day (140 g in meal 1, 160 g in the snack) and it is a repetitive day for something billed as balanced.",
+      "snippet": "\"High-Protein White Fish & Cucumber with Quinoa\" / \"High-Protein Edamame & Onions with Quinoa\""
+    },
+    {
+      "what": "The swap list hides the only two things I was swapping for. I wanted out of the goat curry because it cost $21.62 and took 42 minutes at difficulty 7 — but alternates return no prepTimeMin, no costPerServing and no difficulty. I had to apply one blind to find out it was cheaper and faster. It also offered me a second cottage-cheese meal on a day that already had 275 g of cottage cheese in it.",
+      "snippet": "1. Ground Beef & Rice Skillet — match 100% | prep=undefined cost=undefined difficulty=undefined"
+    },
+    {
+      "what": "The documented apply call rejected the recipe the app had just offered me, with a message that names nothing I can act on. I sent the recipeId and the two scales from its own alternates response; it complained about ingredients without saying it wanted the ingredient array echoed back. Second attempt with the whole object worked.",
+      "snippet": "PUT /api/plans/{planId}/slots/{slotId}/apply -> 400 {\"error\":\"a slot needs at least one ingredient\"}"
+    },
+    {
+      "what": "No way to tell it how I actually eat. I keep to low-FODMAP, and the nine dietary styles on offer have nothing for it — so the app cheerfully built me a day with 250 g edamame, 95 g onion, garlic, honey and chickpea pasta. I declared no hard exclusions, so nothing here is a broken wall and I am not calling it one, but a plan I physically cannot digest is no use to me and there was no field to say so.",
+      "snippet": "dietaryStyles: [\"none\",\"mediterranean\",\"vegetarian\",\"vegan\",\"paleo\",\"keto\",\"carnivore\",\"halal\",\"kosher\"]"
+    },
+    {
+      "what": "Sloppy labelling that matters at the shop and the stove. A Jamaican dish is filed as Indian; olive oil is tagged as a carbohydrate; and 'Quinoa 170g' never says cooked or dry, though the chickpea pasta in the next meal is careful to say 'dry'. Dry vs cooked quinoa is a 400-calorie difference — I had to back it out of the slot's own kcal to know which one to buy.",
+      "snippet": "\"name\":\"Jamaican Curry Goat\",\"cuisine\":\"indian\" · {\"name\":\"Oil\",\"role\":\"carb\"} · \"name\":\"Quinoa\",\"grams\":170"
+    },
+    {
+      "what": "Nobody flinched at my goal weight. 110.5 kg at 178 cm is BMI 34.9, and I am starting from an already-obese 30.9 — the app took it silently. Its own limits only guard the thin end, and rateAcknowledged is still false. A tool that tells me my protein source to the gram might mention that my goal takes me further into obesity.",
+      "snippet": "\"goalBmi\":{\"needsAckBelow\":18.5,\"refusedBelow\":16} · \"rateAcknowledged\": false"
+    }
+  ],
+  "followUp": {
+    "action": "Asked for alternates on the one meal I could not live with — Jamaican Curry Goat, $21.62, 42 minutes, difficulty 7, needing a 4-hour marinade, a 6QT pressure cooker and goat meat my supermarket does not carry — then swapped in the one normal option it offered, Ground Beef & Rice Skillet.",
+    "endpoint": "POST /api/plans/cms6x15bw03glwlw0b8xw4y8k/slots/cms6x15ha03grwlw0nglws66d/alternates then PUT /api/plans/cms6x15bw03glwlw0b8xw4y8k/slots/cms6x15ha03grwlw0nglws66d/apply",
+    "status": 200,
+    "howItWent": "Well, once I got past a 400 on my first apply — I sent the recipeId and scales from its own alternates response and got \"a slot needs at least one ingredient\", which explains nothing; echoing the entire alternate object back returned 200. The result was genuinely good: the day went from $43.57 to $32.39, my longest cook from 42 minutes to 20, difficulty 7 to 2, and total calories moved from 2295.92 to 2292 against a 2,296 target, with a dish that has real steps (\"Brown the beef in a hot skillet, breaking it up as it cooks.\"). My irritation is that alternates never showed me the cost or the time, so the improvement I was chasing was invisible until after I committed."
+  },
+  "verdict": "It nails my calorie number to within a rounding error and its swap tool genuinely rescued my day, but the number it is nailing looks like maintenance rather than the surplus a 97.9-to-110.5 kg lean bulk needs, it won't show me the math behind it, and half the meals are two-line templates — one of which tells me to cook cottage cheese."
+}

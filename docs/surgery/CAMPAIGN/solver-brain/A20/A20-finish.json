@@ -1,0 +1,308 @@
+{
+  "falsification": {
+    "refusedPersonas": 16,
+    "solvedInstances": 310,
+    "inBand": 0,
+    "perRun": {
+      "fleet-http": 52,
+      "rig-baseline-s424242": 52,
+      "rig-baseline-s20260730": 52,
+      "rig-baseline-s8675309": 52,
+      "rig-noop-s424242": 52,
+      "rig-poscontrol-s424242": 50
+    }
+  },
+  "binomial": {
+    "refusedDays": 52,
+    "upper95FRrate": 0.05598218012623557,
+    "upper95FromInstances": 0.009617109451485084
+  },
+  "laundering": [
+    {
+      "pred": "P0_shipped",
+      "refusedDays": 0,
+      "kpi1_c7": 0.7699619771863118,
+      "den": 526,
+      "deltaPts": 0,
+      "FRdays": 0
+    },
+    {
+      "pred": "P1_emptyPool",
+      "refusedDays": 0,
+      "kpi1_c7": 0.7699619771863118,
+      "den": 526,
+      "deltaPts": 0,
+      "FRdays": 0
+    },
+    {
+      "pred": "P3_looseBound",
+      "refusedDays": 50,
+      "kpi1_c7": 0.7699619771863118,
+      "den": 526,
+      "deltaPts": 0,
+      "FRdays": 0
+    },
+    {
+      "pred": "P4_scaledBound",
+      "refusedDays": 52,
+      "kpi1_c7": 0.7699619771863118,
+      "den": 526,
+      "deltaPts": 0,
+      "FRdays": 0
+    },
+    {
+      "pred": "P5_tierLabel",
+      "refusedDays": 83,
+      "kpi1_c7": 0.7777777777777778,
+      "den": 495,
+      "deltaPts": 0.7815800591466027,
+      "FRdays": 28
+    },
+    {
+      "pred": "P6_ownDiagnose",
+      "refusedDays": 269,
+      "kpi1_c7": 1,
+      "den": 309,
+      "deltaPts": 23.003802281368824,
+      "FRdays": 186
+    }
+  ],
+  "counterfactual": [
+    {
+      "id": "p027",
+      "style": "vegan",
+      "days": 1,
+      "targetKcal": 1234,
+      "floor": 117.3,
+      "maxDens": 0.0568,
+      "reqDens": 0.0827,
+      "loose": 80.6,
+      "scaled": 80.6,
+      "concLoose": 188.7,
+      "clears": true
+    },
+    {
+      "id": "p030",
+      "style": "vegan",
+      "days": 1,
+      "targetKcal": 1500,
+      "floor": 88.4,
+      "maxDens": 0.0568,
+      "reqDens": 0.0512,
+      "loose": 98,
+      "scaled": 85.6,
+      "concLoose": 229.4,
+      "clears": true
+    },
+    {
+      "id": "p051",
+      "style": "vegan",
+      "days": 7,
+      "targetKcal": 1500,
+      "floor": 122.8,
+      "maxDens": 0.0568,
+      "reqDens": 0.0712,
+      "loose": 98,
+      "scaled": 98,
+      "concLoose": 229.4,
+      "clears": true
+    },
+    {
+      "id": "p059",
+      "style": "vegan",
+      "days": 7,
+      "targetKcal": 1200,
+      "floor": 85,
+      "maxDens": 0.0568,
+      "reqDens": 0.0616,
+      "loose": 78.4,
+      "scaled": 78.4,
+      "concLoose": 183.5,
+      "clears": true
+    },
+    {
+      "id": "p073",
+      "style": "vegan",
+      "days": 1,
+      "targetKcal": 1512,
+      "floor": 157.7,
+      "maxDens": 0.0568,
+      "reqDens": 0.0907,
+      "loose": 98.7,
+      "scaled": 64.2,
+      "concLoose": 231.3,
+      "clears": true
+    },
+    {
+      "id": "p077",
+      "style": "vegan",
+      "days": 1,
+      "targetKcal": 2923,
+      "floor": 209.5,
+      "maxDens": 0.0568,
+      "reqDens": 0.0623,
+      "loose": 190.9,
+      "scaled": 149.9,
+      "concLoose": 447.1,
+      "clears": true
+    },
+    {
+      "id": "p108",
+      "style": "vegan",
+      "days": 1,
+      "targetKcal": 1792,
+      "floor": 173.8,
+      "maxDens": 0.0568,
+      "reqDens": 0.0843,
+      "loose": 117,
+      "scaled": 85.6,
+      "concLoose": 274.1,
+      "clears": true
+    },
+    {
+      "id": "p130",
+      "style": "vegan",
+      "days": 7,
+      "targetKcal": 1657,
+      "floor": 141.1,
+      "maxDens": 0.0568,
+      "reqDens": 0.074,
+      "loose": 108.2,
+      "scaled": 108.2,
+      "concLoose": 253.4,
+      "clears": true
+    },
+    {
+      "id": "p133",
+      "style": "vegan",
+      "days": 1,
+      "targetKcal": 1388,
+      "floor": 122,
+      "maxDens": 0.0568,
+      "reqDens": 0.0764,
+      "loose": 90.6,
+      "scaled": 90.6,
+      "concLoose": 212.3,
+      "clears": true
+    },
+    {
+      "id": "p184",
+      "style": "vegan",
+      "days": 1,
+      "targetKcal": 2187,
+      "floor": 172.1,
+      "maxDens": 0.0568,
+      "reqDens": 0.0684,
+      "loose": 142.8,
+      "scaled": 107,
+      "concLoose": 334.5,
+      "clears": true
+    },
+    {
+      "id": "p208",
+      "style": "vegan",
+      "days": 1,
+      "targetKcal": 4939,
+      "floor": 221,
+      "maxDens": 0.0568,
+      "reqDens": 0.0389,
+      "loose": 322.6,
+      "scaled": 120,
+      "concLoose": 755.4,
+      "clears": true
+    },
+    {
+      "id": "p211",
+      "style": "vegan",
+      "days": 7,
+      "targetKcal": 2356,
+      "floor": 178.1,
+      "maxDens": 0.0568,
+      "reqDens": 0.0657,
+      "loose": 153.9,
+      "scaled": 153.9,
+      "concLoose": 360.4,
+      "clears": true
+    },
+    {
+      "id": "p220",
+      "style": "vegan",
+      "days": 1,
+      "targetKcal": 2323,
+      "floor": 214.6,
+      "maxDens": 0.0568,
+      "reqDens": 0.0803,
+      "loose": 151.7,
+      "scaled": 128.5,
+      "concLoose": 355.3,
+      "clears": true
+    },
+    {
+      "id": "p222",
+      "style": "vegan",
+      "days": 7,
+      "targetKcal": 1946,
+      "floor": 147,
+      "maxDens": 0.0568,
+      "reqDens": 0.0657,
+      "loose": 127.1,
+      "scaled": 127.1,
+      "concLoose": 297.6,
+      "clears": true
+    },
+    {
+      "id": "p227",
+      "style": "vegan",
+      "days": 7,
+      "targetKcal": 1297,
+      "floor": 95.2,
+      "maxDens": 0.0568,
+      "reqDens": 0.0638,
+      "loose": 84.7,
+      "scaled": 84.7,
+      "concLoose": 198.4,
+      "clears": true
+    },
+    {
+      "id": "p248",
+      "style": "vegan",
+      "days": 1,
+      "targetKcal": 3124,
+      "floor": 219.3,
+      "maxDens": 0.0568,
+      "reqDens": 0.061,
+      "loose": 204,
+      "scaled": 128.5,
+      "concLoose": 477.8,
+      "clears": true
+    }
+  ],
+  "refusedDaysByStyle": {
+    "vegan": 52
+  },
+  "tierTrap": {
+    "tierDays": 83,
+    "byKind": {
+      "floor-vs-rate": {
+        "days": 30,
+        "inBand": 20,
+        "truthSAT": 28,
+        "truthUNK": 2,
+        "truthINF": 0
+      },
+      "every-protein-walled": {
+        "days": 53,
+        "inBand": 0,
+        "truthSAT": 0,
+        "truthUNK": 1,
+        "truthINF": 52
+      }
+    },
+    "p5RefusedDays": 83,
+    "p5NotProven": 31
+  },
+  "unknown": {
+    "days": 31,
+    "personas": 19
+  }
+}

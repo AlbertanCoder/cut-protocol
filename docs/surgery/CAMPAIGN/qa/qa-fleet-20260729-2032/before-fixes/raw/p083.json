@@ -1,0 +1,1216 @@
+{
+ "persona": {
+  "idx": 83,
+  "id": "p083",
+  "tier": "IMPOSSIBLE",
+  "displayName": "triathlete, 76",
+  "story": "wants 2 lb/wk off a small frame at the calorie floor, with gluten, dairy and soy all walled off and nothing over 15 minutes to cook",
+  "profile": {
+   "sex": "F",
+   "age": 76,
+   "heightCm": 151,
+   "startWeightKg": 63.8,
+   "goalWeightKg": 58.2,
+   "occupationKey": "software-tech",
+   "trainingStyle": "cardio",
+   "minutesPerSession": 150,
+   "sessionsPerWeek": 9,
+   "rateLbPerWeek": 2,
+   "dietaryStyle": "keto",
+   "excludedFoods": [
+    "peanuts",
+    "gluten",
+    "dairy",
+    "soy"
+   ],
+   "mealsPerDay": 3,
+   "snacksPerDay": 0,
+   "unitPref": "imperial",
+   "bodyFatPct": 23,
+   "bodyFatSource": "visual-estimate",
+   "cuisinePreferences": [
+    "american",
+    "mediterranean"
+   ],
+   "rateAcknowledged": true,
+   "floorKcal": 1200
+  },
+  "filters": {
+   "maxComplexity": 3,
+   "cuisines": [
+    "american",
+    "mediterranean"
+   ],
+   "proteinPriority": true,
+   "maxPrepMin": 15
+  },
+  "horizon": "day",
+  "walls": [
+   "peanut",
+   "gluten",
+   "dairy",
+   "soy"
+  ],
+  "freeTextExclusions": [],
+  "dietaryStyle": "keto",
+  "bmi": 28,
+  "goalKind": "cut",
+  "macroStyle": "balanced",
+  "requestedButUnsupported": [
+   "this request is mathematically unsatisfiable by design — a clear, fast, honest refusal is the pass condition, and a confident plan is a critical honesty defect"
+  ],
+  "impossibleKind": "floor-vs-rate",
+  "tupleKey": "[\"IMPOSSIBLE\",\"F\",76,151,63.8,58.2,\"software-tech\",\"cardio\",2,\"keto\",[\"dairy\",\"gluten\",\"peanuts\",\"soy\"],3,0,\"balanced\",\"day\",15,null,true,null,\"floor-vs-rate\"]"
+ },
+ "request": {
+  "horizon": "day",
+  "filters": {
+   "maxComplexity": 3,
+   "cuisines": [
+    "american",
+    "mediterranean"
+   ],
+   "proteinPriority": true,
+   "maxPrepMin": 15
+  }
+ },
+ "profileResponse": {
+  "id": "cms6x0sqv02cnwlw00d44tb41",
+  "userId": "cms6x0sgb0025wl2oh603lihi",
+  "sex": "F",
+  "age": 76,
+  "heightCm": 151,
+  "bodyFatPct": 23,
+  "bodyFatSource": "visual-estimate",
+  "occupationKey": "software-tech",
+  "activityOverride": null,
+  "sessionsPerWeek": 9,
+  "trainingStyle": "cardio",
+  "minutesPerSession": 150,
+  "startWeightKg": 63.8,
+  "goalWeightKg": 58.2,
+  "startDate": "2026-07-29",
+  "unitPref": "imperial",
+  "rateLbPerWeek": 2,
+  "rateAcknowledged": true,
+  "floorKcal": 1200,
+  "excludedFormulas": [],
+  "targetKcal": 2054,
+  "mealsPerDay": 3,
+  "snacksPerDay": 0,
+  "excludedFoods": [
+   "peanuts",
+   "gluten",
+   "dairy",
+   "soy"
+  ],
+  "dietaryStyle": "keto",
+  "cuisinePreferences": [
+   "american",
+   "mediterranean"
+  ],
+  "mealPreferencesNote": null,
+  "maxPrepMin": null,
+  "budgetTier": null,
+  "allowBatch": null,
+  "maxComplexity": null,
+  "adaptiveTdee": true,
+  "proteinPriorityMode": false,
+  "updatedAt": "2026-07-30T02:49:37.360Z"
+ },
+ "generate": {
+  "status": 200,
+  "ms": 649,
+  "body": {
+   "id": "cms6x0tf102dbwlw0njv4z5c8",
+   "userId": "cms6x0sgb0025wl2oh603lihi",
+   "startDate": "2026-07-27",
+   "createdAt": "2026-07-30T02:49:38.029Z",
+   "slots": [
+    {
+     "id": "cms6x0tf302ddwlw0ovwxnu6n",
+     "planId": "cms6x0tf102dbwlw0njv4z5c8",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 0,
+     "recipeId": "cmrevpcyh004gwl5gnni3al5q",
+     "proteinScale": 1.09,
+     "sidesScale": 1.09,
+     "ingredients": [
+      {
+       "foodId": "cmrevpcmu000cwl5gfljr1l1o",
+       "name": "Bacon, cooked",
+       "role": "protein",
+       "grams": 65
+      },
+      {
+       "foodId": "cmrevpcm50006wl5g2u2bcspd",
+       "name": "Eggs, whole, cooked",
+       "role": "protein",
+       "grams": 165
+      }
+     ],
+     "kcal": 607.4000000000001,
+     "protein": 45.5,
+     "fat": 45.45,
+     "carb": 2.725,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrevpcyh004gwl5gnni3al5q",
+      "name": "Bacon & Eggs",
+      "description": "Weekend breakfast-style plate.",
+      "steps": [
+       "Cook bacon until crisp, set aside.",
+       "Fry or scramble eggs in the bacon fat."
+      ],
+      "slotType": "either",
+      "cuisine": "western-comfort",
+      "prepTimeMin": 15,
+      "source": "curated",
+      "mealCategory": null,
+      "kcal": 557.0999999999999,
+      "protein": 41.7,
+      "fat": 41.7,
+      "carb": 2.49,
+      "tasteTier": "really_good",
+      "tasteTierSource": "curated",
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 3.38,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-10T11:55:10.938Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x0tf402dfwlw0a8ud6q56",
+     "planId": "cms6x0tf102dbwlw0njv4z5c8",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 1,
+     "recipeId": "cmrevpcyh004gwl5gnni3al5q",
+     "proteinScale": 1.21,
+     "sidesScale": 1.21,
+     "ingredients": [
+      {
+       "foodId": "cmrevpcmu000cwl5gfljr1l1o",
+       "name": "Bacon, cooked",
+       "role": "protein",
+       "grams": 70
+      },
+      {
+       "foodId": "cmrevpcm50006wl5g2u2bcspd",
+       "name": "Eggs, whole, cooked",
+       "role": "protein",
+       "grams": 180
+      }
+     ],
+     "kcal": 657.7,
+     "protein": 49.3,
+     "fat": 49.2,
+     "carb": 2.96,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrevpcyh004gwl5gnni3al5q",
+      "name": "Bacon & Eggs",
+      "description": "Weekend breakfast-style plate.",
+      "steps": [
+       "Cook bacon until crisp, set aside.",
+       "Fry or scramble eggs in the bacon fat."
+      ],
+      "slotType": "either",
+      "cuisine": "western-comfort",
+      "prepTimeMin": 15,
+      "source": "curated",
+      "mealCategory": null,
+      "kcal": 557.0999999999999,
+      "protein": 41.7,
+      "fat": 41.7,
+      "carb": 2.49,
+      "tasteTier": "really_good",
+      "tasteTierSource": "curated",
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 3.38,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-10T11:55:10.938Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x0tf502djwlw0cid78r5i",
+     "planId": "cms6x0tf102dbwlw0njv4z5c8",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 2,
+     "recipeId": "cmrj2tyok05m2wlwst1uh8vwt",
+     "proteinScale": 0.79,
+     "sidesScale": 0.79,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t7hg004pwlwsioxvv8bh",
+       "name": "Vegetable Oil",
+       "role": "carb",
+       "grams": 85
+      },
+      {
+       "foodId": "cmrj2ta7g00fwwlwsu9z4zhyn",
+       "name": "Achiote Seeds",
+       "role": "carb",
+       "grams": 7
+      }
+     ],
+     "kcal": 776.76,
+     "protein": 0.371,
+     "fat": 85.161,
+     "carb": 2.24,
+     "warning": "Tried 1 recipe(s) for this slot, none fit within tolerance — closest was \"Achiote Oil (Aceite Achiotado) Recipe\" (delivered 0g protein vs a 34g target).",
+     "locked": false,
+     "recipe": {
+      "id": "cmrj2tyok05m2wlwst1uh8vwt",
+      "name": "Achiote Oil (Aceite Achiotado) Recipe",
+      "description": null,
+      "steps": [
+       "Heat the vegetable or olive oil and Achiote seeds in a small skillet over medium heat for about 2 to 3 minutes.",
+       "Don't let the seeds turn black. Remove the skillet from the heat and let stand for 5 minutes more. Strain the oil and store for up to 15 days at room temperature in a jar with a tight lid."
+      ],
+      "slotType": "meal",
+      "cuisine": "western-comfort",
+      "prepTimeMin": 14,
+      "source": "themealdb-import",
+      "mealCategory": null,
+      "kcal": 996.8,
+      "protein": 0.5,
+      "fat": 109.2,
+      "carb": 3,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 1.1,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-13T10:25:47.733Z",
+      "createdByUserId": null
+     }
+    }
+   ],
+   "groceryList": null,
+   "meta": {
+    "matchPct": 83,
+    "attempts": 5,
+    "score": {
+     "daysInTolerance": 0,
+     "avgMatch": 83,
+     "days": [
+      {
+       "dayOfWeek": 2,
+       "dayName": "Wednesday",
+       "matchPct": 83,
+       "totals": {
+        "kcal": 2042,
+        "protein": 95,
+        "fat": 180,
+        "carb": 8
+       },
+       "kcalDeltaPct": -0.6,
+       "proteinShortPct": 26.2,
+       "fatOk": true,
+       "carbOk": true,
+       "inTolerance": false,
+       "miss": "95 g protein vs 129 g — 34 g short",
+       "unfilledSlots": 0,
+       "warnedSlots": 1,
+       "proteinFloor": {
+        "met": false,
+        "floorG": 123,
+        "achievedG": 95.2,
+        "shortG": 27.8,
+        "shortPct": 22.6,
+        "reason": "27.8 g short of the 123 g protein floor (23% under) — the compliant pool couldn't scale up to close the gap within the 0.5-2x portion limit."
+       },
+       "windowIndex": 0,
+       "dayIndex": 0,
+       "key": "0:2"
+      }
+     ],
+     "totalDays": 1,
+     "floorDaysMet": 0,
+     "floorDaysTotal": 1
+    },
+    "days": [
+     {
+      "dayOfWeek": 2,
+      "dayName": "Wednesday",
+      "matchPct": 83,
+      "totals": {
+       "kcal": 2042,
+       "protein": 95,
+       "fat": 180,
+       "carb": 8
+      },
+      "kcalDeltaPct": -0.6,
+      "proteinShortPct": 26.2,
+      "fatOk": true,
+      "carbOk": true,
+      "inTolerance": false,
+      "miss": "95 g protein vs 129 g — 34 g short",
+      "unfilledSlots": 0,
+      "warnedSlots": 1,
+      "proteinFloor": {
+       "met": false,
+       "floorG": 123,
+       "achievedG": 95.2,
+       "shortG": 27.8,
+       "shortPct": 22.6,
+       "reason": "27.8 g short of the 123 g protein floor (23% under) — the compliant pool couldn't scale up to close the gap within the 0.5-2x portion limit."
+      },
+      "windowIndex": 0,
+      "dayIndex": 0,
+      "key": "0:2"
+     }
+    ],
+    "diagnosis": {
+     "feasible": false,
+     "reasons": [
+      "Protein-priority mode: the 123g/day floor wasn't met on 1 day(s) — only 2 of 3 compliant recipes carry enough protein density to close the gap within the 0.5-2x portion limit.",
+      "Max prep 15 min cuts the compliant pool from 17 to 3 recipes (14 removed).",
+      "Your targets need ~6.3g protein per 100 kcal; only 2 of 3 eligible recipes come close (12+ needed for a full varied week)."
+     ],
+     "suggestions": [
+      "AI-generate a few high-protein compliant recipes, set the protein-preference filter, or allow batch-cooking repeats of the densest dishes.",
+      "Raise max prep time (each step back adds recipes — without the cap you have 17).",
+      "Set the protein-preference filter, or AI-generate a few high-protein recipes to deepen the pool."
+     ],
+     "binding": {
+      "key": "protein-density",
+      "label": "protein density in your recipe pool",
+      "detail": "your targets need ~6.3 g protein per 100 kcal and only 2 of 3 compliant recipes come close."
+     }
+    },
+    "poolCounts": {
+     "raw": 889,
+     "afterDiet": 17,
+     "afterPrep": 3,
+     "afterStack": 3,
+     "stackExplain": {
+      "total": 3,
+      "survivorCount": 3,
+      "survivors": [
+       {
+        "id": "cmrevpcyh004gwl5gnni3al5q",
+        "name": "Bacon & Eggs",
+        "description": "Weekend breakfast-style plate.",
+        "steps": [
+         "Cook bacon until crisp, set aside.",
+         "Fry or scramble eggs in the bacon fat."
+        ],
+        "slotType": "either",
+        "cuisine": "western-comfort",
+        "prepTimeMin": 15,
+        "source": "curated",
+        "mealCategory": null,
+        "kcal": 557.0999999999999,
+        "protein": 41.7,
+        "fat": 41.7,
+        "carb": 2.49,
+        "tasteTier": "really_good",
+        "tasteTierSource": "curated",
+        "userRatingAvg": null,
+        "userRatingCount": null,
+        "costPerServing": 3.38,
+        "difficulty": 1,
+        "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+        "aiFingerprint": null,
+        "aiVerifiedAt": null,
+        "createdAt": "2026-07-10T11:55:10.938Z",
+        "createdByUserId": null,
+        "ingredients": [
+         {
+          "id": "cmrfn2wbs004iwlg4x34jn1b9",
+          "recipeId": "cmrevpcyh004gwl5gnni3al5q",
+          "foodId": "cmrevpcmu000cwl5gfljr1l1o",
+          "baseGrams": 60,
+          "scalable": true,
+          "role": "protein",
+          "food": {
+           "id": "cmrevpcmu000cwl5gfljr1l1o",
+           "name": "Bacon, cooked",
+           "category": "protein",
+           "kcal": 541,
+           "protein": 37,
+           "fat": 42,
+           "carb": 1.4,
+           "fiber": 0,
+           "source": "manual",
+           "dataQuality": null,
+           "fdcId": null,
+           "fdcCategory": null,
+           "allergenTags": null,
+           "mayContain": null
+          }
+         },
+         {
+          "id": "cmrfn2wbx004kwlg4f2krfuj8",
+          "recipeId": "cmrevpcyh004gwl5gnni3al5q",
+          "foodId": "cmrevpcm50006wl5g2u2bcspd",
+          "baseGrams": 150,
+          "scalable": true,
+          "role": "protein",
+          "food": {
+           "id": "cmrevpcm50006wl5g2u2bcspd",
+           "name": "Eggs, whole, cooked",
+           "category": "dairy-eggs",
+           "kcal": 155,
+           "protein": 13,
+           "fat": 11,
+           "carb": 1.1,
+           "fiber": 0,
+           "source": "manual",
+           "dataQuality": null,
+           "fdcId": null,
+           "fdcCategory": null,
+           "allergenTags": null,
+           "mayContain": null
+          }
+         }
+        ],
+        "dietGuardStyle": "keto"
+       },
+       {
+        "id": "cmrevpcyt004lwl5gx6bidm0z",
+        "name": "Jerky & Pork Rinds Snack Plate",
+        "description": "Closer / site valve — his words.",
+        "steps": [
+         "No cooking — portion and eat."
+        ],
+        "slotType": "snack",
+        "cuisine": "western-comfort",
+        "prepTimeMin": 0,
+        "source": "curated",
+        "mealCategory": null,
+        "kcal": 409.2,
+        "protein": 38.1,
+        "fat": 24.9,
+        "carb": 6.6,
+        "tasteTier": "really_good",
+        "tasteTierSource": "curated",
+        "userRatingAvg": null,
+        "userRatingCount": null,
+        "costPerServing": 6.75,
+        "difficulty": 1,
+        "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+        "aiFingerprint": null,
+        "aiVerifiedAt": null,
+        "createdAt": "2026-07-10T11:55:10.950Z",
+        "createdByUserId": null,
+        "ingredients": [
+         {
+          "id": "cmrfn2wc8004nwlg4c8fqk4hw",
+          "recipeId": "cmrevpcyt004lwl5gx6bidm0z",
+          "foodId": "cmrevpcma0007wl5gfj59j5mk",
+          "baseGrams": 60,
+          "scalable": true,
+          "role": "protein",
+          "food": {
+           "id": "cmrevpcma0007wl5gfj59j5mk",
+           "name": "Beef jerky",
+           "category": "protein",
+           "kcal": 410,
+           "protein": 33,
+           "fat": 26,
+           "carb": 11,
+           "fiber": 0,
+           "source": "manual",
+           "dataQuality": null,
+           "fdcId": null,
+           "fdcCategory": null,
+           "allergenTags": null,
+           "mayContain": null
+          }
+         },
+         {
+          "id": "cmrfn2wcd004pwlg4k6vect5c",
+          "recipeId": "cmrevpcyt004lwl5gx6bidm0z",
+          "foodId": "cmrevpcmq000bwl5g2mbd0jsv",
+          "baseGrams": 30,
+          "scalable": true,
+          "role": "protein",
+          "food": {
+           "id": "cmrevpcmq000bwl5g2mbd0jsv",
+           "name": "Pork rinds",
+           "category": "pantry",
+           "kcal": 544,
+           "protein": 61,
+           "fat": 31,
+           "carb": 0,
+           "fiber": 0,
+           "source": "manual",
+           "dataQuality": null,
+           "fdcId": null,
+           "fdcCategory": null,
+           "allergenTags": null,
+           "mayContain": null
+          }
+         }
+        ],
+        "dietGuardStyle": "keto"
+       },
+       {
+        "id": "cmrj2tyok05m2wlwst1uh8vwt",
+        "name": "Achiote Oil (Aceite Achiotado) Recipe",
+        "description": null,
+        "steps": [
+         "Heat the vegetable or olive oil and Achiote seeds in a small skillet over medium heat for about 2 to 3 minutes.",
+         "Don't let the seeds turn black. Remove the skillet from the heat and let stand for 5 minutes more. Strain the oil and store for up to 15 days at room temperature in a jar with a tight lid."
+        ],
+        "slotType": "meal",
+        "cuisine": "western-comfort",
+        "prepTimeMin": 14,
+        "source": "themealdb-import",
+        "mealCategory": null,
+        "kcal": 996.8,
+        "protein": 0.5,
+        "fat": 109.2,
+        "carb": 3,
+        "tasteTier": null,
+        "tasteTierSource": null,
+        "userRatingAvg": null,
+        "userRatingCount": null,
+        "costPerServing": 1.1,
+        "difficulty": 1,
+        "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+        "aiFingerprint": null,
+        "aiVerifiedAt": null,
+        "createdAt": "2026-07-13T10:25:47.733Z",
+        "createdByUserId": null,
+        "ingredients": [
+         {
+          "id": "cmrj2tyov05m4wlwsgulxf3wa",
+          "recipeId": "cmrj2tyok05m2wlwst1uh8vwt",
+          "foodId": "cmrj2t7hg004pwlwsioxvv8bh",
+          "baseGrams": 109,
+          "scalable": true,
+          "role": "carb",
+          "food": {
+           "id": "cmrj2t7hg004pwlwsioxvv8bh",
+           "name": "Vegetable Oil",
+           "category": "fats-nuts-oils",
+           "kcal": 900,
+           "protein": 0,
+           "fat": 100,
+           "carb": 0,
+           "fiber": 0,
+           "source": "usda-verified",
+           "dataQuality": "pass — re-derived; fdcId 2710180 \"Vegetable oil, NFS\" (Survey (FNDDS)); replaced mismatched fdcId 172370 \"Oil, vegetable, soybean, refined\"",
+           "fdcId": 2710180,
+           "fdcCategory": "Salad dressings and vegetable oils",
+           "allergenTags": null,
+           "mayContain": null
+          }
+         },
+         {
+          "id": "cmrj2typ405m6wlwsiygcff8k",
+          "recipeId": "cmrj2tyok05m2wlwst1uh8vwt",
+          "foodId": "cmrj2ta7g00fwwlwsu9z4zhyn",
+          "baseGrams": 9.375,
+          "scalable": true,
+          "role": "carb",
+          "food": {
+           "id": "cmrj2ta7g00fwwlwsu9z4zhyn",
+           "name": "Achiote Seeds",
+           "category": "fats-nuts-oils",
+           "kcal": 168,
+           "protein": 5.3,
+           "fat": 2.3,
+           "carb": 32,
+           "fiber": 4.8,
+           "source": "manual",
+           "dataQuality": "exception:provenance-cleared — carried fdcId 170145 (\"Seeds, breadfruit seeds, boiled\"), whose description does not denote this food; this row's macros are that record's values verbatim and are therefore NOT this food's numbers; no FDC record matches this name unambiguously, so no replacement was guessed",
+           "fdcId": null,
+           "fdcCategory": null,
+           "allergenTags": null,
+           "mayContain": null
+          }
+         }
+        ],
+        "dietGuardStyle": "keto"
+       }
+      ],
+      "scored": [
+       {
+        "recipe": {
+         "id": "cmrevpcyh004gwl5gnni3al5q",
+         "name": "Bacon & Eggs",
+         "description": "Weekend breakfast-style plate.",
+         "steps": [
+          "Cook bacon until crisp, set aside.",
+          "Fry or scramble eggs in the bacon fat."
+         ],
+         "slotType": "either",
+         "cuisine": "western-comfort",
+         "prepTimeMin": 15,
+         "source": "curated",
+         "mealCategory": null,
+         "kcal": 557.0999999999999,
+         "protein": 41.7,
+         "fat": 41.7,
+         "carb": 2.49,
+         "tasteTier": "really_good",
+         "tasteTierSource": "curated",
+         "userRatingAvg": null,
+         "userRatingCount": null,
+         "costPerServing": 3.38,
+         "difficulty": 1,
+         "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+         "aiFingerprint": null,
+         "aiVerifiedAt": null,
+         "createdAt": "2026-07-10T11:55:10.938Z",
+         "createdByUserId": null,
+         "ingredients": [
+          {
+           "id": "cmrfn2wbs004iwlg4x34jn1b9",
+           "recipeId": "cmrevpcyh004gwl5gnni3al5q",
+           "foodId": "cmrevpcmu000cwl5gfljr1l1o",
+           "baseGrams": 60,
+           "scalable": true,
+           "role": "protein",
+           "food": {
+            "id": "cmrevpcmu000cwl5gfljr1l1o",
+            "name": "Bacon, cooked",
+            "category": "protein",
+            "kcal": 541,
+            "protein": 37,
+            "fat": 42,
+            "carb": 1.4,
+            "fiber": 0,
+            "source": "manual",
+            "dataQuality": null,
+            "fdcId": null,
+            "fdcCategory": null,
+            "allergenTags": null,
+            "mayContain": null
+           }
+          },
+          {
+           "id": "cmrfn2wbx004kwlg4f2krfuj8",
+           "recipeId": "cmrevpcyh004gwl5gnni3al5q",
+           "foodId": "cmrevpcm50006wl5g2u2bcspd",
+           "baseGrams": 150,
+           "scalable": true,
+           "role": "protein",
+           "food": {
+            "id": "cmrevpcm50006wl5g2u2bcspd",
+            "name": "Eggs, whole, cooked",
+            "category": "dairy-eggs",
+            "kcal": 155,
+            "protein": 13,
+            "fat": 11,
+            "carb": 1.1,
+            "fiber": 0,
+            "source": "manual",
+            "dataQuality": null,
+            "fdcId": null,
+            "fdcCategory": null,
+            "allergenTags": null,
+            "mayContain": null
+           }
+          }
+         ],
+         "dietGuardStyle": "keto"
+        },
+        "s": {
+         "recipeId": "cmrevpcyh004gwl5gnni3al5q",
+         "cost": {
+          "costCad": 3.38,
+          "costMatchedCad": 3.38,
+          "costFallbackCad": 0,
+          "coverage": 1,
+          "tier": "cheap",
+          "totalGrams": 210,
+          "matchedGrams": 210,
+          "unpricedNames": [],
+          "provenance": "estimated"
+         },
+         "time": {
+          "min": 15,
+          "known": true,
+          "provenance": "row"
+         },
+         "complexity": {
+          "score": 1,
+          "band": "simple",
+          "factors": {
+           "ingredientCount": 2,
+           "stepCount": 2,
+           "techniques": [],
+           "techniqueCount": 0,
+           "terms": {
+            "ingredients": 0,
+            "steps": 0,
+            "techniques": 0
+           },
+           "weights": {
+            "ingredients": 0.35,
+            "steps": 0.4,
+            "techniques": 0.25
+           },
+           "evidence": "row"
+          },
+          "provenance": "estimated"
+         },
+         "taste": {
+          "score": 0.65,
+          "band": "decent",
+          "source": "curated_tier",
+          "factors": {
+           "flavourAxes": [
+            "fat",
+            "umami"
+           ],
+           "axisCount": 2,
+           "axisTotal": 5,
+           "tasteTier": "really_good",
+           "tasteTierSource": "curated",
+           "userRatingAvg": null,
+           "userRatingCount": 0,
+           "ownRating": null
+          },
+          "provenance": "estimated"
+         },
+         "passesHardCaps": true,
+         "violations": [],
+         "bindingConstraint": null,
+         "unevaluable": [],
+         "rank": 0.7688,
+         "rankTerms": {
+          "cost": 0.662,
+          "time": 0.833,
+          "complexity": 1,
+          "taste": 0.65
+         },
+         "weights": {
+          "cost": 0.25,
+          "time": 0.25,
+          "complexity": 0.2,
+          "taste": 0.3
+         }
+        }
+       },
+       {
+        "recipe": {
+         "id": "cmrevpcyt004lwl5gx6bidm0z",
+         "name": "Jerky & Pork Rinds Snack Plate",
+         "description": "Closer / site valve — his words.",
+         "steps": [
+          "No cooking — portion and eat."
+         ],
+         "slotType": "snack",
+         "cuisine": "western-comfort",
+         "prepTimeMin": 0,
+         "source": "curated",
+         "mealCategory": null,
+         "kcal": 409.2,
+         "protein": 38.1,
+         "fat": 24.9,
+         "carb": 6.6,
+         "tasteTier": "really_good",
+         "tasteTierSource": "curated",
+         "userRatingAvg": null,
+         "userRatingCount": null,
+         "costPerServing": 6.75,
+         "difficulty": 1,
+         "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+         "aiFingerprint": null,
+         "aiVerifiedAt": null,
+         "createdAt": "2026-07-10T11:55:10.950Z",
+         "createdByUserId": null,
+         "ingredients": [
+          {
+           "id": "cmrfn2wc8004nwlg4c8fqk4hw",
+           "recipeId": "cmrevpcyt004lwl5gx6bidm0z",
+           "foodId": "cmrevpcma0007wl5gfj59j5mk",
+           "baseGrams": 60,
+           "scalable": true,
+           "role": "protein",
+           "food": {
+            "id": "cmrevpcma0007wl5gfj59j5mk",
+            "name": "Beef jerky",
+            "category": "protein",
+            "kcal": 410,
+            "protein": 33,
+            "fat": 26,
+            "carb": 11,
+            "fiber": 0,
+            "source": "manual",
+            "dataQuality": null,
+            "fdcId": null,
+            "fdcCategory": null,
+            "allergenTags": null,
+            "mayContain": null
+           }
+          },
+          {
+           "id": "cmrfn2wcd004pwlg4k6vect5c",
+           "recipeId": "cmrevpcyt004lwl5gx6bidm0z",
+           "foodId": "cmrevpcmq000bwl5g2mbd0jsv",
+           "baseGrams": 30,
+           "scalable": true,
+           "role": "protein",
+           "food": {
+            "id": "cmrevpcmq000bwl5g2mbd0jsv",
+            "name": "Pork rinds",
+            "category": "pantry",
+            "kcal": 544,
+            "protein": 61,
+            "fat": 31,
+            "carb": 0,
+            "fiber": 0,
+            "source": "manual",
+            "dataQuality": null,
+            "fdcId": null,
+            "fdcCategory": null,
+            "allergenTags": null,
+            "mayContain": null
+           }
+          }
+         ],
+         "dietGuardStyle": "keto"
+        },
+        "s": {
+         "recipeId": "cmrevpcyt004lwl5gx6bidm0z",
+         "cost": {
+          "costCad": 6.75,
+          "costMatchedCad": 6.75,
+          "costFallbackCad": 0,
+          "coverage": 1,
+          "tier": "moderate",
+          "totalGrams": 90,
+          "matchedGrams": 90,
+          "unpricedNames": [],
+          "provenance": "estimated"
+         },
+         "time": {
+          "min": null,
+          "known": false,
+          "provenance": "row"
+         },
+         "complexity": {
+          "score": 1,
+          "band": "simple",
+          "factors": {
+           "ingredientCount": 2,
+           "stepCount": 1,
+           "techniques": [],
+           "techniqueCount": 0,
+           "terms": {
+            "ingredients": 0,
+            "steps": 0,
+            "techniques": 0
+           },
+           "weights": {
+            "ingredients": 0.35,
+            "steps": 0.4,
+            "techniques": 0.25
+           },
+           "evidence": "row"
+          },
+          "provenance": "estimated"
+         },
+         "taste": {
+          "score": 0.608,
+          "band": "decent",
+          "source": "curated_tier",
+          "factors": {
+           "flavourAxes": [],
+           "axisCount": 0,
+           "axisTotal": 5,
+           "tasteTier": "really_good",
+           "tasteTierSource": "curated",
+           "userRatingAvg": null,
+           "userRatingCount": 0,
+           "ownRating": null
+          },
+          "provenance": "estimated"
+         },
+         "passesHardCaps": true,
+         "violations": [],
+         "bindingConstraint": null,
+         "unevaluable": [],
+         "rank": 0.5887,
+         "rankTerms": {
+          "cost": 0.325,
+          "time": 0.5,
+          "complexity": 1,
+          "taste": 0.608
+         },
+         "weights": {
+          "cost": 0.25,
+          "time": 0.25,
+          "complexity": 0.2,
+          "taste": 0.3
+         }
+        }
+       },
+       {
+        "recipe": {
+         "id": "cmrj2tyok05m2wlwst1uh8vwt",
+         "name": "Achiote Oil (Aceite Achiotado) Recipe",
+         "description": null,
+         "steps": [
+          "Heat the vegetable or olive oil and Achiote seeds in a small skillet over medium heat for about 2 to 3 minutes.",
+          "Don't let the seeds turn black. Remove the skillet from the heat and let stand for 5 minutes more. Strain the oil and store for up to 15 days at room temperature in a jar with a tight lid."
+         ],
+         "slotType": "meal",
+         "cuisine": "western-comfort",
+         "prepTimeMin": 14,
+         "source": "themealdb-import",
+         "mealCategory": null,
+         "kcal": 996.8,
+         "protein": 0.5,
+         "fat": 109.2,
+         "carb": 3,
+         "tasteTier": null,
+         "tasteTierSource": null,
+         "userRatingAvg": null,
+         "userRatingCount": null,
+         "costPerServing": 1.1,
+         "difficulty": 1,
+         "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+         "aiFingerprint": null,
+         "aiVerifiedAt": null,
+         "createdAt": "2026-07-13T10:25:47.733Z",
+         "createdByUserId": null,
+         "ingredients": [
+          {
+           "id": "cmrj2tyov05m4wlwsgulxf3wa",
+           "recipeId": "cmrj2tyok05m2wlwst1uh8vwt",
+           "foodId": "cmrj2t7hg004pwlwsioxvv8bh",
+           "baseGrams": 109,
+           "scalable": true,
+           "role": "carb",
+           "food": {
+            "id": "cmrj2t7hg004pwlwsioxvv8bh",
+            "name": "Vegetable Oil",
+            "category": "fats-nuts-oils",
+            "kcal": 900,
+            "protein": 0,
+            "fat": 100,
+            "carb": 0,
+            "fiber": 0,
+            "source": "usda-verified",
+            "dataQuality": "pass — re-derived; fdcId 2710180 \"Vegetable oil, NFS\" (Survey (FNDDS)); replaced mismatched fdcId 172370 \"Oil, vegetable, soybean, refined\"",
+            "fdcId": 2710180,
+            "fdcCategory": "Salad dressings and vegetable oils",
+            "allergenTags": null,
+            "mayContain": null
+           }
+          },
+          {
+           "id": "cmrj2typ405m6wlwsiygcff8k",
+           "recipeId": "cmrj2tyok05m2wlwst1uh8vwt",
+           "foodId": "cmrj2ta7g00fwwlwsu9z4zhyn",
+           "baseGrams": 9.375,
+           "scalable": true,
+           "role": "carb",
+           "food": {
+            "id": "cmrj2ta7g00fwwlwsu9z4zhyn",
+            "name": "Achiote Seeds",
+            "category": "fats-nuts-oils",
+            "kcal": 168,
+            "protein": 5.3,
+            "fat": 2.3,
+            "carb": 32,
+            "fiber": 4.8,
+            "source": "manual",
+            "dataQuality": "exception:provenance-cleared — carried fdcId 170145 (\"Seeds, breadfruit seeds, boiled\"), whose description does not denote this food; this row's macros are that record's values verbatim and are therefore NOT this food's numbers; no FDC record matches this name unambiguously, so no replacement was guessed",
+            "fdcId": null,
+            "fdcCategory": null,
+            "allergenTags": null,
+            "mayContain": null
+           }
+          }
+         ],
+         "dietGuardStyle": "keto"
+        },
+        "s": {
+         "recipeId": "cmrj2tyok05m2wlwst1uh8vwt",
+         "cost": {
+          "costCad": 1.1,
+          "costMatchedCad": 1.1,
+          "costFallbackCad": 0,
+          "coverage": 1,
+          "tier": "cheap",
+          "totalGrams": 118.4,
+          "matchedGrams": 118.4,
+          "unpricedNames": [],
+          "provenance": "estimated"
+         },
+         "time": {
+          "min": 14,
+          "known": true,
+          "provenance": "row"
+         },
+         "complexity": {
+          "score": 1,
+          "band": "simple",
+          "factors": {
+           "ingredientCount": 2,
+           "stepCount": 2,
+           "techniques": [],
+           "techniqueCount": 0,
+           "terms": {
+            "ingredients": 0,
+            "steps": 0,
+            "techniques": 0
+           },
+           "weights": {
+            "ingredients": 0.35,
+            "steps": 0.4,
+            "techniques": 0.25
+           },
+           "evidence": "row"
+          },
+          "provenance": "estimated"
+         },
+         "taste": {
+          "score": 0.46,
+          "band": "low",
+          "source": "ingredient_signal",
+          "factors": {
+           "flavourAxes": [
+            "fat"
+           ],
+           "axisCount": 1,
+           "axisTotal": 5,
+           "tasteTier": null,
+           "tasteTierSource": null,
+           "userRatingAvg": null,
+           "userRatingCount": 0,
+           "ownRating": null
+          },
+          "provenance": "estimated"
+         },
+         "passesHardCaps": true,
+         "violations": [],
+         "bindingConstraint": null,
+         "unevaluable": [],
+         "rank": 0.7716,
+         "rankTerms": {
+          "cost": 0.89,
+          "time": 0.844,
+          "complexity": 1,
+          "taste": 0.46
+         },
+         "weights": {
+          "cost": 0.25,
+          "time": 0.25,
+          "complexity": 0.2,
+          "taste": 0.3
+         }
+        }
+       }
+      ],
+      "activeCaps": [
+       "complexity",
+       "taste"
+      ],
+      "perCap": {
+       "complexity": {
+        "failed": 0,
+        "passedAlone": 3
+       },
+       "taste": {
+        "failed": 0,
+        "passedAlone": 3
+       }
+      },
+      "liftGain": {
+       "complexity": 0,
+       "taste": 0
+      },
+      "unevaluable": [],
+      "ok": true,
+      "bindingConstraint": null,
+      "message": "3 of 3 recipes clear the filter stack (complexity, taste)."
+     }
+    },
+    "variety": {
+     "mealEligible": 2,
+     "usableForSlot": 1,
+     "slotKcal": 685,
+     "snackEligible": 2,
+     "weeklyMealSlots": 21,
+     "weeklySnackSlots": 0,
+     "repeatCap": 2,
+     "distinctWeeks": 0,
+     "horizonWeeks": 1,
+     "sustainsHorizon": false,
+     "notes": [
+      "1 of your 2 compliant recipes can be portioned to a 685 kcal meal — about 0 week(s) of 21 meals before dishes start repeating, so over 1 weeks you will see favourites come back.",
+      "1 day: 2 distinct dish(es) across 3 filled slot(s); most-repeated dish appears 2x against a 2x cap for this horizon (2x per week)."
+     ],
+     "horizon": {
+      "weeks": 1,
+      "days": 1,
+      "perWeekCap": 2,
+      "horizonRepeatCap": 2,
+      "mealSlots": 3,
+      "snackSlots": 0,
+      "totalSlots": 3,
+      "distinctFloor": 2,
+      "distinctRecipes": 2,
+      "maxRepeat": 2,
+      "maxRepeatRecipeId": "cmrevpcyh004gwl5gnni3al5q",
+      "lockedRepeatsOfMax": 0,
+      "filledSlots": 3,
+      "unfilledSlots": 0,
+      "requiredDistinct": 2,
+      "capHeld": true,
+      "floorHeld": true
+     }
+    },
+    "priorWeeksConsidered": 0,
+    "horizon": {
+     "key": "day",
+     "label": "1 day",
+     "days": 1,
+     "kind": "days",
+     "weeks": 1,
+     "custom": false,
+     "startDate": "2026-07-29",
+     "endDate": "2026-07-29",
+     "startDayOfWeek": 2,
+     "weeksWritten": 1,
+     "solveMs": 0,
+     "weekPlans": [
+      {
+       "startDate": "2026-07-27",
+       "dayIndices": [
+        2
+       ],
+       "days": 1,
+       "daysInTolerance": 0,
+       "avgMatch": 83,
+       "unfilledSlots": 0,
+       "poolSize": 3
+      }
+     ]
+    }
+   }
+  }
+ }
+}

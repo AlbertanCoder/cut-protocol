@@ -1,0 +1,33 @@
+E-V2 — THE GATE (verifier's own run)
+command: node --test tests/brain/governanceRelayGate.test.js tests/aiGovernance.test.js tests/aiGovernanceStructure.test.js
+
+ℹ tests 48
+ℹ pass 48
+ℹ fail 0
+
+=== git show 42ef521 -- governance.js (actual committed change) ===
+-const { isBrainEnabled } = require("./llm.js");
++const { isBrainEnabled, relayConfig } = require("./llm.js");
+-  if (!process.env.ANTHROPIC_API_KEY) {
++  // A DIRECT KEY IS NOT THE ONLY TRANSPORT. This check used to read
++  // `!process.env.ANTHROPIC_API_KEY` alone, which made the gate relay-blind: a
++  // packaged install ships no key BY DESIGN (the relay exists precisely to
++  // replace it), so every governed feature was refused here with "no API key is
++  // configured" before the relay-aware isBrainEnabled() below could ever speak.
++  // The result was an app reporting status {"enabled":true,"reason":"ok"} while
++  // 503-ing every AI call — root cause #1 in autopsy-20260727-0126.
++  //
++  // The two transports are exactly the two llm.js:91 accepts. Reachability is
++  // NOT decided here: a configured-but-unreachable relay is a transport-layer
++  // failure that surfaces as an honest call error, not a governance refusal.
++  // With NEITHER transport this still refuses 503 — fail-closed is preserved,
++  // and the reason/message contract is unchanged for that case.
++  if (!process.env.ANTHROPIC_API_KEY && !relayConfig()) {
+
+=== VERIFIER'S OWN MATRIX (not the surgeon's test file) ===
+key, no relay, BRAIN=on       | chat=ON critic=ON classify=ON recipeDrafts=ON | identical: true
+NO key, relay, BRAIN=on       | chat=ON critic=ON classify=ON recipeDrafts=ON | identical: true
+NO key, NO relay, BRAIN=on    | chat=no-api-key critic=no-api-key classify=no-api-key recipeDrafts=no-api-key | identical: true
+NO key, relay, BRAIN UNSET    | chat=feature-off critic=feature-off classify=feature-off recipeDrafts=feature-off | identical: true
+half relay (url only)         | chat=no-api-key critic=no-api-key classify=no-api-key recipeDrafts=no-api-key | identical: true
+http NON-loopback relay       | chat=no-api-key critic=no-api-key classify=no-api-key recipeDrafts=no-api-key | identical: true

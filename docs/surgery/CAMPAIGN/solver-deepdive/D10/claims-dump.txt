@@ -1,0 +1,1609 @@
+====================================================================================================
+#### AGENT A1  rows: 8
+====================================================================================================
+[98] CLAIM: no-op A/B delta, days-in-band, satisfiable-only (rig self-test)
+     VALUE: +0.00 pts (paired b=0 c=0; 639/639 byte-identical records)
+     SEED : 424242
+
+[99] CLAIM: rig baseline days-in-band, satisfiable-only (tier!=IMPOSSIBLE, judged)
+     VALUE: 413/536 = 77.1% (Wilson 95% CI 73.3-80.4)
+     SEED : 424242
+
+[100] CLAIM: rig baseline days-in-band, all judged days
+     VALUE: 434/622 = 69.8% (Wilson 95% CI 66.1-73.3)
+     SEED : 424242
+
+[101] CLAIM: cross-seed spread of rig baseline over 3 registry seeds
+     VALUE: 0.9 pts satisfiable-only (77.1/77.8/78.0), 0.6 pts all-days (69.8/70.4/70.3)
+     SEED : 424242+20260730+8675309
+
+[102] CLAIM: minimum detectable effect for a day-churning treatment (DERIVED)
+     VALUE: 3.45 pts 95% half-width at n=536 (McNemar se=sqrt(89-121/536)/536=0.0176)
+     SEED : 424242
+
+[103] CLAIM: positive control (pool thinned 2-of-3) delta, satisfiable-only
+     VALUE: -2.05 pts, paired 95% CI -5.50..+1.39, discordant b=50 c=39 - spans zero
+     SEED : 424242
+
+[104] CLAIM: IMPOSSIBLE-tier days landing IN band (flagged to A3, not resolved by A1)
+     VALUE: 21/86 judged days (32 personas, 103 planned days)
+     SEED : 424242
+
+[105] CLAIM: slots pinned at a 0.5x/2.0x scale bound, all filled slots
+     VALUE: 1130/2818 = 40.1% (BRIEF.md states 39.3%)
+     SEED : 424242
+
+====================================================================================================
+#### AGENT A2  rows: 16
+====================================================================================================
+[5] CLAIM: MEASURED instrument check: raw persona dumps reproduce graded per-day claimed kcal
+     VALUE: 0 mismatches / 212 personas / 578 days
+     SEED : qa-fleet-20260729-2032 (head 0d3eaa5, BRAIN=off)
+
+[6] CLAIM: MEASURED binding=PINNED_AT_BOUND, satisfiable-only missed days
+     VALUE: 70/110 = 63.6%
+     SEED : qa-fleet-20260729-2032 (head 0d3eaa5, BRAIN=off)
+
+[7] CLAIM: MEASURED binding=POOL_EXHAUSTED, satisfiable-only missed days
+     VALUE: 21/110 = 19.1%
+     SEED : qa-fleet-20260729-2032 (head 0d3eaa5, BRAIN=off)
+
+[8] CLAIM: MEASURED binding=FAT_OUT_OF_BAND, satisfiable-only missed days
+     VALUE: 10/110 = 9.1%
+     SEED : qa-fleet-20260729-2032 (head 0d3eaa5, BRAIN=off)
+
+[9] CLAIM: MEASURED binding=CARB_OUT_OF_BAND, satisfiable-only missed days
+     VALUE: 9/110 = 8.2%
+     SEED : qa-fleet-20260729-2032 (head 0d3eaa5, BRAIN=off)
+
+[10] CLAIM: MEASURED binding=PROTEIN_SHORT and KCAL_OUT_OF_BAND as sole binding constraint
+     VALUE: 0/110 = 0.0%
+     SEED : qa-fleet-20260729-2032 (head 0d3eaa5, BRAIN=off)
+
+[11] CLAIM: MEASURED binding=STRUCTURAL, all-578-days missed
+     VALUE: 63/173 = 36.4%
+     SEED : qa-fleet-20260729-2032 (head 0d3eaa5, BRAIN=off)
+
+[12] CLAIM: MEASURED binding taxonomy sum check ties to fleet totals
+     VALUE: 173 misses / 578 days
+     SEED : qa-fleet-20260729-2032 (head 0d3eaa5, BRAIN=off)
+
+[13] CLAIM: MEASURED per-slot: warned slots pinned at 0.5x or 2.0x (brief claims 68.3%)
+     VALUE: 297/438 = 67.8%
+     SEED : qa-fleet-20260729-2032 (head 0d3eaa5, BRAIN=off)
+
+[14] CLAIM: MEASURED per-slot: all filled slots pinned (brief claims 39.3%)
+     VALUE: 980/2432 = 40.3%
+     SEED : qa-fleet-20260729-2032 (head 0d3eaa5, BRAIN=off)
+
+[15] CLAIM: MEASURED per-slot: un-warned slots pinned
+     VALUE: 683/1994 = 34.3%
+     SEED : qa-fleet-20260729-2032 (head 0d3eaa5, BRAIN=off)
+
+[16] CLAIM: MEASURED pinned-binding days blocked at 0.5x FLOOR (needsLess) vs 2.0x ceiling only
+     VALUE: 66 floor / 0 ceiling / 4 both, of 70
+     SEED : qa-fleet-20260729-2032 (head 0d3eaa5, BRAIN=off)
+
+[17] CLAIM: MEASURED divergent protein@2.0+sides@0.5 slots (the 625g-chicken shape)
+     VALUE: 54/2432 = 2.2%
+     SEED : qa-fleet-20260729-2032 (head 0d3eaa5, BRAIN=off)
+
+[18] CLAIM: MEASURED missed days failing 2+ macros simultaneously
+     VALUE: 97/173 = 56.1%
+     SEED : qa-fleet-20260729-2032 (head 0d3eaa5, BRAIN=off)
+
+[19] CLAIM: MEASURED carnivore+keto misses bound by POOL_EXHAUSTED not pinning
+     VALUE: 20/27 = 74.1%
+     SEED : qa-fleet-20260729-2032 (head 0d3eaa5, BRAIN=off)
+
+[20] CLAIM: DERIVED satisfiable-only in-band incl. 7 forge-error days (brief uses 385/495=77.8%)
+     VALUE: 392/502 = 78.1%
+     SEED : qa-fleet-20260729-2032 (head 0d3eaa5, BRAIN=off)
+
+====================================================================================================
+#### AGENT A3  rows: 15
+====================================================================================================
+[25] CLAIM: MEASURED instrument check: reconstructed afterDiet pool sizes vs fleet poolCounts.afterDiet
+     VALUE: 29/29 exact, 0 mismatches
+     SEED : qa-fleet-20260729-2032 (head 0d3eaa5, BRAIN=off)
+
+[26] CLAIM: MEASURED impossible-tier days by sub-kind (every-protein-walled / floor-vs-rate)
+     VALUE: 53 days / 30 days = 83 total
+     SEED : qa-fleet-20260729-2032 (head 0d3eaa5, BRAIN=off)
+
+[27] CLAIM: MEASURED every-protein-walled days in band
+     VALUE: 0/53 = 0.0%
+     SEED : qa-fleet-20260729-2032 (head 0d3eaa5, BRAIN=off)
+
+[28] CLAIM: MEASURED floor-vs-rate days in band -- tier mislabelled, NOT unsatisfiable
+     VALUE: 20/30 = 66.7%
+     SEED : qa-fleet-20260729-2032 (head 0d3eaa5, BRAIN=off)
+
+[29] CLAIM: DERIVED structurally impossible days (SCALED upper bound < protein floor)
+     VALUE: 52 days / 16 personas (brief says 83)
+     SEED : qa-fleet-20260729-2032 (head 0d3eaa5, BRAIN=off)
+
+[30] CLAIM: MEASURED structurally-impossible days landing in band (proof falsification check)
+     VALUE: 0/52
+     SEED : qa-fleet-20260729-2032 (head 0d3eaa5, BRAIN=off)
+
+[31] CLAIM: DERIVED structurally impossible personas OUTSIDE the IMPOSSIBLE tier (under-inclusive check)
+     VALUE: 0 personas / 0 days
+     SEED : qa-fleet-20260729-2032 (head 0d3eaa5, BRAIN=off)
+
+[32] CLAIM: DERIVED corrected satisfiable-only denominator
+     VALUE: 526 days (brief uses 495)
+     SEED : qa-fleet-20260729-2032 (head 0d3eaa5, BRAIN=off)
+
+[33] CLAIM: DERIVED corrected satisfiable-only days-in-band rate
+     VALUE: 405/526 = 77.0% (brief 385/495 = 77.8%; A2 392/502 = 78.1%)
+     SEED : qa-fleet-20260729-2032 (head 0d3eaa5, BRAIN=off)
+
+[34] CLAIM: DERIVED all-days ceiling with a perfect solver
+     VALUE: 526/578 = 91.0% (brief asserts near 88%)
+     SEED : qa-fleet-20260729-2032 (head 0d3eaa5, BRAIN=off)
+
+[35] CLAIM: DERIVED ceiling implied by the brief OWN 83-day figure
+     VALUE: 495/578 = 85.6%, not 88% -- brief internally inconsistent
+     SEED : qa-fleet-20260729-2032 (head 0d3eaa5, BRAIN=off)
+
+[36] CLAIM: DERIVED satisfiable-only (526 d) structural ceiling
+     VALUE: none proven below 100%; relaxation ignores fat/carb so cannot prove feasibility
+     SEED : qa-fleet-20260729-2032 (head 0d3eaa5, BRAIN=off)
+
+[37] CLAIM: DERIVED three-way split, days (sums to 578)
+     VALUE: structurally-impossible 52 / pool-limited 140 / solver-limited 386
+     SEED : qa-fleet-20260729-2032 (head 0d3eaa5, BRAIN=off)
+
+[38] CLAIM: MEASURED in-band rate by bucket
+     VALUE: impossible 0/52=0.0%, pool-limited 83/140=59.3%, solver-limited 322/386=83.4%
+     SEED : qa-fleet-20260729-2032 (head 0d3eaa5, BRAIN=off)
+
+[39] CLAIM: ESTIMATED p175 contested: SCALED bound clears floor by 7.9g (8.8%) yet scored 0/1 days
+     VALUE: if impossible: 53 d, ceiling 90.8%
+     SEED : qa-fleet-20260729-2032 (head 0d3eaa5, BRAIN=off)
+
+====================================================================================================
+#### AGENT A4  rows: 4
+====================================================================================================
+[0] CLAIM: nominal fat band relative half-width (default path)
+     VALUE: +/-8.11%
+     SEED : n/a-analytic
+
+[1] CLAIM: EFFECTIVE fat pass/fail half-width actually graded
+     VALUE: +/-33.1%
+     SEED : n/a-analytic
+
+[2] CLAIM: effective pass floor vs engine ESSENTIAL_FAT_PER_LB_LBM=0.3
+     VALUE: 0.2475 lbm = 17.5% BELOW declared essential floor
+     SEED : n/a-analytic
+
+[3] CLAIM: NASEM AMDR fat relative half-width for comparison
+     VALUE: +/-27.3% (20-35% energy)
+     SEED : n/a-citation
+
+====================================================================================================
+#### AGENT A5  rows: 4
+====================================================================================================
+[21] CLAIM: soft-target MIGP vs hard-constraint IP feasibility, published benchmark (810 instances, 30 USDA foods)
+     VALUE: 100% vs 48%
+     SEED : n/a
+
+[22] CLAIM: nutrient constraint counts across 52 published diet-LP studies
+     VALUE: 5-37
+     SEED : n/a
+
+[23] CLAIM: Maillot 2010 individual diet modeling feasibility
+     VALUE: 1171/1171 individuals feasible, 32 nutrients
+     SEED : n/a
+
+[24] CLAIM: PREDICTION for A19 greedy-vs-joint gap on days-in-band
+     VALUE: single-digit points (ESTIMATED)
+     SEED : n/a
+
+====================================================================================================
+#### AGENT A6  rows: 1
+====================================================================================================
+[4] CLAIM: Cut Protocol effective fat pass window, as % of band midpoint
+     VALUE: +/-33.1%
+     SEED : n/a-documentary
+
+====================================================================================================
+#### AGENT A7  rows: 10
+====================================================================================================
+[70] CLAIM: Food rows surviving vegan+soy+gluten+peanut+treenut+sesame+legumes (exclusionGate.isExcluded)
+     VALUE: 4634 of 14151
+     SEED : n/a-deterministic-query
+
+[71] CLAIM: Recipes whose every ingredient survives the killer stack
+     VALUE: 29 of 910
+     SEED : n/a-deterministic-query
+
+[72] CLAIM: Best in-library vegan bulk staple protein density (pumpkin seeds/pepitas 29.9g/515kcal)
+     VALUE: 5.81 g protein per 100 kcal
+     SEED : n/a-deterministic-query
+
+[73] CLAIM: Required protein density across 5 representative impossible-tier personas (bmrEngine computeMacros, 0.85x band midpoint)
+     VALUE: 7.98-8.63 g protein per 100 kcal
+     SEED : n/a-deterministic-engine
+
+[74] CLAIM: Whole-food shortfall vs protein floor (best staple vs required)
+     VALUE: 27-33 percent short
+     SEED : n/a-deterministic-engine
+
+[75] CLAIM: Fat overshoot if day built from densest surviving staple (pepitas) vs fat band 51-60g
+     VALUE: 158 g fat (2.6x)
+     SEED : n/a-deterministic-engine
+
+[76] CLAIM: Library rows for rice/potato/hemp/sunflower protein, nutritional yeast, torula, chlorella, pumpkin seed protein
+     VALUE: 0 rows each
+     SEED : n/a-deterministic-query
+
+[77] CLAIM: Nutritional yeast protein density (external, Wikipedia citing USDA FDC 1946780)
+     VALUE: 13.3 g protein per 100 kcal
+     SEED : n/a-external-citation
+
+[78] CLAIM: Dietary-style LEAK: exclusionGate.isExcluded returns false for vegan on Squirrel/Groundhog/Armadillo/Wild pig/Heart/Owl/Sea cucumber/Ceviche/Isopure whey
+     VALUE: latent leak, 0 realized in 910-recipe corpus
+     SEED : n/a-deterministic-query
+
+[79] CLAIM: Harness self-error: styleExcludedByMetadata (metadata arm only) vs real union gate
+     VALUE: 6772 vs 4634 survivors (46 pct swing)
+     SEED : n/a-deterministic-query
+
+====================================================================================================
+#### AGENT A8  rows: 1
+====================================================================================================
+[80] CLAIM: perfect refusal of impossible tier + perfect planning of rest scores same as mediocre solver
+     VALUE: 495/578 = 85.6%
+     SEED : n-a-analytic
+
+====================================================================================================
+#### AGENT A10  rows: 17
+====================================================================================================
+[81] CLAIM: solveGeneral product call sites (k!=2 path executed anywhere)
+     VALUE: 0
+     SEED : n/a
+
+[82] CLAIM: recipes where solve2 degenerate branch diverges from scaleRecipe (fixed kcal>0 AND no scalable protein role)
+     VALUE: 138 of 910 (15.2%)
+     SEED : none-deterministic
+
+[83] CLAIM: recipes with fixed-ingredient kcal>0 (golden test precondition fails)
+     VALUE: 707 of 910 (77.7%)
+     SEED : none-deterministic
+
+[84] CLAIM: scalable RecipeIngredient rows carrying non-null role
+     VALUE: 4358 of 5664 (76.9%)
+     SEED : none-deterministic
+
+[85] CLAIM: recipes that would get k>=3 per-role knobs
+     VALUE: 753 of 910 (82.8%)
+     SEED : none-deterministic
+
+[86] CLAIM: recipes reaching the 2-knob Cramer branch today
+     VALUE: 706 of 910 (77.6%)
+     SEED : none-deterministic
+
+[87] CLAIM: recipes with only ONE uniform knob today (no scalable protein-role ing)
+     VALUE: 200 of 910 (22.0%)
+     SEED : none-deterministic
+
+[88] CLAIM: PAIRED PROXY (not days-in-band) 4-macro pass, k=2 legacy baseline, 11072 recipe-target pairs
+     VALUE: 9.81%
+     SEED : none-deterministic
+
+[89] CLAIM: PAIRED PROXY 4-macro pass, per-role shipped weights 200 iter
+     VALUE: 10.61%
+     SEED : none-deterministic
+
+[90] CLAIM: PAIRED PROXY 4-macro pass, per-role equal weights + protein hinge 5000 iter
+     VALUE: 15.41%
+     SEED : none-deterministic
+
+[91] CLAIM: any-knob pinning, k=2 legacy baseline
+     VALUE: 77.24%
+     SEED : none-deterministic
+
+[92] CLAIM: any-knob pinning, per-role shipped weights
+     VALUE: 46.45%
+     SEED : none-deterministic
+
+[93] CLAIM: any-knob pinning, per-role best-compliance variant D
+     VALUE: 77.16%
+     SEED : none-deterministic
+
+[94] CLAIM: pinned-given-miss, k=2 baseline vs per-role shipped
+     VALUE: 81.71% -> 49.22%
+     SEED : none-deterministic
+
+[95] CLAIM: mean weighted residual k=2 vs per-role (optimizer weights)
+     VALUE: 174.26 -> 82.59
+     SEED : none-deterministic
+
+[96] CLAIM: pairs where 5000 iters beat the shipped 200-iter cap (solveGeneral not converged)
+     VALUE: 8109 of 11072 (73.2%)
+     SEED : none-deterministic
+
+[97] CLAIM: plates with role-scale spread >3x, per-role shipped vs best-compliance variant D
+     VALUE: 1.84% -> 23.04%
+     SEED : none-deterministic
+
+====================================================================================================
+#### AGENT A11  rows: 20
+====================================================================================================
+[50] CLAIM: raw Recipe rows in dev.db (instrument check)
+     VALUE: 910
+     SEED : personas.mjs seed 1387006667 (250 personas); analysis deterministic, no RNG
+
+[51] CLAIM: raw Food rows in dev.db
+     VALUE: 14151
+     SEED : personas.mjs seed 1387006667 (250 personas); analysis deterministic, no RNG
+
+[52] CLAIM: satisfiable personas that are POOL-LIMITED (hull test)
+     VALUE: 5 of 218 (2.3%)
+     SEED : personas.mjs seed 1387006667 (250 personas); analysis deterministic, no RNG
+
+[53] CLAIM: all-250 personas POOL-LIMITED
+     VALUE: 23 of 250
+     SEED : personas.mjs seed 1387006667 (250 personas); analysis deterministic, no RNG
+
+[54] CLAIM: of those 23, vegan IMPOSSIBLE-tier
+     VALUE: 18
+     SEED : personas.mjs seed 1387006667 (250 personas); analysis deterministic, no RNG
+
+[55] CLAIM: vegetarian satisfiable personas POOL-LIMITED (axis=protein)
+     VALUE: 4 of 21
+     SEED : personas.mjs seed 1387006667 (250 personas); analysis deterministic, no RNG
+
+[56] CLAIM: keto satisfiable personas POOL-LIMITED
+     VALUE: 0 of 16
+     SEED : personas.mjs seed 1387006667 (250 personas); analysis deterministic, no RNG
+
+[57] CLAIM: vegan satisfiable personas POOL-LIMITED
+     VALUE: 0 of 11
+     SEED : personas.mjs seed 1387006667 (250 personas); analysis deterministic, no RNG
+
+[58] CLAIM: pure-style pool size: none/mediterranean/halal/kosher/vegetarian/vegan/paleo/keto/carnivore
+     VALUE: 910/814/758/680/401/169/167/53/3 of 910
+     SEED : personas.mjs seed 1387006667 (250 personas); analysis deterministic, no RNG
+
+[59] CLAIM: fat g per 100kcal, none pool: min/q1/med/q3/max
+     VALUE: 0.03/2.63/4.20/5.75/10.96
+     SEED : personas.mjs seed 1387006667 (250 personas); analysis deterministic, no RNG
+
+[60] CLAIM: fat g per 100kcal, vegan pool: min/q1/med/q3/max
+     VALUE: 0.03/2.26/3.81/4.59/10.96
+     SEED : personas.mjs seed 1387006667 (250 personas); analysis deterministic, no RNG
+
+[61] CLAIM: fat g per 100kcal, keto pool: min/q1/med/q3/max
+     VALUE: 0.43/5.89/6.87/7.98/10.96
+     SEED : personas.mjs seed 1387006667 (250 personas); analysis deterministic, no RNG
+
+[62] CLAIM: fat g per 100kcal, vegetarian pool: min/q1/med/q3/max
+     VALUE: 0.03/2.54/4.02/5.56/10.96
+     SEED : personas.mjs seed 1387006667 (250 personas); analysis deterministic, no RNG
+
+[63] CLAIM: protein g per 100kcal median by style (none/vegan/vegetarian/keto/paleo/kosher)
+     VALUE: 5.39/5.08/3.25/7.65/5.86/5.29
+     SEED : personas.mjs seed 1387006667 (250 personas); analysis deterministic, no RNG
+
+[64] CLAIM: TARGET protein g per 100kcal across 218 satisfiable personas min/med/max
+     VALUE: 4.62/8.16/12.95
+     SEED : personas.mjs seed 1387006667 (250 personas); analysis deterministic, no RNG
+
+[65] CLAIM: TARGET fat g per 100kcal across 218 satisfiable personas min/med/max
+     VALUE: 1.43/2.60/8.63
+     SEED : personas.mjs seed 1387006667 (250 personas); analysis deterministic, no RNG
+
+[66] CLAIM: median protein g per 100kcal of the 232 recipes vegetarian admits over vegan
+     VALUE: 2.42
+     SEED : personas.mjs seed 1387006667 (250 personas); analysis deterministic, no RNG
+
+[67] CLAIM: mean % of survivors with all 4 macros in band, satisfiable (vegetarian/paleo/vegan/none/kosher/halal/keto)
+     VALUE: 9.56/10.74/12.82/16.87/18.80/23.84/29.04
+     SEED : personas.mjs seed 1387006667 (250 personas); analysis deterministic, no RNG
+
+[68] CLAIM: keto survivors fat-OK share (highest of any style)
+     VALUE: 92.70%
+     SEED : personas.mjs seed 1387006667 (250 personas); analysis deterministic, no RNG
+
+[69] CLAIM: mean survivors per satisfiable persona (vegetarian/vegan/keto/paleo/kosher/none)
+     VALUE: 237/130/41/131/461/577
+     SEED : personas.mjs seed 1387006667 (250 personas); analysis deterministic, no RNG
+
+====================================================================================================
+#### AGENT A12  rows: 10
+====================================================================================================
+[40] CLAIM: dayTolerance 4 rules jointly satisfiable (grader box non-empty)
+     VALUE: 250/250 personas (min kcal at all macro floors = 70.4% of target mean, 74.1% max, vs 115% ceiling)
+     SEED : personas.jsonl@qa-fleet-20260729-2032
+
+[41] CLAIM: macro band midpoints sum BELOW targetKcal (CARB_MIDPOINT_BUFFER_G=25)
+     VALUE: mean +89.4 kcal (4.4% of target); median +100; non-keto ~+100; keto +6; 0/250 break the 15% kcal rule
+     SEED : personas.jsonl@qa-fleet-20260729-2032
+
+[42] CLAIM: personas where max kcal inside all 3 DISPLAYED bands < targetKcal
+     VALUE: 39/250 (15.6%), worst -19 kcal
+     SEED : personas.jsonl@qa-fleet-20260729-2032
+
+[43] CLAIM: UI/grader divergence: carbs graded pass but rendered amber
+     VALUE: mean +50 g (200 kcal) above carbHi
+     SEED : personas.jsonl@qa-fleet-20260729-2032
+
+[44] CLAIM: UI/grader divergence: fat graded FAIL but UI draws fat as floor with no ceiling
+     VALUE: grader fails above mean 77 g = 14.4 g above displayed fatHi; UI never warns
+     SEED : n/a (code)
+
+[45] CLAIM: UI/grader divergence: protein passes below displayed floor tick
+     VALUE: mean 19.3 g below proteinLo still graded OK; fat 16.4 g below displayed min still OK
+     SEED : personas.jsonl@qa-fleet-20260729-2032
+
+[46] CLAIM: UI/grader divergence: kcal ring flips amber at 100% vs grader 115%
+     VALUE: mean 334 kcal window where Today says "Over by N - swap a slot" and Plan says inTolerance
+     SEED : n/a (code)
+
+[47] CLAIM: floor-clamp coherence (targetKcal clamped BEFORE computeMacros)
+     VALUE: CLEAN - 60/250 personas floored, all bands derived from clamped target
+     SEED : personas.jsonl@qa-fleet-20260729-2032
+
+[48] CLAIM: carb-floored zero-carb-band pathology reachable in code but not in population
+     VALUE: 9/250 carbFloored, all carbMid 49-50; carbMid=0 never occurs
+     SEED : personas.jsonl@qa-fleet-20260729-2032
+
+[49] CLAIM: coherence contribution to the 70.1% gap
+     VALUE: 0.0 points - grader box feasible 250/250; UI does not feed the metric
+     SEED : personas.jsonl@qa-fleet-20260729-2032
+
+====================================================================================================
+#### AGENT A13  rows: 53
+====================================================================================================
+[106] CLAIM: one-knob degenerate branch, share of RECIPES
+     VALUE: 204/910 = 22.4%
+     SEED : 424242
+
+[107] CLAIM: one-knob branch, share of SERVED slots (all judged days)
+     VALUE: 610/2818 = 21.6%
+     SEED : 424242
+
+[108] CLAIM: one-knob branch, share of SERVED slots (satisfiable-only)
+     VALUE: 419/2525 = 16.6%
+     SEED : 424242
+
+[109] CLAIM: satisfiable days containing >=1 one-knob slot
+     VALUE: 292/536 = 54.5%
+     SEED : 424242
+
+[110] CLAIM: in-band rate, satisfiable days WITH vs WITHOUT a one-knob slot (observational, confounded)
+     VALUE: 73.3% (214/292) vs 81.6% (199/244)
+     SEED : 424242
+
+[111] CLAIM: hook validation: variant=legacy vs untouched baseline
+     VALUE: 639/639 byte-identical day records, b=0 c=0
+     SEED : 424242
+
+[112] CLAIM: rig baseline reproduced, satisfiable-only
+     VALUE: 413/536 = 77.1%
+     SEED : 424242
+
+[133] CLAIM: wls2 (2-knob weighted least-squares over 4 macros) vs baseline, satisfiable-only, PAIRED
+     VALUE: 77.1%->91.8% = +14.74 pts, McNemar b=8 c=87 chi2=64.04, 95% CI +11.40..+18.08
+     SEED : 424242
+
+[134] CLAIM: role (per-role n-knob) vs baseline, satisfiable-only, PAIRED
+     VALUE: 77.1%->92.2% = +15.11 pts, McNemar b=4 c=85 chi2=71.91
+     SEED : 424242
+
+[135] CLAIM: roleb (per-role + per-role bounds) vs baseline, satisfiable-only, PAIRED
+     VALUE: 77.1%->91.6% = +14.55 pts, McNemar b=7 c=85 chi2=64.45
+     SEED : 424242
+
+[136] CLAIM: n-knob gain OVER 2-knob WLS (role minus wls2), satisfiable-only
+     VALUE: +0.37 pts (494 vs 492 of 536) -- below the 3.45 pt discrimination floor (C14)
+     SEED : 424242
+
+[137] CLAIM: servability: served slots with role-scale spread >3x
+     VALUE: baseline 8.4% / wls2 7.0% / role 17.7% / roleb 15.0%
+     SEED : 424242
+
+[138] CLAIM: secondary diagnostic: any-knob pinning on served slots
+     VALUE: baseline 40.1% / wls2 44.7% / role 63.9% -- pinning ROSE while compliance rose (corroborates A10)
+     SEED : 424242
+
+[139] CLAIM: per-macro pass rates satisfiable-only, baseline -> wls2
+     VALUE: kcal 95.0->98.1, protein 99.6->99.8, fat 84.9->94.6, carb 89.0->97.0
+     SEED : 424242
+
+[140] CLAIM: days with fat OVER band (C9 largest bucket, closer cannot fix), satisfiable-only
+     VALUE: 255 -> 152 under wls2 (-103 days)
+     SEED : 424242
+
+[141] CLAIM: slots filled, baseline vs wls2 (refusal-gaming check), satisfiable-only
+     VALUE: 2525 vs 2524 -- unchanged
+     SEED : 424242
+
+[142] CLAIM: wls2 cross-seed replication, satisfiable-only PAIRED delta (3 seeds)
+     VALUE: s424242 +14.74 (b=8,c=87) | s20260730 +14.37 (b=5,c=82) | s8675309 +13.99 (b=5,c=80)
+     SEED : 424242,20260730,8675309
+
+[143] CLAIM: wls2 satisfiable-only LEVEL on the A1 rig (rig level, NOT the HTTP fleet -- see C15)
+     VALUE: 91.8% / 92.2% / 92.0% across the 3 seeds vs baseline 77.1% / 77.8% / 78.0%
+     SEED : 424242,20260730,8675309
+
+[144] CLAIM: role cross-seed replication, satisfiable-only PAIRED delta (2 seeds)
+     VALUE: s424242 +15.11 (b=4,c=85) | s20260730 +14.55 (b=8,c=86)
+     SEED : 424242,20260730
+
+[145] CLAIM: fleet sandbox block encountered (recorded, not worked around)
+     VALUE: a bash command that merely QUOTED the live dev.db path in a stat/echo was blocked; re-ran without naming the path
+     SEED : n/a
+
+[146] CLAIM: product code untouched
+     VALUE: backend/src/lib/weeklyPlanner.js + mealSolver.js mtimes predate the session first write; git status matches session start
+     SEED : n/a
+
+[152] CLAIM: ABLATION satisfiable-only s424242: what carries the gain
+     VALUE: baseline 77.1% | 4-macro L2 @ optimizer weights +9.51 (b=12,c=63) | +tolerance-normalised weights +14.74 (b=8,c=87) | +per-role knobs +15.11 (b=4,c=85) | +per-role bounds +14.55 (b=7,c=85)
+     SEED : 424242
+
+[153] CLAIM: protein hinge (asymmetric: overshoot free) contribution, satisfiable-only
+     VALUE: with hinge +14.74 vs without +11.75 = hinge worth +2.99 pts -- confirms A10 sec.3.2
+     SEED : 424242
+
+[154] CLAIM: n-knob gain over 2-knob WLS, per seed (role minus wls2)
+     VALUE: +0.37 / +0.18 / -0.37 pts across s424242 / s20260730 / s8675309 -- mean +0.06, far below the 3.45 pt floor (C14)
+     SEED : 424242,20260730,8675309
+
+[155] CLAIM: role cross-seed 3rd seed, satisfiable-only PAIRED
+     VALUE: s8675309 +13.62 pts (b=7,c=80)
+     SEED : 8675309
+
+[156] CLAIM: independent re-implementation control (hook v1 wls2 vs hook v2 tol+hinge)
+     VALUE: identical, 639/639 byte-identical day records
+     SEED : 424242
+
+[157] CLAIM: SCALE_BOUNDS integrity: knobs recorded across 67158 solves
+     VALUE: minKnob 0.500000 maxKnob 2.000000, out-of-box 0 -- bounds never widened
+     SEED : 424242
+
+[176] CLAIM: baseline satisfiable-only days in band (rig, A13 own DB copy e55f52e53658a086)
+     VALUE: 413/536 = 77.1% (CI 73.3-80.4)
+     SEED : 424242
+
+[177] CLAIM: CORROBORATES BRIEF: any-knob pinned share of ALL served slots (all days)
+     VALUE: 1130/2818 = 40.1% (BRIEF.md says 39.3%)
+     SEED : 424242
+
+[178] CLAIM: CORROBORATES BRIEF: pinned share of slots that MISSED (slot carries a warning), all days
+     VALUE: 385/540 = 71.3% (BRIEF.md says 68.3%)
+     SEED : 424242
+
+[179] CLAIM: C6 ANSWERED - one-knob degenerate branch coverage, recipes (test: proteinIngs.length === 0 || Math.abs(det) < 1e-6, weeklyPlanner.js:407)
+     VALUE: 204/910 = 22.4%
+     SEED : 424242
+
+[180] CLAIM: C6 ANSWERED - one-knob branch coverage, SERVED slots (satisfiable / all-days)
+     VALUE: 419/2525 = 16.6% satisfiable; 610/2818 = 21.6% all-days
+     SEED : 424242
+
+[181] CLAIM: days containing >=1 one-knob slot are 8.3 pts less likely to land in band
+     VALUE: 73.3% (214/292) vs 81.6% (199/244)
+     SEED : 424242
+
+[182] CLAIM: NOOP CONTROL: the require-hook itself costs nothing
+     VALUE: +0.00 pts, b=0 c=0, 639/639 rows
+     SEED : 424242
+
+[183] CLAIM: 2-knob 4-macro tolerance-normalised objective (wls2) vs baseline, satisfiable-only
+     VALUE: 77.1% -> 91.8%, +14.74 pts, McNemar CI +11.40..+18.08, b=8 c=87
+     SEED : 424242
+
+[184] CLAIM: wls2 delta replicate seed 20260730
+     VALUE: 77.8% -> 92.2%, +14.37 pts, b=5 c=82
+     SEED : 20260730
+
+[185] CLAIM: wls2 delta replicate seed 8675309
+     VALUE: 78.0% -> 92.0%, +13.99 pts, b=5 c=80
+     SEED : 8675309
+
+[186] CLAIM: n-knob per-role portioning (role, k up to 5) vs baseline, satisfiable-only
+     VALUE: 77.1% -> 92.2%, +15.11 pts, b=4 c=85
+     SEED : 424242
+
+[187] CLAIM: KEY NULL: n-knob buys nothing OVER 2-knob once the objective is 4-macro
+     VALUE: +0.37 pts, b=8 c=10 - not distinguishable from zero at n=536 (C14 floor 3.5)
+     SEED : 424242
+
+[188] CLAIM: the WEIGHTS carry the gain, not the knobs: tolerance-normalised vs optimizer.js L42/L81 {kcal:1,protein:1,fat:0.1,carb:0.1}, both n-knob
+     VALUE: 86.6% -> 92.2%, +5.60 pts, b=10 c=40
+     SEED : 424242
+
+[189] CLAIM: removing the protein overshoot hinge
+     VALUE: 91.8% -> 88.8%, -2.99 pts, b=25 c=9 - UNRESOLVED under C14 (|d| < 3.5)
+     SEED : 424242
+
+[190] CLAIM: per-role BOXES (veg 0.75-2.0, fat 0.5-1.5) vs one shared box, both n-knob
+     VALUE: 92.2% -> 91.6%, -0.56 pts, b=12 c=9 - UNRESOLVED under C14
+     SEED : 424242
+
+[191] CLAIM: KILL-CONDITION RESULT: n-knob RAISES any-knob pinning on satisfiable served slots
+     VALUE: 39.4% (996/2525) -> 61.5% (1553/2524)
+     SEED : 424242
+
+[192] CLAIM: pinning is not diagnostic: share of IN-BAND satisfiable days that touch a bound, role variant
+     VALUE: 473/494 = 95.7% (baseline 306/413 = 74.1%)
+     SEED : 424242
+
+[193] CLAIM: C10 FLOOR MOVED ALONE (box min 0.5 -> 0.25, ceiling max:2 UNCHANGED), legacy 2-knob solve
+     VALUE: 77.1% -> 81.3%, +4.29 pts, McNemar CI +1.41..+7.17, b=20 c=43
+     SEED : 424242
+
+[194] CLAIM: the ONLY arm that cuts pinning is the floor widening
+     VALUE: any-knob pinned 39.4% -> 27.2%; pinned-given-miss 86.5% -> 63.9%
+     SEED : 424242
+
+[195] CLAIM: BEST ARM: floor 0.25 + 2-knob 4-macro objective, satisfiable-only
+     VALUE: 77.1% -> 97.0% (520/536), +19.96 pts, McNemar CI +16.54..+23.39, b=1 c=108
+     SEED : 424242
+
+[196] CLAIM: best arm, all-days secondary (rig 622 judged days; A3 ceiling 91.0%)
+     VALUE: 434/622 = 69.8% -> 548/622 = 88.1%
+     SEED : 424242
+
+[197] CLAIM: SERVABILITY PRICE of the 0.25 floor (the cost the compliance is bought with)
+     VALUE: 35.5% of served satisfiable slots carry a knob below the old 0.5x floor; max role-scale spread 8.0x vs 4.0x; 10.4% of slots spread >4x
+     SEED : 424242
+
+[198] CLAIM: C9 tie-in: the 4-macro portioner TRIMS, which the add-only macro closer cannot - satisfiable days with fat OVER band
+     VALUE: 255/536 baseline -> 152/536 wls2 -> fatOk 84.9% -> 94.6%
+     SEED : 424242
+
+[199] CLAIM: HONESTY SIDE EFFECT: slot-level warnings RISE while day misses fall (per-slot gate is kcal+protein only, C8)
+     VALUE: warned satisfiable slots 341 baseline -> 405 wls2 (13.5% -> 16.0%); floor25w back to 343
+     SEED : 424242
+
+[200] CLAIM: INSTRUMENT CHECKS, all 16 A13 arms
+     VALUE: verdict-disagreements 0 / kcal-drift>1 0 / crashes 0 / silent-miss 0 / invalid records 0
+     SEED : all
+
+[201] CLAIM: C18 compliance
+     VALUE: A13/dev.db untouched (dbHash e55f52e53658a086 on all 16 arms incl. the two run 07-31); checkdb.mjs never invoked, --fix never run
+     SEED : all
+
+====================================================================================================
+#### AGENT A14  rows: 19
+====================================================================================================
+[113] CLAIM: MEASURED: A14 variant runner (require-cache patched weeklyPlanner, default knobs) reproduces A1 baseline byte-identically
+     VALUE: 639/639 records identical; 413/536 = 77.1% satisfiable-only; b=0 c=0
+     SEED : 424242
+
+[158] CLAIM: base level satisfiable-only, byte-identical to A1 baseline (rig no-op check)
+     VALUE: 413/536 = 77.05%; all-days 434/622 = 69.77%; 639/639 rows byte-identical
+     SEED : 424242
+
+[159] CLAIM: ATTEMPTS curve under current code, satisfiable-only (knob = week restarts, generateHorizonPlan attempts)
+     VALUE: att1 70.1% / att2 73.3% / att5(base) 77.1% / att12 80.4% / att20 80.8% / att30 81.7%
+     SEED : 424242
+
+[160] CLAIM: attempts 12->30 marginal gain is FLAT (prior campaign's negative result reproduced in shape)
+     VALUE: +1.30 pts (80.4->81.7) for 2.27x candidate draws (270k->614k)
+     SEED : 424242
+
+[161] CLAIM: attempts=12 vs default 5, POOLED 3 seeds, paired McNemar
+     VALUE: +2.24 pts, 95% CI [+1.04,+3.44], b=31 c=67, n=1608 satisfiable days
+     SEED : 424242+20260730+8675309
+
+[162] CLAIM: attempts=12 single-seed delta does NOT replicate (C14 rule 4 demonstrated)
+     VALUE: s424242 +3.36 / s20260730 +1.49 / s8675309 +1.87 pts; primary seed overstates by 1.8x
+     SEED : 424242,20260730,8675309
+
+[163] CLAIM: attempts=30, single seed only, UNREPLICATED
+     VALUE: +4.66 pts, 95% CI [+1.79,+7.54], b=19 c=44, at 4.60x candidate draws
+     SEED : 424242
+
+[164] CLAIM: PER-SLOT CAP of 20 is correctly placed: raising it to 40 buys nothing (POOLED 3 seeds)
+     VALUE: cap40 +0.62 pts, 95% CI [-0.52,+1.76], b=39 c=49, n=1608, at 1.29x draws
+     SEED : 424242+20260730+8675309
+
+[165] CLAIM: lowering the per-slot cap below 20 costs real compliance
+     VALUE: cap12 -1.68 pts CI [-3.34,-0.01] pooled n=1608; cap8 -4.10 pts CI [-7.10,-1.11] n=536
+     SEED : 424242+20260730+8675309
+
+[166] CLAIM: PER-SLOT FLOOR of 5 is TOO LOW: raising it to 12 is the cheapest positive lever measured (POOLED 3 seeds)
+     VALUE: floor12 +1.12 pts, 95% CI [+0.24,+2.00], b=17 c=35, n=1608, at 1.17x draws
+     SEED : 424242+20260730+8675309
+
+[167] CLAIM: floor12 is surgical: by construction it touches only pools <120 recipes, and the strata confirm it
+     VALUE: pool 0-60: 48.3->63.3% (+15.00 pts, b=2 c=11); pool 140-300 and 300+: b=0 c=0 EXACTLY zero
+     SEED : 424242
+
+[168] CLAIM: FALSIFIES prior campaign mechanism: a flat budget of 20 does NOT starve thin pools, it is where they gain most
+     VALUE: flat20 pool 0-60 stratum: 48.3->65.0% = +16.67 pts, b=2 c=12 (largest gain of any stratum)
+     SEED : 424242
+
+[169] CLAIM: pool-scaled adaptivity itself buys ~nothing over a flat budget at the same mean depth
+     VALUE: flat14 vs adaptive base (mean depth 15.08): +0.12 pts, 95% CI [-1.62,+1.87], b=101 c=103, pooled n=1608
+     SEED : 424242+20260730+8675309
+
+[170] CLAIM: per-slot depth matters steeply at the BOTTOM of the curve
+     VALUE: flat5 -9.76 pts, 95% CI [-11.84,-7.69], b=231 c=74, pooled n=1608
+     SEED : 424242+20260730+8675309
+
+[171] CLAIM: flat per-slot depth curve, satisfiable-only, s424242
+     VALUE: flat5 66.8 / flat8 74.1 / flat12 76.3 / flat14 77.6 / flat20 79.1 / flat30 79.3 / flat60 79.9 %
+     SEED : 424242
+
+[172] CLAIM: the only arm that reached the C14 3.5-pt floor on a DIVISOR change is uneconomic
+     VALUE: cap200div2 +3.54 pts CI [+0.39,+6.70] at 5.98x candidate draws (799k vs 133k), single seed
+     SEED : 424242
+
+[173] CLAIM: INSTRUMENT CHECK: two different flag paths encoding the same effective rule give identical verdicts
+     VALUE: flat=20 vs min=20,max=20: 0 of 639 rows differ in dayKey/verdict/achieved/slot-assignment
+     SEED : 424242
+
+[174] CLAIM: INSTRUMENT FAULT: wall-clock cost is contaminated by machine load and must not be quoted
+     VALUE: flat20 and floor20 are the same rule (both mean budget 20.00, both 9773 slotCalls, 0 differing rows) yet logged WALLCLOCK 34.9s vs 78.7s = 2.25x
+     SEED : 424242
+
+[175] CLAIM: C18 compliance: every A14 arm sits on the fleet baseline DB; zero new solves run in the resume session
+     VALUE: 43/43 jsonl files carry dbHash e55f52e53658a086, foodFingerprint 423e7279ed6af641, poolRaw 910, foodRows 14151; A14/dev.db untouched since 07-30 21:29; checkdb.mjs never invoked
+     SEED : all
+
+====================================================================================================
+#### AGENT A15  rows: 19
+====================================================================================================
+[114] CLAIM: MEASURED instrument check: re-grade of qa-fleet results reproduces recorded baseline exactly
+     VALUE: all 405/578=70.1%, satisfiable 405/526=77.0%, 0 disagreements
+     SEED : qa-fleet-20260729-2032 (re-score, no new solve)
+
+[115] CLAIM: MEASURED instrument check: reconstructed bmrEngine bands vs bands recorded by the run
+     VALUE: 0/212 personas mismatch
+     SEED : qa-fleet-20260729-2032 (re-score, no new solve)
+
+[116] CLAIM: DERIVED baseline EFFECTIVE fat gate, per diet path (E = h/mid + 0.25)
+     VALUE: default path 31.9-34.4%, keto/carb-floored path 35.5-36.1%
+     SEED : qa-fleet-20260729-2032 (re-score, no new solve)
+
+[117] CLAIM: MEASURED fat effective +/-10% (TIGHTEN from baseline ~33.1%), satisfiable
+     VALUE: 261/526=49.6% CI 45.4-53.9, delta -27.4 pts, b=0 c=144
+     SEED : qa-fleet-20260729-2032 (re-score, no new solve)
+
+[118] CLAIM: MEASURED fat effective +/-15% (TIGHTEN), satisfiable
+     VALUE: 322/526=61.2% CI 57.0-65.3, delta -15.8 pts, b=0 c=83
+     SEED : qa-fleet-20260729-2032 (re-score, no new solve)
+
+[119] CLAIM: MEASURED fat effective +/-20% (TIGHTEN), satisfiable
+     VALUE: 360/526=68.4% CI 64.3-72.3, delta -8.6 pts, b=0 c=45
+     SEED : qa-fleet-20260729-2032 (re-score, no new solve)
+
+[120] CLAIM: MEASURED fat effective +/-25% (TIGHTEN), satisfiable
+     VALUE: 379/526=72.1% CI 68.1-75.7, delta -4.9 pts, b=0 c=26
+     SEED : qa-fleet-20260729-2032 (re-score, no new solve)
+
+[121] CLAIM: MEASURED fat effective +/-40% (loosen past AMDR), satisfiable
+     VALUE: 415/526=78.9% CI 75.2-82.2, delta +1.9 pts, b=10 c=0
+     SEED : qa-fleet-20260729-2032 (re-score, no new solve)
+
+[122] CLAIM: MEASURED fat effective +/-50% (loosen), satisfiable
+     VALUE: 426/526=81.0% CI 77.4-84.1, delta +4.0 pts, b=21 c=0
+     SEED : qa-fleet-20260729-2032 (re-score, no new solve)
+
+[123] CLAIM: MEASURED A4 recommendation: added fat floor at 20% of target energy, satisfiable
+     VALUE: 371/526=70.5% CI 66.5-74.3, delta -6.5 pts, b=0 c=34 (TIGHTENS)
+     SEED : qa-fleet-20260729-2032 (re-score, no new solve)
+
+[124] CLAIM: MEASURED A4 C3: added fat floor at ESSENTIAL_FAT_PER_LB_LBM=0.30 g/lb LBM, satisfiable
+     VALUE: 405/526=77.0%, delta 0.0 pts, b=0 c=0 - IDENTICALLY ZERO
+     SEED : qa-fleet-20260729-2032 (re-score, no new solve)
+
+[125] CLAIM: MEASURED C3 defect realized incidence: baseline-PASSING days below the 0.30 g/lb essential-fat floor
+     VALUE: 0 of 578 (18 days sit below it; all 18 already fail baseline, all are fat=0 empty-plan days)
+     SEED : qa-fleet-20260729-2032 (re-score, no new solve)
+
+[126] CLAIM: MEASURED C3 hole occupancy: days with fat in [0.2475, 0.30) x lbm
+     VALUE: 0 of 578; realized fat p5=0.321 p50=0.401 g/lb LBM, entirely above the hole
+     SEED : qa-fleet-20260729-2032 (re-score, no new solve)
+
+[127] CLAIM: MEASURED C12/A12 variant CARB_MIDPOINT_BUFFER_G=0, re-scored WITHOUT re-solving, satisfiable
+     VALUE: 419/526=79.7% CI 76.0-82.9, delta +2.7 pts, b=14 c=0 (band-shift only; solver aim NOT re-run)
+     SEED : qa-fleet-20260729-2032 (re-score, no new solve)
+
+[128] CLAIM: MEASURED AMDR %-of-energy ruler for all 3 macros, satisfiable
+     VALUE: 103/526=19.6% CI 16.4-23.2, delta -57.4 pts, b=18 c=320
+     SEED : qa-fleet-20260729-2032 (re-score, no new solve)
+
+[129] CLAIM: MEASURED why AMDR collapses: app PRESCRIPTION itself is outside AMDR
+     VALUE: carb midpoint below 45%E on 419/526 days; protein midpoint above 35%E on 245/526; fat midpoint below 20%E on 96/526
+     SEED : qa-fleet-20260729-2032 (re-score, no new solve)
+
+[130] CLAIM: MEASURED direction of every fat-only failure, satisfiable misses
+     VALUE: 42 of 42 fat-only misses are OVER the band; 0 are short
+     SEED : qa-fleet-20260729-2032 (re-score, no new solve)
+
+[131] CLAIM: MEASURED fat misses are not near-misses: effective E needed to rescue the 81 fat-failing satisfiable days
+     VALUE: p0=33% p25=45% p50=75% p90=121%; E=50% rescues 23/81, E=100% rescues 68/81
+     SEED : qa-fleet-20260729-2032 (re-score, no new solve)
+
+[132] CLAIM: DERIVED ruler-attributable share of the 23.0-pt satisfiable gap
+     VALUE: <=4.0 pts (17%), obtainable only at a fat gate of +/-50% - 1.83x the NASEM AMDR half-width; ~19 pts are solver/pool
+     SEED : qa-fleet-20260729-2032 (re-score, no new solve)
+
+====================================================================================================
+#### AGENT A16  rows: 24
+====================================================================================================
+[237] CLAIM: MEASURED: vegetarian whole-food enrichment curve, satisfiable-only, paired McNemar vs A16 baseline 413/536=77.1 pct
+     VALUE: N5 +5.04pts (b=6 c=33) | N10 +5.60 (b=9 c=39) | N20 +7.09 (b=8 c=46) | N40 +7.28 (b=9 c=48) | N68 +8.02 (b=11 c=54) -> 456/536=85.1 pct
+     SEED : 424242
+
+[238] CLAIM: MEASURED: vegan whole-food enrichment curve, satisfiable-only, paired McNemar vs the same baseline
+     VALUE: N5 +4.29pts (b=6 c=29) | N10 +6.90 (b=1 c=38) | N20 +7.28 (b=5 c=44) | N40 +9.70 (b=10 c=62) -> 465/536=86.8 pct
+     SEED : 424242
+
+[239] CLAIM: MEASURED: ONE simulated protein-concentrate Food row (Nutritional Yeast) plus k recipes beats both whole-food curves
+     VALUE: N1 +2.61pts (b=9 c=23, UNRESOLVED under C14) | N2 +4.48 (b=12 c=36) | N4 +7.84 (b=12 c=54) = 84.9 pct | N8 +10.45 (b=5 c=61) = 87.5 pct
+     SEED : 424242
+
+[240] CLAIM: DERIVED (linear interpolation between adjacent measured arms): authoring volume to reach 85 pct satisfiable-only from 77.1 pct
+     VALUE: concentrate ~4 recipes (N4=84.9, N8=87.5) | vegan whole-food ~26 (N20=84.3, N40=86.8) | vegetarian whole-food ~65 (N40=84.3, N68=85.1). Concentrate is 6.5x cheaper than vegan and 16x cheaper than vegetarian.
+     SEED : 424242
+
+[241] CLAIM: MEASURED: the enrichment curve flattens by N~4-8 (concentrate) and by N~5-20 (whole food) - marginal points per added recipe
+     VALUE: concentrate 2.61 / 1.87 / 1.68 / 0.65 pts-per-recipe over 0-1 / 1-2 / 2-4 / 4-8. vegetarian 1.008 / 0.112 / 0.149 / 0.010 / 0.026 over 0-5 / 5-10 / 10-20 / 20-40 / 40-68. Not monotone: vegan rebounds 0.038 (10-20) to 0.121 (20-40).
+     SEED : 424242
+
+[242] CLAIM: MEASURED: CONTRADICTS reading C11 as an authoring instruction - vegetarian-corner recipes do NOT mainly help vegetarians
+     VALUE: vegetarian-N68: of 54 gained days, 44.4 pct land on dietStyle=none, 18.5 pct vegan, 13.0 pct kosher, 11.1 pct mediterranean, only 9.3 pct (5 days) on vegetarian. Vegetarian personas move 63.2 -> 64.9 pct (+1.7pts, n=57, b=4 c=5) = UNRESOLVED under C14.
+     SEED : 424242
+
+[243] CLAIM: MEASURED: keto and carnivore admit ZERO synthetic rows and gain ZERO days in every arm - corroborates C11 that authoring keto recipes buys little
+     VALUE: keto n=46 stays 63.0 pct and carnivore n=3 stays 0.0 pct across vegetarian-N5, vegetarian-N68, vegan-N5, vegan-N40 and conc-N8; keto synSlots=0 in all five
+     SEED : 424242
+
+[244] CLAIM: MEASURED (C16 mandatory): pool-mode leak check of the whole-food catalogue against oracle.mjs AUDIT_ALLERGENS over 250 personas
+     VALUE: vegetarian 68 rows / 9621 admissions leaks=0 ; vegan 40 rows / 5870 admissions leaks=0 ; none 80 rows / 9924 admissions leaks=0
+     SEED : 424242
+
+[245] CLAIM: MEASURED (C16 mandatory): shipped-plan leak counts do NOT rise under enrichment and no synthetic row ever leaked
+     VALUE: baseline 5 leaks / 2818 slots ; veg-N20 1 ; veg-N68 3 (438 synthetic slots) ; vegan-N20 4 ; vegan-N40 1 (418 synthetic slots) ; conc-N8 0 of 358 concentrate slots. Every hit is a pre-existing real recipe.
+     SEED : 424242
+
+[246] CLAIM: MEASURED INSTRUMENT FAULT in my own tool, recorded not hidden: A16-leakcheck-v2.mjs cannot resolve concentrate-arm slots
+     VALUE: against A16-conc-recipes-N8 it reported unknown-ids 358 and inspected only 2552 of 2910 slots; the gap is closed by A16-conc-leakcheck.mjs which checked 358/358 and found 0 leaks
+     SEED : 424242
+
+[247] CLAIM: MEASURED: 4 of the 5 baseline oracle leak hits are FALSE POSITIVES of the audit list, not engine defects
+     VALUE: oracle.mjs:59 nuts list contains "nut butter" and :68 sets AUDIT_ALLERGENS["tree nuts"] = AUDIT_ALLERGENS.nuts, so "Peanut Butter" matches tree-nuts although CLAUDE.md states peanuts are not tree nuts; the 5th hit is "Egg Plants" matching the vegan egg term
+     SEED : 424242
+
+[248] CLAIM: MEASURED BLIND SPOT in the independent audit list, for A24: the oracle gluten terms would not catch a Self-raising Flour leak
+     VALUE: oracle.mjs:54 gluten list carries "wheat flour" and "all-purpose flour" but not bare "flour" (:51 comment says flour and oat/rice/corn/sorghum bran are gluten-FREE); A16-conc-5 uses Self-raising Flour. The product gate shipped it to a gluten-excluding persona 0 times so nothing leaked - but the oracle would not have said so.
+     SEED : 424242
+
+[249] CLAIM: MEASURED: the concentrate does NOT demolish the A3 structural-impossibility proof - it speaks to the A7 LIBRARY sense of impossible, not to botany
+     VALUE: IMPOSSIBLE tier n=86 judged: baseline 21 in band (24.4 pct) -> conc-N8 24 (27.9 pct), gained 4 lost 1, across 77 concentrate slots on 47 days. 61 of the 65 baseline IMPOSSIBLE misses survive one concentrate row.
+     SEED : 424242
+
+[250] CLAIM: MEASURED: all 8 concentrate recipes are SNACK slots at 145-236 kcal with fat density 0.54-0.91 g per 100 kcal against a 2.32 target centroid
+     VALUE: one low-fat high-protein snack per day is what buys +10.45pts; the A11 finding that the pool is fattier than every target is the mechanism, and C9 records 74 days failing on fat alone with every one OVER band
+     SEED : 424242
+
+[251] CLAIM: ESTIMATED (upper bound that states its own assumption): every A16 curve is a ceiling on real authoring, not a forecast
+     VALUE: the catalogue optimises each row directly onto that corner measured target ratio centroid (A16-catalogue-v2.mjs:114, protein weighted 4x in dist()) and admits no taste, cost or repeat-fatigue constraint. A human author aiming less precisely needs MORE rows than these curves say. What would test it: author 4 real concentrate recipes, seed them, re-run the same arms.
+     SEED : 424242
+
+[252] CLAIM: MEASURED: C18 compliance - checkdb.mjs never invoked, no re-copy, every A16 arm sits on the fleet baseline dataset
+     VALUE: baseline, enrich-vegetarian-N68, enrich-vegan-N40 and conc-recipes-N8 all carry dbHash e55f52e53658a086, foodFingerprint 423e7279ed6af641, poolRaw 910, foodRows 14151; instrument checks 0 disagree / 0 drift / 0 crash / 0 silent-miss on every arm
+     SEED : 424242
+
+[320] CLAIM: MEASURED (C14 rule 4): the concentrate result replicates at the second seed
+     VALUE: seed 20260730 baseline 417/536 = 77.8 pct -> conc-recipes-N4 461/536 = 86.0 pct, delta +8.21pts (b=15 c=59, McNemar chi2=24.99). Seed 424242 gave +7.84pts. Cross-seed spread on the DELTA is 0.37pts, well inside the 3.5pt discrimination floor.
+     SEED : 20260730
+
+[321] CLAIM: NOT REPLICATED, stated as a limitation: the whole-food vegetarian and vegan curves were run at seed 424242 only
+     VALUE: all nine whole-food arms are single-seed points, not estimates (C14 rule 4). Their deltas (+4.29 to +9.70pts, every one with c >> b) sit far above the 3.5pt floor, so the direction is safe, but the exact knee position is unreplicated. What would test it: re-run the N5/N20/N68 arms at seeds 20260730 and 8675309.
+     SEED : 424242
+
+[325] CLAIM: MEASURED (C19 step 1): direct by-name check of every synthetic ingredient against the C13 latent-leak list - ZERO hits
+     VALUE: 70 distinct Food names across all three catalogue corners plus the concentrate arm; 0 match any of squirrel, groundhog, armadillo, wild pig, heart, owl, sea cucumber, ceviche, hog maws, bear, dove, isopure, whey, seal, oogruk. Checked by name, NOT through oracle.
+     SEED : 424242
+
+[326] CLAIM: MEASURED (C19 step 2): my clean oracle results are necessary and NOT sufficient - oracle coverage is inadequate for the C13 row class
+     VALUE: A17 measured that oracle.mjs catches only 1 of 13 C13 rows and reported 0 leaks on an arm that placed Sea cucumber 309 times. Every A16 leak result (pool-mode 0/0/0, shipped-mode no rise, conc 0 of 358) therefore withdraws its safety-warrant status and stands only as a necessary condition.
+     SEED : 424242
+
+[327] CLAIM: MEASURED (C19 step 3): the adjuster-class leak A17 found is STRUCTURALLY INVISIBLE to the rig, so no A16 arm can be shown free of it
+     VALUE: the day record slot object carries only slotType,slotIndex,recipeId,proteinScale,sidesScale,pinnedLo,pinnedHi,kcal,protein,warning - no ingredient names and no adjuster field. A raw text scan of four arms for the C13 terms returns 0, which is evidence the JSONL never records adjuster foods, NOT evidence of absence.
+     SEED : 424242
+
+[328] CLAIM: DERIVED (C19 step 3, mitigation is structural not empirical): no A16 treatment ever widened the adjuster gate
+     VALUE: A16-enrich.mjs:44 returns only { pool: pool.concat(afterPrep) }; A16-concentrate.mjs:150 sets patch.adjusters only when MODE is adjuster or both, and every arm reported here was run with A16_CONC_MODE=recipes. Adjuster exposure is therefore identical in baseline and treatment and is not caused by enrichment - which is not the same as absent.
+     SEED : 424242
+
+[329] CLAIM: MEASURED (C19 step 4): A16 does NOT show the A17 artifact - the enrichment gain is not scored on customers the app should decline
+     VALUE: net days gained, satisfiable vs IMPOSSIBLE tier: veg-N5 27 vs 0 | veg-N68 43 vs 0 | vegan-N5 23 vs 0 | vegan-N40 52 vs 0 | conc-N4 42 vs 3 (6.7 pct) | conc-N8 56 vs 3 (5.1 pct). All four whole-food arms gain ZERO IMPOSSIBLE-tier days. A17 gained 9 of 10 there.
+     SEED : 424242
+
+[330] CLAIM: MEASURED (C19 step 3): the gate applied to synthetic recipes is the products own, not mine
+     VALUE: ingredient eligibility: exclusionGate.isExcluded + foodValidation.macroTrustIssue + used by >=2 real recipes + grams capped at the librarys own max use (A16-catalogue-v2.mjs:95-103,116). Admission per persona: planContext.filterRecipePool then mealSolver.applyPrepFilter (A16-enrich.mjs:42-43). No synthetic row is slipped past the gate - one a persona forbids is dropped by product code.
+     SEED : 424242
+
+====================================================================================================
+#### AGENT A17  rows: 20
+====================================================================================================
+[253] CLAIM: instrument validation: hook passthrough vs plain baseline
+     VALUE: 639/639 byte-identical day records, b=0 c=0 on all three denominators -- interception is an exact no-op
+     SEED : 424242
+
+[254] CLAIM: instrument validation: closer re-implementation v1 (BROKEN) vs product
+     VALUE: 559/639 byte-identical, satisfiable-only -0.37 pts (b=5 c=3) -- control CAUGHT a real host-index bug that would have contaminated every downstream delta
+     SEED : 424242
+
+[255] CLAIM: instrument validation: closer re-implementation v2 vs product
+     VALUE: 639/639 byte-identical day records, b=0 c=0 -- re-implementation reproduces shipping macroCloser exactly; all A17 deltas are measured against a validated clone
+     SEED : 424242
+
+[256] CLAIM: macro closer firing rate on its OWN denominator (one call per day-solve)
+     VALUE: 957 fired / 2072 invocations = 46.2 pct -- NOT 9.9 pct
+     SEED : 424242
+
+[257] CLAIM: DERIVED structural cap on any per-filled-slot closer firing rate
+     VALUE: 622 judged days / 2818 filled slots = 22.1 pct, because macroCloser.js:116 selects ONE host slot per day -- a per-slot denominator understates the gate ~4.5x
+     SEED : 424242
+
+[258] CLAIM: which gate binds the closer: terminal-state census, n=2072 invocations
+     VALUE: noGap 983 (47.4 pct) / allCandsHarmful 909 (43.9 pct) / capReached 90 (4.3 pct) / noHost 85 (4.1 pct) / noSlots 5 / noAdjusters 0 / noTarget 0
+     SEED : 424242
+
+[259] CLAIM: closer candidate-set gate: round-0 gaps with zero available adjuster of that role
+     VALUE: protein 270 of 1140 protein gaps (23.7 pct); fat 0 of 348; carb 15 of 339 (4.4 pct)
+     SEED : 424242
+
+[260] CLAIM: candidate-set widening (density-ranked, +8 rows per role, both product gates applied), satisfiable-only PAIRED
+     VALUE: +0.19 pts (413->414/536), b=5 c=6 -- UNRESOLVED at the C14 3.45 pt floor, not a gain
+     SEED : 424242
+
+[261] CLAIM: candidate-set widening, ALL DAYS PAIRED (secondary)
+     VALUE: +1.61 pts (434->444/622), b=5 c=15 -- below the C14 3.45 pt floor for a two-directional treatment; UNRESOLVED
+     SEED : 424242
+
+[262] CLAIM: DERIVED: where the widening gain lands
+     VALUE: all-days +10 days but satisfiable-only +1 day, so 9 of 10 gained days are in the IMPOSSIBLE tier whose correct output is a refusal (C7)
+     SEED : 424242
+
+[263] CLAIM: LEAK (C13/C16): widened candidate set OFFERS a C13 latent-leak row to excluded profiles
+     VALUE: Sea cucumber, yane (Alaska Native) offered as a protein adjuster on 439 vegan and 229 vegetarian closer invocations; 81 distinct rows offered overall
+     SEED : 424242
+
+[264] CLAIM: LEAK REALIZED: widened closer PLACES an animal row into vegan/vegetarian slots
+     VALUE: 309 placements of Sea cucumber on vegan (277) + vegetarian (32) profiles, out of 2320 total adjuster placements = 13.3 pct -- automatic fail under BRIEF integrity rule 2
+     SEED : 424242
+
+[265] CLAIM: CONTRADICTION: oracle.mjs does NOT catch the C13 latent-leak list
+     VALUE: 12 of 13 C13 rows return no match against oracle AUDIT_ALLERGENS + its animal-term lists on a vegan plan (only the Seal/meat row is CAUGHT); oracle reported 0 leaks on the leaking arm
+     SEED : 424242
+
+[266] CLAIM: SYMMETRIC TRIMMER prototype (C9 scope), satisfiable-only PAIRED, seed 1
+     VALUE: +14.93 pts (413->493/536 = 77.1->92.0 pct), b=4 c=84, McNemar 95 pct CI +11.74 to +18.11, chi2=70.92 -- clears the C14 3.45 pt floor by 4x
+     SEED : 424242
+
+[267] CLAIM: SYMMETRIC TRIMMER, satisfiable-only PAIRED, seed 2 (C14 replication)
+     VALUE: +14.55 pts (417->495/536 = 77.8->92.4 pct), b=2 c=80, CI +11.48 to +17.63 -- cross-seed spread 0.38 pts
+     SEED : 20260730
+
+[268] CLAIM: SYMMETRIC TRIMMER, all-days PAIRED, both seeds
+     VALUE: +13.34 pts (434->517/622) at s424242 and +13.02 pts (438->519/622) at s20260730
+     SEED : 424242,20260730
+
+[269] CLAIM: trimmer flip anatomy: which macro had been failing on the days it rescued
+     VALUE: 87 days gained / 4 lost; of the 87 gained, 53 had been failing fat, 41 carb, 13 kcal, 2 protein (a day can fail several)
+     SEED : 424242
+
+[270] CLAIM: independent confirmation of C9/A15: fat misses are OVER, not short
+     VALUE: baseline fat-failing judged days: 97 OVER band, 1 SHORT (99.0 pct over) -- the add-only closer structurally cannot address them
+     SEED : 424242
+
+[271] CLAIM: TRIMMER HONESTY REGRESSION (integrity rule 3) -- disqualifying as prototyped
+     VALUE: s424242: 1 verdict-disagreement AND 1 silent miss (p237#6, tier EASY, style none, engine claims inBand=true matchPct=87, grader false, hasWarning=false hasDiagnosis=false). Baseline 0/0. s20260730: 0/0
+     SEED : 424242
+
+[272] CLAIM: TRIMMER acceptability cost: how much of a real component it deletes
+     VALUE: 2034 cut events over 890 firing invocations; median 48.9 pct of the component removed; 46.6 pct pinned at the 0.5 TRIM_FRAC cap; 20.0 pct leave under 20 g; median 30 g cut, max 550 g; most-trimmed Olive Oil x135, Beef jerky x134, Hummus x102
+     SEED : 424242
+
+====================================================================================================
+#### AGENT A18  rows: 21
+====================================================================================================
+[147] CLAIM: MEASURED: /plans/generate reaches generateHorizonPlan -> generateBestWeekPlan ONLY; generateDayCandidates is a different endpoint (plans.js:463) + brain/chatPlan.js
+     VALUE: shipping generate never calls generateDayCandidates
+     SEED : n/a
+
+[148] CLAIM: MEASURED: SCORE_WEIGHTS enters shipping week selection ONLY as a tiebreak after daysInTolerance (mealSolver.js:685-691 "score.daysInTolerance > best.score.daysInTolerance")
+     VALUE: tiebreak-only, not primary objective
+     SEED : n/a
+
+[149] CLAIM: CORRECTION to C8: KCAL_TOLERANCE_PCT=0.15 and PROTEIN_TOLERANCE_PCT=0.12 are defined in weeklyPlanner.js:67/:74 and IMPORTED by mealSolver.js:13-14; C8 attributes them to mealSolver.js
+     VALUE: right values+lines, wrong file
+     SEED : n/a
+
+[150] CLAIM: CORRECTION to C8/A9: fat+carb DO influence slot choice via compositionDistance (weeklyPlanner.js:465-471) which sorts BEFORE worstRatio at :651 and can early-accept at :642; they are absent from the GATE (:630) but not from the slot objective
+     VALUE: slot objective is 4-macro, slot gate is 2-macro
+     SEED : n/a
+
+[151] CLAIM: MEASURED: the protein hinge A10 recommends is ALREADY shipped in both live objectives - mealSolver.js:150 "Math.max(0, (pMid - t.protein) / pMid)" and weeklyPlanner.js:427 "Math.max(0, (target - scaledProtein) / target)"
+     VALUE: already implemented, not a candidate change
+     SEED : n/a
+
+[202] CLAIM: HEADLINE (MEASURED): the {kcal:1 protein:1 fat:0.1 carb:0.1} objective A18 was assigned to sweep is UNREACHABLE — brain/optimizer.js:42/:81 never loads under BRAIN=off
+     VALUE: 0 of 1 hook edits applied; hook exited 3 with "a target module was never loaded. THIS RUN IS INVALID"; in-band 434/622 = baseline exactly
+     SEED : 424242
+
+[203] CLAIM: CONTROL (MEASURED): hookidentity no-op proves the preload hook itself changes nothing
+     VALUE: byte-identical 639/639 days; satisfiable 413/536 -> 413/536; delta 0.00 pts; b=0 c=0
+     SEED : 424242
+
+[204] CLAIM: MEASURED: SCORE_WEIGHTS (mealSolver.js:127) is REACHED and reshuffles plans but moves net compliance 0.00 pts in all 5 weight arms
+     VALUE: w-equal 0.00 [-0.90,+0.90] b=3 c=3; w-graderline 0.00 [-1.16,+1.16] b=5 c=5; w-fatheavy 0.00 [-0.52,+0.52] b=1 c=1; w-fatcarb 0.00 [-0.52,+0.52] b=1 c=1; w-kcalonly 0.00 [-1.16,+1.16] b=5 c=5; all satisfiable 413/536 -> 413/536
+     SEED : 424242
+
+[205] CLAIM: MEASURED: the weight arms are NOT dormant — they change plan CONTENT while leaving the verdict count untouched (reshuffle, not no-op)
+     VALUE: byte-identical days: w-kcalonly 419/639, w-equal 435/639, w-fatcarb 433/639, w-fatheavy 442/639, w-graderline 459/639 (180-220 days differ per arm) vs hookidentity 639/639
+     SEED : 424242
+
+[206] CLAIM: REPLICATION (MEASURED): the destructive weight probe w-kcalonly {kcal:1,protein:0,fat:0,carb:0} is a 0.00 pt null at a SECOND seed
+     VALUE: seed 20260730: satisfiable 417/536 -> 417/536; delta 0.00 pts [-1.03,+1.03]; b=4 c=4; byte-identical 426/639
+     SEED : 20260730
+
+[207] CLAIM: MEASURED: day-level protein hinge in mealSolver.js is worth 0.00 pts (negative control p-daysym breaks it, nothing happens)
+     VALUE: satisfiable 413/536 -> 413/536; delta 0.00 pts [-0.73,+0.73]; b=2 c=2; byte-identical 428/639
+     SEED : 424242
+
+[208] CLAIM: MEASURED: SLOT-level protein hinge in weeklyPlanner.js IS load-bearing — negative control p-slotsym costs 4.29 pts (only arm past the C14 3.5 pt floor besides c-firstfit)
+     VALUE: satisfiable 413/536 -> 390/536; delta -4.29 pts [-6.72,-1.87]; b=34 c=11; byte-identical 297/639
+     SEED : 424242
+
+[209] CLAIM: MEASURED: rig sensitivity floor established by negative control c-firstfit (COMPOSITION_GOOD_ENOUGH 0.05 -> 999, pure first-fit)
+     VALUE: satisfiable 413/536 -> 280/536; delta -24.81 pts [-29.41,-20.22]; b=162 c=29; byte-identical 84/639
+     SEED : 424242
+
+[210] CLAIM: MEASURED: tightening the slot composition early-accept (c-strict, COMPOSITION_GOOD_ENOUGH 0.05 -> 0) is UNRESOLVED-null, not a win
+     VALUE: satisfiable 413/536 -> 415/536; delta +0.37 pts [-1.34,+2.09]; b=10 c=12; below the C14 3.5 pt floor
+     SEED : 424242
+
+[211] CLAIM: MEASURED: the C8 structural lever (give the no-fit FALLBACK rank a fat/carb term) is the best positive arm but stays UNRESOLVED at two seeds
+     VALUE: s424242 +0.75 pts [-0.89,+2.38] b=8 c=12 (413->417/536); s20260730 +0.75 pts [-1.26,+2.75] b=13 c=17 (417->421/536); both below the C14 3.5 pt floor
+     SEED : 424242+20260730
+
+[212] CLAIM: MULTIPLE COMPARISONS (DERIVED): no correction was needed — zero of 11 arms produced a POSITIVE delta above the C14 3.5 pt floor even uncorrected
+     VALUE: max positive delta across 11 arms = +0.75 pts (s-fallbackcomp); the only two arms past 3.5 pts are pre-registered NEGATIVE controls (c-firstfit -24.81, p-slotsym -4.29), so there is no winner to correct for or to replicate as a win
+     SEED : 424242
+
+[213] CLAIM: INSTRUMENT CHECKS, all 14 A18 runs (11 arms + baseline + optdormant + 2 replications)
+     VALUE: verdict-disagreements 0 / kcal-drift>1 0 / crashes 0 / invalid records 0 / compare problems 0 on every pair
+     SEED : all
+
+[214] CLAIM: C18 compliance
+     VALUE: A18/dev.db never re-copied; dbHash e55f52e53658a086 on baseline and on all 11 arms and both seed-20260730 replications; checkdb.mjs never invoked, --fix never run
+     SEED : all
+
+[215] CLAIM: SCOPE NOTE (MEASURED): backend/src was never written — all patching is in-memory via Module._extensions hook
+     VALUE: git status --porcelain backend/src returns no A18 modification; hook reads with fs.readFileSync and calls mod._compile on the patched string
+     SEED : all
+
+[236] CLAIM: SCOPE NOTE CORRECTION (MEASURED): git status shows M on mealSolver.js and weeklyPlanner.js, but those predate A18 (present in the session-start snapshot on branch fix/audit-remediation). A18 wrote nothing: all three swept constants are still at shipped values and no patched text exists on disk
+     VALUE: mealSolver.js:127 still {kcal:0.46,protein:0.3,fat:0.12,carb:0.12}; weeklyPlanner.js:458 still COMPOSITION_GOOD_ENOUGH=0.05; optimizer.js:42/:81 still {kcal:1,protein:1,fat:0.1,carb:0.1}; grep for __a18r and the kcalonly literal across backend/src/lib returns empty
+     SEED : all
+
+[295] CLAIM: MECHANISM (DERIVED, explains the §3 null): SCORE_WEIGHTS can NEVER change compliance because week selection consults it only AFTER daysInTolerance ties. mealSolver.js:686 selects on "score.daysInTolerance > best.score.daysInTolerance"; SCORE_WEIGHTS enters only via avgMatch at :691 "score.avgMatch > best.score.avgMatch", which is reached only when daysInTolerance is EQUAL. So a weight change re-picks a different week from the equal-daysInTolerance set and the in-band COUNT is preserved by construction
+     VALUE: Prediction: discordant pairs must balance exactly (b==c). Observed b==c in 6 of 6 weight arms: s424242 w-equal 3/3, w-graderline 5/5, w-fatheavy 1/1, w-fatcarb 1/1, w-kcalonly 5/5; s20260730 w-kcalonly 4/4. Meanwhile the two weeklyPlanner arms that bypass this rule are strongly unbalanced (c-firstfit b=162 c=29; p-slotsym b=34 c=11)
+     SEED : 424242+20260730
+
+====================================================================================================
+#### AGENT A19  rows: 20
+====================================================================================================
+[216] CLAIM: FORK VALIDITY: A19 re-implementation of generateBestWeekPlan/generateHorizonPlan reproduces A1 runRig baseline verdicts exactly
+     VALUE: 0 day-verdicts differ, 639/639; 413/536 sat both sides; only field difference is A19-added poolAfterPrep
+     SEED : 424242
+
+[217] CLAIM: dayN (per-day best-of-N harvest across the rolls the loop ALREADY ran, repeat cap enforced greedily) vs fork baseline, satisfiable-only
+     VALUE: +2.62 pts (77.1% -> 79.7%), McNemar b=15 c=29 n=534, paired 95% CI +0.20..+5.05
+     SEED : 424242
+
+[218] CLAIM: dayN vs fork baseline, satisfiable-only
+     VALUE: +4.14 pts (77.8% -> 81.9%), McNemar b=9 c=31, paired 95% CI +1.83..+6.44
+     SEED : 20260730
+
+[219] CLAIM: dayN vs fork baseline, satisfiable-only
+     VALUE: +1.87 pts (78.0% -> 79.9%), McNemar b=10 c=20, paired 95% CI -0.13..+3.87 (spans zero)
+     SEED : 8675309
+
+[220] CLAIM: DERIVED three-seed mean of the dayN delta; every seed below the C14 3.5-pt two-directional floor except 20260730
+     VALUE: (2.62+4.14+1.87)/3 = +2.88 pts satisfiable-only; range 1.87..4.14
+     SEED : 424242,20260730,8675309
+
+[221] CLAIM: dayNstrict (hill-climb from the winning week; a day is swapped only if the WHOLE week still respects DEFAULT_REPEAT_CAP=2) vs fork baseline, satisfiable-only
+     VALUE: +1.68 pts at ALL THREE seeds, McNemar b=0 c=9 each; one-directional, never loses a day
+     SEED : 424242,20260730,8675309
+
+[222] CLAIM: The identical c=9 at three seeds is a coincidence, not a stuck instrument: the flipped dayKey sets are disjoint
+     VALUE: 0 dayKeys common to all three seeds; s424242 p000#5,p000#6,p034#6,p047#4,p067#3,p067#5,p070#4,p128#3,p245#6 vs s8675309 p000#1,p000#3,p034#1,p034#5,p047#1,p047#4,p047#5,p245#0,p245#4; capBlocked differs 99/106/76
+     SEED : 424242,20260730,8675309
+
+[223] CLAIM: ORACLE UPPER BOUND (NOT an achievable rate): share of days for which AT LEAST ONE of the best-of-N week rolls already landed in band, variety cap ignored, satisfiable-judged n=536
+     VALUE: 87.7% / 89.0% / 86.8% vs baseline 77.1% / 77.8% / 78.0% -> headroom +10.6 / +11.2 / +8.8 pts (mean +10.2)
+     SEED : 424242,20260730,8675309
+
+[224] CLAIM: ORACLE UPPER BOUND, all-judged-days n=622
+     VALUE: 79.1% / 80.2% / 78.1% vs baseline 69.8% / 70.4% / 70.3% -> headroom +9.3 / +9.8 / +7.8 pts
+     SEED : 424242,20260730,8675309
+
+[225] CLAIM: Days on which NO roll landed in band (the pool/target could not do it under greedy per-slot filling at any of the N restarts), satisfiable planned days n=553
+     VALUE: 83 / 76 / 88 (15.0% / 13.7% / 15.9%)
+     SEED : 424242,20260730,8675309
+
+[226] CLAIM: REACH OF THE LEVER: the day-mixing lever exists only in windows that ran more than one roll; the rest early-exit on the first roll
+     VALUE: 120/250, 121/250, 122/250 windows ran >1 roll; mean rolls per window 2.70 / 2.66 / 2.66 of a 5-attempt budget
+     SEED : 424242,20260730,8675309
+
+[227] CLAIM: DISQUALIFIER for naive dayN: it breaks the weekly variety contract
+     VALUE: seed 424242: 189 days switched, 436 candidate-days rejected by the cap, 28 windows breached the per-window repeat cap, 24/250 customers ended with varietyCapHeld=false, 177 consecutive-day duplicate slots
+     SEED : 424242
+
+[228] CLAIM: dayNstrict breaks nothing: variety contract intact at all three seeds
+     VALUE: 0 windows cap-breached, 0/250 customers with varietyCapHeld=false, 0 mixes rejected; 9 days switched, 99/106/76 candidate-days cap-blocked
+     SEED : 424242,20260730,8675309
+
+[229] CLAIM: C9 CONFIRMED, direction of the flips: day-selection IS a mechanism that moves a day DOWN
+     VALUE: dayN gained days 29/32/22 (83 total), 70 of 83 lowered day kcal, mean delta -156 / -209 / -320 kcal; dayNstrict 27 gained, 22 of 27 lowered kcal, mean -174 / -473 / -593
+     SEED : 424242,20260730,8675309
+
+[230] CLAIM: C9/A5-sub-prediction-1 CONFIRMED: every day the mechanism rescued was OVER band, never short
+     VALUE: 83/83 dayN-gained and 27/27 dayNstrict-gained days carried at least one OVER violation in the baseline; 82/83 involved a fat-over or carb-over miss; exactly 1 of 83 failed on kcal alone; 1 of 83 carried protein-short
+     SEED : 424242,20260730,8675309
+
+[231] CLAIM: A5 sub-prediction 3 (weak Pareto, never worse) FALSIFIED for naive dayN: days are NOT independent because they share a week-level variety budget
+     VALUE: dayN LOST 15 / 9 / 12 previously-in-band days (34 total); 29 of 34 lost days rose in kcal, mean +134 / +133 / +120
+     SEED : 424242,20260730,8675309
+
+[232] CLAIM: Bound-pinned share of missed days barely moves under dayN — the mechanism does not touch the 0.5x/2.0x box (A5 §3 reasoning)
+     VALUE: forkweek: 188 missed, 168 anyPinned (89.4%), atLo 112 atHi 109. dayN: 174 missed, 158 anyPinned (90.8%), atLo 103 atHi 99
+     SEED : 424242
+
+[233] CLAIM: INSTRUMENT CHECKS, all 11 A19 arms
+     VALUE: verdict-disagreements 0 / kcal-drift>1 0 / crashes 0 / silent-miss 0 / invalid records 0 on every arm; no honesty regression
+     SEED : all
+
+[234] CLAIM: C18 compliance
+     VALUE: checkdb.mjs NEVER invoked and --fix never run; prepareAgentDb reused the existing copy; all 11 arms carry run.dbHash e55f52e53658a086 and foodFingerprint 423e7279ed6af641; the two 07-31 forkweekP re-runs are byte-identical to the 07-30 forkweek arms (0/639 records differ)
+     SEED : 20260730,8675309
+
+[235] CLAIM: SCOPE LIMIT: this is day-level SELECTION, not a joint MILP. Within-day slot sequencing is unchanged
+     VALUE: the measured deltas bound the cost of the WEEK-level argmax discarding good days; they do not bound the cost of greedy slot-by-slot filling inside a day
+     SEED : all
+
+====================================================================================================
+#### AGENT A20  rows: 25
+====================================================================================================
+[273] CLAIM: A3 food-density term is dead: max over all 14151 Food rows using A3-classify-all.mjs:50 expression (kcalPer100g/proteinPer100g - columns do not exist)
+     VALUE: 0
+     SEED : qa-fleet-20260729-2032
+
+[274] CLAIM: same expression with real columns (kcal/protein): max food protein density in library
+     VALUE: 0.2751 g/kcal
+     SEED : qa-fleet-20260729-2032
+
+[275] CLAIM: macro closer ADJUSTER_CANDIDATES surviving the vegan+soy+legume wall, protein role (planContext.js:167-178)
+     VALUE: 0 of 4, for 16/16 refused personas
+     SEED : qa-fleet-20260729-2032
+
+[276] CLAIM: closer protein ceiling from surviving fat/carb adjusters only (MAX_GRAMS macroCloser.js:46)
+     VALUE: 29.2 g
+     SEED : qa-fleet-20260729-2032
+
+[277] CLAIM: SOUND refusal set after repairing the bound with closer reach: personas / days (was A3 16 / 52)
+     VALUE: 10 personas / 16 days
+     SEED : qa-fleet-20260729-2032
+
+[278] CLAIM: days losing their impossibility proof once the macro closer is in the bound (p030,p051,p059,p211,p222,p227)
+     VALUE: 36 days / 6 personas
+     SEED : qa-fleet-20260729-2032
+
+[279] CLAIM: P7_repaired refusal predicate confusion matrix over 578 fleet days: TR/FR/UR/FA-hard/FA-soft/TA
+     VALUE: 16/0/0/0/90/405
+     SEED : qa-fleet-20260729-2032
+
+[280] CLAIM: P7_repaired refusal precision (KPI-2a) and strict precision (UNKNOWN refusals counted against)
+     VALUE: 100.0 % and 100.0 %
+     SEED : qa-fleet-20260729-2032
+
+[281] CLAIM: P7_repaired recall against A3/C7 asserted 52-day impossible tier
+     VALUE: 30.8 % (16/52)
+     SEED : qa-fleet-20260729-2032
+
+[282] CLAIM: P4_A3bound (A3 SCALED bound as a refusal predicate): refused / TR / FR / UR, strict precision
+     VALUE: 52 / 16 / 0 / 36, 30.8 %
+     SEED : qa-fleet-20260729-2032
+
+[283] CLAIM: P5_tierLabel (refuse the engineered IMPOSSIBLE tier): refused / FR days / UR days / KPI-2a precision
+     VALUE: 83 / 28 / 39 / 36.4 %
+     SEED : qa-fleet-20260729-2032
+
+[284] CLAIM: P6_ownDiagnose (refuse where app diagnose() says infeasible): refused / FR days / KPI-2a precision
+     VALUE: 269 / 186 / 7.9 %
+     SEED : qa-fleet-20260729-2032
+
+[285] CLAIM: non-circular falsification: day-instances SOLVED for the 16 A3-refused personas across 2 instruments / 6 runs, and how many landed in band
+     VALUE: 310 solved, 0 in band
+     SEED : qa-fleet-20260729-2032
+
+[286] CLAIM: exact one-sided 95 % upper bound on false-refusal rate from 0/310 in-band instances (sample evidence only, not the proof)
+     VALUE: 0.96 %
+     SEED : qa-fleet-20260729-2032
+
+[287] CLAIM: KPI-1 (C7 denominator) delta bought by the sound refusal path vs shipped
+     VALUE: +0.00 pts (77.00 % both)
+     SEED : qa-fleet-20260729-2032
+
+[288] CLAIM: KPI-1 (C7) delta bought by denominator laundering: P5_tierLabel / P6_ownDiagnose
+     VALUE: +0.78 pts / +23.00 pts
+     SEED : qa-fleet-20260729-2032
+
+[289] CLAIM: engineered IMPOSSIBLE tier days not proven impossible when refused wholesale (28 certificated + 3 unknown of 83)
+     VALUE: 37.3 %
+     SEED : qa-fleet-20260729-2032
+
+[290] CLAIM: all-days ceiling with a perfect solver, recomputed on the repaired proof (C7/A3 say 91.0 %)
+     VALUE: 97.2 % (562/578)
+     SEED : qa-fleet-20260729-2032
+
+[291] CLAIM: vegan protein concentrate DOES exist in the library and survives the p073 gate (contradicts A7 zero-rows claim): Seaweed, spirulina, dried
+     VALUE: 57.5 g protein / 100 g
+     SEED : qa-fleet-20260729-2032
+
+[292] CLAIM: dietary style of every day the sound predicate refuses
+     VALUE: 52/52 vegan
+     SEED : qa-fleet-20260729-2032
+
+[293] CLAIM: infinite-density and supra-physical (>0.25 g/kcal) rows that would break the bound: recipes / foods
+     VALUE: 0 / 0
+     SEED : qa-fleet-20260729-2032
+
+[294] CLAIM: P1_emptyPool (afterDiet===0), the only already-implemented exact refusal check: days it fires on
+     VALUE: 0 of 578
+     SEED : qa-fleet-20260729-2032
+
+[322] CLAIM: CORRECTION to two earlier A20 rows: KPI-1(C7) laundering deltas RE-BASED on the revised 16-day ground truth (earlier +0.78/+23.00 were on A3's un-repaired 52-day truth, artifact A20-finish.json). Baseline P0_shipped KPI-1(C7)
+     VALUE: 72.06 % (405/562)
+     SEED : qa-fleet-20260729-2032
+
+[323] CLAIM: KPI-1(C7) delta vs shipped, revised ground truth: P7_repaired / P4_A3bound / P5_tierLabel / P6_ownDiagnose
+     VALUE: +0.00 / +4.94 / +5.72 / +27.94 pts
+     SEED : qa-fleet-20260729-2032
+
+[324] CLAIM: A3's own SCALED bound used as a refusal launders +4.94 pts of KPI-1 by refusing 36 days it cannot prove impossible - above C14 3.5 pt discrimination floor
+     VALUE: +4.94 pts, 36 unproven refusals
+     SEED : qa-fleet-20260729-2032
+
+====================================================================================================
+#### AGENT A21  rows: 20
+====================================================================================================
+[348] CLAIM: STACK COMPOSITION (label falsified): the stack JSONL header treatment string names ONLY the --treatment module; A13-class levers ship as a NODE_OPTIONS --require preload and are structurally unrecordable there (runRig.mjs:214 treatmentName = treatment.NAME || path.basename(tp))
+     VALUE: header reads A16-concentrate-recipes-N8 but the arm contains TWO levers
+     SEED : 424242
+
+[349] CLAIM: DERIVED (signature ID) stack lever 1 = A16 concentrate recipes N=8 (pool)
+     VALUE: 321 of 3011 slots carry an A16-conc* recipeId (A16 arm alone: 358); 0 in baseline/wls2/floor25/trim3/att12
+     SEED : 424242
+
+[350] CLAIM: DERIVED (signature ID) stack lever 2 = a 4-macro weeklyPlanner portioning objective equivalent to A13 wls2; the 0.5x SCALE_BOUNDS floor was NOT moved
+     VALUE: min(proteinScale,sidesScale)=0.5 in stack vs 0.25 in A13 floor25/floor25w; protein!=sides slot share base 2088 -> wls2 2525 (+437) and conc8 2286 -> stack 2661 (+375); filled warned slots base 341 -> wls2 405 (+64) and conc8 242 -> stack 293 (+51)
+     SEED : 424242
+
+[351] CLAIM: NOT REACHED: the exact stack invocation was never written to disk (no run script, no shell log in A21/); identification is by artifact signature only
+     VALUE: cannot separate a13-hook-v2.cjs from a13-hook-v3.cjs with A13_FLOOR=0.5 - they are behaviourally identical
+     SEED : 424242
+
+[352] CLAIM: MEASURED PRIMARY (D2 = C7/A3 satisfiable denominator, n=570) stack vs baseline
+     VALUE: s424242 76.14% -> 94.21%, delta +18.07 CI[+14.80,+21.34] b=3 c=106; s8675309 76.67 -> 94.21 +17.54; s20260730 76.84 -> 94.39 +17.54
+     SEED : 424242,8675309,20260730
+
+[353] CLAIM: MEASURED SECONDARY (D1 rig tier n=536 / D3 A20-repaired n=606 / D4 all judged n=622) stack vs baseline, seed 424242
+     VALUE: D1 77.05 -> 94.96 (+17.91 CI[+14.54,+21.28] b=3 c=99); D3 71.62 -> 88.61 (+17.00); D4 69.77 -> 86.33 (+16.56)
+     SEED : 424242
+
+[354] CLAIM: DERIVED: the headline is denominator-insensitive - spread across all four denominators x three seeds is 16.08 to 18.07 pts (1.99 pts)
+     VALUE: max 18.07 (D2 s424242) minus min 16.08 (D4 s8675309 and s20260730) = 1.99
+     SEED : 424242,8675309,20260730
+
+[355] CLAIM: C21 CLEAN: no lever in this stack refuses a day; judged-day counts identical in both arms at every denominator and seed
+     VALUE: n=536/570/606/622 identical base and stack; 0 crashes; compare.v2 byteIdentical=17 of 639
+     SEED : 424242,8675309,20260730
+
+[356] CLAIM: C23 ANTI-INFLATION NUMBER (satisfiable rig tier, n=536): sum of parts 148 vs union of parts 96 vs stack actually gained 99
+     VALUE: wls2 rescues 87, conc8 rescues 61, 52 days are rescued by BOTH; stack gains 99 and loses 3; 34.5% of the naive sum is double-counted
+     SEED : 424242
+
+[357] CLAIM: MEASURED marginal contribution of each lever ON TOP of the other (paired, n=536)
+     VALUE: conc8 -> stack +7.46 CI[+4.90,+10.02] b=6 c=46 (portioning lever added to the pool lever); wls2 -> stack +3.17 CI[+1.44,+4.90] b=3 c=20 (pool lever added to the portioning lever, BELOW the C14 3.5-pt floor)
+     SEED : 424242
+
+[358] CLAIM: NEGATIVE RESULT: the best stack does NOT beat one existing single arm - A13 floor25w (0.25 floor + 4-macro objective, no pool change) scores higher
+     VALUE: floor25w 520/536 = 97.01% vs stack 509/536 = 94.96%; paired stack -> floor25w +2.05 CI[+0.65,+3.46] b=2 c=13, BELOW the C14 3.5-pt discrimination floor = not distinguishable from zero; single seed only, floor25w has no replicate arm
+     SEED : 424242
+
+[359] CLAIM: ADJUDICATION of the apparent A13-vs-A21 warning contradiction: BOTH are correct, different slot denominators
+     VALUE: A13 341 -> 405 counts FILLED slots; A21-denoms 389 -> 454 counts ALL slots; the gap is exactly the unfilled slots (base 48, wls2 49) and every unfilled slot carries a warning (48/48, 49/49)
+     SEED : 424242
+
+[360] CLAIM: A13 warning cost SURVIVES inside the stack - the apparent fall is the pool lever masking it
+     VALUE: filled warned slots: base 341, conc8 242 (-99), stack 293 (+51 vs conc8), wls2 405 (+64 vs base). The stack fall 389 -> 316 (all slots) is a base-vs-stack comparison, not a test of the portioning lever
+     SEED : 424242
+
+[361] CLAIM: MEASURED cross-agent baseline identity at seed 424242 (rig determinism across five agent working copies)
+     VALUE: A21 vs A13/A16/A17/A19 baselines: 639/639 days identical on achieved macros AND verdict, 0 differing
+     SEED : 424242
+
+[362] CLAIM: MEASURED honesty-on-miss and drift, both arms, all judged days
+     VALUE: baseline 188 missed days / 0 silent; stack 85 missed days / 0 silent; verdict-disagreements 0; kcal drift>1g 0; crashes 0; invalid records 0
+     SEED : 424242
+
+[363] CLAIM: MEASURED C19 by-name leak check on the stack candidate set (oracle is necessary-not-sufficient)
+     VALUE: 384 distinct Food names reachable in the stack arm, 1 hit: "Palm Hearts" matching C13 term "heart" - a false positive (palm hearts is a plant); the identical hit is present in the baseline (386 names), so the stack introduces no new C13 exposure
+     SEED : 424242
+
+[364] CLAIM: MEASURED leak counts on the A21 arms via A16 leakcheck-v2, all reported hits are the C19 false-positive classes
+     VALUE: baseline 5 (4x Peanut Butter as tree nut + 1x Egg Plants as vegan), stack 3 (2x Peanut Butter + 1x Egg Plants); the 321 synthetic concentrate slots are unknown to that tool and were covered separately by A16-conc-leakcheck: 321/321 checked, 0 leaks
+     SEED : 424242
+
+[365] CLAIM: MEASURED failure-direction collapse under the stack (corroborates C23 single-failure-mode)
+     VALUE: satisfiable misses 123 -> 27; fat OVER 81 -> 17; fat SHORT 0 -> 0 (0 in all eight arms measured); carb OVER 53 -> 11; kcal 27 -> 12; protein 2 -> 1
+     SEED : 424242
+
+[366] CLAIM: MEASURED second mechanism of the pool lever: it fills slots the baseline leaves empty
+     VALUE: unfilled satisfiable-tier slots 48 -> 23 (conc8 alone 22); every unfilled slot carries a warning, so 25 of the 73-slot warning fall is unfilled-slot elimination, not warning suppression
+     SEED : 424242
+
+[367] CLAIM: PROVENANCE CAVEAT carried, not dropped: the pool half of this stack rests on a SIMULATED food row
+     VALUE: A16 Nutritional Yeast row is LABEL tier (Bob s Red Mill via Wikipedia, cited FDC id 1946780 returns 404) and its 8 recipes exist only in memory; the +7.46 marginal is therefore an ESTIMATE of what authoring 8 real recipes would buy
+     SEED : 424242
+
+====================================================================================================
+#### AGENT A22  rows: 24
+====================================================================================================
+[331] CLAIM: FAILED: A19 ORACLE UPPER BOUND does not reproduce from its own cited script
+     VALUE: A19 claims 87.7/89.0/86.8 pct; node A19-analyze.mjs prints 85.0 pct (470/553) at every seed
+     SEED : 424242,20260730,8675309
+
+[332] CLAIM: FAILED: A19 no-roll-ever-landed count does not reproduce
+     VALUE: A19 claims 83/553 (15.0 pct); A19-analyze.mjs rolls-in-band histogram bucket 0 = 147 of 639 planned
+     SEED : 424242
+
+[333] CLAIM: MEASURED: independent judged-filtered recompute of the A19 oracle bound, joined to A19-baseline on personaId#dayIndex
+     VALUE: 466/536 = 86.9 pct satisfiable-judged, headroom +9.9 pts (A19 claims 87.7 pct / +10.6); all-judged 78.5 pct (A19 claims 79.1)
+     SEED : 424242
+
+[334] CLAIM: FAILED (ledger transcription, A20 FINDINGS.md is correct): CLAIMS row KPI-1 sound-refusal delta records "+0.00 pts (77.00 pct both)"
+     VALUE: delta +0.00 REPRODUCES but the level is 72.06 pct (405/562), not 77.00; 77.00 is P4_A3bound n=526
+     SEED : qa-fleet-20260729-2032
+
+[335] CLAIM: INCOMPLETE ledger row: A20 confusion matrix 16/0/0/0/90/405 sums to 511, not 578
+     VALUE: the 67 UNKNOWN-accepted days (UA_inband+UA_out) are omitted from the 6-tuple; A20 FINDINGS.md carries them
+     SEED : qa-fleet-20260729-2032
+
+[336] CLAIM: RETRACTION of A22 ledger row 'A19 no-roll-ever-landed count does not reproduce': that row is WRONG, A19 is right
+     VALUE: 83 = satisfiable-planned 553 minus any-roll-in-band 470, exactly 15.0 pct; my predecessor compared A19 against histogram bucket 0 (147) which is over ALL 639 planned days, the wrong denominator
+     SEED : 424242
+
+[337] CLAIM: MECHANISM of the A19 oracle-bound failure: numerator counted on PLANNED days, denominator on JUDGED days
+     VALUE: A19 87.7 pct = 470/536 and 79.1 pct = 492/622; 470 and 492 are any-roll counts over 553 and 639 PLANNED days. Judged-consistent values are 466/536 = 86.9 pct and 488/622 = 78.5 pct. 17 unjudged satisfiable days, 4 of them any-roll-in-band
+     SEED : 424242
+
+[338] CLAIM: REPRODUCED independently (own baseline arm + own wls2 arm, not A13 files): A13 4-macro portioning objective
+     VALUE: 77.1 pct -> 91.8 pct = +14.74 pts, McNemar b=8 c=87 chi2=64.04, CI +11.40..+18.08 - identical to A13 to 2 decimals
+     SEED : 424242
+
+[339] CLAIM: REPRODUCED independently (own arms): A17 symmetric trimmer, AND its honesty regression
+     VALUE: +14.93 pts (413->493/536 = 77.1->92.0 pct), b=4 c=84, CI +11.74..+18.11; treatment instrument line shows disagree 1 / silent-miss 1 against baseline 0/0 - C23 honesty cost reproduces
+     SEED : 424242
+
+[340] CLAIM: REPRODUCED: A1 rig baseline level, from a fresh run on A22 own dev.db copy
+     VALUE: 413/536 = 77.1 pct satisfiable, 434/622 = 69.8 pct all-judged; paired against A1-baseline b=0 c=0, zero day-verdicts differ
+     SEED : 424242
+
+[341] CLAIM: NEGATIVE CONTROL (A22 own arm): a re-portioning objective weighted on kcal ALONE buys nothing - the A13 gain is not an artifact of touching the portioner
+     VALUE: +0.00 pts (413/536 both), b=5 c=5; same rig, same seed, same hook machinery that returns +14.74 for the 4-macro weights
+     SEED : 424242
+
+[342] CLAIM: REPRODUCED: A16 three headline enrichment arms, replayed from A16 artifacts
+     VALUE: conc-recipes-N8 +10.45 pts (469/536 = 87.5 pct, b=5 c=61); enrich-vegan-N40 +9.70 (465/536 = 86.8 pct, b=10 c=62); enrich-vegetarian-N68 +8.02 (456/536 = 85.1 pct, b=11 c=54) - all exact to A16 ledger
+     SEED : 424242
+
+[343] CLAIM: REPRODUCED: A15 ruler decomposition, full variant table re-run
+     VALUE: V0 405/526 = 77.0 pct; V6 fatE50 426/526 = 81.0 pct d=+4.0 (b=21 c=0); V1 fatE10 -27.4; V8 essential-fat floor +0.00 (b=0 c=0); V10 AMDR -57.4. Ruler share of the 23.0-pt gap = 4.0/23.0 = 17.4 pct
+     SEED : qa-fleet-20260729-2032
+
+[344] CLAIM: REPRODUCED: A20 full refusal matrix and the repaired ceiling, re-run against A22 own dev.db
+     VALUE: 16 proven impossible / 562/578 = 97.2 pct; P0 and P7 KPI1_C7 = 72.06 pct (n=562); P4 77.00 (n=526) = +4.94; P5 77.78 = +5.72; P6 100.00 = +27.94; P7 matrix 16/0/0/0/90/405
+     SEED : qa-fleet-20260729-2032
+
+[345] CLAIM: REPRODUCED independently (own script, own DB copy): C20 dead term in A3 bound
+     VALUE: expression kcalPer100g>0 && proteinPer100g>0 evaluates nonzero on 0 of 14151 Food rows, max 0; PRAGMA table_info(Food) has neither column; real max protein density 0.2751 g/kcal (Soy protein isolate, potassium type) - matches A20 exactly
+     SEED : qa-fleet-20260729-2032
+
+[346] CLAIM: MEASURED: A21 stack replayed from A21 artifacts at 3 seeds while A21 FINDINGS.md is absent from disk
+     VALUE: satisfiable-only 509/536 = 95.0 pct (+17.91, b=3 c=99) / 509/536 = 95.0 pct (+17.16, b=1 c=93) / 508/536 = 94.8 pct (+16.79, b=4 c=94); instrument 0 disagree 0 silent-miss on all 3 - the A17 honesty regression is NOT present in the stack
+     SEED : 424242,20260730,8675309
+
+[347] CLAIM: DERIVED from A21-overlap-s424242.json: the three levers overlap almost totally - C23 no-adding rule quantified
+     VALUE: net gains alone wls2 +79 / conc8 +56 / trim +80 days = 215; the stack nets 96 days (509-413). Summing the parts would overstate by 2.24x
+     SEED : 424242
+
+[368] CLAIM: REPRODUCED: A3 final-split, every ledger row exact
+     VALUE: 52 / 140 / 386 days, in-band rates 0.000 / 0.593 / 0.834, total 405/578 = 70.07 pct; 405/526 = 77.0 pct; ceilings 91.0 pct, 85.6 pct from the brief 83-day figure
+     SEED : qa-fleet-20260729-2032
+
+[369] CLAIM: CAUTION on A3 three-way split: the number reproduces but is definition-sensitive by ~6x, and A3 own two scripts disagree
+     VALUE: A3-final-split.mjs:24 (afterStack<distinctNeeded) gives pool-limited 140; A3-classify-all.mjs:90 (hardcoded POOL_LIMIT=60 on poolAfterDiet) gives 62; final-split own sensitivity table spans 25d to 145d as the cut moves 10->100. Only the 140 figure is in CLAIMS.tsv
+     SEED : qa-fleet-20260729-2032
+
+[370] CLAIM: REPRODUCED: A13 best arm (floor 0.25 + 4-macro objective) and floor-alone
+     VALUE: floor25w 520/536 = 97.0 pct, +19.96 pts, b=1 c=108, CI +16.54..+23.39; floor25 alone 436/536 = 81.3 pct, +4.29 pts, b=20 c=43 - both exact to the A13 ledger
+     SEED : 424242
+
+[371] CLAIM: INDEPENDENT CONFIRMATION of C19 with an amendment: oracle.mjs vegan coverage tested by name against the C13 rows in the Food table
+     VALUE: of the C13 rows I located: 2 CAUGHT (Squirrel ground MEAT; Seal bearded Oogruk MEAT - both only via the token meat), 9 MISSED (Groundhog, Armadillo, Wild pig, Owl horned flesh, Sea cucumber yane, Ceviche, Hog maws, Dove cooked, Nutritional powder mix (Isopure)). C19 says 1 of 13 caught; it is 2. The conclusion stands unchanged
+     SEED : e55f52e53658a086
+
+[372] CLAIM: MEASURED: the Isopure row name carries no dairy token, which is WHY oracle misses it
+     VALUE: stored name is 'Nutritional powder mix (Isopure)' - AUDIT_ALLERGENS.dairy contains 'whey' but the name does not, so ANIMAL_DAIRY_EGG never fires
+     SEED : e55f52e53658a086
+
+[373] CLAIM: REPRODUCED: A19 day-selection DELTAS are sound - only its oracle-bound LEVELS fail
+     VALUE: dayN +2.62 pts (427/536, b=15 c=29) and dayNstrict +1.68 pts (422/536, b=0 c=9) at s424242, exact to the A19 ledger. The A19 failure is confined to the two ORACLE UPPER BOUND rows and is a denominator error, not a solver error
+     SEED : 424242
+
+[374] CLAIM: A21 FINDINGS.md is ABSENT from disk at A22 close of work; its numbers are replayed from its raw arms only
+     VALUE: docs/surgery/CAMPAIGN/solver-brain/A21/ contains 12 artifacts and no FINDINGS.md; A22 replayed A21-baseline vs A21-stack at 3 seeds directly. No A21 prose was read, so no A21 interpretation is endorsed
+     SEED : n/a
+
+====================================================================================================
+#### AGENT A23  rows: 24
+====================================================================================================
+[296] CLAIM: A4 cite 1 NASEM 2024 AMDR letter report, adult fat 20-35 pct energy
+     VALUE: VERIFIED - Table 3-1 "Fat: 20-35 percent of energy"; 7.5/27.5 = 27.27 pct confirms A4 +/-27.3 pct
+     SEED : https://www.nationalacademies.org/read/27957/chapter/5
+
+[297] CLAIM: A4 cite 2 Delany 2025 Sports Medicine scoping review
+     VALUE: VERIFIED - "ranging from 15 to 30% of energy intakes"; "focussed minimal attention"; "often vague, leaving significant room for interpretation"; "three papers advised against excessive restriction below 15%"
+     SEED : https://pmc.ncbi.nlm.nih.gov/articles/PMC12513969/
+
+[298] CLAIM: A4 cite 3 Aragon 2017 ISSN position stand AMDR sentence
+     VALUE: VERIFIED verbatim - "The AMDR set protein at 10-35%, carbohydrate at 45-65%, and fat at 20-35% of total energy."
+     SEED : https://pmc.ncbi.nlm.nih.gov/articles/PMC5470183/
+
+[299] CLAIM: A4 code claims ESSENTIAL_FAT_PER_LB_LBM, fatLo, keto 0.9/1.12
+     VALUE: VERIFIED in tree - bmrEngine.js:286 = 0.3 with comment "fat never drops below this"; :322 lbmLb*0.34; :313 fatMid*0.9 and *1.12
+     SEED : n/a
+
+[300] CLAIM: A4 unfetched sources Thomas/Erdman/Burke 2016 and Whittaker & Wu 2021
+     VALUE: CORRECTLY LABELLED - Thomas 2016 exists (JAND 116:501-528 / MSSE 48:543-568); A4 marked both UNVERIFIED and used neither as support. No overreach.
+     SEED : https://www.jandonline.org/article/S2212-2672(15)01802-X/abstract
+
+[301] CLAIM: A5 cite 2 Stigler/NEOS 77 foods 9 nutrients 39.93 vs 39.69
+     VALUE: VERIFIED - "9 equations in 77 unknowns"; "His guess for the cost of an optimal diet was $39.93 per year"; simplex optimum $39.69
+     SEED : https://neos-guide.org/case-studies/om/the-diet-problem/
+
+[302] CLAIM: A5 cite 3 van Dooren 2018 three quotes, 52 studies, 5-37 constraints
+     VALUE: VERIFIED verbatim on all three quotes; "The total number of studies included for analysis are 52"; constraints 5-37. Search window 2000-2014 plus stated 2015-2016 additions, so A5 "2000-2016" is defensible
+     SEED : https://www.frontiersin.org/journals/nutrition/articles/10.3389/fnut.2018.00048/full
+
+[303] CLAIM: A5 cite 4 Maillot 2010, 1171 individuals, 32 nutrients, all feasible
+     VALUE: VERIFIED - "a new nutritionally adequate diet was obtained for each individual"; "In half the modeled diets, <5 of the foods usually consumed were replaced"
+     SEED : https://pubmed.ncbi.nlm.nih.gov/19939986/
+
+[304] CLAIM: A5 cite 6 Leung/Wanitprapha/Quinn 1995 MIP over 895 recipes, weekly
+     VALUE: VERIFIED - "mixed-integer programming", "895 popular recipes found in Hawaii", one-week period
+     SEED : https://pubmed.ncbi.nlm.nih.gov/7547833/
+
+[305] CLAIM: A5 cite 7 Aguilera Moreno 2026 arXiv:2605.13849 exists and matches
+     VALUE: VERIFIED - "810 instances (30 USDA foods, 9 configurations, 3 methods)"; "strictly better ... in 66% of cases ... while maintaining 100% feasibility; hard-constraint IP achieves only 48%"; "Solve times stay under 100 ms". Single-author preprint; the submitted-date-vs-arXiv-ID discrepancy A5 flagged is real (Submitted 12 Mar 2026 under a 2605 ID)
+     SEED : https://arxiv.org/abs/2605.13849
+
+[306] CLAIM: A5 cite 8 Htiouech & Alzaidi 2017 MMKP NP-hard in strong sense
+     VALUE: VERIFIED - "The MMKP is an NP-Hard optimization problem in strong sense."
+     SEED : https://ijcaonline.org/archives/volume174/number6/28409-2017915404/
+
+[307] CLAIM: A5 formulation class "goal-programming MMKP" / "structurally Leung 1995"
+     VALUE: NOT A CITED CLAIM - A5 labels it DERIVED and no source classifies Cut Protocol. Leung 1995 never uses MMKP or goal programming. A25 must not render this as a literature classification
+     SEED : n/a
+
+[308] CLAIM: A6 cite 1 Fitia +/-10 pct calories only
+     VALUE: VERIFIED - "Your daily calorie target always includes a +-10% margin ... Lower limit: 1,800 kcal Upper limit: 2,200 kcal"; no per-macro tolerance on the page
+     SEED : https://fitia.app/help/articles/calorie-bar-green-yellow
+
+[309] CLAIM: A6 cites 2/3 MacroFactor adherence-neutral and dashboard
+     VALUE: VERIFIED - "if you exceed your calorie or macronutrient allotments for the day or week"; the ~300 calories figure is presented as a users self-set standard exactly as A6 said; streaks "emphasize the habit of tracking, effort, and consistency over perfection"; no adherence rate reported
+     SEED : https://macrofactor.com/adherence-neutral/
+
+[310] CLAIM: A6 cites 4/5/8/9 Carbon, Eat This Much, Prospre, RP Diet Coach
+     VALUE: VERIFIED as null results - Carbon "sticking within the optimal range" with no numbers; ETM "We also suggest fairly loose ranges" with no percentage; Prospre "how accurate you need your macros to be" undefined; RP page (29 Sep 2025) defines no tolerance
+     SEED : https://www.joincarbon.com/how-it-works
+
+[311] CLAIM: A6 cite 7 Cronometer forum 5721
+     VALUE: VERIFIED as A6 labelled it - user Beat: "set a Daily Target and Maximum Treshold"; no staff reply in thread; 2023. A6 UNVERIFIED-as-official tag is correct
+     SEED : https://forums.cronometer.com/discussion/5721/target-range-for-macros
+
+[312] CLAIM: A6 cite 10 IIFYM +5 g over / -10 g under (load-bearing for C1 2.4x)
+     VALUE: VERIFIED verbatim - Julson MS RDN CLT, Healthline, upd 14 Jun 2023: "As long as you dont go over each macronutrient by more than 5 grams, or under by more than 10 grams, you should still see results." A6 2.4x arithmetic reproduces: 35.5/15 = 2.37
+     SEED : https://www.healthline.com/nutrition/iifym-guide
+
+[313] CLAIM: A6 contaminated-source tier flag
+     VALUE: CONFIRMED INDEPENDENTLY - macro-trackers.com self-publishes the 120-day study (12-participant panel) on its own methodology page; no protocol, named author or institution; its top pick Welling claims portion-error under +-2% and 1.8 s logging; the same ranking is syndicated via openpr.com, a paid press-release wire. Discard tier stands
+     SEED : https://www.macro-trackers.com/methodology
+
+[314] CLAIM: contaminated tier did NOT propagate downstream
+     VALUE: CONFIRMED - case-insensitive grep over all of docs/surgery/CAMPAIGN returns the five domains only in A6/FINDINGS.md:64-65 and CORRECTIONS.md:117-118, i.e. the flag itself. Zero downstream reliance
+     SEED : n/a
+
+[315] CLAIM: A7 nutritional yeast 13.3 g protein/100 kcal - PROVENANCE MISLABEL
+     VALUE: FIGURE VERIFIED, SOURCE TIER WRONG - the Wikipedia table gives 8 g protein / 60 kcal per 15 g but labels it "Bobs Red Mill brand, manufacturer reported values". A7 wrote "citing USDA FoodData Central #1946780". Under the CLAUDE.md provenance rule this is LABEL, not USDA-VERIFIED
+     SEED : https://en.wikipedia.org/wiki/Nutritional_yeast
+
+[316] CLAIM: A8 cites 1/2 SAT Competition 2024 medals and rules
+     VALUE: VERIFIED verbatim - "all categories of the main track, i.e., SAT, UNSAT, SAT+UNSAT"; "Printing a model in case of a satisfiable instance is required for all tracks expect for No-limits. Additionally, UNSAT certificates (proofs) are required for the Main track."; "if a solver reports UNSAT on an instance that was proven to be SAT by some other solver"
+     SEED : https://satcompetition.github.io/2024/rules.html
+
+[317] CLAIM: A8 cites 3/4/5 Gurobi IIS, MIPLIB infeasible set, Gurobi status codes
+     VALUE: VERIFIED - IIS is "a minimal subset of constraints and variable bounds that, if isolated from the rest of the model, is still infeasible"; MIPLIB "The Infeasible Set" 44 instances; INFEASIBLE(3) "Model was proven to be infeasible" distinct from TIME_LIMIT(9)
+     SEED : https://miplib.zib.de/set_infeasible.html
+
+[318] CLAIM: A8 cite 6 Liffiton & Sakallah 2008 JAR 40:1-33
+     VALUE: VERIFIED bibliographically (link.springer.com 303s to an auth endpoint; title/authors/journal/volume/pages/year confirmed via search and the authors own hosted PDF). No A8 claim rests on it - decorative citation
+     SEED : https://sun.iwu.edu/~mliffito/publications/jar_liffiton_CAMUS.pdf
+
+[319] CLAIM: FLEET HEADLINE zero fabricated citations across A4-A8
+     VALUE: 20 of 20 external sources located and confirmed to say what was claimed; 2 correctly self-labelled UNVERIFIED; 1 provenance mislabel (A7 nutritional yeast); 1 derived-class label that must not be reported as literature (A5)
+     SEED : n/a
+
+====================================================================================================
+#### AGENT A24  rows: 10
+====================================================================================================
+[375] CLAIM: MEASURED: no Phase-4 headline arm moved a denominator (C21 audit) - judged days and satisfiable-judged days are IDENTICAL across baseline and every treatment
+     VALUE: 622 judged / 536 satisfiable-judged in all of: A13 baseline,wls2,role,floor25,floor25w; A16 baseline,conc-N8,veg-N68,vegan-N40; A17 baseline,trim3,dense8; A21 baseline,stack
+     SEED : 424242
+
+[376] CLAIM: MEASURED: DB-discontinuity (C18) did not land - every comparison arm on disk carries the fleet baseline dbHash
+     VALUE: 129 of 129 .jsonl arms = e55f52e53658a086; 14 non-arm probe/dump files carry no dbHash header (incl. all 6 A19-probe-* files that produce the falsified oracle bound)
+     SEED : n/a
+
+[377] CLAIM: MEASURED (independent re-derivation from raw arms): honesty-on-miss / verdict-agreement / kcal-drift on the headline arms
+     VALUE: A21-stack 85 misses 0 silent 0 disagree 0 drift; A13-wls2 102/0/0/0; A13-floor25w 74/0/0/0; A16-conc-N8 129/0/0/0; A17-trim3 105 misses 1 SILENT 1 DISAGREE - only A17 regresses
+     SEED : 424242
+
+[378] CLAIM: MEASURED (from A21-overlap-s424242.json): A19 dayNstrict is 100 pct subsumed by A13 wls2 - all 9 of its rescued days are also rescued by wls2
+     VALUE: dayNst gained 9, both=9, union=87; marginal value of dayNstrict on top of wls2 = 0 days = +0.00 pts
+     SEED : 424242
+
+[379] CLAIM: MEASURED: A14 att12 is 87 pct subsumed by A13 wls2; A13 floor25 is 84 pct subsumed standalone
+     VALUE: att12 gained 31 both=27 -> 4 unique days = +0.75 pts; floor25 gained 43 both=36 -> 7 unique = +1.31 pts (but floor25 STACKED with wls2 is +28 days = super-additive, so standalone-unique understates it 4x)
+     SEED : 424242
+
+[380] CLAIM: DERIVED: hard arithmetic cap on any additive lever sum - baseline satisfiable misses are 123 of 536, so the union of ALL levers cannot exceed +22.95 pts
+     VALUE: naive sum of six measured gross gains (wls2 87 + trim 84 + conc8 61 + floor25 43 + att12 31 + dayNst 9 = 315 days = +58.77 pts) is 2.56x arithmetically impossible
+     SEED : 424242
+
+[381] CLAIM: MEASURED: A17 trimmer and A13 wls2 rescue 72 of the same days - the C23 overlap quantified
+     VALUE: wls2 87, trim 84, both 72, union 99, Jaccard 0.727; naive sum 171 vs union 99 = 42.1 pct of the sum double-counted
+     SEED : 424242
+
+[382] CLAIM: MEASURED: the fleet load-bearing honesty property survives an independent attack - 48 of 173 missed days carry NO slot warning, but 48 of 48 carry a plan-level diagnosisFeasible=false
+     VALUE: 173 misses / 48 unwarned / 48 with diagnosis / 0 silent. diagnose() is the SOLE honesty signal on 27.7 pct of missed days
+     SEED : qa-fleet-20260729-2032
+
+[383] CLAIM: DERIVED: the 578-day decomposition A25 needs, on A20 repaired ground truth (fixes the A20 P7 matrix that sums to 511)
+     VALUE: INFEASIBLE-proved 16 (0 in band) + UNKNOWN 67 (0 in band) + SAT-certified 495 (405 in band, 90 miss) = 578, 405/578 = 70.07 pct
+     SEED : qa-fleet-20260729-2032
+
+[384] CLAIM: MEASURED: A13 floor25w (97.01 pct, the best arm on disk and A21 lead) exists at ONE seed only
+     VALUE: A13/ holds A13-floor25w-s424242.jsonl and no s20260730 or s8675309 replicate; A22 re-ran the same seed (reproducibility, not replication - integrity rule 8)
+     SEED : 424242
+

@@ -1,0 +1,133 @@
+# SOLVER BRAIN — final report
+
+**Question:** can Cut Protocol's meal solver reach 85–99 % macro compliance, and if so by what
+mechanism and at what cost?
+
+**Fleet:** 25 agents, `BRAIN=off`, 2026-07-30 / 07-31. 386 rows in `CLAIMS.tsv`.
+**Synthesis rule in force:** this report introduces no number that does not already appear in an
+agent's `FINDINGS.md`. Where a number the report needs was never produced, it says
+**not measured** and names the agent who should have produced it.
+
+**Agents read in full for this synthesis: A1–A24, all 24.** None summarised from a title.
+
+---
+
+## 1. The answer, in one paragraph
+
+**Yes — 85 % is reachable, on the satisfiable-only denominator, by one mechanism, and it has been
+measured rather than projected.** Replacing the solver's two-knob portioning solve with a
+**4-macro tolerance-normalised weighted least-squares objective** (A13's `wls2`, a change at
+`weeklyPlanner.js` L394/L451, not a new degree of freedom) moves satisfiable-only compliance from
+**77.1 % to 91.8 % — +14.74 pts [+11.40, +18.08], b=8 c=87** (MEASURED, rig, seed 424242),
+replicated at two further seeds (**+14.37**, **+13.99**) and defended by A22's negative control: a
+re-portioning objective weighted on **kcal alone**, same rig, same seed, same hook, moves
+**+0.00 pts (b=5 c=5)** — so the gain is not an artifact of touching the portioner. The highest
+arm anywhere in the study is **97.01 %** (`floor25w` = the same objective plus a 0.25× portion
+floor, **+19.96 [+16.54, +23.39], b=1 c=108**) — **but it exists at one seed only, and it ships
+35.5 % of served satisfiable slots below the old 0.5× portion floor**, a plate-size cost measured
+in scale ratios and never rendered in grams. **99 % is not supported by anything measured**, and
+on all 578 days it is arithmetically impossible: A20's repaired bound proves 16 days infeasible,
+capping all-days at **562/578 = 97.2 %**. The ceiling this study can defend is therefore
+"85 % yes, 97 % once, 99 % no", and the binding cost is not compliance but **portion realism and
+slot-level amber**, both of which the winning arms make worse before they make them better.
+
+---
+
+## 2. The ceiling decomposition — 578 days
+
+**This is the study's core scientific contribution and it changed twice mid-flight.**
+
+### 2.1 The one decomposition this report carries (A24, DERIVED from `A20/A20-day-labels.jsonl`)
+
+| bucket | days | in band | miss |
+|---|---|---|---|
+| **INFEASIBLE — proved** (A20's repaired bound) | **16** | 0 | 16 |
+| **UNKNOWN** — no proof, no certificate (36 days that lost their proof + 31 prior) | **67** | 0 | 67 |
+| **SAT-certified** — an in-band plan exists for this day | **495** | **405** | 90 |
+| **TOTAL** | **578** | **405 = 70.07 %** | 173 |
+
+MEASURED / DERIVED. **Why this one and not A20's own:** A20's published P7 confusion matrix
+**sums to 511**, not 578 — A22 caught it (`INCOMPLETE`), and A24 repaired it by restoring the 67
+UNKNOWN-accepted days the matrix omitted. The ledger row is defective; A20's prose is not.
+
+**The "0 in band" against the 67 UNKNOWN days is tautological and must not be read as evidence of
+infeasibility** — a certificate *is* an in-band day, so any day with an in-band observation is
+SAT-certified by construction. **The 67 UNKNOWN days are where the ceiling uncertainty lives.**
+
+### 2.2 The three live ceilings, shown and not averaged
+
+| ceiling | source | status |
+|---|---|---|
+| **"near 88 %"** all-days | mission prompt + `BRIEF.md`, from an 83-day impossible tier | **Dead.** Not reproducible from its own tier count: **495/578 = 85.6 %** (A3, DERIVED). Two independent errors, not one — the tier is also over-counted |
+| **91.0 %** all-days (526/578) | A3 / C7 | **Superseded as a bound.** A20 measured a dead term in A3's own script: `f.kcalPer100g > 0 && f.proteinPer100g > 0` against a Prisma `Food` model whose columns are `kcal`/`protein` — **evaluates to 0 across all 14,151 rows**. A3's operative SCALED bound is recipe-only by construction and survives, but omits the macro closer entirely |
+| **97.2 %** all-days (562/578) | A20 repaired (SCALED + every surviving adjuster at its `MAX_GRAMS` ceiling); reproduced by A22 | **The one bound this report carries** |
+
+**Picked: 97.2 %.** Defence: it is the only bound whose computation has been audited and repaired,
+and A22 reproduced it independently (**16 days, 562/578 = 97.2 %**). It is not averaged with the
+others; the others are shown above and rejected for stated cause.
+
+**And immediately, per A24 (I9): 97.2 % is a proof that WEAKENED, not a ceiling that rose.**
+36 days moved INFEASIBLE → **UNKNOWN**, not INFEASIBLE → satisfiable. They gained no certificate.
+The honest sentence is **"16 days are provably impossible; 67 days are unknown in both
+directions"** — not "the ceiling went up by six points".
+
+### 2.3 The denominator this report divides by
+
+**Primary: satisfiable-only.** On the HTTP fleet — the canonical instrument for *levels* (C15) —
+that is **526 of 578 days**, and today's rate is **405/526 = 77.0 %** (A3, reproduced exactly by
+A15's independent re-grade and by A22). Deltas are quoted on A1's rig, whose satisfiable tier is
+**536 of 622 days**, baseline **413/536 = 77.1 %** at seed 424242. **The two are never mixed** —
+the rig deviates from the fleet in four documented ways (startDayOfWeek pinned to 0, free-text
+exclusions not applied, no HTTP layer, adjusters re-assembled).
+
+**Defence of 526, stated with its cost.** A20's repair implies a *stricter* satisfiable
+denominator of **562**, on which the same baseline reads **72.06 %** (A20, MEASURED) — five
+points worse. This report shows that figure rather than hiding it. 526 is kept for three reasons:
+
+1. It is C7's ruling, independently corroborated by A1 — the IMPOSSIBLE tier produced **21 of 86**
+   judged days in band, impossible if refusal were the correct output — and reproduced by A22.
+2. Every Phase-4 delta in this study was measured on it or its rig analogue. Re-basing would
+   require re-running the fleet.
+3. Promoting the 36 freed days to "satisfiable" asserts feasibility nothing measured. Those
+   personas were **solved 310 times across 2 instruments / 6 runs and landed in band 0 times**,
+   giving an exact one-sided 95 % upper bound on the false-refusal rate of **0.96 %** (A20).
+
+**Deliberate asymmetry, declared:** the denominator comes from A3's bound and the ceiling from
+A20's repaired bound. That is not a double standard — it is C21's discipline. **A20 measured that
+using one object as both the ruling denominator and the refusal predicate launders +4.94 pts**
+(predicate P4) by removing 36 days it cannot prove impossible. Keeping them separate is the point.
+
+**And the choice does not change the answer.** A21 measured its headline across **4 denominators
+x 3 seeds**: spread **1.99 pts** (DERIVED). Judged-day counts are identical in baseline and
+treatment arms everywhere; A24's C21 audit confirms it independently — **622 judged / 536
+satisfiable-judged in all 14 headline arms**. **No lever moved a denominator.**
+
+---
+
+## 3. Ranked lever table
+
+All deltas are **satisfiable-only, paired McNemar, A1's rig (n=536), compare.v2.mjs**, unless
+stated. **C14 governs every verdict here:** a treatment that churns days in both directions needs
+**|delta| >= 3.5 pts** before this study may call it real (A1, DERIVED from a measured positive
+control: b=50, c=39, n=536 → 95 % half-width **3.45 pts**). A one-directional treatment (b=0) is
+floored instead at ~1.5 pts / **~9 flipped days**. **A delta between those floors is UNRESOLVED,
+not small** — that is a statement about n, not about the mechanism.
+
+**The cap on everything below, first (A24 / I1, MEASURED).** Baseline satisfiable misses are
+**123 of 536**, so **the union of all levers cannot exceed +22.95 pts**. The naive sum of the six
+measured gross gains (87 + 84 + 61 + 43 + 31 + 9 = 315 days = **+58.77 pts**) is
+**2.56x arithmetically impossible**. **Never sum this table.**
+
+| # | lever | delta | b / c | marginal over #1 (A24) | verdict |
+|---|---|---|---|---|---|
+| 1 | A13 `wls2` 4-macro tolerance-normalised portioning | **+14.74** | 8 / 87 | — (it is the base) | **REAL**, 3 seeds |
+| 2 | A13 `floor25` 0.25x portion floor, on top of #1 | **+19.96** total | 1 / 108 | +5.22 (b=1 c=29) | **REAL, single seed** |
+| 3 | A16 protein-concentrate pool enrichment (N=8) | +10.45 | 5 / 61 | **+7.46** [+4.90,+10.02] | **ESTIMATED** |
+| 4 | A17 macro trimmer | +14.93 | 4 / 84 | **+2.24** (12 d) | **UNRESOLVED** + disqualified |
+| 5 | A14 attempt-budget floor 5 → 12 | +1.12 pooled | 17 / 35 | +0.75 (4 d, via att12) | **UNRESOLVED** |
+| 6 | A19 variety-safe day harvesting | +1.68 | 0 / 9 | **+0.00 (0 d)** | **SUBSUMED — dead** |
+| 7 | A18 `SCORE_WEIGHTS` retune | **0.00** | b == c, 6/6 | 0.00 | **DEAD, structurally** |
+| 8 | A17 closer-candidate widening | +0.19 | 5 / 6 | — | **AUTOMATIC FAIL (leak)** |
+| 9 | A15 ruler widening (fat ±50 %) | +4.0 max | 21 / 0 | — | **not a solver lever** |
+| 10 | A20 sound refusal (P7) | **+0.00** | — | — | **ship for honesty, not points** |
+| 11 | A21 "best stack" (= #3 + a #1-equivalent) | +18.07 (D2) | — | beaten by #2 by +2.05 | **overstated as "combined"** |

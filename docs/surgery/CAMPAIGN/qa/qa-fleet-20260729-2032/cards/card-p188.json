@@ -1,0 +1,78 @@
+{
+  "personaId": "p188",
+  "satisfaction": 3,
+  "wouldRecommend": false,
+  "criteria": {
+    "macrosInRange": 9,
+    "worksEndToEnd": 5,
+    "mealsAreGood": 2,
+    "affordableAdjustable": 5,
+    "tasty": 2
+  },
+  "allergenRespect": {
+    "ok": true,
+    "leaks": []
+  },
+  "delights": [
+    "The day landed exactly on my number: three meals totalling 1306.4 kcal against my target of 1306, with 112.9 g protein. That is the one thing I most needed it to get right and it nailed it.",
+    "The shopping list owned its own limits instead of bluffing: 'costCoverageNote: 3 of 18 item(s) have no price match and are excluded from the total (rough CAD estimates for the rest, not sourced data)' — CAD 19.23 for the day is a number I can live with.",
+    "The alternates list understood the slot: 'Beef and Broccoli Stir-Fry' at matchPct 92, with garlic, soy sauce, oyster sauce and sherry in it, was the first thing all day that read like food a person would cook."
+  ],
+  "defects": [
+    {
+      "what": "The recipe instructions are nonsense — you do not cook cottage cheese, and this appears in two of my three meals.",
+      "snippet": "\"steps\":[\"Cook the cottage cheese.\",\"Serve over chickpea pasta with onions.\"]"
+    },
+    {
+      "what": "Two of three meals were the same cheap protein — 555 g of cottage cheese in a single day (220 g + 335 g). I will not eat that.",
+      "snippet": "High-Protein Cottage Cheese & Onions with Chickpea Pasta / High-Protein Cottage Cheese & Broccoli with Rice"
+    },
+    {
+      "what": "It told me to cook a cold cut that is already cooked.",
+      "snippet": "\"Cook the turkey.\" for \"Turkey breast, low salt, prepackaged or deli, luncheon meat\", 125g"
+    },
+    {
+      "what": "Swapping a meal fails on the obvious call. Sending just the recipe id from the alternates it had itself just offered me 400s, identically for all three alternates, with an error that makes no sense — I named a recipe with 11 ingredients. It only worked after I hand-rebuilt the entire ingredient array myself.",
+      "snippet": "PUT .../slots/<slotId>/apply {\"recipeId\":\"cmrj2tcxw00s5wlwsnxal50uf\"} -> 400 {\"error\":\"a slot needs at least one ingredient\"}"
+    },
+    {
+      "what": "It offered me a potato dumpling as a compliant swap. Perogies are potato-filled and potato is a nightshade — one of my four walls. It did not reach my plan because I refused it, but the app handed it to me as a match.",
+      "snippet": "{\"recipeName\":\"Grilled Chicken Breast & Perogies\",\"matchPct\":99,\"ingredients\":[... {\"name\":\"Perogies, boiled\",\"grams\":155}]}"
+    },
+    {
+      "what": "An unnamed oil I cannot clear against a peanut allergy — high-heat cooking oil is very often peanut/groundnut oil, and the app never says which. I have to ignore it and use my own.",
+      "snippet": "{\"name\":\"High Heat Cooking Oil\",\"role\":\"carb\",\"grams\":14}"
+    },
+    {
+      "what": "Two of my four walls are not even things this app claims to filter. Its allergy list has no nightshade and no pork option, yet my profile stores them — so I have no way to know they are being enforced rather than honored by luck, and the perogies suggestion says they are not.",
+      "snippet": "allergyOptions: shellfish, fish, kiwi, soy, dairy, eggs, gluten, peanuts, tree nuts, sesame — but excludedFoods: [\"peanuts\",\"nightshades\",\"pork\",\"eggs\"]"
+    },
+    {
+      "what": "There is a message to the programmers sitting in my shopping list, on every single priced item.",
+      "snippet": "\"note\":\"rough manually-entered CAD estimate, not sourced pricing data — edit src/lib/groceryPrices.js to correct\""
+    },
+    {
+      "what": "The shopping list gives a wrong purchase unit for dry pasta — a can of drained pasta is not a thing I can buy.",
+      "snippet": "{\"name\":\"Chickpea pasta, dry\",\"purchaseUnits\":{\"display\":\"1 can (drained)\",\"approx\":\"≈240 g each\"}}"
+    },
+    {
+      "what": "The list sends me shopping for water, and for a bottle of sherry to use three grams of.",
+      "snippet": "\"other\":[{\"name\":\"Dry sherry\",\"preparedGrams\":3,...},{\"name\":\"Water\",\"preparedGrams\":7,...}]"
+    },
+    {
+      "what": "Every meal is the identical fill-in-the-blank template — protein + one starch + one vegetable + exactly 5 g olive oil, all three named 'High-Protein', with no description, no cuisine and no seasoning anywhere in the day.",
+      "snippet": "\"description\":null,\"cuisine\":null,\"source\":\"ai-generated\" on all three slots; Olive Oil 5g in each"
+    },
+    {
+      "what": "1306 kcal a day for a 40-year-old woman picking in a warehouse and training twice a week, and nothing in the plan says a word of caution about it.",
+      "snippet": "\"targetKcal\":1306,\"occupationKey\":\"warehouse\",\"rateLbPerWeek\":2,\"floorKcal\":null"
+    }
+  ],
+  "followUp": {
+    "action": "I refused to eat cottage cheese twice in one day, so I asked for alternates on my third meal and then tried to swap the one appetising option in.",
+    "endpoint": "POST /api/plans/cms6x1jxa04r1wlw0105xuif5/slots/cms6x1jxe04r7wlw0b2awqq15/alternates (200), then PUT .../apply (400, then 200)",
+    "status": 400,
+    "howItWent": "The alternates call was fast and gave me three real choices with match percentages, including the only dish all day I actually wanted to eat. Then the swap refused me: sending the recipe id it had just handed me returned 400 'a slot needs at least one ingredient' for all three alternates, and I only got the stir-fry onto my plan by reconstructing all 11 ingredients and both scale factors by hand — after which it recalculated my day correctly to 1266.3 kcal."
+  },
+  "verdict": "My four walls were respected and the calorie and protein maths was genuinely excellent, but the food itself is a template with half a kilo of cottage cheese in it and instructions telling me to cook cottage cheese, the one good dish could only be swapped in by hand, and being offered perogies when I said no nightshades means I cannot trust the filter that matters most to me."
+}

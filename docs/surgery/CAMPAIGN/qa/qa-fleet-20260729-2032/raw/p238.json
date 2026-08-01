@@ -1,0 +1,716 @@
+{
+ "persona": {
+  "idx": 238,
+  "id": "p238",
+  "tier": "EASY",
+  "displayName": "cyclist, 46",
+  "story": "cyclist, 46, male, 171 cm / 122 kg (BMI 41.7), cut at 0.5 lb/wk, vegan diet, avoiding shellfish, soy, high-protein, 3 meals + 3 snacks, wants a single day",
+  "profile": {
+   "sex": "M",
+   "age": 46,
+   "heightCm": 171,
+   "startWeightKg": 122,
+   "goalWeightKg": 109.3,
+   "occupationKey": "desk-office",
+   "trainingStyle": "cardio",
+   "minutesPerSession": 120,
+   "sessionsPerWeek": 6,
+   "rateLbPerWeek": 0.5,
+   "dietaryStyle": "vegan",
+   "excludedFoods": [
+    "shellfish",
+    "soy"
+   ],
+   "mealsPerDay": 3,
+   "snacksPerDay": 3,
+   "unitPref": "metric"
+  },
+  "filters": {
+   "proteinPriority": true
+  },
+  "horizon": "day",
+  "walls": [
+   "shellfish",
+   "soy"
+  ],
+  "freeTextExclusions": [],
+  "dietaryStyle": "vegan",
+  "bmi": 41.7,
+  "goalKind": "cut",
+  "macroStyle": "high-protein",
+  "requestedButUnsupported": [
+   "wanted protein set explicitly in g/lb; the API derives the protein band from LBM (1.14-1.25 g/lb) and accepts no client protein target — only the per-request proteinPriority filter"
+  ],
+  "tupleKey": "[\"EASY\",\"M\",46,171,122,109.3,\"desk-office\",\"cardio\",0.5,\"vegan\",[\"shellfish\",\"soy\"],3,3,\"high-protein\",\"day\",null,null,true,null,null]"
+ },
+ "request": {
+  "horizon": "day",
+  "filters": {
+   "proteinPriority": true
+  }
+ },
+ "profileResponse": {
+  "id": "cms6x1we105w5wlw0eihj7xgl",
+  "userId": "cms6x1w60006gwl2orpturt7w",
+  "sex": "M",
+  "age": 46,
+  "heightCm": 171,
+  "bodyFatPct": 0,
+  "bodyFatSource": null,
+  "occupationKey": "desk-office",
+  "activityOverride": null,
+  "sessionsPerWeek": 6,
+  "trainingStyle": "cardio",
+  "minutesPerSession": 120,
+  "startWeightKg": 122,
+  "goalWeightKg": 109.3,
+  "startDate": "2026-07-29",
+  "unitPref": "metric",
+  "rateLbPerWeek": 0.5,
+  "rateAcknowledged": false,
+  "floorKcal": null,
+  "excludedFormulas": [],
+  "targetKcal": 3970,
+  "mealsPerDay": 3,
+  "snacksPerDay": 3,
+  "excludedFoods": [
+   "shellfish",
+   "soy"
+  ],
+  "dietaryStyle": "vegan",
+  "cuisinePreferences": [],
+  "mealPreferencesNote": null,
+  "maxPrepMin": null,
+  "budgetTier": null,
+  "allowBatch": null,
+  "maxComplexity": null,
+  "adaptiveTdee": true,
+  "proteinPriorityMode": false,
+  "updatedAt": "2026-07-30T20:34:15.182Z"
+ },
+ "generate": {
+  "status": 200,
+  "ms": 762,
+  "body": {
+   "id": "cms7z1y4o051rwlgwptynt7ni",
+   "userId": "cms6x1w60006gwl2orpturt7w",
+   "startDate": "2026-07-27",
+   "createdAt": "2026-07-30T20:34:16.200Z",
+   "slots": [
+    {
+     "id": "cms7z1y4q051twlgwx4aocf6o",
+     "planId": "cms7z1y4o051rwlgwptynt7ni",
+     "dayOfWeek": 3,
+     "slotType": "meal",
+     "slotIndex": 0,
+     "recipeId": "cms7pjmjg002dwlbkzije27kh",
+     "proteinScale": 1.93,
+     "sidesScale": 0.5,
+     "ingredients": [
+      {
+       "foodId": "cmrviimmu05ccwl1k2k6y1v1u",
+       "name": "Lentils, pink or red, raw",
+       "role": "protein",
+       "grams": 215
+      },
+      {
+       "foodId": "cmrj2t8jp009lwlwsggitwh7i",
+       "name": "Spinach",
+       "role": "veg",
+       "grams": 75
+      },
+      {
+       "foodId": "cmrg8zxar000lwli0qy2ovmx4",
+       "name": "Onion",
+       "role": "veg",
+       "grams": 30
+      },
+      {
+       "foodId": "cmrj2t8nj00a2wlwsr9mgwnlr",
+       "name": "Tinned Tomatos",
+       "role": "veg",
+       "grams": 60
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      },
+      {
+       "foodId": "cmrj2t6j9000gwlwstmjp6mv2",
+       "name": "Cumin",
+       "role": "other",
+       "grams": 2
+      },
+      {
+       "foodId": "cmrj2t8dg008swlws9uhv1fo5",
+       "name": "Turmeric",
+       "role": "other",
+       "grams": 1
+      },
+      {
+       "foodId": "cmrj2t6ft0001wlwstiofk9on",
+       "name": "Garlic",
+       "role": "veg",
+       "grams": 5
+      }
+     ],
+     "kcal": 872.5199999999999,
+     "protein": 55.1778,
+     "fat": 10.793,
+     "carb": 146.1239999999999,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cms7pjmjg002dwlbkzije27kh",
+      "name": "Red Lentil and Spinach Dhal",
+      "description": null,
+      "steps": [
+       "Soften the onion and garlic in the oil, then bloom the cumin and turmeric for 30 seconds.",
+       "Add the lentils, tomatoes and 500 ml water. Simmer 20-25 minutes until the lentils collapse.",
+       "Stir the spinach through at the end until it just wilts."
+      ],
+      "slotType": "meal",
+      "cuisine": "indian",
+      "prepTimeMin": 30,
+      "source": "curated",
+      "mealCategory": null,
+      "kcal": 581.6700000000001,
+      "protein": 33.09180000000001,
+      "fat": 14.1445,
+      "carb": 87.36300000000001,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": null,
+      "difficulty": 1,
+      "filterProvenance": null,
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-30T16:08:04.828Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z1y4r051vwlgwsbmvx01k",
+     "planId": "cms7z1y4o051rwlgwptynt7ni",
+     "dayOfWeek": 3,
+     "slotType": "meal",
+     "slotIndex": 1,
+     "recipeId": "cms7pjmj90025wlbke02jmm0u",
+     "proteinScale": 0.95,
+     "sidesScale": 1.93,
+     "ingredients": [
+      {
+       "foodId": "cmrukzadw0000wlbwara3md10",
+       "name": "Seitan",
+       "role": "protein",
+       "grams": 170
+      },
+      {
+       "foodId": "cmrevpcn2000ewl5gmlyzu0vd",
+       "name": "White rice, cooked",
+       "role": "carb",
+       "grams": 350
+      },
+      {
+       "foodId": "cmrj2t6na000ywlws9jek4w4z",
+       "name": "Broccoli",
+       "role": "veg",
+       "grams": 270
+      },
+      {
+       "foodId": "cmrj2t6ft0001wlwstiofk9on",
+       "name": "Garlic",
+       "role": "veg",
+       "grams": 5
+      },
+      {
+       "foodId": "cmrj2t6ye002dwlwssjv94yyn",
+       "name": "Ginger",
+       "role": "other",
+       "grams": 4
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 19
+      }
+     ],
+     "kcal": 924.0500000000001,
+     "protein": 59.29280000000001,
+     "fat": 24.417,
+     "carb": 123.851,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cms7pjmj90025wlbke02jmm0u",
+      "name": "Seitan Stir-Fry with Broccoli and Rice",
+      "description": null,
+      "steps": [
+       "Slice the seitan thin.",
+       "Stir-fry it in a very hot pan for 3 minutes until the edges catch.",
+       "Add the broccoli, garlic and ginger with a splash of water and cover for 2 minutes to steam through.",
+       "Serve on the rice."
+      ],
+      "slotType": "meal",
+      "cuisine": "asian",
+      "prepTimeMin": 20,
+      "source": "curated",
+      "mealCategory": null,
+      "kcal": 593.75,
+      "protein": 53.8618,
+      "fat": 14.665,
+      "carb": 68.5,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": null,
+      "difficulty": 2,
+      "filterProvenance": null,
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-30T16:08:04.821Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z1y4r051xwlgwzgdjwo4w",
+     "planId": "cms7z1y4o051rwlgwptynt7ni",
+     "dayOfWeek": 3,
+     "slotType": "meal",
+     "slotIndex": 2,
+     "recipeId": "cmrul1dp00000wlk415rwnz4x",
+     "proteinScale": 0.5,
+     "sidesScale": 2,
+     "ingredients": [
+      {
+       "foodId": "cmrukzadw0000wlbwara3md10",
+       "name": "Seitan",
+       "role": "protein",
+       "grams": 85
+      },
+      {
+       "foodId": "cmrukzaed0004wlbwdxnybljb",
+       "name": "Lentil pasta, dry",
+       "role": "carb",
+       "grams": 200
+      },
+      {
+       "foodId": "cmrj2t6na000ywlws9jek4w4z",
+       "name": "Broccoli",
+       "role": "veg",
+       "grams": 220
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 915.2,
+     "protein": 76.904,
+     "fat": 11.448,
+     "carb": 127.194,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrul1dp00000wlk415rwnz4x",
+      "name": "High-Protein Seitan & Broccoli with Lentil Pasta",
+      "description": null,
+      "steps": [
+       "Cook the seitan.",
+       "Serve over lentil pasta with broccoli."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 633.1,
+      "protein": 70.3,
+      "fat": 10.8,
+      "carb": 68.7,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 4.81,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:40:54.805Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z1y4s051zwlgwc5jgqbyo",
+     "planId": "cms7z1y4o051rwlgwptynt7ni",
+     "dayOfWeek": 3,
+     "slotType": "snack",
+     "slotIndex": 0,
+     "recipeId": "cms7pjmkf0035wlbkw9gwdm3s",
+     "proteinScale": 1.05,
+     "sidesScale": 1.05,
+     "ingredients": [
+      {
+       "foodId": "cmrviimf0044qwl1km752wwyb",
+       "name": "Bread, whole-wheat, commercially prepared",
+       "role": "carb",
+       "grams": 65
+      },
+      {
+       "foodId": "cmrj2t6tj001rwlwszp26qdc2",
+       "name": "Peanut Butter",
+       "role": "fat",
+       "grams": 30
+      },
+      {
+       "foodId": "cmrj2t8zr00bbwlwsdb7085qg",
+       "name": "Banana",
+       "role": "carb",
+       "grams": 95
+      }
+     ],
+     "kcal": 427.7500000000001,
+     "protein": 15.7555,
+     "fat": 18.0085,
+     "carb": 56.105,
+     "warning": "Tried 4 recipe(s) for this slot, none fit within tolerance — closest was \"Peanut Butter Banana Toast\" (delivered 16g protein vs a 21g target).",
+     "locked": false,
+     "recipe": {
+      "id": "cms7pjmkf0035wlbkw9gwdm3s",
+      "name": "Peanut Butter Banana Toast",
+      "description": null,
+      "steps": [
+       "Toast the bread.",
+       "Spread the peanut butter while it is warm so it melts in, then top with sliced banana."
+      ],
+      "slotType": "snack",
+      "cuisine": "american",
+      "prepTimeMin": 5,
+      "source": "curated",
+      "mealCategory": null,
+      "kcal": 398.74,
+      "protein": 14.637,
+      "fat": 16.789,
+      "carb": 52.384,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": null,
+      "difficulty": 1,
+      "filterProvenance": null,
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-30T16:08:04.863Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z1y9w0521wlgwpirbl9x2",
+     "planId": "cms7z1y4o051rwlgwptynt7ni",
+     "dayOfWeek": 3,
+     "slotType": "snack",
+     "slotIndex": 1,
+     "recipeId": "cms7pjmjn002nwlbky6jaa8pr",
+     "proteinScale": 2,
+     "sidesScale": 0.5,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t8130077wlws41hxskn2",
+       "name": "Chickpeas",
+       "role": "protein",
+       "grams": 240
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 4
+      },
+      {
+       "foodId": "cmrj2t6jp000iwlwsli2ckg55",
+       "name": "Paprika",
+       "role": "other",
+       "grams": 2
+      }
+     ],
+     "kcal": 548.04,
+     "protein": 20.034,
+     "fat": 25.642,
+     "carb": 62.27999999999999,
+     "warning": "Tried 4 recipe(s) for this slot, none fit within tolerance — closest was \"Roasted Chickpeas with Paprika\" (landed 548 kcal vs a 415 target; delivered 20g protein vs a 23g target).",
+     "locked": false,
+     "recipe": {
+      "id": "cms7pjmjn002nwlbky6jaa8pr",
+      "name": "Roasted Chickpeas with Paprika",
+      "description": null,
+      "steps": [
+       "Dry the chickpeas thoroughly — wet ones steam instead of crisping.",
+       "Toss with oil and paprika and roast at 200C for 25 minutes, shaking once."
+      ],
+      "slotType": "snack",
+      "cuisine": "mediterranean",
+      "prepTimeMin": 30,
+      "source": "curated",
+      "mealCategory": null,
+      "kcal": 321.84,
+      "protein": 10.158,
+      "fat": 17.95,
+      "carb": 31.68,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": null,
+      "difficulty": 1,
+      "filterProvenance": null,
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-30T16:08:04.836Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z1y9w0523wlgw5ajbh0um",
+     "planId": "cms7z1y4o051rwlgwptynt7ni",
+     "dayOfWeek": 3,
+     "slotType": "snack",
+     "slotIndex": 2,
+     "recipeId": "cms7pjmk80030wlbkykqmlu59",
+     "proteinScale": 2,
+     "sidesScale": 0.5,
+     "ingredients": [
+      {
+       "foodId": "cmrj2tbvx00mewlws4x17n3as",
+       "name": "Hummus",
+       "role": "protein",
+       "grams": 180
+      },
+      {
+       "foodId": "cmrj2t6oc0013wlwsjzlwoln2",
+       "name": "Carrots",
+       "role": "veg",
+       "grams": 45
+      },
+      {
+       "foodId": "cmrevpcnl000jwl5gnqnk630b",
+       "name": "Cucumber",
+       "role": "veg",
+       "grams": 45
+      }
+     ],
+     "kcal": 449.55,
+     "protein": 14.688,
+     "fat": 32.22,
+     "carb": 32.283,
+     "warning": "Tried 4 recipe(s) for this slot, none fit within tolerance — closest was \"Hummus with Carrot and Cucumber\" (landed 450 kcal vs a 282 target; delivered 15g protein vs a 27g target).",
+     "locked": false,
+     "recipe": {
+      "id": "cms7pjmk80030wlbkykqmlu59",
+      "name": "Hummus with Carrot and Cucumber",
+      "description": null,
+      "steps": [
+       "Cut the carrot and cucumber into batons.",
+       "Serve with the hummus."
+      ],
+      "slotType": "snack",
+      "cuisine": "mediterranean",
+      "prepTimeMin": 5,
+      "source": "curated",
+      "mealCategory": null,
+      "kcal": 259.2,
+      "protein": 8.370000000000001,
+      "fat": 16.38,
+      "carb": 24.066,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": null,
+      "difficulty": 1,
+      "filterProvenance": null,
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-30T16:08:04.856Z",
+      "createdByUserId": null
+     }
+    }
+   ],
+   "groceryList": null,
+   "meta": {
+    "matchPct": 85,
+    "attempts": 5,
+    "score": {
+     "daysInTolerance": 0,
+     "avgMatch": 85,
+     "days": [
+      {
+       "dayOfWeek": 3,
+       "dayName": "Thursday",
+       "matchPct": 85,
+       "totals": {
+        "kcal": 4137,
+        "protein": 242,
+        "fat": 123,
+        "carb": 548
+       },
+       "kcalDeltaPct": 4.2,
+       "proteinShortPct": 4.8,
+       "fatOk": false,
+       "carbOk": true,
+       "inTolerance": false,
+       "miss": "123 g fat vs a 72–85 g range — 38 g over",
+       "unfilledSlots": 0,
+       "warnedSlots": 3,
+       "proteinFloor": {
+        "met": true,
+        "floorG": 242,
+        "achievedG": 241.9,
+        "shortG": 0.1,
+        "shortPct": 0.1,
+        "reason": null
+       },
+       "windowIndex": 0,
+       "dayIndex": 0,
+       "key": "0:3"
+      }
+     ],
+     "totalDays": 1,
+     "floorDaysMet": 1,
+     "floorDaysTotal": 1
+    },
+    "days": [
+     {
+      "dayOfWeek": 3,
+      "dayName": "Thursday",
+      "matchPct": 85,
+      "totals": {
+       "kcal": 4137,
+       "protein": 242,
+       "fat": 123,
+       "carb": 548
+      },
+      "kcalDeltaPct": 4.2,
+      "proteinShortPct": 4.8,
+      "fatOk": false,
+      "carbOk": true,
+      "inTolerance": false,
+      "miss": "123 g fat vs a 72–85 g range — 38 g over",
+      "unfilledSlots": 0,
+      "warnedSlots": 3,
+      "proteinFloor": {
+       "met": true,
+       "floorG": 242,
+       "achievedG": 241.9,
+       "shortG": 0.1,
+       "shortPct": 0.1,
+       "reason": null
+      },
+      "windowIndex": 0,
+      "dayIndex": 0,
+      "key": "0:3"
+     }
+    ],
+    "diagnosis": {
+     "feasible": false,
+     "reasons": [
+      "1 day(s) landed outside your 72–85 g fat range — portion scaling moves a dish's calories, not its fat/carb ratio, so the pool's composition is what binds here."
+     ],
+     "suggestions": [
+      "Add (or AI-generate) a few recipes built around the macro you keep missing, or drop the cuisine/protein preference so the solver can reach dishes that carry it."
+     ],
+     "binding": {
+      "key": "macro-composition",
+      "label": "fat in your recipe pool",
+      "detail": "1 of 1 day(s) landed outside your 72-85 g fat range. Portion scaling moves a dish's calories, not its fat/carb ratio, so what binds here is which dishes your rules leave in the pool. Calories and protein landed on target on every day — it is composition, not portion size, that is short."
+     }
+    },
+    "poolCounts": {
+     "raw": 910,
+     "afterDiet": 98,
+     "afterPrep": 98,
+     "afterStack": 98,
+     "stackExplain": null
+    },
+    "variety": {
+     "mealEligible": 75,
+     "usableForSlot": 11,
+     "slotKcal": 950,
+     "snackEligible": 4,
+     "weeklyMealSlots": 21,
+     "weeklySnackSlots": 21,
+     "repeatCap": 2,
+     "distinctWeeks": 0.5,
+     "horizonWeeks": 1,
+     "sustainsHorizon": false,
+     "notes": [
+      "11 of your 75 compliant recipes can be portioned to a 950 kcal meal — about 0.5 week(s) of 21 meals before dishes start repeating, so over 1 weeks you will see favourites come back.",
+      "Only 4 snack recipe(s) fit your rules, so the same snacks come back every week.",
+      "1 day: 6 distinct dish(es) across 6 filled slot(s); most-repeated dish appears 1x against a 2x cap for this horizon (2x per week)."
+     ],
+     "horizon": {
+      "weeks": 1,
+      "days": 1,
+      "perWeekCap": 2,
+      "horizonRepeatCap": 2,
+      "mealSlots": 3,
+      "snackSlots": 3,
+      "totalSlots": 6,
+      "distinctFloor": 3,
+      "distinctRecipes": 6,
+      "maxRepeat": 1,
+      "maxRepeatRecipeId": "cms7pjmjg002dwlbkzije27kh",
+      "lockedRepeatsOfMax": 0,
+      "filledSlots": 6,
+      "unfilledSlots": 0,
+      "requiredDistinct": 3,
+      "capHeld": true,
+      "floorHeld": true
+     }
+    },
+    "priorWeeksConsidered": 0,
+    "horizon": {
+     "key": "day",
+     "label": "1 day",
+     "days": 1,
+     "kind": "days",
+     "weeks": 1,
+     "custom": false,
+     "startDate": "2026-07-30",
+     "endDate": "2026-07-30",
+     "startDayOfWeek": 3,
+     "weeksWritten": 1,
+     "solveMs": 1,
+     "weekPlans": [
+      {
+       "startDate": "2026-07-27",
+       "dayIndices": [
+        3
+       ],
+       "days": 1,
+       "daysInTolerance": 0,
+       "avgMatch": 85,
+       "unfilledSlots": 0,
+       "poolSize": 98
+      }
+     ]
+    }
+   }
+  }
+ }
+}

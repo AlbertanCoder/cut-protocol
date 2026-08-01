@@ -1,0 +1,548 @@
+{
+ "persona": {
+  "idx": 101,
+  "id": "p101",
+  "tier": "ROBUSTNESS",
+  "displayName": "security guard, 48",
+  "story": "security guard, 48 (managing meals for a 17-year-old), female, 164 cm / 117.6 kg (BMI 43.7), cut at 2 lb/wk, none diet, no exclusions, low-carb, 3 meals + 1 snacks, wants a single day",
+  "profile": {
+   "sex": "F",
+   "age": 48,
+   "heightCm": 164,
+   "startWeightKg": 117.6,
+   "goalWeightKg": 106.7,
+   "occupationKey": "security-guard",
+   "trainingStyle": "weights",
+   "minutesPerSession": 40,
+   "sessionsPerWeek": 3,
+   "rateLbPerWeek": 2,
+   "dietaryStyle": "none",
+   "excludedFoods": [
+    "no cow dairy but sheep and goat cheese are completely fine"
+   ],
+   "mealsPerDay": 3,
+   "snacksPerDay": 1,
+   "unitPref": "metric",
+   "mealPreferencesNote": "I react badly to a long list of things and my dietitian told me to write it all out so here it is: no onion, no garlic, no leek, no shallot, no wheat, no barley, no rye, no cow dairy but sheep is fine, no lentils, no chickpeas, and absolutely nothing with cilantro because it tastes like dish soap to me.",
+   "rateAcknowledged": true
+  },
+  "filters": {},
+  "horizon": "day",
+  "walls": [],
+  "freeTextExclusions": [],
+  "dietaryStyle": "none",
+  "bmi": 43.7,
+  "goalKind": "cut",
+  "macroStyle": "low-carb",
+  "requestedButUnsupported": [
+   "managing meals for a 17-year-old; the app has no parent-managed or dependent flag (adultGate refuses under-18 outright), so only the adult's own plan can be built",
+   "wanted a low-carb split without full keto; carbs are the leftover after LBM-derived protein and fat, and only dietaryStyle:\"keto\" changes that",
+   "typed a 300-character allergy narrative; mealPreferencesNote is freeform text that no filter reads, so none of it constrains the plan"
+  ],
+  "parentManaged": {
+   "kidAge": 17,
+   "note": "managing meals for a 17-year-old"
+  },
+  "robustKind": "long-allergy-note",
+  "longExclusion": "no cow dairy but sheep and goat cheese are completely fine",
+  "tupleKey": "[\"ROBUSTNESS\",\"F\",48,164,117.6,106.7,\"security-guard\",\"weights\",2,\"none\",[\"no cow dairy but sheep and goat cheese are completely fine\"],3,1,\"low-carb\",\"day\",null,null,null,\"long-allergy-note\",null]"
+ },
+ "request": {
+  "horizon": "day",
+  "filters": {}
+ },
+ "profileResponse": {
+  "id": "cms6x0x9502o7wlw0jth44jra",
+  "userId": "cms6x0x3r002nwl2oliv6v63c",
+  "sex": "F",
+  "age": 48,
+  "heightCm": 164,
+  "bodyFatPct": 0,
+  "bodyFatSource": null,
+  "occupationKey": "security-guard",
+  "activityOverride": null,
+  "sessionsPerWeek": 3,
+  "trainingStyle": "weights",
+  "minutesPerSession": 40,
+  "startWeightKg": 117.6,
+  "goalWeightKg": 106.7,
+  "startDate": "2026-07-29",
+  "unitPref": "metric",
+  "rateLbPerWeek": 2,
+  "rateAcknowledged": true,
+  "floorKcal": null,
+  "excludedFormulas": [],
+  "targetKcal": 1728,
+  "mealsPerDay": 3,
+  "snacksPerDay": 1,
+  "excludedFoods": [
+   "no cow dairy but sheep and goat cheese are completely fine"
+  ],
+  "dietaryStyle": "none",
+  "cuisinePreferences": [],
+  "mealPreferencesNote": "I react badly to a long list of things and my dietitian told me to write it all out so here it is: no onion, no garlic, no leek, no shallot, no wheat, no barley, no rye, no cow dairy but sheep is fine, no lentils, no chickpeas, and absolutely nothing with cilantro because it tastes like dish soap to me.",
+  "maxPrepMin": null,
+  "budgetTier": null,
+  "allowBatch": null,
+  "maxComplexity": null,
+  "adaptiveTdee": true,
+  "proteinPriorityMode": false,
+  "updatedAt": "2026-07-30T02:49:43.377Z"
+ },
+ "generate": {
+  "status": 200,
+  "ms": 285,
+  "body": {
+   "id": "cms6x0xre02orwlw0yjgvs1hq",
+   "userId": "cms6x0x3r002nwl2oliv6v63c",
+   "startDate": "2026-07-27",
+   "createdAt": "2026-07-30T02:49:43.658Z",
+   "slots": [
+    {
+     "id": "cms6x0xrf02otwlw09y89z3vo",
+     "planId": "cms6x0xre02orwlw0yjgvs1hq",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 0,
+     "recipeId": "cmrj2u6bh07anwlws4athcnb2",
+     "proteinScale": 0.95,
+     "sidesScale": 0.93,
+     "ingredients": [
+      {
+       "foodId": "cmrj2taw400ikwlwsh1obe0tn",
+       "name": "Raw King Prawns",
+       "role": "protein",
+       "grams": 285
+      },
+      {
+       "foodId": "cmrj2t6rr001jwlwsqfi60fyj",
+       "name": "Garlic Clove",
+       "role": null,
+       "grams": 2
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "carb",
+       "grams": 20
+      },
+      {
+       "foodId": "cmrj2t7pt005swlwszhtld1bv",
+       "name": "Cayenne Pepper",
+       "role": null,
+       "grams": 1
+      },
+      {
+       "foodId": "cmrj2t6h10006wlwslufza94y",
+       "name": "Parsley",
+       "role": null,
+       "grams": 25
+      }
+     ],
+     "kcal": 437.41,
+     "protein": 58.2755,
+     "fat": 21.8055,
+     "carb": 5.375500000000001,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrj2u6bh07anwlws4athcnb2",
+      "name": "Gambas al ajillo",
+      "description": null,
+      "steps": [
+       "step 1",
+       "Peel the prawns, leaving the tails intact, and, using a cocktail stick, remove the digestive tracts. Or, if you are using a frying pan rather than a terracotta pot, you can cook the prawns in their shells. Season with a little sea salt.",
+       "step 2",
+       "Put the garlic, olive oil and chillies in a flameproof terracotta pot or frying pan and set over a high heat. When the garlic starts to turn golden, add the prawns and cook for 1-2 mins on each side until just pink. Sprinkle over the chopped parsley and some freshly cracked black pepper, and serve immediately. If using a terracotta pot, you can take that straight to the table, but be careful with it as the oil and terracotta will remain hot for several minutes."
+      ],
+      "slotType": "meal",
+      "cuisine": "western-comfort",
+      "prepTimeMin": 22,
+      "source": "themealdb-import",
+      "mealCategory": null,
+      "kcal": 479.3,
+      "protein": 61.4,
+      "fat": 25,
+      "carb": 5.9,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 18.21,
+      "difficulty": 2,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-13T10:25:57.630Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x0xrg02oxwlw0v323sq1f",
+     "planId": "cms6x0xre02orwlw0yjgvs1hq",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 1,
+     "recipeId": "cmrevpcyh004gwl5gnni3al5q",
+     "proteinScale": 0.91,
+     "sidesScale": 0.91,
+     "ingredients": [
+      {
+       "foodId": "cmrevpcmu000cwl5gfljr1l1o",
+       "name": "Bacon, cooked",
+       "role": "protein",
+       "grams": 55
+      },
+      {
+       "foodId": "cmrevpcm50006wl5g2u2bcspd",
+       "name": "Eggs, whole, cooked",
+       "role": "protein",
+       "grams": 135
+      }
+     ],
+     "kcal": 506.8,
+     "protein": 37.90000000000001,
+     "fat": 37.95,
+     "carb": 2.255,
+     "warning": "Tried 5 recipe(s) for this slot, none fit within tolerance — closest was \"Bacon & Eggs\" (delivered 38g protein vs a 65g target).",
+     "locked": false,
+     "recipe": {
+      "id": "cmrevpcyh004gwl5gnni3al5q",
+      "name": "Bacon & Eggs",
+      "description": "Weekend breakfast-style plate.",
+      "steps": [
+       "Cook bacon until crisp, set aside.",
+       "Fry or scramble eggs in the bacon fat."
+      ],
+      "slotType": "either",
+      "cuisine": "western-comfort",
+      "prepTimeMin": 15,
+      "source": "curated",
+      "mealCategory": null,
+      "kcal": 557.0999999999999,
+      "protein": 41.7,
+      "fat": 41.7,
+      "carb": 2.49,
+      "tasteTier": "really_good",
+      "tasteTierSource": "curated",
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 3.38,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-10T11:55:10.938Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x0xrg02ozwlw0pw54scav",
+     "planId": "cms6x0xre02orwlw0yjgvs1hq",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 2,
+     "recipeId": "cmrul79sv001uwl80m4kyr7ig",
+     "proteinScale": 2,
+     "sidesScale": 0.5,
+     "ingredients": [
+      {
+       "foodId": "cmrukzae20001wlbwgdjqlh3f",
+       "name": "Textured vegetable protein, dry",
+       "role": "protein",
+       "grams": 110
+      },
+      {
+       "foodId": "cmrj2t88z0087wlwsmsmchxzb",
+       "name": "Quinoa",
+       "role": "carb",
+       "grams": 55
+      },
+      {
+       "foodId": "cmrevpcnl000jwl5gnqnk630b",
+       "name": "Cucumber",
+       "role": "veg",
+       "grams": 45
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 478.5000000000001,
+     "protein": 59.88550000000001,
+     "fat": 7.228,
+     "carb": 45.687,
+     "warning": "Tried 5 recipe(s) for this slot, none fit within tolerance — closest was \"High-Protein TVP & Cucumber with Quinoa\" (landed 479 kcal vs a 582 target; delivered 60g protein vs a 94g target).",
+     "locked": false,
+     "recipe": {
+      "id": "cmrul79sv001uwl80m4kyr7ig",
+      "name": "High-Protein TVP & Cucumber with Quinoa",
+      "description": null,
+      "steps": [
+       "Cook the tvp.",
+       "Serve over quinoa with cucumber."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 367.5,
+      "protein": 34,
+      "fat": 7.8,
+      "carb": 41.9,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 2.31,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:45:29.695Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x0xrh02p1wlw04t9g8bdu",
+     "planId": "cms6x0xre02orwlw0yjgvs1hq",
+     "dayOfWeek": 2,
+     "slotType": "snack",
+     "slotIndex": 0,
+     "recipeId": "cmrfp3wtp000ewlj0rcs6iepn",
+     "proteinScale": 2,
+     "sidesScale": 0.82,
+     "ingredients": [
+      {
+       "foodId": "cmrfoypup0004wl085b1p8hrt",
+       "name": "Fish, tuna, light, canned in water, drained solids",
+       "role": "protein",
+       "grams": 150
+      },
+      {
+       "foodId": "cmrevpcoi000qwl5ghkc51bf4",
+       "name": "Greek yogurt, 0%",
+       "role": "dairy",
+       "grams": 25
+      },
+      {
+       "foodId": "cmrfoyqc20005wl08vpvpwsgl",
+       "name": "Crackers, cheese, whole grain",
+       "role": "carb",
+       "grams": 20
+      },
+      {
+       "foodId": "cmrevpcnl000jwl5gnqnk630b",
+       "name": "Cucumber",
+       "role": "veg",
+       "grams": 65
+      },
+      {
+       "foodId": "cmrfoyqn10006wl080mnva73o",
+       "name": "Oil, corn, peanut, and olive",
+       "role": "fat",
+       "grams": 2
+      },
+      {
+       "foodId": "cmrj2t7ve006iwlwsr3tyleyw",
+       "name": "Lemon Juice",
+       "role": "other",
+       "grams": 5
+      },
+      {
+       "foodId": "cmrfoyr8u0008wl0809yfp9zn",
+       "name": "Dill weed, fresh",
+       "role": "other",
+       "grams": 1
+      }
+     ],
+     "kcal": 257.86,
+     "protein": 33.35959999999999,
+     "fat": 6.837199999999999,
+     "carb": 14.2992,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrfp3wtp000ewlj0rcs6iepn",
+      "name": "Tuna Cucumber Cracker Plate",
+      "description": "Lemon-dill tuna salad with Greek yogurt served over cucumber slices and whole-grain crackers.",
+      "steps": [
+       "Drain tuna and flake into a bowl.",
+       "Mix in Greek yogurt, olive oil, lemon juice, and dill.",
+       "Slice cucumber into rounds.",
+       "Top cucumber and crackers with tuna mixture and serve."
+      ],
+      "slotType": "snack",
+      "cuisine": "mediterranean",
+      "prepTimeMin": 8,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 215.4,
+      "protein": 20.2,
+      "fat": 7,
+      "carb": 17.6,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 0.83,
+      "difficulty": 3,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-11T01:38:18.733Z",
+      "createdByUserId": null
+     }
+    }
+   ],
+   "groceryList": null,
+   "meta": {
+    "matchPct": 88,
+    "attempts": 5,
+    "score": {
+     "daysInTolerance": 0,
+     "avgMatch": 88,
+     "days": [
+      {
+       "dayOfWeek": 2,
+       "dayName": "Wednesday",
+       "matchPct": 88,
+       "totals": {
+        "kcal": 1681,
+        "protein": 189,
+        "fat": 74,
+        "carb": 68
+       },
+       "kcalDeltaPct": -2.7,
+       "proteinShortPct": 15.1,
+       "fatOk": true,
+       "carbOk": true,
+       "inTolerance": false,
+       "miss": "189 g protein vs 223 g — 34 g short",
+       "unfilledSlots": 0,
+       "warnedSlots": 2,
+       "windowIndex": 0,
+       "dayIndex": 0,
+       "key": "0:2"
+      }
+     ],
+     "totalDays": 1
+    },
+    "days": [
+     {
+      "dayOfWeek": 2,
+      "dayName": "Wednesday",
+      "matchPct": 88,
+      "totals": {
+       "kcal": 1681,
+       "protein": 189,
+       "fat": 74,
+       "carb": 68
+      },
+      "kcalDeltaPct": -2.7,
+      "proteinShortPct": 15.1,
+      "fatOk": true,
+      "carbOk": true,
+      "inTolerance": false,
+      "miss": "189 g protein vs 223 g — 34 g short",
+      "unfilledSlots": 0,
+      "warnedSlots": 2,
+      "windowIndex": 0,
+      "dayIndex": 0,
+      "key": "0:2"
+     }
+    ],
+    "diagnosis": {
+     "feasible": false,
+     "reasons": [
+      "1 day(s) landed protein-short: your targets need ~12.9g protein per 100 kcal and only 83 of 889 compliant recipes come close, so the back half of the week runs out of good fits."
+     ],
+     "suggestions": [
+      "AI-generate a few high-protein compliant recipes, set the protein-preference filter, or allow batch-cooking repeats of the dense dishes."
+     ],
+     "binding": {
+      "key": "portion-bounds",
+      "label": "the 0.5x-2x portion limit",
+      "detail": "the compliant dishes exist, but they cannot be scaled far enough to land on every slot's calorie and protein target at once."
+     }
+    },
+    "poolCounts": {
+     "raw": 889,
+     "afterDiet": 889,
+     "afterPrep": 889,
+     "afterStack": 889,
+     "stackExplain": null
+    },
+    "variety": {
+     "mealEligible": 737,
+     "usableForSlot": 319,
+     "slotKcal": 509,
+     "snackEligible": 9,
+     "weeklyMealSlots": 21,
+     "weeklySnackSlots": 7,
+     "repeatCap": 2,
+     "distinctWeeks": 15.2,
+     "horizonWeeks": 1,
+     "sustainsHorizon": true,
+     "notes": [
+      "1 day: 4 distinct dish(es) across 4 filled slot(s); most-repeated dish appears 1x against a 2x cap for this horizon (2x per week)."
+     ],
+     "horizon": {
+      "weeks": 1,
+      "days": 1,
+      "perWeekCap": 2,
+      "horizonRepeatCap": 2,
+      "mealSlots": 3,
+      "snackSlots": 1,
+      "totalSlots": 4,
+      "distinctFloor": 2,
+      "distinctRecipes": 4,
+      "maxRepeat": 1,
+      "maxRepeatRecipeId": "cmrj2u6bh07anwlws4athcnb2",
+      "lockedRepeatsOfMax": 0,
+      "filledSlots": 4,
+      "unfilledSlots": 0,
+      "requiredDistinct": 2,
+      "capHeld": true,
+      "floorHeld": true
+     }
+    },
+    "priorWeeksConsidered": 0,
+    "horizon": {
+     "key": "day",
+     "label": "1 day",
+     "days": 1,
+     "kind": "days",
+     "weeks": 1,
+     "custom": false,
+     "startDate": "2026-07-29",
+     "endDate": "2026-07-29",
+     "startDayOfWeek": 2,
+     "weeksWritten": 1,
+     "solveMs": 7,
+     "weekPlans": [
+      {
+       "startDate": "2026-07-27",
+       "dayIndices": [
+        2
+       ],
+       "days": 1,
+       "daysInTolerance": 0,
+       "avgMatch": 88,
+       "unfilledSlots": 0,
+       "poolSize": 889
+      }
+     ]
+    }
+   }
+  }
+ }
+}

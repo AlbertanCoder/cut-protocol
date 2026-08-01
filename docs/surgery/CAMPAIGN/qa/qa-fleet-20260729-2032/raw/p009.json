@@ -1,0 +1,618 @@
+{
+ "persona": {
+  "idx": 9,
+  "id": "p009",
+  "tier": "EASY",
+  "displayName": "electrician, 58",
+  "story": "electrician, 58, female, 184 cm / 63.9 kg (BMI 18.9), cut at 0.5 lb/wk, keto diet, avoiding dairy, gluten, soy, low-carb, 4 meals + 0 snacks, wants a single day",
+  "profile": {
+   "sex": "F",
+   "age": 58,
+   "heightCm": 184,
+   "startWeightKg": 63.9,
+   "goalWeightKg": 56.2,
+   "occupationKey": "electrician",
+   "trainingStyle": "weights",
+   "minutesPerSession": 45,
+   "sessionsPerWeek": 3,
+   "rateLbPerWeek": 0.5,
+   "dietaryStyle": "keto",
+   "excludedFoods": [
+    "dairy",
+    "gluten",
+    "soy"
+   ],
+   "mealsPerDay": 4,
+   "snacksPerDay": 0,
+   "unitPref": "imperial",
+   "cuisinePreferences": [
+    "indian",
+    "thai"
+   ],
+   "goalWeightAcknowledged": true
+  },
+  "filters": {
+   "cuisines": [
+    "indian",
+    "thai"
+   ]
+  },
+  "horizon": "day",
+  "walls": [
+   "dairy",
+   "gluten",
+   "soy"
+  ],
+  "freeTextExclusions": [],
+  "dietaryStyle": "keto",
+  "bmi": 18.9,
+  "goalKind": "cut",
+  "macroStyle": "low-carb",
+  "requestedButUnsupported": [],
+  "goalBmi": 16.6,
+  "tupleKey": "[\"EASY\",\"F\",58,184,63.9,56.2,\"electrician\",\"weights\",0.5,\"keto\",[\"dairy\",\"gluten\",\"soy\"],4,0,\"low-carb\",\"day\",null,null,null,null,null]"
+ },
+ "request": {
+  "horizon": "day",
+  "filters": {
+   "cuisines": [
+    "indian",
+    "thai"
+   ]
+  }
+ },
+ "profileResponse": {
+  "id": "cms6x09sf00q1wlw0dz39nt6q",
+  "userId": "cms6x09ik0003wl2o049uniyy",
+  "sex": "F",
+  "age": 58,
+  "heightCm": 184,
+  "bodyFatPct": 0,
+  "bodyFatSource": null,
+  "occupationKey": "electrician",
+  "activityOverride": null,
+  "sessionsPerWeek": 3,
+  "trainingStyle": "weights",
+  "minutesPerSession": 45,
+  "startWeightKg": 63.9,
+  "goalWeightKg": 56.2,
+  "startDate": "2026-07-29",
+  "unitPref": "imperial",
+  "rateLbPerWeek": 0.5,
+  "rateAcknowledged": false,
+  "floorKcal": null,
+  "excludedFormulas": [],
+  "targetKcal": 1734,
+  "mealsPerDay": 4,
+  "snacksPerDay": 0,
+  "excludedFoods": [
+   "dairy",
+   "gluten",
+   "soy"
+  ],
+  "dietaryStyle": "keto",
+  "cuisinePreferences": [
+   "indian",
+   "thai"
+  ],
+  "mealPreferencesNote": null,
+  "maxPrepMin": null,
+  "budgetTier": null,
+  "allowBatch": null,
+  "maxComplexity": null,
+  "adaptiveTdee": true,
+  "proteinPriorityMode": false,
+  "updatedAt": "2026-07-30T20:33:02.915Z"
+ },
+ "generate": {
+  "status": 200,
+  "ms": 384,
+  "body": {
+   "id": "cms7z0e0200afwlgw73w65e8k",
+   "userId": "cms6x09ik0003wl2o049uniyy",
+   "startDate": "2026-07-27",
+   "createdAt": "2026-07-30T20:33:03.458Z",
+   "slots": [
+    {
+     "id": "cms7z0e0300ahwlgwckolnd2q",
+     "planId": "cms7z0e0200afwlgw73w65e8k",
+     "dayOfWeek": 3,
+     "slotType": "meal",
+     "slotIndex": 0,
+     "recipeId": "cmrj2thrp01ukwlwsyjd1nnsi",
+     "proteinScale": 0.5,
+     "sidesScale": 2,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t6is000ewlwsmzadlvxo",
+       "name": "Beef",
+       "role": "protein",
+       "grams": 125
+      },
+      {
+       "foodId": "cmrg8zxar000lwli0qy2ovmx4",
+       "name": "Onion",
+       "role": "veg",
+       "grams": 55
+      },
+      {
+       "foodId": "cmrj2t6qh001dwlws2ramsws8",
+       "name": "Bay Leaf",
+       "role": null,
+       "grams": 1
+      },
+      {
+       "foodId": "cmrj2t6gd0003wlwss7jf3wzf",
+       "name": "Salt",
+       "role": null,
+       "grams": 1
+      },
+      {
+       "foodId": "cmrj2t6mf000uwlwsne5kc5wl",
+       "name": "Black Pepper",
+       "role": null,
+       "grams": 1
+      },
+      {
+       "foodId": "cmrj2t6hb0007wlwsh6l6ynal",
+       "name": "Water",
+       "role": null,
+       "grams": 500
+      }
+     ],
+     "kcal": 316.39,
+     "protein": 34.66,
+     "fat": 16.4216,
+     "carb": 6.527,
+     "warning": "Tried 5 recipe(s) for this slot, none fit within tolerance — closest was \"Seswaa\" (landed 316 kcal vs a 385 target).",
+     "locked": false,
+     "recipe": {
+      "id": "cmrj2thrp01ukwlwsyjd1nnsi",
+      "name": "Seswaa",
+      "description": null,
+      "steps": [
+       "Pre heat the oven to 160 degrees Celsius. Cut the meat into large chunks then brown in a dish suitable for slow cooking in the oven such as a cast iron casserole dish.",
+       "Add the whole peeled onion, salt, cracked black pepper, water and bay leaves. Bring to the boil then cover and place into the oven for 4 hours.",
+       "After 4 hours, remove from oven and place onto the stove burner in order to cook off most of the remaining liquid. Use a wooden spoon to pound or mash up the meat, the meat should fall apart quite easily. and will appear shredded. You may brown the meat further if desired.",
+       "Check seasoning then serve with polenta or the more traditional thick cornmeal porridge known as pap or sadza, and a side of green vegetables."
+      ],
+      "slotType": "meal",
+      "cuisine": "western-comfort",
+      "prepTimeMin": 22,
+      "source": "themealdb-import",
+      "mealCategory": null,
+      "kcal": 590.5,
+      "protein": 68.1,
+      "fat": 32.6,
+      "carb": 3.1,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 11.34,
+      "difficulty": 3,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-13T10:25:25.814Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z0e0400ajwlgwxzhjer76",
+     "planId": "cms7z0e0200afwlgw73w65e8k",
+     "dayOfWeek": 3,
+     "slotType": "meal",
+     "slotIndex": 1,
+     "recipeId": "cmrj2u8pt07tzwlws9h0lxepi",
+     "proteinScale": 0.79,
+     "sidesScale": 0.79,
+     "ingredients": [
+      {
+       "foodId": "cmrj2tbdg00kewlwsk3jyuawz",
+       "name": "Herring",
+       "role": null,
+       "grams": 160
+      },
+      {
+       "foodId": "cmrg8zxar000lwli0qy2ovmx4",
+       "name": "Onion",
+       "role": "veg",
+       "grams": 6
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 20
+      },
+      {
+       "foodId": "cmrj2t7at003uwlwsq3e1ii9n",
+       "name": "Allspice",
+       "role": null,
+       "grams": 1
+      },
+      {
+       "foodId": "cmrj2t6gl0004wlws73buybhw",
+       "name": "Pepper",
+       "role": null,
+       "grams": 1
+      },
+      {
+       "foodId": "cmrj2t6qh001dwlws2ramsws8",
+       "name": "Bay Leaf",
+       "role": null,
+       "grams": 1
+      }
+     ],
+     "kcal": 443.47,
+     "protein": 29.1069,
+     "fat": 34.6095,
+     "carb": 2.6714,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrj2u8pt07tzwlws9h0lxepi",
+      "name": "Sledz w Oleju (Polish Herrings)",
+      "description": null,
+      "steps": [
+       "Soak herring in cold water for at least 1 hour. If very salty, repeat, changing the water each time.",
+       "Drain thoroughly and slice herring into bite-size pieces.",
+       "Place in a jar large enough to accommodate the pieces and cover with oil, allspice, peppercorns, and bay leaf. Close the jar.",
+       "Refrigerate for 2 to 3 days before eating. This will keep refrigerated up to 2 weeks.",
+       "Serve with finely chopped onion or onion slices, lemon, and parsley or dill."
+      ],
+      "slotType": "meal",
+      "cuisine": "western-comfort",
+      "prepTimeMin": 25,
+      "source": "themealdb-import",
+      "mealCategory": null,
+      "kcal": 568.46825,
+      "protein": 36.2159975,
+      "fat": 45.3564125,
+      "carb": 1.811525,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 6.46,
+      "difficulty": 3,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-13T10:26:00.738Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z0e0500alwlgwppq0mozq",
+     "planId": "cms7z0e0200afwlgw73w65e8k",
+     "dayOfWeek": 3,
+     "slotType": "meal",
+     "slotIndex": 2,
+     "recipeId": "cmrevpcyh004gwl5gnni3al5q",
+     "proteinScale": 0.81,
+     "sidesScale": 0.81,
+     "ingredients": [
+      {
+       "foodId": "cmrevpcmu000cwl5gfljr1l1o",
+       "name": "Bacon, cooked",
+       "role": "protein",
+       "grams": 50
+      },
+      {
+       "foodId": "cmrevpcm50006wl5g2u2bcspd",
+       "name": "Eggs, whole, cooked",
+       "role": "protein",
+       "grams": 120
+      }
+     ],
+     "kcal": 456.5,
+     "protein": 34.1,
+     "fat": 34.2,
+     "carb": 2.02,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrevpcyh004gwl5gnni3al5q",
+      "name": "Bacon & Eggs",
+      "description": "Weekend breakfast-style plate.",
+      "steps": [
+       "Cook bacon until crisp, set aside.",
+       "Fry or scramble eggs in the bacon fat."
+      ],
+      "slotType": "either",
+      "cuisine": "western-comfort",
+      "prepTimeMin": 15,
+      "source": "curated",
+      "mealCategory": null,
+      "kcal": 557.0999999999999,
+      "protein": 41.7,
+      "fat": 41.7,
+      "carb": 2.49,
+      "tasteTier": "really_good",
+      "tasteTierSource": "curated",
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 3.38,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-10T11:55:10.938Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z0e0500anwlgwbprbt6dj",
+     "planId": "cms7z0e0200afwlgw73w65e8k",
+     "dayOfWeek": 3,
+     "slotType": "meal",
+     "slotIndex": 3,
+     "recipeId": "cmrj2tggn01jtwlwsfpr46mf4",
+     "proteinScale": 0.5,
+     "sidesScale": 0.73,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t6hb0007wlwsh6l6ynal",
+       "name": "Water",
+       "role": null,
+       "grams": 170
+      },
+      {
+       "foodId": "cmrj2t7kx0055wlwsdnc87tsf",
+       "name": "Sirloin Steak tips",
+       "role": "protein",
+       "grams": 115
+      },
+      {
+       "foodId": "cmrj2t6rr001jwlwsqfi60fyj",
+       "name": "Garlic Clove",
+       "role": null,
+       "grams": 3
+      },
+      {
+       "foodId": "cmrj2t7l40056wlws69opouvc",
+       "name": "Ground Ginger",
+       "role": "veg",
+       "grams": 1
+      },
+      {
+       "foodId": "cmrj2t6xs002awlwsfwq9grns",
+       "name": "Oil",
+       "role": "fat",
+       "grams": 35
+      },
+      {
+       "foodId": "cmrj2t6vv0021wlwsx5wv83r4",
+       "name": "Red Onions",
+       "role": "veg",
+       "grams": 40
+      },
+      {
+       "foodId": "cmrj2t6ik000dwlwsj8e736h1",
+       "name": "Tomato",
+       "role": "veg",
+       "grams": 90
+      },
+      {
+       "foodId": "cmrj2t6jp000iwlwsli2ckg55",
+       "name": "Paprika",
+       "role": null,
+       "grams": 1
+      },
+      {
+       "foodId": "cmrj2t6mf000uwlwsne5kc5wl",
+       "name": "Black Pepper",
+       "role": null,
+       "grams": 1
+      },
+      {
+       "foodId": "cmrj2t7k10051wlwsghd1hb86",
+       "name": "Curry Powder",
+       "role": null,
+       "grams": 2
+      },
+      {
+       "foodId": "cmrj2t6pz001bwlwsbarwpyy1",
+       "name": "Tomato Puree",
+       "role": "veg",
+       "grams": 8
+      },
+      {
+       "foodId": "cmrj2t6gd0003wlwss7jf3wzf",
+       "name": "Salt",
+       "role": null,
+       "grams": 1
+      },
+      {
+       "foodId": "cmrj2t7lb0057wlws13ompczm",
+       "name": "Chilli",
+       "role": null,
+       "grams": 3
+      },
+      {
+       "foodId": "cmrj2t7lj0058wlwsk4i51m8h",
+       "name": "Cilantro",
+       "role": null,
+       "grams": 18
+      }
+     ],
+     "kcal": 582.7900000000001,
+     "protein": 36.01979999999999,
+     "fat": 44.4043,
+     "carb": 13.2488,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrj2tggn01jtwlwsfpr46mf4",
+      "name": "Kenyan Beef Curry",
+      "description": null,
+      "steps": [
+       "Bring the 4 cups of water to a boil in a Dutch oven or soup pot. Add the beef, garlic, and ginger, and stir well. Bring to a gentle simmer, cover, and cook, stirring occasionally, for 20 minutes. If you get any foamy scum on the top, not to worry, simply spoon it away or stir it back in.",
+       "Remove from the heat, and drain, but reserve the excess water for later.",
+       "Return the pot or Dutch oven to medium heat with the 2 tablespoons of cooking oil. Once the oil is shimmering, add the onions and cook, stirring occasionally, until softened, 5 to 7 minutes.",
+       "Add the tomatoes to the onions, and continue cooking, stirring occasionally, until the tomatoes are falling apart, 3 to 5 minutes.",
+       "Add the drained beef to the tomato and onion mixture, and stir well. Continue cooking over medium heat for 5 minutes, stirring occasionally.",
+       "Add the paprika, pepper, curry powder, tomato paste, and salt to taste, and stir well.",
+       "Add back the excess water that was used for cooking the beef, along with enough extra water to cover. Bring to a boil, reduce heat, and simmer, uncovered, stirring occasionally, for about 1 hour, or until the meat is tender and the sauce is thickened. Add additional water if your beef curry begins to dry and stick, or if would like your curry to have more of a soupy consistency.",
+       "When the beef curry is ready, remove from the heat, give it a taste, and adjust the seasonings as desired. Garnish with fresh chilis and cilantro."
+      ],
+      "slotType": "meal",
+      "cuisine": "indian",
+      "prepTimeMin": 39,
+      "source": "themealdb-import",
+      "mealCategory": null,
+      "kcal": 935.0275,
+      "protein": 69.03742500000001,
+      "fat": 67.7464725,
+      "carb": 16.64027,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 14.27,
+      "difficulty": 6,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-13T10:25:24.119Z",
+      "createdByUserId": null
+     }
+    }
+   ],
+   "groceryList": null,
+   "meta": {
+    "matchPct": 98,
+    "attempts": 2,
+    "score": {
+     "daysInTolerance": 1,
+     "avgMatch": 98,
+     "days": [
+      {
+       "dayOfWeek": 3,
+       "dayName": "Thursday",
+       "matchPct": 98,
+       "totals": {
+        "kcal": 1799,
+        "protein": 134,
+        "fat": 130,
+        "carb": 24
+       },
+       "kcalDeltaPct": 3.8,
+       "proteinShortPct": 0,
+       "fatOk": true,
+       "carbOk": true,
+       "inTolerance": true,
+       "miss": null,
+       "unfilledSlots": 0,
+       "warnedSlots": 1,
+       "windowIndex": 0,
+       "dayIndex": 0,
+       "key": "0:3"
+      }
+     ],
+     "totalDays": 1
+    },
+    "days": [
+     {
+      "dayOfWeek": 3,
+      "dayName": "Thursday",
+      "matchPct": 98,
+      "totals": {
+       "kcal": 1799,
+       "protein": 134,
+       "fat": 130,
+       "carb": 24
+      },
+      "kcalDeltaPct": 3.8,
+      "proteinShortPct": 0,
+      "fatOk": true,
+      "carbOk": true,
+      "inTolerance": true,
+      "miss": null,
+      "unfilledSlots": 0,
+      "warnedSlots": 1,
+      "windowIndex": 0,
+      "dayIndex": 0,
+      "key": "0:3"
+     }
+    ],
+    "diagnosis": null,
+    "poolCounts": {
+     "raw": 910,
+     "afterDiet": 22,
+     "afterPrep": 22,
+     "afterStack": 22,
+     "stackExplain": null
+    },
+    "variety": {
+     "mealEligible": 19,
+     "usableForSlot": 10,
+     "slotKcal": 434,
+     "snackEligible": 3,
+     "weeklyMealSlots": 28,
+     "weeklySnackSlots": 0,
+     "repeatCap": 2,
+     "distinctWeeks": 0.4,
+     "horizonWeeks": 1,
+     "sustainsHorizon": false,
+     "notes": [
+      "10 of your 19 compliant recipes can be portioned to a 434 kcal meal — about 0.3 week(s) of 28 meals before dishes start repeating, so over 1 weeks you will see favourites come back.",
+      "1 day: 4 distinct dish(es) across 4 filled slot(s); most-repeated dish appears 1x against a 2x cap for this horizon (2x per week)."
+     ],
+     "horizon": {
+      "weeks": 1,
+      "days": 1,
+      "perWeekCap": 2,
+      "horizonRepeatCap": 2,
+      "mealSlots": 4,
+      "snackSlots": 0,
+      "totalSlots": 4,
+      "distinctFloor": 2,
+      "distinctRecipes": 4,
+      "maxRepeat": 1,
+      "maxRepeatRecipeId": "cmrj2thrp01ukwlwsyjd1nnsi",
+      "lockedRepeatsOfMax": 0,
+      "filledSlots": 4,
+      "unfilledSlots": 0,
+      "requiredDistinct": 2,
+      "capHeld": true,
+      "floorHeld": true
+     }
+    },
+    "priorWeeksConsidered": 0,
+    "horizon": {
+     "key": "day",
+     "label": "1 day",
+     "days": 1,
+     "kind": "days",
+     "weeks": 1,
+     "custom": false,
+     "startDate": "2026-07-30",
+     "endDate": "2026-07-30",
+     "startDayOfWeek": 3,
+     "weeksWritten": 1,
+     "solveMs": 0,
+     "weekPlans": [
+      {
+       "startDate": "2026-07-27",
+       "dayIndices": [
+        3
+       ],
+       "days": 1,
+       "daysInTolerance": 1,
+       "avgMatch": 98,
+       "unfilledSlots": 0,
+       "poolSize": 22
+      }
+     ]
+    }
+   }
+  }
+ }
+}

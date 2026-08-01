@@ -1,0 +1,588 @@
+{
+ "persona": {
+  "idx": 161,
+  "id": "p161",
+  "tier": "EASY",
+  "displayName": "retail cashier, 50",
+  "story": "retail cashier, 50 (managing meals for a 14-year-old), female, 172 cm / 102.5 kg (BMI 34.6), lean bulk at 0.5 lb/wk, keto diet, avoiding soy, balanced, 3 meals + 1 snacks, wants a single day",
+  "profile": {
+   "sex": "F",
+   "age": 50,
+   "heightCm": 172,
+   "startWeightKg": 102.5,
+   "goalWeightKg": 112.7,
+   "occupationKey": "cashier",
+   "trainingStyle": "cardio",
+   "minutesPerSession": 25,
+   "sessionsPerWeek": 2,
+   "rateLbPerWeek": 0.5,
+   "dietaryStyle": "keto",
+   "excludedFoods": [
+    "soy"
+   ],
+   "mealsPerDay": 3,
+   "snacksPerDay": 1,
+   "unitPref": "metric"
+  },
+  "filters": {},
+  "horizon": "day",
+  "walls": [
+   "soy"
+  ],
+  "freeTextExclusions": [],
+  "dietaryStyle": "keto",
+  "bmi": 34.6,
+  "goalKind": "lean bulk",
+  "macroStyle": "balanced",
+  "requestedButUnsupported": [
+   "managing meals for a 14-year-old; the app has no parent-managed or dependent flag (adultGate refuses under-18 outright), so only the adult's own plan can be built"
+  ],
+  "parentManaged": {
+   "kidAge": 14,
+   "note": "managing meals for a 14-year-old"
+  },
+  "tupleKey": "[\"EASY\",\"F\",50,172,102.5,112.7,\"cashier\",\"cardio\",0.5,\"keto\",[\"soy\"],3,1,\"balanced\",\"day\",null,null,null,null,null]"
+ },
+ "request": {
+  "horizon": "day",
+  "filters": {}
+ },
+ "profileResponse": {
+  "id": "cms6x1crv044twlw0uog5otnw",
+  "userId": "cms6x1cba004bwl2ot91b2ty0",
+  "sex": "F",
+  "age": 50,
+  "heightCm": 172,
+  "bodyFatPct": 0,
+  "bodyFatSource": null,
+  "occupationKey": "cashier",
+  "activityOverride": null,
+  "sessionsPerWeek": 2,
+  "trainingStyle": "cardio",
+  "minutesPerSession": 25,
+  "startWeightKg": 102.5,
+  "goalWeightKg": 112.7,
+  "startDate": "2026-07-29",
+  "unitPref": "metric",
+  "rateLbPerWeek": 0.5,
+  "rateAcknowledged": false,
+  "floorKcal": null,
+  "excludedFormulas": [],
+  "targetKcal": 2041,
+  "mealsPerDay": 3,
+  "snacksPerDay": 1,
+  "excludedFoods": [
+   "soy"
+  ],
+  "dietaryStyle": "keto",
+  "cuisinePreferences": [],
+  "mealPreferencesNote": null,
+  "maxPrepMin": null,
+  "budgetTier": null,
+  "allowBatch": null,
+  "maxComplexity": null,
+  "adaptiveTdee": true,
+  "proteinPriorityMode": false,
+  "updatedAt": "2026-07-30T02:50:03.323Z"
+ },
+ "generate": {
+  "status": 200,
+  "ms": 31,
+  "body": {
+   "id": "cms6x1cye0457wlw0492ix2az",
+   "userId": "cms6x1cba004bwl2ot91b2ty0",
+   "startDate": "2026-07-27",
+   "createdAt": "2026-07-30T02:50:03.350Z",
+   "slots": [
+    {
+     "id": "cms6x1cyf0459wlw012m0813a",
+     "planId": "cms6x1cye0457wlw0492ix2az",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 0,
+     "recipeId": "cmrj2twow055vwlws2m6xj8rm",
+     "proteinScale": 0.73,
+     "sidesScale": 0.69,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t9z700f1wlwsb36u0abl",
+       "name": "Lamb",
+       "role": "protein",
+       "grams": 250
+      },
+      {
+       "foodId": "cmrj2t788003iwlwsdtufusv7",
+       "name": "White Cabbage",
+       "role": "veg",
+       "grams": 17
+      },
+      {
+       "foodId": "cmrj2t9zg00f2wlwsl23mool5",
+       "name": "Whole black peppercorns",
+       "role": null,
+       "grams": 5
+      },
+      {
+       "foodId": "cmrj2t6gd0003wlwss7jf3wzf",
+       "name": "Salt",
+       "role": null,
+       "grams": 2
+      },
+      {
+       "foodId": "cmrj2t6hb0007wlwsh6l6ynal",
+       "name": "Water",
+       "role": null,
+       "grams": 60
+      },
+      {
+       "foodId": "cmrj2t7ho004qwlws8t7qsudo",
+       "name": "Flour",
+       "role": "carb",
+       "grams": 7
+      }
+     ],
+     "kcal": 538.24,
+     "protein": 51.018,
+     "fat": 34.162,
+     "carb": 6.757000000000001,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrj2twow055vwlws2m6xj8rm",
+      "name": "Fårikål (Norwegian National Dish)",
+      "description": null,
+      "steps": [
+       "▢",
+       "Cut the lamb into large pieces.",
+       "▢",
+       "Slice the cabbage into large wedges, keeping the core attached.",
+       "▢",
+       "Add a layer of lamb pieces to the bottom of a large pot, fatty side down. Sprinkle with peppercorns and salt. Add a layer of cabbage wedges on top. Repeat with more layers of lamb, peppercorns, and cabbage, ending with cabbage on top.",
+       "▢",
+       "Optional: Sprinkle a couple of tablespoons on top of the lamb for a thicker stew.",
+       "▢",
+       "Add water to the pot and bring to a boil. Cover and reduce heat. Cook on low heat for 2 – 3 hours, until the lamb gently falls away from the bone.",
+       "▢",
+       "Serve with boiled potatoes and fresh parsley, covering generously with the fårikål broth."
+      ],
+      "slotType": "meal",
+      "cuisine": "western-comfort",
+      "prepTimeMin": 45,
+      "source": "themealdb-import",
+      "mealCategory": null,
+      "kcal": 734.9,
+      "protein": 69.4,
+      "fat": 46.6,
+      "carb": 9.5,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 16.63,
+      "difficulty": 5,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-13T10:25:45.152Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x1cyf045bwlw02fpxuqqc",
+     "planId": "cms6x1cye0457wlw0492ix2az",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 1,
+     "recipeId": "cmrj2tctf00r5wlwshnmjtoqv",
+     "proteinScale": 1.15,
+     "sidesScale": 1.04,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t6is000ewlwsmzadlvxo",
+       "name": "Beef",
+       "role": "protein",
+       "grams": 145
+      },
+      {
+       "foodId": "cmrg8zxar000lwli0qy2ovmx4",
+       "name": "Onion",
+       "role": "veg",
+       "grams": 30
+      },
+      {
+       "foodId": "cmrj2t6j0000fwlwsog8rz1h6",
+       "name": "Red Pepper",
+       "role": null,
+       "grams": 1
+      },
+      {
+       "foodId": "cmrj2t6ft0001wlwstiofk9on",
+       "name": "Garlic",
+       "role": "veg",
+       "grams": 2
+      },
+      {
+       "foodId": "cmrj2t6j9000gwlwstmjp6mv2",
+       "name": "Cumin",
+       "role": null,
+       "grams": 1
+      },
+      {
+       "foodId": "cmrj2t6jh000hwlwsev33v7zd",
+       "name": "Oregano",
+       "role": null,
+       "grams": 1
+      },
+      {
+       "foodId": "cmrj2t6jp000iwlwsli2ckg55",
+       "name": "Paprika",
+       "role": null,
+       "grams": 1
+      },
+      {
+       "foodId": "cmrj2t6jx000jwlws245wvtmm",
+       "name": "Beef Stock",
+       "role": "protein",
+       "grams": 290
+      },
+      {
+       "foodId": "cmrj2t6hb0007wlwsh6l6ynal",
+       "name": "Water",
+       "role": null,
+       "grams": 155
+      },
+      {
+       "foodId": "cmrj2t6gd0003wlwss7jf3wzf",
+       "name": "Salt",
+       "role": null,
+       "grams": 1
+      },
+      {
+       "foodId": "cmrj2t6k6000kwlws6nnvgyhz",
+       "name": "Cheese",
+       "role": null,
+       "grams": 50
+      },
+      {
+       "foodId": "cmrj2t6kg000lwlwsgcajfryi",
+       "name": "Extra Virgin Olive Oil",
+       "role": "carb",
+       "grams": 1
+      }
+     ],
+     "kcal": 596.36,
+     "protein": 56.23836,
+     "fat": 36.19466,
+     "carb": 10.7485,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrj2tctf00r5wlwshnmjtoqv",
+      "name": "Arepa pelua",
+      "description": null,
+      "steps": [
+       "Cook the meat: Place the flank steak in a pot with broth or water and salt. Cook over low heat for about 2 hours, until tender and easy to shred.",
+       "Shred the meat: Once cooked, drain and shred the meat using two forks.",
+       "Prepare the vegetables: Sauté chopped onion, bell pepper, and garlic in a little oil. Add cumin, oregano, paprika, and salt. Stir in the meat and cook for a few minutes until the flavors are well combined.",
+       "Make the dough: In a bowl, mix the cornmeal with warm water and salt until a soft dough forms. Let it rest for 5 minutes.",
+       "Form the arepas: Divide the dough into 6 portions, shape into balls, and flatten into thick discs.",
+       "Cook: Cook the arepas on a griddle or skillet over medium heat for 2–3 minutes on each side until golden. You can then bake them for a few minutes if you prefer them crispier.",
+       "Fill: Slice the arepas open on one side, fill with the hot shredded beef, and top with grated cheese."
+      ],
+      "slotType": "meal",
+      "cuisine": "western-comfort",
+      "prepTimeMin": 35,
+      "source": "themealdb-import",
+      "mealCategory": null,
+      "kcal": 534,
+      "protein": 50,
+      "fat": 32.6,
+      "carb": 9.6,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 7.33,
+      "difficulty": 5,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-13T10:25:19.395Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x1cyg045dwlw0d44c4gr7",
+     "planId": "cms6x1cye0457wlw0492ix2az",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 2,
+     "recipeId": "cmrj2u6bh07anwlws4athcnb2",
+     "proteinScale": 1.04,
+     "sidesScale": 1.82,
+     "ingredients": [
+      {
+       "foodId": "cmrj2taw400ikwlwsh1obe0tn",
+       "name": "Raw King Prawns",
+       "role": "protein",
+       "grams": 310
+      },
+      {
+       "foodId": "cmrj2t6rr001jwlwsqfi60fyj",
+       "name": "Garlic Clove",
+       "role": null,
+       "grams": 4
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "carb",
+       "grams": 40
+      },
+      {
+       "foodId": "cmrj2t7pt005swlwszhtld1bv",
+       "name": "Cayenne Pepper",
+       "role": null,
+       "grams": 3
+      },
+      {
+       "foodId": "cmrj2t6h10006wlwslufza94y",
+       "name": "Parsley",
+       "role": null,
+       "grams": 45
+      }
+     ],
+     "kcal": 655.2,
+     "protein": 64.2625,
+     "fat": 42.4445,
+     "carb": 8.660499999999999,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrj2u6bh07anwlws4athcnb2",
+      "name": "Gambas al ajillo",
+      "description": null,
+      "steps": [
+       "step 1",
+       "Peel the prawns, leaving the tails intact, and, using a cocktail stick, remove the digestive tracts. Or, if you are using a frying pan rather than a terracotta pot, you can cook the prawns in their shells. Season with a little sea salt.",
+       "step 2",
+       "Put the garlic, olive oil and chillies in a flameproof terracotta pot or frying pan and set over a high heat. When the garlic starts to turn golden, add the prawns and cook for 1-2 mins on each side until just pink. Sprinkle over the chopped parsley and some freshly cracked black pepper, and serve immediately. If using a terracotta pot, you can take that straight to the table, but be careful with it as the oil and terracotta will remain hot for several minutes."
+      ],
+      "slotType": "meal",
+      "cuisine": "western-comfort",
+      "prepTimeMin": 22,
+      "source": "themealdb-import",
+      "mealCategory": null,
+      "kcal": 479.3,
+      "protein": 61.4,
+      "fat": 25,
+      "carb": 5.9,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 18.21,
+      "difficulty": 2,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-13T10:25:57.630Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x1cyh045fwlw01vwwos46",
+     "planId": "cms6x1cye0457wlw0492ix2az",
+     "dayOfWeek": 2,
+     "slotType": "snack",
+     "slotIndex": 0,
+     "recipeId": "cmrevpcyh004gwl5gnni3al5q",
+     "proteinScale": 0.5,
+     "sidesScale": 0.5,
+     "ingredients": [
+      {
+       "foodId": "cmrevpcmu000cwl5gfljr1l1o",
+       "name": "Bacon, cooked",
+       "role": "protein",
+       "grams": 30
+      },
+      {
+       "foodId": "cmrevpcm50006wl5g2u2bcspd",
+       "name": "Eggs, whole, cooked",
+       "role": "protein",
+       "grams": 75
+      }
+     ],
+     "kcal": 278.55,
+     "protein": 20.85,
+     "fat": 20.85,
+     "carb": 1.245,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrevpcyh004gwl5gnni3al5q",
+      "name": "Bacon & Eggs",
+      "description": "Weekend breakfast-style plate.",
+      "steps": [
+       "Cook bacon until crisp, set aside.",
+       "Fry or scramble eggs in the bacon fat."
+      ],
+      "slotType": "either",
+      "cuisine": "western-comfort",
+      "prepTimeMin": 15,
+      "source": "curated",
+      "mealCategory": null,
+      "kcal": 557.0999999999999,
+      "protein": 41.7,
+      "fat": 41.7,
+      "carb": 2.49,
+      "tasteTier": "really_good",
+      "tasteTierSource": "curated",
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 3.38,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-10T11:55:10.938Z",
+      "createdByUserId": null
+     }
+    }
+   ],
+   "groceryList": null,
+   "meta": {
+    "matchPct": 99,
+    "attempts": 1,
+    "score": {
+     "daysInTolerance": 1,
+     "avgMatch": 99,
+     "days": [
+      {
+       "dayOfWeek": 2,
+       "dayName": "Wednesday",
+       "matchPct": 99,
+       "totals": {
+        "kcal": 2068,
+        "protein": 192,
+        "fat": 134,
+        "carb": 27
+       },
+       "kcalDeltaPct": 1.3,
+       "proteinShortPct": 0.8,
+       "fatOk": true,
+       "carbOk": true,
+       "inTolerance": true,
+       "miss": null,
+       "unfilledSlots": 0,
+       "warnedSlots": 0,
+       "windowIndex": 0,
+       "dayIndex": 0,
+       "key": "0:2"
+      }
+     ],
+     "totalDays": 1
+    },
+    "days": [
+     {
+      "dayOfWeek": 2,
+      "dayName": "Wednesday",
+      "matchPct": 99,
+      "totals": {
+       "kcal": 2068,
+       "protein": 192,
+       "fat": 134,
+       "carb": 27
+      },
+      "kcalDeltaPct": 1.3,
+      "proteinShortPct": 0.8,
+      "fatOk": true,
+      "carbOk": true,
+      "inTolerance": true,
+      "miss": null,
+      "unfilledSlots": 0,
+      "warnedSlots": 0,
+      "windowIndex": 0,
+      "dayIndex": 0,
+      "key": "0:2"
+     }
+    ],
+    "diagnosis": null,
+    "poolCounts": {
+     "raw": 889,
+     "afterDiet": 31,
+     "afterPrep": 31,
+     "afterStack": 31,
+     "stackExplain": null
+    },
+    "variety": {
+     "mealEligible": 30,
+     "usableForSlot": 19,
+     "slotKcal": 601,
+     "snackEligible": 2,
+     "weeklyMealSlots": 21,
+     "weeklySnackSlots": 7,
+     "repeatCap": 2,
+     "distinctWeeks": 0.9,
+     "horizonWeeks": 1,
+     "sustainsHorizon": false,
+     "notes": [
+      "19 of your 30 compliant recipes can be portioned to a 601 kcal meal — about 0.9 week(s) of 21 meals before dishes start repeating, so over 1 weeks you will see favourites come back.",
+      "Only 2 snack recipe(s) fit your rules, so the same snacks come back every week.",
+      "1 day: 4 distinct dish(es) across 4 filled slot(s); most-repeated dish appears 1x against a 2x cap for this horizon (2x per week)."
+     ],
+     "horizon": {
+      "weeks": 1,
+      "days": 1,
+      "perWeekCap": 2,
+      "horizonRepeatCap": 2,
+      "mealSlots": 3,
+      "snackSlots": 1,
+      "totalSlots": 4,
+      "distinctFloor": 2,
+      "distinctRecipes": 4,
+      "maxRepeat": 1,
+      "maxRepeatRecipeId": "cmrj2twow055vwlws2m6xj8rm",
+      "lockedRepeatsOfMax": 0,
+      "filledSlots": 4,
+      "unfilledSlots": 0,
+      "requiredDistinct": 2,
+      "capHeld": true,
+      "floorHeld": true
+     }
+    },
+    "priorWeeksConsidered": 0,
+    "horizon": {
+     "key": "day",
+     "label": "1 day",
+     "days": 1,
+     "kind": "days",
+     "weeks": 1,
+     "custom": false,
+     "startDate": "2026-07-29",
+     "endDate": "2026-07-29",
+     "startDayOfWeek": 2,
+     "weeksWritten": 1,
+     "solveMs": 0,
+     "weekPlans": [
+      {
+       "startDate": "2026-07-27",
+       "dayIndices": [
+        2
+       ],
+       "days": 1,
+       "daysInTolerance": 1,
+       "avgMatch": 99,
+       "unfilledSlots": 0,
+       "poolSize": 31
+      }
+     ]
+    }
+   }
+  }
+ }
+}

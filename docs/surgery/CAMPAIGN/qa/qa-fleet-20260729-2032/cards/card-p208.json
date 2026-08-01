@@ -1,0 +1,70 @@
+{
+  "personaId": "p208",
+  "satisfaction": 2,
+  "wouldRecommend": false,
+  "criteria": {
+    "macrosInRange": 1,
+    "worksEndToEnd": 4,
+    "mealsAreGood": 2,
+    "affordableAdjustable": 5,
+    "tasty": 3
+  },
+  "allergenRespect": {
+    "ok": true,
+    "leaks": []
+  },
+  "delights": [
+    "Nothing broke a wall. Across both meals and all three alternates every single ingredient was vegan and gluten-free - Potatoes, Olive Oil, Onion, Garlic, Paprika, Tomato Puree, Tinned Tomatos, Basil Leaves, Parsley, Aubergine, Courgettes, Leek, Rice, Vegetable Stock. No soy, no wheat, no peanut, no tree nut, no sesame, no dairy or egg. That is the thing I care about most and it held.",
+    "It refuses to pretend it succeeded: 'Tried 5 recipe(s) for this slot, none fit within tolerance - closest was \"Air fryer patatas bravas\" (delivered 75g protein vs a 96g target).' It tells me the shortfall in grams instead of quietly handing me a plan that misses.",
+    "Alternates came back instantly with an honest match score on each - 'Boulangere Potatoes' 94%, 'Ratatouille' 44%, 'Tave me Presh ska Mish Meatless Leek Bake' 27% - so I could see how bad my options were rather than guess."
+  ],
+  "defects": [
+    {
+      "what": "The macro numbers are impossible for the ingredients listed - potatoes and tomato sauce cannot deliver 74g of protein. Every number I was shown is roughly triple reality.",
+      "snippet": "Air fryer patatas bravas: Potatoes 450g, Olive Oil 20g, Onion 55g, Garlic 2g, Paprika 1g, Tomato Puree 60g, Tinned Tomatos 115g, Basil Leaves 50g -> \"kcal\":1785.68, \"protein\":74.51, \"carb\":310.27"
+    },
+    {
+      "what": "Because the protein numbers are invented, the ranking is built on them - my 94% best-match alternate is potatoes, onion, thyme, oil and stock claiming 105g of protein.",
+      "snippet": "Boulangere Potatoes: Onion 115g, Thyme 50g, Olive Oil 14g, Potatoes 775g, Vegetable Stock 220g -> \"protein\":105.3, \"matchPct\":94"
+    },
+    {
+      "what": "I asked for 2 meals + 1 snack. The snack does not exist - null recipe, zero calories, a third of my eating shape simply missing.",
+      "snippet": "\"slotType\":\"snack\",\"recipeId\":null,\"ingredients\":[],\"kcal\":0,\"warning\":\"No eligible snack recipe left for this slot.\""
+    },
+    {
+      "what": "The same dish was served to me twice in one day and the variety check did not notice the near-identical names.",
+      "snippet": "meal 0 \"Air fryer patatas bravas\" / meal 1 \"Patatas bravas\" - both western-comfort, both Potatoes 450g + Olive Oil + Onion + Garlic + Paprika + Tinned Tomatos"
+    },
+    {
+      "what": "No protein source anywhere in the day or in any alternate. As a vegan who cannot have soy, legumes, gluten, nuts or sesame I was handed 900g of potato and told I was short.",
+      "snippet": "day total P 115g claimed (really ~25g from these ingredients) with 515.8g carbs = 70% of calories from carbohydrate, against a low-carb preference"
+    },
+    {
+      "what": "targetKcal of 4939 is set for a man cutting at 2 lb/week, and the solver then tried to make single meals hit 2318-2340 kcal. It also has my acknowledgement and my protein-priority flag switched off.",
+      "snippet": "\"targetKcal\":4939, \"rateLbPerWeek\":2, \"rateAcknowledged\":false, \"proteinPriorityMode\":false"
+    },
+    {
+      "what": "Swapping a slot rejects the obvious payload with an error that blames the recipe for being empty; it only works if the client echoes the whole ingredients array back.",
+      "snippet": "PUT /api/plans/.../apply {\"recipeId\":\"cmrj2uhqt09t7wlwsgyejz3ia\",\"proteinScale\":2,\"sidesScale\":2} -> 400 {\"error\":\"a slot needs at least one ingredient\"}"
+    },
+    {
+      "what": "Stored warning text is double-encoded, so the message I read is garbled mid-sentence (a freshly written one on the same day is clean, so it is inconsistent).",
+      "snippet": "none fit within tolerance â€” closest was \"Air fryer patatas bravas\""
+    },
+    {
+      "what": "Garnish herbs are scaled as if they were vegetables, and one food name is misspelled.",
+      "snippet": "Basil Leaves 50g, Parsley 50g, Thyme 50g; food named \"Tinned Tomatos\""
+    },
+    {
+      "what": "Recipe instructions contain leftover placeholder lines interleaved with the real method, and the plan carried no grocery list.",
+      "snippet": "\"steps\":[\"step 1\",\"Soak the potatoes in just-boiled water...\",\"step 2\",...] ; \"groceryList\":null"
+    }
+  ],
+  "followUp": {
+    "action": "Asked for alternates on the second potato dish because I had been given patatas bravas twice, then swapped Ratatouille in for variety",
+    "endpoint": "POST /api/plans/cms6x1oqe05a5wlw0nyvlp2wr/slots/cms6x1oqg05a9wlw0agy86el2/alternates then PUT .../apply",
+    "status": 200,
+    "howItWent": "Alternates returned three options instantly with match scores, but all three were vegetable-only and the top-ranked one was more potatoes, so the swap did not solve my real problem. The apply call first failed with 400 'a slot needs at least one ingredient' and only succeeded when I sent the entire alternate object back, leaving my day at 2958 kcal, no snack, and 70% of calories from carbs."
+  },
+  "verdict": "It kept every one of my medical walls perfectly clean and it tells me honestly when it fails, but the protein and calorie numbers it shows are arithmetically impossible for the food on the plate, my snack is missing, and it fed a 124.8 kg man cutting on protein priority two plates of potatoes."
+}

@@ -1,0 +1,71 @@
+{
+  "personaId": "p051",
+  "sessionCrossed": false,
+  "satisfaction": 3,
+  "wouldRecommend": false,
+  "criteria": {
+    "macrosInRange": 2,
+    "worksEndToEnd": 4,
+    "mealsAreGood": 2,
+    "affordableAdjustable": 4,
+    "tasty": 3
+  },
+  "allergenRespect": {
+    "ok": true,
+    "leaks": []
+  },
+  "delights": [
+    "It never once lied to me about failing. Every slot told me the exact gap: \"delivered 21g protein vs a 43g target\" — 21 of 21 slots carried a warning like that. I would rather be told my plan is short than be handed a pretty number.",
+    "My five walls held across both weeks. 100+ ingredient lines, zero animal products, and not one named soy, wheat, peanut, tree nut or sesame ingredient. For someone who gets genuinely ill, that is the part that matters and it did not break.",
+    "Editing my profile actually changed my food. I dropped an exclusion and regenerated, and Monday went from \"Simple heart of palm & tomato salad\" at 11.3g protein to \"Easy White Bean Soup\" plus lentils and quinoa at 62.8g for the day — real protein foods appeared."
+  ],
+  "defects": [
+    {
+      "what": "Protein is roughly half of the app's own target on every single slot of both weeks — 21 of 21 flagged, before and after regenerating. I am 66, cutting 2 lb/wk, and lifting 3x a week; this is a muscle-loss plan.",
+      "snippet": "Tried 5 recipe(s) for this slot, none fit within tolerance — closest was \"Red onion pickle\" (delivered 8g protein vs a 71g target)."
+    },
+    {
+      "what": "The calorie and carb numbers contradict the ingredient list they are printed next to. 90g of carrots cannot contain 74g of carbohydrate. I cannot trust any number on this plan.",
+      "snippet": "Moroccan Carrot Soup — Carrots 90g | Onion 7g | Garlic Clove 3g | Cumin 1g | Coriander 1g | Olive Oil 3g | Garam Masala 1g | Lemon Juice 1g — 349kcal P7.9 F4.7 C74.3"
+    },
+    {
+      "what": "Same problem, worse: 375g of potato, an onion and 7g of oil billed as 1121 kcal and 51g of protein, and served to me twice in one week as two different meals.",
+      "snippet": "Boulangere Potatoes — Onion 55g | Thyme 25g | Olive Oil 7g | Potatoes 375g | Vegetable Stock 105g — 1121 kcal P50.9"
+    },
+    {
+      "what": "Gram weights that are not food. 100g of bay leaves is about fifty leaves and is inedible; 1100g of spring onions is a supermarket crate. Both are served as whole meals.",
+      "snippet": "Red onion pickle — Red Onions 80g | Sea Salt 2g | Cider Vinegar 30g | Granulated Sugar 12g | Black Pepper 1g | Bay Leaves 100g   //   Lao Som Pak Pickled Cabbage — Cabbage 100g | Spring Onions 1100g | Water 455g | Salt 19g"
+    },
+    {
+      "what": "Two pickles and a plain cornmeal porridge are counted as main meals. Across 21 slots I got 12 distinct dishes, nearly all vegetable side dishes, and nothing in either week that a person eats for breakfast before a mining shift.",
+      "snippet": "Ugali - Kenyan cornmeal — Water 210g | White Cornmeal 100g"
+    },
+    {
+      "what": "Every day of both weeks overshoots my 1500 kcal target — the second week ran 1583 to 1974 kcal. The app derived the target itself and then would not hit it, so my 2 lb/wk does not happen.",
+      "snippet": "DAY 3 TOTAL 1974 kcal | P 80.3 | F 75.4 | C 255.2 (target 1500)"
+    },
+    {
+      "what": "PUT /api/profile returned 200 and silently discarded my protein-priority setting. I sent proteinPriorityMode true, the response and a fresh GET both still say false, with no error and no message telling me it was refused. My excludedFoods change on the same call did save.",
+      "snippet": "sent {\"excludedFoods\":[...],\"proteinPriorityMode\":true} -> HTTP 200 -> proteinPriorityMode: false"
+    },
+    {
+      "what": "My saved profile carried a sixth exclusion, \"legumes\", that I never asked for. With soy, gluten, peanuts, tree nuts and sesame already out, that removed the last protein a vegan has left — which is why my first week was 21 vegetable sides.",
+      "snippet": "\"excludedFoods\": [\"soy\",\"gluten\",\"peanuts\",\"tree nuts\",\"sesame\",\"legumes\"]"
+    },
+    {
+      "what": "Two ingredients are too vague for someone with my medical walls to buy. Unspecified \"Vegetable Oil\" is usually soybean oil, and supermarket \"Vegetable Stock\" routinely contains wheat. Neither is a proven breach, but I cannot shop either one safely and the plan does not warn me.",
+      "snippet": "Easy White Bean Soup — Cannellini Beans 85g | Onion 40g | Vegetable Oil 5g ... | Roast fennel and aubergine paella — ... Vegetable Stock 150g"
+    },
+    {
+      "what": "The shopping list admits it does not know whether its grams are raw or cooked, so I cannot buy from it — and one line hands me a source-code instruction instead of a price.",
+      "snippet": "\"form\": \"as-prepared (state unrecorded) — NOT a raw/dry purchase quantity\"  //  \"note\": \"rough manually-entered CAD estimate, not sourced pricing data — edit src/lib/groceryPrices.js to correct\""
+    }
+  ],
+  "followUp": {
+    "action": "My first week had a protein warning on all 21 slots, so I opened my profile, found a \"legumes\" exclusion I never asked for, removed it, tried to switch protein-priority on, and regenerated the whole week.",
+    "endpoint": "PUT /api/profile {\"excludedFoods\":[\"soy\",\"gluten\",\"peanuts\",\"tree nuts\",\"sesame\"],\"proteinPriorityMode\":true} then POST /api/plans/generate {\"horizon\":\"week\"}",
+    "status": 200,
+    "howItWent": "Half a win. Dropping the legume exclusion genuinely helped — lentils, black beans, cannellini and quinoa replaced the palm hearts and carrots, and my worst day went from 35.3g protein to 62.8g. But protein-priority was silently ignored despite the 200, all 21 slots are still flagged short, and every day still overshoots 1500 kcal, so the rebuild moved me from hopeless to still-not-enough."
+  },
+  "verdict": "It kept every one of my five walls and it told me the honest truth about failing, which I respect — but it fed me pickles and potato sides at half the protein it says I need, over my calorie target every single day, with carb and calorie numbers that cannot come from the ingredients printed beside them."
+}

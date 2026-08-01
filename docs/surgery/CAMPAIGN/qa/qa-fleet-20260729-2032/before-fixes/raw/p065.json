@@ -1,0 +1,681 @@
+{
+ "persona": {
+  "idx": 65,
+  "id": "p065",
+  "tier": "EASY",
+  "displayName": "restaurant chef, 63",
+  "story": "restaurant chef, 63, male, 195 cm / 157 kg (BMI 41.3), maintain, pescatarian diet, avoiding peanut, beef, tree nut, pork, high-protein, 3 meals + 2 snacks, wants a single day",
+  "profile": {
+   "sex": "M",
+   "age": 63,
+   "heightCm": 195,
+   "startWeightKg": 157,
+   "goalWeightKg": 157,
+   "occupationKey": "chef-kitchen",
+   "trainingStyle": "mixed",
+   "minutesPerSession": 30,
+   "sessionsPerWeek": 2,
+   "rateLbPerWeek": 0.25,
+   "dietaryStyle": null,
+   "excludedFoods": [
+    "peanuts",
+    "beef",
+    "tree nuts",
+    "pork"
+   ],
+   "mealsPerDay": 3,
+   "snacksPerDay": 2,
+   "unitPref": "metric",
+   "bodyFatPct": 34,
+   "bodyFatSource": "visual-estimate",
+   "cuisinePreferences": [
+    "japanese",
+    "chinese"
+   ]
+  },
+  "filters": {
+   "proteinPriority": true,
+   "cuisines": [
+    "japanese",
+    "chinese"
+   ]
+  },
+  "horizon": "day",
+  "walls": [
+   "peanut",
+   "beef",
+   "tree nut",
+   "pork"
+  ],
+  "freeTextExclusions": [
+   "beef",
+   "pork"
+  ],
+  "dietaryStyle": null,
+  "bmi": 41.3,
+  "goalKind": "maintain",
+  "macroStyle": "high-protein",
+  "requestedButUnsupported": [
+   "pescatarian is not one of the 9 dietary styles; expressed instead as walls on pork+beef, which is not the same promise",
+   "wanted protein set explicitly in g/lb; the API derives the protein band from LBM (1.14-1.25 g/lb) and accepts no client protein target — only the per-request proteinPriority filter"
+  ],
+  "tupleKey": "[\"EASY\",\"M\",63,195,157,157,\"chef-kitchen\",\"mixed\",0.25,null,[\"beef\",\"peanuts\",\"pork\",\"tree nuts\"],3,2,\"high-protein\",\"day\",null,null,true,null,null]"
+ },
+ "request": {
+  "horizon": "day",
+  "filters": {
+   "proteinPriority": true,
+   "cuisines": [
+    "japanese",
+    "chinese"
+   ]
+  }
+ },
+ "profileResponse": {
+  "id": "cms6x0nus0205wlw0d53vugo6",
+  "userId": "cms6x0nkn001nwl2ocj0m6pux",
+  "sex": "M",
+  "age": 63,
+  "heightCm": 195,
+  "bodyFatPct": 34,
+  "bodyFatSource": "visual-estimate",
+  "occupationKey": "chef-kitchen",
+  "activityOverride": null,
+  "sessionsPerWeek": 2,
+  "trainingStyle": "mixed",
+  "minutesPerSession": 30,
+  "startWeightKg": 157,
+  "goalWeightKg": 157,
+  "startDate": "2026-07-29",
+  "unitPref": "metric",
+  "rateLbPerWeek": 0.25,
+  "rateAcknowledged": false,
+  "floorKcal": null,
+  "excludedFormulas": [],
+  "targetKcal": 3754,
+  "mealsPerDay": 3,
+  "snacksPerDay": 2,
+  "excludedFoods": [
+   "peanuts",
+   "beef",
+   "tree nuts",
+   "pork"
+  ],
+  "dietaryStyle": null,
+  "cuisinePreferences": [
+   "japanese",
+   "chinese"
+  ],
+  "mealPreferencesNote": null,
+  "maxPrepMin": null,
+  "budgetTier": null,
+  "allowBatch": null,
+  "maxComplexity": null,
+  "adaptiveTdee": true,
+  "proteinPriorityMode": false,
+  "updatedAt": "2026-07-30T02:49:30.835Z"
+ },
+ "generate": {
+  "status": 200,
+  "ms": 346,
+  "body": {
+   "id": "cms6x0nzi020pwlw04nbr0aq2",
+   "userId": "cms6x0nkn001nwl2ocj0m6pux",
+   "startDate": "2026-07-27",
+   "createdAt": "2026-07-30T02:49:30.990Z",
+   "slots": [
+    {
+     "id": "cms6x0o4m020rwlw0qdrpafr1",
+     "planId": "cms6x0nzi020pwlw04nbr0aq2",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 0,
+     "recipeId": "cmrul79ys00biwl80ys9x2qbw",
+     "proteinScale": 0.84,
+     "sidesScale": 1.96,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t7t00067wlwsj23ngikm",
+       "name": "Egg White",
+       "role": "protein",
+       "grams": 220
+      },
+      {
+       "foodId": "cmrukzaeh0005wlbwrbkygio0",
+       "name": "Chickpea pasta, dry",
+       "role": "carb",
+       "grams": 195
+      },
+      {
+       "foodId": "cmrg8zxar000lwli0qy2ovmx4",
+       "name": "Onion",
+       "role": "veg",
+       "grams": 115
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 875,
+     "protein": 63.805,
+     "fat": 14.865,
+     "carb": 123.183,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrul79ys00biwl80ys9x2qbw",
+      "name": "High-Protein Egg White & Onions with Chickpea Pasta",
+      "description": null,
+      "steps": [
+       "Cook the egg white.",
+       "Serve over chickpea pasta with onions."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 552,
+      "protein": 48.5,
+      "fat": 10.1,
+      "carb": 66.7,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 3.21,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:45:29.909Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x0o4n020twlw04s6i4s5l",
+     "planId": "cms6x0nzi020pwlw04nbr0aq2",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 1,
+     "recipeId": "cmrul79v2005iwl80mf7ft65q",
+     "proteinScale": 0.5,
+     "sidesScale": 2,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t7w3006lwlws4zdhow4d",
+       "name": "Chicken Breast",
+       "role": "protein",
+       "grams": 100
+      },
+      {
+       "foodId": "cmrukzaed0004wlbwdxnybljb",
+       "name": "Lentil pasta, dry",
+       "role": "carb",
+       "grams": 200
+      },
+      {
+       "foodId": "cmrj2t6na000ywlws9jek4w4z",
+       "name": "Broccoli",
+       "role": "veg",
+       "grams": 220
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 1076.2,
+     "protein": 70.354,
+     "fat": 25.548,
+     "carb": 138.794,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrul79v2005iwl80mf7ft65q",
+      "name": "High-Protein Chicken & Broccoli with Lentil Pasta",
+      "description": null,
+      "steps": [
+       "Cook the chicken.",
+       "Serve over lentil pasta with broccoli."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 955.1,
+      "protein": 57.2,
+      "fat": 39,
+      "carb": 91.9,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 7.58,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:45:29.775Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x0o4o020vwlw0pt31oxc9",
+     "planId": "cms6x0nzi020pwlw04nbr0aq2",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 2,
+     "recipeId": "cmrj2tlfh02o3wlwstiztsyvf",
+     "proteinScale": 2,
+     "sidesScale": 2,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t6hb0007wlwsh6l6ynal",
+       "name": "Water",
+       "role": null,
+       "grams": 950
+      },
+      {
+       "foodId": "cmrj2t84f007mwlws3l8rub2z",
+       "name": "Chicken Thighs",
+       "role": "protein",
+       "grams": 225
+      },
+      {
+       "foodId": "cmrj2t6ft0001wlwstiofk9on",
+       "name": "Garlic",
+       "role": "veg",
+       "grams": 6
+      },
+      {
+       "foodId": "cmrj2t7hg004pwlwsioxvv8bh",
+       "name": "Vegetable Oil",
+       "role": "carb",
+       "grams": 14
+      },
+      {
+       "foodId": "cmrj2t73d002xwlwsmcicl8l0",
+       "name": "Fish Sauce",
+       "role": "protein",
+       "grams": 5
+      },
+      {
+       "foodId": "cmrj2t6gd0003wlwss7jf3wzf",
+       "name": "Salt",
+       "role": null,
+       "grams": 2
+      },
+      {
+       "foodId": "cmrj2t6z2002gwlwsjklhz848",
+       "name": "Sugar",
+       "role": "carb",
+       "grams": 2
+      },
+      {
+       "foodId": "cmrj2t73m002ywlwsrp8x2000",
+       "name": "Rice Noodles",
+       "role": "carb",
+       "grams": 115
+      },
+      {
+       "foodId": "cmrj2t6yn002ewlwsssm71ui2",
+       "name": "Bean Sprouts",
+       "role": "carb",
+       "grams": 185
+      },
+      {
+       "foodId": "cmrj2t8960088wlws27ja08eg",
+       "name": "Mint",
+       "role": null,
+       "grams": 30
+      },
+      {
+       "foodId": "cmrj2t6rj001iwlwsv6losppt",
+       "name": "Lime",
+       "role": "veg",
+       "grams": 20
+      },
+      {
+       "foodId": "cmrj2t7me005cwlwssmv2um0d",
+       "name": "Red Chilli",
+       "role": null,
+       "grams": 9
+      }
+     ],
+     "kcal": 930.8399999999999,
+     "protein": 69.7484,
+     "fat": 43.3341,
+     "carb": 65.6643,
+     "warning": "Tried 5 recipe(s) for this slot, none fit within tolerance — closest was \"Nom Banh Chok – Cambodian Noodle Soup\" (delivered 70g protein vs a 82g target).",
+     "locked": false,
+     "recipe": {
+      "id": "cmrj2tlfh02o3wlwstiztsyvf",
+      "name": "Nom Banh Chok – Cambodian Noodle Soup",
+      "description": null,
+      "steps": [
+       "Heat the vegetable oil in a large pot over medium heat until it shimmers, about 2 minutes.",
+       "Add the minced garlic and sauté until fragrant and lightly golden, about 1 minute, stirring constantly to prevent burning.",
+       "Add the chicken pieces and cook until they turn opaque on all sides, about 5 minutes, stirring occasionally.",
+       "Pour in the 8 cups of water and bring to a boil over high heat, which should take about 8 minutes.",
+       "Reduce the heat to low, stir in the fish sauce, salt, and sugar, and simmer uncovered for 20 minutes to develop the flavors.",
+       "While the broth simmers, cook the rice noodles according to package instructions until al dente, then drain and rinse under cold water to stop the cooking.",
+       "Divide the cooked noodles evenly among four bowls.",
+       "Ladle the hot broth and chicken over the noodles in each bowl.",
+       "Top each bowl with bean sprouts, chopped mint leaves, and optional red chili slices.",
+       "Serve immediately with lime wedges on the side for squeezing over the soup."
+      ],
+      "slotType": "meal",
+      "cuisine": "western-comfort",
+      "prepTimeMin": 43,
+      "source": "themealdb-import",
+      "mealCategory": null,
+      "kcal": 465.3,
+      "protein": 35.1,
+      "fat": 21.6,
+      "carb": 32.8,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 4.27,
+      "difficulty": 6,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-13T10:25:30.558Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x0o4p020zwlw0ukpnwtf1",
+     "planId": "cms6x0nzi020pwlw04nbr0aq2",
+     "dayOfWeek": 2,
+     "slotType": "snack",
+     "slotIndex": 0,
+     "recipeId": "cmrevpcyh004gwl5gnni3al5q",
+     "proteinScale": 0.78,
+     "sidesScale": 0.78,
+     "ingredients": [
+      {
+       "foodId": "cmrevpcmu000cwl5gfljr1l1o",
+       "name": "Bacon, cooked",
+       "role": "protein",
+       "grams": 45
+      },
+      {
+       "foodId": "cmrevpcm50006wl5g2u2bcspd",
+       "name": "Eggs, whole, cooked",
+       "role": "protein",
+       "grams": 115
+      }
+     ],
+     "kcal": 421.7,
+     "protein": 31.6,
+     "fat": 31.55,
+     "carb": 1.895,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrevpcyh004gwl5gnni3al5q",
+      "name": "Bacon & Eggs",
+      "description": "Weekend breakfast-style plate.",
+      "steps": [
+       "Cook bacon until crisp, set aside.",
+       "Fry or scramble eggs in the bacon fat."
+      ],
+      "slotType": "either",
+      "cuisine": "western-comfort",
+      "prepTimeMin": 15,
+      "source": "curated",
+      "mealCategory": null,
+      "kcal": 557.0999999999999,
+      "protein": 41.7,
+      "fat": 41.7,
+      "carb": 2.49,
+      "tasteTier": "really_good",
+      "tasteTierSource": "curated",
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 3.38,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-10T11:55:10.938Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x0o4p0211wlw0wfcjntvr",
+     "planId": "cms6x0nzi020pwlw04nbr0aq2",
+     "dayOfWeek": 2,
+     "slotType": "snack",
+     "slotIndex": 1,
+     "recipeId": "cmrevpcyh004gwl5gnni3al5q",
+     "proteinScale": 0.81,
+     "sidesScale": 0.81,
+     "ingredients": [
+      {
+       "foodId": "cmrevpcmu000cwl5gfljr1l1o",
+       "name": "Bacon, cooked",
+       "role": "protein",
+       "grams": 50
+      },
+      {
+       "foodId": "cmrevpcm50006wl5g2u2bcspd",
+       "name": "Eggs, whole, cooked",
+       "role": "protein",
+       "grams": 120
+      }
+     ],
+     "kcal": 456.5,
+     "protein": 34.1,
+     "fat": 34.2,
+     "carb": 2.02,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrevpcyh004gwl5gnni3al5q",
+      "name": "Bacon & Eggs",
+      "description": "Weekend breakfast-style plate.",
+      "steps": [
+       "Cook bacon until crisp, set aside.",
+       "Fry or scramble eggs in the bacon fat."
+      ],
+      "slotType": "either",
+      "cuisine": "western-comfort",
+      "prepTimeMin": 15,
+      "source": "curated",
+      "mealCategory": null,
+      "kcal": 557.0999999999999,
+      "protein": 41.7,
+      "fat": 41.7,
+      "carb": 2.49,
+      "tasteTier": "really_good",
+      "tasteTierSource": "curated",
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 3.38,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-10T11:55:10.938Z",
+      "createdByUserId": null
+     }
+    }
+   ],
+   "groceryList": null,
+   "meta": {
+    "matchPct": 76,
+    "attempts": 5,
+    "score": {
+     "daysInTolerance": 0,
+     "avgMatch": 76,
+     "days": [
+      {
+       "dayOfWeek": 2,
+       "dayName": "Wednesday",
+       "matchPct": 76,
+       "totals": {
+        "kcal": 3760,
+        "protein": 270,
+        "fat": 149,
+        "carb": 332
+       },
+       "kcalDeltaPct": 0.2,
+       "proteinShortPct": 1.2,
+       "fatOk": false,
+       "carbOk": true,
+       "inTolerance": false,
+       "miss": "149 g fat vs a 78–91 g range — 58 g over",
+       "unfilledSlots": 0,
+       "warnedSlots": 1,
+       "proteinFloor": {
+        "met": true,
+        "floorG": 260,
+        "achievedG": 269.6,
+        "shortG": 0,
+        "shortPct": 0,
+        "reason": null
+       },
+       "windowIndex": 0,
+       "dayIndex": 0,
+       "key": "0:2"
+      }
+     ],
+     "totalDays": 1,
+     "floorDaysMet": 1,
+     "floorDaysTotal": 1
+    },
+    "days": [
+     {
+      "dayOfWeek": 2,
+      "dayName": "Wednesday",
+      "matchPct": 76,
+      "totals": {
+       "kcal": 3760,
+       "protein": 270,
+       "fat": 149,
+       "carb": 332
+      },
+      "kcalDeltaPct": 0.2,
+      "proteinShortPct": 1.2,
+      "fatOk": false,
+      "carbOk": true,
+      "inTolerance": false,
+      "miss": "149 g fat vs a 78–91 g range — 58 g over",
+      "unfilledSlots": 0,
+      "warnedSlots": 1,
+      "proteinFloor": {
+       "met": true,
+       "floorG": 260,
+       "achievedG": 269.6,
+       "shortG": 0,
+       "shortPct": 0,
+       "reason": null
+      },
+      "windowIndex": 0,
+      "dayIndex": 0,
+      "key": "0:2"
+     }
+    ],
+    "diagnosis": {
+     "feasible": false,
+     "reasons": [
+      "1 day(s) landed outside your 78–91 g fat range — portion scaling moves a dish's calories, not its fat/carb ratio, so the pool's composition is what binds here."
+     ],
+     "suggestions": [
+      "Add (or AI-generate) a few recipes built around the macro you keep missing, or drop the cuisine/protein preference so the solver can reach dishes that carry it."
+     ],
+     "binding": {
+      "key": "macro-composition",
+      "label": "fat in your recipe pool",
+      "detail": "1 of 1 day(s) landed outside your 78-91 g fat range. Portion scaling moves a dish's calories, not its fat/carb ratio, so what binds here is which dishes your rules leave in the pool. Calories and protein landed on target on every day — it is composition, not portion size, that is short."
+     }
+    },
+    "poolCounts": {
+     "raw": 889,
+     "afterDiet": 663,
+     "afterPrep": 663,
+     "afterStack": 663,
+     "stackExplain": null
+    },
+    "variety": {
+     "mealEligible": 548,
+     "usableForSlot": 215,
+     "slotKcal": 991,
+     "snackEligible": 2,
+     "weeklyMealSlots": 21,
+     "weeklySnackSlots": 14,
+     "repeatCap": 2,
+     "distinctWeeks": 10.2,
+     "horizonWeeks": 1,
+     "sustainsHorizon": false,
+     "notes": [
+      "Only 2 snack recipe(s) fit your rules, so the same snacks come back every week.",
+      "1 day: 4 distinct dish(es) across 5 filled slot(s); most-repeated dish appears 2x against a 2x cap for this horizon (2x per week)."
+     ],
+     "horizon": {
+      "weeks": 1,
+      "days": 1,
+      "perWeekCap": 2,
+      "horizonRepeatCap": 2,
+      "mealSlots": 3,
+      "snackSlots": 2,
+      "totalSlots": 5,
+      "distinctFloor": 3,
+      "distinctRecipes": 4,
+      "maxRepeat": 2,
+      "maxRepeatRecipeId": "cmrevpcyh004gwl5gnni3al5q",
+      "lockedRepeatsOfMax": 0,
+      "filledSlots": 5,
+      "unfilledSlots": 0,
+      "requiredDistinct": 3,
+      "capHeld": true,
+      "floorHeld": true
+     }
+    },
+    "priorWeeksConsidered": 0,
+    "horizon": {
+     "key": "day",
+     "label": "1 day",
+     "days": 1,
+     "kind": "days",
+     "weeks": 1,
+     "custom": false,
+     "startDate": "2026-07-29",
+     "endDate": "2026-07-29",
+     "startDayOfWeek": 2,
+     "weeksWritten": 1,
+     "solveMs": 10,
+     "weekPlans": [
+      {
+       "startDate": "2026-07-27",
+       "dayIndices": [
+        2
+       ],
+       "days": 1,
+       "daysInTolerance": 0,
+       "avgMatch": 76,
+       "unfilledSlots": 0,
+       "poolSize": 663
+      }
+     ]
+    }
+   }
+  }
+ }
+}

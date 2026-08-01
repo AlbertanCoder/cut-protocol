@@ -1,0 +1,106 @@
+=== A. ALLERGEN METADATA COLUMNS, RAW SQL ===
+[{"n":14151,"tagsNull":14151,"mcNull":14151,"catNull":635}]
+distinct allergenTags sample: [{"t":null}]
+distinct mayContain sample: [{"t":null}]
+
+=== B. THE 11 HIGH-PROTEIN HARSH-GATE SURVIVORS, PROBED AGAINST OTHER WALLS ===
+
+  Nutritional powder mix, protein, NFS
+    P=78.1 F=1.56 C=6.25 kcal=352 src=usda-verified fdcId=2710745 cat="Protein and nutritional powders"
+    allergenTags=null mayContain=null
+    dairy wall=ALLOWED  milk wall=ALLOWED  whey wall=ALLOWED  egg wall=ALLOWED  vegan style=ALLOWED  vegetarian style=ALLOWED
+
+  Nutritional powder mix (Isopure)
+    P=58.1 F=1.16 C=29.1 kcal=359 src=usda-verified fdcId=2710734 cat="Protein and nutritional powders"
+    allergenTags=null mayContain=null
+    dairy wall=ALLOWED  milk wall=ALLOWED  whey wall=ALLOWED  egg wall=ALLOWED  vegan style=ALLOWED  vegetarian style=ALLOWED
+
+  Seaweed, spirulina, dried
+    P=57.5 F=7.72 C=23.9 kcal=290 src=usda-verified fdcId=170495 cat="Vegetables and Vegetable Products"
+    allergenTags=null mayContain=null
+    dairy wall=ALLOWED  milk wall=ALLOWED  whey wall=ALLOWED  egg wall=ALLOWED  vegan style=ALLOWED  vegetarian style=ALLOWED
+
+  Beverages, nutritional shake mix, high protein, powder
+    P=53.6 F=10.7 C=20.4 kcal=392 src=usda-verified fdcId=174181 cat="Beverages"
+    allergenTags=null mayContain=null
+    dairy wall=ALLOWED  milk wall=ALLOWED  whey wall=ALLOWED  egg wall=ALLOWED  vegan style=ALLOWED  vegetarian style=ALLOWED
+
+  Nutritional powder mix, high protein (Herbalife)
+    P=53.6 F=10.7 C=20.4 kcal=392 src=usda-verified fdcId=2710733 cat="Protein and nutritional powders"
+    allergenTags=null mayContain=null
+    dairy wall=ALLOWED  milk wall=ALLOWED  whey wall=ALLOWED  egg wall=ALLOWED  vegan style=ALLOWED  vegetarian style=ALLOWED
+
+  Nutritional powder mix, high protein, NFS
+    P=53.6 F=10.7 C=20.4 kcal=392 src=usda-verified fdcId=2710741 cat="Protein and nutritional powders"
+    allergenTags=null mayContain=null
+    dairy wall=ALLOWED  milk wall=ALLOWED  whey wall=ALLOWED  egg wall=ALLOWED  vegan style=ALLOWED  vegetarian style=ALLOWED
+
+  Nutritional powder mix, protein, light, NFS
+    P=50 F=12 C=22 kcal=396 src=usda-verified fdcId=2710744 cat="Protein and nutritional powders"
+    allergenTags=null mayContain=null
+    dairy wall=ALLOWED  milk wall=ALLOWED  whey wall=ALLOWED  egg wall=ALLOWED  vegan style=ALLOWED  vegetarian style=ALLOWED
+
+  Seeds, cottonseed meal, partially defatted (glandless)
+    P=49.1 F=4.77 C=38.4 kcal=367 src=usda-verified fdcId=170147 cat="Nut and Seed Products"
+    allergenTags=null mayContain=null
+    dairy wall=ALLOWED  milk wall=ALLOWED  whey wall=ALLOWED  egg wall=ALLOWED  vegan style=ALLOWED  vegetarian style=ALLOWED
+
+  Fast action yeast
+    P=40.4 F=7.61 C=41.2 kcal=325 src=manual fdcId=null cat=null
+    allergenTags=null mayContain=null
+    dairy wall=ALLOWED  milk wall=ALLOWED  whey wall=ALLOWED  egg wall=ALLOWED  vegan style=ALLOWED  vegetarian style=ALLOWED
+
+  Yeast
+    P=40.4 F=7.61 C=41.2 kcal=325 src=usda-verified fdcId=2710005 cat="Not included in a food category"
+    allergenTags=null mayContain=null
+    dairy wall=ALLOWED  milk wall=ALLOWED  whey wall=ALLOWED  egg wall=ALLOWED  vegan style=ALLOWED  vegetarian style=ALLOWED
+
+  Instant Yeast
+    P=40.4 F=7.61 C=41.2 kcal=325 src=manual fdcId=null cat=null
+    allergenTags=null mayContain=null
+    dairy wall=ALLOWED  milk wall=ALLOWED  whey wall=ALLOWED  egg wall=ALLOWED  vegan style=ALLOWED  vegetarian style=ALLOWED
+
+=== C. WHAT A NAIVE NUMERIC WIDENING WOULD ADMIT (protein >= 40, harsh gate, trusted) ===
+  fdcCategory distribution across all trusted protein>=40 rows:
+     13  Dairy and Egg Products
+     13  Legumes and Legume Products
+     13  American Indian/Alaska Native Foods
+     11  Protein and nutritional powders
+      8  (null)
+      6  Beverages
+      6  Nut and Seed Products
+      3  Sweets
+      2  Snacks
+      2  Finfish and Shellfish Products
+      2  Pork
+      1  Not included in a food category
+      1  Shellfish
+      1  Pork Products
+      1  Cereal Grains and Pasta
+      1  Vegetables and Vegetable Products
+      1  Baked Products
+      1  Cheese
+      1  Soy and meat-alternative products
+
+=== D. LEAN-CARB CANDIDATES BY CATEGORY (carb>=60, fat<=3, trusted, harsh gate) ===
+  n=324 [["pantry",200],["grains",59],["fruit-veg",38],["drinks",20],["fats-nuts-oils",7]]
+  of those, carb>=95 g/100g (essentially pure sugar/starch): 54
+
+=== E. PROVENANCE OF THE TEN CURRENT CANDIDATES ===
+  Avocado                            src=manual         fdcId=    null dq=""
+  Butter                             src=manual         fdcId=    null dq=""
+  Chicken breast, cooked, skinless   src=manual         fdcId=    null dq=""
+  Greek Yogurt                       src=manual         fdcId=    null dq="override:applied — WRONG FORM — plain nonfat Greek yogurt. Previous row carried 'Yogurt, G"
+  Lentils                            src=usda-verified  fdcId= 2707423 dq="pass — re-derived; fdcId 2707423 \"Lentils, NFS\" (Survey (FNDDS)); replaced mismatched fdcI"
+  Oats                               src=manual         fdcId=    null dq=""
+  Olive Oil                          src=usda-verified  fdcId= 2710186 dq="pass — re-derived; fdcId 2710186 \"Olive oil\" (Survey (FNDDS)); replaced mismatched fdcId 1"
+  Potatoes                           src=manual         fdcId=    null dq="override:applied — raw potato flesh and skin; previous row carried POTATO BREAD data (266 "
+  Tofu                               src=manual         fdcId=    null dq="override:applied — raw firm tofu set with calcium sulfate; previous row carried TOFU YOGUR"
+  White rice, cooked                 src=manual         fdcId=    null dq=""
+
+=== F. TABLE SHAPE ===
+  total rows: 14151
+  trusted (macroTrustIssue === null): 14042
+  quarantined: 79
+  placeholder: 29
+  unverified-provenance: 1

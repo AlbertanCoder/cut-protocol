@@ -1,0 +1,624 @@
+{
+ "persona": {
+  "idx": 103,
+  "id": "p103",
+  "tier": "IMPOSSIBLE",
+  "displayName": "electrician, 45",
+  "story": "wants 2 lb/wk off a small frame at the calorie floor, with gluten, dairy and soy all walled off and nothing over 15 minutes to cook",
+  "profile": {
+   "sex": "F",
+   "age": 45,
+   "heightCm": 164,
+   "startWeightKg": 69.5,
+   "goalWeightKg": 52.3,
+   "occupationKey": "electrician",
+   "trainingStyle": "weights",
+   "minutesPerSession": 45,
+   "sessionsPerWeek": 3,
+   "rateLbPerWeek": 2,
+   "dietaryStyle": "keto",
+   "excludedFoods": [
+    "shellfish",
+    "gluten",
+    "dairy",
+    "soy"
+   ],
+   "mealsPerDay": 4,
+   "snacksPerDay": 1,
+   "unitPref": "metric",
+   "rateAcknowledged": true,
+   "floorKcal": 1200
+  },
+  "filters": {
+   "proteinPriority": true,
+   "maxPrepMin": 15
+  },
+  "horizon": "day",
+  "walls": [
+   "shellfish",
+   "gluten",
+   "dairy",
+   "soy"
+  ],
+  "freeTextExclusions": [],
+  "dietaryStyle": "keto",
+  "bmi": 25.8,
+  "goalKind": "cut",
+  "macroStyle": "balanced",
+  "requestedButUnsupported": [
+   "this request is mathematically unsatisfiable by design — a clear, fast, honest refusal is the pass condition, and a confident plan is a critical honesty defect"
+  ],
+  "impossibleKind": "floor-vs-rate",
+  "tupleKey": "[\"IMPOSSIBLE\",\"F\",45,164,69.5,52.3,\"electrician\",\"weights\",2,\"keto\",[\"dairy\",\"gluten\",\"shellfish\",\"soy\"],4,1,\"balanced\",\"day\",15,null,true,null,\"floor-vs-rate\"]"
+ },
+ "request": {
+  "horizon": "day",
+  "filters": {
+   "proteinPriority": true,
+   "maxPrepMin": 15
+  }
+ },
+ "profileResponse": {
+  "id": "cms6x0xrf02ovwlw0x5a9ahd0",
+  "userId": "cms6x0xkb002pwl2o574ab7ia",
+  "sex": "F",
+  "age": 45,
+  "heightCm": 164,
+  "bodyFatPct": 0,
+  "bodyFatSource": null,
+  "occupationKey": "electrician",
+  "activityOverride": null,
+  "sessionsPerWeek": 3,
+  "trainingStyle": "weights",
+  "minutesPerSession": 45,
+  "startWeightKg": 69.5,
+  "goalWeightKg": 52.3,
+  "startDate": "2026-07-29",
+  "unitPref": "metric",
+  "rateLbPerWeek": 2,
+  "rateAcknowledged": true,
+  "floorKcal": 1200,
+  "excludedFormulas": [],
+  "targetKcal": 1311,
+  "mealsPerDay": 4,
+  "snacksPerDay": 1,
+  "excludedFoods": [
+   "shellfish",
+   "gluten",
+   "dairy",
+   "soy"
+  ],
+  "dietaryStyle": "keto",
+  "cuisinePreferences": [],
+  "mealPreferencesNote": null,
+  "maxPrepMin": null,
+  "budgetTier": null,
+  "allowBatch": null,
+  "maxComplexity": null,
+  "adaptiveTdee": true,
+  "proteinPriorityMode": false,
+  "updatedAt": "2026-07-30T20:33:32.636Z"
+ },
+ "generate": {
+  "status": 200,
+  "ms": 49,
+  "body": {
+   "id": "cms7z10pn01ytwlgwel3noq69",
+   "userId": "cms6x0xkb002pwl2o574ab7ia",
+   "startDate": "2026-07-27",
+   "createdAt": "2026-07-30T20:33:32.891Z",
+   "slots": [
+    {
+     "id": "cms7z10po01yvwlgwt7jeo1hk",
+     "planId": "cms7z10pn01ytwlgwel3noq69",
+     "dayOfWeek": 3,
+     "slotType": "meal",
+     "slotIndex": 0,
+     "recipeId": "cms7pjmiv001pwlbkyddkp88y",
+     "proteinScale": 0.5,
+     "sidesScale": 0.52,
+     "ingredients": [
+      {
+       "foodId": "cmrj2tbgn00kqwlwsij0gf7e5",
+       "name": "Tuna",
+       "role": "protein",
+       "grams": 75
+      },
+      {
+       "foodId": "cmrevpcm50006wl5g2u2bcspd",
+       "name": "Eggs, whole, cooked",
+       "role": "protein",
+       "grams": 50
+      },
+      {
+       "foodId": "cmrj2t6pf0018wlwsw7d7x91a",
+       "name": "Green Beans",
+       "role": "veg",
+       "grams": 50
+      },
+      {
+       "foodId": "cmrviiloq000vwl1kqpbdop59",
+       "name": "Olives, green, Manzanilla, stuffed with pimiento",
+       "role": "fat",
+       "grams": 20
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 6
+      },
+      {
+       "foodId": "cmrj2t7ve006iwlwsr3tyleyw",
+       "name": "Lemon Juice",
+       "role": "other",
+       "grams": 10
+      },
+      {
+       "foodId": "cmrevpclb0000wl5ghnno9i5f",
+       "name": "Chicken breast, cooked, skinless",
+       "role": "protein",
+       "grams": 60,
+       "adjuster": true
+      }
+     ],
+     "kcal": 362.2,
+     "protein": 45.645,
+     "fat": 17.129,
+     "carb": 5.437,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cms7pjmiv001pwlbkyddkp88y",
+      "name": "Tuna Niçoise Salad Bowl",
+      "description": null,
+      "steps": [
+       "Blanch the green beans 3 minutes and cool them under the tap so they stay green.",
+       "Flake the drained tuna over the beans with quartered eggs and olives.",
+       "Dress with olive oil and lemon."
+      ],
+      "slotType": "meal",
+      "cuisine": "french",
+      "prepTimeMin": 15,
+      "source": "curated",
+      "mealCategory": null,
+      "kcal": 524.2,
+      "protein": 54.055,
+      "fat": 29.914,
+      "carb": 10.184,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": null,
+      "difficulty": 1,
+      "filterProvenance": null,
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-30T16:08:04.807Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z10pp01yxwlgwehtmbd4z",
+     "planId": "cms7z10pn01ytwlgwel3noq69",
+     "dayOfWeek": 3,
+     "slotType": "meal",
+     "slotIndex": 1,
+     "recipeId": "cms7pjmiv001pwlbkyddkp88y",
+     "proteinScale": 0.54,
+     "sidesScale": 0.59,
+     "ingredients": [
+      {
+       "foodId": "cmrj2tbgn00kqwlwsij0gf7e5",
+       "name": "Tuna",
+       "role": "protein",
+       "grams": 80
+      },
+      {
+       "foodId": "cmrevpcm50006wl5g2u2bcspd",
+       "name": "Eggs, whole, cooked",
+       "role": "protein",
+       "grams": 55
+      },
+      {
+       "foodId": "cmrj2t6pf0018wlwsw7d7x91a",
+       "name": "Green Beans",
+       "role": "veg",
+       "grams": 60
+      },
+      {
+       "foodId": "cmrviiloq000vwl1kqpbdop59",
+       "name": "Olives, green, Manzanilla, stuffed with pimiento",
+       "role": "fat",
+       "grams": 25
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 7
+      },
+      {
+       "foodId": "cmrj2t7ve006iwlwsr3tyleyw",
+       "name": "Lemon Juice",
+       "role": "other",
+       "grams": 10
+      }
+     ],
+     "kcal": 295.55,
+     "protein": 29.25850000000001,
+     "fat": 17.255,
+     "carb": 6.381000000000001,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cms7pjmiv001pwlbkyddkp88y",
+      "name": "Tuna Niçoise Salad Bowl",
+      "description": null,
+      "steps": [
+       "Blanch the green beans 3 minutes and cool them under the tap so they stay green.",
+       "Flake the drained tuna over the beans with quartered eggs and olives.",
+       "Dress with olive oil and lemon."
+      ],
+      "slotType": "meal",
+      "cuisine": "french",
+      "prepTimeMin": 15,
+      "source": "curated",
+      "mealCategory": null,
+      "kcal": 524.2,
+      "protein": 54.055,
+      "fat": 29.914,
+      "carb": 10.184,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": null,
+      "difficulty": 1,
+      "filterProvenance": null,
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-30T16:08:04.807Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z10pp01yzwlgw5lig6bcb",
+     "planId": "cms7z10pn01ytwlgwel3noq69",
+     "dayOfWeek": 3,
+     "slotType": "meal",
+     "slotIndex": 2,
+     "recipeId": "cmrevpcyh004gwl5gnni3al5q",
+     "proteinScale": 0.53,
+     "sidesScale": 0.53,
+     "ingredients": [
+      {
+       "foodId": "cmrevpcmu000cwl5gfljr1l1o",
+       "name": "Bacon, cooked",
+       "role": "protein",
+       "grams": 30
+      },
+      {
+       "foodId": "cmrevpcm50006wl5g2u2bcspd",
+       "name": "Eggs, whole, cooked",
+       "role": "protein",
+       "grams": 80
+      }
+     ],
+     "kcal": 286.3,
+     "protein": 21.5,
+     "fat": 21.4,
+     "carb": 1.3,
+     "warning": "Tried 1 recipe(s) for this slot, none fit within tolerance — closest was \"Bacon & Eggs\" (delivered 22g protein vs a 30g target).",
+     "locked": false,
+     "recipe": {
+      "id": "cmrevpcyh004gwl5gnni3al5q",
+      "name": "Bacon & Eggs",
+      "description": "Weekend breakfast-style plate.",
+      "steps": [
+       "Cook bacon until crisp, set aside.",
+       "Fry or scramble eggs in the bacon fat."
+      ],
+      "slotType": "either",
+      "cuisine": "western-comfort",
+      "prepTimeMin": 15,
+      "source": "curated",
+      "mealCategory": null,
+      "kcal": 557.0999999999999,
+      "protein": 41.7,
+      "fat": 41.7,
+      "carb": 2.49,
+      "tasteTier": "really_good",
+      "tasteTierSource": "curated",
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 3.38,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-10T11:55:10.938Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z10pq01z1wlgw2lrxq1vf",
+     "planId": "cms7z10pn01ytwlgwel3noq69",
+     "dayOfWeek": 3,
+     "slotType": "meal",
+     "slotIndex": 3,
+     "recipeId": "cmrevpcyh004gwl5gnni3al5q",
+     "proteinScale": 0.62,
+     "sidesScale": 0.62,
+     "ingredients": [
+      {
+       "foodId": "cmrevpcmu000cwl5gfljr1l1o",
+       "name": "Bacon, cooked",
+       "role": "protein",
+       "grams": 35
+      },
+      {
+       "foodId": "cmrevpcm50006wl5g2u2bcspd",
+       "name": "Eggs, whole, cooked",
+       "role": "protein",
+       "grams": 95
+      }
+     ],
+     "kcal": 336.6,
+     "protein": 25.3,
+     "fat": 25.15,
+     "carb": 1.535,
+     "warning": "Tried 1 recipe(s) for this slot, none fit within tolerance — closest was \"Bacon & Eggs\" (delivered 25g protein vs a 40g target).",
+     "locked": false,
+     "recipe": {
+      "id": "cmrevpcyh004gwl5gnni3al5q",
+      "name": "Bacon & Eggs",
+      "description": "Weekend breakfast-style plate.",
+      "steps": [
+       "Cook bacon until crisp, set aside.",
+       "Fry or scramble eggs in the bacon fat."
+      ],
+      "slotType": "either",
+      "cuisine": "western-comfort",
+      "prepTimeMin": 15,
+      "source": "curated",
+      "mealCategory": null,
+      "kcal": 557.0999999999999,
+      "protein": 41.7,
+      "fat": 41.7,
+      "carb": 2.49,
+      "tasteTier": "really_good",
+      "tasteTierSource": "curated",
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 3.38,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-10T11:55:10.938Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z10pr01z3wlgww9m5tnbv",
+     "planId": "cms7z10pn01ytwlgwel3noq69",
+     "dayOfWeek": 3,
+     "slotType": "snack",
+     "slotIndex": 0,
+     "recipeId": "cms7pjmks003ewlbkbzjiva2m",
+     "proteinScale": 0.69,
+     "sidesScale": 0.69,
+     "ingredients": [
+      {
+       "foodId": "cmrevpcm50006wl5g2u2bcspd",
+       "name": "Eggs, whole, cooked",
+       "role": "protein",
+       "grams": 80
+      },
+      {
+       "foodId": "cmrj2t6gd0003wlwss7jf3wzf",
+       "name": "Salt",
+       "role": "other",
+       "grams": 1
+      },
+      {
+       "foodId": "cmrj2t6tr001swlwsgjm8tehu",
+       "name": "Chilli Powder",
+       "role": "other",
+       "grams": 1
+      }
+     ],
+     "kcal": 126.82,
+     "protein": 10.535,
+     "fat": 8.943000000000001,
+     "carb": 1.377,
+     "warning": "Tried 2 recipe(s) for this slot, none fit within tolerance — closest was \"Hard-Boiled Eggs with Chilli Salt\" (delivered 11g protein vs a 15g target).",
+     "locked": false,
+     "recipe": {
+      "id": "cms7pjmks003ewlbkbzjiva2m",
+      "name": "Hard-Boiled Eggs with Chilli Salt",
+      "description": null,
+      "steps": [
+       "Boil 8 minutes for a set yolk, then straight into cold water.",
+       "Peel and dip in chilli salt."
+      ],
+      "slotType": "snack",
+      "cuisine": "american",
+      "prepTimeMin": 12,
+      "source": "curated",
+      "mealCategory": null,
+      "kcal": 188.82,
+      "protein": 15.735,
+      "fat": 13.343,
+      "carb": 1.817,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": null,
+      "difficulty": 1,
+      "filterProvenance": null,
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-30T16:08:04.877Z",
+      "createdByUserId": null
+     }
+    }
+   ],
+   "groceryList": null,
+   "meta": {
+    "matchPct": 95,
+    "attempts": 1,
+    "score": {
+     "daysInTolerance": 1,
+     "avgMatch": 95,
+     "days": [
+      {
+       "dayOfWeek": 3,
+       "dayName": "Thursday",
+       "matchPct": 95,
+       "totals": {
+        "kcal": 1407,
+        "protein": 132,
+        "fat": 90,
+        "carb": 16
+       },
+       "kcalDeltaPct": 7.4,
+       "proteinShortPct": 0,
+       "fatOk": true,
+       "carbOk": true,
+       "inTolerance": true,
+       "miss": null,
+       "unfilledSlots": 0,
+       "warnedSlots": 3,
+       "proteinFloor": {
+        "met": true,
+        "floorG": 126,
+        "achievedG": 132.2,
+        "shortG": 0,
+        "shortPct": 0,
+        "reason": null
+       },
+       "windowIndex": 0,
+       "dayIndex": 0,
+       "key": "0:3"
+      }
+     ],
+     "totalDays": 1,
+     "floorDaysMet": 1,
+     "floorDaysTotal": 1
+    },
+    "days": [
+     {
+      "dayOfWeek": 3,
+      "dayName": "Thursday",
+      "matchPct": 95,
+      "totals": {
+       "kcal": 1407,
+       "protein": 132,
+       "fat": 90,
+       "carb": 16
+      },
+      "kcalDeltaPct": 7.4,
+      "proteinShortPct": 0,
+      "fatOk": true,
+      "carbOk": true,
+      "inTolerance": true,
+      "miss": null,
+      "unfilledSlots": 0,
+      "warnedSlots": 3,
+      "proteinFloor": {
+       "met": true,
+       "floorG": 126,
+       "achievedG": 132.2,
+       "shortG": 0,
+       "shortPct": 0,
+       "reason": null
+      },
+      "windowIndex": 0,
+      "dayIndex": 0,
+      "key": "0:3"
+     }
+    ],
+    "diagnosis": null,
+    "poolCounts": {
+     "raw": 910,
+     "afterDiet": 19,
+     "afterPrep": 5,
+     "afterStack": 5,
+     "stackExplain": null
+    },
+    "variety": {
+     "mealEligible": 2,
+     "usableForSlot": 2,
+     "slotKcal": 298,
+     "snackEligible": 3,
+     "weeklyMealSlots": 28,
+     "weeklySnackSlots": 7,
+     "repeatCap": 2,
+     "distinctWeeks": 0.1,
+     "horizonWeeks": 1,
+     "sustainsHorizon": false,
+     "notes": [
+      "2 of your 2 compliant recipes can be portioned to a 298 kcal meal — about 0 week(s) of 28 meals before dishes start repeating, so over 1 weeks you will see favourites come back.",
+      "Only 3 snack recipe(s) fit your rules, so the same snacks come back every week.",
+      "1 day: 3 distinct dish(es) across 5 filled slot(s); most-repeated dish appears 2x against a 2x cap for this horizon (2x per week)."
+     ],
+     "horizon": {
+      "weeks": 1,
+      "days": 1,
+      "perWeekCap": 2,
+      "horizonRepeatCap": 2,
+      "mealSlots": 4,
+      "snackSlots": 1,
+      "totalSlots": 5,
+      "distinctFloor": 3,
+      "distinctRecipes": 3,
+      "maxRepeat": 2,
+      "maxRepeatRecipeId": "cms7pjmiv001pwlbkyddkp88y",
+      "lockedRepeatsOfMax": 0,
+      "filledSlots": 5,
+      "unfilledSlots": 0,
+      "requiredDistinct": 3,
+      "capHeld": true,
+      "floorHeld": true
+     }
+    },
+    "priorWeeksConsidered": 0,
+    "horizon": {
+     "key": "day",
+     "label": "1 day",
+     "days": 1,
+     "kind": "days",
+     "weeks": 1,
+     "custom": false,
+     "startDate": "2026-07-30",
+     "endDate": "2026-07-30",
+     "startDayOfWeek": 3,
+     "weeksWritten": 1,
+     "solveMs": 0,
+     "weekPlans": [
+      {
+       "startDate": "2026-07-27",
+       "dayIndices": [
+        3
+       ],
+       "days": 1,
+       "daysInTolerance": 1,
+       "avgMatch": 95,
+       "unfilledSlots": 0,
+       "poolSize": 5
+      }
+     ]
+    }
+   }
+  }
+ }
+}

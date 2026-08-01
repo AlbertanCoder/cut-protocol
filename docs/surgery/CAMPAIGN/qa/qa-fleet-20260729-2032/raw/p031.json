@@ -1,0 +1,781 @@
+{
+ "persona": {
+  "idx": 31,
+  "id": "p031",
+  "tier": "EASY",
+  "displayName": "postpartum, 50",
+  "story": "postpartum, 50 (managing meals for a 16-year-old), female, 169 cm / 89.1 kg (BMI 31.2), cut at 0.5 lb/wk, low-FODMAP diet, no exclusions, high-protein, 5 meals + 1 snacks, wants a single day",
+  "profile": {
+   "sex": "F",
+   "age": 50,
+   "heightCm": 169,
+   "startWeightKg": 89.1,
+   "goalWeightKg": 81.4,
+   "occupationKey": "unemployed-home",
+   "trainingStyle": "mixed",
+   "minutesPerSession": 25,
+   "sessionsPerWeek": 3,
+   "rateLbPerWeek": 0.5,
+   "dietaryStyle": null,
+   "excludedFoods": [],
+   "mealsPerDay": 5,
+   "snacksPerDay": 1,
+   "unitPref": "imperial"
+  },
+  "filters": {
+   "proteinPriority": true
+  },
+  "horizon": "day",
+  "walls": [],
+  "freeTextExclusions": [],
+  "dietaryStyle": null,
+  "bmi": 31.2,
+  "goalKind": "cut",
+  "macroStyle": "high-protein",
+  "requestedButUnsupported": [
+   "low-FODMAP is not a dietary style; expressed instead as free-text exclusions (onion, garlic, wheat)",
+   "managing meals for a 16-year-old; the app has no parent-managed or dependent flag (adultGate refuses under-18 outright), so only the adult's own plan can be built",
+   "wanted protein set explicitly in g/lb; the API derives the protein band from LBM (1.14-1.25 g/lb) and accepts no client protein target — only the per-request proteinPriority filter"
+  ],
+  "parentManaged": {
+   "kidAge": 16,
+   "note": "managing meals for a 16-year-old"
+  },
+  "tupleKey": "[\"EASY\",\"F\",50,169,89.1,81.4,\"unemployed-home\",\"mixed\",0.5,null,[],5,1,\"high-protein\",\"day\",null,null,true,null,null]"
+ },
+ "request": {
+  "horizon": "day",
+  "filters": {
+   "proteinPriority": true
+  }
+ },
+ "profileResponse": {
+  "id": "cms6x0f14012vwlw0p8736yrz",
+  "userId": "cms6x0eqn000pwl2opiawznwq",
+  "sex": "F",
+  "age": 50,
+  "heightCm": 169,
+  "bodyFatPct": 0,
+  "bodyFatSource": null,
+  "occupationKey": "unemployed-home",
+  "activityOverride": null,
+  "sessionsPerWeek": 3,
+  "trainingStyle": "mixed",
+  "minutesPerSession": 25,
+  "startWeightKg": 89.1,
+  "goalWeightKg": 81.4,
+  "startDate": "2026-07-29",
+  "unitPref": "imperial",
+  "rateLbPerWeek": 0.5,
+  "rateAcknowledged": false,
+  "floorKcal": null,
+  "excludedFormulas": [],
+  "targetKcal": 1708,
+  "mealsPerDay": 5,
+  "snacksPerDay": 1,
+  "excludedFoods": [],
+  "dietaryStyle": null,
+  "cuisinePreferences": [],
+  "mealPreferencesNote": null,
+  "maxPrepMin": null,
+  "budgetTier": null,
+  "allowBatch": null,
+  "maxComplexity": null,
+  "adaptiveTdee": true,
+  "proteinPriorityMode": false,
+  "updatedAt": "2026-07-30T20:33:09.617Z"
+ },
+ "generate": {
+  "status": 200,
+  "ms": 423,
+  "body": {
+   "id": "cms7z0j7j00mjwlgwnm9jmmwh",
+   "userId": "cms6x0eqn000pwl2opiawznwq",
+   "startDate": "2026-07-27",
+   "createdAt": "2026-07-30T20:33:10.207Z",
+   "slots": [
+    {
+     "id": "cms7z0j7k00mlwlgwiov2eymj",
+     "planId": "cms7z0j7j00mjwlgwnm9jmmwh",
+     "dayOfWeek": 3,
+     "slotType": "meal",
+     "slotIndex": 0,
+     "recipeId": "cmrujkwt3007cwl9oaahetc8g",
+     "proteinScale": 0.82,
+     "sidesScale": 0.5,
+     "ingredients": [
+      {
+       "foodId": "cmrj2tbgn00kqwlwsij0gf7e5",
+       "name": "Tuna",
+       "role": "protein",
+       "grams": 100
+      },
+      {
+       "foodId": "cmrj2t8190078wlws1rc1yrxl",
+       "name": "Couscous",
+       "role": "carb",
+       "grams": 75
+      },
+      {
+       "foodId": "cmrevpcnl000jwl5gnqnk630b",
+       "name": "Cucumber",
+       "role": "veg",
+       "grams": 40
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 10
+      }
+     ],
+     "kcal": 294,
+     "protein": 28.5785,
+     "fat": 11.004,
+     "carb": 18.264,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrujkwt3007cwl9oaahetc8g",
+      "name": "Mediterranean Tuna & Cucumber with Couscous",
+      "description": null,
+      "steps": [
+       "Cook the tuna.",
+       "Serve with couscous and cucumber."
+      ],
+      "slotType": "meal",
+      "cuisine": "mediterranean",
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 405.2,
+      "protein": 36.757,
+      "fat": 11.352,
+      "carb": 36.528,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 6.17,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:00:06.807Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z0j7l00mnwlgwwb32jn34",
+     "planId": "cms7z0j7j00mjwlgwnm9jmmwh",
+     "dayOfWeek": 3,
+     "slotType": "meal",
+     "slotIndex": 1,
+     "recipeId": "cmrj2tnuq037gwlws005ercqw",
+     "proteinScale": 1.33,
+     "sidesScale": 1.26,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t73m002ywlwsrp8x2000",
+       "name": "Rice Noodles",
+       "role": "carb",
+       "grams": 45
+      },
+      {
+       "foodId": "cmrj2t6oc0013wlwsjzlwoln2",
+       "name": "Carrots",
+       "role": "veg",
+       "grams": 19
+      },
+      {
+       "foodId": "cmrevpcnl000jwl5gnqnk630b",
+       "name": "Cucumber",
+       "role": "veg",
+       "grams": 16
+      },
+      {
+       "foodId": "cmrj2t7w3006lwlws4zdhow4d",
+       "name": "Chicken Breast",
+       "role": "protein",
+       "grams": 115
+      },
+      {
+       "foodId": "cmrj2t8sx00amwlws6ytbu63p",
+       "name": "Radish",
+       "role": null,
+       "grams": 16
+      },
+      {
+       "foodId": "cmrj2t6vv0021wlwsx5wv83r4",
+       "name": "Red Onions",
+       "role": "veg",
+       "grams": 17
+      },
+      {
+       "foodId": "cmrj2t8960088wlws27ja08eg",
+       "name": "Mint",
+       "role": null,
+       "grams": 30
+      },
+      {
+       "foodId": "cmrj2t8go0097wlwsir7zztto",
+       "name": "Peanuts",
+       "role": "carb",
+       "grams": 8
+      },
+      {
+       "foodId": "cmrj2t7me005cwlwssmv2um0d",
+       "name": "Red Chilli",
+       "role": null,
+       "grams": 6
+      },
+      {
+       "foodId": "cmrj2t6rj001iwlwsv6losppt",
+       "name": "Lime",
+       "role": "veg",
+       "grams": 14
+      },
+      {
+       "foodId": "cmrj2t73d002xwlwsmcicl8l0",
+       "name": "Fish Sauce",
+       "role": "protein",
+       "grams": 3
+      },
+      {
+       "foodId": "cmrj2t6ls000rwlwsf7bu3ffs",
+       "name": "Soy Sauce",
+       "role": "carb",
+       "grams": 3
+      },
+      {
+       "foodId": "cmrj2t6xc0028wlwszh51pa6i",
+       "name": "Sesame Seed Oil",
+       "role": "fat",
+       "grams": 4
+      }
+     ],
+     "kcal": 307.91,
+     "protein": 30.6694,
+     "fat": 10.962,
+     "carb": 22.0966,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrj2tnuq037gwlws005ercqw",
+      "name": "Vietnamese chicken salad",
+      "description": null,
+      "steps": [
+       "step 1",
+       "To make the dressing, whisk all the ingredients together in a large serving bowl. Cook the noodles following pack instructions, then drain and add to the bowl with the dressing.",
+       "step 2",
+       "Peel the carrot into long strips using a vegetable peeler. Do the same for the cucumber, until you reach the seeds (discard them). Add the carrot and cucumber to the noodle mixture along with the shredded chicken, radishes, red onion and mint. Toss well to coat in the dressing, scatter over the peanuts and serve."
+      ],
+      "slotType": "meal",
+      "cuisine": "asian",
+      "prepTimeMin": 27,
+      "source": "themealdb-import",
+      "mealCategory": null,
+      "kcal": 240.414,
+      "protein": 23.375175,
+      "fat": 8.77643,
+      "carb": 17.43292,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 3.72,
+      "difficulty": 4,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-13T10:25:33.698Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z0jag00mpwlgwmeil8nk7",
+     "planId": "cms7z0j7j00mjwlgwnm9jmmwh",
+     "dayOfWeek": 3,
+     "slotType": "meal",
+     "slotIndex": 2,
+     "recipeId": "cmrj2tcwi00ruwlws9voqvh31",
+     "proteinScale": 0.85,
+     "sidesScale": 0.93,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t6ko000mwlwspqqfzzr3",
+       "name": "Lean Minced Steak",
+       "role": "protein",
+       "grams": 105
+      },
+      {
+       "foodId": "cmrj2t6kv000nwlwsx2ny708d",
+       "name": "Cooked Beetroot",
+       "role": null,
+       "grams": 25
+      },
+      {
+       "foodId": "cmrj2t6l3000owlws5iz4sbb7",
+       "name": "Naan Bread",
+       "role": "carb",
+       "grams": 45
+      },
+      {
+       "foodId": "cmrj2t6lb000pwlws5jjsp0e9",
+       "name": "Rocket",
+       "role": null,
+       "grams": 12
+      },
+      {
+       "foodId": "cmrj2t6lj000qwlwsea5gchwo",
+       "name": "Soured cream and chive dip",
+       "role": null,
+       "grams": 15
+      }
+     ],
+     "kcal": 305.0000000000001,
+     "protein": 30.3481,
+     "fat": 9.1652,
+     "carb": 25.92,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrj2tcwi00ruwlws9voqvh31",
+      "name": "Aussie Burgers",
+      "description": null,
+      "steps": [
+       "step 1",
+       "Make the burgers: Tip the meat into a bowl and sprinkle over 1 tsp salt and a good grinding of black pepper.Work with wet hands to mix in the seasoning. Divide into four with your hands and shape into burgers. (It can be frozen at this stage.)",
+       "step 2",
+       "Sort out your ingredients: Slice the beetroot and split the naan breads.",
+       "step 3",
+       "Toast the naans: Heat a griddle pan or barbecue. Griddle the naans on both sides until lightly toasted and set aside. Add the burgers to the grill or barbecue and cook for 2-3 minutes, then turn and cook the other side for a further 2-3 minutes.",
+       "step 4",
+       "Assemble the dish: Set half a toasted naan on each serving plate and put a pile of rocket on each. Top with a burger, then a few slices of beetroot and a dollop of soured cream. Sprinkle with salt and freshly ground black pepper and serve immediately with a big green salad and chips. A glass of red wine wouldn’t go amiss, either."
+      ],
+      "slotType": "meal",
+      "cuisine": "western-comfort",
+      "prepTimeMin": 33,
+      "source": "themealdb-import",
+      "mealCategory": null,
+      "kcal": 344.1,
+      "protein": 35.5,
+      "fat": 10.1,
+      "carb": 28.4,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 5.63,
+      "difficulty": 4,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-13T10:25:19.506Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z0jcs00mrwlgwqmlmicr1",
+     "planId": "cms7z0j7j00mjwlgwnm9jmmwh",
+     "dayOfWeek": 3,
+     "slotType": "meal",
+     "slotIndex": 3,
+     "recipeId": "cmrj2tisd022uwlwsj9ss5frl",
+     "proteinScale": 0.71,
+     "sidesScale": 0.84,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 6
+      },
+      {
+       "foodId": "cmrg8zxar000lwli0qy2ovmx4",
+       "name": "Onion",
+       "role": "veg",
+       "grams": 45
+      },
+      {
+       "foodId": "cmrj2t7wh006nwlwsiiln85f1",
+       "name": "Ginger Garlic Paste",
+       "role": "veg",
+       "grams": 2
+      },
+      {
+       "foodId": "cmrj2t6ik000dwlwsj8e736h1",
+       "name": "Tomato",
+       "role": "veg",
+       "grams": 50
+      },
+      {
+       "foodId": "cmrj2t7pt005swlwszhtld1bv",
+       "name": "Cayenne Pepper",
+       "role": null,
+       "grams": 1
+      },
+      {
+       "foodId": "cmrj2t7k10051wlwsghd1hb86",
+       "name": "Curry Powder",
+       "role": null,
+       "grams": 1
+      },
+      {
+       "foodId": "cmrj2t7ws006owlwsp3fhnnvo",
+       "name": "Garam Masala",
+       "role": null,
+       "grams": 1
+      },
+      {
+       "foodId": "cmrj2t7x0006pwlws1r36lnn9",
+       "name": "Ground Turmeric",
+       "role": null,
+       "grams": 1
+      },
+      {
+       "foodId": "cmrj2t7ch0042wlwsj8arrl7o",
+       "name": "Ground Cumin",
+       "role": null,
+       "grams": 1
+      },
+      {
+       "foodId": "cmrj2t7w3006lwlws4zdhow4d",
+       "name": "Chicken Breast",
+       "role": "protein",
+       "grams": 125
+      },
+      {
+       "foodId": "cmrj2t7xa006qwlwsdbkeil1k",
+       "name": "Red Potatoes",
+       "role": "veg",
+       "grams": 75
+      },
+      {
+       "foodId": "cmrj2t7lj0058wlwsk4i51m8h",
+       "name": "Cilantro",
+       "role": null,
+       "grams": 2
+      }
+     ],
+     "kcal": 322.96,
+     "protein": 31.6884,
+     "fat": 10.8164,
+     "carb": 24.5634,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrj2tisd022uwlwsj9ss5frl",
+      "name": "Bengali Chicken Curry with Potatoes",
+      "description": null,
+      "steps": [
+       "Heat the olive oil in a large skillet over medium-high heat. Cook and stir the onions in the hot oil until translucent, about 5 minutes. Add the ginger-garlic paste and continue cooking another 5 minutes. Reduce heat to medium; stir the tomatoes into the mixture and cook until the tomatoes are pulpy, 5 to 10 minutes. Season with the cayenne pepper, curry powder, garam masala, turmeric, and cumin; cook and stir another 5 minutes.",
+       "Add the chicken and potatoes to the mixture in the skillet; simmer, stirring occasionally, until the potatoes are tender and the chicken is no longer pink in the center, about 20 minutes. Sprinkle the cilantro over the mixture and continue simmering another 10 minutes. Serve hot."
+      ],
+      "slotType": "meal",
+      "cuisine": "indian",
+      "prepTimeMin": 21,
+      "source": "themealdb-import",
+      "mealCategory": null,
+      "kcal": 403.01775,
+      "protein": 43.06742,
+      "fat": 12.9105125,
+      "carb": 27.7617,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 6.16,
+      "difficulty": 3,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-13T10:25:27.134Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z0jcu00mtwlgw9dbzxms1",
+     "planId": "cms7z0j7j00mjwlgwnm9jmmwh",
+     "dayOfWeek": 3,
+     "slotType": "meal",
+     "slotIndex": 4,
+     "recipeId": "cmrujkwse0066wl9oenv0p0h5",
+     "proteinScale": 0.74,
+     "sidesScale": 0.5,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t7w3006lwlws4zdhow4d",
+       "name": "Chicken Breast",
+       "role": "protein",
+       "grams": 125
+      },
+      {
+       "foodId": "cmrj2t8190078wlws1rc1yrxl",
+       "name": "Couscous",
+       "role": "carb",
+       "grams": 75
+      },
+      {
+       "foodId": "cmrg8zxar000lwli0qy2ovmx4",
+       "name": "Onion",
+       "role": "veg",
+       "grams": 30
+      },
+      {
+       "foodId": "cmrevpco3000nwl5g1d51b3it",
+       "name": "Almonds",
+       "role": "fat",
+       "grams": 18
+      }
+     ],
+     "kcal": 353.64,
+     "protein": 35.0775,
+     "fat": 12.875,
+     "carb": 23.982,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrujkwse0066wl9oenv0p0h5",
+      "name": "Mediterranean Chicken & Onions with Couscous",
+      "description": null,
+      "steps": [
+       "Cook the chicken.",
+       "Serve with couscous and onions."
+      ],
+      "slotType": "meal",
+      "cuisine": "mediterranean",
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 503.64,
+      "protein": 48.375,
+      "fat": 14.204,
+      "carb": 44.184,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 6.47,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:00:06.782Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z0jcv00mvwlgwbvz6x334",
+     "planId": "cms7z0j7j00mjwlgwnm9jmmwh",
+     "dayOfWeek": 3,
+     "slotType": "snack",
+     "slotIndex": 0,
+     "recipeId": "cms7pjmkm003awlbk8b9zzoqo",
+     "proteinScale": 0.62,
+     "sidesScale": 0.6,
+     "ingredients": [
+      {
+       "foodId": "cmrj2tbym00mowlwszf3qi0d8",
+       "name": "Cottage Cheese",
+       "role": "protein",
+       "grams": 110
+      },
+      {
+       "foodId": "cmrg8urje0000wli0g52uqcdi",
+       "name": "Pineapple, raw",
+       "role": "carb",
+       "grams": 60
+      }
+     ],
+     "kcal": 122.6,
+     "protein": 12.376,
+     "fat": 2.656,
+     "carb": 13.201,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cms7pjmkm003awlbk8b9zzoqo",
+      "name": "Cottage Cheese with Pineapple",
+      "description": null,
+      "steps": [
+       "Spoon the cottage cheese into a bowl.",
+       "Top with diced pineapple."
+      ],
+      "slotType": "snack",
+      "cuisine": "american",
+      "prepTimeMin": 3,
+      "source": "curated",
+      "mealCategory": null,
+      "kcal": 201.6,
+      "protein": 20.26,
+      "fat": 4.35,
+      "carb": 21.858,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": null,
+      "difficulty": 1,
+      "filterProvenance": null,
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-30T16:08:04.870Z",
+      "createdByUserId": null
+     }
+    }
+   ],
+   "groceryList": null,
+   "meta": {
+    "matchPct": 99,
+    "attempts": 2,
+    "score": {
+     "daysInTolerance": 1,
+     "avgMatch": 99,
+     "days": [
+      {
+       "dayOfWeek": 3,
+       "dayName": "Thursday",
+       "matchPct": 99,
+       "totals": {
+        "kcal": 1706,
+        "protein": 169,
+        "fat": 57,
+        "carb": 128
+       },
+       "kcalDeltaPct": -0.1,
+       "proteinShortPct": 0.2,
+       "fatOk": true,
+       "carbOk": true,
+       "inTolerance": true,
+       "miss": null,
+       "unfilledSlots": 0,
+       "warnedSlots": 0,
+       "proteinFloor": {
+        "met": true,
+        "floorG": 161,
+        "achievedG": 168.7,
+        "shortG": 0,
+        "shortPct": 0,
+        "reason": null
+       },
+       "windowIndex": 0,
+       "dayIndex": 0,
+       "key": "0:3"
+      }
+     ],
+     "totalDays": 1,
+     "floorDaysMet": 1,
+     "floorDaysTotal": 1
+    },
+    "days": [
+     {
+      "dayOfWeek": 3,
+      "dayName": "Thursday",
+      "matchPct": 99,
+      "totals": {
+       "kcal": 1706,
+       "protein": 169,
+       "fat": 57,
+       "carb": 128
+      },
+      "kcalDeltaPct": -0.1,
+      "proteinShortPct": 0.2,
+      "fatOk": true,
+      "carbOk": true,
+      "inTolerance": true,
+      "miss": null,
+      "unfilledSlots": 0,
+      "warnedSlots": 0,
+      "proteinFloor": {
+       "met": true,
+       "floorG": 161,
+       "achievedG": 168.7,
+       "shortG": 0,
+       "shortPct": 0,
+       "reason": null
+      },
+      "windowIndex": 0,
+      "dayIndex": 0,
+      "key": "0:3"
+     }
+    ],
+    "diagnosis": null,
+    "poolCounts": {
+     "raw": 910,
+     "afterDiet": 910,
+     "afterPrep": 910,
+     "afterStack": 910,
+     "stackExplain": null
+    },
+    "variety": {
+     "mealEligible": 730,
+     "usableForSlot": 363,
+     "slotKcal": 317,
+     "snackEligible": 18,
+     "weeklyMealSlots": 35,
+     "weeklySnackSlots": 7,
+     "repeatCap": 2,
+     "distinctWeeks": 10.4,
+     "horizonWeeks": 1,
+     "sustainsHorizon": true,
+     "notes": [
+      "1 day: 6 distinct dish(es) across 6 filled slot(s); most-repeated dish appears 1x against a 2x cap for this horizon (2x per week)."
+     ],
+     "horizon": {
+      "weeks": 1,
+      "days": 1,
+      "perWeekCap": 2,
+      "horizonRepeatCap": 2,
+      "mealSlots": 5,
+      "snackSlots": 1,
+      "totalSlots": 6,
+      "distinctFloor": 3,
+      "distinctRecipes": 6,
+      "maxRepeat": 1,
+      "maxRepeatRecipeId": "cmrujkwt3007cwl9oaahetc8g",
+      "lockedRepeatsOfMax": 0,
+      "filledSlots": 6,
+      "unfilledSlots": 0,
+      "requiredDistinct": 3,
+      "capHeld": true,
+      "floorHeld": true
+     }
+    },
+    "priorWeeksConsidered": 0,
+    "horizon": {
+     "key": "day",
+     "label": "1 day",
+     "days": 1,
+     "kind": "days",
+     "weeks": 1,
+     "custom": false,
+     "startDate": "2026-07-30",
+     "endDate": "2026-07-30",
+     "startDayOfWeek": 3,
+     "weeksWritten": 1,
+     "solveMs": 16,
+     "weekPlans": [
+      {
+       "startDate": "2026-07-27",
+       "dayIndices": [
+        3
+       ],
+       "days": 1,
+       "daysInTolerance": 1,
+       "avgMatch": 99,
+       "unfilledSlots": 0,
+       "poolSize": 910
+      }
+     ]
+    }
+   }
+  }
+ }
+}

@@ -1,0 +1,671 @@
+{
+ "persona": {
+  "idx": 2,
+  "id": "p002",
+  "tier": "EASY",
+  "displayName": "finish carpenter, 71",
+  "story": "finish carpenter, 71, female, 158 cm / 95.9 kg (BMI 38.4), cut at 1.5 lb/wk, kosher diet, avoiding peanut, dairy, shellfish, cilantro, balanced, 4 meals + 1 snacks, wants a single day",
+  "profile": {
+   "sex": "F",
+   "age": 71,
+   "heightCm": 158,
+   "startWeightKg": 95.9,
+   "goalWeightKg": 87.7,
+   "occupationKey": "carpenter-finish",
+   "trainingStyle": "weights",
+   "minutesPerSession": 50,
+   "sessionsPerWeek": 3,
+   "rateLbPerWeek": 1.5,
+   "dietaryStyle": "kosher",
+   "excludedFoods": [
+    "peanuts",
+    "dairy",
+    "shellfish",
+    "cilantro"
+   ],
+   "mealsPerDay": 4,
+   "snacksPerDay": 1,
+   "unitPref": "imperial",
+   "cuisinePreferences": [
+    "mexican",
+    "mediterranean"
+   ],
+   "rateAcknowledged": true
+  },
+  "filters": {
+   "cuisines": [
+    "mexican",
+    "mediterranean"
+   ]
+  },
+  "horizon": "day",
+  "walls": [
+   "peanut",
+   "dairy",
+   "shellfish",
+   "cilantro"
+  ],
+  "freeTextExclusions": [
+   "cilantro"
+  ],
+  "dietaryStyle": "kosher",
+  "bmi": 38.4,
+  "goalKind": "cut",
+  "macroStyle": "balanced",
+  "requestedButUnsupported": [],
+  "tupleKey": "[\"EASY\",\"F\",71,158,95.9,87.7,\"carpenter-finish\",\"weights\",1.5,\"kosher\",[\"cilantro\",\"dairy\",\"peanuts\",\"shellfish\"],4,1,\"balanced\",\"day\",null,null,null,null,null]"
+ },
+ "request": {
+  "horizon": "day",
+  "filters": {
+   "cuisines": [
+    "mexican",
+    "mediterranean"
+   ]
+  }
+ },
+ "profileResponse": {
+  "id": "cms6wyehv0055wlw0kau6brma",
+  "userId": "cms6wye220001wlpc1f11pl02",
+  "sex": "F",
+  "age": 71,
+  "heightCm": 158,
+  "bodyFatPct": 0,
+  "bodyFatSource": null,
+  "occupationKey": "carpenter-finish",
+  "activityOverride": null,
+  "sessionsPerWeek": 3,
+  "trainingStyle": "weights",
+  "minutesPerSession": 50,
+  "startWeightKg": 95.9,
+  "goalWeightKg": 87.7,
+  "startDate": "2026-07-29",
+  "unitPref": "imperial",
+  "rateLbPerWeek": 1.5,
+  "rateAcknowledged": false,
+  "floorKcal": null,
+  "excludedFormulas": [],
+  "targetKcal": 1543,
+  "mealsPerDay": 4,
+  "snacksPerDay": 1,
+  "excludedFoods": [
+   "peanuts",
+   "dairy",
+   "shellfish",
+   "cilantro"
+  ],
+  "dietaryStyle": "kosher",
+  "cuisinePreferences": [
+   "mexican",
+   "mediterranean"
+  ],
+  "mealPreferencesNote": null,
+  "maxPrepMin": null,
+  "budgetTier": null,
+  "allowBatch": null,
+  "maxComplexity": null,
+  "adaptiveTdee": true,
+  "proteinPriorityMode": false,
+  "updatedAt": "2026-07-30T20:33:00.165Z"
+ },
+ "generate": {
+  "status": 200,
+  "ms": 787,
+  "body": {
+   "id": "cms7z0c2o002lwlgw5efgnkls",
+   "userId": "cms6wye220001wlpc1f11pl02",
+   "startDate": "2026-07-27",
+   "createdAt": "2026-07-30T20:33:00.960Z",
+   "slots": [
+    {
+     "id": "cms7z0c2q002nwlgwmoj1njck",
+     "planId": "cms7z0c2o002lwlgw5efgnkls",
+     "dayOfWeek": 3,
+     "slotType": "meal",
+     "slotIndex": 0,
+     "recipeId": "cmrujkws4005owl9o5ilc9tvd",
+     "proteinScale": 0.93,
+     "sidesScale": 0.5,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t7w3006lwlws4zdhow4d",
+       "name": "Chicken Breast",
+       "role": "protein",
+       "grams": 160
+      },
+      {
+       "foodId": "cmrg8zuft0008wli0etz5grtf",
+       "name": "Bulgur, cooked",
+       "role": "carb",
+       "grams": 65
+      },
+      {
+       "foodId": "cmrevpcnl000jwl5gnqnk630b",
+       "name": "Cucumber",
+       "role": "veg",
+       "grams": 40
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 10
+      },
+      {
+       "foodId": "cmrevpclb0000wl5ghnno9i5f",
+       "name": "Chicken breast, cooked, skinless",
+       "role": "protein",
+       "grams": 10,
+       "adjuster": true
+      }
+     ],
+     "kcal": 356.45,
+     "protein": 41.338,
+     "fat": 14.772,
+     "carb": 12.954,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrujkws4005owl9o5ilc9tvd",
+      "name": "Mediterranean Chicken & Cucumber with Bulgur",
+      "description": null,
+      "steps": [
+       "Cook the chicken.",
+       "Serve with bulgur and cucumber."
+      ],
+      "slotType": "meal",
+      "cuisine": "mediterranean",
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 409.9,
+      "protein": 42.726,
+      "fat": 14.894,
+      "carb": 25.908,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 6.16,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:00:06.772Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z0c2r002pwlgw5ax2uutm",
+     "planId": "cms7z0c2o002lwlgw5efgnkls",
+     "dayOfWeek": 3,
+     "slotType": "meal",
+     "slotIndex": 1,
+     "recipeId": "cmrj2tii0020jwlwsld1aq10z",
+     "proteinScale": 0.72,
+     "sidesScale": 1.01,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t7uz006gwlwsb7pufep6",
+       "name": "Skirty Steak",
+       "role": "protein",
+       "grams": 165
+      },
+      {
+       "foodId": "cmrj2t6ft0001wlwstiofk9on",
+       "name": "Garlic",
+       "role": "veg",
+       "grams": 2
+      },
+      {
+       "foodId": "cmrg8zxar000lwli0qy2ovmx4",
+       "name": "Onion",
+       "role": "veg",
+       "grams": 35
+      },
+      {
+       "foodId": "cmrj2t6j0000fwlwsog8rz1h6",
+       "name": "Red Pepper",
+       "role": null,
+       "grams": 8
+      },
+      {
+       "foodId": "cmrj2t6ik000dwlwsj8e736h1",
+       "name": "Tomato",
+       "role": "veg",
+       "grams": 25
+      },
+      {
+       "foodId": "cmrj2t6jx000jwlws245wvtmm",
+       "name": "Beef Stock",
+       "role": "other",
+       "grams": 245
+      },
+      {
+       "foodId": "cmrj2t74r0033wlwsf2w8xn44",
+       "name": "Worcestershire Sauce",
+       "role": "carb",
+       "grams": 2
+      },
+      {
+       "foodId": "cmrj2t6pz001bwlwsbarwpyy1",
+       "name": "Tomato Puree",
+       "role": "veg",
+       "grams": 3
+      },
+      {
+       "foodId": "cmrj2t6j9000gwlwstmjp6mv2",
+       "name": "Cumin",
+       "role": null,
+       "grams": 1
+      },
+      {
+       "foodId": "cmrj2t7bn003ywlws0phcxl0w",
+       "name": "Tomato Ketchup",
+       "role": "veg",
+       "grams": 11
+      },
+      {
+       "foodId": "cmrj2t6gd0003wlwss7jf3wzf",
+       "name": "Salt",
+       "role": null,
+       "grams": 1
+      },
+      {
+       "foodId": "cmrj2t6gl0004wlws73buybhw",
+       "name": "Pepper",
+       "role": null,
+       "grams": 1
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 3
+      }
+     ],
+     "kcal": 340.26,
+     "protein": 40.90208,
+     "fat": 14.30623,
+     "carb": 13.2297,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrj2tii0020jwlwsld1aq10z",
+      "name": "Venezuelan Shredded Beef",
+      "description": null,
+      "steps": [
+       "Season beef with salt, pepper and minced garlic",
+       "Chop 1 onion in 4 big wedges",
+       "Place in the beef pressure cooker with the 4 wedges of onion and the stock",
+       "Pressure cook for 20 minutes",
+       "Release the pressure and open the lid",
+       "Remove the beef and SAVE 2 cups of stock in another container",
+       "With 2 forks, shred the beef. Beef should be tender enough to so easily. If not, cook for another 10 minutes",
+       "Press the saute button of the Instant pot. Add the olive oil",
+       "When the machine beeps, add the sliced onion, pepper and tomatoes. Cook until tender",
+       "Add the shredded beef back in the pot and mix",
+       "Pour in 1 1/2 cups of the saved stock, the Worcestershire sauce, tomato paste, ketchup and cumin. Mix",
+       "If sauce seems to dry, add a tad more of stock",
+       "Season with salt and pepper",
+       "Serve!"
+      ],
+      "slotType": "meal",
+      "cuisine": "western-comfort",
+      "prepTimeMin": 56,
+      "source": "themealdb-import",
+      "mealCategory": null,
+      "kcal": 427.44825,
+      "protein": 53.66576000000001,
+      "fat": 18.61276625,
+      "carb": 12.40132,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 12.92,
+      "difficulty": 7,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-13T10:25:26.761Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z0c2s002rwlgw9ji5yuf7",
+     "planId": "cms7z0c2o002lwlgw5efgnkls",
+     "dayOfWeek": 3,
+     "slotType": "meal",
+     "slotIndex": 2,
+     "recipeId": "cmrujkws4005owl9o5ilc9tvd",
+     "proteinScale": 1.01,
+     "sidesScale": 0.5,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t7w3006lwlws4zdhow4d",
+       "name": "Chicken Breast",
+       "role": "protein",
+       "grams": 170
+      },
+      {
+       "foodId": "cmrg8zuft0008wli0etz5grtf",
+       "name": "Bulgur, cooked",
+       "role": "carb",
+       "grams": 65
+      },
+      {
+       "foodId": "cmrevpcnl000jwl5gnqnk630b",
+       "name": "Cucumber",
+       "role": "veg",
+       "grams": 40
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 10
+      }
+     ],
+     "kcal": 351.95,
+     "protein": 40.488,
+     "fat": 14.674,
+     "carb": 12.954,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrujkws4005owl9o5ilc9tvd",
+      "name": "Mediterranean Chicken & Cucumber with Bulgur",
+      "description": null,
+      "steps": [
+       "Cook the chicken.",
+       "Serve with bulgur and cucumber."
+      ],
+      "slotType": "meal",
+      "cuisine": "mediterranean",
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 409.9,
+      "protein": 42.726,
+      "fat": 14.894,
+      "carb": 25.908,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 6.16,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:00:06.772Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z0c2s002twlgwl1672mkn",
+     "planId": "cms7z0c2o002lwlgw5efgnkls",
+     "dayOfWeek": 3,
+     "slotType": "meal",
+     "slotIndex": 3,
+     "recipeId": "cmrujkwt3007cwl9oaahetc8g",
+     "proteinScale": 1.41,
+     "sidesScale": 0.53,
+     "ingredients": [
+      {
+       "foodId": "cmrj2tbgn00kqwlwsij0gf7e5",
+       "name": "Tuna",
+       "role": "protein",
+       "grams": 170
+      },
+      {
+       "foodId": "cmrj2t8190078wlws1rc1yrxl",
+       "name": "Couscous",
+       "role": "carb",
+       "grams": 80
+      },
+      {
+       "foodId": "cmrevpcnl000jwl5gnqnk630b",
+       "name": "Cucumber",
+       "role": "veg",
+       "grams": 40
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 10
+      }
+     ],
+     "kcal": 380.8,
+     "protein": 46.618,
+     "fat": 11.586,
+     "carb": 19.424,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrujkwt3007cwl9oaahetc8g",
+      "name": "Mediterranean Tuna & Cucumber with Couscous",
+      "description": null,
+      "steps": [
+       "Cook the tuna.",
+       "Serve with couscous and cucumber."
+      ],
+      "slotType": "meal",
+      "cuisine": "mediterranean",
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 405.2,
+      "protein": 36.757,
+      "fat": 11.352,
+      "carb": 36.528,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 6.17,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:00:06.807Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z0c2t002vwlgwq0qb9aix",
+     "planId": "cms7z0c2o002lwlgw5efgnkls",
+     "dayOfWeek": 3,
+     "slotType": "snack",
+     "slotIndex": 0,
+     "recipeId": "cms7pjmju002swlbktsksba9r",
+     "proteinScale": 0.72,
+     "sidesScale": 0.72,
+     "ingredients": [
+      {
+       "foodId": "cmrukzae50002wlbwr9bq9oa7",
+       "name": "Edamame, shelled, cooked",
+       "role": "protein",
+       "grams": 105
+      },
+      {
+       "foodId": "cmrj2t6gd0003wlwss7jf3wzf",
+       "name": "Salt",
+       "role": "other",
+       "grams": 1
+      }
+     ],
+     "kcal": 127.05,
+     "protein": 12.6,
+     "fat": 5.25,
+     "carb": 9.450000000000001,
+     "warning": "Tried 7 recipe(s) for this slot, none fit within tolerance — closest was \"Edamame with Sea Salt\" (delivered 13g protein vs a 16g target).",
+     "locked": false,
+     "recipe": {
+      "id": "cms7pjmju002swlbktsksba9r",
+      "name": "Edamame with Sea Salt",
+      "description": null,
+      "steps": [
+       "Boil the pods 4 minutes in well-salted water.",
+       "Drain and salt again while hot. Eat from the pod."
+      ],
+      "slotType": "snack",
+      "cuisine": "japanese",
+      "prepTimeMin": 6,
+      "source": "curated",
+      "mealCategory": null,
+      "kcal": 181.5,
+      "protein": 18,
+      "fat": 7.5,
+      "carb": 13.5,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": null,
+      "difficulty": 1,
+      "filterProvenance": null,
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-30T16:08:04.843Z",
+      "createdByUserId": null
+     }
+    }
+   ],
+   "groceryList": null,
+   "meta": {
+    "matchPct": 96,
+    "attempts": 1,
+    "score": {
+     "daysInTolerance": 1,
+     "avgMatch": 96,
+     "days": [
+      {
+       "dayOfWeek": 3,
+       "dayName": "Thursday",
+       "matchPct": 96,
+       "totals": {
+        "kcal": 1557,
+        "protein": 182,
+        "fat": 61,
+        "carb": 68
+       },
+       "kcalDeltaPct": 0.9,
+       "proteinShortPct": 0,
+       "fatOk": true,
+       "carbOk": true,
+       "inTolerance": true,
+       "miss": null,
+       "unfilledSlots": 0,
+       "warnedSlots": 1,
+       "windowIndex": 0,
+       "dayIndex": 0,
+       "key": "0:3"
+      }
+     ],
+     "totalDays": 1
+    },
+    "days": [
+     {
+      "dayOfWeek": 3,
+      "dayName": "Thursday",
+      "matchPct": 96,
+      "totals": {
+       "kcal": 1557,
+       "protein": 182,
+       "fat": 61,
+       "carb": 68
+      },
+      "kcalDeltaPct": 0.9,
+      "proteinShortPct": 0,
+      "fatOk": true,
+      "carbOk": true,
+      "inTolerance": true,
+      "miss": null,
+      "unfilledSlots": 0,
+      "warnedSlots": 1,
+      "windowIndex": 0,
+      "dayIndex": 0,
+      "key": "0:3"
+     }
+    ],
+    "diagnosis": null,
+    "poolCounts": {
+     "raw": 910,
+     "afterDiet": 418,
+     "afterPrep": 418,
+     "afterStack": 418,
+     "stackExplain": null
+    },
+    "variety": {
+     "mealEligible": 377,
+     "usableForSlot": 255,
+     "slotKcal": 351,
+     "snackEligible": 7,
+     "weeklyMealSlots": 28,
+     "weeklySnackSlots": 7,
+     "repeatCap": 2,
+     "distinctWeeks": 9.1,
+     "horizonWeeks": 1,
+     "sustainsHorizon": true,
+     "notes": [
+      "1 day: 4 distinct dish(es) across 5 filled slot(s); most-repeated dish appears 2x against a 2x cap for this horizon (2x per week)."
+     ],
+     "horizon": {
+      "weeks": 1,
+      "days": 1,
+      "perWeekCap": 2,
+      "horizonRepeatCap": 2,
+      "mealSlots": 4,
+      "snackSlots": 1,
+      "totalSlots": 5,
+      "distinctFloor": 3,
+      "distinctRecipes": 4,
+      "maxRepeat": 2,
+      "maxRepeatRecipeId": "cmrujkws4005owl9o5ilc9tvd",
+      "lockedRepeatsOfMax": 0,
+      "filledSlots": 5,
+      "unfilledSlots": 0,
+      "requiredDistinct": 3,
+      "capHeld": true,
+      "floorHeld": true
+     }
+    },
+    "priorWeeksConsidered": 0,
+    "horizon": {
+     "key": "day",
+     "label": "1 day",
+     "days": 1,
+     "kind": "days",
+     "weeks": 1,
+     "custom": false,
+     "startDate": "2026-07-30",
+     "endDate": "2026-07-30",
+     "startDayOfWeek": 3,
+     "weeksWritten": 1,
+     "solveMs": 4,
+     "weekPlans": [
+      {
+       "startDate": "2026-07-27",
+       "dayIndices": [
+        3
+       ],
+       "days": 1,
+       "daysInTolerance": 1,
+       "avgMatch": 96,
+       "unfilledSlots": 0,
+       "poolSize": 418
+      }
+     ]
+    }
+   }
+  }
+ }
+}

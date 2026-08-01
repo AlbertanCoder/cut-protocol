@@ -301,6 +301,61 @@ function goalWeightGate(candidate, body) {
   };
 }
 
+// Below this the goal reads as "maintain", not "gain", and the smallest rate the
+// menu offers (0.25 lb/wk ≈ 125 kcal) is a defensible answer. Above it the customer
+// has asked to put weight ON and a deficit is the wrong direction, not a small error.
+const GAIN_INTENT_KG = 0.5;
+
+/**
+ * Refuse to prescribe a deficit to someone whose goal is ABOVE their start weight.
+ *
+ * Returns a response body, or null to proceed. Only evaluated when the request
+ * actually touches the goal, the start weight or the rate — this never blocks an
+ * unrelated edit (the same scoping rule goalWeightGate uses).
+ *
+ * This is a REFUSAL and not an acknowledgement gate on purpose. The other two gates
+ * ask "are you sure?" because a lean, small-framed person can legitimately want a
+ * low goal weight. Here there is nothing to be sure about: the app has no surplus
+ * path at all, so the only honest answers are "don't do that" or "build one".
+ */
+function gainDirectionGate(candidate, body) {
+  // Scoped to the GOAL and the RATE — deliberately NOT to startWeightKg.
+  //
+  // The first version of this gate also fired on a start-weight edit, and
+  // tests/profileSafetyGates.test.js caught it immediately with the right principle:
+  // "a tracker you cannot tell the truth to is worthless". Someone who has lost
+  // weight down to 42 kg while an old 62 kg goal still sits above it must be able to
+  // record that weight; refusing it would trap them with BOTH the wrong weight and
+  // the stale goal. That is the same trap goalWeightGate avoids by downgrading a
+  // height correction to its acknowledgement path instead of refusing.
+  //
+  // A real weight is a fact and is never refused. Only the PRESCRIPTION is gated,
+  // which means the customer has to be actively setting the goal or the rate.
+  if (body.goalWeightKg === undefined && body.rateLbPerWeek === undefined) return null;
+  const start = candidate?.startWeightKg;
+  const goal = candidate?.goalWeightKg;
+  const rate = candidate?.rateLbPerWeek;
+  if (!(start > 0) || !(goal > 0) || !(rate > 0)) return null;
+  const gainKg = goal - start;
+  if (gainKg <= GAIN_INTENT_KG) return null;
+
+  const gainLb = Math.round(gainKg * 2.20462);
+  const deficit = Math.round(rate * 500);
+  return {
+    gate: "gain-not-supported",
+    error: `Your goal is ${r1(gainKg)} kg (${gainLb} lb) ABOVE your current weight, but every rate this app offers takes weight off.`,
+    fields: {
+      goalWeightKg: `This is higher than your current ${r1(start)} kg. Cut Protocol can only plan weight loss or maintenance right now.`,
+    },
+    detail: [
+      `Left as it is, the app would have prescribed you ${deficit} kcal a day BELOW what you burn — the opposite of what you asked for. It would have done that silently, and the plan would have looked correct the whole way down.`,
+      "That is a gap in the app, not a mistake you made. Building muscle needs a calorie SURPLUS and a slower rate than any of the loss rates here, and none of that exists yet.",
+      "Two things you can do now: set your goal weight to your current weight (or below) to get an honest cutting or maintenance plan, or keep the goal and ignore the calorie target while you use the app for recipes and shopping only.",
+    ],
+    whatNow: `Set a goal at or below ${r1(start)} kg to continue, or leave the goal and treat the calorie number as not applicable to you.`,
+  };
+}
+
 router.get("/", async (req, res) => {
   const profile = await prisma.profile.findUnique({ where: { userId: req.userId } });
   res.json(profile);
@@ -394,6 +449,22 @@ router.put("/", async (req, res) => {
     return res.status(422).json(goalGate.body);
   }
 
+  // GATE 3 — the goal must not point the opposite way to the prescription.
+  //
+  // Every rate in RATE_OPTIONS is a LOSS rate, and targetKcal is derived as
+  // TDEE − rate×500 with no reference to which way the goal points. So a customer
+  // who says "I am 124.6 kg and I want to reach 134.4 kg" was being prescribed a
+  // 750 kcal/day DEFICIT, silently. The 275-customer campaign
+  // (qa-fleet-20260729-2032) found this on 50 of 50 affected profiles — one
+  // customer in five — and the worst case was a 19-year-old at BMI 18.2 asking to
+  // gain who was handed 1,200 kcal, below her own BMR.
+  //
+  // Until a surplus path exists this REFUSES rather than guesses. Reversing a
+  // customer's stated direction is the worst of the available options, and a plan
+  // built on it is actively harmful to the underweight case.
+  const gainGate = gainDirectionGate(candidate, body);
+  if (gainGate) return res.status(400).json(gainGate);
+
   // Unsafe-rate contract: >1% of body weight per week (or floor-clamped
   // target) requires an explicit rateAcknowledged: true IN THIS REQUEST
   // whenever the rate/floor inputs change. 422 tells the UI to show the
@@ -453,4 +524,5 @@ module.exports.validateProfilePatch = validateProfilePatch;
 module.exports.validateProfileFields = validateProfileFields;
 module.exports.adultGate = adultGate;
 module.exports.goalWeightGate = goalWeightGate;
-module.exports.SAFETY_GATES = { ADULT_MIN_AGE, GOAL_BMI_ACK, GOAL_BMI_REFUSE };
+module.exports.gainDirectionGate = gainDirectionGate;
+module.exports.SAFETY_GATES = { ADULT_MIN_AGE, GOAL_BMI_ACK, GOAL_BMI_REFUSE, GAIN_INTENT_KG };

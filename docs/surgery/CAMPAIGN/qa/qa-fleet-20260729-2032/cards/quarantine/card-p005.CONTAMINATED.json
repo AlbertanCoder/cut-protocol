@@ -1,0 +1,76 @@
+{
+  "personaId": "p005",
+  "satisfaction": 1,
+  "wouldRecommend": false,
+  "criteria": {
+    "macrosInRange": 1,
+    "worksEndToEnd": 4,
+    "mealsAreGood": 2,
+    "affordableAdjustable": 3,
+    "tasty": 3
+  },
+  "allergenRespect": {
+    "ok": false,
+    "leaks": [
+      "Pork Shoulder 405g in \"Slow-roasted ham with lemon, garlic & sage\" (day 5 dinner)",
+      "Pork rinds 17g in \"Jerky & Pork Rinds Snack Plate\" (day 3)",
+      "Pork rinds 20g in \"Jerky & Pork Rinds Snack Plate\" (day 4)",
+      "Chorizo 30g in \"Spanish beans with chicken & chorizo\" (day 6 dinner)",
+      "Pepperoni 60g in \"Pepperoni & Pistachios Plate\" (day 2 and day 6)"
+    ]
+  },
+  "delights": [
+    "It admits when it failed instead of hiding it: \"Tried 5 recipe(s) for this slot, none fit within tolerance — closest was \\\"Grilled Portuguese sardines\\\" (delivered 56g protein vs a 79g target).\" I would rather be told.",
+    "\"Spanish Chicken\" — Chicken Thighs 305g, Onion, Paprika, Lemon, Parsley, Chicken Stock, Olive Oil — 4g carb. That is the one dish that is actually keto AND something I would cook after a shift.",
+    "Regenerating was instant and did give me the full week I asked for: 28 slots across 7 days, where my saved plan only had one day in it."
+  ],
+  "defects": [
+    {
+      "what": "My hard no-pork line is broken six times across the week, including a whole pork-shoulder dinner. This is medical, not a preference.",
+      "snippet": "\"Slow-roasted ham with lemon, garlic & sage\" — Pork Shoulder 405g"
+    },
+    {
+      "what": "I am set to keto and I think low-carb, and no single day is remotely keto — the solver builds meals on quinoa, white rice, potato and beans.",
+      "snippet": "carbs per day: 106, 121, 115, 100, 105, 75, 147 g — day 6 includes Quinoa 170g, Russet Potato 45g, Pinto Beans 40g, Jersey Royal Potatoes 30g"
+    },
+    {
+      "what": "The app says my target is 1263 kcal and then hands me 2219-2523 kcal every day. Both numbers cannot be right and neither is explained.",
+      "snippet": "profile targetKcal 1263 vs day totals 2375, 2359, 2362, 2219, 2219, 2364, 2523"
+    },
+    {
+      "what": "I asked for 3 meals and 0 snacks. Every one of the 7 days has a snack slot bolted on, and the snacks are where most of the pork is.",
+      "snippet": "profile snacksPerDay: 0 — plan contains 7 slots with slotType \"snack\""
+    },
+    {
+      "what": "My goal is maintain (67.4 kg to 67.3 kg, about a quarter pound) yet the account is set to a 1.5 lb/week loss rate. At 76, doing formwork concrete plus four 60-minute weight sessions, a 1263 kcal prescription is not something I would follow.",
+      "snippet": "\"goalWeightKg\":67.3,\"startWeightKg\":67.4,\"rateLbPerWeek\":1.5,\"targetKcal\":1263"
+    },
+    {
+      "what": "Ingredient scaling produces amounts that are not food. A quarter pound of rosemary as a side, and 13 grams of cabbage inside a cabbage stew.",
+      "snippet": "\"Grilled Portuguese sardines\" — Rosemary 105g; \"Lakra me Mish Cabbage and Meat Stew\" — Cabbage 13g, Beef 250g"
+    },
+    {
+      "what": "Portions are two to four times what a 67 kg woman eats, and protein lands around 265 g/day (roughly 4 g per kg of me).",
+      "snippet": "\"Ground pack (elk/game), cooked 405g\"; \"White Fish 380g\"; \"Shrimp 325g\"; day protein totals P265, P268, P259, P264, P266, P269, P262"
+    },
+    {
+      "what": "I cannot shop this on a Saturday morning. Elk, goat meat and scotch bonnet are not in my grocery store, and a 290 g slab of deli luncheon meat is not a dinner.",
+      "snippet": "\"Turkey breast, low salt, prepackaged or deli, luncheon meat 290g\"; \"Goat Meat 365g\"; \"Scotch Bonnet 25g\"; costPerServing $9.07-$10.88"
+    },
+    {
+      "what": "The plan handed to me under my own login carries a different userId than my profile does, and one recipe note reads as if it were written for a man. It does not feel like my plan.",
+      "snippet": "GET /api/profile userId \"cms6wyfdn0004wlpc3vmj7hth\" vs GET /api/plans/current userId \"cms6wyf0c0003wlpc5575p8a7\"; recipe description \"Closer / site valve — his words.\""
+    },
+    {
+      "what": "Repetition inside one week: shrimp is the base of four separate meals and the same shrimp-quinoa bowl appears on two consecutive days.",
+      "snippet": "\"Garlic Shrimp Quinoa Bowl\" on day 2 and day 3; plus \"High-Protein Shrimp & Bell Peppers with Quinoa\" and \"High-Protein Shrimp & Broccoli with Quinoa\""
+    }
+  ],
+  "followUp": {
+    "action": "Regenerated the whole week, hoping a fresh solve would drop the pork-rind snack and give me the seven days I originally asked for",
+    "endpoint": "POST /api/plans/generate {\"horizon\":\"week\"}",
+    "status": 200,
+    "howItWent": "It worked mechanically and fast — I got 28 slots over 7 days instead of the single day that was saved. But it made the safety problem worse, not better: one pork slot became six pork hits, now including a 405 g pork-shoulder dinner and chorizo, and the snack slots I never asked for came back on all seven days."
+  },
+  "verdict": "It regenerates a full week in a second and it is honest about its own misses, but it fed me pork six times, ignored keto with 100-147 g of carbs a day, and prescribed 1263 kcal while serving 2400 — I would not put my name on it."
+}

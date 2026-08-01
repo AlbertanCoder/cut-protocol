@@ -1,0 +1,79 @@
+{
+  "personaId": "p005",
+  "sessionCrossed": false,
+  "satisfaction": 3,
+  "wouldRecommend": false,
+  "criteria": {
+    "macrosInRange": 4,
+    "worksEndToEnd": 4,
+    "mealsAreGood": 3,
+    "affordableAdjustable": 3,
+    "tasty": 5
+  },
+  "allergenRespect": {
+    "ok": true,
+    "leaks": []
+  },
+  "delights": [
+    "It told me the truth about my own thin options instead of pretending: \"17 of your 26 compliant recipes can be portioned to a 421 kcal meal - about 0.8 week(s) of 21 meals before dishes start repeating, so over 1 weeks you will see favourites come back.\" I am 76 and keto and off eggs; I would rather be told that up front than discover it in week three.",
+    "After I hit generate again, the numbers were genuinely excellent - every single day landed 1227-1271 kcal against my 1263 target, 128 g protein daily, and carbs 15-25 g/day, which is real keto and not keto-in-name. The app reported \"daysInTolerance\": 7 and it was not lying.",
+    "When a slot could not be filled properly it named the exact gap instead of hiding it: \"Tried 5 recipe(s) for this slot, none fit within tolerance - closest was \\\"Quick salt & pepper squid\\\" (delivered 32g protein vs a 38g target).\" That is the kind of honesty I trust."
+  ],
+  "defects": [
+    {
+      "what": "The meal plan sitting on my account when I first opened it was almost entirely empty - 19 of 21 slots had no food at all, and four whole days (Mon, Tue, Wed, Sat, Sun) were completely blank. I asked for a full week and got 1007 kcal total for seven days.",
+      "snippet": "\"kcal\":0, \"warning\":\"No eligible meal recipe left for this slot.\""
+    },
+    {
+      "what": "The only two slots that were filled served me a cup of cooking oil as a meal - 55 g Vegetable Oil plus 5 g Achiote Seeds, 503 kcal and 0.3 g of protein - and served the identical thing for both lunch and dinner on the same day.",
+      "snippet": "Achiote Oil (Aceite Achiotado) Recipe | Vegetable Oil 55g, Achiote Seeds 5g | 503kcal P0 F55 C2"
+    },
+    {
+      "what": "That dish is a condiment recipe, not a meal, and its own instructions say so - you strain it and keep it in a jar. Nothing in the app noticed it was serving me a pantry staple as dinner.",
+      "snippet": "\"Don't let the seeds turn black. Remove the skillet from the heat and let stand for 5 minutes more. Strain the oil and store for up to 15 days at room temperature in a jar with a tight lid.\""
+    },
+    {
+      "what": "I said I want to MAINTAIN, and my goal weight is 0.1 kg below my current weight, but the app has me on a 1.5 lb/week deficit - a 750 kcal/day cut - to lose about a fifth of a pound. That puts a 76-year-old woman doing heavy formwork concrete work plus four 60-minute weights sessions on 1263 kcal/day, which is only 63 kcal above the app's own stated female floor of 1200. It also pre-ticked the acknowledgement for me; I never agreed to an aggressive rate.",
+      "snippet": "\"startWeightKg\":67.4,\"goalWeightKg\":67.3,\"rateLbPerWeek\":1.5,\"rateAcknowledged\":true,\"targetKcal\":1263"
+    },
+    {
+      "what": "On the regenerated week, Saturday is beef, beef and beef - all three meals, about 425 g of it - and Sunday is beef twice. The app still scored that day 100% because its variety cap counts dish names, not what the dish is actually made of.",
+      "snippet": "DAY 5: Arepa pelua (Beef 105g) / Lakra me Mish Cabbage and Meat Stew (Beef 145g) / Thai beef stir-fry (Beef 175g) - \"matchPct\": 100"
+    },
+    {
+      "what": "There are essentially no vegetables in the entire week. The shopping list for 21 meals contains about 570 g of produce, and more than half of that is onion, against 3,755 g of meat and seafood. For a woman my age eating 1263 kcal a day that is no fibre and very little else.",
+      "snippet": "produce items: Cabbage 100g | Garlic 25g | Lemon 52g | Onion 313g | Tomato Puree 11g | Tomato Sauce 50g | White Cabbage 17g"
+    },
+    {
+      "what": "My shopping list told me, the customer, to go and edit a programming file to fix the prices. I do not know what that is and I should never have been shown it.",
+      "snippet": "\"note\":\"rough manually-entered CAD estimate, not sourced pricing data - edit src/lib/groceryPrices.js to correct\""
+    },
+    {
+      "what": "The estimated grocery total is not trustworthy and the quantities are not shoppable: it says CAD 156.75 for one person's week, but 17 of the 58 items carry no price at all so the real number is higher, and only 14 of 58 items tell me what to actually buy - the rest are raw gram counts with a disclaimer that they are not purchase quantities.",
+      "snippet": "\"form\":\"as-prepared (state unrecorded) - NOT a raw/dry purchase quantity\", \"purchaseUnits\":null"
+    },
+    {
+      "what": "I set my cuisine preferences to American and Indian and got neither, once, in 21 meals - I got Venezuelan, Argentine, Albanian, Norwegian, Botswanan, Spanish, Thai, Japanese and Chinese. The cuisine labels are also plainly wrong, which is probably why: the Norwegian national dish, a Botswanan stew and French duck confit are all filed as the same cuisine.",
+      "snippet": "Farikal (Norwegian National Dish) [western-comfort] / Seswaa [western-comfort] / Duck Confit [western-comfort] / Gambas al ajillo [western-comfort]"
+    },
+    {
+      "what": "Two dishes are not realistically cookable as described. Duck Confit is listed at 22 minutes prep - it is a two-day cure-and-slow-cook dish - and it lists 15 g of sea salt as an ingredient in a single serving, which is about two and a half teaspoons of salt in one meal at my age. It also has 15 g of thyme in one portion.",
+      "snippet": "Duck Confit [prep 22min, diff 3] Sea Salt 15g, Bay Leaf 1g, Garlic 6g, Thyme 15g, Duck Legs 135g, White Wine 50g"
+    },
+    {
+      "what": "Portions are sized for someone much bigger than me. To hit 128 g of protein on 1263 kcal it hands a 67 kg 76-year-old woman single servings of 240 g lamb, 225 g king prawns, 205 g salmon and 190 g beef.",
+      "snippet": "Farikal: Lamb 240g | Gambas al ajillo: Raw King Prawns 225g | Honey Teriyaki Salmon: Salmon 205g"
+    },
+    {
+      "what": "The plan handed to me shipped with no shopping list attached; I only got one by asking for it separately after regenerating.",
+      "snippet": "\"groceryList\": null"
+    }
+  ],
+  "followUp": {
+    "action": "Hit generate again for a full week, which is exactly what I would do after opening a plan with four blank days and a cup of oil for dinner. I then pulled a shopping list for the result to see whether I could actually go buy it.",
+    "endpoint": "POST /api/plans/generate {\"horizon\":\"week\"} (then POST /api/plans/cms6wyfn600drwlw0dvob1781/grocery-list)",
+    "status": 200,
+    "howItWent": "It fixed everything in one click - the same plan went from 2 filled slots out of 21 to 21 out of 21, from 1007 kcal for the week to 8782, and from two ingredients to 13 real dishes with all seven days inside tolerance. That is a relief and also the most damning thing I found: the app could clearly do this the whole time, so whatever it saved to my account first was simply broken, and a customer who did not think to press the button again would have concluded the product does not work. The shopping list then came back fine, 58 items in store sections, though with prices it admits are guesses and quantities it admits are not purchase amounts."
+  },
+  "verdict": "My allergies were respected everywhere and the regenerated week is genuinely well-built keto that hits 1263 kcal and 128 g protein every single day, but the plan actually waiting on my account was four blank days plus 55 g of vegetable oil served as two meals, and it has a 76-year-old who asked to maintain her weight eating a 750 kcal daily deficit - so I cannot recommend something whose first impression was that broken."
+}

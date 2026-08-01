@@ -1,0 +1,36 @@
+E-V7 — THE GAUNTLET (verifier's own runs)
+
+### npm test (full suite)
+ℹ todo 0
+ℹ duration_ms 13391.7587
+
+[runTests] OK — 110 files, 1482 tests, 0 failures.
+
+### goldens by the repo's own command: node scripts/runTests.mjs tests/golden
+✔ golden: BRAIN=off engine output is byte-identical to the locked baseline (117.4438ms)
+ℹ tests 10
+ℹ pass 10
+ℹ fail 0
+[runTests] OK — 2 files, 10 tests, 0 failures.
+
+### allergen sweep by name
+✔ STAGE-2: a plural keyword can never bypass its singular's guard (0.2115ms)
+ℹ tests 30
+ℹ pass 30
+ℹ fail 0
+
+### was any golden BASELINE file touched in the surgical era? (relock check)
+  (empty = no baseline file changed = NO RELOCK)
+
+### full list of non-doc files changed in the surgical era
+   backend/src/lib/aiRecipeClient.js               |  13 +-
+   backend/src/lib/brain/governance.js             |  17 +-
+   backend/src/lib/mealRouter.js                   |   4 +
+   backend/src/lib/mealSolver.js                   |   7 +-
+   backend/src/lib/weeklyPlanner.js                |  41 ++++-
+   backend/src/routes/plans.js                     |  47 ++++-
+   backend/tests/aiGovernanceStructure.test.js     |  17 +-
+   backend/tests/brain/generateWallClock.test.js   | 232 ++++++++++++++++++++++++
+   backend/tests/brain/governanceRelayGate.test.js | 165 +++++++++++++++++
+   frontend/src/lib/api.js                         |   9 +-
+   10 files changed, 539 insertions(+), 13 deletions(-)

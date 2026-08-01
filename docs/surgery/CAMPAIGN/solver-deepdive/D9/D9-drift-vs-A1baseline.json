@@ -1,0 +1,159 @@
+{
+  "tool": "compare.v2.mjs",
+  "baselineFile": "C:\\Users\\<account>\\Desktop\\cut-protocol\\docs\\surgery\\CAMPAIGN\\solver-brain\\A1\\A1-baseline-s424242.jsonl",
+  "treatmentFile": "C:\\Users\\<account>\\Desktop\\cut-protocol\\docs\\surgery\\CAMPAIGN\\solver-deepdive\\D9\\D9-baseline-worktree-s424242.jsonl",
+  "baselineHeader": {
+    "schemaRun": "solver-brain/run/v1",
+    "label": "baseline",
+    "agentId": "A1",
+    "pop": "personas",
+    "seed": 424242,
+    "seedName": "primary",
+    "treatment": "none",
+    "customers": 250,
+    "brain": "off",
+    "startDayOfWeek": 0,
+    "foodFingerprint": "423e7279ed6af641",
+    "poolRaw": 910,
+    "foodRows": 14151,
+    "dbPath": "C:\\Users\\<account>\\Desktop\\cut-protocol\\docs\\surgery\\CAMPAIGN\\solver-brain\\A1\\dev.db",
+    "dbHash": "e55f52e53658a086",
+    "startedAt": "2026-07-31T03:16:23.494Z"
+  },
+  "treatmentHeader": {
+    "schemaRun": "solver-brain/run/v1",
+    "label": "d9-baseline-worktree",
+    "agentId": "D9",
+    "pop": "personas",
+    "seed": 424242,
+    "seedName": "primary",
+    "treatment": "none",
+    "customers": 250,
+    "brain": "off",
+    "startDayOfWeek": 0,
+    "foodFingerprint": "b961ac3afbdf3f53",
+    "poolRaw": 910,
+    "foodRows": 14151,
+    "dbPath": "C:\\Users\\<account>\\Desktop\\cut-protocol\\docs\\surgery\\CAMPAIGN\\solver-brain\\D9\\dev.db",
+    "dbHash": "d9037dce9754b452",
+    "startedAt": "2026-08-01T00:28:03.359Z"
+  },
+  "problems": [
+    "FOOD FINGERPRINT MISMATCH — the two runs saw different nutrition data"
+  ],
+  "instrument": {
+    "baseline": {
+      "dis": 0,
+      "drift": 0,
+      "crash": 0,
+      "silent": 0
+    },
+    "treatment": {
+      "dis": 0,
+      "drift": 0,
+      "crash": 0,
+      "silent": 0
+    }
+  },
+  "results": {
+    "satisfiable": {
+      "base": {
+        "k": 413,
+        "n": 536,
+        "p": 0.7705223880597015,
+        "lo": 0.7330738268392512,
+        "hi": 0.8041209277113941
+      },
+      "treat": {
+        "k": 417,
+        "n": 537,
+        "p": 0.776536312849162,
+        "lo": 0.7394099404510492,
+        "hi": 0.8097343515089825
+      },
+      "deltaUnpaired": {
+        "d": 0.006013924789460501,
+        "lo": -0.04405831696352784,
+        "hi": 0.05605894960053195
+      },
+      "deltaPaired": {
+        "n": 536,
+        "b": 24,
+        "c": 28,
+        "unpaired": 1,
+        "d": 0.007462686567164179,
+        "lo": -0.01889821665980297,
+        "hi": 0.03382358979413133,
+        "thin": false,
+        "chi": 0.17307692307692307
+      }
+    },
+    "all": {
+      "base": {
+        "k": 434,
+        "n": 622,
+        "p": 0.6977491961414791,
+        "lo": 0.6605359085930758,
+        "hi": 0.7325348867481756
+      },
+      "treat": {
+        "k": 437,
+        "n": 623,
+        "p": 0.7014446227929374,
+        "lo": 0.6643644946156374,
+        "hi": 0.7360557335676606
+      },
+      "deltaUnpaired": {
+        "d": 0.003695426651458278,
+        "lo": -0.04714727367641383,
+        "hi": 0.05451626646368802
+      },
+      "deltaPaired": {
+        "n": 622,
+        "b": 25,
+        "c": 28,
+        "unpaired": 1,
+        "d": 0.00482315112540193,
+        "lo": -0.018113835080744604,
+        "hi": 0.027760137331548463,
+        "thin": false,
+        "chi": 0.07547169811320754
+      }
+    },
+    "planned": {
+      "base": {
+        "k": 434,
+        "n": 639,
+        "p": 0.6791862284820032,
+        "lo": 0.6420153720254128,
+        "hi": 0.7142155412677605
+      },
+      "treat": {
+        "k": 437,
+        "n": 639,
+        "p": 0.6838810641627543,
+        "lo": 0.6468226616984296,
+        "hi": 0.7187418126417264
+      },
+      "deltaUnpaired": {
+        "d": 0.0046948356807511304,
+        "lo": -0.04629906540016531,
+        "hi": 0.05565505893605686
+      },
+      "deltaPaired": {
+        "n": 639,
+        "b": 25,
+        "c": 28,
+        "unpaired": 0,
+        "d": 0.004694835680751174,
+        "lo": -0.017632014468182584,
+        "hi": 0.027021685829684935,
+        "thin": false,
+        "chi": 0.07547169811320754
+      }
+    }
+  },
+  "byteIdentical": 125,
+  "total": 639,
+  "generatedAt": "2026-08-01T00:29:12.378Z"
+}

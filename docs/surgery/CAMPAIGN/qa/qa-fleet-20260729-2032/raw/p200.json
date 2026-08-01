@@ -1,0 +1,452 @@
+{
+ "persona": {
+  "idx": 200,
+  "id": "p200",
+  "tier": "EASY",
+  "displayName": "restaurant chef, 75",
+  "story": "restaurant chef, 75, female, 151 cm / 95.5 kg (BMI 41.9), maintain, none diet, no exclusions, low-carb, 3 meals + 0 snacks, wants a single day",
+  "profile": {
+   "sex": "F",
+   "age": 75,
+   "heightCm": 151,
+   "startWeightKg": 95.5,
+   "goalWeightKg": 95.5,
+   "occupationKey": "chef-kitchen",
+   "trainingStyle": "mixed",
+   "minutesPerSession": 30,
+   "sessionsPerWeek": 2,
+   "rateLbPerWeek": 0.25,
+   "dietaryStyle": "none",
+   "excludedFoods": [],
+   "mealsPerDay": 3,
+   "snacksPerDay": 0,
+   "unitPref": "imperial",
+   "cuisinePreferences": [
+    "chinese",
+    "mediterranean"
+   ]
+  },
+  "filters": {
+   "cuisines": [
+    "chinese",
+    "mediterranean"
+   ]
+  },
+  "horizon": "day",
+  "walls": [],
+  "freeTextExclusions": [],
+  "dietaryStyle": "none",
+  "bmi": 41.9,
+  "goalKind": "maintain",
+  "macroStyle": "low-carb",
+  "requestedButUnsupported": [
+   "wanted a low-carb split without full keto; carbs are the leftover after LBM-derived protein and fat, and only dietaryStyle:\"keto\" changes that"
+  ],
+  "tupleKey": "[\"EASY\",\"F\",75,151,95.5,95.5,\"chef-kitchen\",\"mixed\",0.25,\"none\",[],3,0,\"low-carb\",\"day\",null,null,null,null,null]"
+ },
+ "request": {
+  "horizon": "day",
+  "filters": {
+   "cuisines": [
+    "chinese",
+    "mediterranean"
+   ]
+  }
+ },
+ "profileResponse": {
+  "id": "cms6x1mvw052lwlw0i4lm58fy",
+  "userId": "cms6x1mks005ewl2omt6icq62",
+  "sex": "F",
+  "age": 75,
+  "heightCm": 151,
+  "bodyFatPct": 0,
+  "bodyFatSource": null,
+  "occupationKey": "chef-kitchen",
+  "activityOverride": null,
+  "sessionsPerWeek": 2,
+  "trainingStyle": "mixed",
+  "minutesPerSession": 30,
+  "startWeightKg": 95.5,
+  "goalWeightKg": 95.5,
+  "startDate": "2026-07-29",
+  "unitPref": "imperial",
+  "rateLbPerWeek": 0.25,
+  "rateAcknowledged": false,
+  "floorKcal": null,
+  "excludedFormulas": [],
+  "targetKcal": 2015,
+  "mealsPerDay": 3,
+  "snacksPerDay": 0,
+  "excludedFoods": [],
+  "dietaryStyle": "none",
+  "cuisinePreferences": [
+   "chinese",
+   "mediterranean"
+  ],
+  "mealPreferencesNote": null,
+  "maxPrepMin": null,
+  "budgetTier": null,
+  "allowBatch": null,
+  "maxComplexity": null,
+  "adaptiveTdee": true,
+  "proteinPriorityMode": false,
+  "updatedAt": "2026-07-30T20:34:03.685Z"
+ },
+ "generate": {
+  "status": 200,
+  "ms": 279,
+  "body": {
+   "id": "cms7z1ouq049vwlgwmxnr821n",
+   "userId": "cms6x1mks005ewl2omt6icq62",
+   "startDate": "2026-07-27",
+   "createdAt": "2026-07-30T20:34:04.178Z",
+   "slots": [
+    {
+     "id": "cms7z1our049xwlgw7ct7u1xv",
+     "planId": "cms7z1ouq049vwlgwmxnr821n",
+     "dayOfWeek": 3,
+     "slotType": "meal",
+     "slotIndex": 0,
+     "recipeId": "cmrujkwsa0060wl9osorbvtkl",
+     "proteinScale": 1.15,
+     "sidesScale": 1.53,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t7w3006lwlws4zdhow4d",
+       "name": "Chicken Breast",
+       "role": "protein",
+       "grams": 195
+      },
+      {
+       "foodId": "cmrj2t8190078wlws1rc1yrxl",
+       "name": "Couscous",
+       "role": "carb",
+       "grams": 230
+      },
+      {
+       "foodId": "cmrevpcnl000jwl5gnqnk630b",
+       "name": "Cucumber",
+       "role": "veg",
+       "grams": 125
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 10
+      }
+     ],
+     "kcal": 594.0999999999999,
+     "protein": 53.3295,
+     "fat": 15.677,
+     "carb": 56.06,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrujkwsa0060wl9osorbvtkl",
+      "name": "Mediterranean Chicken & Cucumber with Couscous",
+      "description": null,
+      "steps": [
+       "Cook the chicken.",
+       "Serve with couscous and cucumber."
+      ],
+      "slotType": "meal",
+      "cuisine": "mediterranean",
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 470,
+      "protein": 44.407,
+      "fat": 14.822,
+      "carb": 36.528,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 6.47,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:00:06.779Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z1ous049zwlgw001i40k0",
+     "planId": "cms7z1ouq049vwlgwmxnr821n",
+     "dayOfWeek": 3,
+     "slotType": "meal",
+     "slotIndex": 1,
+     "recipeId": "cmrevpcpb0011wl5g2m81r2ia",
+     "proteinScale": 0.73,
+     "sidesScale": 0.93,
+     "ingredients": [
+      {
+       "foodId": "cmrevpcln0002wl5gainaw8kr",
+       "name": "Sirloin steak, cooked, lean",
+       "role": "protein",
+       "grams": 180
+      },
+      {
+       "foodId": "cmrevpcn5000fwl5g0j42i9os",
+       "name": "Potato, baked with skin",
+       "role": "carb",
+       "grams": 230
+      },
+      {
+       "foodId": "cmrevpcnl000jwl5gnqnk630b",
+       "name": "Cucumber",
+       "role": "veg",
+       "grams": 140
+      },
+      {
+       "foodId": "cmrevpcnz000mwl5g62fmfzqk",
+       "name": "Butter",
+       "role": "fat",
+       "grams": 9
+      }
+     ],
+     "kcal": 654.23,
+     "protein": 58.85700000000001,
+     "fat": 23.404,
+     "carb": 51.333,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrevpcpb0011wl5g2m81r2ia",
+      "name": "Cast-Iron Sirloin, Potato & Cucumber",
+      "description": "Same sear, starch swapped to potato.",
+      "steps": [
+       "Sear the sirloin as above; rest and slice.",
+       "Bake the potato at 425°F ~45 min, or halve and pan-crisp cut-side down 15 min.",
+       "Serve cucumber raw and cold as a cooling side.",
+       "Butter goes on the steak, not the potato."
+      ],
+      "slotType": "meal",
+      "cuisine": "western-comfort",
+      "prepTimeMin": 25,
+      "source": "curated",
+      "mealCategory": null,
+      "kcal": 821.7,
+      "protein": 79.72500000000001,
+      "fat": 30.34,
+      "carb": 55.75,
+      "tasteTier": "really_good",
+      "tasteTierSource": "curated",
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 15.22,
+      "difficulty": 3,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-10T11:55:10.607Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms7z1ouu04a1wlgwqlakh117",
+     "planId": "cms7z1ouq049vwlgwmxnr821n",
+     "dayOfWeek": 3,
+     "slotType": "meal",
+     "slotIndex": 2,
+     "recipeId": "cmrujkwr70040wl9otg8s1bb9",
+     "proteinScale": 1.54,
+     "sidesScale": 1.86,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t7w3006lwlws4zdhow4d",
+       "name": "Chicken Breast",
+       "role": "protein",
+       "grams": 260
+      },
+      {
+       "foodId": "cmrj2t7fb004fwlws8ezof2dp",
+       "name": "Russet Potato",
+       "role": "carb",
+       "grams": 335
+      },
+      {
+       "foodId": "cmrg8zxar000lwli0qy2ovmx4",
+       "name": "Onion",
+       "role": "veg",
+       "grams": 110
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 10
+      }
+     ],
+     "kcal": 764.25,
+     "protein": 68.5205,
+     "fat": 17.3575,
+     "carb": 81.964,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrujkwr70040wl9otg8s1bb9",
+      "name": "Spiced Chicken & Onions with Potato",
+      "description": null,
+      "steps": [
+       "Cook the chicken.",
+       "Serve with potato and onions."
+      ],
+      "slotType": "meal",
+      "cuisine": "indian",
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 489,
+      "protein": 43.644,
+      "fat": 14.748,
+      "carb": 44.124,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 5.94,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:00:06.740Z",
+      "createdByUserId": null
+     }
+    }
+   ],
+   "groceryList": null,
+   "meta": {
+    "matchPct": 98,
+    "attempts": 1,
+    "score": {
+     "daysInTolerance": 1,
+     "avgMatch": 98,
+     "days": [
+      {
+       "dayOfWeek": 3,
+       "dayName": "Thursday",
+       "matchPct": 98,
+       "totals": {
+        "kcal": 2013,
+        "protein": 181,
+        "fat": 56,
+        "carb": 189
+       },
+       "kcalDeltaPct": -0.1,
+       "proteinShortPct": 0.2,
+       "fatOk": true,
+       "carbOk": true,
+       "inTolerance": true,
+       "miss": null,
+       "unfilledSlots": 0,
+       "warnedSlots": 0,
+       "windowIndex": 0,
+       "dayIndex": 0,
+       "key": "0:3"
+      }
+     ],
+     "totalDays": 1
+    },
+    "days": [
+     {
+      "dayOfWeek": 3,
+      "dayName": "Thursday",
+      "matchPct": 98,
+      "totals": {
+       "kcal": 2013,
+       "protein": 181,
+       "fat": 56,
+       "carb": 189
+      },
+      "kcalDeltaPct": -0.1,
+      "proteinShortPct": 0.2,
+      "fatOk": true,
+      "carbOk": true,
+      "inTolerance": true,
+      "miss": null,
+      "unfilledSlots": 0,
+      "warnedSlots": 0,
+      "windowIndex": 0,
+      "dayIndex": 0,
+      "key": "0:3"
+     }
+    ],
+    "diagnosis": null,
+    "poolCounts": {
+     "raw": 910,
+     "afterDiet": 910,
+     "afterPrep": 910,
+     "afterStack": 910,
+     "stackExplain": null
+    },
+    "variety": {
+     "mealEligible": 730,
+     "usableForSlot": 426,
+     "slotKcal": 672,
+     "snackEligible": 18,
+     "weeklyMealSlots": 21,
+     "weeklySnackSlots": 0,
+     "repeatCap": 2,
+     "distinctWeeks": 20.3,
+     "horizonWeeks": 1,
+     "sustainsHorizon": true,
+     "notes": [
+      "1 day: 3 distinct dish(es) across 3 filled slot(s); most-repeated dish appears 1x against a 2x cap for this horizon (2x per week)."
+     ],
+     "horizon": {
+      "weeks": 1,
+      "days": 1,
+      "perWeekCap": 2,
+      "horizonRepeatCap": 2,
+      "mealSlots": 3,
+      "snackSlots": 0,
+      "totalSlots": 3,
+      "distinctFloor": 2,
+      "distinctRecipes": 3,
+      "maxRepeat": 1,
+      "maxRepeatRecipeId": "cmrujkwsa0060wl9osorbvtkl",
+      "lockedRepeatsOfMax": 0,
+      "filledSlots": 3,
+      "unfilledSlots": 0,
+      "requiredDistinct": 2,
+      "capHeld": true,
+      "floorHeld": true
+     }
+    },
+    "priorWeeksConsidered": 0,
+    "horizon": {
+     "key": "day",
+     "label": "1 day",
+     "days": 1,
+     "kind": "days",
+     "weeks": 1,
+     "custom": false,
+     "startDate": "2026-07-30",
+     "endDate": "2026-07-30",
+     "startDayOfWeek": 3,
+     "weeksWritten": 1,
+     "solveMs": 3,
+     "weekPlans": [
+      {
+       "startDate": "2026-07-27",
+       "dayIndices": [
+        3
+       ],
+       "days": 1,
+       "daysInTolerance": 1,
+       "avgMatch": 98,
+       "unfilledSlots": 0,
+       "poolSize": 910
+      }
+     ]
+    }
+   }
+  }
+ }
+}

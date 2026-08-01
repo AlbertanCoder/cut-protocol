@@ -1,0 +1,2626 @@
+{
+ "persona": {
+  "idx": 197,
+  "id": "p197",
+  "tier": "ROBUSTNESS",
+  "displayName": "nurse on 12s, 28",
+  "story": "nurse on 12s, 28, male, 194 cm / 161.4 kg (BMI 42.9), cut at 2 lb/wk, none diet, avoiding pork, dairy, peanut, low-fat, 4 meals + 0 snacks, wants a full week",
+  "profile": {
+   "sex": "M",
+   "age": 28,
+   "heightCm": 194,
+   "startWeightKg": 161.4,
+   "goalWeightKg": 140.5,
+   "occupationKey": "nurse-healthcare",
+   "trainingStyle": "mixed",
+   "minutesPerSession": 30,
+   "sessionsPerWeek": 2,
+   "rateLbPerWeek": 2,
+   "dietaryStyle": "none",
+   "excludedFoods": [
+    "pork",
+    "dairy",
+    "peanuts"
+   ],
+   "mealsPerDay": 9,
+   "snacksPerDay": 0,
+   "unitPref": "imperial",
+   "bodyFatPct": 18,
+   "bodyFatSource": "visual-estimate",
+   "cuisinePreferences": [
+    "mediterranean",
+    "japanese"
+   ],
+   "rateAcknowledged": true
+  },
+  "filters": {
+   "cuisines": [
+    "mediterranean",
+    "japanese"
+   ]
+  },
+  "horizon": "week",
+  "walls": [
+   "pork",
+   "dairy",
+   "peanut"
+  ],
+  "freeTextExclusions": [
+   "pork"
+  ],
+  "dietaryStyle": "none",
+  "bmi": 42.9,
+  "goalKind": "cut",
+  "macroStyle": "low-fat",
+  "requestedButUnsupported": [
+   "wanted a low-fat split; the fat band is fixed at LBM x0.34-0.40 and is not client-settable"
+  ],
+  "robustKind": "nine-meals",
+  "expectRejection": {
+   "field": "mealsPerDay",
+   "why": "validator requires 1-8"
+  },
+  "tupleKey": "[\"ROBUSTNESS\",\"M\",28,194,161.4,140.5,\"nurse-healthcare\",\"mixed\",2,\"none\",[\"dairy\",\"peanuts\",\"pork\"],9,0,\"low-fat\",\"week\",null,null,null,\"nine-meals\",null]"
+ },
+ "request": {
+  "horizon": "week",
+  "filters": {
+   "cuisines": [
+    "mediterranean",
+    "japanese"
+   ]
+  }
+ },
+ "profileResponse": {
+  "id": "cms6x1m3404zfwlw04zii9d9u",
+  "userId": "cms6x1lrg005bwl2otsc564rh",
+  "sex": "M",
+  "age": 28,
+  "heightCm": 194,
+  "bodyFatPct": 18,
+  "bodyFatSource": "visual-estimate",
+  "occupationKey": "nurse-healthcare",
+  "activityOverride": null,
+  "sessionsPerWeek": 2,
+  "trainingStyle": "mixed",
+  "minutesPerSession": 30,
+  "startWeightKg": 161.4,
+  "goalWeightKg": 140.5,
+  "startDate": "2026-07-29",
+  "unitPref": "imperial",
+  "rateLbPerWeek": 2,
+  "rateAcknowledged": false,
+  "floorKcal": null,
+  "excludedFormulas": [],
+  "targetKcal": 3617,
+  "mealsPerDay": 3,
+  "snacksPerDay": 0,
+  "excludedFoods": [
+   "pork",
+   "dairy",
+   "peanuts"
+  ],
+  "dietaryStyle": "none",
+  "cuisinePreferences": [
+   "mediterranean",
+   "japanese"
+  ],
+  "mealPreferencesNote": null,
+  "maxPrepMin": null,
+  "budgetTier": null,
+  "allowBatch": null,
+  "maxComplexity": null,
+  "adaptiveTdee": true,
+  "proteinPriorityMode": false,
+  "updatedAt": "2026-07-30T02:50:15.608Z"
+ },
+ "generate": {
+  "status": 200,
+  "ms": 198,
+  "body": {
+   "id": "cms6x1mio050xwlw06wpmotdt",
+   "userId": "cms6x1lrg005bwl2otsc564rh",
+   "startDate": "2026-07-27",
+   "createdAt": "2026-07-30T02:50:15.745Z",
+   "slots": [
+    {
+     "id": "cms6x1miq050zwlw0552v85ad",
+     "planId": "cms6x1mio050xwlw06wpmotdt",
+     "dayOfWeek": 0,
+     "slotType": "meal",
+     "slotIndex": 0,
+     "recipeId": "cmrul79wn0080wl80sjb9la4c",
+     "proteinScale": 1.69,
+     "sidesScale": 1.95,
+     "ingredients": [
+      {
+       "foodId": "cmrfoyrjh0009wl08cmcid51m",
+       "name": "Turkey breast, low salt, prepackaged or deli, luncheon meat",
+       "role": "protein",
+       "grams": 290
+      },
+      {
+       "foodId": "cmrukzaeh0005wlbwrbkygio0",
+       "name": "Chickpea pasta, dry",
+       "role": "carb",
+       "grams": 195
+      },
+      {
+       "foodId": "cmrg8zxar000lwli0qy2ovmx4",
+       "name": "Onion",
+       "role": "veg",
+       "grams": 115
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 1070.1,
+     "protein": 103.485,
+     "fat": 17.272,
+     "carb": 128.17,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrul79wn0080wl80sjb9la4c",
+      "name": "High-Protein Turkey & Onions with Chickpea Pasta",
+      "description": null,
+      "steps": [
+       "Cook the turkey.",
+       "Serve over chickpea pasta with onions."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 594.3,
+      "protein": 57.7,
+      "fat": 11.5,
+      "carb": 66.6,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 6.91,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:45:29.832Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x1mir0511wlw0d0macqlo",
+     "planId": "cms6x1mio050xwlw06wpmotdt",
+     "dayOfWeek": 0,
+     "slotType": "meal",
+     "slotIndex": 1,
+     "recipeId": "cmrj2tcxw00s5wlwsnxal50uf",
+     "proteinScale": 2,
+     "sidesScale": 2,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t6ls000rwlwsf7bu3ffs",
+       "name": "Soy Sauce",
+       "role": "carb",
+       "grams": 6
+      },
+      {
+       "foodId": "cmrj2t6m0000swlws689kgktw",
+       "name": "Dry sherry",
+       "role": null,
+       "grams": 3
+      },
+      {
+       "foodId": "cmrj2t6m8000twlwshm9tioqm",
+       "name": "Cornstarch",
+       "role": "carb",
+       "grams": 2
+      },
+      {
+       "foodId": "cmrj2t6mf000uwlwsne5kc5wl",
+       "name": "Black Pepper",
+       "role": null,
+       "grams": 1
+      },
+      {
+       "foodId": "cmrj2t6mo000vwlws2107zlap",
+       "name": "Sirloin steak",
+       "role": "protein",
+       "grams": 225
+      },
+      {
+       "foodId": "cmrj2t6mv000wwlwshajphmy6",
+       "name": "Oyster Sauce",
+       "role": "carb",
+       "grams": 9
+      },
+      {
+       "foodId": "cmrj2t6n2000xwlwsqltep2pn",
+       "name": "Chicken Stock",
+       "role": "protein",
+       "grams": 30
+      },
+      {
+       "foodId": "cmrj2t6na000ywlws9jek4w4z",
+       "name": "Broccoli",
+       "role": "veg",
+       "grams": 225
+      },
+      {
+       "foodId": "cmrj2t6nh000zwlwskv8t9g0p",
+       "name": "High Heat Cooking Oil",
+       "role": "carb",
+       "grams": 14
+      },
+      {
+       "foodId": "cmrj2t6ft0001wlwstiofk9on",
+       "name": "Garlic",
+       "role": "veg",
+       "grams": 3
+      },
+      {
+       "foodId": "cmrj2t6hb0007wlwsh6l6ynal",
+       "name": "Water",
+       "role": null,
+       "grams": 7
+      }
+     ],
+     "kcal": 646.26,
+     "protein": 72.85019999999999,
+     "fat": 31.7816,
+     "carb": 22.3473,
+     "warning": "Tried 5 recipe(s) for this slot, none fit within tolerance — closest was \"Beef and Broccoli Stir-Fry\" (landed 646 kcal vs a 1185 target; delivered 73g protein vs a 114g target).",
+     "locked": false,
+     "recipe": {
+      "id": "cmrj2tcxw00s5wlwsnxal50uf",
+      "name": "Beef and Broccoli Stir-Fry",
+      "description": null,
+      "steps": [
+       "Marinate the beef:",
+       "Stir together the beef marinade ingredients (1 teaspoon soy sauce, 1 teaspoon Chinese rice wine, 1/2 teaspoon cornstarch, 1/8 teaspoon black pepper) in a medium bowl.",
+       "Add the beef slices and stir until coated. Let stand for 10 minutes.",
+       "Prepare the sauce:",
+       "Stir together the sauce ingredients (2 tablespoons oyster sauce, 1 teaspoon Chinese rice wine, 1 teaspoon soy sauce, 1/4 cup chicken broth) in a small bowl. Set aside.",
+       "Blanch or steam the broccoli:",
+       "Bring a pot of water to a boil. Add the broccoli and cook until crisp-tender, about 2 minutes. Drain thoroughly.",
+       "Stir-fry the beef:",
+       "Heat a large frying pan or wok over high heat until a bead of water sizzles and instantly evaporates upon contact. Add the cooking oil and swirl to coat.",
+       "Add the beef and immediately spread it out all over the surface of the wok or pan in a single layer (preferably not touching).",
+       "Let the beef fry undisturbed for 1 minute. Flip the beef slices over, add the garlic to the pan, and fry for an additional 30 seconds to 1 minute until no longer pink.",
+       "Add the sauce, cornstarch, and broccoli:",
+       "Pour in the sauce and the cornstarch slurry (1 teaspoon cornstarch dissolved in 1 tablespoon of water). Stir until the sauce boils and thickens, about 30 seconds. Stir in the broccoli.",
+       "Serve immediately, with steamed rice or on its own."
+      ],
+      "slotType": "meal",
+      "cuisine": "asian",
+      "prepTimeMin": 56,
+      "source": "themealdb-import",
+      "mealCategory": null,
+      "kcal": 322.8,
+      "protein": 36.7,
+      "fat": 15.8,
+      "carb": 11,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 7.07,
+      "difficulty": 9,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-13T10:25:19.556Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x1mis0513wlw09z1dy2g2",
+     "planId": "cms6x1mio050xwlw06wpmotdt",
+     "dayOfWeek": 0,
+     "slotType": "meal",
+     "slotIndex": 2,
+     "recipeId": "cmrj2u60u0785wlws5mxsdqni",
+     "proteinScale": 2,
+     "sidesScale": 2,
+     "ingredients": [
+      {
+       "foodId": "cmrj2tb0x00j2wlwsjzrofelh",
+       "name": "Shrimp",
+       "role": "protein",
+       "grams": 300
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "carb",
+       "grams": 20
+      },
+      {
+       "foodId": "cmrj2tabp00gcwlwspk69j20a",
+       "name": "Dry White Wine",
+       "role": null,
+       "grams": 75
+      },
+      {
+       "foodId": "cmrj2tb1o00j5wlws7706a36s",
+       "name": "Fish Stock",
+       "role": "protein",
+       "grams": 100
+      },
+      {
+       "foodId": "cmrj2tab700gawlwsmp3bxndy",
+       "name": "Fennel",
+       "role": null,
+       "grams": 50
+      },
+      {
+       "foodId": "cmrg8zxar000lwli0qy2ovmx4",
+       "name": "Onion",
+       "role": "veg",
+       "grams": 55
+      },
+      {
+       "foodId": "cmrj2t6ft0001wlwstiofk9on",
+       "name": "Garlic",
+       "role": "veg",
+       "grams": 5
+      },
+      {
+       "foodId": "cmrj2t6t4001pwlwsxeja9565",
+       "name": "Potatoes",
+       "role": "veg",
+       "grams": 85
+      },
+      {
+       "foodId": "cmrj2t8ao008fwlwsygj9bgg1",
+       "name": "Orange",
+       "role": "veg",
+       "grams": 65
+      },
+      {
+       "foodId": "cmrj2t72s002vwlwsw9c3ovn9",
+       "name": "Star Anise",
+       "role": null,
+       "grams": 50
+      },
+      {
+       "foodId": "cmrj2t6qh001dwlws2ramsws8",
+       "name": "Bay Leaf",
+       "role": null,
+       "grams": 1
+      },
+      {
+       "foodId": "cmrj2t80w0076wlwsw1o7e51u",
+       "name": "Harissa Spice",
+       "role": null,
+       "grams": 2
+      },
+      {
+       "foodId": "cmrj2t6pz001bwlwsbarwpyy1",
+       "name": "Tomato Puree",
+       "role": "veg",
+       "grams": 11
+      },
+      {
+       "foodId": "cmrj2tag100gtwlwsn382zemc",
+       "name": "Chopped Tomatoes",
+       "role": "veg",
+       "grams": 200
+      },
+      {
+       "foodId": "cmrj2tb2700j7wlwsq70yyopd",
+       "name": "Mussels",
+       "role": null,
+       "grams": 15
+      },
+      {
+       "foodId": "cmrj2tay100irwlwsiujfz75h",
+       "name": "White Fish",
+       "role": "protein",
+       "grams": 100
+      },
+      {
+       "foodId": "cmrj2t6oj0014wlwsaw8ffg0k",
+       "name": "Thyme",
+       "role": null,
+       "grams": 100
+      },
+      {
+       "foodId": "cmrj2t7dl0047wlwsorfmmmbn",
+       "name": "Bread",
+       "role": "carb",
+       "grams": 50
+      }
+     ],
+     "kcal": 1483.69,
+     "protein": 127.732,
+     "fat": 48.06065,
+     "carb": 142.8679,
+     "warning": "Tried 5 recipe(s) for this slot, none fit within tolerance — closest was \"Fish Stew with Rouille\" (landed 1484 kcal vs a 1773 target; delivered 128g protein vs a 171g target).",
+     "locked": false,
+     "recipe": {
+      "id": "cmrj2u60u0785wlws5mxsdqni",
+      "name": "Fish Stew with Rouille",
+      "description": null,
+      "steps": [
+       "Twist the heads from the prawns, then peel away the legs and shells, but leave the tails intact. Devein each prawn. Fry the shells in 1 tbsp oil for 5 mins, until dark pink and golden in patches. Add the wine, boil down by two thirds, then pour in the stock. Strain into a jug, discarding the shells.",
+       "Heat the rest of the oil in a deep frying pan or casserole. Add the fennel, onion and garlic, season, then cover and gently cook for 10 mins until softened. Meanwhile, peel the potato and cut into 2cm-ish chunks. Put into a pan of cold water, bring to the boil and cook for 5 mins until almost tender. Drain in a colander.",
+       "Peel a strip of zest from the orange. Put the zest, star anise, bay and ½ tsp harissa into the pan. Fry gently, uncovered, for 5-10 mins, until the vegetables are soft, sweet and golden.",
+       "Stir in the tomato purée, cook for 2 mins, then add the tomatoes and stock. Simmer for 10 mins until the sauce thickens slightly. Season to taste. The sauce can be made ahead, then reheated later in the day. Meantime, scrub the mussels or clams and pull away any stringy beards. Any that are open should be tapped sharply on the worktop – if they don’t close after a few seconds, discard them.",
+       "Reheat the sauce if necessary, then stir the potato, chunks of fish and prawns very gently into the stew. Bring back to the boil, then cover and gently simmer for 3 mins. Scatter the mussels or clams over the stew, then cover and cook for 2 mins more or until the shells have opened wide. Discard any that remain closed. The chunks of fish should flake easily and the prawns should be pink through. Scatter with the thyme leaves.",
+       "To make the quick rouille, stir the rest of the harissa through the mayonnaise. Serve the stew in bowls, topped with spoonfuls of rouille, which will melt into the sauce and enrich it. Have some good bread ready, as you’ll definitely want to mop up the juices."
+      ],
+      "slotType": "meal",
+      "cuisine": "western-comfort",
+      "prepTimeMin": 36,
+      "source": "themealdb-import",
+      "mealCategory": null,
+      "kcal": 744.9,
+      "protein": 63.9,
+      "fat": 24.3,
+      "carb": 71.6,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 14.46,
+      "difficulty": 6,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-13T10:25:57.246Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x1mit0515wlw0fdplxdrp",
+     "planId": "cms6x1mio050xwlw06wpmotdt",
+     "dayOfWeek": 1,
+     "slotType": "meal",
+     "slotIndex": 0,
+     "recipeId": "cmrj2tx9j05afwlwsh1erfyyp",
+     "proteinScale": 0.5,
+     "sidesScale": 0.53,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t7h2004nwlwsf1vj166a",
+       "name": "Lamb Shoulder",
+       "role": "protein",
+       "grams": 65
+      },
+      {
+       "foodId": "cmrj2t7ho004qwlws8t7qsudo",
+       "name": "Flour",
+       "role": "carb",
+       "grams": 13
+      },
+      {
+       "foodId": "cmrj2t7hg004pwlwsioxvv8bh",
+       "name": "Vegetable Oil",
+       "role": "carb",
+       "grams": 1
+      },
+      {
+       "foodId": "cmrg8zxar000lwli0qy2ovmx4",
+       "name": "Onion",
+       "role": "veg",
+       "grams": 4
+      },
+      {
+       "foodId": "cmrj2t6oc0013wlwsjzlwoln2",
+       "name": "Carrots",
+       "role": "veg",
+       "grams": 8
+      },
+      {
+       "foodId": "cmrj2ta2r00fewlwsu3015yzh",
+       "name": "Vegetable Stock",
+       "role": "carb",
+       "grams": 4665
+      },
+      {
+       "foodId": "cmrj2t6t4001pwlwsxeja9565",
+       "name": "Potatoes",
+       "role": "veg",
+       "grams": 65
+      },
+      {
+       "foodId": "cmrj2t7fj004gwlwswaogj0v8",
+       "name": "Shortcrust Pastry",
+       "role": null,
+       "grams": 60
+      },
+      {
+       "foodId": "cmrj2t6wp0025wlwsvl5esd2h",
+       "name": "Egg",
+       "role": "protein",
+       "grams": 6
+      }
+     ],
+     "kcal": 1276.42,
+     "protein": 115.3305,
+     "fat": 33.9242,
+     "carb": 133.6806,
+     "warning": "Tried 5 recipe(s) for this slot, none fit within tolerance — closest was \"Lamb and Potato pie\" (landed 1276 kcal vs a 1067 target).",
+     "locked": false,
+     "recipe": {
+      "id": "cmrj2tx9j05afwlwsh1erfyyp",
+      "name": "Lamb and Potato pie",
+      "description": null,
+      "steps": [
+       "Dust the meat with flour to lightly coat.",
+       "Heat enough vegetable oil in a large saucepan to fill the base, and fry the onion and meat until lightly browned. Season with salt and pepper.",
+       "Add the carrots, stock and more seasoning to taste.",
+       "Bring to the boil, cover and reduce the heat to a simmer. Simmer for at least an hour or until the meat is tender. Take your time cooking the meat, the longer you leave it to cook, the better the flavour will be.",
+       "Preheat the oven to 180C/350F/Gas 4.",
+       "Add the drained potato cubes to the lamb.",
+       "Turn the mixture into a pie dish or casserole and cover with the shortcrust pastry. Make three slits in the top of the pastry to release any steam while cooking.",
+       "Brush with beaten egg and bake for about 40 minutes, until the pastry is golden brown.",
+       "Serve."
+      ],
+      "slotType": "meal",
+      "cuisine": "western-comfort",
+      "prepTimeMin": 39,
+      "source": "themealdb-import",
+      "mealCategory": null,
+      "kcal": 2398.8,
+      "protein": 217.4,
+      "fat": 62.8,
+      "carb": 252.7,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 33.01,
+      "difficulty": 5,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-13T10:25:45.895Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x1miu0517wlw0fipoxf5c",
+     "planId": "cms6x1mio050xwlw06wpmotdt",
+     "dayOfWeek": 1,
+     "slotType": "meal",
+     "slotIndex": 1,
+     "recipeId": "cmrevpcta002mwl5guzn8e8rm",
+     "proteinScale": 0.6,
+     "sidesScale": 0.88,
+     "ingredients": [
+      {
+       "foodId": "cmrevpcls0003wl5g6uhs17yp",
+       "name": "Extra-lean ground beef, cooked",
+       "role": "protein",
+       "grams": 270
+      },
+      {
+       "foodId": "cmrevpcnd000hwl5g7w5d714r",
+       "name": "Black beans, canned, drained",
+       "role": "carb",
+       "grams": 355
+      },
+      {
+       "foodId": "cmrevpcnr000kwl5gf8u73ie2",
+       "name": "Chili aromatics & sauce",
+       "role": "veg",
+       "grams": 440
+      }
+     ],
+     "kcal": 1087,
+     "protein": 108.395,
+     "fat": 21.995,
+     "carb": 116,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrevpcta002mwl5guzn8e8rm",
+      "name": "Street Chili",
+      "description": "The batch-cook chili — 6 servings, freezes well.",
+      "steps": [
+       "Brown the beef, breaking it up.",
+       "Add onion, garlic, jalapeño — cook until soft.",
+       "Toast cumin, chili powder, smoked paprika 30 seconds.",
+       "Stir in diced tomatoes, tomato paste, chipotle + adobo sauce, beans.",
+       "Simmer low and slow, 30+ minutes.",
+       "Finish with lime juice and cilantro."
+      ],
+      "slotType": "meal",
+      "cuisine": "mexican",
+      "prepTimeMin": 45,
+      "source": "curated",
+      "mealCategory": null,
+      "kcal": 1483.88,
+      "protein": 161.14,
+      "fat": 35.28,
+      "carb": 131,
+      "tasteTier": "really_good",
+      "tasteTierSource": "curated",
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 25.29,
+      "difficulty": 2,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-10T11:55:10.751Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x1miu0519wlw0h90sw7gc",
+     "planId": "cms6x1mio050xwlw06wpmotdt",
+     "dayOfWeek": 1,
+     "slotType": "meal",
+     "slotIndex": 2,
+     "recipeId": "cmrujkwty008uwl9ox63oneba",
+     "proteinScale": 2,
+     "sidesScale": 0.5,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t6fj0000wlwsdedjzth2",
+       "name": "Ground Beef",
+       "role": "protein",
+       "grams": 280
+      },
+      {
+       "foodId": "cmrj2t80e0074wlws89ldq9y0",
+       "name": "bowtie pasta",
+       "role": "carb",
+       "grams": 75
+      },
+      {
+       "foodId": "cmrj2t6na000ywlws9jek4w4z",
+       "name": "Broccoli",
+       "role": "veg",
+       "grams": 55
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 10
+      }
+     ],
+     "kcal": 1116.1,
+     "protein": 82.84349999999999,
+     "fat": 58.3595,
+     "carb": 59.47350000000001,
+     "warning": "Tried 5 recipe(s) for this slot, none fit within tolerance — closest was \"Rustic Ground Beef & Broccoli with Pasta\" (delivered 83g protein vs a 125g target).",
+     "locked": false,
+     "recipe": {
+      "id": "cmrujkwty008uwl9ox63oneba",
+      "name": "Rustic Ground Beef & Broccoli with Pasta",
+      "description": null,
+      "steps": [
+       "Cook the ground beef.",
+       "Serve with pasta and broccoli."
+      ],
+      "slotType": "meal",
+      "cuisine": "italian",
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 1046,
+      "protein": 58.2,
+      "fat": 36.2,
+      "carb": 118.9,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 6.26,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:00:06.839Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x1miv051bwlw088xt3p8x",
+     "planId": "cms6x1mio050xwlw06wpmotdt",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 0,
+     "recipeId": "cmrj2tmuv02zbwlws3pg3b96r",
+     "proteinScale": 1.44,
+     "sidesScale": 2,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t84f007mwlws3l8rub2z",
+       "name": "Chicken Thighs",
+       "role": "protein",
+       "grams": 375
+      },
+      {
+       "foodId": "cmrg8zxar000lwli0qy2ovmx4",
+       "name": "Onion",
+       "role": "veg",
+       "grams": 45
+      },
+      {
+       "foodId": "cmrj2t6jp000iwlwsli2ckg55",
+       "name": "Paprika",
+       "role": null,
+       "grams": 3
+      },
+      {
+       "foodId": "cmrj2t6qp001ewlwsds5bbm29",
+       "name": "Lemon",
+       "role": "veg",
+       "grams": 30
+      },
+      {
+       "foodId": "cmrj2t6h10006wlwslufza94y",
+       "name": "Parsley",
+       "role": null,
+       "grams": 15
+      },
+      {
+       "foodId": "cmrj2t6n2000xwlwsqltep2pn",
+       "name": "Chicken Stock",
+       "role": "protein",
+       "grams": 55
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "carb",
+       "grams": 7
+      }
+     ],
+     "kcal": 903.51,
+     "protein": 100.3905,
+     "fat": 49.1065,
+     "carb": 10.412,
+     "warning": "Tried 5 recipe(s) for this slot, none fit within tolerance — closest was \"Spanish Chicken\" (landed 904 kcal vs a 1067 target).",
+     "locked": false,
+     "recipe": {
+      "id": "cmrj2tmuv02zbwlws3pg3b96r",
+      "name": "Spanish Chicken",
+      "description": null,
+      "steps": [
+       "step 1",
+       "Heat oven to 190C/170C fan/gas 5. Put all the ingredients into a large, wide ovenproof dish. Mix everything together with your hands and season.",
+       "step 2",
+       "Bake for 45 mins, stirring the onions after 20 mins, until the chicken is golden and the onions tender. Serve with rice."
+      ],
+      "slotType": "meal",
+      "cuisine": "mediterranean",
+      "prepTimeMin": 23,
+      "source": "themealdb-import",
+      "mealCategory": null,
+      "kcal": 606.3,
+      "protein": 69.3,
+      "fat": 32.5,
+      "carb": 5.6,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 7.22,
+      "difficulty": 3,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-13T10:25:32.407Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x1miw051dwlw0fs39ojdj",
+     "planId": "cms6x1mio050xwlw06wpmotdt",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 1,
+     "recipeId": "cmrj2tmsc02yqwlwspeqwn28f",
+     "proteinScale": 2,
+     "sidesScale": 0.93,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t8n300a0wlwsqbuoptcz",
+       "name": "Pinto Beans",
+       "role": "carb",
+       "grams": 70
+      },
+      {
+       "foodId": "cmrg8zxar000lwli0qy2ovmx4",
+       "name": "Onion",
+       "role": "veg",
+       "grams": 25
+      },
+      {
+       "foodId": "cmrj2t6jp000iwlwsli2ckg55",
+       "name": "Paprika",
+       "role": null,
+       "grams": 2
+      },
+      {
+       "foodId": "cmrj2t6oj0014wlwsaw8ffg0k",
+       "name": "Thyme",
+       "role": null,
+       "grams": 25
+      },
+      {
+       "foodId": "cmrj2t6sp001nwlws8p9eluh3",
+       "name": "Bay Leaves",
+       "role": null,
+       "grams": 1
+      },
+      {
+       "foodId": "cmrj2t6h10006wlwslufza94y",
+       "name": "Parsley",
+       "role": null,
+       "grams": 25
+      },
+      {
+       "foodId": "cmrj2t84f007mwlws3l8rub2z",
+       "name": "Chicken Thighs",
+       "role": "protein",
+       "grams": 260
+      },
+      {
+       "foodId": "cmrj2t8nb00a1wlwslv2l5bf2",
+       "name": "Jersey Royal Potatoes",
+       "role": "veg",
+       "grams": 60
+      },
+      {
+       "foodId": "cmrj2t79y003qwlws7zi5s5ml",
+       "name": "Chorizo",
+       "role": null,
+       "grams": 60
+      },
+      {
+       "foodId": "cmrj2t8jp009lwlwsggitwh7i",
+       "name": "Spinach",
+       "role": "veg",
+       "grams": 25
+      }
+     ],
+     "kcal": 1247.07,
+     "protein": 112.8305,
+     "fat": 47.3945,
+     "carb": 93.12550000000002,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrj2tmsc02yqwlwspeqwn28f",
+      "name": "Spanish beans with chicken & chorizo",
+      "description": null,
+      "steps": [
+       "step 1",
+       "Soak the beans for at least 4 hrs or overnight in a large bowl with plenty of water to cover. Next day, rinse and drain, then put in a large heavy based pan with the onion, paprika, herb bundle and chicken. Pour over enough water or stock to cover, bring to the boil, then reduce the heat, cover and simmer for 45 mins.",
+       "step 2",
+       "Remove the chicken to a plate, then add the potatoes and chorizo to the pan. Continue cooking for 30 mins until the beans and potatoes are tender.",
+       "step 3",
+       "Discard the skin and bones from the chicken and tear into large chunks. Return the chicken to the pan with the spinach and simmer for 5 mins."
+      ],
+      "slotType": "meal",
+      "cuisine": "mediterranean",
+      "prepTimeMin": 31,
+      "source": "themealdb-import",
+      "mealCategory": null,
+      "kcal": 1008.7,
+      "protein": 81.2,
+      "fat": 34,
+      "carb": 97.5,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 7.8,
+      "difficulty": 4,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-13T10:25:32.317Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x1mix051fwlw09robeke9",
+     "planId": "cms6x1mio050xwlw06wpmotdt",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 2,
+     "recipeId": "cmrj2tkwo02jqwlwsbk01c600",
+     "proteinScale": 2,
+     "sidesScale": 1.77,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t84f007mwlws3l8rub2z",
+       "name": "Chicken Thighs",
+       "role": "protein",
+       "grams": 455
+      },
+      {
+       "foodId": "cmrj2t7k10051wlwsghd1hb86",
+       "name": "Curry Powder",
+       "role": null,
+       "grams": 10
+      },
+      {
+       "foodId": "cmrj2t8d8008rwlws51a28g0q",
+       "name": "All-purpose Seasoning",
+       "role": null,
+       "grams": 1
+      },
+      {
+       "foodId": "cmrg8zxar000lwli0qy2ovmx4",
+       "name": "Onion",
+       "role": "veg",
+       "grams": 50
+      },
+      {
+       "foodId": "cmrj2t6w20022wlws8tukrt3u",
+       "name": "Spring Onions",
+       "role": "veg",
+       "grams": 145
+      },
+      {
+       "foodId": "cmrj2t6tb001qwlwsb78om24m",
+       "name": "Green Pepper",
+       "role": null,
+       "grams": 1
+      },
+      {
+       "foodId": "cmrj2t6ft0001wlwstiofk9on",
+       "name": "Garlic",
+       "role": "veg",
+       "grams": 5
+      },
+      {
+       "foodId": "cmrj2t7rb005zwlws4bfn6rn7",
+       "name": "Scotch Bonnet",
+       "role": null,
+       "grams": 45
+      },
+      {
+       "foodId": "cmrj2t6oj0014wlwsaw8ffg0k",
+       "name": "Thyme",
+       "role": null,
+       "grams": 130
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "carb",
+       "grams": 18
+      },
+      {
+       "foodId": "cmrj2t6hb0007wlwsh6l6ynal",
+       "name": "Water",
+       "role": null,
+       "grams": 25
+      },
+      {
+       "foodId": "cmrj2t7fb004fwlws8ezof2dp",
+       "name": "Russet Potato",
+       "role": "veg",
+       "grams": 75
+      },
+      {
+       "foodId": "cmrj2t6gd0003wlwss7jf3wzf",
+       "name": "Salt",
+       "role": null,
+       "grams": 1
+      },
+      {
+       "foodId": "cmrj2t6gl0004wlws73buybhw",
+       "name": "Pepper",
+       "role": null,
+       "grams": 1
+      }
+     ],
+     "kcal": 1443.69,
+     "protein": 133.49775,
+     "fat": 71.73135999999998,
+     "carb": 75.20429999999999,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrj2tkwo02jqwlwsbk01c600",
+      "name": "Jamaican Curry Chicken Recipe",
+      "description": null,
+      "steps": [
+       "Equipment",
+       "Dutch Oven",
+       "Instructions",
+       "Add chicken thighs, all-purpose seasoning, 1 tablespoon of curry powder, onion, green onions, green pepper, garlic cloves, scotch bonnet pepper (if using), and thyme to a large bowl and combine, making sure all chicken pieces are covered with the seasoning. Cover and refrigerate for at least 1 hour or up to overnight.",
+       "One the chicken is done marinating, remove onions, peppers, and garlic cloves from chicken and set aside.",
+       "Heat olive oil in a large heavy bottom pot over medium heat. Add remaining curry powder and stir, cooking for about 20-30 seconds. Add onions, green pepper, garlic cloves, thyme, and scotch bonnet pepper (if using) to pot and stir until onions have softened, about 3-5 minutes. If your onions and peppers are looking dry, add about 1 tablespoon of water.",
+       "Add chicken and ¼ cup of water to the pot. Cover and reduce heat to medium low. Cook, stirring occasionally, for 30-35 minutes.",
+       "When there is about 15 minutes remaining, stir in potato and continue to cook covered.",
+       "Once chicken is cooked and potatoes are softened, remove from heat. Salt and pepper to taste."
+      ],
+      "slotType": "meal",
+      "cuisine": "indian",
+      "prepTimeMin": 42,
+      "source": "themealdb-import",
+      "mealCategory": null,
+      "kcal": 756.6,
+      "protein": 67.7,
+      "fat": 37.3,
+      "carb": 43.3,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 9.62,
+      "difficulty": 7,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-13T10:25:29.881Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x1mix051hwlw01h1a2ygm",
+     "planId": "cms6x1mio050xwlw06wpmotdt",
+     "dayOfWeek": 3,
+     "slotType": "meal",
+     "slotIndex": 0,
+     "recipeId": "cmrj2tf18018iwlwsofai8vzs",
+     "proteinScale": 1.5,
+     "sidesScale": 0.5,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "carb",
+       "grams": 25
+      },
+      {
+       "foodId": "cmrj2t6is000ewlwsmzadlvxo",
+       "name": "Beef",
+       "role": "protein",
+       "grams": 340
+      },
+      {
+       "foodId": "cmrg8zxar000lwli0qy2ovmx4",
+       "name": "Onion",
+       "role": "veg",
+       "grams": 14
+      },
+      {
+       "foodId": "cmrj2t6jx000jwlws245wvtmm",
+       "name": "Beef Stock",
+       "role": "protein",
+       "grams": 270
+      },
+      {
+       "foodId": "cmrj2t6uo001wwlwsjm3ptpzx",
+       "name": "Swede",
+       "role": null,
+       "grams": 13
+      },
+      {
+       "foodId": "cmrj2t6u6001uwlwsseysgkv2",
+       "name": "Celery",
+       "role": "veg",
+       "grams": 5
+      },
+      {
+       "foodId": "cmrj2t6oc0013wlwsjzlwoln2",
+       "name": "Carrots",
+       "role": "veg",
+       "grams": 30
+      },
+      {
+       "foodId": "cmrj2t6h10006wlwslufza94y",
+       "name": "Parsley",
+       "role": null,
+       "grams": 50
+      },
+      {
+       "foodId": "cmrj2t6t4001pwlwsxeja9565",
+       "name": "Potatoes",
+       "role": "veg",
+       "grams": 55
+      },
+      {
+       "foodId": "cmrj2t6ug001vwlwssesfsb74",
+       "name": "Leek",
+       "role": null,
+       "grams": 6
+      }
+     ],
+     "kcal": 1328.53,
+     "protein": 108.6621,
+     "fat": 72.23229999999998,
+     "carb": 59.6662,
+     "warning": "Tried 5 recipe(s) for this slot, none fit within tolerance — closest was \"Brun Lapskaus (Norwegian Beef Vegetable Stew)\" (landed 1329 kcal vs a 1067 target).",
+     "locked": false,
+     "recipe": {
+      "id": "cmrj2tf18018iwlwsofai8vzs",
+      "name": "Brun Lapskaus (Norwegian Beef Vegetable Stew)",
+      "description": null,
+      "steps": [
+       "▢",
+       "Heat olive oil in a large pot. Cut beef into 1 inch (2.5 cm) cubes and brown in oil.",
+       "▢",
+       "Dice the onion and add to browning beef. Add the stock and bring to a boil, then lower the heat, cover, and let simmer for about 30 minutes.",
+       "▢",
+       "Peel and cut the rutabaga and celery root into 1 inch (2.5 cm) cubes. Add to the pot, cover, and continue simmering for another 30 minutes.",
+       "▢",
+       "Peel and chop the rest of the vegetables into 1 inch (2.5 cm) cubes and add to the pot. Slice the leek into rings. Cover and continue simmering for about 20 minutes. Stir as little as possible.",
+       "▢",
+       "Top with fresh parsley."
+      ],
+      "slotType": "meal",
+      "cuisine": "western-comfort",
+      "prepTimeMin": 43,
+      "source": "themealdb-import",
+      "mealCategory": null,
+      "kcal": 1575.9,
+      "protein": 87.9,
+      "fat": 85.4,
+      "carb": 117.4,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 13.85,
+      "difficulty": 6,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-13T10:25:22.268Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x1miy051jwlw08x9pq1jz",
+     "planId": "cms6x1mio050xwlw06wpmotdt",
+     "dayOfWeek": 3,
+     "slotType": "meal",
+     "slotIndex": 1,
+     "recipeId": "cmrul4e5w0050wl68gg9dtivf",
+     "proteinScale": 1.93,
+     "sidesScale": 1.77,
+     "ingredients": [
+      {
+       "foodId": "cmrfoyrjh0009wl08cmcid51m",
+       "name": "Turkey breast, low salt, prepackaged or deli, luncheon meat",
+       "role": "protein",
+       "grams": 325
+      },
+      {
+       "foodId": "cmrukzaeh0005wlbwrbkygio0",
+       "name": "Chickpea pasta, dry",
+       "role": "carb",
+       "grams": 175
+      },
+      {
+       "foodId": "cmrj2t6na000ywlws9jek4w4z",
+       "name": "Broccoli",
+       "role": "veg",
+       "grams": 195
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 1054.7,
+     "protein": 110.8615,
+     "fat": 17.1105,
+     "carb": 119.884,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrul4e5w0050wl68gg9dtivf",
+      "name": "High-Protein Turkey & Broccoli with Chickpea Pasta",
+      "description": null,
+      "steps": [
+       "Cook the turkey.",
+       "Serve over chickpea pasta with broccoli."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 604.4,
+      "protein": 59.9,
+      "fat": 11.8,
+      "carb": 67.9,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 7.36,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:43:15.380Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x1miz051lwlw0gpx5iyk2",
+     "planId": "cms6x1mio050xwlw06wpmotdt",
+     "dayOfWeek": 3,
+     "slotType": "meal",
+     "slotIndex": 2,
+     "recipeId": "cmrevpctw002twl5gdov5q7ka",
+     "proteinScale": 1.49,
+     "sidesScale": 2,
+     "ingredients": [
+      {
+       "foodId": "cmrevpclb0000wl5ghnno9i5f",
+       "name": "Chicken breast, cooked, skinless",
+       "role": "protein",
+       "grams": 375
+      },
+      {
+       "foodId": "cmrevpcn2000ewl5gmlyzu0vd",
+       "name": "White rice, cooked",
+       "role": "carb",
+       "grams": 400
+      },
+      {
+       "foodId": "cmrevpcnh000iwl5gh2zjhyqe",
+       "name": "Bell peppers",
+       "role": "veg",
+       "grams": 300
+      }
+     ],
+     "kcal": 1231.75,
+     "protein": 130.05,
+     "fat": 15.6,
+     "carb": 130,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrevpctw002twl5gdov5q7ka",
+      "name": "Grilled Chicken Breast, Rice & Peppers",
+      "description": "The site-lunch template.",
+      "steps": [
+       "Grill or pan-sear seasoned chicken breast until 165°F internal.",
+       "Rest, slice.",
+       "Serve over rice with peppers — packs well for a lunch box."
+      ],
+      "slotType": "meal",
+      "cuisine": "western-comfort",
+      "prepTimeMin": 15,
+      "source": "curated",
+      "mealCategory": null,
+      "kcal": 719,
+      "protein": 84.4,
+      "fat": 10.05,
+      "carb": 65,
+      "tasteTier": "really_good",
+      "tasteTierSource": "curated",
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 9.07,
+      "difficulty": 2,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-10T11:55:10.772Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x1mj0051nwlw030l7kmne",
+     "planId": "cms6x1mio050xwlw06wpmotdt",
+     "dayOfWeek": 4,
+     "slotType": "meal",
+     "slotIndex": 0,
+     "recipeId": "cmrj2tx9j05afwlwsh1erfyyp",
+     "proteinScale": 0.5,
+     "sidesScale": 0.53,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t7h2004nwlwsf1vj166a",
+       "name": "Lamb Shoulder",
+       "role": "protein",
+       "grams": 65
+      },
+      {
+       "foodId": "cmrj2t7ho004qwlws8t7qsudo",
+       "name": "Flour",
+       "role": "carb",
+       "grams": 13
+      },
+      {
+       "foodId": "cmrj2t7hg004pwlwsioxvv8bh",
+       "name": "Vegetable Oil",
+       "role": "carb",
+       "grams": 1
+      },
+      {
+       "foodId": "cmrg8zxar000lwli0qy2ovmx4",
+       "name": "Onion",
+       "role": "veg",
+       "grams": 4
+      },
+      {
+       "foodId": "cmrj2t6oc0013wlwsjzlwoln2",
+       "name": "Carrots",
+       "role": "veg",
+       "grams": 8
+      },
+      {
+       "foodId": "cmrj2ta2r00fewlwsu3015yzh",
+       "name": "Vegetable Stock",
+       "role": "carb",
+       "grams": 4665
+      },
+      {
+       "foodId": "cmrj2t6t4001pwlwsxeja9565",
+       "name": "Potatoes",
+       "role": "veg",
+       "grams": 65
+      },
+      {
+       "foodId": "cmrj2t7fj004gwlwswaogj0v8",
+       "name": "Shortcrust Pastry",
+       "role": null,
+       "grams": 60
+      },
+      {
+       "foodId": "cmrj2t6wp0025wlwsvl5esd2h",
+       "name": "Egg",
+       "role": "protein",
+       "grams": 6
+      }
+     ],
+     "kcal": 1276.42,
+     "protein": 115.3305,
+     "fat": 33.9242,
+     "carb": 133.6806,
+     "warning": "Tried 5 recipe(s) for this slot, none fit within tolerance — closest was \"Lamb and Potato pie\" (landed 1276 kcal vs a 1067 target).",
+     "locked": false,
+     "recipe": {
+      "id": "cmrj2tx9j05afwlwsh1erfyyp",
+      "name": "Lamb and Potato pie",
+      "description": null,
+      "steps": [
+       "Dust the meat with flour to lightly coat.",
+       "Heat enough vegetable oil in a large saucepan to fill the base, and fry the onion and meat until lightly browned. Season with salt and pepper.",
+       "Add the carrots, stock and more seasoning to taste.",
+       "Bring to the boil, cover and reduce the heat to a simmer. Simmer for at least an hour or until the meat is tender. Take your time cooking the meat, the longer you leave it to cook, the better the flavour will be.",
+       "Preheat the oven to 180C/350F/Gas 4.",
+       "Add the drained potato cubes to the lamb.",
+       "Turn the mixture into a pie dish or casserole and cover with the shortcrust pastry. Make three slits in the top of the pastry to release any steam while cooking.",
+       "Brush with beaten egg and bake for about 40 minutes, until the pastry is golden brown.",
+       "Serve."
+      ],
+      "slotType": "meal",
+      "cuisine": "western-comfort",
+      "prepTimeMin": 39,
+      "source": "themealdb-import",
+      "mealCategory": null,
+      "kcal": 2398.8,
+      "protein": 217.4,
+      "fat": 62.8,
+      "carb": 252.7,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 33.01,
+      "difficulty": 5,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-13T10:25:45.895Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x1mj0051pwlw0l7nsebq5",
+     "planId": "cms6x1mio050xwlw06wpmotdt",
+     "dayOfWeek": 4,
+     "slotType": "meal",
+     "slotIndex": 1,
+     "recipeId": "cmrul4e720070wl688wh3ur8e",
+     "proteinScale": 2,
+     "sidesScale": 2,
+     "ingredients": [
+      {
+       "foodId": "cmrj2tay100irwlwsiujfz75h",
+       "name": "White Fish",
+       "role": "protein",
+       "grams": 380
+      },
+      {
+       "foodId": "cmrj2t7fb004fwlws8ezof2dp",
+       "name": "Russet Potato",
+       "role": "carb",
+       "grams": 300
+      },
+      {
+       "foodId": "cmrevpcnh000iwl5gh2zjhyqe",
+       "name": "Bell peppers",
+       "role": "veg",
+       "grams": 160
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 729.1999999999999,
+     "protein": 73.32999999999998,
+     "fat": 14.686,
+     "carb": 73.79999999999998,
+     "warning": "Tried 5 recipe(s) for this slot, none fit within tolerance — closest was \"High-Protein White Fish & Bell Peppers with Potato\" (landed 729 kcal vs a 1089 target; delivered 73g protein vs a 109g target).",
+     "locked": false,
+     "recipe": {
+      "id": "cmrul4e720070wl688wh3ur8e",
+      "name": "High-Protein White Fish & Bell Peppers with Potato",
+      "description": null,
+      "steps": [
+       "Cook the white fish.",
+       "Serve over potato with bell peppers."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 387.1,
+      "protein": 36.7,
+      "fat": 9.8,
+      "carb": 36.9,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 7.89,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:43:15.422Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x1mj1051rwlw0kmspeluc",
+     "planId": "cms6x1mio050xwlw06wpmotdt",
+     "dayOfWeek": 4,
+     "slotType": "meal",
+     "slotIndex": 2,
+     "recipeId": "cmrj2tlw102rwwlwsz0fyjwlr",
+     "proteinScale": 2,
+     "sidesScale": 0.5,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t8a2008cwlws8ncn9t5x",
+       "name": "Saffron",
+       "role": null,
+       "grams": 1
+      },
+      {
+       "foodId": "cmrj2t6kg000lwlwsgcajfryi",
+       "name": "Extra Virgin Olive Oil",
+       "role": "carb",
+       "grams": 7
+      },
+      {
+       "foodId": "cmrj2t6rr001jwlwsqfi60fyj",
+       "name": "Garlic Clove",
+       "role": null,
+       "grams": 2
+      },
+      {
+       "foodId": "cmrevpco3000nwl5g1d51b3it",
+       "name": "Almonds",
+       "role": "carb",
+       "grams": 30
+      },
+      {
+       "foodId": "cmrj2t8ji009kwlwsnryuorxp",
+       "name": "Stale bread",
+       "role": "carb",
+       "grams": 4
+      },
+      {
+       "foodId": "cmrj2t6h10006wlwslufza94y",
+       "name": "Parsley",
+       "role": null,
+       "grams": 25
+      },
+      {
+       "foodId": "cmrj2t84f007mwlws3l8rub2z",
+       "name": "Chicken Thighs",
+       "role": "protein",
+       "grams": 520
+      },
+      {
+       "foodId": "cmrg8zxar000lwli0qy2ovmx4",
+       "name": "Onion",
+       "role": "veg",
+       "grams": 14
+      },
+      {
+       "foodId": "cmrj2t6oc0013wlwsjzlwoln2",
+       "name": "Carrots",
+       "role": "veg",
+       "grams": 8
+      },
+      {
+       "foodId": "cmrj2t6u6001uwlwsseysgkv2",
+       "name": "Celery",
+       "role": "veg",
+       "grams": 5
+      },
+      {
+       "foodId": "cmrj2t6m0000swlws689kgktw",
+       "name": "Dry sherry",
+       "role": null,
+       "grams": 20
+      },
+      {
+       "foodId": "cmrj2t6n2000xwlwsqltep2pn",
+       "name": "Chicken Stock",
+       "role": "protein",
+       "grams": 180
+      },
+      {
+       "foodId": "cmrj2t72a002uwlwsg6tictrb",
+       "name": "Cinnamon Stick",
+       "role": null,
+       "grams": 1
+      },
+      {
+       "foodId": "cmrj2t721002twlwsox4gqm64",
+       "name": "Cloves",
+       "role": null,
+       "grams": 1
+      },
+      {
+       "foodId": "cmrj2t6sp001nwlws8p9eluh3",
+       "name": "Bay Leaves",
+       "role": null,
+       "grams": 25
+      },
+      {
+       "foodId": "cmrj2t6wp0025wlwsvl5esd2h",
+       "name": "Egg",
+       "role": "protein",
+       "grams": 50
+      }
+     ],
+     "kcal": 1681.95,
+     "protein": 159.1317,
+     "fat": 90.25919999999999,
+     "carb": 60.3501,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrj2tlw102rwwlwsz0fyjwlr",
+      "name": "Pollo en pepitoria",
+      "description": null,
+      "steps": [
+       "step 1",
+       "Put the saffron in a small bowl with 75ml of just-boiled water. Stir and set aside. Heat 2 tbsp of the oil in a broad, shallow casserole dish. Cook the garlic until pale gold in colour, then add the blanched almonds and bread, and continue to fry until everything is golden. Tip into a food processor with some salt and pepper and the parsley, and whizz together.",
+       "step 2",
+       "Heat 2 more tbsp of the oil in the pan and brown the chicken all over, seasoning as you cook. Put in a bowl and set aside.",
+       "step 3",
+       "Remove all but about 2 tbsp of chicken fat from the pan and cook the onion, carrot and celery until golden. Add the sherry, stirring to dislodge any brown bits that have stuck to the pan. Pour in the stock and the saffron (with its water), and bring to the boil, then turn the heat down to a simmer. Add the spices and bay leaves, and put the chicken back in the pan with any juices. Season and gently cook the chicken for about 40 mins with the lid on.",
+       "step 4",
+       "Transfer the chicken to a bowl again, leaving the sauce in the pan, and cover with foil to keep warm. Remove the yolks from the eggs and roughly chop the whites. Mash the egg yolks in a small bowl and gradually mix in a couple of tbsp of the sauce. Bring the remaining sauce to the boil to reduce a bit (you want it to just coat the chicken), then turn the heat down. Remove the bay and cinnamon stick. Add the egg yolks and cook for a few mins until the mixture has thickened. Stir in the almond mixture that you made earlier (this will thicken the sauce, too). Put the chicken back in the pan and heat it for about 3 mins, spooning the sauce over it. Season to taste.",
+       "step 5",
+       "Scatter over the extra parsley, the almonds pieces and the chopped egg whites (if you’re going to use them). You can serve this straight from the dish with some rice, if you like."
+      ],
+      "slotType": "meal",
+      "cuisine": "western-comfort",
+      "prepTimeMin": 47,
+      "source": "themealdb-import",
+      "mealCategory": null,
+      "kcal": 1497,
+      "protein": 98.2,
+      "fat": 83.3,
+      "carb": 106.6,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 12.49,
+      "difficulty": 8,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-13T10:25:31.154Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x1mj2051twlw07lpfml1y",
+     "planId": "cms6x1mio050xwlw06wpmotdt",
+     "dayOfWeek": 5,
+     "slotType": "meal",
+     "slotIndex": 0,
+     "recipeId": "cmrul79wf007owl80az2k9apq",
+     "proteinScale": 1.34,
+     "sidesScale": 2,
+     "ingredients": [
+      {
+       "foodId": "cmrfoyrjh0009wl08cmcid51m",
+       "name": "Turkey breast, low salt, prepackaged or deli, luncheon meat",
+       "role": "protein",
+       "grams": 230
+      },
+      {
+       "foodId": "cmrukzaed0004wlbwdxnybljb",
+       "name": "Lentil pasta, dry",
+       "role": "carb",
+       "grams": 200
+      },
+      {
+       "foodId": "cmrevpcnh000iwl5gh2zjhyqe",
+       "name": "Bell peppers",
+       "role": "veg",
+       "grams": 160
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 1045.3,
+     "protein": 101.74,
+     "fat": 11.389,
+     "carb": 127.673,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrul79wf007owl80az2k9apq",
+      "name": "High-Protein Turkey & Bell Peppers with Lentil Pasta",
+      "description": null,
+      "steps": [
+       "Cook the turkey.",
+       "Serve over lentil pasta with bell peppers."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 605.1,
+      "protein": 62.9,
+      "fat": 8.7,
+      "carb": 65.8,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 7.28,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:45:29.824Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x1mj3051vwlw0cv34piht",
+     "planId": "cms6x1mio050xwlw06wpmotdt",
+     "dayOfWeek": 5,
+     "slotType": "meal",
+     "slotIndex": 1,
+     "recipeId": "cmrevpcta002mwl5guzn8e8rm",
+     "proteinScale": 0.59,
+     "sidesScale": 1.04,
+     "ingredients": [
+      {
+       "foodId": "cmrevpcls0003wl5g6uhs17yp",
+       "name": "Extra-lean ground beef, cooked",
+       "role": "protein",
+       "grams": 270
+      },
+      {
+       "foodId": "cmrevpcnd000hwl5g7w5d714r",
+       "name": "Black beans, canned, drained",
+       "role": "carb",
+       "grams": 415
+      },
+      {
+       "foodId": "cmrevpcnr000kwl5gf8u73ie2",
+       "name": "Chili aromatics & sauce",
+       "role": "veg",
+       "grams": 520
+      }
+     ],
+     "kcal": 1194.2,
+     "protein": 114.935,
+     "fat": 22.535,
+     "carb": 136,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrevpcta002mwl5guzn8e8rm",
+      "name": "Street Chili",
+      "description": "The batch-cook chili — 6 servings, freezes well.",
+      "steps": [
+       "Brown the beef, breaking it up.",
+       "Add onion, garlic, jalapeño — cook until soft.",
+       "Toast cumin, chili powder, smoked paprika 30 seconds.",
+       "Stir in diced tomatoes, tomato paste, chipotle + adobo sauce, beans.",
+       "Simmer low and slow, 30+ minutes.",
+       "Finish with lime juice and cilantro."
+      ],
+      "slotType": "meal",
+      "cuisine": "mexican",
+      "prepTimeMin": 45,
+      "source": "curated",
+      "mealCategory": null,
+      "kcal": 1483.88,
+      "protein": 161.14,
+      "fat": 35.28,
+      "carb": 131,
+      "tasteTier": "really_good",
+      "tasteTierSource": "curated",
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 25.29,
+      "difficulty": 2,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-10T11:55:10.751Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x1mj3051xwlw0rx1ln76y",
+     "planId": "cms6x1mio050xwlw06wpmotdt",
+     "dayOfWeek": 5,
+     "slotType": "meal",
+     "slotIndex": 2,
+     "recipeId": "cmrujkwse0066wl9oenv0p0h5",
+     "proteinScale": 2,
+     "sidesScale": 0.5,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t7w3006lwlws4zdhow4d",
+       "name": "Chicken Breast",
+       "role": "protein",
+       "grams": 340
+      },
+      {
+       "foodId": "cmrj2t8190078wlws1rc1yrxl",
+       "name": "Couscous",
+       "role": "carb",
+       "grams": 75
+      },
+      {
+       "foodId": "cmrg8zxar000lwli0qy2ovmx4",
+       "name": "Onion",
+       "role": "veg",
+       "grams": 30
+      },
+      {
+       "foodId": "cmrevpco3000nwl5g1d51b3it",
+       "name": "Almonds",
+       "role": "fat",
+       "grams": 18
+      }
+     ],
+     "kcal": 1097.84,
+     "protein": 56.9325,
+     "fat": 63.31999999999999,
+     "carb": 74.98200000000001,
+     "warning": "Tried 5 recipe(s) for this slot, none fit within tolerance — closest was \"Mediterranean Chicken & Onions with Couscous\" (landed 1098 kcal vs a 1378 target; delivered 57g protein vs a 132g target).",
+     "locked": false,
+     "recipe": {
+      "id": "cmrujkwse0066wl9oenv0p0h5",
+      "name": "Mediterranean Chicken & Onions with Couscous",
+      "description": null,
+      "steps": [
+       "Cook the chicken.",
+       "Serve with couscous and onions."
+      ],
+      "slotType": "meal",
+      "cuisine": "mediterranean",
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 746.7,
+      "protein": 35.1,
+      "fat": 36.6,
+      "carb": 69.7,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 6.47,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:00:06.782Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x1mj4051zwlw0hbara7q7",
+     "planId": "cms6x1mio050xwlw06wpmotdt",
+     "dayOfWeek": 6,
+     "slotType": "meal",
+     "slotIndex": 0,
+     "recipeId": "cmrj2u94k07wqwlwsfn6c5vey",
+     "proteinScale": 1.32,
+     "sidesScale": 1.32,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t6j0000fwlwsog8rz1h6",
+       "name": "Red Pepper",
+       "role": null,
+       "grams": 7
+      },
+      {
+       "foodId": "cmrj2tbdr00kfwlws7zb8xmry",
+       "name": "Can of chickpeas",
+       "role": "carb",
+       "grams": 265
+      },
+      {
+       "foodId": "cmrj2t6h10006wlwslufza94y",
+       "name": "Parsley",
+       "role": null,
+       "grams": 35
+      },
+      {
+       "foodId": "cmrj2t7me005cwlwssmv2um0d",
+       "name": "Red Chilli",
+       "role": null,
+       "grams": 6
+      },
+      {
+       "foodId": "cmrj2t6rr001jwlwsqfi60fyj",
+       "name": "Garlic Clove",
+       "role": null,
+       "grams": 2
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "carb",
+       "grams": 30
+      },
+      {
+       "foodId": "cmrj2tawo00imwlws7ey73iv1",
+       "name": "Squid",
+       "role": null,
+       "grams": 200
+      },
+      {
+       "foodId": "cmrj2t79y003qwlws7zi5s5ml",
+       "name": "Chorizo",
+       "role": null,
+       "grams": 65
+      },
+      {
+       "foodId": "cmrj2t6qp001ewlwsds5bbm29",
+       "name": "Lemon",
+       "role": "veg",
+       "grams": 19
+      }
+     ],
+     "kcal": 1061.4,
+     "protein": 63.75332,
+     "fat": 59.55822,
+     "carb": 66.52510000000001,
+     "warning": "Tried 5 recipe(s) for this slot, none fit within tolerance — closest was \"Squid, chickpea & chorizo salad\" (delivered 64g protein vs a 103g target).",
+     "locked": false,
+     "recipe": {
+      "id": "cmrj2u94k07wqwlwsfn6c5vey",
+      "name": "Squid, chickpea & chorizo salad",
+      "description": null,
+      "steps": [
+       "step 1",
+       "Cook the peppers whole under a grill, on a barbecue or griddle, until completely charred. Place the peppers in a bowl, cover with a plate until cool enough to handle, then peel, deseed and finely slice. In a large bowl mix the peppers and any juices with the chickpeas, parsley, chilli and garlic. Set aside.",
+       "step 2",
+       "Heat a large frying pan until smoking. Working quickly and carefully, add a splash of oil to the pan, then the squid. Stir-fry for about 30 secs. Scatter the chorizo over the squid, continue to cook for 30 secs more, then tip into the bowl with the peppers. Season everything with salt and pepper, then dress with the remaining oil, lemon juice and lemon zest. Mix together, pile onto a platter and let everyone help themselves."
+      ],
+      "slotType": "meal",
+      "cuisine": "mediterranean",
+      "prepTimeMin": 25,
+      "source": "themealdb-import",
+      "mealCategory": null,
+      "kcal": 806.3,
+      "protein": 48.1,
+      "fat": 45.6,
+      "carb": 50.1,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 9.1,
+      "difficulty": 3,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-13T10:26:01.269Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x1mj50521wlw0t69ei0yi",
+     "planId": "cms6x1mio050xwlw06wpmotdt",
+     "dayOfWeek": 6,
+     "slotType": "meal",
+     "slotIndex": 1,
+     "recipeId": "cmrevpcrq0021wl5gyq2peags",
+     "proteinScale": 1.88,
+     "sidesScale": 1.37,
+     "ingredients": [
+      {
+       "foodId": "cmrevpcls0003wl5g6uhs17yp",
+       "name": "Extra-lean ground beef, cooked",
+       "role": "protein",
+       "grams": 470
+      },
+      {
+       "foodId": "cmrevpcn5000fwl5g0j42i9os",
+       "name": "Potato, baked with skin",
+       "role": "carb",
+       "grams": 340
+      },
+      {
+       "foodId": "cmrevpcnh000iwl5gh2zjhyqe",
+       "name": "Bell peppers",
+       "role": "veg",
+       "grams": 205
+      }
+     ],
+     "kcal": 1188.15,
+     "protein": 132.75,
+     "fat": 33.855,
+     "carb": 83.69999999999999,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrevpcrq0021wl5gyq2peags",
+      "name": "Ground Beef & Potato Hash",
+      "description": null,
+      "steps": [
+       "Dice and pan-crisp the potato first, set aside.",
+       "Brown the beef with peppers in the same pan.",
+       "Fold the potato back in, crisp another 2-3 minutes."
+      ],
+      "slotType": "meal",
+      "cuisine": "western-comfort",
+      "prepTimeMin": 25,
+      "source": "curated",
+      "mealCategory": null,
+      "kcal": 709,
+      "protein": 72.75,
+      "fat": 18.2,
+      "carb": 61.5,
+      "tasteTier": "really_good",
+      "tasteTierSource": "curated",
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 10.48,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-10T11:55:10.694Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x1mj50523wlw09gf89iyn",
+     "planId": "cms6x1mio050xwlw06wpmotdt",
+     "dayOfWeek": 6,
+     "slotType": "meal",
+     "slotIndex": 2,
+     "recipeId": "cmrj2u60u0785wlws5mxsdqni",
+     "proteinScale": 2,
+     "sidesScale": 1.5,
+     "ingredients": [
+      {
+       "foodId": "cmrj2tb0x00j2wlwsjzrofelh",
+       "name": "Shrimp",
+       "role": "protein",
+       "grams": 300
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "carb",
+       "grams": 15
+      },
+      {
+       "foodId": "cmrj2tabp00gcwlwspk69j20a",
+       "name": "Dry White Wine",
+       "role": null,
+       "grams": 55
+      },
+      {
+       "foodId": "cmrj2tb1o00j5wlws7706a36s",
+       "name": "Fish Stock",
+       "role": "protein",
+       "grams": 100
+      },
+      {
+       "foodId": "cmrj2tab700gawlwsmp3bxndy",
+       "name": "Fennel",
+       "role": null,
+       "grams": 35
+      },
+      {
+       "foodId": "cmrg8zxar000lwli0qy2ovmx4",
+       "name": "Onion",
+       "role": "veg",
+       "grams": 40
+      },
+      {
+       "foodId": "cmrj2t6ft0001wlwstiofk9on",
+       "name": "Garlic",
+       "role": "veg",
+       "grams": 3
+      },
+      {
+       "foodId": "cmrj2t6t4001pwlwsxeja9565",
+       "name": "Potatoes",
+       "role": "veg",
+       "grams": 65
+      },
+      {
+       "foodId": "cmrj2t8ao008fwlwsygj9bgg1",
+       "name": "Orange",
+       "role": "veg",
+       "grams": 50
+      },
+      {
+       "foodId": "cmrj2t72s002vwlwsw9c3ovn9",
+       "name": "Star Anise",
+       "role": null,
+       "grams": 35
+      },
+      {
+       "foodId": "cmrj2t6qh001dwlws2ramsws8",
+       "name": "Bay Leaf",
+       "role": null,
+       "grams": 1
+      },
+      {
+       "foodId": "cmrj2t80w0076wlwsw1o7e51u",
+       "name": "Harissa Spice",
+       "role": null,
+       "grams": 2
+      },
+      {
+       "foodId": "cmrj2t6pz001bwlwsbarwpyy1",
+       "name": "Tomato Puree",
+       "role": "veg",
+       "grams": 8
+      },
+      {
+       "foodId": "cmrj2tag100gtwlwsn382zemc",
+       "name": "Chopped Tomatoes",
+       "role": "veg",
+       "grams": 150
+      },
+      {
+       "foodId": "cmrj2tb2700j7wlwsq70yyopd",
+       "name": "Mussels",
+       "role": null,
+       "grams": 11
+      },
+      {
+       "foodId": "cmrj2tay100irwlwsiujfz75h",
+       "name": "White Fish",
+       "role": "protein",
+       "grams": 100
+      },
+      {
+       "foodId": "cmrj2t6oj0014wlwsaw8ffg0k",
+       "name": "Thyme",
+       "role": null,
+       "grams": 75
+      },
+      {
+       "foodId": "cmrj2t7dl0047wlwsorfmmmbn",
+       "name": "Bread",
+       "role": "carb",
+       "grams": 35
+      }
+     ],
+     "kcal": 1198.26,
+     "protein": 117.9499,
+     "fat": 36.22949999999999,
+     "carb": 105.6714,
+     "warning": "Tried 5 recipe(s) for this slot, none fit within tolerance — closest was \"Fish Stew with Rouille\" (delivered 118g protein vs a 152g target).",
+     "locked": false,
+     "recipe": {
+      "id": "cmrj2u60u0785wlws5mxsdqni",
+      "name": "Fish Stew with Rouille",
+      "description": null,
+      "steps": [
+       "Twist the heads from the prawns, then peel away the legs and shells, but leave the tails intact. Devein each prawn. Fry the shells in 1 tbsp oil for 5 mins, until dark pink and golden in patches. Add the wine, boil down by two thirds, then pour in the stock. Strain into a jug, discarding the shells.",
+       "Heat the rest of the oil in a deep frying pan or casserole. Add the fennel, onion and garlic, season, then cover and gently cook for 10 mins until softened. Meanwhile, peel the potato and cut into 2cm-ish chunks. Put into a pan of cold water, bring to the boil and cook for 5 mins until almost tender. Drain in a colander.",
+       "Peel a strip of zest from the orange. Put the zest, star anise, bay and ½ tsp harissa into the pan. Fry gently, uncovered, for 5-10 mins, until the vegetables are soft, sweet and golden.",
+       "Stir in the tomato purée, cook for 2 mins, then add the tomatoes and stock. Simmer for 10 mins until the sauce thickens slightly. Season to taste. The sauce can be made ahead, then reheated later in the day. Meantime, scrub the mussels or clams and pull away any stringy beards. Any that are open should be tapped sharply on the worktop – if they don’t close after a few seconds, discard them.",
+       "Reheat the sauce if necessary, then stir the potato, chunks of fish and prawns very gently into the stew. Bring back to the boil, then cover and gently simmer for 3 mins. Scatter the mussels or clams over the stew, then cover and cook for 2 mins more or until the shells have opened wide. Discard any that remain closed. The chunks of fish should flake easily and the prawns should be pink through. Scatter with the thyme leaves.",
+       "To make the quick rouille, stir the rest of the harissa through the mayonnaise. Serve the stew in bowls, topped with spoonfuls of rouille, which will melt into the sauce and enrich it. Have some good bread ready, as you’ll definitely want to mop up the juices."
+      ],
+      "slotType": "meal",
+      "cuisine": "western-comfort",
+      "prepTimeMin": 36,
+      "source": "themealdb-import",
+      "mealCategory": null,
+      "kcal": 744.9,
+      "protein": 63.9,
+      "fat": 24.3,
+      "carb": 71.6,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 14.46,
+      "difficulty": 6,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"measured\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-13T10:25:57.246Z",
+      "createdByUserId": null
+     }
+    }
+   ],
+   "groceryList": null,
+   "meta": {
+    "matchPct": 88,
+    "attempts": 5,
+    "score": {
+     "daysInTolerance": 5,
+     "avgMatch": 88,
+     "days": [
+      {
+       "dayOfWeek": 0,
+       "dayName": "Monday",
+       "matchPct": 90,
+       "totals": {
+        "kcal": 3200,
+        "protein": 304,
+        "fat": 97,
+        "carb": 293
+       },
+       "kcalDeltaPct": -11.5,
+       "proteinShortPct": 12.9,
+       "fatOk": true,
+       "carbOk": true,
+       "inTolerance": true,
+       "miss": null,
+       "unfilledSlots": 0,
+       "warnedSlots": 2,
+       "windowIndex": 0,
+       "dayIndex": 0,
+       "key": "0:0"
+      },
+      {
+       "dayOfWeek": 1,
+       "dayName": "Tuesday",
+       "matchPct": 93,
+       "totals": {
+        "kcal": 3480,
+        "protein": 307,
+        "fat": 114,
+        "carb": 309
+       },
+       "kcalDeltaPct": -3.8,
+       "proteinShortPct": 12.2,
+       "fatOk": true,
+       "carbOk": true,
+       "inTolerance": true,
+       "miss": null,
+       "unfilledSlots": 0,
+       "warnedSlots": 2,
+       "windowIndex": 0,
+       "dayIndex": 1,
+       "key": "0:1"
+      },
+      {
+       "dayOfWeek": 2,
+       "dayName": "Wednesday",
+       "matchPct": 76,
+       "totals": {
+        "kcal": 3594,
+        "protein": 347,
+        "fat": 168,
+        "carb": 179
+       },
+       "kcalDeltaPct": -0.6,
+       "proteinShortPct": 0.7,
+       "fatOk": false,
+       "carbOk": false,
+       "inTolerance": false,
+       "miss": "168 g fat vs a 99–117 g range — 51 g over; 179 g carbs vs a 275–299 g range — 96 g short",
+       "unfilledSlots": 0,
+       "warnedSlots": 1,
+       "windowIndex": 0,
+       "dayIndex": 2,
+       "key": "0:2"
+      },
+      {
+       "dayOfWeek": 3,
+       "dayName": "Thursday",
+       "matchPct": 98,
+       "totals": {
+        "kcal": 3615,
+        "protein": 350,
+        "fat": 105,
+        "carb": 310
+       },
+       "kcalDeltaPct": -0.1,
+       "proteinShortPct": 0,
+       "fatOk": true,
+       "carbOk": true,
+       "inTolerance": true,
+       "miss": null,
+       "unfilledSlots": 0,
+       "warnedSlots": 1,
+       "windowIndex": 0,
+       "dayIndex": 3,
+       "key": "0:3"
+      },
+      {
+       "dayOfWeek": 4,
+       "dayName": "Friday",
+       "matchPct": 88,
+       "totals": {
+        "kcal": 3688,
+        "protein": 348,
+        "fat": 139,
+        "carb": 268
+       },
+       "kcalDeltaPct": 2,
+       "proteinShortPct": 0.3,
+       "fatOk": true,
+       "carbOk": true,
+       "inTolerance": true,
+       "miss": null,
+       "unfilledSlots": 0,
+       "warnedSlots": 2,
+       "windowIndex": 0,
+       "dayIndex": 4,
+       "key": "0:4"
+      },
+      {
+       "dayOfWeek": 5,
+       "dayName": "Saturday",
+       "matchPct": 83,
+       "totals": {
+        "kcal": 3337,
+        "protein": 274,
+        "fat": 97,
+        "carb": 339
+       },
+       "kcalDeltaPct": -7.7,
+       "proteinShortPct": 21.6,
+       "fatOk": true,
+       "carbOk": true,
+       "inTolerance": false,
+       "miss": "274 g protein vs 349 g — 75 g short",
+       "unfilledSlots": 0,
+       "warnedSlots": 1,
+       "windowIndex": 0,
+       "dayIndex": 5,
+       "key": "0:5"
+      },
+      {
+       "dayOfWeek": 6,
+       "dayName": "Sunday",
+       "matchPct": 86,
+       "totals": {
+        "kcal": 3448,
+        "protein": 314,
+        "fat": 130,
+        "carb": 256
+       },
+       "kcalDeltaPct": -4.7,
+       "proteinShortPct": 9.9,
+       "fatOk": true,
+       "carbOk": true,
+       "inTolerance": true,
+       "miss": null,
+       "unfilledSlots": 0,
+       "warnedSlots": 2,
+       "windowIndex": 0,
+       "dayIndex": 6,
+       "key": "0:6"
+      }
+     ],
+     "totalDays": 7
+    },
+    "days": [
+     {
+      "dayOfWeek": 0,
+      "dayName": "Monday",
+      "matchPct": 90,
+      "totals": {
+       "kcal": 3200,
+       "protein": 304,
+       "fat": 97,
+       "carb": 293
+      },
+      "kcalDeltaPct": -11.5,
+      "proteinShortPct": 12.9,
+      "fatOk": true,
+      "carbOk": true,
+      "inTolerance": true,
+      "miss": null,
+      "unfilledSlots": 0,
+      "warnedSlots": 2,
+      "windowIndex": 0,
+      "dayIndex": 0,
+      "key": "0:0"
+     },
+     {
+      "dayOfWeek": 1,
+      "dayName": "Tuesday",
+      "matchPct": 93,
+      "totals": {
+       "kcal": 3480,
+       "protein": 307,
+       "fat": 114,
+       "carb": 309
+      },
+      "kcalDeltaPct": -3.8,
+      "proteinShortPct": 12.2,
+      "fatOk": true,
+      "carbOk": true,
+      "inTolerance": true,
+      "miss": null,
+      "unfilledSlots": 0,
+      "warnedSlots": 2,
+      "windowIndex": 0,
+      "dayIndex": 1,
+      "key": "0:1"
+     },
+     {
+      "dayOfWeek": 2,
+      "dayName": "Wednesday",
+      "matchPct": 76,
+      "totals": {
+       "kcal": 3594,
+       "protein": 347,
+       "fat": 168,
+       "carb": 179
+      },
+      "kcalDeltaPct": -0.6,
+      "proteinShortPct": 0.7,
+      "fatOk": false,
+      "carbOk": false,
+      "inTolerance": false,
+      "miss": "168 g fat vs a 99–117 g range — 51 g over; 179 g carbs vs a 275–299 g range — 96 g short",
+      "unfilledSlots": 0,
+      "warnedSlots": 1,
+      "windowIndex": 0,
+      "dayIndex": 2,
+      "key": "0:2"
+     },
+     {
+      "dayOfWeek": 3,
+      "dayName": "Thursday",
+      "matchPct": 98,
+      "totals": {
+       "kcal": 3615,
+       "protein": 350,
+       "fat": 105,
+       "carb": 310
+      },
+      "kcalDeltaPct": -0.1,
+      "proteinShortPct": 0,
+      "fatOk": true,
+      "carbOk": true,
+      "inTolerance": true,
+      "miss": null,
+      "unfilledSlots": 0,
+      "warnedSlots": 1,
+      "windowIndex": 0,
+      "dayIndex": 3,
+      "key": "0:3"
+     },
+     {
+      "dayOfWeek": 4,
+      "dayName": "Friday",
+      "matchPct": 88,
+      "totals": {
+       "kcal": 3688,
+       "protein": 348,
+       "fat": 139,
+       "carb": 268
+      },
+      "kcalDeltaPct": 2,
+      "proteinShortPct": 0.3,
+      "fatOk": true,
+      "carbOk": true,
+      "inTolerance": true,
+      "miss": null,
+      "unfilledSlots": 0,
+      "warnedSlots": 2,
+      "windowIndex": 0,
+      "dayIndex": 4,
+      "key": "0:4"
+     },
+     {
+      "dayOfWeek": 5,
+      "dayName": "Saturday",
+      "matchPct": 83,
+      "totals": {
+       "kcal": 3337,
+       "protein": 274,
+       "fat": 97,
+       "carb": 339
+      },
+      "kcalDeltaPct": -7.7,
+      "proteinShortPct": 21.6,
+      "fatOk": true,
+      "carbOk": true,
+      "inTolerance": false,
+      "miss": "274 g protein vs 349 g — 75 g short",
+      "unfilledSlots": 0,
+      "warnedSlots": 1,
+      "windowIndex": 0,
+      "dayIndex": 5,
+      "key": "0:5"
+     },
+     {
+      "dayOfWeek": 6,
+      "dayName": "Sunday",
+      "matchPct": 86,
+      "totals": {
+       "kcal": 3448,
+       "protein": 314,
+       "fat": 130,
+       "carb": 256
+      },
+      "kcalDeltaPct": -4.7,
+      "proteinShortPct": 9.9,
+      "fatOk": true,
+      "carbOk": true,
+      "inTolerance": true,
+      "miss": null,
+      "unfilledSlots": 0,
+      "warnedSlots": 2,
+      "windowIndex": 0,
+      "dayIndex": 6,
+      "key": "0:6"
+     }
+    ],
+    "diagnosis": {
+     "feasible": false,
+     "reasons": [
+      "1 day(s) landed protein-short: your targets need ~9.6g protein per 100 kcal and only 156 of 495 compliant recipes come close, so the back half of the week runs out of good fits.",
+      "1 day(s) landed outside your 99–117 g fat range, and 1 day(s) landed outside your 275–299 g carb range — portion scaling moves a dish's calories, not its fat/carb ratio, so the pool's composition is what binds here."
+     ],
+     "suggestions": [
+      "AI-generate a few high-protein compliant recipes, set the protein-preference filter, or allow batch-cooking repeats of the dense dishes.",
+      "Add (or AI-generate) a few recipes built around the macro you keep missing, or drop the cuisine/protein preference so the solver can reach dishes that carry it."
+     ],
+     "binding": {
+      "key": "macro-composition",
+      "label": "fat in your recipe pool",
+      "detail": "1 of 7 day(s) landed outside your 99-117 g fat range, and 1 of 7 day(s) landed outside your 275-299 g carb range. Portion scaling moves a dish's calories, not its fat/carb ratio, so what binds here is which dishes your rules leave in the pool."
+     }
+    },
+    "poolCounts": {
+     "raw": 889,
+     "afterDiet": 495,
+     "afterPrep": 495,
+     "afterStack": 495,
+     "stackExplain": null
+    },
+    "variety": {
+     "mealEligible": 467,
+     "usableForSlot": 67,
+     "slotKcal": 1206,
+     "snackEligible": 4,
+     "weeklyMealSlots": 21,
+     "weeklySnackSlots": 0,
+     "repeatCap": 2,
+     "distinctWeeks": 3.2,
+     "horizonWeeks": 1,
+     "sustainsHorizon": true,
+     "notes": [
+      "1 week: 18 distinct dish(es) across 21 filled slot(s); most-repeated dish appears 2x against a 2x cap for this horizon (2x per week)."
+     ],
+     "horizon": {
+      "weeks": 1,
+      "days": 7,
+      "perWeekCap": 2,
+      "horizonRepeatCap": 2,
+      "mealSlots": 21,
+      "snackSlots": 0,
+      "totalSlots": 21,
+      "distinctFloor": 11,
+      "distinctRecipes": 18,
+      "maxRepeat": 2,
+      "maxRepeatRecipeId": "cmrj2u60u0785wlws5mxsdqni",
+      "lockedRepeatsOfMax": 0,
+      "filledSlots": 21,
+      "unfilledSlots": 0,
+      "requiredDistinct": 11,
+      "capHeld": true,
+      "floorHeld": true
+     }
+    },
+    "priorWeeksConsidered": 0,
+    "horizon": {
+     "key": "week",
+     "label": "1 week",
+     "days": 7,
+     "kind": "days",
+     "weeks": 1,
+     "custom": false,
+     "startDate": "2026-07-27",
+     "endDate": "2026-08-02",
+     "startDayOfWeek": 0,
+     "weeksWritten": 1,
+     "solveMs": 30,
+     "weekPlans": [
+      {
+       "startDate": "2026-07-27",
+       "dayIndices": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+       ],
+       "days": 7,
+       "daysInTolerance": 5,
+       "avgMatch": 88,
+       "unfilledSlots": 0,
+       "poolSize": 495
+      }
+     ]
+    }
+   }
+  }
+ }
+}

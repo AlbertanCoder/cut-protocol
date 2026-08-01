@@ -1,0 +1,528 @@
+{
+ "persona": {
+  "idx": 172,
+  "id": "p172",
+  "tier": "HARD",
+  "displayName": "retail cashier, 41",
+  "story": "retail cashier, 41, male, 191 cm / 131.7 kg (BMI 36.1), cut at 2 lb/wk, vegetarian diet, avoiding shellfish, peanut, dairy, sesame, low-fat, 3 meals + 2 snacks, wants a single day",
+  "profile": {
+   "sex": "M",
+   "age": 41,
+   "heightCm": 191,
+   "startWeightKg": 131.7,
+   "goalWeightKg": 122,
+   "occupationKey": "cashier",
+   "trainingStyle": "cardio",
+   "minutesPerSession": 25,
+   "sessionsPerWeek": 2,
+   "rateLbPerWeek": 2,
+   "dietaryStyle": "vegetarian",
+   "excludedFoods": [
+    "shellfish",
+    "peanuts",
+    "dairy",
+    "sesame"
+   ],
+   "mealsPerDay": 3,
+   "snacksPerDay": 2,
+   "unitPref": "imperial",
+   "rateAcknowledged": true
+  },
+  "filters": {
+   "maxPrepMin": 20,
+   "proteinPriority": true
+  },
+  "horizon": "day",
+  "walls": [
+   "shellfish",
+   "peanut",
+   "dairy",
+   "sesame"
+  ],
+  "freeTextExclusions": [],
+  "dietaryStyle": "vegetarian",
+  "bmi": 36.1,
+  "goalKind": "cut",
+  "macroStyle": "low-fat",
+  "requestedButUnsupported": [
+   "wanted a low-fat split; the fat band is fixed at LBM x0.34-0.40 and is not client-settable"
+  ],
+  "tupleKey": "[\"HARD\",\"M\",41,191,131.7,122,\"cashier\",\"cardio\",2,\"vegetarian\",[\"dairy\",\"peanuts\",\"sesame\",\"shellfish\"],3,2,\"low-fat\",\"day\",20,null,true,null,null]"
+ },
+ "request": {
+  "horizon": "day",
+  "filters": {
+   "maxPrepMin": 20,
+   "proteinPriority": true
+  }
+ },
+ "profileResponse": {
+  "id": "cms6x1fb704cxwlw0pm5445h4",
+  "userId": "cms6x1f5u004mwl2oaged7en7",
+  "sex": "M",
+  "age": 41,
+  "heightCm": 191,
+  "bodyFatPct": 0,
+  "bodyFatSource": null,
+  "occupationKey": "cashier",
+  "activityOverride": null,
+  "sessionsPerWeek": 2,
+  "trainingStyle": "cardio",
+  "minutesPerSession": 25,
+  "startWeightKg": 131.7,
+  "goalWeightKg": 122,
+  "startDate": "2026-07-29",
+  "unitPref": "imperial",
+  "rateLbPerWeek": 2,
+  "rateAcknowledged": true,
+  "floorKcal": null,
+  "excludedFormulas": [],
+  "targetKcal": 2303,
+  "mealsPerDay": 3,
+  "snacksPerDay": 2,
+  "excludedFoods": [
+   "shellfish",
+   "peanuts",
+   "dairy",
+   "sesame"
+  ],
+  "dietaryStyle": "vegetarian",
+  "cuisinePreferences": [],
+  "mealPreferencesNote": null,
+  "maxPrepMin": null,
+  "budgetTier": null,
+  "allowBatch": null,
+  "maxComplexity": null,
+  "adaptiveTdee": true,
+  "proteinPriorityMode": false,
+  "updatedAt": "2026-07-30T02:50:06.780Z"
+ },
+ "generate": {
+  "status": 200,
+  "ms": 311,
+  "body": {
+   "id": "cms6x1fu704fjwlw0t7i5x5jt",
+   "userId": "cms6x1f5u004mwl2oaged7en7",
+   "startDate": "2026-07-27",
+   "createdAt": "2026-07-30T02:50:07.087Z",
+   "slots": [
+    {
+     "id": "cms6x1fu804flwlw0evevnqsi",
+     "planId": "cms6x1fu704fjwlw0t7i5x5jt",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 0,
+     "recipeId": "cmrul4e2u0006wl68te3f1bnc",
+     "proteinScale": 1.4,
+     "sidesScale": 1.24,
+     "ingredients": [
+      {
+       "foodId": "cmrukzadw0000wlbwara3md10",
+       "name": "Seitan",
+       "role": "protein",
+       "grams": 240
+      },
+      {
+       "foodId": "cmrevpcn2000ewl5gmlyzu0vd",
+       "name": "White rice, cooked",
+       "role": "carb",
+       "grams": 135
+      },
+      {
+       "foodId": "cmrg8zxar000lwli0qy2ovmx4",
+       "name": "Onion",
+       "role": "veg",
+       "grams": 75
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 538.5,
+     "protein": 64.47,
+     "fat": 10.28,
+     "carb": 54.40500000000001,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrul4e2u0006wl68te3f1bnc",
+      "name": "High-Protein Seitan & Onions with Rice",
+      "description": null,
+      "steps": [
+       "Cook the seitan.",
+       "Serve over white rice with onions."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 416,
+      "protein": 46.1,
+      "fat": 8.8,
+      "carb": 43.2,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 3.79,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:43:15.270Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x1fu904fnwlw09kb6ej58",
+     "planId": "cms6x1fu704fjwlw0t7i5x5jt",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 1,
+     "recipeId": "cmrul79ys00biwl80ys9x2qbw",
+     "proteinScale": 2,
+     "sidesScale": 0.73,
+     "ingredients": [
+      {
+       "foodId": "cmrj2t7t00067wlwsj23ngikm",
+       "name": "Egg White",
+       "role": "protein",
+       "grams": 520
+      },
+      {
+       "foodId": "cmrukzaeh0005wlbwrbkygio0",
+       "name": "Chickpea pasta, dry",
+       "role": "carb",
+       "grams": 75
+      },
+      {
+       "foodId": "cmrg8zxar000lwli0qy2ovmx4",
+       "name": "Onion",
+       "role": "veg",
+       "grams": 45
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 604,
+     "protein": 71.135,
+     "fat": 8.795,
+     "carb": 57.725,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrul79ys00biwl80ys9x2qbw",
+      "name": "High-Protein Egg White & Onions with Chickpea Pasta",
+      "description": null,
+      "steps": [
+       "Cook the egg white.",
+       "Serve over chickpea pasta with onions."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 552,
+      "protein": 48.5,
+      "fat": 10.1,
+      "carb": 66.7,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 3.21,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:45:29.909Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x1fua04fpwlw0fhw26gf0",
+     "planId": "cms6x1fu704fjwlw0t7i5x5jt",
+     "dayOfWeek": 2,
+     "slotType": "meal",
+     "slotIndex": 2,
+     "recipeId": "cmrul4e2y000cwl682qrfg56j",
+     "proteinScale": 1.57,
+     "sidesScale": 1.92,
+     "ingredients": [
+      {
+       "foodId": "cmrukzadw0000wlbwara3md10",
+       "name": "Seitan",
+       "role": "protein",
+       "grams": 270
+      },
+      {
+       "foodId": "cmrj2t88z0087wlwsmsmchxzb",
+       "name": "Quinoa",
+       "role": "carb",
+       "grams": 210
+      },
+      {
+       "foodId": "cmrj2t6na000ywlws9jek4w4z",
+       "name": "Broccoli",
+       "role": "veg",
+       "grams": 210
+      },
+      {
+       "foodId": "cmrj2t6r4001gwlws4txccjsf",
+       "name": "Olive Oil",
+       "role": "fat",
+       "grams": 5
+      }
+     ],
+     "kcal": 686.1,
+     "protein": 82.13700000000001,
+     "fat": 15.146,
+     "carb": 68.697,
+     "warning": null,
+     "locked": false,
+     "recipe": {
+      "id": "cmrul4e2y000cwl682qrfg56j",
+      "name": "High-Protein Seitan & Broccoli with Quinoa",
+      "description": null,
+      "steps": [
+       "Cook the seitan.",
+       "Serve over quinoa with broccoli."
+      ],
+      "slotType": "meal",
+      "cuisine": null,
+      "prepTimeMin": 15,
+      "source": "ai-generated",
+      "mealCategory": null,
+      "kcal": 415.1,
+      "protein": 50.2,
+      "fat": 10.9,
+      "carb": 37.1,
+      "tasteTier": null,
+      "tasteTierSource": null,
+      "userRatingAvg": null,
+      "userRatingCount": null,
+      "costPerServing": 5.01,
+      "difficulty": 1,
+      "filterProvenance": "{\"costPerServing\":\"estimated\",\"prepTimeMin\":\"estimated\",\"difficulty\":\"estimated\"}",
+      "aiFingerprint": null,
+      "aiVerifiedAt": null,
+      "aiVerifiedBy": null,
+      "createdAt": "2026-07-21T11:43:15.274Z",
+      "createdByUserId": null
+     }
+    },
+    {
+     "id": "cms6x1fua04frwlw0mvbp9qbs",
+     "planId": "cms6x1fu704fjwlw0t7i5x5jt",
+     "dayOfWeek": 2,
+     "slotType": "snack",
+     "slotIndex": 0,
+     "recipeId": null,
+     "proteinScale": 1,
+     "sidesScale": 1,
+     "ingredients": [],
+     "kcal": 0,
+     "protein": 0,
+     "fat": 0,
+     "carb": 0,
+     "warning": "No eligible snack recipe left for this slot.",
+     "locked": false,
+     "recipe": null
+    },
+    {
+     "id": "cms6x1fub04ftwlw07fnrlmgj",
+     "planId": "cms6x1fu704fjwlw0t7i5x5jt",
+     "dayOfWeek": 2,
+     "slotType": "snack",
+     "slotIndex": 1,
+     "recipeId": null,
+     "proteinScale": 1,
+     "sidesScale": 1,
+     "ingredients": [],
+     "kcal": 0,
+     "protein": 0,
+     "fat": 0,
+     "carb": 0,
+     "warning": "No eligible snack recipe left for this slot.",
+     "locked": false,
+     "recipe": null
+    }
+   ],
+   "groceryList": null,
+   "meta": {
+    "matchPct": 60,
+    "attempts": 5,
+    "score": {
+     "daysInTolerance": 0,
+     "avgMatch": 60,
+     "days": [
+      {
+       "dayOfWeek": 2,
+       "dayName": "Wednesday",
+       "matchPct": 60,
+       "totals": {
+        "kcal": 1829,
+        "protein": 218,
+        "fat": 34,
+        "carb": 181
+       },
+       "kcalDeltaPct": -20.6,
+       "proteinShortPct": 20.5,
+       "fatOk": false,
+       "carbOk": false,
+       "inTolerance": false,
+       "miss": "1,829 kcal vs a 2,303 target — 474 under; 218 g protein vs 274 g — 56 g short; 34 g fat vs a 78–92 g range — 44 g short; 181 g carbs vs a 74–98 g range — 83 g over",
+       "unfilledSlots": 2,
+       "warnedSlots": 2,
+       "proteinFloor": {
+        "met": false,
+        "floorG": 261,
+        "achievedG": 217.7,
+        "shortG": 43.3,
+        "shortPct": 16.6,
+        "reason": "43.3 g short of the 261 g protein floor (17% under) — the compliant pool couldn't scale up to close the gap within the 0.5-2x portion limit."
+       },
+       "windowIndex": 0,
+       "dayIndex": 0,
+       "key": "0:2"
+      }
+     ],
+     "totalDays": 1,
+     "floorDaysMet": 0,
+     "floorDaysTotal": 1
+    },
+    "days": [
+     {
+      "dayOfWeek": 2,
+      "dayName": "Wednesday",
+      "matchPct": 60,
+      "totals": {
+       "kcal": 1829,
+       "protein": 218,
+       "fat": 34,
+       "carb": 181
+      },
+      "kcalDeltaPct": -20.6,
+      "proteinShortPct": 20.5,
+      "fatOk": false,
+      "carbOk": false,
+      "inTolerance": false,
+      "miss": "1,829 kcal vs a 2,303 target — 474 under; 218 g protein vs 274 g — 56 g short; 34 g fat vs a 78–92 g range — 44 g short; 181 g carbs vs a 74–98 g range — 83 g over",
+      "unfilledSlots": 2,
+      "warnedSlots": 2,
+      "proteinFloor": {
+       "met": false,
+       "floorG": 261,
+       "achievedG": 217.7,
+       "shortG": 43.3,
+       "shortPct": 16.6,
+       "reason": "43.3 g short of the 261 g protein floor (17% under) — the compliant pool couldn't scale up to close the gap within the 0.5-2x portion limit."
+      },
+      "windowIndex": 0,
+      "dayIndex": 0,
+      "key": "0:2"
+     }
+    ],
+    "diagnosis": {
+     "feasible": false,
+     "reasons": [
+      "2 of 5 slots over 1 days came back empty — no compliant recipe was left that could fill them.",
+      "Protein-priority mode: the 261g/day floor wasn't met on 1 day(s) — only 34 of 132 compliant recipes carry enough protein density to close the gap within the 0.5-2x portion limit.",
+      "Your library has no snack-sized recipe that fits your rules — all 2 snack slots this week come back empty.",
+      "1 day(s) landed outside your 78–92 g fat range, and 1 day(s) landed outside your 74–98 g carb range — portion scaling moves a dish's calories, not its fat/carb ratio, so the pool's composition is what binds here."
+     ],
+     "suggestions": [
+      "AI-generate a few high-protein compliant recipes, set the protein-preference filter, or allow batch-cooking repeats of the densest dishes.",
+      "Set snacks per day to 0 and fold those calories into your meals, or AI-generate a few compliant snacks on the Recipes tab.",
+      "Add (or AI-generate) a few recipes built around the macro you keep missing, or drop the cuisine/protein preference so the solver can reach dishes that carry it."
+     ],
+     "binding": {
+      "key": "snack-pool",
+      "label": "your snack-eligible recipe pool",
+      "detail": "no snack-sized recipe fits your rules, so all 2 snack slot(s) come back empty."
+     }
+    },
+    "poolCounts": {
+     "raw": 889,
+     "afterDiet": 188,
+     "afterPrep": 132,
+     "afterStack": 132,
+     "stackExplain": null
+    },
+    "variety": {
+     "mealEligible": 129,
+     "usableForSlot": 63,
+     "slotKcal": 608,
+     "snackEligible": 0,
+     "weeklyMealSlots": 21,
+     "weeklySnackSlots": 14,
+     "repeatCap": 2,
+     "distinctWeeks": 3,
+     "horizonWeeks": 1,
+     "sustainsHorizon": false,
+     "notes": [
+      "Your library has no snack-sized recipe that fits your rules — snack slots stay empty until you add one.",
+      "1 day: 3 distinct dish(es) across 3 filled slot(s); most-repeated dish appears 1x against a 2x cap for this horizon (2x per week)."
+     ],
+     "horizon": {
+      "weeks": 1,
+      "days": 1,
+      "perWeekCap": 2,
+      "horizonRepeatCap": 2,
+      "mealSlots": 3,
+      "snackSlots": 2,
+      "totalSlots": 5,
+      "distinctFloor": 3,
+      "distinctRecipes": 3,
+      "maxRepeat": 1,
+      "maxRepeatRecipeId": "cmrul4e2u0006wl68te3f1bnc",
+      "lockedRepeatsOfMax": 0,
+      "filledSlots": 3,
+      "unfilledSlots": 2,
+      "requiredDistinct": 2,
+      "capHeld": true,
+      "floorHeld": true
+     }
+    },
+    "priorWeeksConsidered": 0,
+    "horizon": {
+     "key": "day",
+     "label": "1 day",
+     "days": 1,
+     "kind": "days",
+     "weeks": 1,
+     "custom": false,
+     "startDate": "2026-07-29",
+     "endDate": "2026-07-29",
+     "startDayOfWeek": 2,
+     "weeksWritten": 1,
+     "solveMs": 1,
+     "weekPlans": [
+      {
+       "startDate": "2026-07-27",
+       "dayIndices": [
+        2
+       ],
+       "days": 1,
+       "daysInTolerance": 0,
+       "avgMatch": 60,
+       "unfilledSlots": 2,
+       "poolSize": 132
+      }
+     ]
+    }
+   }
+  }
+ }
+}

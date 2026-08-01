@@ -1,0 +1,36 @@
+A. THE SWALLOW
+   pool size handed to the router : 335
+   generation rung reached        : 0 (0 = library preempted it)
+   status / via / ok / modelCalls : library-hit / scan / true / 0
+   attempts (model tries)         : []
+   recipe                         : {"name":"Skillet Chicken Thighs, Potato & Cucumber","source":"curated"}
+   scaled kcal / protein          : 1115.41 / 87.52149999999999
+   target was                     : 1116 kcal / 87 g protein
+
+B. THE BLIND SPOT
+   day fat  : 155 g  vs band 56-66 -> OUT OF TOLERANCE
+   day carb : 102 g  vs band 263-287 -> OUT OF TOLERANCE
+   empty slots / warned slots     : 0 / 0
+   pass attempted                 : 0
+   router calls made              : 0
+   -> if attempted === 0 while the day is out of tolerance,
+      the brain pass is structurally day-blind.
+
+### the gap-detection predicate — weeklyPlanner.js (verifier's own read)
+675:  const empty = [];
+676-  const roughs = [];
+677-  out.forEach((s, i) => {
+678-    if (!s.recipeId) empty.push(i);
+679-    else if (s.warning) roughs.push(i);
+680-  });
+681-
+682-  // THE WALL CLOCK. maxCalls bounds the money; this bounds the time. A design is
+683-  // only STARTED when the remaining budget can still cover a whole one, so the
+
+    -> the pass collects ONLY (!s.recipeId) and (s.warning).
+       No day-total / tolerance term appears. Day-blindness is structural.
+
+### cross-check vs surgeon Run A artifact (day horizon, meals 3 + snacks 1)
+15:  day horizon, meals 3 + snacks 1 : 4 slots, 0 empty, 0 warned. Day OUT of
+16:      tolerance on fat (83g vs 56-66g). matchPct 88, daysInTolerance 0/1.
+17:  TIGHTENED ONCE (meals 2, snacks 0): 2 slots, 0 empty, 0 warned. Day out of
