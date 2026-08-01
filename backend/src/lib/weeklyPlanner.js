@@ -949,7 +949,43 @@ async function solveDay(dayTargets, dailyTarget, recipePool, usageCount, prevDay
   // this cannot widen what the customer is allowed to eat; with none supplied the
   // day is returned untouched and every existing fixture and golden is unchanged.
   const closed = closeDayMacros({ slots: results, dailyTarget, adjusters });
-  return { slots: closed.slots, todayIds };
+  return { slots: restateAdjustedWarnings(closed.slots, closed.added), todayIds };
+}
+
+// A slot's warning is built from the recipe AS SCALED in resolveSlot() and frozen
+// onto the record ~290 lines before closeDayMacros touches the plate. When the
+// closer then adds to that slot, the sentence keeps quoting a kcal figure the slot
+// no longer has: measured at 6.0% of adjusted slots, with 8 of 15 UNDERSTATING the
+// gap, and a worst case reporting a slot as 87 kcal UNDER target when it actually
+// shipped 614 OVER. The sign was wrong, not merely the magnitude — and under this
+// repo's constitution ("silent target misses are forbidden") a wrong number that
+// reads as reassuring is the failure mode that matters most.
+//
+// The original sentence explains WHY this recipe was chosen and is kept; what is
+// appended is what the slot actually ships once the adjusters are on it.
+function restateAdjustedWarnings(slots, added) {
+  if (!Array.isArray(added) || !added.length || !Array.isArray(slots)) return slots;
+  const bySlot = new Map();
+  for (const a of added) {
+    if (!Number.isInteger(a?.slotIndex)) continue;
+    bySlot.set(a.slotIndex, [...(bySlot.get(a.slotIndex) || []), a]);
+  }
+  if (!bySlot.size) return slots;
+
+  const out = slots.slice();
+  for (const [i, items] of bySlot) {
+    const slot = out[i];
+    // Only slots that already said something can have said something stale. A slot
+    // with no warning that the closer pushed out of band is a DIFFERENT defect
+    // (a missing warning, not a lying one) and is not silently papered over here.
+    if (!slot || !slot.warning) continue;
+    const names = items.map((x) => `${Math.round(x.grams)}g ${String(x.name).toLowerCase()}`).join(", ");
+    out[i] = {
+      ...slot,
+      warning: `${slot.warning} Balanced with ${names}, so this slot now provides ${Math.round(slot.kcal)} kcal.`,
+    };
+  }
+  return out;
 }
 
 // Fisher-Yates using the caller's rng (deterministic when rng is seeded).
@@ -1074,6 +1110,9 @@ function estimateSlotTarget(dailyTarget, mealConfig, slotType) {
 module.exports = {
   generateWeekPlan, regenerateOneSlot, buildSlots, targetsForSlots, solveDay,
   resolveSlot, scaleRecipe, buildAiFallbackContext, estimateSlotTarget,
+  // Exported to be tested directly: it is the seam where a slot's frozen
+  // narration is reconciled with what the closer did to the plate (E4).
+  restateAdjustedWarnings,
   fillGapsWithBrain,
   eligibleRecipes, buildPriorUsage, practicalGrams, RECENCY_WEIGHTS,
   applyScales, enforceScaledCarbCeiling, buildLockedMap, slotKeyOf,

@@ -199,7 +199,11 @@ function closeDayMacros({ slots, dailyTarget, adjusters }) {
           fat: totals.fat + (cand.food.fat || 0) * f,
           carb: totals.carb + (cand.food.carb || 0) * f,
         };
-        added.push({ foodId: cand.food.id, name: cand.food.name, grams: use, role: gap.role });
+        // slotIndex is reported so the caller can re-derive anything it had already
+        // written about this slot. A slot's warning is built from the recipe as
+        // scaled and frozen ~290 lines upstream; without knowing WHICH slot moved,
+        // the caller cannot tell that its own narration has gone stale (E4).
+        added.push({ foodId: cand.food.id, name: cand.food.name, grams: use, role: gap.role, slotIndex: hostIdx });
         placed = true;
         break;
       }
