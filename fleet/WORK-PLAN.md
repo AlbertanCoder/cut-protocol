@@ -88,6 +88,39 @@ nothing reads `residual`, and `brain/create.js` always passes k=2 so the
 gradient path is unreachable. **Whoever wires the brain up owns choosing the
 normalisation**; a test measures the current ratio so it cannot ship silently.
 
+### Tier 2's measured effect on compliance (2026-08-01)
+
+Tier 2 shipped on test evidence alone. Tests prove correctness, not that the
+headline metric held — and G4 makes the closer **refuse** adds it used to make,
+which could as easily have cost points. Measured after the fact, paired: same
+three canonical seeds, same DB (`d9037dce…`), same 250 personas, **only the code
+differs**. Baseline tree pinned at `962ac88` in a separate worktree.
+
+| seed | satisfiable (n=537) | all-planned (n=640) | closer fired on |
+|---|---|---|---|
+| 424242 | 77.3% → 77.8% (+3 days) | 68.0% → 68.8% (+5 days) | 254 → 124 |
+| 20260730 | 77.8% → 78.4% (+3 days) | 68.6% → 69.2% (+4 days) | 259 → 122 |
+| 8675309 | 76.9% → 77.5% (+3 days) | 67.7% → 68.3% (+4 days) | 262 → 130 |
+| **pooled** | **77.34% → 77.90% (+0.56 pp)** | **68.07% → 68.75% (+0.68 pp)** | **775 → 376 (−51%)** |
+
+**The headline is not the +0.68 pp — it is the −51%.** The closer now acts on
+half as many days and compliance went **up**. It was actively harming a large
+share of the days it touched, which is precisely what G4 predicted and what the
+106/106 fat-worsening figure described.
+
+Magnitude honesty: +0.68 pp is small, and per-seed it sits inside the ~0.9 pp
+cross-seed spread W1-2 measured — a single seed would prove nothing. What carries
+it is that this is a **paired** comparison and the sign is consistent **3 of 3
+seeds on both denominators, 6 of 6**. It also lands close to W3-4's independent
+prediction for G4+E4 (+0.84).
+
+Instrument checks clean on all six runs (disagree 0 · drift>1 0 · missing-food 0
+· crashes 0 · net 0). The harness reproduced the fleet's published baseline
+exactly (77.3% / 69.8% / 68.0% at seed 424242), which validates it before Tier 4
+depends on it.
+
+Evidence: `fleet/out/P0prefix/` (baseline worktree) and `fleet/out/P0postfix/`.
+
 | # | Defect | Location | Scale |
 |---|---|---|---|
 | 2.1 | **G4** — `wouldHarm` returns `isOver && !wasOver`, so an **already** out-of-band macro is unprotected. The one day that most needs the guard is the one day without it. Docstring: *"'No worse' is the whole rule."* | `backend/src/lib/macroCloser.js:86-91` | **106/106** fat worsenings; 68/110 carb. Worst +16.1 g. Magnitude modest (~1.34 g/day) but direction universal |
