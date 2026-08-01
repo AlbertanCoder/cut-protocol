@@ -1,0 +1,51 @@
+{
+  "arm": "B",
+  "armLabel": "MIXED BASIS (macros BRM + allergens Bragg) — counterfactual ceiling only",
+  "foods": [
+    {
+      "id": "cms9tkyb70000wlk8q7b38s1y",
+      "name": "Nutritional yeast, large flake",
+      "brand": "Bob's Red Mill",
+      "fdcId": 2596118,
+      "provenanceTag": "LABEL",
+      "probeSource": "fleet-probe",
+      "fdcCategory": "Baking Additives & Extracts",
+      "fdcCategoryPinned": true,
+      "per100g": {
+        "kcal": 400,
+        "protein": 53.3,
+        "fat": 3.33,
+        "carb": 33.3,
+        "fiber": 20
+      },
+      "proteinPer100kcal": 13.32,
+      "fatPer100kcal": 0.83,
+      "atwater": {
+        "ok": true,
+        "classic": 376,
+        "fiberAdjusted": 336,
+        "stated": 400,
+        "highFibreBand": true
+      },
+      "nameShapeIssues": [],
+      "validateFoodOk": true,
+      "allergenTags": [],
+      "mayContain": [],
+      "dataQuality": "exception:mixed-basis — MACROS are USDA FDC Branded 2596118 (Bob's Red Mill, LABEL); ALLERGEN DECLARATION is Bragg's (free of wheat/soy/milk, gluten-free labelled) whose per-100 g panel could not be sourced. THE TWO HALVES COME FROM DIFFERENT BRANDS. Counterfactual probe row only — must never be merged. fleet-probe row, W3-6 arm B."
+    }
+  ],
+  "dishes": [],
+  "skippedDishes": [
+    {
+      "w23": 4,
+      "name": "Sprouted Lentil & Cucumber Crunch Bowl",
+      "reason": "ATWATER. Its base, 130 g of 'Lentils, sprouted, raw' (FDC 168427) = ~70% of the dish's calories, is a DB row that FAILS foodValidation.checkAtwater (stated 106 kcal vs 129 classic; the USDA record carries no fibre datum so the fibre-adjusted arm cannot rescue it). W2-3 flagged it; the brief says prefer to skip rather than document an exception. Skipped."
+    },
+    {
+      "w23": 12,
+      "name": "Lupini Snack Jar",
+      "reason": "TRIAGE T-3. Lupin. foodMatchesExclusionTerm(lupinRow,'peanuts') === false while Health Canada advises every peanut-allergic consumer to avoid lupin (5-37% cross-reactivity), and the 17-persona wall INCLUDES peanuts. Inserting it would convert a P1-latent defect into a shipped P0 for exactly the population this probe exists to serve. Skipped."
+    }
+  ],
+  "skippedFoods": []
+}

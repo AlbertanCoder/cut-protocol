@@ -1,0 +1,561 @@
+{
+ "filesScanned": 351,
+ "filesWithNulBytes": [
+  "backend/src/lib/dietaryFilter.js",
+  "backend/scripts/qc/fuzz.mjs",
+  "backend/tests/librarySync.test.js"
+ ],
+ "terms": {
+  "fatInRange": {
+   "totalHits": 8,
+   "appSourceHits": 2,
+   "appSourceOutsideMealSolver": [],
+   "inMealSolver": [
+    {
+     "file": "backend/src/lib/mealSolver.js",
+     "line": 187,
+     "text": "fatInRange: fatOut === 0,"
+    },
+    {
+     "file": "backend/src/lib/mealSolver.js",
+     "line": 199,
+     "text": "// already produced fatInRange/carbInRange) and then dropped on the floor —"
+    }
+   ],
+   "testHits": 6,
+   "scriptHits": 0
+  },
+  "carbInRange": {
+   "totalHits": 9,
+   "appSourceHits": 2,
+   "appSourceOutsideMealSolver": [],
+   "inMealSolver": [
+    {
+     "file": "backend/src/lib/mealSolver.js",
+     "line": 188,
+     "text": "carbInRange: carbOut === 0,"
+    },
+    {
+     "file": "backend/src/lib/mealSolver.js",
+     "line": 199,
+     "text": "// already produced fatInRange/carbInRange) and then dropped on the floor —"
+    }
+   ],
+   "testHits": 7,
+   "scriptHits": 0
+  },
+  "kcalErrPct": {
+   "totalHits": 4,
+   "appSourceHits": 1,
+   "appSourceOutsideMealSolver": [],
+   "inMealSolver": [
+    {
+     "file": "backend/src/lib/mealSolver.js",
+     "line": 185,
+     "text": "kcalErrPct: Math.round(kcalErr * 1000) / 10,"
+    }
+   ],
+   "testHits": 3,
+   "scriptHits": 0
+  },
+  "proteinShortPct": {
+   "totalHits": 23,
+   "appSourceHits": 6,
+   "appSourceOutsideMealSolver": [],
+   "inMealSolver": [
+    {
+     "file": "backend/src/lib/mealSolver.js",
+     "line": 186,
+     "text": "proteinShortPct: Math.round(proteinShort * 1000) / 10,"
+    },
+    {
+     "file": "backend/src/lib/mealSolver.js",
+     "line": 232,
+     "text": "const proteinShortPct = pMid > 0 ? Math.max(0, (pMid - totals.protein) / pMid) : 0;"
+    },
+    {
+     "file": "backend/src/lib/mealSolver.js",
+     "line": 243,
+     "text": "kcalDeltaPct, proteinShortPct,"
+    },
+    {
+     "file": "backend/src/lib/mealSolver.js",
+     "line": 245,
+     "text": "proteinOk: proteinShortPct <= DAY_PROTEIN_TOLERANCE_PCT,"
+    },
+    {
+     "file": "backend/src/lib/mealSolver.js",
+     "line": 621,
+     "text": "proteinShortPct: Math.round(tol.proteinShortPct * 1000) / 10,"
+    },
+    {
+     "file": "backend/src/lib/mealSolver.js",
+     "line": 1319,
+     "text": "proteinShortDays: allDays.filter((d) => d.proteinShortPct > DAY_PROTEIN_TOLERANCE_PCT * 100).length,"
+    }
+   ],
+   "testHits": 10,
+   "scriptHits": 7
+  },
+  "dayTolerance": {
+   "totalHits": 48,
+   "appSourceHits": 15,
+   "appSourceOutsideMealSolver": [
+    {
+     "file": "backend/src/lib/macroCloser.js",
+     "line": 8,
+     "text": "* FOUR macro targets that dayTolerance() grades on, and a dish's macro RATIO is fixed"
+    },
+    {
+     "file": "backend/src/lib/macroCloser.js",
+     "line": 94,
+     "text": "// Keto's carb ceiling has NO upward allowance — a diet law, same as dayTolerance."
+    },
+    {
+     "file": "backend/src/lib/weeklyPlanner.js",
+     "line": 240,
+     "text": "// `dayTolerance()` grades it on."
+    },
+    {
+     "file": "frontend/src/components/PlanTab.jsx",
+     "line": 497,
+     "text": "// macros (the server's own dayTolerance verdict, single-sourced in"
+    }
+   ],
+   "inMealSolver": [
+    {
+     "file": "backend/src/lib/mealSolver.js",
+     "line": 152,
+     "text": "// — the exact same bandMiss/allowance arithmetic dayTolerance() grades on, so"
+    },
+    {
+     "file": "backend/src/lib/mealSolver.js",
+     "line": 158,
+     "text": "// (bandMiss/hasBand/DAY_*_TOLERANCE_PCT are declared below with dayTolerance,"
+    },
+    {
+     "file": "backend/src/lib/mealSolver.js",
+     "line": 168,
+     "text": "// same as dayTolerance."
+    },
+    {
+     "file": "backend/src/lib/mealSolver.js",
+     "line": 200,
+     "text": "// dayTolerance/dayMissLine/diagnoseFromResult were kcal+protein only, so a"
+    },
+    {
+     "file": "backend/src/lib/mealSolver.js",
+     "line": 229,
+     "text": "function dayTolerance(dailyTarget, totals) {"
+    },
+    {
+     "file": "backend/src/lib/mealSolver.js",
+     "line": 266,
+     "text": "const t = dayTolerance(dailyTarget, totals);"
+    },
+    {
+     "file": "backend/src/lib/mealSolver.js",
+     "line": 392,
+     "text": "// Single-sourced through dayTolerance (solver-core-2): the per-macro rules"
+    },
+    {
+     "file": "backend/src/lib/mealSolver.js",
+     "line": 399,
+     "text": "const tol = dayTolerance(dailyTarget, t);"
+    },
+    {
+     "file": "backend/src/lib/mealSolver.js",
+     "line": 487,
+     "text": "const tol = dayTolerance(dailyTarget, totals);"
+    },
+    {
+     "file": "backend/src/lib/mealSolver.js",
+     "line": 607,
+     "text": "const tol = dayTolerance(dailyTarget, exactTotals);"
+    },
+    {
+     "file": "backend/src/lib/mealSolver.js",
+     "line": 1455,
+     "text": "dayTolerance, dayMissLine, dayInTolerance, varietyOutlook,"
+    }
+   ],
+   "testHits": 23,
+   "scriptHits": 9
+  },
+  "dayInTolerance": {
+   "totalHits": 25,
+   "appSourceHits": 8,
+   "appSourceOutsideMealSolver": [
+    {
+     "file": "backend/src/lib/brain/proteinFloor.js",
+     "line": 50,
+     "text": "// dayInTolerance() draws. This table kept its pre-change 0.075 fat/carb"
+    },
+    {
+     "file": "backend/src/lib/weeklyPlanner.js",
+     "line": 577,
+     "text": "// solver-core-2 made mealSolver's dayInTolerance a FOUR-macro verdict (kcal,"
+    }
+   ],
+   "inMealSolver": [
+    {
+     "file": "backend/src/lib/mealSolver.js",
+     "line": 112,
+     "text": "// REWEIGHTED 2026-07-24 (solver-core-4). solver-core-2 made dayInTolerance a"
+    },
+    {
+     "file": "backend/src/lib/mealSolver.js",
+     "line": 124,
+     "text": "// dayInTolerance draws\" and a day that fails on fat forfeits the whole fat"
+    },
+    {
+     "file": "backend/src/lib/mealSolver.js",
+     "line": 256,
+     "text": "const dayInTolerance = (t) => t.kcalOk && t.proteinOk && t.fatOk && t.carbOk;"
+    },
+    {
+     "file": "backend/src/lib/mealSolver.js",
+     "line": 488,
+     "text": "const ok = dayInTolerance(tol);"
+    },
+    {
+     "file": "backend/src/lib/mealSolver.js",
+     "line": 611,
+     "text": "const ok = dayInTolerance(tol);"
+    },
+    {
+     "file": "backend/src/lib/mealSolver.js",
+     "line": 1455,
+     "text": "dayTolerance, dayMissLine, dayInTolerance, varietyOutlook,"
+    }
+   ],
+   "testHits": 8,
+   "scriptHits": 9
+  },
+  "SCORE_WEIGHTS": {
+   "totalHits": 20,
+   "appSourceHits": 8,
+   "appSourceOutsideMealSolver": [
+    {
+     "file": "backend/src/lib/brain/proteinFloor.js",
+     "line": 47,
+     "text": "// WHY. mealSolver's default SCORE_WEIGHTS moved to 0.46/0.30/0.12/0.12, and at"
+    },
+    {
+     "file": "backend/src/lib/brain/proteinFloor.js",
+     "line": 70,
+     "text": "// WHY 0.12 SPECIFICALLY and not higher: fat/carb match SCORE_WEIGHTS exactly, so"
+    },
+    {
+     "file": "backend/src/lib/brain/proteinFloor.js",
+     "line": 80,
+     "text": "// SCORE_WEIGHTS.protein 0.30 and scorer.js DEFAULT_WEIGHTS.protein 0.35). Sums"
+    },
+    {
+     "file": "backend/src/lib/brain/proteinFloor.js",
+     "line": 81,
+     "text": "// to 1.00, like SCORE_WEIGHTS, so matchPct stays a true weighted closeness"
+    }
+   ],
+   "inMealSolver": [
+    {
+     "file": "backend/src/lib/mealSolver.js",
+     "line": 127,
+     "text": "const SCORE_WEIGHTS = { kcal: 0.46, protein: 0.3, fat: 0.12, carb: 0.12 };"
+    },
+    {
+     "file": "backend/src/lib/mealSolver.js",
+     "line": 132,
+     "text": "* opts.proteinPriority (default false): swaps SCORE_WEIGHTS for"
+    },
+    {
+     "file": "backend/src/lib/mealSolver.js",
+     "line": 143,
+     "text": "const weights = priority ? PROTEIN_PRIORITY_WEIGHTS : SCORE_WEIGHTS;"
+    },
+    {
+     "file": "backend/src/lib/mealSolver.js",
+     "line": 1454,
+     "text": "generateDayCandidates, generateBestWeekPlan, alternatesForSlot, SCORE_WEIGHTS,"
+    }
+   ],
+   "testHits": 12,
+   "scriptHits": 0
+  },
+  "matchPct": {
+   "totalHits": 89,
+   "appSourceHits": 33,
+   "appSourceOutsideMealSolver": [
+    {
+     "file": "backend/src/lib/brain/chatPlan.js",
+     "line": 58,
+     "text": "matchPct: best.score ? best.score.matchPct : null,"
+    },
+    {
+     "file": "backend/src/lib/brain/chatPlan.js",
+     "line": 73,
+     "text": "const quality = plan.matchPct == null ? \"from your recipes\""
+    },
+    {
+     "file": "backend/src/lib/brain/chatPlan.js",
+     "line": 74,
+     "text": ": plan.matchPct >= 90 ? \"that hits your targets nicely\""
+    },
+    {
+     "file": "backend/src/lib/brain/chatPlan.js",
+     "line": 75,
+     "text": ": plan.matchPct >= 75 ? \"that lands close to your targets\""
+    },
+    {
+     "file": "backend/src/lib/brain/chatPlan.js",
+     "line": 77,
+     "text": "const gap = plan.matchPct != null && plan.matchPct < 75"
+    },
+    {
+     "file": "backend/src/lib/brain/proteinFloor.js",
+     "line": 81,
+     "text": "// to 1.00, like SCORE_WEIGHTS, so matchPct stays a true weighted closeness"
+    },
+    {
+     "file": "backend/src/lib/brain/reviseDay.js",
+     "line": 24,
+     "text": "* @param {(slots:any[])=>{matchPct:number,totals?:object}} o.scoreDay  pure day scorer"
+    },
+    {
+     "file": "backend/src/lib/brain/reviseDay.js",
+     "line": 48,
+     "text": "//    (`!(x < t)` also short-circuits safely if matchPct is NaN.)"
+    },
+    {
+     "file": "backend/src/lib/brain/reviseDay.js",
+     "line": 49,
+     "text": "if (!brainOn || !(baseScore.matchPct < roughMatch)) {"
+    },
+    {
+     "file": "backend/src/lib/brain/reviseDay.js",
+     "line": 63,
+     "text": "if (revisedScore.matchPct > baseScore.matchPct) {"
+    },
+    {
+     "file": "backend/src/routes/plans.js",
+     "line": 402,
+     "text": "matchPct: result.score.avgMatch,"
+    },
+    {
+     "file": "frontend/src/components/PlanTab.jsx",
+     "line": 157,
+     "text": "<span className=\"mono stat-hero text-3xl\" style={{ color: onTarget ? C.accent : C.ink }}>{best.matchPct}%</span>"
+    },
+    {
+     "file": "frontend/src/components/PlanTab.jsx",
+     "line": 179,
+     "text": "<span className=\"mono shrink-0\" style={{ color: C.faint }}>{kc(a.kcal)} kcal · {g1(a.protein)}P · {a.matchPct}%</span>"
+    },
+    {
+     "file": "frontend/src/components/PlanTab.jsx",
+     "line": 347,
+     "text": "//   mealSolver.js scoreDay()  → matchPct = Math.round(max(0, 1 - err) * 100)"
+    },
+    {
+     "file": "frontend/src/components/PlanTab.jsx",
+     "line": 348,
+     "text": "//   mealSolver.js scoreWeek() → avgMatch = Math.round(mean of those matchPcts)"
+    },
+    {
+     "file": "frontend/src/components/PlanTab.jsx",
+     "line": 349,
+     "text": "//   routes/plans.js           → meta.matchPct = result.score.avgMatch"
+    },
+    {
+     "file": "frontend/src/components/PlanTab.jsx",
+     "line": 359,
+     "text": "// The scalar may arrive as `matchPct`, as a bare numeric `score`, or nested"
+    },
+    {
+     "file": "frontend/src/components/PlanTab.jsx",
+     "line": 361,
+     "text": "const pct = asPercent(meta.matchPct) ?? asPercent(meta.score) ?? asPercent(meta.score?.avgMatch);"
+    },
+    {
+     "file": "frontend/src/components/PlanTab.jsx",
+     "line": 452,
+     "text": "<span className=\"mono text-xs font-bold\" style={{ color: d.inTolerance ? C.ink : C.warn }}>{d.matchPct}%</span>"
+    },
+    {
+     "file": "frontend/src/components/PlanTab.jsx",
+     "line": 516,
+     "text": "<span className=\"mono stat-hero text-3xl\" style={{ color: onTarget ? C.accent : C.ink }}>{c.score.matchPct}%</span>"
+    },
+    {
+     "file": "frontend/src/components/PlanTab.jsx",
+     "line": 691,
+     "text": "{kc(a.kcal)} kcal · {g1(a.protein)}P · {a.matchPct}% fit"
+    }
+   ],
+   "inMealSolver": [
+    {
+     "file": "backend/src/lib/mealSolver.js",
+     "line": 117,
+     "text": "// and 743 of 1,091 of them scored 90% or better. `meta.matchPct` is the first"
+    },
+    {
+     "file": "backend/src/lib/mealSolver.js",
+     "line": 155,
+     "text": "// saturates: past the line the verdict has already flipped, and matchPct is a"
+    },
+    {
+     "file": "backend/src/lib/mealSolver.js",
+     "line": 183,
+     "text": "matchPct: Math.round(Math.max(0, 1 - err) * 100),"
+    },
+    {
+     "file": "backend/src/lib/mealSolver.js",
+     "line": 504,
+     "text": ".sort((a, b) => b.score.matchPct - a.score.matchPct)"
+    },
+    {
+     "file": "backend/src/lib/mealSolver.js",
+     "line": 542,
+     "text": "candidates.sort((a, b) => b.score.matchPct - a.score.matchPct);"
+    },
+    {
+     "file": "backend/src/lib/mealSolver.js",
+     "line": 550,
+     "text": "candidates[0].score.matchPct < 60 ||"
+    },
+    {
+     "file": "backend/src/lib/mealSolver.js",
+     "line": 557,
+     "text": "// rough, even when kcal alone makes matchPct look fine (LAW 7 — the mode"
+    },
+    {
+     "file": "backend/src/lib/mealSolver.js",
+     "line": 612,
+     "text": "matchSum += sc.matchPct;"
+    },
+    {
+     "file": "backend/src/lib/mealSolver.js",
+     "line": 618,
+     "text": "matchPct: sc.matchPct,"
+    },
+    {
+     "file": "backend/src/lib/mealSolver.js",
+     "line": 859,
+     "text": "const matchPct = Math.round(Math.max(0, 1 - (kw * Math.min(1, kcalErr) + pw * Math.min(1, pShort))) * 100);"
+    },
+    {
+     "file": "backend/src/lib/mealSolver.js",
+     "line": 860,
+     "text": "alternates.push({ ...result, matchPct });"
+    },
+    {
+     "file": "backend/src/lib/mealSolver.js",
+     "line": 1282,
+     "text": "const avgMatch = allDays.length ? Math.round(allDays.reduce((s, d) => s + d.matchPct, 0) / allDays.length) : 0;"
+    }
+   ],
+   "testHits": 53,
+   "scriptHits": 3
+  },
+  "daysInTolerance": {
+   "totalHits": 42,
+   "appSourceHits": 18,
+   "appSourceOutsideMealSolver": [
+    {
+     "file": "backend/src/routes/plans.js",
+     "line": 404,
+     "text": "score: result.score, // { daysInTolerance, avgMatch, days[], totalDays }"
+    },
+    {
+     "file": "backend/src/routes/plans.js",
+     "line": 425,
+     "text": "daysInTolerance: w.score.daysInTolerance,"
+    },
+    {
+     "file": "frontend/src/components/PlanTab.jsx",
+     "line": 212,
+     "text": "const clean = w.daysInTolerance === w.days && w.unfilledSlots === 0;"
+    },
+    {
+     "file": "frontend/src/components/PlanTab.jsx",
+     "line": 218,
+     "text": "{w.daysInTolerance}/{w.days} days on target · {w.avgMatch}% avg"
+    },
+    {
+     "file": "frontend/src/components/PlanTab.jsx",
+     "line": 373,
+     "text": "const daysInTol = asPercent(meta.score?.daysInTolerance);"
+    }
+   ],
+   "inMealSolver": [
+    {
+     "file": "backend/src/lib/mealSolver.js",
+     "line": 592,
+     "text": "let daysInTolerance = 0;"
+    },
+    {
+     "file": "backend/src/lib/mealSolver.js",
+     "line": 613,
+     "text": "if (ok) daysInTolerance++;"
+    },
+    {
+     "file": "backend/src/lib/mealSolver.js",
+     "line": 634,
+     "text": "daysInTolerance,"
+    },
+    {
+     "file": "backend/src/lib/mealSolver.js",
+     "line": 686,
+     "text": "|| score.daysInTolerance > best.score.daysInTolerance"
+    },
+    {
+     "file": "backend/src/lib/mealSolver.js",
+     "line": 687,
+     "text": "|| (score.daysInTolerance === best.score.daysInTolerance"
+    },
+    {
+     "file": "backend/src/lib/mealSolver.js",
+     "line": 689,
+     "text": "|| (score.daysInTolerance === best.score.daysInTolerance"
+    },
+    {
+     "file": "backend/src/lib/mealSolver.js",
+     "line": 696,
+     "text": "if (best.score.days.length > 0 && best.score.daysInTolerance === best.score.days.length"
+    },
+    {
+     "file": "backend/src/lib/mealSolver.js",
+     "line": 738,
+     "text": "// is on the plate. Rescore so daysInTolerance/avgMatch describe the week"
+    },
+    {
+     "file": "backend/src/lib/mealSolver.js",
+     "line": 743,
+     "text": "const anyDayMissed = best.score.daysInTolerance < best.score.days.length;"
+    },
+    {
+     "file": "backend/src/lib/mealSolver.js",
+     "line": 1281,
+     "text": "const daysInTolerance = allDays.filter((d) => d.inTolerance).length;"
+    },
+    {
+     "file": "backend/src/lib/mealSolver.js",
+     "line": 1287,
+     "text": "daysInTolerance, avgMatch, days: allDays, totalDays: allDays.length,"
+    },
+    {
+     "file": "backend/src/lib/mealSolver.js",
+     "line": 1293,
+     "text": "const anyMissed = daysInTolerance < allDays.length;"
+    },
+    {
+     "file": "backend/src/lib/mealSolver.js",
+     "line": 1307,
+     "text": "reasons.push(`${allDays.length - daysInTolerance} of ${allDays.length} days landed outside your macro tolerance.`);"
+    }
+   ],
+   "testHits": 14,
+   "scriptHits": 10
+  }
+ }
+}

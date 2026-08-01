@@ -1,0 +1,4698 @@
+{
+ "schema": "fleet/W3-3/results/v1",
+ "generatedAt": "2026-08-01T03:44:48.418Z",
+ "arms": [
+  "base",
+  "oracle",
+  "master",
+  "greedy",
+  "lns",
+  "realised"
+ ],
+ "armNotes": {
+  "base": "shipping generateBestWeekPlan best-of-5, reconstructed from the same attempt stream; XCHECKed 640/640 vs W1-2",
+  "oracle": "post-hoc per-day argmax across the k attempts, IGNORES the weekly repeat cap — an UPPER BOUND, not a policy",
+  "master": "exact cap-feasible master over the same candidate set (one candidate per calendar day, usage(r) <= repeatCap)",
+  "greedy": "naive greedy-with-skip — MEASURED FOR REFERENCE ONLY; W2-2 §3(iv) forbids shipping it",
+  "lns": "W2-2's recommendation: keep the best whole week, destroy the d worst days, re-solve against the surviving usageCount ledger",
+  "realised": "W2-2's safe rule: cherry-pick argmax; if it passes the cap ship it (attains the bound); if not, LNS repair"
+ },
+ "seeds": [
+  {
+   "seed": 424242,
+   "k": 12,
+   "kMain": 5,
+   "personas": 250,
+   "byDiet": {
+    "none": {
+     "personas": 28,
+     "days": 196,
+     "poolMin": 92,
+     "poolMax": 910,
+     "base": 167,
+     "oracle": 187,
+     "master": 174,
+     "greedy": 172,
+     "lns": 172,
+     "realised": 172
+    },
+    "keto": {
+     "personas": 7,
+     "days": 49,
+     "poolMin": 1,
+     "poolMax": 53,
+     "base": 25,
+     "oracle": 39,
+     "master": 31,
+     "greedy": 30,
+     "lns": 30,
+     "realised": 30
+    },
+    "carnivore": {
+     "personas": 1,
+     "days": 7,
+     "poolMin": 3,
+     "poolMax": 3,
+     "base": 0,
+     "oracle": 0,
+     "master": 0,
+     "greedy": 0,
+     "lns": 0,
+     "realised": 0
+    },
+    "kosher": {
+     "personas": 4,
+     "days": 28,
+     "poolMin": 63,
+     "poolMax": 345,
+     "base": 11,
+     "oracle": 14,
+     "master": 14,
+     "greedy": 13,
+     "lns": 11,
+     "realised": 11
+    },
+    "vegetarian": {
+     "personas": 7,
+     "days": 49,
+     "poolMin": 35,
+     "poolMax": 327,
+     "base": 29,
+     "oracle": 35,
+     "master": 30,
+     "greedy": 30,
+     "lns": 29,
+     "realised": 29
+    },
+    "vegan": {
+     "personas": 10,
+     "days": 70,
+     "poolMin": 17,
+     "poolMax": 169,
+     "base": 15,
+     "oracle": 22,
+     "master": 19,
+     "greedy": 18,
+     "lns": 18,
+     "realised": 21
+    },
+    "mediterranean": {
+     "personas": 5,
+     "days": 35,
+     "poolMin": 158,
+     "poolMax": 814,
+     "base": 30,
+     "oracle": 33,
+     "master": 30,
+     "greedy": 29,
+     "lns": 30,
+     "realised": 30
+    },
+    "paleo": {
+     "personas": 2,
+     "days": 14,
+     "poolMin": 29,
+     "poolMax": 116,
+     "base": 6,
+     "oracle": 7,
+     "master": 7,
+     "greedy": 5,
+     "lns": 7,
+     "realised": 7
+    },
+    "halal": {
+     "personas": 1,
+     "days": 7,
+     "poolMin": 758,
+     "poolMax": 758,
+     "base": 7,
+     "oracle": 7,
+     "master": 7,
+     "greedy": 6,
+     "lns": 7,
+     "realised": 7
+    }
+   },
+   "compression": {
+    "0": {
+     "personas": 13,
+     "baseDays": 0,
+     "oracleDays": 0,
+     "masterDays": 0,
+     "realisedDays": 0,
+     "totalDays": 91,
+     "oracleGainPerPersona": 0,
+     "masterGainPerPersona": 0,
+     "realisedGainPerPersona": 0,
+     "remainingDays": 91,
+     "oracleCaptureOfRemaining": 0
+    },
+    "1": {
+     "personas": 3,
+     "baseDays": 3,
+     "oracleDays": 8,
+     "masterDays": 3,
+     "realisedDays": 3,
+     "totalDays": 21,
+     "oracleGainPerPersona": 1.67,
+     "masterGainPerPersona": 0,
+     "realisedGainPerPersona": 0,
+     "remainingDays": 18,
+     "oracleCaptureOfRemaining": 27.78
+    },
+    "2": {
+     "personas": 1,
+     "baseDays": 2,
+     "oracleDays": 6,
+     "masterDays": 2,
+     "realisedDays": 2,
+     "totalDays": 7,
+     "oracleGainPerPersona": 4,
+     "masterGainPerPersona": 0,
+     "realisedGainPerPersona": 0,
+     "remainingDays": 5,
+     "oracleCaptureOfRemaining": 80
+    },
+    "3": {
+     "personas": 6,
+     "baseDays": 18,
+     "oracleDays": 37,
+     "masterDays": 27,
+     "realisedDays": 25,
+     "totalDays": 42,
+     "oracleGainPerPersona": 3.17,
+     "masterGainPerPersona": 1.5,
+     "realisedGainPerPersona": 1.17,
+     "remainingDays": 24,
+     "oracleCaptureOfRemaining": 79.17
+    },
+    "4": {
+     "personas": 3,
+     "baseDays": 12,
+     "oracleDays": 20,
+     "masterDays": 15,
+     "realisedDays": 13,
+     "totalDays": 21,
+     "oracleGainPerPersona": 2.67,
+     "masterGainPerPersona": 1,
+     "realisedGainPerPersona": 0.33,
+     "remainingDays": 9,
+     "oracleCaptureOfRemaining": 88.89
+    },
+    "5": {
+     "personas": 5,
+     "baseDays": 25,
+     "oracleDays": 35,
+     "masterDays": 31,
+     "realisedDays": 29,
+     "totalDays": 35,
+     "oracleGainPerPersona": 2,
+     "masterGainPerPersona": 1.2,
+     "realisedGainPerPersona": 0.8,
+     "remainingDays": 10,
+     "oracleCaptureOfRemaining": 100
+    },
+    "6": {
+     "personas": 8,
+     "baseDays": 48,
+     "oracleDays": 56,
+     "masterDays": 52,
+     "realisedDays": 53,
+     "totalDays": 56,
+     "oracleGainPerPersona": 1,
+     "masterGainPerPersona": 0.5,
+     "realisedGainPerPersona": 0.63,
+     "remainingDays": 8,
+     "oracleCaptureOfRemaining": 100
+    },
+    "7": {
+     "personas": 26,
+     "baseDays": 182,
+     "oracleDays": 182,
+     "masterDays": 182,
+     "realisedDays": 182,
+     "totalDays": 182,
+     "oracleGainPerPersona": 0,
+     "masterGainPerPersona": 0,
+     "realisedGainPerPersona": 0,
+     "remainingDays": 0,
+     "oracleCaptureOfRemaining": null
+    }
+   },
+   "filledByArm": {
+    "base": 2820,
+    "oracle": 2810,
+    "lns": 2820
+   },
+   "provenance": {
+    "dbSha256": "d9037dce9754b4524943069fff7e0f3e396598c108426f370b0a189458b623a1",
+    "dbCopySha256": "d9037dce9754b4524943069fff7e0f3e396598c108426f370b0a189458b623a1",
+    "foodFingerprint": "b961ac3afbdf3f53905ead1353ffb05a9a2b94b7f1e0cd7fa87bbf975291f26b",
+    "foodRows": 14151,
+    "recipeRows": 910,
+    "personasSha256": "e564b1ddcc36b95249b51819e03762a30da61f29f2a254312699290fae57704e",
+    "gitSha": "79b17a43e359bacf7a2b5d8bc732a81516500a6a",
+    "gitBranch": "fleet/measure-2026-08",
+    "srcPorcelain": "",
+    "brain": "off",
+    "networkCalls": 0,
+    "ruler": "product/dayTolerance+dayInTolerance (mealSolver.js)",
+    "poolShape": "route (applyFilterStack ON)",
+    "elapsedSec": 56.68
+   },
+   "lnsConfig": {
+    "rounds": 3,
+    "destroy": 2,
+    "tries": 3,
+    "extraDaySolves": 501
+   },
+   "population": {
+    "weekPersonas": 65,
+    "dayPersonas": 185,
+    "weekDays": 455,
+    "dayDays": 185,
+    "degenerateDays": 1,
+    "unjudgedSatDays": 16,
+    "crashed": 0
+   },
+   "level": {
+    "base": {
+     "d553": {
+      "k": 415,
+      "n": 553,
+      "pct": 75.05
+     },
+     "d640": {
+      "k": 435,
+      "n": 640,
+      "pct": 67.97
+     },
+     "d537": {
+      "k": 415,
+      "n": 537,
+      "pct": 77.28
+     }
+    },
+    "oracle": {
+     "d553": {
+      "k": 467,
+      "n": 553,
+      "pct": 84.45
+     },
+     "d640": {
+      "k": 489,
+      "n": 640,
+      "pct": 76.41
+     },
+     "d537": {
+      "k": 464,
+      "n": 537,
+      "pct": 86.41
+     }
+    },
+    "master": {
+     "d553": {
+      "k": 436,
+      "n": 553,
+      "pct": 78.84
+     },
+     "d640": {
+      "k": 457,
+      "n": 640,
+      "pct": 71.41
+     },
+     "d537": {
+      "k": 436,
+      "n": 537,
+      "pct": 81.19
+     }
+    },
+    "greedy": {
+     "d553": {
+      "k": 428,
+      "n": 553,
+      "pct": 77.4
+     },
+     "d640": {
+      "k": 448,
+      "n": 640,
+      "pct": 70
+     },
+     "d537": {
+      "k": 428,
+      "n": 537,
+      "pct": 79.7
+     }
+    },
+    "lns": {
+     "d553": {
+      "k": 432,
+      "n": 553,
+      "pct": 78.12
+     },
+     "d640": {
+      "k": 453,
+      "n": 640,
+      "pct": 70.78
+     },
+     "d537": {
+      "k": 432,
+      "n": 537,
+      "pct": 80.45
+     }
+    },
+    "realised": {
+     "d553": {
+      "k": 431,
+      "n": 553,
+      "pct": 77.94
+     },
+     "d640": {
+      "k": 452,
+      "n": 640,
+      "pct": 70.63
+     },
+     "d537": {
+      "k": 431,
+      "n": 537,
+      "pct": 80.26
+     }
+    }
+   },
+   "weekSatOnly": {
+    "base": {
+     "k": 278,
+     "n": 392,
+     "pct": 70.92
+    },
+    "oracle": {
+     "k": 330,
+     "n": 392,
+     "pct": 84.18
+    },
+    "master": {
+     "k": 299,
+     "n": 392,
+     "pct": 76.28
+    },
+    "greedy": {
+     "k": 291,
+     "n": 392,
+     "pct": 74.23
+    },
+    "lns": {
+     "k": 291,
+     "n": 392,
+     "pct": 74.23
+    },
+    "realised": {
+     "k": 294,
+     "n": 392,
+     "pct": 75
+    }
+   },
+   "dayHorizonSatOnly": {
+    "base": {
+     "k": 137,
+     "n": 161,
+     "pct": 85.09
+    },
+    "oracle": {
+     "k": 137,
+     "n": 161,
+     "pct": 85.09
+    },
+    "master": {
+     "k": 137,
+     "n": 161,
+     "pct": 85.09
+    },
+    "greedy": {
+     "k": 137,
+     "n": 161,
+     "pct": 85.09
+    },
+    "lns": {
+     "k": 141,
+     "n": 161,
+     "pct": 87.58
+    },
+    "realised": {
+     "k": 137,
+     "n": 161,
+     "pct": 85.09
+    }
+   },
+   "capViolation": {
+    "all": {
+     "personas": 250,
+     "violated": 61,
+     "pct": 24.4
+    },
+    "weekPersonas": {
+     "personas": 65,
+     "violated": 61,
+     "pct": 93.85
+    },
+    "dayPersonas": {
+     "personas": 185,
+     "violated": 0,
+     "pct": 0
+    },
+    "byDiet": {
+     "none": {
+      "personas": 28,
+      "violated": 26,
+      "maxUsageHist": {
+       "2": 2,
+       "3": 9,
+       "4": 4,
+       "5": 5,
+       "6": 4,
+       "7": 2,
+       "8": 1,
+       "9": 1
+      },
+      "worstExcess": 7,
+      "examples": [
+       {
+        "id": "p000",
+        "maxUsage": 3,
+        "cap": 2,
+        "over": [
+         {
+          "recipeId": "cmrujkwqi002uwl9ob1bgrck4",
+          "name": "Fiesta Chicken & Onions with Rice",
+          "used": 3,
+          "cap": 2
+         }
+        ]
+       },
+       {
+        "id": "p023",
+        "maxUsage": 3,
+        "cap": 2,
+        "over": [
+         {
+          "recipeId": "cmrfn2w780030wlg49qus3ftp",
+          "name": "Grilled Chicken Breast & Perogies",
+          "used": 3,
+          "cap": 2
+         },
+         {
+          "recipeId": "cmrfp3wtp000ewlj0rcs6iepn",
+          "name": "Tuna Cucumber Cracker Plate",
+          "used": 3,
+          "cap": 2
+         }
+        ]
+       },
+       {
+        "id": "p036",
+        "maxUsage": 8,
+        "cap": 2,
+        "over": [
+         {
+          "recipeId": "cmrujkwvx00ciwl9onlcdvocx",
+          "name": "Thai Chicken & Bell Peppers with Rice",
+          "used": 3,
+          "cap": 2
+         },
+         {
+          "recipeId": "cms7pjmju002swlbktsksba9r",
+          "name": "Edamame with Sea Salt",
+          "used": 8,
+          "cap": 2
+         }
+        ]
+       }
+      ],
+      "pct": 92.86
+     },
+     "keto": {
+      "personas": 7,
+      "violated": 6,
+      "maxUsageHist": {
+       "0": 1,
+       "3": 2,
+       "4": 2,
+       "5": 1,
+       "6": 1
+      },
+      "worstExcess": 4,
+      "examples": [
+       {
+        "id": "p067",
+        "maxUsage": 4,
+        "cap": 2,
+        "over": [
+         {
+          "recipeId": "cmrj2tgq601m0wlwsywpofgzn",
+          "name": "Matambre a la Pizza",
+          "used": 3,
+          "cap": 2
+         },
+         {
+          "recipeId": "cmrj2td5300ttwlwszao8ubba",
+          "name": "Beef Asado",
+          "used": 4,
+          "cap": 2
+         }
+        ]
+       },
+       {
+        "id": "p089",
+        "maxUsage": 4,
+        "cap": 2,
+        "over": [
+         {
+          "recipeId": "cmrj2tx2k058wwlwsds8g2gmc",
+          "name": "Keleya Zaara",
+          "used": 4,
+          "cap": 2
+         },
+         {
+          "recipeId": "cmrevpcyt004lwl5gx6bidm0z",
+          "name": "Jerky & Pork Rinds Snack Plate",
+          "used": 4,
+          "cap": 2
+         }
+        ]
+       },
+       {
+        "id": "p104",
+        "maxUsage": 5,
+        "cap": 2,
+        "over": [
+         {
+          "recipeId": "cmrj2tx2k058wwlwsds8g2gmc",
+          "name": "Keleya Zaara",
+          "used": 4,
+          "cap": 2
+         },
+         {
+          "recipeId": "cmrj2tmq402y9wlwsqahfcq5y",
+          "name": "Smoky chicken skewers",
+          "used": 5,
+          "cap": 2
+         }
+        ]
+       }
+      ],
+      "pct": 85.71
+     },
+     "carnivore": {
+      "personas": 1,
+      "violated": 1,
+      "maxUsageHist": {
+       "8": 1
+      },
+      "worstExcess": 6,
+      "examples": [
+       {
+        "id": "p018",
+        "maxUsage": 8,
+        "cap": 2,
+        "over": [
+         {
+          "recipeId": "cmrfn2w780030wlg49qus3ftp",
+          "name": "Grilled Chicken Breast & Perogies",
+          "used": 5,
+          "cap": 2
+         },
+         {
+          "recipeId": "cmrevpcy5004bwl5gsicopbjv",
+          "name": "Perogies & Bacon",
+          "used": 8,
+          "cap": 2
+         }
+        ]
+       }
+      ],
+      "pct": 100
+     },
+     "kosher": {
+      "personas": 4,
+      "violated": 4,
+      "maxUsageHist": {
+       "4": 2,
+       "5": 1,
+       "6": 1
+      },
+      "worstExcess": 4,
+      "examples": [
+       {
+        "id": "p022",
+        "maxUsage": 6,
+        "cap": 2,
+        "over": [
+         {
+          "recipeId": "cmrujkwvx00ciwl9onlcdvocx",
+          "name": "Thai Chicken & Bell Peppers with Rice",
+          "used": 4,
+          "cap": 2
+         },
+         {
+          "recipeId": "cmrevpd0k0057wl5ggnxuvv9c",
+          "name": "Avocado Chips & Jerky",
+          "used": 3,
+          "cap": 2
+         }
+        ]
+       },
+       {
+        "id": "p034",
+        "maxUsage": 4,
+        "cap": 2,
+        "over": [
+         {
+          "recipeId": "cms7pjmks003ewlbkbzjiva2m",
+          "name": "Hard-Boiled Eggs with Chilli Salt",
+          "used": 4,
+          "cap": 2
+         }
+        ]
+       },
+       {
+        "id": "p118",
+        "maxUsage": 4,
+        "cap": 2,
+        "over": [
+         {
+          "recipeId": "cmrujkwra0046wl9ods3ggn18",
+          "name": "Spiced Chicken & Bell Peppers with Potato",
+          "used": 3,
+          "cap": 2
+         },
+         {
+          "recipeId": "cmrujkwvx00ciwl9onlcdvocx",
+          "name": "Thai Chicken & Bell Peppers with Rice",
+          "used": 4,
+          "cap": 2
+         }
+        ]
+       }
+      ],
+      "pct": 100
+     },
+     "vegetarian": {
+      "personas": 7,
+      "violated": 7,
+      "maxUsageHist": {
+       "4": 5,
+       "5": 1,
+       "6": 1
+      },
+      "worstExcess": 4,
+      "examples": [
+       {
+        "id": "p045",
+        "maxUsage": 6,
+        "cap": 2,
+        "over": [
+         {
+          "recipeId": "cmrul79z400c0wl8064gi62w8",
+          "name": "High-Protein Egg White & Broccoli with Quinoa",
+          "used": 4,
+          "cap": 2
+         },
+         {
+          "recipeId": "cmrul4e7h007owl68wk6sgpum",
+          "name": "High-Protein Egg White & Onions with Quinoa",
+          "used": 3,
+          "cap": 2
+         }
+        ]
+       },
+       {
+        "id": "p086",
+        "maxUsage": 4,
+        "cap": 2,
+        "over": [
+         {
+          "recipeId": "cmrul4e7h007owl68wk6sgpum",
+          "name": "High-Protein Egg White & Onions with Quinoa",
+          "used": 3,
+          "cap": 2
+         },
+         {
+          "recipeId": "cmrul79zo00cuwl80i55ngt34",
+          "name": "High-Protein Cottage Cheese & Cucumber with Quinoa",
+          "used": 4,
+          "cap": 2
+         }
+        ]
+       },
+       {
+        "id": "p112",
+        "maxUsage": 4,
+        "cap": 2,
+        "over": [
+         {
+          "recipeId": "cmrul79rz000iwl80771jcpsc",
+          "name": "High-Protein Seitan & Cucumber with Quinoa",
+          "used": 3,
+          "cap": 2
+         },
+         {
+          "recipeId": "cms7pjmks003ewlbkbzjiva2m",
+          "name": "Hard-Boiled Eggs with Chilli Salt",
+          "used": 4,
+          "cap": 2
+         }
+        ]
+       }
+      ],
+      "pct": 100
+     },
+     "vegan": {
+      "personas": 10,
+      "violated": 9,
+      "maxUsageHist": {
+       "2": 1,
+       "4": 1,
+       "5": 4,
+       "6": 4
+      },
+      "worstExcess": 4,
+      "examples": [
+       {
+        "id": "p051",
+        "maxUsage": 6,
+        "cap": 2,
+        "over": [
+         {
+          "recipeId": "cmrj2ucb308ljwlwshp004cle",
+          "name": "Lao Som Pak Pickled Cabbage",
+          "used": 5,
+          "cap": 2
+         },
+         {
+          "recipeId": "cmrj2ul500ak9wlwskp59bqxx",
+          "name": "Ugali – Kenyan cornmeal",
+          "used": 6,
+          "cap": 2
+         }
+        ]
+       },
+       {
+        "id": "p054",
+        "maxUsage": 5,
+        "cap": 2,
+        "over": [
+         {
+          "recipeId": "cmrul4e440020wl68cn3wmtsm",
+          "name": "High-Protein Edamame & Broccoli with Lentil Pasta",
+          "used": 3,
+          "cap": 2
+         },
+         {
+          "recipeId": "cms7pjmju002swlbktsksba9r",
+          "name": "Edamame with Sea Salt",
+          "used": 5,
+          "cap": 2
+         }
+        ]
+       },
+       {
+        "id": "p059",
+        "maxUsage": 5,
+        "cap": 2,
+        "over": [
+         {
+          "recipeId": "cmrj2uaj8087gwlwsssnykonm",
+          "name": "Boulangère Potatoes",
+          "used": 4,
+          "cap": 2
+         },
+         {
+          "recipeId": "cmrj2ucb308ljwlwshp004cle",
+          "name": "Lao Som Pak Pickled Cabbage",
+          "used": 5,
+          "cap": 2
+         }
+        ]
+       }
+      ],
+      "pct": 90
+     },
+     "mediterranean": {
+      "personas": 5,
+      "violated": 5,
+      "maxUsageHist": {
+       "3": 2,
+       "4": 1,
+       "5": 1,
+       "8": 1
+      },
+      "worstExcess": 6,
+      "examples": [
+       {
+        "id": "p052",
+        "maxUsage": 5,
+        "cap": 2,
+        "over": [
+         {
+          "recipeId": "cmrujkwvx00ciwl9onlcdvocx",
+          "name": "Thai Chicken & Bell Peppers with Rice",
+          "used": 3,
+          "cap": 2
+         },
+         {
+          "recipeId": "cmrujkwqi002uwl9ob1bgrck4",
+          "name": "Fiesta Chicken & Onions with Rice",
+          "used": 5,
+          "cap": 2
+         }
+        ]
+       },
+       {
+        "id": "p122",
+        "maxUsage": 3,
+        "cap": 2,
+        "over": [
+         {
+          "recipeId": "cms7pjmju002swlbktsksba9r",
+          "name": "Edamame with Sea Salt",
+          "used": 3,
+          "cap": 2
+         },
+         {
+          "recipeId": "cms7pjmkm003awlbk8b9zzoqo",
+          "name": "Cottage Cheese with Pineapple",
+          "used": 3,
+          "cap": 2
+         }
+        ]
+       },
+       {
+        "id": "p128",
+        "maxUsage": 4,
+        "cap": 2,
+        "over": [
+         {
+          "recipeId": "cms7pjmkm003awlbk8b9zzoqo",
+          "name": "Cottage Cheese with Pineapple",
+          "used": 4,
+          "cap": 2
+         },
+         {
+          "recipeId": "cmrujhgxz000zwlbon488ewmg",
+          "name": "Greek Yogurt, Honey & Almonds",
+          "used": 4,
+          "cap": 2
+         }
+        ]
+       }
+      ],
+      "pct": 100
+     },
+     "paleo": {
+      "personas": 2,
+      "violated": 2,
+      "maxUsageHist": {
+       "5": 1,
+       "6": 1
+      },
+      "worstExcess": 4,
+      "examples": [
+       {
+        "id": "p203",
+        "maxUsage": 5,
+        "cap": 2,
+        "over": [
+         {
+          "recipeId": "cmrevpcpb0011wl5g2m81r2ia",
+          "name": "Cast-Iron Sirloin, Potato & Cucumber",
+          "used": 3,
+          "cap": 2
+         },
+         {
+          "recipeId": "cmrj2u3i806oawlwsrvqxe0y5",
+          "name": "Slow-roasted ham with lemon, garlic & sage",
+          "used": 3,
+          "cap": 2
+         }
+        ]
+       },
+       {
+        "id": "p239",
+        "maxUsage": 6,
+        "cap": 2,
+        "over": [
+         {
+          "recipeId": "cmrujkwuh009uwl9ohi26dm66",
+          "name": "Classic Chicken & Bell Peppers with Potato",
+          "used": 4,
+          "cap": 2
+         },
+         {
+          "recipeId": "cmrevpcyt004lwl5gx6bidm0z",
+          "name": "Jerky & Pork Rinds Snack Plate",
+          "used": 6,
+          "cap": 2
+         }
+        ]
+       }
+      ],
+      "pct": 100
+     },
+     "halal": {
+      "personas": 1,
+      "violated": 1,
+      "maxUsageHist": {
+       "6": 1
+      },
+      "worstExcess": 4,
+      "examples": [
+       {
+        "id": "p232",
+        "maxUsage": 6,
+        "cap": 2,
+        "over": [
+         {
+          "recipeId": "cmrg91na2000mwli0w2pcl3e2",
+          "name": "Turkey & Swiss Roll-Ups",
+          "used": 6,
+          "cap": 2
+         }
+        ]
+       }
+      ],
+      "pct": 100
+     }
+    }
+   },
+   "capCapacity": {
+    "none": {
+     "personas": 28,
+     "snackStarved": 2,
+     "mealStarved": 0,
+     "minSnackSlack": -15,
+     "minMealSlack": 112,
+     "snackEligibleMin": 3,
+     "snackEligibleMax": 18
+    },
+    "keto": {
+     "personas": 7,
+     "snackStarved": 2,
+     "mealStarved": 2,
+     "minSnackSlack": -13,
+     "minMealSlack": -21,
+     "snackEligibleMin": 0,
+     "snackEligibleMax": 4
+    },
+    "carnivore": {
+     "personas": 1,
+     "snackStarved": 1,
+     "mealStarved": 1,
+     "minSnackSlack": -5,
+     "minMealSlack": -15,
+     "snackEligibleMin": 1,
+     "snackEligibleMax": 1
+    },
+    "kosher": {
+     "personas": 4,
+     "snackStarved": 1,
+     "mealStarved": 0,
+     "minSnackSlack": -6,
+     "minMealSlack": 92,
+     "snackEligibleMin": 4,
+     "snackEligibleMax": 11
+    },
+    "vegetarian": {
+     "personas": 7,
+     "snackStarved": 1,
+     "mealStarved": 0,
+     "minSnackSlack": -15,
+     "minMealSlack": 41,
+     "snackEligibleMin": 3,
+     "snackEligibleMax": 10
+    },
+    "vegan": {
+     "personas": 10,
+     "snackStarved": 5,
+     "mealStarved": 0,
+     "minSnackSlack": -14,
+     "minMealSlack": 2,
+     "snackEligibleMin": 0,
+     "snackEligibleMax": 5
+    },
+    "mediterranean": {
+     "personas": 5,
+     "snackStarved": 0,
+     "mealStarved": 0,
+     "minSnackSlack": 0,
+     "minMealSlack": 255,
+     "snackEligibleMin": 7,
+     "snackEligibleMax": 15
+    },
+    "paleo": {
+     "personas": 2,
+     "snackStarved": 0,
+     "mealStarved": 0,
+     "minSnackSlack": 2,
+     "minMealSlack": 28,
+     "snackEligibleMin": 8,
+     "snackEligibleMax": 8
+    },
+    "halal": {
+     "personas": 1,
+     "snackStarved": 0,
+     "mealStarved": 0,
+     "minSnackSlack": 23,
+     "minMealSlack": 1175,
+     "snackEligibleMin": 15,
+     "snackEligibleMax": 15
+    }
+   },
+   "a5": {
+    "oracle": {
+     "b": 52,
+     "c": 0,
+     "diff": 52,
+     "floor": 14.13,
+     "real": true
+    },
+    "master": {
+     "b": 26,
+     "c": 5,
+     "diff": 21,
+     "floor": 10.91,
+     "real": true
+    },
+    "greedy": {
+     "b": 36,
+     "c": 23,
+     "diff": 13,
+     "floor": 15.05,
+     "real": false
+    },
+    "lns": {
+     "b": 17,
+     "c": 0,
+     "diff": 17,
+     "floor": 8.08,
+     "real": true
+    },
+    "realised": {
+     "b": 16,
+     "c": 0,
+     "diff": 16,
+     "floor": 7.84,
+     "real": true
+    }
+   },
+   "variety": {
+    "base": {
+     "weekPersonas": 65,
+     "capBreaches": 0,
+     "capBreachPct": 0,
+     "worstExcess": 0,
+     "adjPairs": 135,
+     "adjIncidences": 169,
+     "personasWithAdjRepeat": 58
+    },
+    "oracle": {
+     "weekPersonas": 65,
+     "capBreaches": 61,
+     "capBreachPct": 93.85,
+     "worstExcess": 7,
+     "adjPairs": 242,
+     "adjIncidences": 393,
+     "personasWithAdjRepeat": 63
+    },
+    "master": {
+     "weekPersonas": 65,
+     "capBreaches": 0,
+     "capBreachPct": 0,
+     "worstExcess": 0,
+     "adjPairs": 148,
+     "adjIncidences": 179,
+     "personasWithAdjRepeat": 59
+    },
+    "greedy": {
+     "weekPersonas": 65,
+     "capBreaches": 36,
+     "capBreachPct": 55.38,
+     "worstExcess": 5,
+     "adjPairs": 157,
+     "adjIncidences": 234,
+     "personasWithAdjRepeat": 62
+    },
+    "lns": {
+     "weekPersonas": 65,
+     "capBreaches": 0,
+     "capBreachPct": 0,
+     "worstExcess": 0,
+     "adjPairs": 126,
+     "adjIncidences": 160,
+     "personasWithAdjRepeat": 56
+    },
+    "realised": {
+     "weekPersonas": 65,
+     "capBreaches": 0,
+     "capBreachPct": 0,
+     "worstExcess": 0,
+     "adjPairs": 124,
+     "adjIncidences": 157,
+     "personasWithAdjRepeat": 55
+    }
+   },
+   "permutation": {
+    "base": {
+     "weekPersonas": 65,
+     "adjPairsBefore": 135,
+     "adjPairsAfter": 1,
+     "adjIncidencesBefore": 169,
+     "adjIncidencesAfter": 1,
+     "daysInBandBefore": 290,
+     "daysInBandAfter": 290,
+     "personasImproved": 58,
+     "personasZeroAfter": 64,
+     "reductionPct": 99.41,
+     "complianceCost": 0
+    },
+    "pick": {
+     "weekPersonas": 65,
+     "adjPairsBefore": 242,
+     "adjPairsAfter": 128,
+     "adjIncidencesBefore": 393,
+     "adjIncidencesAfter": 153,
+     "daysInBandBefore": 344,
+     "daysInBandAfter": 344,
+     "personasImproved": 62,
+     "personasZeroAfter": 22,
+     "reductionPct": 61.07,
+     "complianceCost": 0
+    },
+    "lns": {
+     "weekPersonas": 65,
+     "adjPairsBefore": 126,
+     "adjPairsAfter": 1,
+     "adjIncidencesBefore": 160,
+     "adjIncidencesAfter": 1,
+     "daysInBandBefore": 304,
+     "daysInBandAfter": 304,
+     "personasImproved": 56,
+     "personasZeroAfter": 64,
+     "reductionPct": 99.38,
+     "complianceCost": 0
+    }
+   },
+   "d5": {
+    "exhaustedRuns": 93,
+    "exhaustedPct": 37.2,
+    "attemptHist": {
+     "1": 122,
+     "2": 19,
+     "3": 10,
+     "4": 6,
+     "5": 93
+    },
+    "decidedBy": {
+     "avgMatch-tiebreak": 98,
+     "single-attempt": 122,
+     "daysInTolerance": 30
+    },
+    "byMatchOnlyLostDays": 9,
+    "byMatchOnlyGainedDays": 0
+   },
+   "ladder": {
+    "1": {
+     "base": 379,
+     "oracle": 379,
+     "master": 379,
+     "n": 553,
+     "capViolatedWeek": 0,
+     "weekPersonas": 56,
+     "masterNull": 0,
+     "basePct": 68.54,
+     "oraclePct": 68.54,
+     "masterPct": 68.54,
+     "capViolPct": 0
+    },
+    "2": {
+     "base": 395,
+     "oracle": 422,
+     "master": 399,
+     "n": 553,
+     "capViolatedWeek": 48,
+     "weekPersonas": 56,
+     "masterNull": 0,
+     "basePct": 71.43,
+     "oraclePct": 76.31,
+     "masterPct": 72.15,
+     "capViolPct": 85.71
+    },
+    "3": {
+     "base": 403,
+     "oracle": 445,
+     "master": 414,
+     "n": 553,
+     "capViolatedWeek": 50,
+     "weekPersonas": 56,
+     "masterNull": 0,
+     "basePct": 72.88,
+     "oraclePct": 80.47,
+     "masterPct": 74.86,
+     "capViolPct": 89.29
+    },
+    "5": {
+     "base": 415,
+     "oracle": 467,
+     "master": 436,
+     "n": 553,
+     "capViolatedWeek": 52,
+     "weekPersonas": 56,
+     "masterNull": 0,
+     "basePct": 75.05,
+     "oraclePct": 84.45,
+     "masterPct": 78.84,
+     "capViolPct": 92.86
+    },
+    "8": {
+     "base": 422,
+     "oracle": 479,
+     "master": 446,
+     "n": 553,
+     "capViolatedWeek": 52,
+     "weekPersonas": 56,
+     "masterNull": 0,
+     "basePct": 76.31,
+     "oraclePct": 86.62,
+     "masterPct": 80.65,
+     "capViolPct": 92.86
+    },
+    "12": {
+     "base": 427,
+     "oracle": 488,
+     "master": 0,
+     "n": 553,
+     "capViolatedWeek": 52,
+     "weekPersonas": 56,
+     "masterNull": 217,
+     "basePct": 77.22,
+     "oraclePct": 88.25,
+     "masterPct": null,
+     "capViolPct": 92.86
+    }
+   },
+   "lnsExtraDaySolves": 501,
+   "masterAttainsOracle": {
+    "week": 47,
+    "weekTotal": 65,
+    "truncated": 0
+   }
+  },
+  {
+   "seed": 20260730,
+   "k": 12,
+   "kMain": 5,
+   "personas": 250,
+   "byDiet": {
+    "none": {
+     "personas": 28,
+     "days": 196,
+     "poolMin": 92,
+     "poolMax": 910,
+     "base": 168,
+     "oracle": 188,
+     "master": 173,
+     "greedy": 178,
+     "lns": 172,
+     "realised": 172
+    },
+    "keto": {
+     "personas": 7,
+     "days": 49,
+     "poolMin": 1,
+     "poolMax": 53,
+     "base": 27,
+     "oracle": 41,
+     "master": 31,
+     "greedy": 32,
+     "lns": 32,
+     "realised": 32
+    },
+    "carnivore": {
+     "personas": 1,
+     "days": 7,
+     "poolMin": 3,
+     "poolMax": 3,
+     "base": 0,
+     "oracle": 0,
+     "master": 0,
+     "greedy": 0,
+     "lns": 0,
+     "realised": 0
+    },
+    "kosher": {
+     "personas": 4,
+     "days": 28,
+     "poolMin": 63,
+     "poolMax": 345,
+     "base": 12,
+     "oracle": 14,
+     "master": 14,
+     "greedy": 13,
+     "lns": 12,
+     "realised": 12
+    },
+    "vegetarian": {
+     "personas": 7,
+     "days": 49,
+     "poolMin": 35,
+     "poolMax": 327,
+     "base": 28,
+     "oracle": 34,
+     "master": 30,
+     "greedy": 31,
+     "lns": 28,
+     "realised": 28
+    },
+    "vegan": {
+     "personas": 10,
+     "days": 70,
+     "poolMin": 17,
+     "poolMax": 169,
+     "base": 17,
+     "oracle": 22,
+     "master": 21,
+     "greedy": 21,
+     "lns": 18,
+     "realised": 18
+    },
+    "mediterranean": {
+     "personas": 5,
+     "days": 35,
+     "poolMin": 158,
+     "poolMax": 814,
+     "base": 30,
+     "oracle": 34,
+     "master": 30,
+     "greedy": 31,
+     "lns": 30,
+     "realised": 30
+    },
+    "paleo": {
+     "personas": 2,
+     "days": 14,
+     "poolMin": 29,
+     "poolMax": 116,
+     "base": 6,
+     "oracle": 10,
+     "master": 9,
+     "greedy": 8,
+     "lns": 8,
+     "realised": 8
+    },
+    "halal": {
+     "personas": 1,
+     "days": 7,
+     "poolMin": 758,
+     "poolMax": 758,
+     "base": 7,
+     "oracle": 7,
+     "master": 7,
+     "greedy": 7,
+     "lns": 7,
+     "realised": 7
+    }
+   },
+   "compression": {
+    "0": {
+     "personas": 12,
+     "baseDays": 0,
+     "oracleDays": 0,
+     "masterDays": 0,
+     "realisedDays": 0,
+     "totalDays": 84,
+     "oracleGainPerPersona": 0,
+     "masterGainPerPersona": 0,
+     "realisedGainPerPersona": 0,
+     "remainingDays": 84,
+     "oracleCaptureOfRemaining": 0
+    },
+    "1": {
+     "personas": 3,
+     "baseDays": 3,
+     "oracleDays": 9,
+     "masterDays": 5,
+     "realisedDays": 3,
+     "totalDays": 21,
+     "oracleGainPerPersona": 2,
+     "masterGainPerPersona": 0.67,
+     "realisedGainPerPersona": 0,
+     "remainingDays": 18,
+     "oracleCaptureOfRemaining": 33.33
+    },
+    "2": {
+     "personas": 3,
+     "baseDays": 6,
+     "oracleDays": 17,
+     "masterDays": 6,
+     "realisedDays": 6,
+     "totalDays": 21,
+     "oracleGainPerPersona": 3.67,
+     "masterGainPerPersona": 0,
+     "realisedGainPerPersona": 0,
+     "remainingDays": 15,
+     "oracleCaptureOfRemaining": 73.33
+    },
+    "3": {
+     "personas": 4,
+     "baseDays": 12,
+     "oracleDays": 24,
+     "masterDays": 18,
+     "realisedDays": 15,
+     "totalDays": 28,
+     "oracleGainPerPersona": 3,
+     "masterGainPerPersona": 1.5,
+     "realisedGainPerPersona": 0.75,
+     "remainingDays": 16,
+     "oracleCaptureOfRemaining": 75
+    },
+    "4": {
+     "personas": 4,
+     "baseDays": 16,
+     "oracleDays": 27,
+     "masterDays": 18,
+     "realisedDays": 20,
+     "totalDays": 28,
+     "oracleGainPerPersona": 2.75,
+     "masterGainPerPersona": 0.5,
+     "realisedGainPerPersona": 1,
+     "remainingDays": 12,
+     "oracleCaptureOfRemaining": 91.67
+    },
+    "5": {
+     "personas": 5,
+     "baseDays": 25,
+     "oracleDays": 35,
+     "masterDays": 33,
+     "realisedDays": 28,
+     "totalDays": 35,
+     "oracleGainPerPersona": 2,
+     "masterGainPerPersona": 1.6,
+     "realisedGainPerPersona": 0.6,
+     "remainingDays": 10,
+     "oracleCaptureOfRemaining": 100
+    },
+    "6": {
+     "personas": 5,
+     "baseDays": 30,
+     "oracleDays": 35,
+     "masterDays": 32,
+     "realisedDays": 32,
+     "totalDays": 35,
+     "oracleGainPerPersona": 1,
+     "masterGainPerPersona": 0.4,
+     "realisedGainPerPersona": 0.4,
+     "remainingDays": 5,
+     "oracleCaptureOfRemaining": 100
+    },
+    "7": {
+     "personas": 29,
+     "baseDays": 203,
+     "oracleDays": 203,
+     "masterDays": 203,
+     "realisedDays": 203,
+     "totalDays": 203,
+     "oracleGainPerPersona": 0,
+     "masterGainPerPersona": 0,
+     "realisedGainPerPersona": 0,
+     "remainingDays": 0,
+     "oracleCaptureOfRemaining": null
+    }
+   },
+   "filledByArm": {
+    "base": 2819,
+    "oracle": 2829,
+    "lns": 2819
+   },
+   "provenance": {
+    "dbSha256": "d9037dce9754b4524943069fff7e0f3e396598c108426f370b0a189458b623a1",
+    "dbCopySha256": "d9037dce9754b4524943069fff7e0f3e396598c108426f370b0a189458b623a1",
+    "foodFingerprint": "b961ac3afbdf3f53905ead1353ffb05a9a2b94b7f1e0cd7fa87bbf975291f26b",
+    "foodRows": 14151,
+    "recipeRows": 910,
+    "personasSha256": "e564b1ddcc36b95249b51819e03762a30da61f29f2a254312699290fae57704e",
+    "gitSha": "79b17a43e359bacf7a2b5d8bc732a81516500a6a",
+    "gitBranch": "fleet/measure-2026-08",
+    "srcPorcelain": "",
+    "brain": "off",
+    "networkCalls": 0,
+    "ruler": "product/dayTolerance+dayInTolerance (mealSolver.js)",
+    "poolShape": "route (applyFilterStack ON)",
+    "elapsedSec": 56.68
+   },
+   "lnsConfig": {
+    "rounds": 3,
+    "destroy": 2,
+    "tries": 3,
+    "extraDaySolves": 507
+   },
+   "population": {
+    "weekPersonas": 65,
+    "dayPersonas": 185,
+    "weekDays": 455,
+    "dayDays": 185,
+    "degenerateDays": 1,
+    "unjudgedSatDays": 16,
+    "crashed": 0
+   },
+   "level": {
+    "base": {
+     "d553": {
+      "k": 418,
+      "n": 553,
+      "pct": 75.59
+     },
+     "d640": {
+      "k": 439,
+      "n": 640,
+      "pct": 68.59
+     },
+     "d537": {
+      "k": 418,
+      "n": 537,
+      "pct": 77.84
+     }
+    },
+    "oracle": {
+     "d553": {
+      "k": 472,
+      "n": 553,
+      "pct": 85.35
+     },
+     "d640": {
+      "k": 494,
+      "n": 640,
+      "pct": 77.19
+     },
+     "d537": {
+      "k": 468,
+      "n": 537,
+      "pct": 87.15
+     }
+    },
+    "master": {
+     "d553": {
+      "k": 438,
+      "n": 553,
+      "pct": 79.2
+     },
+     "d640": {
+      "k": 459,
+      "n": 640,
+      "pct": 71.72
+     },
+     "d537": {
+      "k": 438,
+      "n": 537,
+      "pct": 81.56
+     }
+    },
+    "greedy": {
+     "d553": {
+      "k": 443,
+      "n": 553,
+      "pct": 80.11
+     },
+     "d640": {
+      "k": 465,
+      "n": 640,
+      "pct": 72.66
+     },
+     "d537": {
+      "k": 443,
+      "n": 537,
+      "pct": 82.5
+     }
+    },
+    "lns": {
+     "d553": {
+      "k": 433,
+      "n": 553,
+      "pct": 78.3
+     },
+     "d640": {
+      "k": 454,
+      "n": 640,
+      "pct": 70.94
+     },
+     "d537": {
+      "k": 433,
+      "n": 537,
+      "pct": 80.63
+     }
+    },
+    "realised": {
+     "d553": {
+      "k": 430,
+      "n": 553,
+      "pct": 77.76
+     },
+     "d640": {
+      "k": 451,
+      "n": 640,
+      "pct": 70.47
+     },
+     "d537": {
+      "k": 430,
+      "n": 537,
+      "pct": 80.07
+     }
+    }
+   },
+   "weekSatOnly": {
+    "base": {
+     "k": 282,
+     "n": 392,
+     "pct": 71.94
+    },
+    "oracle": {
+     "k": 336,
+     "n": 392,
+     "pct": 85.71
+    },
+    "master": {
+     "k": 302,
+     "n": 392,
+     "pct": 77.04
+    },
+    "greedy": {
+     "k": 307,
+     "n": 392,
+     "pct": 78.32
+    },
+    "lns": {
+     "k": 294,
+     "n": 392,
+     "pct": 75
+    },
+    "realised": {
+     "k": 294,
+     "n": 392,
+     "pct": 75
+    }
+   },
+   "dayHorizonSatOnly": {
+    "base": {
+     "k": 136,
+     "n": 161,
+     "pct": 84.47
+    },
+    "oracle": {
+     "k": 136,
+     "n": 161,
+     "pct": 84.47
+    },
+    "master": {
+     "k": 136,
+     "n": 161,
+     "pct": 84.47
+    },
+    "greedy": {
+     "k": 136,
+     "n": 161,
+     "pct": 84.47
+    },
+    "lns": {
+     "k": 139,
+     "n": 161,
+     "pct": 86.34
+    },
+    "realised": {
+     "k": 136,
+     "n": 161,
+     "pct": 84.47
+    }
+   },
+   "capViolation": {
+    "all": {
+     "personas": 250,
+     "violated": 62,
+     "pct": 24.8
+    },
+    "weekPersonas": {
+     "personas": 65,
+     "violated": 62,
+     "pct": 95.38
+    },
+    "dayPersonas": {
+     "personas": 185,
+     "violated": 0,
+     "pct": 0
+    },
+    "byDiet": {
+     "none": {
+      "personas": 28,
+      "violated": 26,
+      "maxUsageHist": {
+       "2": 2,
+       "3": 6,
+       "4": 7,
+       "5": 6,
+       "6": 5,
+       "8": 2
+      },
+      "worstExcess": 6,
+      "examples": [
+       {
+        "id": "p000",
+        "maxUsage": 4,
+        "cap": 2,
+        "over": [
+         {
+          "recipeId": "cmrul1dqn0026wlk4tzlwp0bw",
+          "name": "High-Protein Chicken & Bell Peppers with Quinoa",
+          "used": 3,
+          "cap": 2
+         },
+         {
+          "recipeId": "cmrujkwvx00ciwl9onlcdvocx",
+          "name": "Thai Chicken & Bell Peppers with Rice",
+          "used": 3,
+          "cap": 2
+         }
+        ]
+       },
+       {
+        "id": "p023",
+        "maxUsage": 4,
+        "cap": 2,
+        "over": [
+         {
+          "recipeId": "cmrujkwqf002owl9o35jjgcvq",
+          "name": "Fiesta Chicken & Bell Peppers with Rice",
+          "used": 4,
+          "cap": 2
+         }
+        ]
+       },
+       {
+        "id": "p036",
+        "maxUsage": 8,
+        "cap": 2,
+        "over": [
+         {
+          "recipeId": "cmrujkwvr00c6wl9ors1onpyk",
+          "name": "Thai Chicken & Bell Peppers with Noodles",
+          "used": 3,
+          "cap": 2
+         },
+         {
+          "recipeId": "cmrujhgx60000wlbowr1mhvif",
+          "name": "Garlic Chicken, Rice & Broccoli",
+          "used": 4,
+          "cap": 2
+         }
+        ]
+       }
+      ],
+      "pct": 92.86
+     },
+     "keto": {
+      "personas": 7,
+      "violated": 6,
+      "maxUsageHist": {
+       "0": 1,
+       "3": 2,
+       "4": 2,
+       "5": 1,
+       "8": 1
+      },
+      "worstExcess": 6,
+      "examples": [
+       {
+        "id": "p067",
+        "maxUsage": 4,
+        "cap": 2,
+        "over": [
+         {
+          "recipeId": "cms7pjmi80013wlbkwughu7bl",
+          "name": "Chicken Thighs with Creamed Spinach",
+          "used": 3,
+          "cap": 2
+         },
+         {
+          "recipeId": "cmrj2td5300ttwlwszao8ubba",
+          "name": "Beef Asado",
+          "used": 4,
+          "cap": 2
+         }
+        ]
+       },
+       {
+        "id": "p089",
+        "maxUsage": 5,
+        "cap": 2,
+        "over": [
+         {
+          "recipeId": "cmrevpcyh004gwl5gnni3al5q",
+          "name": "Bacon & Eggs",
+          "used": 5,
+          "cap": 2
+         },
+         {
+          "recipeId": "cmrj2tx2k058wwlwsds8g2gmc",
+          "name": "Keleya Zaara",
+          "used": 5,
+          "cap": 2
+         }
+        ]
+       },
+       {
+        "id": "p104",
+        "maxUsage": 4,
+        "cap": 2,
+        "over": [
+         {
+          "recipeId": "cms7pjmi1000wwlbk8yoezv92",
+          "name": "Baked Salmon with Buttered Asparagus",
+          "used": 3,
+          "cap": 2
+         },
+         {
+          "recipeId": "cmrj2tmq402y9wlwsqahfcq5y",
+          "name": "Smoky chicken skewers",
+          "used": 4,
+          "cap": 2
+         }
+        ]
+       }
+      ],
+      "pct": 85.71
+     },
+     "carnivore": {
+      "personas": 1,
+      "violated": 1,
+      "maxUsageHist": {
+       "10": 1
+      },
+      "worstExcess": 8,
+      "examples": [
+       {
+        "id": "p018",
+        "maxUsage": 10,
+        "cap": 2,
+        "over": [
+         {
+          "recipeId": "cmrfn2w780030wlg49qus3ftp",
+          "name": "Grilled Chicken Breast & Perogies",
+          "used": 7,
+          "cap": 2
+         },
+         {
+          "recipeId": "cmrevpcy5004bwl5gsicopbjv",
+          "name": "Perogies & Bacon",
+          "used": 10,
+          "cap": 2
+         }
+        ]
+       }
+      ],
+      "pct": 100
+     },
+     "kosher": {
+      "personas": 4,
+      "violated": 4,
+      "maxUsageHist": {
+       "4": 1,
+       "6": 3
+      },
+      "worstExcess": 4,
+      "examples": [
+       {
+        "id": "p022",
+        "maxUsage": 6,
+        "cap": 2,
+        "over": [
+         {
+          "recipeId": "cmrevpczp004xwl5get0rorr3",
+          "name": "Pistachios & Jerky",
+          "used": 3,
+          "cap": 2
+         },
+         {
+          "recipeId": "cms7pjmkf0035wlbkw9gwdm3s",
+          "name": "Peanut Butter Banana Toast",
+          "used": 4,
+          "cap": 2
+         }
+        ]
+       },
+       {
+        "id": "p034",
+        "maxUsage": 6,
+        "cap": 2,
+        "over": [
+         {
+          "recipeId": "cms7pjmks003ewlbkbzjiva2m",
+          "name": "Hard-Boiled Eggs with Chilli Salt",
+          "used": 6,
+          "cap": 2
+         },
+         {
+          "recipeId": "cmrul79sv001uwl80m4kyr7ig",
+          "name": "High-Protein TVP & Cucumber with Quinoa",
+          "used": 4,
+          "cap": 2
+         }
+        ]
+       },
+       {
+        "id": "p118",
+        "maxUsage": 4,
+        "cap": 2,
+        "over": [
+         {
+          "recipeId": "cmrujkwr1003owl9ogywoijch",
+          "name": "Spiced Chicken & Onions with Rice",
+          "used": 4,
+          "cap": 2
+         },
+         {
+          "recipeId": "cmrujkwvx00ciwl9onlcdvocx",
+          "name": "Thai Chicken & Bell Peppers with Rice",
+          "used": 4,
+          "cap": 2
+         }
+        ]
+       }
+      ],
+      "pct": 100
+     },
+     "vegetarian": {
+      "personas": 7,
+      "violated": 7,
+      "maxUsageHist": {
+       "4": 3,
+       "5": 2,
+       "6": 2
+      },
+      "worstExcess": 4,
+      "examples": [
+       {
+        "id": "p045",
+        "maxUsage": 6,
+        "cap": 2,
+        "over": [
+         {
+          "recipeId": "cmrul79z400c0wl8064gi62w8",
+          "name": "High-Protein Egg White & Broccoli with Quinoa",
+          "used": 3,
+          "cap": 2
+         },
+         {
+          "recipeId": "cmrujkwva00bcwl9o5zlcp7uy",
+          "name": "Classic Eggs & Broccoli with Rice",
+          "used": 3,
+          "cap": 2
+         }
+        ]
+       },
+       {
+        "id": "p086",
+        "maxUsage": 5,
+        "cap": 2,
+        "over": [
+         {
+          "recipeId": "cmrul79z000buwl80q9shge3z",
+          "name": "High-Protein Egg White & Cucumber with Quinoa",
+          "used": 3,
+          "cap": 2
+         },
+         {
+          "recipeId": "cmrul4e7h007owl68wk6sgpum",
+          "name": "High-Protein Egg White & Onions with Quinoa",
+          "used": 5,
+          "cap": 2
+         }
+        ]
+       },
+       {
+        "id": "p112",
+        "maxUsage": 4,
+        "cap": 2,
+        "over": [
+         {
+          "recipeId": "cms7pjmks003ewlbkbzjiva2m",
+          "name": "Hard-Boiled Eggs with Chilli Salt",
+          "used": 4,
+          "cap": 2
+         },
+         {
+          "recipeId": "cms7pjmj90025wlbke02jmm0u",
+          "name": "Seitan Stir-Fry with Broccoli and Rice",
+          "used": 4,
+          "cap": 2
+         }
+        ]
+       }
+      ],
+      "pct": 100
+     },
+     "vegan": {
+      "personas": 10,
+      "violated": 10,
+      "maxUsageHist": {
+       "3": 1,
+       "4": 2,
+       "5": 3,
+       "6": 4
+      },
+      "worstExcess": 4,
+      "examples": [
+       {
+        "id": "p047",
+        "maxUsage": 4,
+        "cap": 2,
+        "over": [
+         {
+          "recipeId": "cms7pjmju002swlbktsksba9r",
+          "name": "Edamame with Sea Salt",
+          "used": 4,
+          "cap": 2
+         }
+        ]
+       },
+       {
+        "id": "p051",
+        "maxUsage": 6,
+        "cap": 2,
+        "over": [
+         {
+          "recipeId": "cmrj2ucb308ljwlwshp004cle",
+          "name": "Lao Som Pak Pickled Cabbage",
+          "used": 6,
+          "cap": 2
+         },
+         {
+          "recipeId": "cmrj2uaj8087gwlwsssnykonm",
+          "name": "Boulangère Potatoes",
+          "used": 5,
+          "cap": 2
+         }
+        ]
+       },
+       {
+        "id": "p054",
+        "maxUsage": 4,
+        "cap": 2,
+        "over": [
+         {
+          "recipeId": "cmrul79sj001cwl80hhwt236x",
+          "name": "High-Protein TVP & Onions with Chickpea Pasta",
+          "used": 4,
+          "cap": 2
+         },
+         {
+          "recipeId": "cmrul1dpg000iwlk4gucmabph",
+          "name": "High-Protein TVP & Broccoli with Chickpea Pasta",
+          "used": 3,
+          "cap": 2
+         }
+        ]
+       }
+      ],
+      "pct": 100
+     },
+     "mediterranean": {
+      "personas": 5,
+      "violated": 5,
+      "maxUsageHist": {
+       "3": 1,
+       "4": 2,
+       "6": 1,
+       "8": 1
+      },
+      "worstExcess": 6,
+      "examples": [
+       {
+        "id": "p052",
+        "maxUsage": 4,
+        "cap": 2,
+        "over": [
+         {
+          "recipeId": "cmrujkwvx00ciwl9onlcdvocx",
+          "name": "Thai Chicken & Bell Peppers with Rice",
+          "used": 3,
+          "cap": 2
+         },
+         {
+          "recipeId": "cmrujkwqf002owl9o35jjgcvq",
+          "name": "Fiesta Chicken & Bell Peppers with Rice",
+          "used": 3,
+          "cap": 2
+         }
+        ]
+       },
+       {
+        "id": "p122",
+        "maxUsage": 6,
+        "cap": 2,
+        "over": [
+         {
+          "recipeId": "cmrujkwr4003uwl9or0xver7i",
+          "name": "Spiced Chicken & Bell Peppers with Rice",
+          "used": 3,
+          "cap": 2
+         },
+         {
+          "recipeId": "cmrujkwqf002owl9o35jjgcvq",
+          "name": "Fiesta Chicken & Bell Peppers with Rice",
+          "used": 3,
+          "cap": 2
+         }
+        ]
+       },
+       {
+        "id": "p128",
+        "maxUsage": 4,
+        "cap": 2,
+        "over": [
+         {
+          "recipeId": "cmrujhgx60000wlbowr1mhvif",
+          "name": "Garlic Chicken, Rice & Broccoli",
+          "used": 3,
+          "cap": 2
+         },
+         {
+          "recipeId": "cms7pjmkm003awlbk8b9zzoqo",
+          "name": "Cottage Cheese with Pineapple",
+          "used": 4,
+          "cap": 2
+         }
+        ]
+       }
+      ],
+      "pct": 100
+     },
+     "paleo": {
+      "personas": 2,
+      "violated": 2,
+      "maxUsageHist": {
+       "5": 2
+      },
+      "worstExcess": 3,
+      "examples": [
+       {
+        "id": "p203",
+        "maxUsage": 5,
+        "cap": 2,
+        "over": [
+         {
+          "recipeId": "cms7pjmks003ewlbkbzjiva2m",
+          "name": "Hard-Boiled Eggs with Chilli Salt",
+          "used": 5,
+          "cap": 2
+         },
+         {
+          "recipeId": "cmrevpcpb0011wl5g2m81r2ia",
+          "name": "Cast-Iron Sirloin, Potato & Cucumber",
+          "used": 3,
+          "cap": 2
+         }
+        ]
+       },
+       {
+        "id": "p239",
+        "maxUsage": 5,
+        "cap": 2,
+        "over": [
+         {
+          "recipeId": "cmrujkwra0046wl9ods3ggn18",
+          "name": "Spiced Chicken & Bell Peppers with Potato",
+          "used": 5,
+          "cap": 2
+         },
+         {
+          "recipeId": "cmrevpcyt004lwl5gx6bidm0z",
+          "name": "Jerky & Pork Rinds Snack Plate",
+          "used": 5,
+          "cap": 2
+         }
+        ]
+       }
+      ],
+      "pct": 100
+     },
+     "halal": {
+      "personas": 1,
+      "violated": 1,
+      "maxUsageHist": {
+       "5": 1
+      },
+      "worstExcess": 3,
+      "examples": [
+       {
+        "id": "p232",
+        "maxUsage": 5,
+        "cap": 2,
+        "over": [
+         {
+          "recipeId": "cmrg91na2000mwli0w2pcl3e2",
+          "name": "Turkey & Swiss Roll-Ups",
+          "used": 5,
+          "cap": 2
+         }
+        ]
+       }
+      ],
+      "pct": 100
+     }
+    }
+   },
+   "capCapacity": {
+    "none": {
+     "personas": 28,
+     "snackStarved": 2,
+     "mealStarved": 0,
+     "minSnackSlack": -15,
+     "minMealSlack": 112,
+     "snackEligibleMin": 3,
+     "snackEligibleMax": 18
+    },
+    "keto": {
+     "personas": 7,
+     "snackStarved": 2,
+     "mealStarved": 2,
+     "minSnackSlack": -13,
+     "minMealSlack": -21,
+     "snackEligibleMin": 0,
+     "snackEligibleMax": 4
+    },
+    "carnivore": {
+     "personas": 1,
+     "snackStarved": 1,
+     "mealStarved": 1,
+     "minSnackSlack": -5,
+     "minMealSlack": -15,
+     "snackEligibleMin": 1,
+     "snackEligibleMax": 1
+    },
+    "kosher": {
+     "personas": 4,
+     "snackStarved": 1,
+     "mealStarved": 0,
+     "minSnackSlack": -6,
+     "minMealSlack": 92,
+     "snackEligibleMin": 4,
+     "snackEligibleMax": 11
+    },
+    "vegetarian": {
+     "personas": 7,
+     "snackStarved": 1,
+     "mealStarved": 0,
+     "minSnackSlack": -15,
+     "minMealSlack": 41,
+     "snackEligibleMin": 3,
+     "snackEligibleMax": 10
+    },
+    "vegan": {
+     "personas": 10,
+     "snackStarved": 5,
+     "mealStarved": 0,
+     "minSnackSlack": -14,
+     "minMealSlack": 2,
+     "snackEligibleMin": 0,
+     "snackEligibleMax": 5
+    },
+    "mediterranean": {
+     "personas": 5,
+     "snackStarved": 0,
+     "mealStarved": 0,
+     "minSnackSlack": 0,
+     "minMealSlack": 255,
+     "snackEligibleMin": 7,
+     "snackEligibleMax": 15
+    },
+    "paleo": {
+     "personas": 2,
+     "snackStarved": 0,
+     "mealStarved": 0,
+     "minSnackSlack": 2,
+     "minMealSlack": 28,
+     "snackEligibleMin": 8,
+     "snackEligibleMax": 8
+    },
+    "halal": {
+     "personas": 1,
+     "snackStarved": 0,
+     "mealStarved": 0,
+     "minSnackSlack": 23,
+     "minMealSlack": 1175,
+     "snackEligibleMin": 15,
+     "snackEligibleMax": 15
+    }
+   },
+   "a5": {
+    "oracle": {
+     "b": 54,
+     "c": 0,
+     "diff": 54,
+     "floor": 14.4,
+     "real": true
+    },
+    "master": {
+     "b": 30,
+     "c": 10,
+     "diff": 20,
+     "floor": 12.4,
+     "real": true
+    },
+    "greedy": {
+     "b": 38,
+     "c": 13,
+     "diff": 25,
+     "floor": 14,
+     "real": true
+    },
+    "lns": {
+     "b": 15,
+     "c": 0,
+     "diff": 15,
+     "floor": 7.59,
+     "real": true
+    },
+    "realised": {
+     "b": 12,
+     "c": 0,
+     "diff": 12,
+     "floor": 6.79,
+     "real": true
+    }
+   },
+   "variety": {
+    "base": {
+     "weekPersonas": 65,
+     "capBreaches": 0,
+     "capBreachPct": 0,
+     "worstExcess": 0,
+     "adjPairs": 124,
+     "adjIncidences": 166,
+     "personasWithAdjRepeat": 53
+    },
+    "oracle": {
+     "weekPersonas": 65,
+     "capBreaches": 62,
+     "capBreachPct": 95.38,
+     "worstExcess": 8,
+     "adjPairs": 237,
+     "adjIncidences": 419,
+     "personasWithAdjRepeat": 62
+    },
+    "master": {
+     "weekPersonas": 65,
+     "capBreaches": 0,
+     "capBreachPct": 0,
+     "worstExcess": 0,
+     "adjPairs": 132,
+     "adjIncidences": 167,
+     "personasWithAdjRepeat": 55
+    },
+    "greedy": {
+     "weekPersonas": 65,
+     "capBreaches": 39,
+     "capBreachPct": 60,
+     "worstExcess": 4,
+     "adjPairs": 175,
+     "adjIncidences": 253,
+     "personasWithAdjRepeat": 57
+    },
+    "lns": {
+     "weekPersonas": 65,
+     "capBreaches": 0,
+     "capBreachPct": 0,
+     "worstExcess": 0,
+     "adjPairs": 118,
+     "adjIncidences": 158,
+     "personasWithAdjRepeat": 53
+    },
+    "realised": {
+     "weekPersonas": 65,
+     "capBreaches": 0,
+     "capBreachPct": 0,
+     "worstExcess": 0,
+     "adjPairs": 117,
+     "adjIncidences": 157,
+     "personasWithAdjRepeat": 52
+    }
+   },
+   "permutation": {
+    "base": {
+     "weekPersonas": 65,
+     "adjPairsBefore": 124,
+     "adjPairsAfter": 1,
+     "adjIncidencesBefore": 166,
+     "adjIncidencesAfter": 1,
+     "daysInBandBefore": 295,
+     "daysInBandAfter": 295,
+     "personasImproved": 53,
+     "personasZeroAfter": 64,
+     "reductionPct": 99.4,
+     "complianceCost": 0
+    },
+    "pick": {
+     "weekPersonas": 65,
+     "adjPairsBefore": 237,
+     "adjPairsAfter": 112,
+     "adjIncidencesBefore": 419,
+     "adjIncidencesAfter": 136,
+     "daysInBandBefore": 350,
+     "daysInBandAfter": 350,
+     "personasImproved": 62,
+     "personasZeroAfter": 22,
+     "reductionPct": 67.54,
+     "complianceCost": 0
+    },
+    "lns": {
+     "weekPersonas": 65,
+     "adjPairsBefore": 118,
+     "adjPairsAfter": 1,
+     "adjIncidencesBefore": 158,
+     "adjIncidencesAfter": 1,
+     "daysInBandBefore": 307,
+     "daysInBandAfter": 307,
+     "personasImproved": 53,
+     "personasZeroAfter": 64,
+     "reductionPct": 99.37,
+     "complianceCost": 0
+    }
+   },
+   "d5": {
+    "exhaustedRuns": 93,
+    "exhaustedPct": 37.2,
+    "attemptHist": {
+     "1": 125,
+     "2": 19,
+     "3": 6,
+     "4": 7,
+     "5": 93
+    },
+    "decidedBy": {
+     "avgMatch-tiebreak": 102,
+     "single-attempt": 125,
+     "daysInTolerance": 23
+    },
+    "byMatchOnlyLostDays": 13,
+    "byMatchOnlyGainedDays": 0
+   },
+   "ladder": {
+    "1": {
+     "base": 376,
+     "oracle": 376,
+     "master": 376,
+     "n": 553,
+     "capViolatedWeek": 0,
+     "weekPersonas": 56,
+     "masterNull": 0,
+     "basePct": 67.99,
+     "oraclePct": 67.99,
+     "masterPct": 67.99,
+     "capViolPct": 0
+    },
+    "2": {
+     "base": 400,
+     "oracle": 427,
+     "master": 406,
+     "n": 553,
+     "capViolatedWeek": 48,
+     "weekPersonas": 56,
+     "masterNull": 0,
+     "basePct": 72.33,
+     "oraclePct": 77.22,
+     "masterPct": 73.42,
+     "capViolPct": 85.71
+    },
+    "3": {
+     "base": 410,
+     "oracle": 450,
+     "master": 422,
+     "n": 553,
+     "capViolatedWeek": 51,
+     "weekPersonas": 56,
+     "masterNull": 0,
+     "basePct": 74.14,
+     "oraclePct": 81.37,
+     "masterPct": 76.31,
+     "capViolPct": 91.07
+    },
+    "5": {
+     "base": 418,
+     "oracle": 472,
+     "master": 438,
+     "n": 553,
+     "capViolatedWeek": 53,
+     "weekPersonas": 56,
+     "masterNull": 0,
+     "basePct": 75.59,
+     "oraclePct": 85.35,
+     "masterPct": 79.2,
+     "capViolPct": 94.64
+    },
+    "8": {
+     "base": 424,
+     "oracle": 484,
+     "master": 445,
+     "n": 553,
+     "capViolatedWeek": 54,
+     "weekPersonas": 56,
+     "masterNull": 0,
+     "basePct": 76.67,
+     "oraclePct": 87.52,
+     "masterPct": 80.47,
+     "capViolPct": 96.43
+    },
+    "12": {
+     "base": 429,
+     "oracle": 490,
+     "master": 0,
+     "n": 553,
+     "capViolatedWeek": 55,
+     "weekPersonas": 56,
+     "masterNull": 217,
+     "basePct": 77.58,
+     "oraclePct": 88.61,
+     "masterPct": null,
+     "capViolPct": 98.21
+    }
+   },
+   "lnsExtraDaySolves": 507,
+   "masterAttainsOracle": {
+    "week": 49,
+    "weekTotal": 65,
+    "truncated": 0
+   }
+  },
+  {
+   "seed": 8675309,
+   "k": 12,
+   "kMain": 5,
+   "personas": 250,
+   "byDiet": {
+    "none": {
+     "personas": 28,
+     "days": 196,
+     "poolMin": 92,
+     "poolMax": 910,
+     "base": 169,
+     "oracle": 188,
+     "master": 173,
+     "greedy": 169,
+     "lns": 172,
+     "realised": 172
+    },
+    "keto": {
+     "personas": 7,
+     "days": 49,
+     "poolMin": 1,
+     "poolMax": 53,
+     "base": 26,
+     "oracle": 39,
+     "master": 30,
+     "greedy": 31,
+     "lns": 31,
+     "realised": 31
+    },
+    "carnivore": {
+     "personas": 1,
+     "days": 7,
+     "poolMin": 3,
+     "poolMax": 3,
+     "base": 0,
+     "oracle": 0,
+     "master": 0,
+     "greedy": 0,
+     "lns": 0,
+     "realised": 0
+    },
+    "kosher": {
+     "personas": 4,
+     "days": 28,
+     "poolMin": 63,
+     "poolMax": 345,
+     "base": 12,
+     "oracle": 14,
+     "master": 14,
+     "greedy": 13,
+     "lns": 12,
+     "realised": 12
+    },
+    "vegetarian": {
+     "personas": 7,
+     "days": 49,
+     "poolMin": 35,
+     "poolMax": 327,
+     "base": 29,
+     "oracle": 35,
+     "master": 31,
+     "greedy": 31,
+     "lns": 30,
+     "realised": 30
+    },
+    "vegan": {
+     "personas": 10,
+     "days": 70,
+     "poolMin": 17,
+     "poolMax": 169,
+     "base": 12,
+     "oracle": 19,
+     "master": 19,
+     "greedy": 17,
+     "lns": 17,
+     "realised": 17
+    },
+    "mediterranean": {
+     "personas": 5,
+     "days": 35,
+     "poolMin": 158,
+     "poolMax": 814,
+     "base": 29,
+     "oracle": 34,
+     "master": 30,
+     "greedy": 27,
+     "lns": 30,
+     "realised": 30
+    },
+    "paleo": {
+     "personas": 2,
+     "days": 14,
+     "poolMin": 29,
+     "poolMax": 116,
+     "base": 6,
+     "oracle": 8,
+     "master": 8,
+     "greedy": 6,
+     "lns": 6,
+     "realised": 6
+    },
+    "halal": {
+     "personas": 1,
+     "days": 7,
+     "poolMin": 758,
+     "poolMax": 758,
+     "base": 7,
+     "oracle": 7,
+     "master": 7,
+     "greedy": 7,
+     "lns": 7,
+     "realised": 7
+    }
+   },
+   "compression": {
+    "0": {
+     "personas": 13,
+     "baseDays": 0,
+     "oracleDays": 0,
+     "masterDays": 0,
+     "realisedDays": 0,
+     "totalDays": 91,
+     "oracleGainPerPersona": 0,
+     "masterGainPerPersona": 0,
+     "realisedGainPerPersona": 0,
+     "remainingDays": 91,
+     "oracleCaptureOfRemaining": 0
+    },
+    "1": {
+     "personas": 2,
+     "baseDays": 2,
+     "oracleDays": 5,
+     "masterDays": 2,
+     "realisedDays": 2,
+     "totalDays": 14,
+     "oracleGainPerPersona": 1.5,
+     "masterGainPerPersona": 0,
+     "realisedGainPerPersona": 0,
+     "remainingDays": 12,
+     "oracleCaptureOfRemaining": 25
+    },
+    "2": {
+     "personas": 4,
+     "baseDays": 8,
+     "oracleDays": 21,
+     "masterDays": 9,
+     "realisedDays": 10,
+     "totalDays": 28,
+     "oracleGainPerPersona": 3.25,
+     "masterGainPerPersona": 0.25,
+     "realisedGainPerPersona": 0.5,
+     "remainingDays": 20,
+     "oracleCaptureOfRemaining": 65
+    },
+    "3": {
+     "personas": 4,
+     "baseDays": 12,
+     "oracleDays": 25,
+     "masterDays": 19,
+     "realisedDays": 16,
+     "totalDays": 28,
+     "oracleGainPerPersona": 3.25,
+     "masterGainPerPersona": 1.75,
+     "realisedGainPerPersona": 1,
+     "remainingDays": 16,
+     "oracleCaptureOfRemaining": 81.25
+    },
+    "4": {
+     "personas": 1,
+     "baseDays": 4,
+     "oracleDays": 7,
+     "masterDays": 5,
+     "realisedDays": 5,
+     "totalDays": 7,
+     "oracleGainPerPersona": 3,
+     "masterGainPerPersona": 1,
+     "realisedGainPerPersona": 1,
+     "remainingDays": 3,
+     "oracleCaptureOfRemaining": 100
+    },
+    "5": {
+     "personas": 9,
+     "baseDays": 45,
+     "oracleDays": 62,
+     "masterDays": 54,
+     "realisedDays": 52,
+     "totalDays": 63,
+     "oracleGainPerPersona": 1.89,
+     "masterGainPerPersona": 1,
+     "realisedGainPerPersona": 0.78,
+     "remainingDays": 18,
+     "oracleCaptureOfRemaining": 94.44
+    },
+    "6": {
+     "personas": 5,
+     "baseDays": 30,
+     "oracleDays": 35,
+     "masterDays": 34,
+     "realisedDays": 31,
+     "totalDays": 35,
+     "oracleGainPerPersona": 1,
+     "masterGainPerPersona": 0.8,
+     "realisedGainPerPersona": 0.2,
+     "remainingDays": 5,
+     "oracleCaptureOfRemaining": 100
+    },
+    "7": {
+     "personas": 27,
+     "baseDays": 189,
+     "oracleDays": 189,
+     "masterDays": 189,
+     "realisedDays": 189,
+     "totalDays": 189,
+     "oracleGainPerPersona": 0,
+     "masterGainPerPersona": 0,
+     "realisedGainPerPersona": 0,
+     "remainingDays": 0,
+     "oracleCaptureOfRemaining": null
+    }
+   },
+   "filledByArm": {
+    "base": 2820,
+    "oracle": 2812,
+    "lns": 2820
+   },
+   "provenance": {
+    "dbSha256": "d9037dce9754b4524943069fff7e0f3e396598c108426f370b0a189458b623a1",
+    "dbCopySha256": "d9037dce9754b4524943069fff7e0f3e396598c108426f370b0a189458b623a1",
+    "foodFingerprint": "b961ac3afbdf3f53905ead1353ffb05a9a2b94b7f1e0cd7fa87bbf975291f26b",
+    "foodRows": 14151,
+    "recipeRows": 910,
+    "personasSha256": "e564b1ddcc36b95249b51819e03762a30da61f29f2a254312699290fae57704e",
+    "gitSha": "79b17a43e359bacf7a2b5d8bc732a81516500a6a",
+    "gitBranch": "fleet/measure-2026-08",
+    "srcPorcelain": "",
+    "brain": "off",
+    "networkCalls": 0,
+    "ruler": "product/dayTolerance+dayInTolerance (mealSolver.js)",
+    "poolShape": "route (applyFilterStack ON)",
+    "elapsedSec": 58.21
+   },
+   "lnsConfig": {
+    "rounds": 3,
+    "destroy": 2,
+    "tries": 3,
+    "extraDaySolves": 495
+   },
+   "population": {
+    "weekPersonas": 65,
+    "dayPersonas": 185,
+    "weekDays": 455,
+    "dayDays": 185,
+    "degenerateDays": 1,
+    "unjudgedSatDays": 16,
+    "crashed": 0
+   },
+   "level": {
+    "base": {
+     "d553": {
+      "k": 413,
+      "n": 553,
+      "pct": 74.68
+     },
+     "d640": {
+      "k": 433,
+      "n": 640,
+      "pct": 67.66
+     },
+     "d537": {
+      "k": 413,
+      "n": 537,
+      "pct": 76.91
+     }
+    },
+    "oracle": {
+     "d553": {
+      "k": 465,
+      "n": 553,
+      "pct": 84.09
+     },
+     "d640": {
+      "k": 487,
+      "n": 640,
+      "pct": 76.09
+     },
+     "d537": {
+      "k": 462,
+      "n": 537,
+      "pct": 86.03
+     }
+    },
+    "master": {
+     "d553": {
+      "k": 434,
+      "n": 553,
+      "pct": 78.48
+     },
+     "d640": {
+      "k": 455,
+      "n": 640,
+      "pct": 71.09
+     },
+     "d537": {
+      "k": 433,
+      "n": 537,
+      "pct": 80.63
+     }
+    },
+    "greedy": {
+     "d553": {
+      "k": 424,
+      "n": 553,
+      "pct": 76.67
+     },
+     "d640": {
+      "k": 444,
+      "n": 640,
+      "pct": 69.38
+     },
+     "d537": {
+      "k": 423,
+      "n": 537,
+      "pct": 78.77
+     }
+    },
+    "lns": {
+     "d553": {
+      "k": 430,
+      "n": 553,
+      "pct": 77.76
+     },
+     "d640": {
+      "k": 450,
+      "n": 640,
+      "pct": 70.31
+     },
+     "d537": {
+      "k": 430,
+      "n": 537,
+      "pct": 80.07
+     }
+    },
+    "realised": {
+     "d553": {
+      "k": 428,
+      "n": 553,
+      "pct": 77.4
+     },
+     "d640": {
+      "k": 448,
+      "n": 640,
+      "pct": 70
+     },
+     "d537": {
+      "k": 428,
+      "n": 537,
+      "pct": 79.7
+     }
+    }
+   },
+   "weekSatOnly": {
+    "base": {
+     "k": 278,
+     "n": 392,
+     "pct": 70.92
+    },
+    "oracle": {
+     "k": 330,
+     "n": 392,
+     "pct": 84.18
+    },
+    "master": {
+     "k": 299,
+     "n": 392,
+     "pct": 76.28
+    },
+    "greedy": {
+     "k": 289,
+     "n": 392,
+     "pct": 73.72
+    },
+    "lns": {
+     "k": 293,
+     "n": 392,
+     "pct": 74.74
+    },
+    "realised": {
+     "k": 293,
+     "n": 392,
+     "pct": 74.74
+    }
+   },
+   "dayHorizonSatOnly": {
+    "base": {
+     "k": 135,
+     "n": 161,
+     "pct": 83.85
+    },
+    "oracle": {
+     "k": 135,
+     "n": 161,
+     "pct": 83.85
+    },
+    "master": {
+     "k": 135,
+     "n": 161,
+     "pct": 83.85
+    },
+    "greedy": {
+     "k": 135,
+     "n": 161,
+     "pct": 83.85
+    },
+    "lns": {
+     "k": 137,
+     "n": 161,
+     "pct": 85.09
+    },
+    "realised": {
+     "k": 135,
+     "n": 161,
+     "pct": 83.85
+    }
+   },
+   "capViolation": {
+    "all": {
+     "personas": 250,
+     "violated": 61,
+     "pct": 24.4
+    },
+    "weekPersonas": {
+     "personas": 65,
+     "violated": 61,
+     "pct": 93.85
+    },
+    "dayPersonas": {
+     "personas": 185,
+     "violated": 0,
+     "pct": 0
+    },
+    "byDiet": {
+     "none": {
+      "personas": 28,
+      "violated": 26,
+      "maxUsageHist": {
+       "2": 2,
+       "3": 8,
+       "4": 9,
+       "5": 6,
+       "6": 1,
+       "8": 2
+      },
+      "worstExcess": 6,
+      "examples": [
+       {
+        "id": "p000",
+        "maxUsage": 3,
+        "cap": 2,
+        "over": [
+         {
+          "recipeId": "cmrujkwp1000cwl9o1jfq4y3t",
+          "name": "Stir-Fried Chicken & Broccoli with Noodles",
+          "used": 3,
+          "cap": 2
+         },
+         {
+          "recipeId": "cmrul1dqn0026wlk4tzlwp0bw",
+          "name": "High-Protein Chicken & Bell Peppers with Quinoa",
+          "used": 3,
+          "cap": 2
+         }
+        ]
+       },
+       {
+        "id": "p023",
+        "maxUsage": 3,
+        "cap": 2,
+        "over": [
+         {
+          "recipeId": "cmrfp3wtp000ewlj0rcs6iepn",
+          "name": "Tuna Cucumber Cracker Plate",
+          "used": 3,
+          "cap": 2
+         },
+         {
+          "recipeId": "cmrujkwr1003owl9ogywoijch",
+          "name": "Spiced Chicken & Onions with Rice",
+          "used": 3,
+          "cap": 2
+         }
+        ]
+       },
+       {
+        "id": "p036",
+        "maxUsage": 8,
+        "cap": 2,
+        "over": [
+         {
+          "recipeId": "cmrujkwvx00ciwl9onlcdvocx",
+          "name": "Thai Chicken & Bell Peppers with Rice",
+          "used": 4,
+          "cap": 2
+         },
+         {
+          "recipeId": "cms7pjmju002swlbktsksba9r",
+          "name": "Edamame with Sea Salt",
+          "used": 8,
+          "cap": 2
+         }
+        ]
+       }
+      ],
+      "pct": 92.86
+     },
+     "keto": {
+      "personas": 7,
+      "violated": 6,
+      "maxUsageHist": {
+       "0": 1,
+       "3": 2,
+       "4": 2,
+       "5": 1,
+       "8": 1
+      },
+      "worstExcess": 6,
+      "examples": [
+       {
+        "id": "p067",
+        "maxUsage": 3,
+        "cap": 2,
+        "over": [
+         {
+          "recipeId": "cms7pjmi1000wwlbk8yoezv92",
+          "name": "Baked Salmon with Buttered Asparagus",
+          "used": 3,
+          "cap": 2
+         },
+         {
+          "recipeId": "cmrj2tgq601m0wlwsywpofgzn",
+          "name": "Matambre a la Pizza",
+          "used": 3,
+          "cap": 2
+         }
+        ]
+       },
+       {
+        "id": "p089",
+        "maxUsage": 4,
+        "cap": 2,
+        "over": [
+         {
+          "recipeId": "cmrj2u8pt07tzwlws9h0lxepi",
+          "name": "Sledz w Oleju (Polish Herrings)",
+          "used": 4,
+          "cap": 2
+         },
+         {
+          "recipeId": "cmrevpcyt004lwl5gx6bidm0z",
+          "name": "Jerky & Pork Rinds Snack Plate",
+          "used": 3,
+          "cap": 2
+         }
+        ]
+       },
+       {
+        "id": "p104",
+        "maxUsage": 5,
+        "cap": 2,
+        "over": [
+         {
+          "recipeId": "cmrj2tgq601m0wlwsywpofgzn",
+          "name": "Matambre a la Pizza",
+          "used": 3,
+          "cap": 2
+         },
+         {
+          "recipeId": "cms7pjmks003ewlbkbzjiva2m",
+          "name": "Hard-Boiled Eggs with Chilli Salt",
+          "used": 3,
+          "cap": 2
+         }
+        ]
+       }
+      ],
+      "pct": 85.71
+     },
+     "carnivore": {
+      "personas": 1,
+      "violated": 1,
+      "maxUsageHist": {
+       "8": 1
+      },
+      "worstExcess": 6,
+      "examples": [
+       {
+        "id": "p018",
+        "maxUsage": 8,
+        "cap": 2,
+        "over": [
+         {
+          "recipeId": "cmrfn2w780030wlg49qus3ftp",
+          "name": "Grilled Chicken Breast & Perogies",
+          "used": 5,
+          "cap": 2
+         },
+         {
+          "recipeId": "cmrevpcy5004bwl5gsicopbjv",
+          "name": "Perogies & Bacon",
+          "used": 8,
+          "cap": 2
+         }
+        ]
+       }
+      ],
+      "pct": 100
+     },
+     "kosher": {
+      "personas": 4,
+      "violated": 4,
+      "maxUsageHist": {
+       "3": 1,
+       "4": 1,
+       "6": 2
+      },
+      "worstExcess": 4,
+      "examples": [
+       {
+        "id": "p022",
+        "maxUsage": 6,
+        "cap": 2,
+        "over": [
+         {
+          "recipeId": "cms7pjmks003ewlbkbzjiva2m",
+          "name": "Hard-Boiled Eggs with Chilli Salt",
+          "used": 6,
+          "cap": 2
+         },
+         {
+          "recipeId": "cmrevpd0k0057wl5ggnxuvv9c",
+          "name": "Avocado Chips & Jerky",
+          "used": 5,
+          "cap": 2
+         }
+        ]
+       },
+       {
+        "id": "p034",
+        "maxUsage": 4,
+        "cap": 2,
+        "over": [
+         {
+          "recipeId": "cmrul79sy0020wl801ylpoo3w",
+          "name": "High-Protein TVP & Broccoli with Quinoa",
+          "used": 3,
+          "cap": 2
+         },
+         {
+          "recipeId": "cmrul79uk004owl80v1qay4ta",
+          "name": "High-Protein Tofu & Onions with Rice",
+          "used": 3,
+          "cap": 2
+         }
+        ]
+       },
+       {
+        "id": "p118",
+        "maxUsage": 3,
+        "cap": 2,
+        "over": [
+         {
+          "recipeId": "cmrujkwr70040wl9otg8s1bb9",
+          "name": "Spiced Chicken & Onions with Potato",
+          "used": 3,
+          "cap": 2
+         },
+         {
+          "recipeId": "cms7pjmkm003awlbk8b9zzoqo",
+          "name": "Cottage Cheese with Pineapple",
+          "used": 3,
+          "cap": 2
+         }
+        ]
+       }
+      ],
+      "pct": 100
+     },
+     "vegetarian": {
+      "personas": 7,
+      "violated": 7,
+      "maxUsageHist": {
+       "4": 5,
+       "5": 1,
+       "6": 1
+      },
+      "worstExcess": 4,
+      "examples": [
+       {
+        "id": "p045",
+        "maxUsage": 6,
+        "cap": 2,
+        "over": [
+         {
+          "recipeId": "cmrujkwvk00buwl9o5qzvdm2i",
+          "name": "Classic Eggs & Bell Peppers with Potato",
+          "used": 4,
+          "cap": 2
+         },
+         {
+          "recipeId": "cmrul79yw00bowl809ubij1m5",
+          "name": "High-Protein Egg White & Cucumber with Rice",
+          "used": 4,
+          "cap": 2
+         }
+        ]
+       },
+       {
+        "id": "p086",
+        "maxUsage": 4,
+        "cap": 2,
+        "over": [
+         {
+          "recipeId": "cmrul79yw00bowl809ubij1m5",
+          "name": "High-Protein Egg White & Cucumber with Rice",
+          "used": 3,
+          "cap": 2
+         },
+         {
+          "recipeId": "cmrul79z000buwl80q9shge3z",
+          "name": "High-Protein Egg White & Cucumber with Quinoa",
+          "used": 3,
+          "cap": 2
+         }
+        ]
+       },
+       {
+        "id": "p112",
+        "maxUsage": 4,
+        "cap": 2,
+        "over": [
+         {
+          "recipeId": "cms7pjmju002swlbktsksba9r",
+          "name": "Edamame with Sea Salt",
+          "used": 3,
+          "cap": 2
+         },
+         {
+          "recipeId": "cms7pjmj90025wlbke02jmm0u",
+          "name": "Seitan Stir-Fry with Broccoli and Rice",
+          "used": 4,
+          "cap": 2
+         }
+        ]
+       }
+      ],
+      "pct": 100
+     },
+     "vegan": {
+      "personas": 10,
+      "violated": 10,
+      "maxUsageHist": {
+       "3": 1,
+       "4": 2,
+       "5": 3,
+       "6": 4
+      },
+      "worstExcess": 4,
+      "examples": [
+       {
+        "id": "p047",
+        "maxUsage": 3,
+        "cap": 2,
+        "over": [
+         {
+          "recipeId": "cmrul4e4i002owl68yvn6t5sv",
+          "name": "High-Protein Tofu & Onions with Lentil Pasta",
+          "used": 3,
+          "cap": 2
+         }
+        ]
+       },
+       {
+        "id": "p051",
+        "maxUsage": 6,
+        "cap": 2,
+        "over": [
+         {
+          "recipeId": "cmrj2ucb308ljwlwshp004cle",
+          "name": "Lao Som Pak Pickled Cabbage",
+          "used": 6,
+          "cap": 2
+         },
+         {
+          "recipeId": "cmrj2uduc08xtwlwsdxsv2yjq",
+          "name": "Simple heart of palm & tomato salad",
+          "used": 3,
+          "cap": 2
+         }
+        ]
+       },
+       {
+        "id": "p054",
+        "maxUsage": 4,
+        "cap": 2,
+        "over": [
+         {
+          "recipeId": "cmrul79ud004cwl808rgh68b3",
+          "name": "High-Protein Tofu & Bell Peppers with Lentil Pasta",
+          "used": 4,
+          "cap": 2
+         },
+         {
+          "recipeId": "cmrul79sj001cwl80hhwt236x",
+          "name": "High-Protein TVP & Onions with Chickpea Pasta",
+          "used": 4,
+          "cap": 2
+         }
+        ]
+       }
+      ],
+      "pct": 100
+     },
+     "mediterranean": {
+      "personas": 5,
+      "violated": 4,
+      "maxUsageHist": {
+       "2": 1,
+       "4": 1,
+       "5": 1,
+       "6": 1,
+       "8": 1
+      },
+      "worstExcess": 6,
+      "examples": [
+       {
+        "id": "p052",
+        "maxUsage": 4,
+        "cap": 2,
+        "over": [
+         {
+          "recipeId": "cmrujkwr4003uwl9or0xver7i",
+          "name": "Spiced Chicken & Bell Peppers with Rice",
+          "used": 3,
+          "cap": 2
+         },
+         {
+          "recipeId": "cmrujhgxz000zwlbon488ewmg",
+          "name": "Greek Yogurt, Honey & Almonds",
+          "used": 4,
+          "cap": 2
+         }
+        ]
+       },
+       {
+        "id": "p122",
+        "maxUsage": 6,
+        "cap": 2,
+        "over": [
+         {
+          "recipeId": "cmrfp3wtp000ewlj0rcs6iepn",
+          "name": "Tuna Cucumber Cracker Plate",
+          "used": 6,
+          "cap": 2
+         },
+         {
+          "recipeId": "cmrujkwr4003uwl9or0xver7i",
+          "name": "Spiced Chicken & Bell Peppers with Rice",
+          "used": 3,
+          "cap": 2
+         }
+        ]
+       },
+       {
+        "id": "p128",
+        "maxUsage": 5,
+        "cap": 2,
+        "over": [
+         {
+          "recipeId": "cms7pjmkm003awlbk8b9zzoqo",
+          "name": "Cottage Cheese with Pineapple",
+          "used": 3,
+          "cap": 2
+         },
+         {
+          "recipeId": "cms7pjmju002swlbktsksba9r",
+          "name": "Edamame with Sea Salt",
+          "used": 4,
+          "cap": 2
+         }
+        ]
+       }
+      ],
+      "pct": 80
+     },
+     "paleo": {
+      "personas": 2,
+      "violated": 2,
+      "maxUsageHist": {
+       "4": 1,
+       "6": 1
+      },
+      "worstExcess": 4,
+      "examples": [
+       {
+        "id": "p203",
+        "maxUsage": 4,
+        "cap": 2,
+        "over": [
+         {
+          "recipeId": "cmrevpcpb0011wl5g2m81r2ia",
+          "name": "Cast-Iron Sirloin, Potato & Cucumber",
+          "used": 3,
+          "cap": 2
+         },
+         {
+          "recipeId": "cmrujkwuh009uwl9ohi26dm66",
+          "name": "Classic Chicken & Bell Peppers with Potato",
+          "used": 4,
+          "cap": 2
+         }
+        ]
+       },
+       {
+        "id": "p239",
+        "maxUsage": 6,
+        "cap": 2,
+        "over": [
+         {
+          "recipeId": "cmrujkwra0046wl9ods3ggn18",
+          "name": "Spiced Chicken & Bell Peppers with Potato",
+          "used": 3,
+          "cap": 2
+         },
+         {
+          "recipeId": "cmrujkwue009owl9ogm49bcf5",
+          "name": "Classic Chicken & Broccoli with Potato",
+          "used": 4,
+          "cap": 2
+         }
+        ]
+       }
+      ],
+      "pct": 100
+     },
+     "halal": {
+      "personas": 1,
+      "violated": 1,
+      "maxUsageHist": {
+       "6": 1
+      },
+      "worstExcess": 4,
+      "examples": [
+       {
+        "id": "p232",
+        "maxUsage": 6,
+        "cap": 2,
+        "over": [
+         {
+          "recipeId": "cmrg91na2000mwli0w2pcl3e2",
+          "name": "Turkey & Swiss Roll-Ups",
+          "used": 6,
+          "cap": 2
+         },
+         {
+          "recipeId": "cmrj2u9ra081lwlws844dgis7",
+          "name": "Vietnamese caramel trout",
+          "used": 3,
+          "cap": 2
+         }
+        ]
+       }
+      ],
+      "pct": 100
+     }
+    }
+   },
+   "capCapacity": {
+    "none": {
+     "personas": 28,
+     "snackStarved": 2,
+     "mealStarved": 0,
+     "minSnackSlack": -15,
+     "minMealSlack": 112,
+     "snackEligibleMin": 3,
+     "snackEligibleMax": 18
+    },
+    "keto": {
+     "personas": 7,
+     "snackStarved": 2,
+     "mealStarved": 2,
+     "minSnackSlack": -13,
+     "minMealSlack": -21,
+     "snackEligibleMin": 0,
+     "snackEligibleMax": 4
+    },
+    "carnivore": {
+     "personas": 1,
+     "snackStarved": 1,
+     "mealStarved": 1,
+     "minSnackSlack": -5,
+     "minMealSlack": -15,
+     "snackEligibleMin": 1,
+     "snackEligibleMax": 1
+    },
+    "kosher": {
+     "personas": 4,
+     "snackStarved": 1,
+     "mealStarved": 0,
+     "minSnackSlack": -6,
+     "minMealSlack": 92,
+     "snackEligibleMin": 4,
+     "snackEligibleMax": 11
+    },
+    "vegetarian": {
+     "personas": 7,
+     "snackStarved": 1,
+     "mealStarved": 0,
+     "minSnackSlack": -15,
+     "minMealSlack": 41,
+     "snackEligibleMin": 3,
+     "snackEligibleMax": 10
+    },
+    "vegan": {
+     "personas": 10,
+     "snackStarved": 5,
+     "mealStarved": 0,
+     "minSnackSlack": -14,
+     "minMealSlack": 2,
+     "snackEligibleMin": 0,
+     "snackEligibleMax": 5
+    },
+    "mediterranean": {
+     "personas": 5,
+     "snackStarved": 0,
+     "mealStarved": 0,
+     "minSnackSlack": 0,
+     "minMealSlack": 255,
+     "snackEligibleMin": 7,
+     "snackEligibleMax": 15
+    },
+    "paleo": {
+     "personas": 2,
+     "snackStarved": 0,
+     "mealStarved": 0,
+     "minSnackSlack": 2,
+     "minMealSlack": 28,
+     "snackEligibleMin": 8,
+     "snackEligibleMax": 8
+    },
+    "halal": {
+     "personas": 1,
+     "snackStarved": 0,
+     "mealStarved": 0,
+     "minSnackSlack": 23,
+     "minMealSlack": 1175,
+     "snackEligibleMin": 15,
+     "snackEligibleMax": 15
+    }
+   },
+   "a5": {
+    "oracle": {
+     "b": 52,
+     "c": 0,
+     "diff": 52,
+     "floor": 14.13,
+     "real": true
+    },
+    "master": {
+     "b": 29,
+     "c": 8,
+     "diff": 21,
+     "floor": 11.92,
+     "real": true
+    },
+    "greedy": {
+     "b": 29,
+     "c": 18,
+     "diff": 11,
+     "floor": 13.44,
+     "real": false
+    },
+    "lns": {
+     "b": 17,
+     "c": 0,
+     "diff": 17,
+     "floor": 8.08,
+     "real": true
+    },
+    "realised": {
+     "b": 15,
+     "c": 0,
+     "diff": 15,
+     "floor": 7.59,
+     "real": true
+    }
+   },
+   "variety": {
+    "base": {
+     "weekPersonas": 65,
+     "capBreaches": 0,
+     "capBreachPct": 0,
+     "worstExcess": 0,
+     "adjPairs": 132,
+     "adjIncidences": 161,
+     "personasWithAdjRepeat": 58
+    },
+    "oracle": {
+     "weekPersonas": 65,
+     "capBreaches": 61,
+     "capBreachPct": 93.85,
+     "worstExcess": 6,
+     "adjPairs": 236,
+     "adjIncidences": 390,
+     "personasWithAdjRepeat": 63
+    },
+    "master": {
+     "weekPersonas": 65,
+     "capBreaches": 0,
+     "capBreachPct": 0,
+     "worstExcess": 0,
+     "adjPairs": 133,
+     "adjIncidences": 170,
+     "personasWithAdjRepeat": 56
+    },
+    "greedy": {
+     "weekPersonas": 65,
+     "capBreaches": 39,
+     "capBreachPct": 60,
+     "worstExcess": 4,
+     "adjPairs": 172,
+     "adjIncidences": 243,
+     "personasWithAdjRepeat": 62
+    },
+    "lns": {
+     "weekPersonas": 65,
+     "capBreaches": 0,
+     "capBreachPct": 0,
+     "worstExcess": 0,
+     "adjPairs": 131,
+     "adjIncidences": 159,
+     "personasWithAdjRepeat": 59
+    },
+    "realised": {
+     "weekPersonas": 65,
+     "capBreaches": 0,
+     "capBreachPct": 0,
+     "worstExcess": 0,
+     "adjPairs": 132,
+     "adjIncidences": 162,
+     "personasWithAdjRepeat": 59
+    }
+   },
+   "permutation": {
+    "base": {
+     "weekPersonas": 65,
+     "adjPairsBefore": 132,
+     "adjPairsAfter": 3,
+     "adjIncidencesBefore": 161,
+     "adjIncidencesAfter": 3,
+     "daysInBandBefore": 290,
+     "daysInBandAfter": 290,
+     "personasImproved": 58,
+     "personasZeroAfter": 63,
+     "reductionPct": 98.14,
+     "complianceCost": 0
+    },
+    "pick": {
+     "weekPersonas": 65,
+     "adjPairsBefore": 236,
+     "adjPairsAfter": 110,
+     "adjIncidencesBefore": 390,
+     "adjIncidencesAfter": 125,
+     "daysInBandBefore": 344,
+     "daysInBandAfter": 344,
+     "personasImproved": 63,
+     "personasZeroAfter": 23,
+     "reductionPct": 67.95,
+     "complianceCost": 0
+    },
+    "lns": {
+     "weekPersonas": 65,
+     "adjPairsBefore": 131,
+     "adjPairsAfter": 3,
+     "adjIncidencesBefore": 159,
+     "adjIncidencesAfter": 3,
+     "daysInBandBefore": 305,
+     "daysInBandAfter": 305,
+     "personasImproved": 59,
+     "personasZeroAfter": 63,
+     "reductionPct": 98.11,
+     "complianceCost": 0
+    }
+   },
+   "d5": {
+    "exhaustedRuns": 94,
+    "exhaustedPct": 37.6,
+    "attemptHist": {
+     "1": 125,
+     "2": 20,
+     "3": 7,
+     "4": 4,
+     "5": 94
+    },
+    "decidedBy": {
+     "daysInTolerance": 24,
+     "avgMatch-tiebreak": 101,
+     "single-attempt": 125
+    },
+    "byMatchOnlyLostDays": 14,
+    "byMatchOnlyGainedDays": 0
+   },
+   "ladder": {
+    "1": {
+     "base": 377,
+     "oracle": 377,
+     "master": 377,
+     "n": 553,
+     "capViolatedWeek": 0,
+     "weekPersonas": 56,
+     "masterNull": 0,
+     "basePct": 68.17,
+     "oraclePct": 68.17,
+     "masterPct": 68.17,
+     "capViolPct": 0
+    },
+    "2": {
+     "base": 399,
+     "oracle": 424,
+     "master": 406,
+     "n": 553,
+     "capViolatedWeek": 50,
+     "weekPersonas": 56,
+     "masterNull": 0,
+     "basePct": 72.15,
+     "oraclePct": 76.67,
+     "masterPct": 73.42,
+     "capViolPct": 89.29
+    },
+    "3": {
+     "base": 404,
+     "oracle": 446,
+     "master": 418,
+     "n": 553,
+     "capViolatedWeek": 51,
+     "weekPersonas": 56,
+     "masterNull": 0,
+     "basePct": 73.06,
+     "oraclePct": 80.65,
+     "masterPct": 75.59,
+     "capViolPct": 91.07
+    },
+    "5": {
+     "base": 413,
+     "oracle": 465,
+     "master": 434,
+     "n": 553,
+     "capViolatedWeek": 52,
+     "weekPersonas": 56,
+     "masterNull": 0,
+     "basePct": 74.68,
+     "oraclePct": 84.09,
+     "masterPct": 78.48,
+     "capViolPct": 92.86
+    },
+    "8": {
+     "base": 419,
+     "oracle": 480,
+     "master": 446,
+     "n": 553,
+     "capViolatedWeek": 53,
+     "weekPersonas": 56,
+     "masterNull": 0,
+     "basePct": 75.77,
+     "oraclePct": 86.8,
+     "masterPct": 80.65,
+     "capViolPct": 94.64
+    },
+    "12": {
+     "base": 422,
+     "oracle": 483,
+     "master": 0,
+     "n": 553,
+     "capViolatedWeek": 52,
+     "weekPersonas": 56,
+     "masterNull": 217,
+     "basePct": 76.31,
+     "oraclePct": 87.34,
+     "masterPct": null,
+     "capViolPct": 92.86
+    }
+   },
+   "lnsExtraDaySolves": 495,
+   "masterAttainsOracle": {
+    "week": 50,
+    "weekTotal": 65,
+    "truncated": 0
+   }
+  }
+ ],
+ "pooled": {
+  "seeds": [
+   424242,
+   20260730,
+   8675309
+  ],
+  "level553": {
+   "base": {
+    "k": 1246,
+    "n": 1659,
+    "pct": 75.11
+   },
+   "oracle": {
+    "k": 1404,
+    "n": 1659,
+    "pct": 84.63
+   },
+   "master": {
+    "k": 1308,
+    "n": 1659,
+    "pct": 78.84
+   },
+   "greedy": {
+    "k": 1295,
+    "n": 1659,
+    "pct": 78.06
+   },
+   "lns": {
+    "k": 1295,
+    "n": 1659,
+    "pct": 78.06
+   },
+   "realised": {
+    "k": 1289,
+    "n": 1659,
+    "pct": 77.7
+   }
+  },
+  "level640": {
+   "base": {
+    "k": 1307,
+    "n": 1920,
+    "pct": 68.07
+   },
+   "oracle": {
+    "k": 1470,
+    "n": 1920,
+    "pct": 76.56
+   },
+   "master": {
+    "k": 1371,
+    "n": 1920,
+    "pct": 71.41
+   },
+   "greedy": {
+    "k": 1357,
+    "n": 1920,
+    "pct": 70.68
+   },
+   "lns": {
+    "k": 1357,
+    "n": 1920,
+    "pct": 70.68
+   },
+   "realised": {
+    "k": 1351,
+    "n": 1920,
+    "pct": 70.36
+   }
+  },
+  "level537": {
+   "base": {
+    "k": 1246,
+    "n": 1611,
+    "pct": 77.34
+   },
+   "oracle": {
+    "k": 1394,
+    "n": 1611,
+    "pct": 86.53
+   },
+   "master": {
+    "k": 1307,
+    "n": 1611,
+    "pct": 81.13
+   },
+   "greedy": {
+    "k": 1294,
+    "n": 1611,
+    "pct": 80.32
+   },
+   "lns": {
+    "k": 1295,
+    "n": 1611,
+    "pct": 80.38
+   },
+   "realised": {
+    "k": 1289,
+    "n": 1611,
+    "pct": 80.01
+   }
+  },
+  "weekSatOnly": {
+   "base": {
+    "k": 838,
+    "n": 1176,
+    "pct": 71.26
+   },
+   "oracle": {
+    "k": 996,
+    "n": 1176,
+    "pct": 84.69
+   },
+   "master": {
+    "k": 900,
+    "n": 1176,
+    "pct": 76.53
+   },
+   "greedy": {
+    "k": 887,
+    "n": 1176,
+    "pct": 75.43
+   },
+   "lns": {
+    "k": 878,
+    "n": 1176,
+    "pct": 74.66
+   },
+   "realised": {
+    "k": 881,
+    "n": 1176,
+    "pct": 74.91
+   }
+  },
+  "dayHorizonSatOnly": {
+   "base": {
+    "k": 408,
+    "n": 483,
+    "pct": 84.47
+   },
+   "oracle": {
+    "k": 408,
+    "n": 483,
+    "pct": 84.47
+   },
+   "master": {
+    "k": 408,
+    "n": 483,
+    "pct": 84.47
+   },
+   "greedy": {
+    "k": 408,
+    "n": 483,
+    "pct": 84.47
+   },
+   "lns": {
+    "k": 417,
+    "n": 483,
+    "pct": 86.34
+   },
+   "realised": {
+    "k": 408,
+    "n": 483,
+    "pct": 84.47
+   }
+  },
+  "a5": {
+   "oracle": {
+    "b": 158,
+    "c": 0,
+    "diff": 158,
+    "floor": 24.64,
+    "real": true
+   },
+   "master": {
+    "b": 85,
+    "c": 23,
+    "diff": 62,
+    "floor": 20.37,
+    "real": true
+   },
+   "greedy": {
+    "b": 103,
+    "c": 54,
+    "diff": 49,
+    "floor": 24.56,
+    "real": true
+   },
+   "lns": {
+    "b": 49,
+    "c": 0,
+    "diff": 49,
+    "floor": 13.72,
+    "real": true
+   },
+   "realised": {
+    "b": 43,
+    "c": 0,
+    "diff": 43,
+    "floor": 12.85,
+    "real": true
+   }
+  },
+  "capViolationWeek": {
+   "violated": 184,
+   "personas": 195,
+   "pct": 94.36
+  },
+  "capViolationAll": {
+   "violated": 184,
+   "personas": 750,
+   "pct": 24.53
+  },
+  "capByDiet": {
+   "none": {
+    "personas": 84,
+    "violated": 78,
+    "worstExcess": 7,
+    "pct": 92.86
+   },
+   "keto": {
+    "personas": 21,
+    "violated": 18,
+    "worstExcess": 6,
+    "pct": 85.71
+   },
+   "carnivore": {
+    "personas": 3,
+    "violated": 3,
+    "worstExcess": 8,
+    "pct": 100
+   },
+   "kosher": {
+    "personas": 12,
+    "violated": 12,
+    "worstExcess": 4,
+    "pct": 100
+   },
+   "vegetarian": {
+    "personas": 21,
+    "violated": 21,
+    "worstExcess": 4,
+    "pct": 100
+   },
+   "vegan": {
+    "personas": 30,
+    "violated": 29,
+    "worstExcess": 4,
+    "pct": 96.67
+   },
+   "mediterranean": {
+    "personas": 15,
+    "violated": 14,
+    "worstExcess": 6,
+    "pct": 93.33
+   },
+   "paleo": {
+    "personas": 6,
+    "violated": 6,
+    "worstExcess": 4,
+    "pct": 100
+   },
+   "halal": {
+    "personas": 3,
+    "violated": 3,
+    "worstExcess": 4,
+    "pct": 100
+   }
+  },
+  "variety": {
+   "base": {
+    "capBreaches": 0,
+    "weekPersonas": 195,
+    "adjPairs": 391,
+    "adjIncidences": 496,
+    "worstExcess": 0
+   },
+   "oracle": {
+    "capBreaches": 184,
+    "weekPersonas": 195,
+    "adjPairs": 715,
+    "adjIncidences": 1202,
+    "worstExcess": 8
+   },
+   "master": {
+    "capBreaches": 0,
+    "weekPersonas": 195,
+    "adjPairs": 413,
+    "adjIncidences": 516,
+    "worstExcess": 0
+   },
+   "greedy": {
+    "capBreaches": 114,
+    "weekPersonas": 195,
+    "adjPairs": 504,
+    "adjIncidences": 730,
+    "worstExcess": 5
+   },
+   "lns": {
+    "capBreaches": 0,
+    "weekPersonas": 195,
+    "adjPairs": 375,
+    "adjIncidences": 477,
+    "worstExcess": 0
+   },
+   "realised": {
+    "capBreaches": 0,
+    "weekPersonas": 195,
+    "adjPairs": 373,
+    "adjIncidences": 476,
+    "worstExcess": 0
+   }
+  },
+  "permutation": {
+   "base": {
+    "adjPairsBefore": 391,
+    "adjPairsAfter": 5,
+    "adjIncidencesBefore": 496,
+    "adjIncidencesAfter": 5,
+    "daysInBandBefore": 875,
+    "daysInBandAfter": 875,
+    "personasImproved": 169,
+    "personasZeroAfter": 191,
+    "weekPersonas": 195,
+    "reductionPct": 98.99,
+    "complianceCost": 0
+   },
+   "pick": {
+    "adjPairsBefore": 715,
+    "adjPairsAfter": 350,
+    "adjIncidencesBefore": 1202,
+    "adjIncidencesAfter": 414,
+    "daysInBandBefore": 1038,
+    "daysInBandAfter": 1038,
+    "personasImproved": 187,
+    "personasZeroAfter": 67,
+    "weekPersonas": 195,
+    "reductionPct": 65.56,
+    "complianceCost": 0
+   },
+   "lns": {
+    "adjPairsBefore": 375,
+    "adjPairsAfter": 5,
+    "adjIncidencesBefore": 477,
+    "adjIncidencesAfter": 5,
+    "daysInBandBefore": 916,
+    "daysInBandAfter": 916,
+    "personasImproved": 168,
+    "personasZeroAfter": 191,
+    "weekPersonas": 195,
+    "reductionPct": 98.95,
+    "complianceCost": 0
+   }
+  },
+  "d5": {
+   "exhaustedRuns": 280,
+   "totalRuns": 750,
+   "decidedBy": {
+    "avgMatch-tiebreak": 301,
+    "single-attempt": 372,
+    "daysInTolerance": 77
+   },
+   "byMatchOnlyLostDays": 36,
+   "byMatchOnlyGainedDays": 0,
+   "exhaustedPct": 37.33
+  },
+  "ladder": {
+   "1": {
+    "base": 1132,
+    "oracle": 1132,
+    "master": 1132,
+    "n": 1659,
+    "capViolatedWeek": 0,
+    "weekPersonas": 168,
+    "masterNull": 0,
+    "basePct": 68.23,
+    "oraclePct": 68.23,
+    "masterPct": 68.23,
+    "capViolPct": 0
+   },
+   "2": {
+    "base": 1194,
+    "oracle": 1273,
+    "master": 1211,
+    "n": 1659,
+    "capViolatedWeek": 146,
+    "weekPersonas": 168,
+    "masterNull": 0,
+    "basePct": 71.97,
+    "oraclePct": 76.73,
+    "masterPct": 73,
+    "capViolPct": 86.9
+   },
+   "3": {
+    "base": 1217,
+    "oracle": 1341,
+    "master": 1254,
+    "n": 1659,
+    "capViolatedWeek": 152,
+    "weekPersonas": 168,
+    "masterNull": 0,
+    "basePct": 73.36,
+    "oraclePct": 80.83,
+    "masterPct": 75.59,
+    "capViolPct": 90.48
+   },
+   "5": {
+    "base": 1246,
+    "oracle": 1404,
+    "master": 1308,
+    "n": 1659,
+    "capViolatedWeek": 157,
+    "weekPersonas": 168,
+    "masterNull": 0,
+    "basePct": 75.11,
+    "oraclePct": 84.63,
+    "masterPct": 78.84,
+    "capViolPct": 93.45
+   },
+   "8": {
+    "base": 1265,
+    "oracle": 1443,
+    "master": 1337,
+    "n": 1659,
+    "capViolatedWeek": 159,
+    "weekPersonas": 168,
+    "masterNull": 0,
+    "basePct": 76.25,
+    "oraclePct": 86.98,
+    "masterPct": 80.59,
+    "capViolPct": 94.64
+   },
+   "12": {
+    "base": 1278,
+    "oracle": 1461,
+    "master": 0,
+    "n": 1659,
+    "capViolatedWeek": 159,
+    "weekPersonas": 168,
+    "masterNull": 651,
+    "basePct": 77.03,
+    "oraclePct": 88.07,
+    "masterPct": null,
+    "capViolPct": 94.64
+   }
+  },
+  "byDiet": {
+   "none": {
+    "personas": 84,
+    "days": 588,
+    "poolMin": 92,
+    "poolMax": 910,
+    "base": 504,
+    "oracle": 563,
+    "master": 520,
+    "greedy": 519,
+    "lns": 516,
+    "realised": 516,
+    "basePct": 85.71,
+    "oraclePct": 95.75,
+    "masterPct": 88.44,
+    "greedyPct": 88.27,
+    "lnsPct": 87.76,
+    "realisedPct": 87.76
+   },
+   "keto": {
+    "personas": 21,
+    "days": 147,
+    "poolMin": 1,
+    "poolMax": 53,
+    "base": 78,
+    "oracle": 119,
+    "master": 92,
+    "greedy": 93,
+    "lns": 93,
+    "realised": 93,
+    "basePct": 53.06,
+    "oraclePct": 80.95,
+    "masterPct": 62.59,
+    "greedyPct": 63.27,
+    "lnsPct": 63.27,
+    "realisedPct": 63.27
+   },
+   "carnivore": {
+    "personas": 3,
+    "days": 21,
+    "poolMin": 3,
+    "poolMax": 3,
+    "base": 0,
+    "oracle": 0,
+    "master": 0,
+    "greedy": 0,
+    "lns": 0,
+    "realised": 0,
+    "basePct": 0,
+    "oraclePct": 0,
+    "masterPct": 0,
+    "greedyPct": 0,
+    "lnsPct": 0,
+    "realisedPct": 0
+   },
+   "kosher": {
+    "personas": 12,
+    "days": 84,
+    "poolMin": 63,
+    "poolMax": 345,
+    "base": 35,
+    "oracle": 42,
+    "master": 42,
+    "greedy": 39,
+    "lns": 35,
+    "realised": 35,
+    "basePct": 41.67,
+    "oraclePct": 50,
+    "masterPct": 50,
+    "greedyPct": 46.43,
+    "lnsPct": 41.67,
+    "realisedPct": 41.67
+   },
+   "vegetarian": {
+    "personas": 21,
+    "days": 147,
+    "poolMin": 35,
+    "poolMax": 327,
+    "base": 86,
+    "oracle": 104,
+    "master": 91,
+    "greedy": 92,
+    "lns": 87,
+    "realised": 87,
+    "basePct": 58.5,
+    "oraclePct": 70.75,
+    "masterPct": 61.9,
+    "greedyPct": 62.59,
+    "lnsPct": 59.18,
+    "realisedPct": 59.18
+   },
+   "vegan": {
+    "personas": 30,
+    "days": 210,
+    "poolMin": 17,
+    "poolMax": 169,
+    "base": 44,
+    "oracle": 63,
+    "master": 59,
+    "greedy": 56,
+    "lns": 53,
+    "realised": 56,
+    "basePct": 20.95,
+    "oraclePct": 30,
+    "masterPct": 28.1,
+    "greedyPct": 26.67,
+    "lnsPct": 25.24,
+    "realisedPct": 26.67
+   },
+   "mediterranean": {
+    "personas": 15,
+    "days": 105,
+    "poolMin": 158,
+    "poolMax": 814,
+    "base": 89,
+    "oracle": 101,
+    "master": 90,
+    "greedy": 87,
+    "lns": 90,
+    "realised": 90,
+    "basePct": 84.76,
+    "oraclePct": 96.19,
+    "masterPct": 85.71,
+    "greedyPct": 82.86,
+    "lnsPct": 85.71,
+    "realisedPct": 85.71
+   },
+   "paleo": {
+    "personas": 6,
+    "days": 42,
+    "poolMin": 29,
+    "poolMax": 116,
+    "base": 18,
+    "oracle": 25,
+    "master": 24,
+    "greedy": 19,
+    "lns": 21,
+    "realised": 21,
+    "basePct": 42.86,
+    "oraclePct": 59.52,
+    "masterPct": 57.14,
+    "greedyPct": 45.24,
+    "lnsPct": 50,
+    "realisedPct": 50
+   },
+   "halal": {
+    "personas": 3,
+    "days": 21,
+    "poolMin": 758,
+    "poolMax": 758,
+    "base": 21,
+    "oracle": 21,
+    "master": 21,
+    "greedy": 20,
+    "lns": 21,
+    "realised": 21,
+    "basePct": 100,
+    "oraclePct": 100,
+    "masterPct": 100,
+    "greedyPct": 95.24,
+    "lnsPct": 100,
+    "realisedPct": 100
+   }
+  },
+  "compression": {
+   "0": {
+    "personas": 38,
+    "baseDays": 0,
+    "oracleDays": 0,
+    "masterDays": 0,
+    "realisedDays": 0,
+    "totalDays": 266,
+    "oracleGainPerPersona": 0,
+    "masterGainPerPersona": 0,
+    "realisedGainPerPersona": 0,
+    "remainingDays": 266,
+    "oracleCaptureOfRemaining": 0
+   },
+   "1": {
+    "personas": 8,
+    "baseDays": 8,
+    "oracleDays": 22,
+    "masterDays": 10,
+    "realisedDays": 8,
+    "totalDays": 56,
+    "oracleGainPerPersona": 1.75,
+    "masterGainPerPersona": 0.25,
+    "realisedGainPerPersona": 0,
+    "remainingDays": 48,
+    "oracleCaptureOfRemaining": 29.17
+   },
+   "2": {
+    "personas": 8,
+    "baseDays": 16,
+    "oracleDays": 44,
+    "masterDays": 17,
+    "realisedDays": 18,
+    "totalDays": 56,
+    "oracleGainPerPersona": 3.5,
+    "masterGainPerPersona": 0.13,
+    "realisedGainPerPersona": 0.25,
+    "remainingDays": 40,
+    "oracleCaptureOfRemaining": 70
+   },
+   "3": {
+    "personas": 14,
+    "baseDays": 42,
+    "oracleDays": 86,
+    "masterDays": 64,
+    "realisedDays": 56,
+    "totalDays": 98,
+    "oracleGainPerPersona": 3.14,
+    "masterGainPerPersona": 1.57,
+    "realisedGainPerPersona": 1,
+    "remainingDays": 56,
+    "oracleCaptureOfRemaining": 78.57
+   },
+   "4": {
+    "personas": 8,
+    "baseDays": 32,
+    "oracleDays": 54,
+    "masterDays": 38,
+    "realisedDays": 38,
+    "totalDays": 56,
+    "oracleGainPerPersona": 2.75,
+    "masterGainPerPersona": 0.75,
+    "realisedGainPerPersona": 0.75,
+    "remainingDays": 24,
+    "oracleCaptureOfRemaining": 91.67
+   },
+   "5": {
+    "personas": 19,
+    "baseDays": 95,
+    "oracleDays": 132,
+    "masterDays": 118,
+    "realisedDays": 109,
+    "totalDays": 133,
+    "oracleGainPerPersona": 1.95,
+    "masterGainPerPersona": 1.21,
+    "realisedGainPerPersona": 0.74,
+    "remainingDays": 38,
+    "oracleCaptureOfRemaining": 97.37
+   },
+   "6": {
+    "personas": 18,
+    "baseDays": 108,
+    "oracleDays": 126,
+    "masterDays": 118,
+    "realisedDays": 116,
+    "totalDays": 126,
+    "oracleGainPerPersona": 1,
+    "masterGainPerPersona": 0.56,
+    "realisedGainPerPersona": 0.44,
+    "remainingDays": 18,
+    "oracleCaptureOfRemaining": 100
+   },
+   "7": {
+    "personas": 82,
+    "baseDays": 574,
+    "oracleDays": 574,
+    "masterDays": 574,
+    "realisedDays": 574,
+    "totalDays": 574,
+    "oracleGainPerPersona": 0,
+    "masterGainPerPersona": 0,
+    "realisedGainPerPersona": 0,
+    "remainingDays": 0,
+    "oracleCaptureOfRemaining": null
+   }
+  },
+  "filledByArm": {
+   "base": 8459,
+   "oracle": 8451,
+   "lns": 8459
+  },
+  "effectiveAttempts": {
+   "p1": 68.23,
+   "byK": {
+    "1": {
+     "oraclePct": 68.23,
+     "m": 1
+    },
+    "2": {
+     "oraclePct": 76.73,
+     "m": 1.27
+    },
+    "3": {
+     "oraclePct": 80.83,
+     "m": 1.44
+    },
+    "5": {
+     "oraclePct": 84.63,
+     "m": 1.63
+    },
+    "8": {
+     "oraclePct": 86.98,
+     "m": 1.78
+    },
+    "12": {
+     "oraclePct": 88.07,
+     "m": 1.85
+    }
+   },
+   "note": "m = ln(1-oracle_k)/ln(1-p1); m=k would mean fully independent attempts"
+  },
+  "lnsExtraDaySolves": 1503,
+  "masterAttainsOracle": {
+   "week": 146,
+   "weekTotal": 195,
+   "truncated": 0
+  },
+  "ladder537": {
+   "1": {
+    "base": 1132,
+    "n": 1611,
+    "basePct": 70.27,
+    "oraclePct": 70.27,
+    "masterPct": 70.27
+   },
+   "2": {
+    "base": 1194,
+    "n": 1611,
+    "basePct": 74.12,
+    "oraclePct": 79.02,
+    "masterPct": 75.17
+   },
+   "3": {
+    "base": 1217,
+    "n": 1611,
+    "basePct": 75.54,
+    "oraclePct": 83.24,
+    "masterPct": 77.84
+   },
+   "5": {
+    "base": 1246,
+    "n": 1611,
+    "basePct": 77.34,
+    "oraclePct": 87.15,
+    "masterPct": 81.19
+   },
+   "8": {
+    "base": 1265,
+    "n": 1611,
+    "basePct": 78.52,
+    "oraclePct": 89.57,
+    "masterPct": 82.99
+   },
+   "12": {
+    "base": 1278,
+    "n": 1611,
+    "basePct": 79.33,
+    "oraclePct": 90.69,
+    "masterPct": null
+   }
+  },
+  "c12Support": {
+   "baselineAt1_n537": 70.27,
+   "baselineAt5_n537": 77.34,
+   "attemptBudgetWorth_pts": 7.07,
+   "note": "C12 asserts a REORDERING (C2, smallest-slot-first) at 1 attempt beats the baseline at 5. This lane measures only the attempt-budget half: how much the baseline gains from attempts 2..5. C2 itself is W3-2/W3-5's."
+  }
+ }
+}

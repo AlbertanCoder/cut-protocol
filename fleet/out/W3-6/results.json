@@ -1,0 +1,298 @@
+{
+  "agent": "W3-6 (vegan-niche-probe)",
+  "generated": "2026-07-31",
+  "branch": "fleet/measure-2026-08",
+  "claims": ["C3", "F5", "F2"],
+  "provenance": {
+    "sharedDbSha256_before": "d9037dce9754b4524943069fff7e0f3e396598c108426f370b0a189458b623a1",
+    "sharedDbSha256_after": "d9037dce9754b4524943069fff7e0f3e396598c108426f370b0a189458b623a1",
+    "sharedDbUntouched": true,
+    "scratchDb": "fleet/scratch/W3-6/dev.db",
+    "gitStatusPorcelainBackendSrcFrontendSrc": "(empty)",
+    "brain": "off",
+    "networkCalls": 0,
+    "networkTrap": "dayDump.mjs:341-346 replaces https/http request+get and globalThis.fetch with throwing counters; every run reported net 0",
+    "seeds": [424242, 20260730, 8675309],
+    "instrumentChecks": "disagree 0 · drift>1 0 · missing-food 0 · crashes 0 on all 9 runs",
+    "baselineReproducesW1_2": "byte-exact: canonical 553 = 415 / 418 / 413 (75.05 / 75.59 / 74.68 %), satisfiable-judged 537 = 77.3 / 77.8 / 76.9 %"
+  },
+
+  "hardBlocksRespected": {
+    "T1_powders": {
+      "respected": true,
+      "detail": "No protein powder, isolate or 'nutritional powder mix' row inserted. The single inserted food is a single-ingredient deactivated yeast; its fdcCategory is PINNED to 'Baking Additives & Extracts', verified against dietaryFilter.FDC_CATEGORY_FAMILIES to map to NO allergen family. insert.mjs carries three refuse-guards (blocked category, powder/isolate/whey name, lupin name) that throw before any write.",
+      "t1MechanismReproducedOnAFreshRow": "YES — the leak sweep's positive control re-files the SAME probe row into 'Protein and nutritional powders' with trace metadata stripped and the gate then clears it for soy, dairy and vegan. T-1 is not specific to the 17 legacy rows; it is a property of the gate."
+    },
+    "T3_lupin": {
+      "respected": true,
+      "detail": "No lupin/lupini row or dish inserted. W2-3 dish #12 (Lupini Snack Jar, Pd 12.95 — the single best box-clearing snack-shaped whole food found) SKIPPED. The 18-persona wall includes peanuts, so shipping it would have converted T-3 from P1-latent into a shipped P0 for exactly the population this probe exists to serve."
+    }
+  },
+
+  "brandSeam": {
+    "problem": "W2-3's dish macros were computed against Bob's Red Mill nutritional yeast (USDA FDC Branded 2596118 — a brand-submitted label transcription, therefore LABEL, not USDA-VERIFIED). BRM's retail listing declares MAY CONTAIN soybean and tree nuts. W2-3's allergen claims came from Bragg (declares free of wheat/soy/milk, gluten-free labelled), whose per-100 g panel could not be sourced. The macro basis and the allergen basis are different brands.",
+    "decision": "Both modelled, as two arms differing in EXACTLY ONE FIELD (Food.mayContain on the yeast row). Nothing else changes between them.",
+    "armA": "SINGLE BASIS, honest. macros BRM + mayContain ['soybeans','nuts'] (BRM's own declaration). dataQualityFlag 'pass'.",
+    "armB": "MIXED BASIS, counterfactual ceiling only. macros BRM + allergenTags [] / mayContain [] (Bragg-class 'source explicitly declared none'). dataQuality prefixed 'exception:mixed-basis' so it can never be read as a sourced row. MUST NOT be merged.",
+    "whyNotNull": "mayContain: null would replicate exactly the T-1 fail-open pattern (absence of evidence read as safety). [] is the schema's encoding for 'the source explicitly declared none' and is the only honest way to represent a free-of claim.",
+    "measuredConsequence": "Under arm A the ENTIRE dish set is excluded for any soy- or tree-nut-allergic user: production-path pool membership 0 of 10 for 'vegan + soy only', 0 of 10 for 'vegan + tree nuts only', 0 of 10 for the full wall. Under arm B, 10 of 10. W2-3's warning is CONFIRMED and it is not marginal — it is total."
+  },
+
+  "inserted": {
+    "foods": [
+      {
+        "name": "Nutritional yeast, large flake",
+        "brand": "Bob's Red Mill",
+        "fdcId": 2596118,
+        "provenanceTag": "LABEL",
+        "provenanceNote": "USDA FDC Branded row = brand-submitted label transcription, not USDA lab work. Tagged LABEL despite carrying an fdcId, per W2-3's legend.",
+        "probeTag": "source = 'fleet-probe' (identifiable and removable; insert.mjs --revert deletes every fleet-probe row)",
+        "fdcCategory": "Baking Additives & Extracts",
+        "fdcCategoryPinned": true,
+        "per100g": { "kcal": 400, "protein": 53.3, "fat": 3.33, "carb": 33.3, "fiber": 20 },
+        "proteinPer100kcal": 13.33,
+        "fatPer100kcal": 0.83,
+        "atwater": {
+          "repoCheckAtwater": "PASS",
+          "classic": 376,
+          "fiberAdjusted": 336,
+          "stated": 400,
+          "band": "high-fibre 30% band (fiber 20 g >= HIGH_FIBER_G 12)",
+          "checkNameShape": "clean",
+          "validateFood": "ok"
+        },
+        "whyItIsTheOnlyFoodInserted": "Measured against the scratch DB by fdcId: 20 of the 21 foods W2-3's dishes need ALREADY EXIST as rows. Nutritional yeast is the only absent one (0 rows). W2-3's already_in_dev_db flags understated this — it marked split peas (172429), frozen green peas (170017), frozen kale (169239), frozen Brussels sprouts (169972), frozen mustard greens (169258) and sprouted lentils (168427) as absent; all six are present."
+      }
+    ],
+    "recipes": {
+      "count": 10,
+      "slotType": "snack (all 10)",
+      "mealCategory": "null (all 10) — none lands in dessert / beverage / bread_or_pastry_side / condiment_or_sauce, the four barred at weeklyPlanner.js:185",
+      "source": "fleet-probe",
+      "provenanceTag": "COMPUTED-FROM-SOURCED-FOODS — every macro recomputed from the DB's own Food rows via foodValidation.computeRecipeMacros. No typed-in numbers anywhere.",
+      "allPassRepoCheckAtwater": true,
+      "rows": [
+        { "w23": 1, "name": "Lemon-Herb Lentil Snack Cup", "kcal": 240.5, "protein": 20.71, "fat": 1.02, "carb": 38.54, "Pd": 8.61, "Fd": 0.42, "clearsBox": true },
+        { "w23": 2, "name": "Minted Green Pea & Nutritional-Yeast Cup", "kcal": 218.2, "protein": 18.34, "fat": 1.06, "carb": 34.29, "Pd": 8.40, "Fd": 0.49, "clearsBox": true },
+        { "w23": 3, "name": "Savoury Mushroom & Spinach Skillet Cup", "kcal": 115.0, "protein": 14.26, "fat": 0.99, "carb": 16.23, "Pd": 12.40, "Fd": 0.86, "clearsBox": true },
+        { "w23": 5, "name": "Bean-Sprout & Nori Slaw", "kcal": 94.1, "protein": 10.69, "fat": 0.64, "carb": 14.85, "Pd": 11.36, "Fd": 0.68, "clearsBox": true },
+        { "w23": 6, "name": "Fava & Herb Smash on Cucumber Rounds", "kcal": 182.0, "protein": 15.72, "fat": 0.84, "carb": 29.24, "Pd": 8.64, "Fd": 0.46, "clearsBox": true },
+        { "w23": 7, "name": "Split-Pea & Dill Snack Bowl with Crudites", "kcal": 258.4, "protein": 21.00, "fat": 1.31, "carb": 41.90, "Pd": 8.13, "Fd": 0.51, "clearsBox": false, "note": "MISSES the protein floor by 0.03 (8.13 vs 8.16). W2-3 published 8.18 using a 41 kcal/100 g 'manual'-source carrot row; this insert used the usda-verified 'Carrots, mature, raw' (45 kcal) for provenance. A 5 g/100 g difference in a 40 g crudite garnish decided box membership. This is W2-3's own 'broccoli's margin is 0.13 g — do not build a claim on it' caution, realised."},
+        { "w23": 8, "name": "Roasted Asparagus & Nooch Spears", "kcal": 100.2, "protein": 11.94, "fat": 0.72, "carb": 14.39, "Pd": 11.91, "Fd": 0.72, "clearsBox": true },
+        { "w23": 9, "name": "Chilled Broccoli & White-Mushroom Chop Salad", "kcal": 115.2, "protein": 12.69, "fat": 1.25, "carb": 17.24, "Pd": 11.01, "Fd": 1.09, "clearsBox": true },
+        { "w23": 10, "name": "Pea & Lentil Protein Scoop", "kcal": 272.8, "protein": 22.33, "fat": 1.11, "carb": 44.61, "Pd": 8.19, "Fd": 0.41, "clearsBox": true },
+        { "w23": 11, "name": "Brussels & Kale Nooch Crisps", "kcal": 123.9, "protein": 13.13, "fat": 1.32, "carb": 19.02, "Pd": 10.60, "Fd": 1.06, "clearsBox": true }
+      ],
+      "documentedException": {
+        "dish": "Bean-Sprout & Nori Slaw",
+        "detail": "references the pre-existing DB row 'Seaweed, laver, raw' (FDC 168458), which itself FAILS foodValidation.checkAtwater (35 stated vs 46 classic; no fibre datum). It is 6 g = 2.1 kcal = 2.2% of the dish. The dish's own checkAtwater PASSES. Inserted with this exception documented; the failing row was NOT inserted (it already existed and was not modified)."
+      }
+    }
+  },
+
+  "skipped": [
+    { "kind": "dish", "w23": 4, "name": "Sprouted Lentil & Cucumber Crunch Bowl", "reason": "ATWATER. 130 g of 'Lentils, sprouted, raw' (FDC 168427) is ~70% of the dish's calories and that DB row fails foodValidation.checkAtwater (106 stated vs 129 classic; USDA carries no fibre datum so the fibre-adjusted arm cannot rescue it). Material, not a garnish. Brief says prefer to skip." },
+    { "kind": "dish", "w23": 12, "name": "Lupini Snack Jar", "reason": "TRIAGE T-3. Lupin. foodMatchesExclusionTerm(lupinRow,'peanuts') === false; Health Canada advises every peanut-allergic consumer to avoid lupin (5-37% cross-reactivity); the 18-persona wall INCLUDES peanuts." },
+    { "kind": "food", "name": "Lentils, sprouted, raw (168427)", "reason": "Fails checkAtwater. Already in DB; not modified, not used." },
+    { "kind": "food", "name": "Seaweed, spirulina, dried (170495)", "reason": "Fails checkAtwater (395 predicted vs 290 stated). Already in DB; not used." },
+    { "kind": "food", "name": "Nutritional yeast flakes (Bulk Barn panel basis)", "reason": "No dish references it, and its only distinguishing property — a declared MAY CONTAIN WHEAT — makes it strictly worse for the target wall. Its behaviour was verified synthetically instead of by insertion, adding no inert row to a library already 94.31% inert to the solver." },
+    { "kind": "food", "name": "Unico Lentils canned / Barilla Red Lentil pasta / Chickapea pasta / Biena roasted chickpea / roasted fava snack", "reason": "None clears the target box or is referenced by an inserted dish. The two pasta rows belong to H3 (the gluten-guard fix), not to the snack slot." },
+    { "kind": "food", "name": "Lupini beans, cooked (172424 / 173804)", "reason": "TRIAGE T-3. Present in the DB already; not referenced, not modified." }
+  ],
+
+  "compliance": {
+    "ruler": "product/dayTolerance+dayInTolerance (mealSolver.js), 4-macro, read off the dayDump record",
+    "denominatorPolicy": "A4 — every rate names its denominator. Canonical = 553 satisfiable-planned-minus-degenerate.",
+    "detectionFloorNote": "W1-2 §4: seed noise on the shipping ruler is 0.9 pt on every denominator; treat anything under ~3 pt on a SINGLE seed as unmeasured. Paired McNemar floors are computed per row below.",
+    "bySeed": {
+      "canonical553": {
+        "base": { "424242": "415/553 = 75.05%", "20260730": "418/553 = 75.59%", "8675309": "413/553 = 74.68%" },
+        "armA": { "424242": "459/553 = 83.00%", "20260730": "459/553 = 83.00%", "8675309": "456/553 = 82.46%" },
+        "armB": { "424242": "465/553 = 84.09%", "20260730": "466/553 = 84.27%", "8675309": "463/553 = 83.73%" }
+      },
+      "satisfiableJudged537": {
+        "base": { "424242": "77.28%", "20260730": "77.84%", "8675309": "76.91%" },
+        "armA": { "424242": "85.47%", "20260730": "85.47%", "8675309": "84.92%" },
+        "armB": { "424242": "86.59%", "20260730": "86.78%", "8675309": "86.22%" }
+      }
+    },
+    "pooledThreeSeeds": {
+      "canonical553x3": { "base": "1246/1659 = 75.11%", "armA": "1374/1659 = 82.82%", "armB": "1394/1659 = 84.03%" },
+      "satisfiableJudged537x3": { "base": "1246/1611 = 77.34%", "armA": "1374/1611 = 85.29%", "armB": "1394/1611 = 86.53%" },
+      "judged623x3": { "base": "1307/1869 = 69.93%", "armA": "1435/1869 = 76.78%", "armB": "1461/1869 = 78.17%" },
+      "planned640x3": { "base": "1307/1920 = 68.07%", "armA": "1435/1920 = 74.74%", "armB": "1461/1920 = 76.09%" }
+    },
+    "pairedMcNemar": {
+      "armA_vs_base": {
+        "canonical553x3": { "n": 1659, "b_baseOnly": 17, "c_treatOnly": 145, "deltaPts": 7.72, "detectionFloorPts": 1.50, "chi2cc": 99.562, "verdict": "REAL — 5.1x the detection floor" },
+        "satisfiableJudged537x3": { "n": 1611, "b": 17, "c": 145, "deltaPts": 7.95, "detectionFloorPts": 1.55 },
+        "veganSatisfiableJudged": { "n": 105, "b": 3, "c": 29, "deltaPts": 24.76, "detectionFloorPts": 10.56, "chi2cc": 19.531, "verdict": "REAL even against the 14.3-pt cross-seed spread — reported POOLED only" },
+        "wallSegmentPlanned": { "n": 162, "b": 0, "c": 0, "deltaPts": 0.0, "verdict": "EXACTLY ZERO by construction" }
+      },
+      "armB_vs_base": {
+        "canonical553x3": { "n": 1659, "b_baseOnly": 42, "c_treatOnly": 190, "deltaPts": 8.92, "detectionFloorPts": 1.80, "chi2cc": 93.142, "verdict": "REAL — 5.0x the detection floor" },
+        "satisfiableJudged537x3": { "n": 1611, "b": 42, "c": 190, "deltaPts": 9.19, "detectionFloorPts": 1.85 },
+        "veganSatisfiableJudged": { "n": 105, "b": 3, "c": 34, "deltaPts": 29.52, "detectionFloorPts": 11.35, "chi2cc": 24.324 },
+        "wallSegmentPlanned": { "n": 162, "b": 0, "c": 0, "deltaPts": 0.0, "verdict": "EXACTLY ZERO by construction" }
+      }
+    },
+    "mechanism": {
+      "rescuedDaysByBaselineMissKey_armA": { "fat:over": 99, "multi:kcal:over+fat:over": 13, "carb:over": 12, "multi:kcal:over+fat:over+carb:over": 9, "multi:fat:over+carb:over": 7, "multi:protein:short+carb:over": 3, "multi:kcal:over+carb:over": 1, "kcal:over": 1 },
+      "regressedDays_armA": { "carb:over": 12, "fat:over": 5 },
+      "rescuedDaysByBaselineMissKey_armB": { "fat:over": 123, "carb:over": 21, "multi:kcal:over+fat:over": 19, "multi:kcal:over+fat:over+carb:over": 14, "multi:fat:over+carb:over": 7, "multi:protein:short+carb:over": 3, "multi:kcal:over+protein:short+carb:over": 1, "multi:kcal:over+carb:over": 1, "kcal:over": 1 },
+      "regressedDays_armB": { "carb:over": 30, "fat:over": 6, "multi:kcal:over+fat:over": 3, "multi:kcal:over+carb:over": 3 },
+      "reading": "THE GAIN IS FAT, NOT PROTEIN. 99 of 145 rescued days (armA) and 123 of 190 (armB) were failing on fat OVER the band, and only 3 on protein-short. These dishes have fat density 0.41-1.09 against a snack-pool median of 5.35 (W1-5 §B). They win by DISPLACING fatty snacks, not by adding protein. This is fully consistent with F2's r = -0.001: the density thesis measures as zero for compliance and this probe does not rescue it.",
+      "displacementProof": "Probe dishes were placed 562 times (armA, 3 seeds) but empty snack slots fell only 424 -> 412. 550 of 562 placements displaced an already-filled, fattier snack rather than filling an empty slot."
+    }
+  },
+
+  "coverage": {
+    "why": "Reported as a SEPARATE number from compliance, per the mission and W1-5 §H. The compliance delta above and the coverage delta below measure different things and neither substitutes for the other.",
+    "wallDefinition": "vegan AND excludes soy AND gluten AND sesame AND a tree-nut term. n = 18 personas. All 18 also exclude `legumes` (18 of 18) and all 18 are tier IMPOSSIBLE.",
+    "wallVsF1": "The 18-persona wall and W1-2's 18-persona F1 one-macro-infeasible set (`aboveMaxGate`) overlap in 17. p208 is a full-wall vegan whose demanded density is only 5.26 so it is not above pool max; p219 (vegan + gluten+dairy+soy, demanded 10.34) is above pool max but is not a wall persona. W1-5's headline said 17 wall personas; the difference is a grouping choice, not a disagreement.",
+    "emptySnackSlots": {
+      "perSeed": { "base": "141 / 794", "armA": "137 / 794", "armB": "45 / 794" },
+      "pooled3Seeds": { "base": "424 / 2382 (fill 82.20%)", "armA": "412 / 2382 (fill 82.70%)", "armB": "136 / 2382 (fill 94.29%)" },
+      "veganPooled": { "base": "216 / 345", "armA": "204 / 345", "armB": "54 / 345" },
+      "wallPooled": { "base": "204 / 204 (100% empty)", "armA": "204 / 204 (100% empty)", "armB": "54 / 204 (73.5% of them eliminated)" },
+      "mealSlotsUnchanged": "150 / 6651 empty in every arm — the intervention touches only the snack slot, as designed",
+      "w1_5Reproduction": "base 141 empty snack slots at seed 424242 reproduces W1-5 §B EXACTLY"
+    },
+    "arithmeticallyUnfillableSnackSlots": {
+      "definition": "snackSlotsDemanded - snackPool x DEFAULT_REPEAT_CAP(2), i.e. unfillable BEFORE any search runs (W1-5's 135-of-141 finding)",
+      "all250": { "base": 139, "armA": 135, "armB": 43, "of": 794 },
+      "vegan30": { "base": 72, "armA": 68, "armB": 18, "of": 115 },
+      "wall18": { "base": 68, "armA": 68, "armB": 18, "of": 68 }
+    },
+    "personaLevel": {
+      "all250": {
+        "nonEmptySnackPool": { "base": 230, "armA": 230, "armB": 248 },
+        "zeroSnackPool": { "base": 20, "armA": 20, "armB": 2 },
+        "atLeastOneSnackClearingOwnProteinGate": { "base": 207, "armA": 212, "armB": 246 },
+        "atLeastOneRecipeClearingOwnProteinGate": { "base": 229, "armA": 229, "armB": 249 },
+        "medianSnackPool": { "base": 9, "armA": 15, "armB": 18 }
+      },
+      "vegan30": {
+        "nonEmptySnackPool": { "base": 12, "armA": 12, "armB": 30 },
+        "zeroSnackPool": { "base": 18, "armA": 18, "armB": 0 },
+        "atLeastOneSnackClearingOwnProteinGate": { "base": 9, "armA": 9, "armB": 30 },
+        "medianSnackPool": { "base": 0, "armA": 0, "armB": 4 }
+      },
+      "wall18": {
+        "nonEmptySnackPool": { "base": 0, "armA": 0, "armB": 18 },
+        "zeroSnackPool": { "base": 18, "armA": 18, "armB": 0 },
+        "atLeastOneSnackClearingOwnProteinGate": { "base": 0, "armA": 0, "armB": 18 },
+        "atLeastOneRecipeClearingOwnProteinGate": { "base": 1, "armA": 1, "armB": 18 },
+        "medianSnackPool": { "base": 0, "armA": 0, "armB": 4 },
+        "snackPoolSizeDistributionArmB": { "4": 17, "3": 1 }
+      }
+    },
+    "theLegumeFinding": {
+      "headline": "ALL 18 wall personas also exclude `legumes`. W2-3 never modelled that term and W1-5's wall label ('soy+gluten+nuts+sesame') omits it.",
+      "consequence": "6 of the 10 inserted dishes are legume dishes (lentil, green pea, split pea, fava, mung sprout) and the gate correctly excludes all six on `legumes` for every wall persona — even under arm B's wall-safe yeast. Only the 4 pure vegetable + nutritional-yeast dishes reach them: Savoury Mushroom & Spinach Skillet Cup (115 kcal, Pd 12.40), Roasted Asparagus & Nooch Spears (100 kcal, Pd 11.91), Chilled Broccoli & White-Mushroom Chop Salad (115 kcal, Pd 11.01), Brussels & Kale Nooch Crisps (124 kcal, Pd 10.60). One persona also excludes nightshades and gets 3.",
+      "implication": "W2-3's 'exactly ONE calorie-carrying whole plant food clears the box unaided — sprouted lentils' was already unusable for this population twice over: it fails Atwater AND it is a legume. The real ceiling for the wall is W2-3's own category 1 — vegetables under 45 kcal/100 g that 'steer a slot but cannot fill one'. The 4 dishes that reach these personas are 100-124 kcal each; their snack slots demand more."
+    }
+  },
+
+  "leakSweep": {
+    "method": "Direct assertions on dietaryFilter.foodMatchesExclusionTerm / adjusterExcludedByStyle and exclusionGate.isExcluded, plus the production planContext.filterRecipePool path. oracle.mjs NOT used — K3: it catches 11 of 25 known cases and its misses are the high-protein rows.",
+    "bothDirections": true,
+    "termsTested": 30,
+    "fullCatalogMatrix": "additionally, all 51 allergenCatalog keys were run against all 10 dishes",
+    "stylesTested": ["none", "vegan", "vegetarian", "pescatarian", "keto", "paleo", "halal", "kosher", "mediterranean", "carnivore"],
+    "positiveControl": {
+      "what": "the SAME probe row re-filed into fdcCategory 'Protein and nutritional powders' with allergenTags/mayContain stripped to null",
+      "result": "gate CLEARS it for soy, dairy and vegan",
+      "instrumentCanSeeALeak": true,
+      "meaning": "the zero below is informative, not vacuous — and T-1's mechanism is reproduced on a brand-new row, proving it is a property of the gate rather than of the 17 legacy rows"
+    },
+    "LEAKS_armA": 0,
+    "LEAKS_armB": 0,
+    "correctExclusionsConfirmed": {
+      "armA": "all 10 dishes + the food row excluded for soy AND the entire tree-nut family (tree nuts, almond, cashew, walnut, pecan, pistachio, hazelnut, macadamia, brazil nut, pine nut, chestnut) via the BRM mayContain trace — TRACE_POLICY_DEFAULT = exclude, working as designed",
+      "bothArms": "all 10 dishes excluded for `yeast`; 6 legume dishes excluded for `legumes`; 3 chilli/paprika dishes excluded for `nightshades`; the garlic dish excluded for `alliums`; the paprika dish for `spices`; carnivore excludes all 10",
+      "allowedWhereItShouldBe": "all 10 allowed for vegan, vegetarian, mediterranean, halal, kosher and unrestricted; production pool membership 10/10 for 'vegan, no allergies', 'vegetarian', 'omnivore, none'",
+      "noFalseClears": "zero hits for gluten, wheat, dairy, milk, eggs, fish, shellfish, crustaceans, molluscs, peanuts, mustard, celery, sulphites, lupin, corn — correct, none is present"
+    },
+    "overExclusionsFound": {
+      "armB": 3,
+      "armBDetail": "nightshades on the three chilli/paprika dishes — CORRECT behaviour, my declared ground truth simply had not listed them. Net genuine over-exclusions in arm B: 0.",
+      "armA": 25,
+      "armADetail": "22 are the tree-nut family expanding from BRM's undifferentiated 'may contain nuts' — correct conservative behaviour. 3 are nightshades as above."
+    },
+    "twoNewH5SpecimensFoundBYAUTHORING": [
+      {
+        "id": "prose-polarity",
+        "severity": "over-exclusion (fail-safe direction) — NOT a leak, so not filed to TRIAGE",
+        "reproduction": "foodMatchesExclusionTerm({name:'made without sesame oil'},'sesame') === true; foodMatchesExclusionTerm({name:'contains no milk'},'dairy') === true; but foodMatchesExclusionTerm({name:'peanut-free facility'},'peanuts') === false and ('dairy-free spread','dairy') === false",
+        "detail": "The gate reads allergen words in recipe prose with no polarity. A hyphenated '-free' guard exists; 'made without X' and 'contains no X' are not covered. Found live: my first draft of Bean-Sprout & Nori Slaw warned '...the roasted snack packs are made with sesame oil' — a SAFETY NOTE — and that hid the dish from every sesame-allergic user. Reworded; the app has no field in which a 'does not contain X' caution can be written, which is the actual gap.",
+        "blastRadius": "1 of 10 probe dishes, i.e. 10% of an authored set, lost to a warning the author wrote to protect the same user."
+      },
+      {
+        "id": "free-text-substring",
+        "severity": "over-exclusion — NOT a leak",
+        "reproduction": "resolveExclusionTerm('oats') -> {kind:'literal', recognised:false}. foodMatchesExclusionTerm({name:'Goat cheese'},'oats') === true; ({name:'Chocolate coated almonds'},'oats') === true; ({name:'Sunflower seed butter'},'sun') === true",
+        "detail": "An UNRECOGNISED free-text exclusion term matches by bare SUBSTRING, with none of the word-boundary machinery or WORD_GUARDS that protect the recognised vocabulary. Found live: my first draft of Lemon-Herb Lentil Snack Cup said '...until every lentil is coated', and 'coated' contains 'oat', so the dish was excluded for anyone who types 'oats'. Reworded.",
+        "blastRadius": "unbounded and user-driven — Profile.excludedFoods is free text. Any short typed term is a substring filter over every recipe name, description and step in the library."
+      }
+    ]
+  },
+
+  "briefClaimVerdicts": {
+    "C3": {
+      "brief": "A16 protein-concentrate / snack enrichment: +10.45 gross; +7.46 marginal over C1",
+      "measured": "snack enrichment ALONE (10 recipes, 1 food row, ZERO protein concentrates — T-1 forbids them) = +7.72 pts on canonical 553, pooled over 3 seeds, b=17 c=145, detection floor +/-1.50 pt, chi2cc 99.6. Arm B +8.92 pts.",
+      "verdict": "CONFIRMED, and the concentrate half is not needed. The brief's +10.45 gross is nearly reached by ten snack recipes with no concentrate at all, which matters because TRIAGE T-1 blocks the concentrate route. Marginality over C1 NOT tested here (C1 is W3-2's arm) — the +7.46 marginal figure remains unverified.",
+      "caveat": "This is a POOL-ENRICHMENT delta on THIS library. 10 recipes against a snack pool of 18 is a 56% enlargement of the smallest pool in the library; the same 10 recipes added to a healthy snack pool would not buy this. A16's own question — where does the enrichment curve flatten — is not answered by a single point."
+    },
+    "F5": {
+      "brief": "18 snack-eligible recipes library-wide (vegan 5, keto 4, carnivore 1); only 2/18 meet target fat median; snack-pool fat density 5.58 = 2.1x target; 141 of 193 empty slots are snacks; slotAttemptBudget exceeds candidate count for every diet => searched exhaustively, no fallback => misses are provably pool-caused",
+      "measured": "Baseline 141/794 empty snack slots at seed 424242 — reproduces EXACTLY. The causal claim is now demonstrated CONSTRUCTIVELY rather than inferred: adding 10 snack recipes with no solver change at all moved empty snack slots 141 -> 45 per seed (arm B) and took 18 personas from a zero snack pool to a non-empty one. Nothing in the search changed.",
+      "verdict": "CONFIRMED, and upgraded from inference to demonstration. W1-5 proved the misses were pool-caused by showing the search was exhaustive; this probe proves it by fixing the pool and watching the misses disappear.",
+      "refinement": "F5's 'arithmetically unfillable a priori' count is where the intervention actually lands: 139 -> 43 across all 250 personas. Note the dissociation — arm A raised compliance +7.72 pts while eliminating only 4 empty snack slots. Filling empty slots and passing the band are close to independent."
+    },
+    "F2": {
+      "brief": "density gap real but nearly inert; r(demanded density, in-band) = -0.057; worth ~3.4 pts against a 3.45-pt detection floor => may measure ZERO",
+      "measured": "CONFIRMED as stated, and this probe does not overturn it. Of 145 rescued days (arm A) only 3 were failing on protein at all; 99 were failing on fat OVER the band. The +7.72 pts is a FAT-DISPLACEMENT effect, not a density effect. On the population F2 is about — the wall personas whose demanded density exceeds their pool's maximum — the measured delta is EXACTLY ZERO: n=162 planned days, b=0, c=0, in all three arms.",
+      "verdict": "CONFIRMED. The density thesis still measures as zero. Anyone reading +7.72 pts as vindication of 'the library is too weak on protein' has attributed it to the wrong macro.",
+      "warning": "F2's 3.4-pt figure and this probe's 7.7 pts are not comparable quantities and must never be summed or substituted. F2 estimates what CLOSING THE DENSITY GAP is worth; this measures what TEN LOW-FAT SNACKS are worth."
+    }
+  },
+
+  "honestLimits": [
+    "Two arms, one library, one persona fleet. The +7.72 / +8.92 pts is what these ten recipes buy on THIS pool; it is a single point on A16's enrichment curve, not the curve.",
+    "Arm B is a counterfactual with a deliberately mixed provenance basis. Its numbers bound the intervention's ceiling; they are NOT a shippable measurement. Shipping arm B's coverage requires sourcing a Bragg-class nutritional yeast panel per 100 g, which W2-3 could not do and this agent did not attempt (zero network).",
+    "The leak sweep is a declared-ground-truth sweep over 11 rows. It is NOT the full false-negative sweep TRIAGE T-2 records as outstanding. It cannot bound how many OTHER rows leak; it can only say these do not. Absence of hits here is not evidence the gate is safe.",
+    "Wall-persona compliance is zero in every arm because all 18 are tier IMPOSSIBLE and excluded from the canonical denominator by construction. That is the correct denominator (it is the only pre-registered exclusion) but it means the compliance KPI is structurally blind to the population this probe was commissioned to serve. W1-2 §6's caution stands: 'IMPOSSIBLE' is a persona-generator label, not a proof.",
+    "Split-Pea & Dill misses the target box at 8.13 vs the 8.16 floor purely because a usda-verified carrot row was preferred over a 'manual' one. Box membership at that margin is not a durable property.",
+    "Favism (G6PD deficiency) applies to the fava dish and is a haemolytic, non-allergic hazard that no allergen taxonomy models. Out of scope for a leak sweep; recorded so nobody reads 'zero leaks' as 'zero hazards'."
+  ],
+
+  "artifacts": {
+    "code": ["fleet/scratch/W3-6/insert.mjs", "fleet/scratch/W3-6/leaksweep.mjs", "fleet/scratch/W3-6/coverage.mjs", "fleet/scratch/W3-6/score.mjs"],
+    "data": [
+      "fleet/out/W3-6/inserted-armA.json", "fleet/out/W3-6/inserted-armB.json",
+      "fleet/out/W3-6/leaksweep-armA.json", "fleet/out/W3-6/leaksweep-armB.json",
+      "fleet/out/W3-6/coverage-armA.json", "fleet/out/W3-6/coverage-armB.json",
+      "fleet/out/W3-6/score.json",
+      "fleet/out/W3-6/base-s{424242,20260730,8675309}.jsonl",
+      "fleet/out/W3-6/armA-s{424242,20260730,8675309}.jsonl",
+      "fleet/out/W3-6/armB-s{424242,20260730,8675309}.jsonl"
+    ],
+    "reproduce": [
+      "cd backend && BRAIN=off node scripts/qc/dayDump.mjs --seed=424242 --agent=W3-6 --freshdb --out=fleet/out/W3-6/base-s424242.jsonl",
+      "node fleet/scratch/W3-6/insert.mjs --arm=A",
+      "cd backend && BRAIN=off node scripts/qc/dayDump.mjs --seed=424242 --agent=W3-6 --out=fleet/out/W3-6/armA-s424242.jsonl",
+      "node fleet/scratch/W3-6/leaksweep.mjs --arm=A && node fleet/scratch/W3-6/coverage.mjs --arm=A",
+      "node fleet/scratch/W3-6/insert.mjs --arm=B   # flips ONE field",
+      "node fleet/scratch/W3-6/score.mjs",
+      "node fleet/scratch/W3-6/insert.mjs --revert  # removes every fleet-probe row"
+    ]
+  },
+
+  "blockers": [
+    "The harness blocks subagent .md writes; the narrative is returned as the final message and this file carries the machine-readable half.",
+    "dayDump.mjs resolves --out against REPO, not cwd: '--out=../fleet/...' wrote outside the repo on the first run. Files were relocated into fleet/out/W3-6/ and the stray directory removed. Reported, not worked around.",
+    "A first draft of score.mjs pooled three seeds on a key that omitted the seed, silently collapsing the paired table onto a single seed. Caught by an n=553 that should have been 1659, fixed, and the fix is commented in the file."
+  ]
+}
