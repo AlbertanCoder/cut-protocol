@@ -1,0 +1,396 @@
+{
+  "agent": "W1-4",
+  "brain": "off",
+  "vectors": {
+    "E5": {
+      "claim": "non-finite kcalTarget -> clamp falls to min 0.5 -> half portion shipped with warning:null",
+      "clampProbe": {
+        "source": "weeklyPlanner.js:294",
+        "SCALE_BOUNDS": {
+          "min": 0.5,
+          "max": 2
+        }
+      },
+      "baseRecipe": {
+        "name": "Cast-Iron Sirloin, Rice & Peppers",
+        "kcal": 880.7,
+        "protein": 79.5
+      },
+      "scaleRecipe_direct": {
+        "NaN": {
+          "proteinScale": 0.5,
+          "sidesScale": 0.5,
+          "kcal": 440.4
+        },
+        "Infinity": {
+          "proteinScale": 0.5,
+          "sidesScale": 0.5,
+          "kcal": 440.4
+        },
+        "normal": {
+          "proteinScale": 0.5,
+          "sidesScale": 1.83,
+          "kcal": 940.1
+        }
+      },
+      "resolveSlot_shipped": {
+        "NaN": {
+          "recipeId": "(filled)",
+          "proteinScale": 0.5,
+          "sidesScale": 0.5,
+          "kcal": 440.4,
+          "protein": 39.7,
+          "warning": null
+        },
+        "Infinity": {
+          "recipeId": "(filled)",
+          "proteinScale": 0.5,
+          "sidesScale": 0.5,
+          "kcal": 440.4,
+          "protein": 39.7,
+          "warning": "Tried 1 recipe(s) for this slot, none fit within tolerance — closest was \"Cast-Iron Sirloin, Rice & Peppers\" ()."
+        },
+        "undefined": {
+          "recipeId": "(filled)",
+          "proteinScale": 0.5,
+          "sidesScale": 0.5,
+          "kcal": 440.4,
+          "protein": 39.7,
+          "warning": null
+        },
+        "normal": {
+          "recipeId": "(filled)",
+          "proteinScale": 0.5,
+          "sidesScale": 1.83,
+          "kcal": 940.1,
+          "protein": 49,
+          "warning": null
+        }
+      },
+      "reachability": "backend/src/lib/brain/tools.js:74 scaleRecipeTool({recipeId,kcalTarget,proteinTarget}) — only recipeId is validated (throws when not in pool); kcalTarget/proteinTarget are passed straight through with no finiteness check."
+    },
+    "E6": {
+      "claim": "a locked slot at >=100% of budget floors budgetKcal to 0; kcalOffPct(0,x)=0 and proteinShortfallPct(0,x)=0 (weeklyPlanner.js:420-428) so the :630 accept gate passes on the FIRST draw for every open slot — no warning ever forms",
+      "mechanism": "weeklyPlanner.js:889 budgetKcal = Math.max(0, dailyTarget.kcal - lockedKcal); :896 kcalTarget = budgetKcal * share = 0",
+      "results": {
+        "lock_0pct": {
+          "lockedKcal": 0,
+          "budgetKcal_derived": 2000,
+          "shippedTotals": {
+            "kcal": 2539,
+            "protein": 182.1,
+            "fat": 121.5,
+            "carb": 195.4
+          },
+          "slotWarnings": 18,
+          "slotWarningTexts": [
+            "Tried 20 recipe(s) for this slot, none fit within tolerance — closest was \"Shrimp With Snow Peas\" (landed 132 kcal vs a 93 target).",
+            "Tried 20 recipe(s) for this slot, none fit within tolerance — closest was \"Balchi di Pisca\" (delivered 6g protein vs a 8g target).",
+            "Tried 20 recipe(s) for this slot, none fit within tolerance — closest was \"Bang bang prawn salad\" (landed 99 kcal vs a 82 target).",
+            "Tried 20 recipe(s) for this slot, none fit within tolerance — closest was \"Grilled corn with garlic mayo & grated cheese\" (landed 158 kcal vs a 90 target; delivered 4g protein vs a 7g target).",
+            "Tried 20 recipe(s) for this slot, none fit within tolerance — closest was \"Egg & Spinach Scramble\" (landed 168 kcal vs a 99 target).",
+            "Tried 20 recipe(s) for this slot, none fit within tolerance — closest was \"Quick salt & pepper squid\" (landed 106 kcal vs a 74 target).",
+            "Tried 20 recipe(s) for this slot, none fit within tolerance — closest was \"Shrimp Chow Fun\" (landed 139 kcal vs a 79 target).",
+            "Tried 20 recipe(s) for this slot, none fit within tolerance — closest was \"Vietnamese caramel trout\" (landed 142 kcal vs a 86 target).",
+            "Tried 20 recipe(s) for this slot, none fit within tolerance — closest was \"Red curry chicken kebabs\" (landed 91 kcal vs a 63 target).",
+            "Tried 20 recipe(s) for this slot, none fit within tolerance — closest was \"Shakshuka\" (landed 176 kcal vs a 68 target).",
+            "Tried 20 recipe(s) for this slot, none fit within tolerance — closest was \"Beef and Broccoli Stir-Fry\" (landed 134 kcal vs a 75 target).",
+            "Tried 20 recipe(s) for this slot, none fit within tolerance — closest was \"Padron peppers\" (delivered 2g protein vs a 5g target).",
+            "Tried 20 recipe(s) for this slot, none fit within tolerance — closest was \"Samlar Kari – Khmer Red Curry\" (landed 194 kcal vs a 75 target).",
+            "Tried 20 recipe(s) for this slot, none fit within tolerance — closest was \"Chorizo, potato & cheese omelette\" (landed 112 kcal vs a 59 target).",
+            "Tried 20 recipe(s) for this slot, none fit within tolerance — closest was \"Smoked aubergine purée\" (delivered 4g protein vs a 5g target).",
+            "Tried 20 recipe(s) for this slot, none fit within tolerance — closest was \"Thai curry noodle soup\" (landed 88 kcal vs a 75 target).",
+            "Tried 20 recipe(s) for this slot, none fit within tolerance — closest was \"Thai beef stir-fry\" (landed 159 kcal vs a 66 target).",
+            "Tried 20 recipe(s) for this slot, none fit within tolerance — closest was \"Yemeni Lahsa (Elite Shakshuka)\" (landed 189 kcal vs a 75 target)."
+          ],
+          "openSlotsFilled": 21,
+          "inBand": false,
+          "fatOverPct": 0.9416,
+          "kcalDeltaPct": 0.2695,
+          "missLine": "2,539 kcal vs a 2,000 target — 539 over; 121 g fat vs a 55–65 g range — 56 g over"
+        },
+        "lock_50pct": {
+          "lockedKcal": 1000,
+          "budgetKcal_derived": 1000,
+          "shippedTotals": {
+            "kcal": 2829,
+            "protein": 200.4,
+            "fat": 125.4,
+            "carb": 239.1
+          },
+          "slotWarnings": 20,
+          "slotWarningTexts": [
+            "Tried 20 recipe(s) for this slot, none fit within tolerance — closest was \"Ful Medames\" (landed 72 kcal vs a 49 target).",
+            "Tried 20 recipe(s) for this slot, none fit within tolerance — closest was \"Sesame Cucumber Salad\" (landed 74 kcal vs a 55 target).",
+            "Tried 20 recipe(s) for this slot, none fit within tolerance — closest was \"Napa Cabbage with Dried Shrimp\" (landed 70 kcal vs a 42 target).",
+            "Tried 20 recipe(s) for this slot, none fit within tolerance — closest was \"Banana Pancakes\" (landed 72 kcal vs a 45 target; delivered 3g protein vs a 5g target).",
+            "Tried 20 recipe(s) for this slot, none fit within tolerance — closest was \"Baingan Bharta\" (delivered 1g protein vs a 6g target).",
+            "Tried 20 recipe(s) for this slot, none fit within tolerance — closest was \"Banana Pancakes\" (landed 72 kcal vs a 39 target; delivered 3g protein vs a 5g target).",
+            "Tried 20 recipe(s) for this slot, none fit within tolerance — closest was \"Thai-style fish broth with greens\" (landed 92 kcal vs a 41 target).",
+            "Tried 20 recipe(s) for this slot, none fit within tolerance — closest was \"Sweet and Sour Pork\" (landed 67 kcal vs a 43 target).",
+            "Tried 20 recipe(s) for this slot, none fit within tolerance — closest was \"Thai pumpkin soup\" (landed 115 kcal vs a 32 target; delivered 3g protein vs a 4g target).",
+            "Tried 20 recipe(s) for this slot, none fit within tolerance — closest was \"Camaro Grelhado Com Molho Cru (Grilled Prawns with Green Onion Sauce)\" (landed 73 kcal vs a 34 target).",
+            "Tried 20 recipe(s) for this slot, none fit within tolerance — closest was \"Red curry chicken kebabs\" (landed 82 kcal vs a 39 target).",
+            "Tried 20 recipe(s) for this slot, none fit within tolerance — closest was \"Cottage Cheese And Feta Stuffed Peppers\" (landed 65 kcal vs a 31 target).",
+            "Tried 20 recipe(s) for this slot, none fit within tolerance — closest was \"Curried Chickpeas with Spinach\" (landed 199 kcal vs a 34 target).",
+            "Tried 20 recipe(s) for this slot, none fit within tolerance — closest was \"Shakshuka Feta Cheese\" (landed 105 kcal vs a 39 target).",
+            "Tried 20 recipe(s) for this slot, none fit within tolerance — closest was \"Hot and Sour Soup\" (landed 102 kcal vs a 31 target).",
+            "Tried 20 recipe(s) for this slot, none fit within tolerance — closest was \"Amok Trey – Cambodian Fish Curry\" (landed 117 kcal vs a 34 target).",
+            "Tried 20 recipe(s) for this slot, none fit within tolerance — closest was \"Quick salt & pepper squid\" (landed 106 kcal vs a 39 target).",
+            "Tried 20 recipe(s) for this slot, none fit within tolerance — closest was \"Pad See Ew\" (landed 106 kcal vs a 31 target).",
+            "Tried 20 recipe(s) for this slot, none fit within tolerance — closest was \"Thai drumsticks\" (landed 54 kcal vs a 34 target).",
+            "Tried 20 recipe(s) for this slot, none fit within tolerance — closest was \"Beef and Broccoli Stir-Fry\" (landed 134 kcal vs a 39 target)."
+          ],
+          "openSlotsFilled": 20,
+          "inBand": false,
+          "fatOverPct": 1.0064,
+          "kcalDeltaPct": 0.4145,
+          "missLine": "2,829 kcal vs a 2,000 target — 829 over; 125 g fat vs a 55–65 g range — 60 g over"
+        },
+        "lock_100pct": {
+          "lockedKcal": 2000,
+          "budgetKcal_derived": 0,
+          "shippedTotals": {
+            "kcal": 4623,
+            "protein": 236.7,
+            "fat": 130.5,
+            "carb": 387.4
+          },
+          "slotWarnings": 0,
+          "slotWarningTexts": [],
+          "openSlotsFilled": 20,
+          "inBand": false,
+          "fatOverPct": 1.0911,
+          "kcalDeltaPct": 1.3116,
+          "missLine": "4,623 kcal vs a 2,000 target — 2,623 over; 130 g fat vs a 55–65 g range — 65 g over; 387 g carbs vs a 180–220 g range — 167 g over"
+        },
+        "lock_130pct": {
+          "lockedKcal": 2600,
+          "budgetKcal_derived": 0,
+          "shippedTotals": {
+            "kcal": 5223,
+            "protein": 236.7,
+            "fat": 130.5,
+            "carb": 387.4
+          },
+          "slotWarnings": 0,
+          "slotWarningTexts": [],
+          "openSlotsFilled": 20,
+          "inBand": false,
+          "fatOverPct": 1.0911,
+          "kcalDeltaPct": 1.6116,
+          "missLine": "5,223 kcal vs a 2,000 target — 3,223 over; 130 g fat vs a 55–65 g range — 65 g over; 387 g carbs vs a 180–220 g range — 167 g over"
+        }
+      },
+      "lock100_vs_lock130_indistinguishable": false
+    },
+    "E7": {
+      "claim": "a solve pinned at the 0.5x portion floor is clamped silently — the shipped slot object carries no field naming the pin",
+      "askedKcal": 60,
+      "baseRecipeKcal": 880.7,
+      "shippedKcal": 440.4,
+      "overshootPct": 633.9,
+      "proteinScale": 0.5,
+      "sidesScale": 0.5,
+      "atLoBound": true,
+      "resultKeys": [
+        "recipeId",
+        "warning",
+        "proteinScale",
+        "sidesScale",
+        "ingredients",
+        "kcal",
+        "protein",
+        "fat",
+        "carb"
+      ],
+      "keysMatchingPinBoundClampLimitFloorCeil": [],
+      "warning": "Tried 1 recipe(s) for this slot, none fit within tolerance — closest was \"Cast-Iron Sirloin, Rice & Peppers\" (landed 440 kcal vs a 60 target).",
+      "warningNamesThePin": false
+    },
+    "D6": {
+      "claim": "compositionReach (mealSolver.js:1047-1048) evaluates poolLo/poolHi * dailyTarget.kcal — the EXACT target — while dayTolerance grades kcal at +/-15%. The tested interval is a strict subset of the reachable one, so `unreachable` false-fires by ~15% in both directions.",
+      "band": {
+        "fatLo": 60,
+        "fatHi": 80,
+        "allowLoG": 42.5,
+        "allowHiG": 97.5
+      },
+      "poolFatPerKcal": {
+        "poolLo": 0.0205,
+        "poolHi": 0.0205
+      },
+      "testedAtExactKcal": {
+        "kcal": 2000,
+        "reachLoG": 41,
+        "reachHiG": 41,
+        "unreachable": "short"
+      },
+      "reachableInsideTheKcalGate": {
+        "kcalLo": 1700,
+        "kcalHi": 2300,
+        "reachLoG_atKcalLo": 34.85,
+        "reachHiG_atKcalHi": 47.15,
+        "clearsAllowLoG": true
+      },
+      "counterexampleDay": {
+        "kcal": 2300,
+        "protein": 177.7,
+        "fat": 47.2,
+        "carb": 271.8,
+        "kcalOk": true,
+        "fatOk": true,
+        "proteinOk": true,
+        "carbOk": false,
+        "inBandOnFatAndKcal": true
+      },
+      "classifyBindingSays": {
+        "key": "meal-pool",
+        "label": "your meal-eligible recipe pool",
+        "detail": "2 recipe(s) pass your rules but none of them is a main meal, so all 2 meal slot(s) come back empty."
+      },
+      "falseFireMagnitudePct": 15
+    },
+    "E9": {
+      "claim": "generateDayCandidates ranks on score.matchPct alone (mealSolver.js:503-505); the 4-macro `inTolerance` verdict computed at :482-490 is carried on every candidate but is NOT a sort key. An out-of-tolerance day can therefore be offered first while an in-tolerance one is demoted.",
+      "runsWithAtLeast2Candidates": 241,
+      "runsWhereAnInToleranceCandidateExisted": 194,
+      "runsWhereAnOutOfToleranceDayWasOfferedFirst": 2,
+      "ratePctOfRunsWithAnInToleranceOption": 1.03,
+      "examples": [
+        {
+          "personaId": "p159",
+          "diet": "none",
+          "offeredFirst": {
+            "matchPct": 85,
+            "inTolerance": false,
+            "miss": "75 g carbs vs a 38–62 g range — 13 g over"
+          },
+          "demotedInTolerance": {
+            "matchPct": 84,
+            "inTolerance": true
+          },
+          "rankOfFirstInTolerance": 3,
+          "candidateCount": 3
+        },
+        {
+          "personaId": "p218",
+          "diet": "vegan",
+          "offeredFirst": {
+            "matchPct": 83,
+            "inTolerance": false,
+            "miss": "67 g fat vs a 37–43 g range — 24 g over"
+          },
+          "demotedInTolerance": {
+            "matchPct": 82,
+            "inTolerance": true
+          },
+          "rankOfFirstInTolerance": 3,
+          "candidateCount": 3
+        }
+      ]
+    },
+    "E10": {
+      "claim": "alternatesForSlot (mealSolver.js:821-863) pushes alternates in DRAW order and returns them unsorted; mealSolver.js:1388 (solveOneMeal) and routes/plans.js:260 both assign options[0] to `best`.",
+      "sortCallsInAlternatesForSlot": 0,
+      "draws": 1126,
+      "drawsWhereOptions0IsNotTopScoring": 504,
+      "ratePct": 44.76,
+      "meanGapPtsWhenWrong": 4.26,
+      "maxGapPts": 44,
+      "examples": [
+        {
+          "personaId": "p000",
+          "slotType": "meal",
+          "slotIndex": 0,
+          "offeredAsBest": 99,
+          "actualBest": 100,
+          "gapPts": 1,
+          "order": [
+            99,
+            100,
+            98
+          ]
+        },
+        {
+          "personaId": "p000",
+          "slotType": "meal",
+          "slotIndex": 1,
+          "offeredAsBest": 99,
+          "actualBest": 100,
+          "gapPts": 1,
+          "order": [
+            99,
+            99,
+            100
+          ]
+        },
+        {
+          "personaId": "p000",
+          "slotType": "meal",
+          "slotIndex": 3,
+          "offeredAsBest": 99,
+          "actualBest": 100,
+          "gapPts": 1,
+          "order": [
+            99,
+            100,
+            100
+          ]
+        },
+        {
+          "personaId": "p000",
+          "slotType": "snack",
+          "slotIndex": 0,
+          "offeredAsBest": 97,
+          "actualBest": 100,
+          "gapPts": 3,
+          "order": [
+            97,
+            100,
+            85
+          ]
+        },
+        {
+          "personaId": "p000",
+          "slotType": "snack",
+          "slotIndex": 1,
+          "offeredAsBest": 97,
+          "actualBest": 100,
+          "gapPts": 3,
+          "order": [
+            97,
+            100,
+            85
+          ]
+        },
+        {
+          "personaId": "p001",
+          "slotType": "meal",
+          "slotIndex": 0,
+          "offeredAsBest": 96,
+          "actualBest": 100,
+          "gapPts": 4,
+          "order": [
+            96,
+            100,
+            100
+          ]
+        }
+      ]
+    }
+  },
+  "provenance": {
+    "dbSha256": "d9037dce9754b452",
+    "recipeRows": 910,
+    "personas": 250,
+    "personasSha256": "e564b1ddcc36b952",
+    "SCALE_BOUNDS": {
+      "min": 0.5,
+      "max": 2
+    },
+    "DAY_KCAL_TOLERANCE_PCT": 0.15,
+    "DAY_FAT_TOLERANCE_PCT": 0.25
+  },
+  "networkCallsAttempted": 0
+}

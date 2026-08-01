@@ -1,0 +1,43 @@
+{
+  "claim": "D6 — compositionReach() evaluates the pool's fat-per-kcal at the EXACT kcal target (mealSolver.js:1047-1048) while dayTolerance grades kcal at +/-15%, so `unreachable` is decided on a strict SUBSET of the reachable interval and false-fires by ~15% in both directions.",
+  "band": {
+    "fatLo": 60,
+    "fatHi": 80,
+    "allowLoG": 42.5,
+    "allowHiG": 97.5
+  },
+  "poolFatPerKcal": {
+    "poolLo": 0.0205,
+    "poolHi": 0.0205
+  },
+  "whatCompositionReachTests": {
+    "atKcal": 2000,
+    "reachLoG": 41,
+    "reachHiG": 41,
+    "verdict": "short (UNREACHABLE)"
+  },
+  "whatTheRulerActuallyAllows": {
+    "kcalLo": 1700,
+    "kcalHi": 2300,
+    "reachHiG_atKcalHi": 47.15,
+    "insideAllowedFatWindow": true
+  },
+  "bindingEmitted": {
+    "key": "macro-composition",
+    "label": "fat in your recipe pool",
+    "detail": "every one of the 30 compliant dishes carries less fat than your 60-80 g range allows — at 2000 kcal they land between 41 and 41 g. Portion scaling changes a dish's size, not its fat-per-calorie, so no mix of these recipes reaches the band."
+  },
+  "emitsTheUnsoundSentence": true,
+  "counterexampleDay": {
+    "kcal": 2300,
+    "protein": 195.5,
+    "fat": 47.1,
+    "carb": 253,
+    "kcalOk": true,
+    "proteinOk": true,
+    "fatOk": true,
+    "carbOk": true
+  },
+  "falseFireMagnitudePct": 15,
+  "directionality": "Symmetric: the OVER side false-fires the same way at kcalLo (reachLoG is tested at 1.00x when the day may legally ship at 0.85x, which lowers delivered grams by 15%)."
+}

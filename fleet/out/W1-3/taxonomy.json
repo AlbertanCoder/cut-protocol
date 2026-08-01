@@ -1,0 +1,7893 @@
+{
+ "meta": {
+  "agent": "W1-3",
+  "generatedAt": "2026-08-01T03:06:33.436Z",
+  "inputs": {
+   "route-s424242": "fleet/out/W1-2/daydump-route-s424242.jsonl",
+   "route-s20260730": "fleet/out/W1-2/daydump-route-s20260730.jsonl",
+   "route-s8675309": "fleet/out/W1-2/daydump-route-s8675309.jsonl",
+   "rigshape-s424242": "fleet/out/W1-2/daydump-rigshape-s424242.jsonl"
+  },
+  "canonicalDenominator": "satisfiable-planned−degenerate = 553",
+  "constants": {
+   "CARRY_CAP_PCT": 0.3,
+   "KCAL_TOLERANCE_PCT": 0.15,
+   "PROTEIN_TOLERANCE_PCT": 0.12,
+   "SLOT_COMP_TOL": 0.25
+  },
+  "scripts": [
+   "adjusterFoods.mjs",
+   "recipeStats.mjs",
+   "taxonomy.mjs",
+   "addendum.mjs",
+   "addendum2.mjs",
+   "final.mjs"
+  ],
+  "reproduce": "node fleet/out/W1-3/adjusterFoods.mjs && node fleet/out/W1-3/recipeStats.mjs && node fleet/out/W1-3/taxonomy.mjs && node fleet/out/W1-3/addendum.mjs && node fleet/out/W1-3/addendum2.mjs && node fleet/out/W1-3/final.mjs"
+ },
+ "runs": {
+  "route-s424242": {
+   "file": "fleet/out/W1-2/daydump-route-s424242.jsonl",
+   "seed": 424242,
+   "poolShape": "route (applyFilterStack ON)",
+   "dbSha256": "d9037dce9754b4524943069fff7e0f3e396598c108426f370b0a189458b623a1",
+   "gitSha": "8cd1480c085cb6860025851b370925d56b963bc5",
+   "replayCheck": {
+    "days": 640,
+    "replayFailures": 1,
+    "slotOrderFailures": 0,
+    "warningKcalTargets": 379,
+    "matched": 379,
+    "mismatchRate": 0,
+    "warningProteinTargets": 347,
+    "proteinMatched": 345,
+    "worstMismatches": []
+   },
+   "denominators": {
+    "planned": 640,
+    "planned-degenerate": 639,
+    "judged": 623,
+    "satisfiable-planned": 554,
+    "satisfiable-planned-degenerate": 553,
+    "satisfiable-judged": 537
+   },
+   "levels": {
+    "planned": {
+     "n": 640,
+     "inBand": 435,
+     "pct": 68
+    },
+    "planned-degenerate": {
+     "n": 639,
+     "inBand": 435,
+     "pct": 68.1
+    },
+    "judged": {
+     "n": 623,
+     "inBand": 435,
+     "pct": 69.8
+    },
+    "satisfiable-planned": {
+     "n": 554,
+     "inBand": 415,
+     "pct": 74.9
+    },
+    "satisfiable-planned-degenerate": {
+     "n": 553,
+     "inBand": 415,
+     "pct": 75
+    },
+    "satisfiable-judged": {
+     "n": 537,
+     "inBand": 415,
+     "pct": 77.3
+    }
+   },
+   "buckets": {
+    "canonical": {
+     "denominator": "satisfiable-planned−degenerate (553)",
+     "n": 553,
+     "inBand": 415,
+     "failing": 138,
+     "bucketSum": 138,
+     "reconciles": true,
+     "buckets": {
+      "fat-over": 48,
+      "carb-over": 34,
+      "multi:kcal-over+fat-over": 17,
+      "empty-slot": 16,
+      "multi:kcal-over+fat-over+carb-over": 8,
+      "multi:fat-over+carb-under": 5,
+      "multi:fat-over+carb-over": 3,
+      "multi:kcal-over+carb-over": 2,
+      "multi:kcal-over+protein-short+fat-over+carb-over": 1,
+      "multi:kcal-over+protein-short+carb-over": 1,
+      "kcal-over": 1,
+      "kcal-under": 1,
+      "multi:protein-short+carb-over": 1
+     }
+    },
+    "satisfiableJudged": {
+     "denominator": "satisfiable-judged (537)",
+     "n": 537,
+     "inBand": 415,
+     "failing": 122,
+     "bucketSum": 122,
+     "reconciles": true,
+     "buckets": {
+      "fat-over": 48,
+      "carb-over": 34,
+      "multi:kcal-over+fat-over": 17,
+      "multi:kcal-over+fat-over+carb-over": 8,
+      "multi:fat-over+carb-under": 5,
+      "multi:fat-over+carb-over": 3,
+      "multi:kcal-over+carb-over": 2,
+      "multi:kcal-over+protein-short+fat-over+carb-over": 1,
+      "multi:kcal-over+protein-short+carb-over": 1,
+      "kcal-over": 1,
+      "kcal-under": 1,
+      "multi:protein-short+carb-over": 1
+     }
+    },
+    "planned": {
+     "denominator": "planned (640)",
+     "n": 640,
+     "inBand": 435,
+     "failing": 205,
+     "bucketSum": 205,
+     "reconciles": true,
+     "buckets": {
+      "fat-over": 49,
+      "carb-over": 37,
+      "multi:protein-short+carb-over": 23,
+      "multi:kcal-over+fat-over": 17,
+      "empty-slot": 16,
+      "multi:kcal-under+protein-short": 14,
+      "multi:kcal-under+protein-short+carb-over": 11,
+      "multi:kcal-over+fat-over+carb-over": 8,
+      "multi:fat-over+carb-under": 5,
+      "multi:protein-short+fat-over": 4,
+      "multi:protein-short+fat-over+carb-over": 4,
+      "multi:fat-over+carb-over": 3,
+      "multi:kcal-under+protein-short+fat-over": 3,
+      "multi:kcal-over+protein-short+fat-over+carb-over": 2,
+      "protein-short": 2,
+      "multi:kcal-over+carb-over": 2,
+      "multi:kcal-over+protein-short+carb-over": 1,
+      "kcal-over": 1,
+      "multi:kcal-under+protein-short+fat-under+carb-under": 1,
+      "kcal-under": 1,
+      "degenerate": 1
+     }
+    },
+    "plannedMinusDegenerate": {
+     "denominator": "planned−degenerate (639)",
+     "n": 639,
+     "inBand": 435,
+     "failing": 204,
+     "bucketSum": 204,
+     "reconciles": true,
+     "buckets": {
+      "fat-over": 49,
+      "carb-over": 37,
+      "multi:protein-short+carb-over": 23,
+      "multi:kcal-over+fat-over": 17,
+      "empty-slot": 16,
+      "multi:kcal-under+protein-short": 14,
+      "multi:kcal-under+protein-short+carb-over": 11,
+      "multi:kcal-over+fat-over+carb-over": 8,
+      "multi:fat-over+carb-under": 5,
+      "multi:protein-short+fat-over": 4,
+      "multi:protein-short+fat-over+carb-over": 4,
+      "multi:fat-over+carb-over": 3,
+      "multi:kcal-under+protein-short+fat-over": 3,
+      "multi:kcal-over+protein-short+fat-over+carb-over": 2,
+      "protein-short": 2,
+      "multi:kcal-over+carb-over": 2,
+      "multi:kcal-over+protein-short+carb-over": 1,
+      "kcal-over": 1,
+      "multi:kcal-under+protein-short+fat-under+carb-under": 1,
+      "kcal-under": 1
+     }
+    }
+   },
+   "bucketsPerDiet": {
+    "none": {
+     "denominator": "none",
+     "n": 275,
+     "inBand": 243,
+     "failing": 32,
+     "bucketSum": 32,
+     "reconciles": true,
+     "buckets": {
+      "fat-over": 19,
+      "carb-over": 6,
+      "multi:kcal-over+fat-over": 3,
+      "multi:kcal-over+fat-over+carb-over": 3,
+      "multi:kcal-over+carb-over": 1
+     }
+    },
+    "keto": {
+     "denominator": "keto",
+     "n": 58,
+     "inBand": 33,
+     "failing": 25,
+     "bucketSum": 25,
+     "reconciles": true,
+     "buckets": {
+      "empty-slot": 11,
+      "carb-over": 11,
+      "kcal-over": 1,
+      "kcal-under": 1,
+      "multi:kcal-over+fat-over": 1
+     }
+    },
+    "vegetarian": {
+     "denominator": "vegetarian",
+     "n": 57,
+     "inBand": 36,
+     "failing": 21,
+     "bucketSum": 21,
+     "reconciles": true,
+     "buckets": {
+      "carb-over": 14,
+      "fat-over": 5,
+      "multi:kcal-over+carb-over": 1,
+      "multi:fat-over+carb-over": 1
+     }
+    },
+    "mediterranean": {
+     "denominator": "mediterranean",
+     "n": 49,
+     "inBand": 44,
+     "failing": 5,
+     "bucketSum": 5,
+     "reconciles": true,
+     "buckets": {
+      "fat-over": 3,
+      "multi:protein-short+carb-over": 1,
+      "multi:kcal-over+fat-over+carb-over": 1
+     }
+    },
+    "kosher": {
+     "denominator": "kosher",
+     "n": 35,
+     "inBand": 17,
+     "failing": 18,
+     "bucketSum": 18,
+     "reconciles": true,
+     "buckets": {
+      "multi:kcal-over+fat-over": 8,
+      "fat-over": 6,
+      "carb-over": 1,
+      "multi:kcal-over+fat-over+carb-over": 1,
+      "multi:kcal-over+protein-short+fat-over+carb-over": 1,
+      "multi:kcal-over+protein-short+carb-over": 1
+     }
+    },
+    "vegan": {
+     "denominator": "vegan",
+     "n": 35,
+     "inBand": 20,
+     "failing": 15,
+     "bucketSum": 15,
+     "reconciles": true,
+     "buckets": {
+      "fat-over": 9,
+      "multi:kcal-over+fat-over": 3,
+      "multi:kcal-over+fat-over+carb-over": 2,
+      "multi:fat-over+carb-over": 1
+     }
+    },
+    "paleo": {
+     "denominator": "paleo",
+     "n": 24,
+     "inBand": 10,
+     "failing": 14,
+     "bucketSum": 14,
+     "reconciles": true,
+     "buckets": {
+      "fat-over": 6,
+      "multi:fat-over+carb-under": 3,
+      "carb-over": 2,
+      "multi:fat-over+carb-over": 1,
+      "multi:kcal-over+fat-over": 1,
+      "multi:kcal-over+fat-over+carb-over": 1
+     }
+    },
+    "halal": {
+     "denominator": "halal",
+     "n": 12,
+     "inBand": 12,
+     "failing": 0,
+     "bucketSum": 0,
+     "reconciles": true,
+     "buckets": {}
+    },
+    "carnivore": {
+     "denominator": "carnivore",
+     "n": 8,
+     "inBand": 0,
+     "failing": 8,
+     "bucketSum": 8,
+     "reconciles": true,
+     "buckets": {
+      "empty-slot": 5,
+      "multi:fat-over+carb-under": 2,
+      "multi:kcal-over+fat-over": 1
+     }
+    }
+   },
+   "bucketsPerTier": {
+    "EASY": {
+     "denominator": "EASY",
+     "n": 340,
+     "inBand": 267,
+     "failing": 73,
+     "bucketSum": 73,
+     "reconciles": true,
+     "buckets": {
+      "fat-over": 29,
+      "carb-over": 16,
+      "empty-slot": 9,
+      "multi:kcal-over+fat-over": 6,
+      "multi:fat-over+carb-under": 5,
+      "multi:kcal-over+fat-over+carb-over": 3,
+      "multi:fat-over+carb-over": 2,
+      "kcal-over": 1,
+      "kcal-under": 1,
+      "multi:protein-short+carb-over": 1
+     }
+    },
+    "HARD": {
+     "denominator": "HARD",
+     "n": 175,
+     "inBand": 126,
+     "failing": 49,
+     "bucketSum": 49,
+     "reconciles": true,
+     "buckets": {
+      "carb-over": 16,
+      "fat-over": 14,
+      "empty-slot": 7,
+      "multi:kcal-over+fat-over+carb-over": 4,
+      "multi:kcal-over+fat-over": 3,
+      "multi:kcal-over+carb-over": 2,
+      "multi:kcal-over+protein-short+fat-over+carb-over": 1,
+      "multi:kcal-over+protein-short+carb-over": 1,
+      "multi:fat-over+carb-over": 1
+     }
+    },
+    "ROBUSTNESS": {
+     "denominator": "ROBUSTNESS",
+     "n": 38,
+     "inBand": 22,
+     "failing": 16,
+     "bucketSum": 16,
+     "reconciles": true,
+     "buckets": {
+      "multi:kcal-over+fat-over": 8,
+      "fat-over": 5,
+      "carb-over": 2,
+      "multi:kcal-over+fat-over+carb-over": 1
+     }
+    }
+   },
+   "overside": {
+    "planned": {
+     "axes": {
+      "over": 217,
+      "short": 166,
+      "byAxis": {
+       "fat-over": 95,
+       "kcal-over": 31,
+       "carb-over": 91,
+       "kcal-under": 46,
+       "protein-short": 81,
+       "fat-under": 17,
+       "carb-under": 22
+      },
+      "total": 383,
+      "overPct": 56.7,
+      "exProtein": {
+       "over": 217,
+       "short": 85,
+       "total": 302,
+       "overPct": 71.9
+      }
+     },
+     "days": {
+      "pureOver": 117,
+      "mixed": 53,
+      "pureShort": 34,
+      "noAxis": 0,
+      "total": 204,
+      "emptySlotDays": 16,
+      "pureOverPct": 57.4,
+      "overTouchedPct": 83.3
+     },
+     "slots": {
+      "slots": 3011,
+      "filled": 2820,
+      "axisOver": 2460,
+      "axisShort": 1434,
+      "byAxis": {
+       "fat-over": 939,
+       "protein-over(UNPENALISED)": 458,
+       "carb-over": 1220,
+       "carb-short": 216,
+       "kcal-over": 301,
+       "protein-short": 347,
+       "fat-short": 335,
+       "kcal-short": 78
+      },
+      "gramsOver": {
+       "fat": 10065,
+       "carb": 30173,
+       "protein": 0
+      },
+      "gramsShort": {
+       "fat": 4323,
+       "carb": 7412,
+       "protein": 0
+      },
+      "kcalOver": 33915,
+      "kcalUnder": 20704,
+      "axisTotal": 3894,
+      "overPct": 63.2,
+      "gramsOverPct": {
+       "fat": 70,
+       "carb": 80.3
+      }
+     }
+    },
+    "planned-degenerate": {
+     "axes": {
+      "over": 217,
+      "short": 166,
+      "byAxis": {
+       "fat-over": 95,
+       "kcal-over": 31,
+       "carb-over": 91,
+       "kcal-under": 46,
+       "protein-short": 81,
+       "fat-under": 17,
+       "carb-under": 22
+      },
+      "total": 383,
+      "overPct": 56.7,
+      "exProtein": {
+       "over": 217,
+       "short": 85,
+       "total": 302,
+       "overPct": 71.9
+      }
+     },
+     "days": {
+      "pureOver": 117,
+      "mixed": 53,
+      "pureShort": 34,
+      "noAxis": 0,
+      "total": 204,
+      "emptySlotDays": 16,
+      "pureOverPct": 57.4,
+      "overTouchedPct": 83.3
+     },
+     "slots": {
+      "slots": 3011,
+      "filled": 2820,
+      "axisOver": 2460,
+      "axisShort": 1434,
+      "byAxis": {
+       "fat-over": 939,
+       "protein-over(UNPENALISED)": 458,
+       "carb-over": 1220,
+       "carb-short": 216,
+       "kcal-over": 301,
+       "protein-short": 347,
+       "fat-short": 335,
+       "kcal-short": 78
+      },
+      "gramsOver": {
+       "fat": 10065,
+       "carb": 30173,
+       "protein": 0
+      },
+      "gramsShort": {
+       "fat": 4323,
+       "carb": 7412,
+       "protein": 0
+      },
+      "kcalOver": 33915,
+      "kcalUnder": 20704,
+      "axisTotal": 3894,
+      "overPct": 63.2,
+      "gramsOverPct": {
+       "fat": 70,
+       "carb": 80.3
+      }
+     }
+    },
+    "judged": {
+     "axes": {
+      "over": 217,
+      "short": 102,
+      "byAxis": {
+       "fat-over": 95,
+       "kcal-over": 31,
+       "carb-over": 91,
+       "carb-under": 6,
+       "protein-short": 65,
+       "kcal-under": 30,
+       "fat-under": 1
+      },
+      "total": 319,
+      "overPct": 68,
+      "exProtein": {
+       "over": 217,
+       "short": 37,
+       "total": 254,
+       "overPct": 85.4
+      }
+     },
+     "days": {
+      "pureOver": 117,
+      "mixed": 53,
+      "pureShort": 18,
+      "noAxis": 0,
+      "total": 188,
+      "emptySlotDays": 0,
+      "pureOverPct": 62.2,
+      "overTouchedPct": 90.4
+     },
+     "slots": {
+      "slots": 2954,
+      "filled": 2820,
+      "axisOver": 2460,
+      "axisShort": 1434,
+      "byAxis": {
+       "fat-over": 939,
+       "protein-over(UNPENALISED)": 458,
+       "carb-over": 1220,
+       "carb-short": 216,
+       "kcal-over": 301,
+       "protein-short": 347,
+       "fat-short": 335,
+       "kcal-short": 78
+      },
+      "gramsOver": {
+       "fat": 10065,
+       "carb": 30173,
+       "protein": 0
+      },
+      "gramsShort": {
+       "fat": 4323,
+       "carb": 7412,
+       "protein": 0
+      },
+      "kcalOver": 33915,
+      "kcalUnder": 20704,
+      "axisTotal": 3894,
+      "overPct": 63.2,
+      "gramsOverPct": {
+       "fat": 70,
+       "carb": 80.3
+      }
+     }
+    },
+    "satisfiable-planned": {
+     "axes": {
+      "over": 162,
+      "short": 73,
+      "byAxis": {
+       "fat-over": 82,
+       "kcal-over": 30,
+       "kcal-under": 17,
+       "protein-short": 19,
+       "fat-under": 16,
+       "carb-under": 21,
+       "carb-over": 50
+      },
+      "total": 235,
+      "overPct": 68.9,
+      "exProtein": {
+       "over": 162,
+       "short": 54,
+       "total": 216,
+       "overPct": 75
+      }
+     },
+     "days": {
+      "pureOver": 113,
+      "mixed": 8,
+      "pureShort": 17,
+      "noAxis": 0,
+      "total": 138,
+      "emptySlotDays": 16,
+      "pureOverPct": 81.9,
+      "overTouchedPct": 87.7
+     },
+     "slots": {
+      "slots": 2634,
+      "filled": 2527,
+      "axisOver": 2100,
+      "axisShort": 1077,
+      "byAxis": {
+       "fat-over": 833,
+       "protein-over(UNPENALISED)": 453,
+       "carb-over": 988,
+       "carb-short": 193,
+       "kcal-over": 279,
+       "protein-short": 152,
+       "fat-short": 236,
+       "kcal-short": 43
+      },
+      "gramsOver": {
+       "fat": 8594,
+       "carb": 20495,
+       "protein": 0
+      },
+      "gramsShort": {
+       "fat": 3210,
+       "carb": 6919,
+       "protein": 0
+      },
+      "kcalOver": 30337,
+      "kcalUnder": 9516,
+      "axisTotal": 3177,
+      "overPct": 66.1,
+      "gramsOverPct": {
+       "fat": 72.8,
+       "carb": 74.8
+      }
+     }
+    },
+    "satisfiable-planned-degenerate": {
+     "axes": {
+      "over": 162,
+      "short": 73,
+      "byAxis": {
+       "fat-over": 82,
+       "kcal-over": 30,
+       "kcal-under": 17,
+       "protein-short": 19,
+       "fat-under": 16,
+       "carb-under": 21,
+       "carb-over": 50
+      },
+      "total": 235,
+      "overPct": 68.9,
+      "exProtein": {
+       "over": 162,
+       "short": 54,
+       "total": 216,
+       "overPct": 75
+      }
+     },
+     "days": {
+      "pureOver": 113,
+      "mixed": 8,
+      "pureShort": 17,
+      "noAxis": 0,
+      "total": 138,
+      "emptySlotDays": 16,
+      "pureOverPct": 81.9,
+      "overTouchedPct": 87.7
+     },
+     "slots": {
+      "slots": 2634,
+      "filled": 2527,
+      "axisOver": 2100,
+      "axisShort": 1077,
+      "byAxis": {
+       "fat-over": 833,
+       "protein-over(UNPENALISED)": 453,
+       "carb-over": 988,
+       "carb-short": 193,
+       "kcal-over": 279,
+       "protein-short": 152,
+       "fat-short": 236,
+       "kcal-short": 43
+      },
+      "gramsOver": {
+       "fat": 8594,
+       "carb": 20495,
+       "protein": 0
+      },
+      "gramsShort": {
+       "fat": 3210,
+       "carb": 6919,
+       "protein": 0
+      },
+      "kcalOver": 30337,
+      "kcalUnder": 9516,
+      "axisTotal": 3177,
+      "overPct": 66.1,
+      "gramsOverPct": {
+       "fat": 72.8,
+       "carb": 74.8
+      }
+     }
+    },
+    "satisfiable-judged": {
+     "axes": {
+      "over": 162,
+      "short": 9,
+      "byAxis": {
+       "fat-over": 82,
+       "kcal-over": 30,
+       "carb-over": 50,
+       "carb-under": 5,
+       "protein-short": 3,
+       "kcal-under": 1
+      },
+      "total": 171,
+      "overPct": 94.7,
+      "exProtein": {
+       "over": 162,
+       "short": 6,
+       "total": 168,
+       "overPct": 96.4
+      }
+     },
+     "days": {
+      "pureOver": 113,
+      "mixed": 8,
+      "pureShort": 1,
+      "noAxis": 0,
+      "total": 122,
+      "emptySlotDays": 0,
+      "pureOverPct": 92.6,
+      "overTouchedPct": 99.2
+     },
+     "slots": {
+      "slots": 2577,
+      "filled": 2527,
+      "axisOver": 2100,
+      "axisShort": 1077,
+      "byAxis": {
+       "fat-over": 833,
+       "protein-over(UNPENALISED)": 453,
+       "carb-over": 988,
+       "carb-short": 193,
+       "kcal-over": 279,
+       "protein-short": 152,
+       "fat-short": 236,
+       "kcal-short": 43
+      },
+      "gramsOver": {
+       "fat": 8594,
+       "carb": 20495,
+       "protein": 0
+      },
+      "gramsShort": {
+       "fat": 3210,
+       "carb": 6919,
+       "protein": 0
+      },
+      "kcalOver": 30337,
+      "kcalUnder": 9516,
+      "axisTotal": 3177,
+      "overPct": 66.1,
+      "gramsOverPct": {
+       "fat": 72.8,
+       "carb": 74.8
+      }
+     }
+    }
+   },
+   "b9": {
+    "denominator": "satisfiable-planned−degenerate (553 days)",
+    "cumulativeFatRatioBySlotOrder": [
+     {
+      "slotPosition": 1,
+      "days": 553,
+      "medianDayRatio": 1.023,
+      "pooledRatio": 1.006,
+      "slotTypes": {
+       "meal": 553
+      }
+     },
+     {
+      "slotPosition": 2,
+      "days": 553,
+      "medianDayRatio": 1.028,
+      "pooledRatio": 0.99,
+      "slotTypes": {
+       "meal": 553
+      }
+     },
+     {
+      "slotPosition": 3,
+      "days": 542,
+      "medianDayRatio": 1.023,
+      "pooledRatio": 0.99,
+      "slotTypes": {
+       "meal": 483,
+       "snack": 59
+      }
+     },
+     {
+      "slotPosition": 4,
+      "days": 448,
+      "medianDayRatio": 1.057,
+      "pooledRatio": 1.042,
+      "slotTypes": {
+       "meal": 198,
+       "snack": 250
+      }
+     },
+     {
+      "slotPosition": 5,
+      "days": 299,
+      "medianDayRatio": 1.064,
+      "pooledRatio": 1.118,
+      "slotTypes": {
+       "snack": 211,
+       "meal": 88
+      }
+     },
+     {
+      "slotPosition": 6,
+      "days": 133,
+      "medianDayRatio": 1.073,
+      "pooledRatio": 1.137,
+      "slotTypes": {
+       "snack": 115,
+       "meal": 18
+      }
+     },
+     {
+      "slotPosition": 7,
+      "days": 48,
+      "medianDayRatio": 1.139,
+      "pooledRatio": 1.203,
+      "slotTypes": {
+       "snack": 30,
+       "meal": 18
+      }
+     },
+     {
+      "slotPosition": 8,
+      "days": 28,
+      "medianDayRatio": 1.215,
+      "pooledRatio": 1.245,
+      "slotTypes": {
+       "snack": 10,
+       "meal": 18
+      }
+     },
+     {
+      "slotPosition": 9,
+      "days": 18,
+      "medianDayRatio": 1.368,
+      "pooledRatio": 1.231,
+      "slotTypes": {
+       "meal": 18
+      }
+     },
+     {
+      "slotPosition": 10,
+      "days": 10,
+      "medianDayRatio": 1.886,
+      "pooledRatio": 1.69,
+      "slotTypes": {
+       "snack": 10
+      }
+     },
+     {
+      "slotPosition": 11,
+      "days": 2,
+      "medianDayRatio": 1.392,
+      "pooledRatio": 1.357,
+      "slotTypes": {
+       "snack": 2
+      }
+     }
+    ],
+    "flooredFatTarget": {
+     "note": "slots SOLVED (recipe shipped) whose carry-forward fatTarget = max(0, (budgetFat-achieved)*share) had already floored to 0",
+     "slots": 181,
+     "medianFatShippedG": 10.59,
+     "meanFatShippedG": 14.38,
+     "totalFatShippedG": 2603,
+     "zeroG": 0
+    },
+    "perSlotFatVsNominalShare": [
+     {
+      "slotPosition": 1,
+      "slots": 553,
+      "filled": 537,
+      "medianRatio": 1.026
+     },
+     {
+      "slotPosition": 2,
+      "slots": 553,
+      "filled": 537,
+      "medianRatio": 0.998
+     },
+     {
+      "slotPosition": 3,
+      "slots": 542,
+      "filled": 522,
+      "medianRatio": 1.018
+     },
+     {
+      "slotPosition": 4,
+      "slots": 448,
+      "filled": 425,
+      "medianRatio": 1.23
+     },
+     {
+      "slotPosition": 5,
+      "slots": 299,
+      "filled": 285,
+      "medianRatio": 1.44
+     },
+     {
+      "slotPosition": 6,
+      "slots": 133,
+      "filled": 120,
+      "medianRatio": 1.595
+     },
+     {
+      "slotPosition": 7,
+      "slots": 48,
+      "filled": 43,
+      "medianRatio": 1.763
+     },
+     {
+      "slotPosition": 8,
+      "slots": 28,
+      "filled": 28,
+      "medianRatio": 1.62
+     },
+     {
+      "slotPosition": 9,
+      "slots": 18,
+      "filled": 18,
+      "medianRatio": 1.286
+     },
+     {
+      "slotPosition": 10,
+      "slots": 10,
+      "filled": 10,
+      "medianRatio": 2.526
+     },
+     {
+      "slotPosition": 11,
+      "slots": 2,
+      "filled": 2,
+      "medianRatio": 2.098
+     }
+    ]
+   },
+   "b8": {
+    "denominator": "all slots of the 553 canonical days",
+    "byNominalKcalTarget": [
+     {
+      "band": "0-150",
+      "slots": 126,
+      "unsolved": 22,
+      "unsolvedPct": 17.5,
+      "snackSlots": 119,
+      "mealSlots": 7,
+      "snackShareOfBand": 94.4,
+      "snackUnsolved": 22,
+      "mealUnsolved": 0,
+      "mealOnlyUnsolvedPct": 0,
+      "snackOnlyUnsolvedPct": 18.5,
+      "medianFatOverPctVsEffTarget": 67.8,
+      "medianFatOverPctMealsOnly": 87.7
+     },
+     {
+      "band": "150-250",
+      "slots": 503,
+      "unsolved": 30,
+      "unsolvedPct": 6,
+      "snackSlots": 353,
+      "mealSlots": 150,
+      "snackShareOfBand": 70.2,
+      "snackUnsolved": 30,
+      "mealUnsolved": 0,
+      "mealOnlyUnsolvedPct": 0,
+      "snackOnlyUnsolvedPct": 8.5,
+      "medianFatOverPctVsEffTarget": 65.7,
+      "medianFatOverPctMealsOnly": 28.3
+     },
+     {
+      "band": "250-400",
+      "slots": 615,
+      "unsolved": 23,
+      "unsolvedPct": 3.7,
+      "snackSlots": 199,
+      "mealSlots": 416,
+      "snackShareOfBand": 32.4,
+      "snackUnsolved": 6,
+      "mealUnsolved": 17,
+      "mealOnlyUnsolvedPct": 4.1,
+      "snackOnlyUnsolvedPct": 3,
+      "medianFatOverPctVsEffTarget": 13.6,
+      "medianFatOverPctMealsOnly": 9.6
+     },
+     {
+      "band": "400-500",
+      "slots": 360,
+      "unsolved": 19,
+      "unsolvedPct": 5.3,
+      "snackSlots": 11,
+      "mealSlots": 349,
+      "snackShareOfBand": 3.1,
+      "snackUnsolved": 0,
+      "mealUnsolved": 19,
+      "mealOnlyUnsolvedPct": 5.4,
+      "snackOnlyUnsolvedPct": 0,
+      "medianFatOverPctVsEffTarget": 5.3,
+      "medianFatOverPctMealsOnly": 4.8
+     },
+     {
+      "band": "500-700",
+      "slots": 613,
+      "unsolved": 8,
+      "unsolvedPct": 1.3,
+      "snackSlots": 4,
+      "mealSlots": 609,
+      "snackShareOfBand": 0.7,
+      "snackUnsolved": 0,
+      "mealUnsolved": 8,
+      "mealOnlyUnsolvedPct": 1.3,
+      "snackOnlyUnsolvedPct": 0,
+      "medianFatOverPctVsEffTarget": 1,
+      "medianFatOverPctMealsOnly": 1
+     },
+     {
+      "band": "700+",
+      "slots": 417,
+      "unsolved": 5,
+      "unsolvedPct": 1.2,
+      "snackSlots": 1,
+      "mealSlots": 416,
+      "snackShareOfBand": 0.2,
+      "snackUnsolved": 0,
+      "mealUnsolved": 5,
+      "mealOnlyUnsolvedPct": 1.2,
+      "snackOnlyUnsolvedPct": 0,
+      "medianFatOverPctVsEffTarget": -3,
+      "medianFatOverPctMealsOnly": -3
+     }
+    ],
+    "byEffectiveKcalTarget": [
+     {
+      "band": "0-150",
+      "slots": 238,
+      "unsolved": 19,
+      "unsolvedPct": 8,
+      "snackSlots": 184,
+      "mealSlots": 54,
+      "snackShareOfBand": 77.3,
+      "snackUnsolved": 19,
+      "mealUnsolved": 0,
+      "mealOnlyUnsolvedPct": 0,
+      "snackOnlyUnsolvedPct": 10.3,
+      "medianFatOverPctVsEffTarget": 101,
+      "medianFatOverPctMealsOnly": 172.9
+     },
+     {
+      "band": "150-250",
+      "slots": 389,
+      "unsolved": 23,
+      "unsolvedPct": 5.9,
+      "snackSlots": 275,
+      "mealSlots": 114,
+      "snackShareOfBand": 70.7,
+      "snackUnsolved": 23,
+      "mealUnsolved": 0,
+      "mealOnlyUnsolvedPct": 0,
+      "snackOnlyUnsolvedPct": 8.4,
+      "medianFatOverPctVsEffTarget": 59.2,
+      "medianFatOverPctMealsOnly": 23.3
+     },
+     {
+      "band": "250-400",
+      "slots": 581,
+      "unsolved": 28,
+      "unsolvedPct": 4.8,
+      "snackSlots": 200,
+      "mealSlots": 381,
+      "snackShareOfBand": 34.4,
+      "snackUnsolved": 16,
+      "mealUnsolved": 12,
+      "mealOnlyUnsolvedPct": 3.1,
+      "snackOnlyUnsolvedPct": 8,
+      "medianFatOverPctVsEffTarget": 13.9,
+      "medianFatOverPctMealsOnly": 9.3
+     },
+     {
+      "band": "400-500",
+      "slots": 372,
+      "unsolved": 5,
+      "unsolvedPct": 1.3,
+      "snackSlots": 12,
+      "mealSlots": 360,
+      "snackShareOfBand": 3.2,
+      "snackUnsolved": 0,
+      "mealUnsolved": 5,
+      "mealOnlyUnsolvedPct": 1.4,
+      "snackOnlyUnsolvedPct": 0,
+      "medianFatOverPctVsEffTarget": 5.9,
+      "medianFatOverPctMealsOnly": 5.9
+     },
+     {
+      "band": "500-700",
+      "slots": 636,
+      "unsolved": 23,
+      "unsolvedPct": 3.6,
+      "snackSlots": 14,
+      "mealSlots": 622,
+      "snackShareOfBand": 2.2,
+      "snackUnsolved": 0,
+      "mealUnsolved": 23,
+      "mealOnlyUnsolvedPct": 3.7,
+      "snackOnlyUnsolvedPct": 0,
+      "medianFatOverPctVsEffTarget": 0.7,
+      "medianFatOverPctMealsOnly": 0.7
+     },
+     {
+      "band": "700+",
+      "slots": 418,
+      "unsolved": 9,
+      "unsolvedPct": 2.2,
+      "snackSlots": 2,
+      "mealSlots": 416,
+      "snackShareOfBand": 0.5,
+      "snackUnsolved": 0,
+      "mealUnsolved": 9,
+      "mealOnlyUnsolvedPct": 2.2,
+      "snackOnlyUnsolvedPct": 0,
+      "medianFatOverPctVsEffTarget": -3,
+      "medianFatOverPctMealsOnly": -3
+     }
+    ]
+   },
+   "b6": {
+    "denominator": "shipped (filled) slots of the 553 canonical days",
+    "shippedSlots": 2527,
+    "fallbackSlots": 386,
+    "fallbackPctOfShipped": 15.3,
+    "totalFatOverageG": 8594,
+    "fallbackFatOverageG": 3452,
+    "fallbackShareOfFatOveragePct": 40.2,
+    "fatOveragePerFallbackSlotG": 8.94,
+    "fatOveragePerOtherSlotG": 2.4,
+    "medianFatOverageFallbackG": 6.64,
+    "medianFatOverageOtherG": 0.73,
+    "kcalOveragePerFallbackSlot": 79,
+    "kcalOveragePerOtherSlot": 6
+   },
+   "b5": {
+    "denominator": "satisfiable-planned−degenerate (553 days)",
+    "proteinOver12PctOfMid": {
+     "days": 32,
+     "n": 553,
+     "pct": 5.8,
+     "pctOfFilledDays": 6,
+     "filledDays": 537
+    },
+    "medianProteinVsMidPct": 0.1,
+    "p90ProteinVsMidPct": 6.8,
+    "medianFatVs28pctEAskPct": -3.9,
+    "medianFatVsFatMidPct": 7.2,
+    "aPrioriGeometry": {
+     "method": "share of the 910-recipe library whose fat-per-kcal density falls BELOW the day's graded low edge vs ABOVE its graded high edge (D3 window: fatLo-0.25*fatMid .. fatHi+0.25*fatMid), averaged over the 553 days. Library-wide, not per-persona pool.",
+     "meanShareLowOnlyPct": 15.13,
+     "meanShareHighOnlyPct": 54.96
+    }
+   },
+   "i7": {
+    "denominator": "all slots of the 553 canonical days; personas measured over the 218 satisfiable personas present",
+    "poolMaxMethod": "max / p99 of (recipe protein g per kcal) over W1-5's per-DIET-STYLE pool (allergen stacking NOT applied, so these bounds are GENEROUS — the real per-persona pool is smaller and the true counts can only be higher)",
+    "slots": 2634,
+    "ratioEffOverNominalDensity": {
+     "median": 1,
+     "p90": 1.028,
+     "p99": 1.419,
+     "max": 1.857,
+     "theoreticalMax": 1.857
+    },
+    "slotsWithRatioAbove1_2": 74,
+    "slotsWithRatioAbove1_5": 21,
+    "personas": 217,
+    "nominalAskAbovePoolMaxPersonas": 1,
+    "carryAskAbovePoolMaxPersonas": 11,
+    "carryAskAbovePoolP99Personas": 27,
+    "slotsAbovePoolMax": 29,
+    "slotsAbovePoolP99": 83,
+    "poolMaxPer100kcal": {
+     "none": {
+      "n": 910,
+      "maxProteinPer100kcal": 22.18,
+      "p99": 12.8
+     },
+     "mediterranean": {
+      "n": 814,
+      "maxProteinPer100kcal": 22.18,
+      "p99": 12.8
+     },
+     "vegetarian": {
+      "n": 401,
+      "maxProteinPer100kcal": 12.27,
+      "p99": 11.35
+     },
+     "vegan": {
+      "n": 169,
+      "maxProteinPer100kcal": 12.27,
+      "p99": 12.09
+     },
+     "paleo": {
+      "n": 167,
+      "maxProteinPer100kcal": 22.18,
+      "p99": 13.23
+     },
+     "keto": {
+      "n": 53,
+      "maxProteinPer100kcal": 22.18,
+      "p99": 22.18
+     },
+     "carnivore": {
+      "n": 3,
+      "maxProteinPer100kcal": 8.28,
+      "p99": 8.28
+     },
+     "halal": {
+      "n": 758,
+      "maxProteinPer100kcal": 22.18,
+      "p99": 12.94
+     },
+     "kosher": {
+      "n": 680,
+      "maxProteinPer100kcal": 14.53,
+      "p99": 12.27
+     }
+    },
+    "worstSample": [
+     {
+      "dayKey": "p022#0",
+      "slot": 4,
+      "ratio": 1.857,
+      "dEff": 14.803,
+      "poolMax": 14.527
+     },
+     {
+      "dayKey": "p034#4",
+      "slot": 3,
+      "ratio": 1.857,
+      "dEff": 17.328,
+      "poolMax": 14.527
+     },
+     {
+      "dayKey": "p034#6",
+      "slot": 3,
+      "ratio": 1.857,
+      "dEff": 17.328,
+      "poolMax": 14.527
+     },
+     {
+      "dayKey": "p036#4",
+      "slot": 4,
+      "ratio": 1.857,
+      "dEff": 16.139,
+      "poolMax": 22.184
+     },
+     {
+      "dayKey": "p086#5",
+      "slot": 5,
+      "ratio": 1.857,
+      "dEff": 19.757,
+      "poolMax": 12.275
+     }
+    ]
+   },
+   "d7": {
+    "denominatorNote": "classifyBinding is HORIZON-level: one key per persona-plan. Reported over personas AND over the days those plans cover.",
+    "personas": 250,
+    "days": 640,
+    "horizonKeyHistogram": {
+     "snack-pool": 21,
+     "null": 172,
+     "macro-composition": 43,
+     "meal-pool": 1,
+     "pool-depth": 1,
+     "protein-density": 10,
+     "variety-cap": 1,
+     "max-prep": 1
+    },
+    "proteinDensityPersonas": 10,
+    "proteinDensityDays": 28,
+    "misclassifiedPersonas": 10,
+    "misclassifiedDays": 28,
+    "ratePersonasAll": 4,
+    "rateDaysAll": 4.4,
+    "ratePersonasWithAMiss": 12.7,
+    "rateDaysOfPlansWithAMiss": 8.9,
+    "plansWithAMiss": 79,
+    "daysOfPlansWithAMiss": 313,
+    "shareOfProteinDensityPlansThatAreWrong": 100,
+    "examples": [
+     {
+      "personaId": "p049",
+      "diet": "vegetarian",
+      "days": 1,
+      "fatOff": 0,
+      "carbOff": 1,
+      "kcalOff": 0,
+      "protShort": 0,
+      "emittedKey": "protein-density",
+      "correctedKey": "macro-composition"
+     },
+     {
+      "personaId": "p051",
+      "diet": "vegan",
+      "days": 7,
+      "fatOff": 3,
+      "carbOff": 6,
+      "kcalOff": 0,
+      "protShort": 7,
+      "emittedKey": "protein-density",
+      "correctedKey": "macro-composition"
+     },
+     {
+      "personaId": "p071",
+      "diet": "vegetarian",
+      "days": 1,
+      "fatOff": 0,
+      "carbOff": 1,
+      "kcalOff": 0,
+      "protShort": 0,
+      "emittedKey": "protein-density",
+      "correctedKey": "macro-composition"
+     },
+     {
+      "personaId": "p086",
+      "diet": "vegetarian",
+      "days": 7,
+      "fatOff": 0,
+      "carbOff": 7,
+      "kcalOff": 1,
+      "protShort": 0,
+      "emittedKey": "protein-density",
+      "correctedKey": "macro-composition"
+     },
+     {
+      "personaId": "p111",
+      "diet": "carnivore",
+      "days": 1,
+      "fatOff": 1,
+      "carbOff": 1,
+      "kcalOff": 0,
+      "protShort": 0,
+      "emittedKey": "protein-density",
+      "correctedKey": "macro-composition"
+     },
+     {
+      "personaId": "p127",
+      "diet": "vegetarian",
+      "days": 1,
+      "fatOff": 0,
+      "carbOff": 1,
+      "kcalOff": 0,
+      "protShort": 0,
+      "emittedKey": "protein-density",
+      "correctedKey": "macro-composition"
+     }
+    ]
+   },
+   "b1": {
+    "planned": {
+     "fatOver": 95,
+     "fatShort": 17,
+     "carbOver": 91,
+     "carbShort": 22,
+     "kcalOver": 31,
+     "kcalShort": 46,
+     "proteinShort": 81,
+     "fatOnly": 49,
+     "fatOnlyOver": 49
+    },
+    "planned-degenerate": {
+     "fatOver": 95,
+     "fatShort": 17,
+     "carbOver": 91,
+     "carbShort": 22,
+     "kcalOver": 31,
+     "kcalShort": 46,
+     "proteinShort": 81,
+     "fatOnly": 49,
+     "fatOnlyOver": 49
+    },
+    "judged": {
+     "fatOver": 95,
+     "fatShort": 1,
+     "carbOver": 91,
+     "carbShort": 6,
+     "kcalOver": 31,
+     "kcalShort": 30,
+     "proteinShort": 65,
+     "fatOnly": 49,
+     "fatOnlyOver": 49
+    },
+    "satisfiable-planned": {
+     "fatOver": 82,
+     "fatShort": 16,
+     "carbOver": 50,
+     "carbShort": 21,
+     "kcalOver": 30,
+     "kcalShort": 17,
+     "proteinShort": 19,
+     "fatOnly": 48,
+     "fatOnlyOver": 48
+    },
+    "satisfiable-planned-degenerate": {
+     "fatOver": 82,
+     "fatShort": 16,
+     "carbOver": 50,
+     "carbShort": 21,
+     "kcalOver": 30,
+     "kcalShort": 17,
+     "proteinShort": 19,
+     "fatOnly": 48,
+     "fatOnlyOver": 48
+    },
+    "satisfiable-judged": {
+     "fatOver": 82,
+     "fatShort": 0,
+     "carbOver": 50,
+     "carbShort": 5,
+     "kcalOver": 30,
+     "kcalShort": 1,
+     "proteinShort": 3,
+     "fatOnly": 48,
+     "fatOnlyOver": 48
+    }
+   },
+   "b10": {
+    "canonical553": {
+     "axes": {
+      "over": 162,
+      "short": 73,
+      "byAxis": {
+       "fat-over": 82,
+       "kcal-over": 30,
+       "kcal-under": 17,
+       "protein-short": 19,
+       "fat-under": 16,
+       "carb-under": 21,
+       "carb-over": 50
+      },
+      "total": 235,
+      "overPct": 68.9,
+      "exProtein": {
+       "over": 162,
+       "short": 54,
+       "total": 216,
+       "overPct": 75
+      }
+     },
+     "days": {
+      "pureOver": 113,
+      "mixed": 8,
+      "pureShort": 17,
+      "noAxis": 0,
+      "total": 138,
+      "emptySlotDays": 16,
+      "pureOverPct": 81.9,
+      "overTouchedPct": 87.7
+     },
+     "slots": {
+      "slots": 2634,
+      "filled": 2527,
+      "axisOver": 2100,
+      "axisShort": 1077,
+      "byAxis": {
+       "fat-over": 833,
+       "protein-over(UNPENALISED)": 453,
+       "carb-over": 988,
+       "carb-short": 193,
+       "kcal-over": 279,
+       "protein-short": 152,
+       "fat-short": 236,
+       "kcal-short": 43
+      },
+      "gramsOver": {
+       "fat": 8594,
+       "carb": 20495,
+       "protein": 0
+      },
+      "gramsShort": {
+       "fat": 3210,
+       "carb": 6919,
+       "protein": 0
+      },
+      "kcalOver": 30337,
+      "kcalUnder": 9516,
+      "axisTotal": 3177,
+      "overPct": 66.1,
+      "gramsOverPct": {
+       "fat": 72.8,
+       "carb": 74.8
+      }
+     }
+    }
+   }
+  },
+  "route-s20260730": {
+   "file": "fleet/out/W1-2/daydump-route-s20260730.jsonl",
+   "seed": 20260730,
+   "poolShape": "route (applyFilterStack ON)",
+   "dbSha256": "d9037dce9754b4524943069fff7e0f3e396598c108426f370b0a189458b623a1",
+   "gitSha": "8cd1480c085cb6860025851b370925d56b963bc5",
+   "replayCheck": {
+    "days": 640,
+    "replayFailures": 1,
+    "slotOrderFailures": 0,
+    "warningKcalTargets": 379,
+    "matched": 379,
+    "mismatchRate": 0,
+    "warningProteinTargets": 348,
+    "proteinMatched": 348,
+    "worstMismatches": []
+   },
+   "denominators": {
+    "planned": 640,
+    "planned-degenerate": 639,
+    "judged": 623,
+    "satisfiable-planned": 554,
+    "satisfiable-planned-degenerate": 553,
+    "satisfiable-judged": 537
+   },
+   "levels": {
+    "planned": {
+     "n": 640,
+     "inBand": 439,
+     "pct": 68.6
+    },
+    "planned-degenerate": {
+     "n": 639,
+     "inBand": 439,
+     "pct": 68.7
+    },
+    "judged": {
+     "n": 623,
+     "inBand": 439,
+     "pct": 70.5
+    },
+    "satisfiable-planned": {
+     "n": 554,
+     "inBand": 418,
+     "pct": 75.5
+    },
+    "satisfiable-planned-degenerate": {
+     "n": 553,
+     "inBand": 418,
+     "pct": 75.6
+    },
+    "satisfiable-judged": {
+     "n": 537,
+     "inBand": 418,
+     "pct": 77.8
+    }
+   },
+   "buckets": {
+    "canonical": {
+     "denominator": "satisfiable-planned−degenerate (553)",
+     "n": 553,
+     "inBand": 418,
+     "failing": 135,
+     "bucketSum": 135,
+     "reconciles": true,
+     "buckets": {
+      "fat-over": 54,
+      "carb-over": 32,
+      "empty-slot": 16,
+      "multi:kcal-over+fat-over": 14,
+      "multi:kcal-over+fat-over+carb-over": 6,
+      "multi:fat-over+carb-under": 4,
+      "multi:fat-over+carb-over": 3,
+      "multi:protein-short+carb-over": 2,
+      "multi:kcal-over+protein-short+carb-over": 1,
+      "kcal-over": 1,
+      "multi:kcal-under+carb-under": 1,
+      "kcal-under": 1
+     }
+    },
+    "satisfiableJudged": {
+     "denominator": "satisfiable-judged (537)",
+     "n": 537,
+     "inBand": 418,
+     "failing": 119,
+     "bucketSum": 119,
+     "reconciles": true,
+     "buckets": {
+      "fat-over": 54,
+      "carb-over": 32,
+      "multi:kcal-over+fat-over": 14,
+      "multi:kcal-over+fat-over+carb-over": 6,
+      "multi:fat-over+carb-under": 4,
+      "multi:fat-over+carb-over": 3,
+      "multi:protein-short+carb-over": 2,
+      "multi:kcal-over+protein-short+carb-over": 1,
+      "kcal-over": 1,
+      "multi:kcal-under+carb-under": 1,
+      "kcal-under": 1
+     }
+    },
+    "planned": {
+     "denominator": "planned (640)",
+     "n": 640,
+     "inBand": 439,
+     "failing": 201,
+     "bucketSum": 201,
+     "reconciles": true,
+     "buckets": {
+      "fat-over": 55,
+      "carb-over": 34,
+      "multi:protein-short+carb-over": 20,
+      "empty-slot": 16,
+      "multi:kcal-under+protein-short+carb-over": 15,
+      "multi:kcal-over+fat-over": 14,
+      "multi:kcal-under+protein-short": 14,
+      "multi:kcal-over+fat-over+carb-over": 6,
+      "multi:protein-short+fat-over+carb-over": 6,
+      "multi:fat-over+carb-under": 4,
+      "multi:fat-over+carb-over": 3,
+      "multi:protein-short+fat-over": 3,
+      "multi:kcal-over+protein-short+fat-over+carb-over": 2,
+      "multi:kcal-under+protein-short+fat-over": 2,
+      "multi:kcal-over+protein-short+carb-over": 1,
+      "protein-short": 1,
+      "kcal-over": 1,
+      "multi:kcal-under+protein-short+fat-under+carb-under": 1,
+      "multi:kcal-under+carb-under": 1,
+      "kcal-under": 1,
+      "degenerate": 1
+     }
+    },
+    "plannedMinusDegenerate": {
+     "denominator": "planned−degenerate (639)",
+     "n": 639,
+     "inBand": 439,
+     "failing": 200,
+     "bucketSum": 200,
+     "reconciles": true,
+     "buckets": {
+      "fat-over": 55,
+      "carb-over": 34,
+      "multi:protein-short+carb-over": 20,
+      "empty-slot": 16,
+      "multi:kcal-under+protein-short+carb-over": 15,
+      "multi:kcal-over+fat-over": 14,
+      "multi:kcal-under+protein-short": 14,
+      "multi:kcal-over+fat-over+carb-over": 6,
+      "multi:protein-short+fat-over+carb-over": 6,
+      "multi:fat-over+carb-under": 4,
+      "multi:fat-over+carb-over": 3,
+      "multi:protein-short+fat-over": 3,
+      "multi:kcal-over+protein-short+fat-over+carb-over": 2,
+      "multi:kcal-under+protein-short+fat-over": 2,
+      "multi:kcal-over+protein-short+carb-over": 1,
+      "protein-short": 1,
+      "kcal-over": 1,
+      "multi:kcal-under+protein-short+fat-under+carb-under": 1,
+      "multi:kcal-under+carb-under": 1,
+      "kcal-under": 1
+     }
+    }
+   },
+   "bucketsPerDiet": {
+    "none": {
+     "denominator": "none",
+     "n": 275,
+     "inBand": 244,
+     "failing": 31,
+     "bucketSum": 31,
+     "reconciles": true,
+     "buckets": {
+      "fat-over": 21,
+      "multi:kcal-over+fat-over": 3,
+      "carb-over": 3,
+      "multi:kcal-over+fat-over+carb-over": 3,
+      "kcal-over": 1
+     }
+    },
+    "keto": {
+     "denominator": "keto",
+     "n": 58,
+     "inBand": 35,
+     "failing": 23,
+     "bucketSum": 23,
+     "reconciles": true,
+     "buckets": {
+      "empty-slot": 11,
+      "carb-over": 10,
+      "kcal-under": 1,
+      "multi:kcal-over+fat-over": 1
+     }
+    },
+    "vegetarian": {
+     "denominator": "vegetarian",
+     "n": 57,
+     "inBand": 34,
+     "failing": 23,
+     "bucketSum": 23,
+     "reconciles": true,
+     "buckets": {
+      "carb-over": 17,
+      "fat-over": 4,
+      "multi:fat-over+carb-over": 2
+     }
+    },
+    "mediterranean": {
+     "denominator": "mediterranean",
+     "n": 49,
+     "inBand": 44,
+     "failing": 5,
+     "bucketSum": 5,
+     "reconciles": true,
+     "buckets": {
+      "fat-over": 3,
+      "multi:protein-short+carb-over": 1,
+      "multi:kcal-over+fat-over+carb-over": 1
+     }
+    },
+    "kosher": {
+     "denominator": "kosher",
+     "n": 35,
+     "inBand": 18,
+     "failing": 17,
+     "bucketSum": 17,
+     "reconciles": true,
+     "buckets": {
+      "fat-over": 9,
+      "multi:kcal-over+fat-over": 5,
+      "multi:kcal-over+fat-over+carb-over": 1,
+      "carb-over": 1,
+      "multi:kcal-over+protein-short+carb-over": 1
+     }
+    },
+    "vegan": {
+     "denominator": "vegan",
+     "n": 35,
+     "inBand": 21,
+     "failing": 14,
+     "bucketSum": 14,
+     "reconciles": true,
+     "buckets": {
+      "fat-over": 10,
+      "multi:kcal-over+fat-over": 2,
+      "multi:kcal-over+fat-over+carb-over": 1,
+      "multi:fat-over+carb-over": 1
+     }
+    },
+    "paleo": {
+     "denominator": "paleo",
+     "n": 24,
+     "inBand": 10,
+     "failing": 14,
+     "bucketSum": 14,
+     "reconciles": true,
+     "buckets": {
+      "fat-over": 7,
+      "multi:fat-over+carb-under": 2,
+      "multi:kcal-over+fat-over": 2,
+      "carb-over": 1,
+      "multi:kcal-under+carb-under": 1,
+      "multi:protein-short+carb-over": 1
+     }
+    },
+    "halal": {
+     "denominator": "halal",
+     "n": 12,
+     "inBand": 12,
+     "failing": 0,
+     "bucketSum": 0,
+     "reconciles": true,
+     "buckets": {}
+    },
+    "carnivore": {
+     "denominator": "carnivore",
+     "n": 8,
+     "inBand": 0,
+     "failing": 8,
+     "bucketSum": 8,
+     "reconciles": true,
+     "buckets": {
+      "empty-slot": 5,
+      "multi:fat-over+carb-under": 2,
+      "multi:kcal-over+fat-over": 1
+     }
+    }
+   },
+   "bucketsPerTier": {
+    "EASY": {
+     "denominator": "EASY",
+     "n": 340,
+     "inBand": 271,
+     "failing": 69,
+     "bucketSum": 69,
+     "reconciles": true,
+     "buckets": {
+      "fat-over": 31,
+      "carb-over": 12,
+      "empty-slot": 9,
+      "multi:kcal-over+fat-over": 5,
+      "multi:fat-over+carb-under": 4,
+      "multi:fat-over+carb-over": 3,
+      "multi:kcal-over+fat-over+carb-over": 2,
+      "multi:kcal-under+carb-under": 1,
+      "kcal-under": 1,
+      "multi:protein-short+carb-over": 1
+     }
+    },
+    "HARD": {
+     "denominator": "HARD",
+     "n": 175,
+     "inBand": 126,
+     "failing": 49,
+     "bucketSum": 49,
+     "reconciles": true,
+     "buckets": {
+      "carb-over": 18,
+      "fat-over": 14,
+      "empty-slot": 7,
+      "multi:kcal-over+fat-over": 4,
+      "multi:kcal-over+fat-over+carb-over": 3,
+      "multi:kcal-over+protein-short+carb-over": 1,
+      "kcal-over": 1,
+      "multi:protein-short+carb-over": 1
+     }
+    },
+    "ROBUSTNESS": {
+     "denominator": "ROBUSTNESS",
+     "n": 38,
+     "inBand": 21,
+     "failing": 17,
+     "bucketSum": 17,
+     "reconciles": true,
+     "buckets": {
+      "fat-over": 9,
+      "multi:kcal-over+fat-over": 5,
+      "carb-over": 2,
+      "multi:kcal-over+fat-over+carb-over": 1
+     }
+    }
+   },
+   "overside": {
+    "planned": {
+     "axes": {
+      "over": 206,
+      "short": 170,
+      "byAxis": {
+       "kcal-over": 24,
+       "fat-over": 95,
+       "carb-over": 87,
+       "kcal-under": 50,
+       "protein-short": 81,
+       "fat-under": 17,
+       "carb-under": 22
+      },
+      "total": 376,
+      "overPct": 54.8,
+      "exProtein": {
+       "over": 206,
+       "short": 89,
+       "total": 295,
+       "overPct": 69.8
+      }
+     },
+     "days": {
+      "pureOver": 113,
+      "mixed": 53,
+      "pureShort": 34,
+      "noAxis": 0,
+      "total": 200,
+      "emptySlotDays": 16,
+      "pureOverPct": 56.5,
+      "overTouchedPct": 83
+     },
+     "slots": {
+      "slots": 3011,
+      "filled": 2819,
+      "axisOver": 2473,
+      "axisShort": 1475,
+      "byAxis": {
+       "kcal-over": 310,
+       "fat-over": 936,
+       "carb-over": 1227,
+       "protein-over(UNPENALISED)": 458,
+       "carb-short": 236,
+       "fat-short": 364,
+       "protein-short": 348,
+       "kcal-short": 69
+      },
+      "gramsOver": {
+       "fat": 9871,
+       "carb": 30335,
+       "protein": 0
+      },
+      "gramsShort": {
+       "fat": 4401,
+       "carb": 8237,
+       "protein": 0
+      },
+      "kcalOver": 33632,
+      "kcalUnder": 20161,
+      "axisTotal": 3948,
+      "overPct": 62.6,
+      "gramsOverPct": {
+       "fat": 69.2,
+       "carb": 78.6
+      }
+     }
+    },
+    "planned-degenerate": {
+     "axes": {
+      "over": 206,
+      "short": 170,
+      "byAxis": {
+       "kcal-over": 24,
+       "fat-over": 95,
+       "carb-over": 87,
+       "kcal-under": 50,
+       "protein-short": 81,
+       "fat-under": 17,
+       "carb-under": 22
+      },
+      "total": 376,
+      "overPct": 54.8,
+      "exProtein": {
+       "over": 206,
+       "short": 89,
+       "total": 295,
+       "overPct": 69.8
+      }
+     },
+     "days": {
+      "pureOver": 113,
+      "mixed": 53,
+      "pureShort": 34,
+      "noAxis": 0,
+      "total": 200,
+      "emptySlotDays": 16,
+      "pureOverPct": 56.5,
+      "overTouchedPct": 83
+     },
+     "slots": {
+      "slots": 3011,
+      "filled": 2819,
+      "axisOver": 2473,
+      "axisShort": 1475,
+      "byAxis": {
+       "kcal-over": 310,
+       "fat-over": 936,
+       "carb-over": 1227,
+       "protein-over(UNPENALISED)": 458,
+       "carb-short": 236,
+       "fat-short": 364,
+       "protein-short": 348,
+       "kcal-short": 69
+      },
+      "gramsOver": {
+       "fat": 9871,
+       "carb": 30335,
+       "protein": 0
+      },
+      "gramsShort": {
+       "fat": 4401,
+       "carb": 8237,
+       "protein": 0
+      },
+      "kcalOver": 33632,
+      "kcalUnder": 20161,
+      "axisTotal": 3948,
+      "overPct": 62.6,
+      "gramsOverPct": {
+       "fat": 69.2,
+       "carb": 78.6
+      }
+     }
+    },
+    "judged": {
+     "axes": {
+      "over": 206,
+      "short": 106,
+      "byAxis": {
+       "kcal-over": 24,
+       "fat-over": 95,
+       "carb-over": 87,
+       "carb-under": 6,
+       "protein-short": 65,
+       "kcal-under": 34,
+       "fat-under": 1
+      },
+      "total": 312,
+      "overPct": 66,
+      "exProtein": {
+       "over": 206,
+       "short": 41,
+       "total": 247,
+       "overPct": 83.4
+      }
+     },
+     "days": {
+      "pureOver": 113,
+      "mixed": 53,
+      "pureShort": 18,
+      "noAxis": 0,
+      "total": 184,
+      "emptySlotDays": 0,
+      "pureOverPct": 61.4,
+      "overTouchedPct": 90.2
+     },
+     "slots": {
+      "slots": 2954,
+      "filled": 2819,
+      "axisOver": 2473,
+      "axisShort": 1475,
+      "byAxis": {
+       "kcal-over": 310,
+       "fat-over": 936,
+       "carb-over": 1227,
+       "protein-over(UNPENALISED)": 458,
+       "carb-short": 236,
+       "fat-short": 364,
+       "protein-short": 348,
+       "kcal-short": 69
+      },
+      "gramsOver": {
+       "fat": 9871,
+       "carb": 30335,
+       "protein": 0
+      },
+      "gramsShort": {
+       "fat": 4401,
+       "carb": 8237,
+       "protein": 0
+      },
+      "kcalOver": 33632,
+      "kcalUnder": 20161,
+      "axisTotal": 3948,
+      "overPct": 62.6,
+      "gramsOverPct": {
+       "fat": 69.2,
+       "carb": 78.6
+      }
+     }
+    },
+    "satisfiable-planned": {
+     "axes": {
+      "over": 147,
+      "short": 74,
+      "byAxis": {
+       "kcal-over": 22,
+       "fat-over": 81,
+       "kcal-under": 18,
+       "protein-short": 19,
+       "fat-under": 16,
+       "carb-under": 21,
+       "carb-over": 44
+      },
+      "total": 221,
+      "overPct": 66.5,
+      "exProtein": {
+       "over": 147,
+       "short": 55,
+       "total": 202,
+       "overPct": 72.8
+      }
+     },
+     "days": {
+      "pureOver": 110,
+      "mixed": 7,
+      "pureShort": 18,
+      "noAxis": 0,
+      "total": 135,
+      "emptySlotDays": 16,
+      "pureOverPct": 81.5,
+      "overTouchedPct": 86.7
+     },
+     "slots": {
+      "slots": 2634,
+      "filled": 2526,
+      "axisOver": 2114,
+      "axisShort": 1117,
+      "byAxis": {
+       "kcal-over": 288,
+       "fat-over": 833,
+       "carb-over": 993,
+       "protein-over(UNPENALISED)": 452,
+       "carb-short": 209,
+       "fat-short": 267,
+       "protein-short": 153,
+       "kcal-short": 36
+      },
+      "gramsOver": {
+       "fat": 8420,
+       "carb": 20462,
+       "protein": 0
+      },
+      "gramsShort": {
+       "fat": 3344,
+       "carb": 7644,
+       "protein": 0
+      },
+      "kcalOver": 30445,
+      "kcalUnder": 9975,
+      "axisTotal": 3231,
+      "overPct": 65.4,
+      "gramsOverPct": {
+       "fat": 71.6,
+       "carb": 72.8
+      }
+     }
+    },
+    "satisfiable-planned-degenerate": {
+     "axes": {
+      "over": 147,
+      "short": 74,
+      "byAxis": {
+       "kcal-over": 22,
+       "fat-over": 81,
+       "kcal-under": 18,
+       "protein-short": 19,
+       "fat-under": 16,
+       "carb-under": 21,
+       "carb-over": 44
+      },
+      "total": 221,
+      "overPct": 66.5,
+      "exProtein": {
+       "over": 147,
+       "short": 55,
+       "total": 202,
+       "overPct": 72.8
+      }
+     },
+     "days": {
+      "pureOver": 110,
+      "mixed": 7,
+      "pureShort": 18,
+      "noAxis": 0,
+      "total": 135,
+      "emptySlotDays": 16,
+      "pureOverPct": 81.5,
+      "overTouchedPct": 86.7
+     },
+     "slots": {
+      "slots": 2634,
+      "filled": 2526,
+      "axisOver": 2114,
+      "axisShort": 1117,
+      "byAxis": {
+       "kcal-over": 288,
+       "fat-over": 833,
+       "carb-over": 993,
+       "protein-over(UNPENALISED)": 452,
+       "carb-short": 209,
+       "fat-short": 267,
+       "protein-short": 153,
+       "kcal-short": 36
+      },
+      "gramsOver": {
+       "fat": 8420,
+       "carb": 20462,
+       "protein": 0
+      },
+      "gramsShort": {
+       "fat": 3344,
+       "carb": 7644,
+       "protein": 0
+      },
+      "kcalOver": 30445,
+      "kcalUnder": 9975,
+      "axisTotal": 3231,
+      "overPct": 65.4,
+      "gramsOverPct": {
+       "fat": 71.6,
+       "carb": 72.8
+      }
+     }
+    },
+    "satisfiable-judged": {
+     "axes": {
+      "over": 147,
+      "short": 10,
+      "byAxis": {
+       "kcal-over": 22,
+       "fat-over": 81,
+       "carb-over": 44,
+       "carb-under": 5,
+       "protein-short": 3,
+       "kcal-under": 2
+      },
+      "total": 157,
+      "overPct": 93.6,
+      "exProtein": {
+       "over": 147,
+       "short": 7,
+       "total": 154,
+       "overPct": 95.5
+      }
+     },
+     "days": {
+      "pureOver": 110,
+      "mixed": 7,
+      "pureShort": 2,
+      "noAxis": 0,
+      "total": 119,
+      "emptySlotDays": 0,
+      "pureOverPct": 92.4,
+      "overTouchedPct": 98.3
+     },
+     "slots": {
+      "slots": 2577,
+      "filled": 2526,
+      "axisOver": 2114,
+      "axisShort": 1117,
+      "byAxis": {
+       "kcal-over": 288,
+       "fat-over": 833,
+       "carb-over": 993,
+       "protein-over(UNPENALISED)": 452,
+       "carb-short": 209,
+       "fat-short": 267,
+       "protein-short": 153,
+       "kcal-short": 36
+      },
+      "gramsOver": {
+       "fat": 8420,
+       "carb": 20462,
+       "protein": 0
+      },
+      "gramsShort": {
+       "fat": 3344,
+       "carb": 7644,
+       "protein": 0
+      },
+      "kcalOver": 30445,
+      "kcalUnder": 9975,
+      "axisTotal": 3231,
+      "overPct": 65.4,
+      "gramsOverPct": {
+       "fat": 71.6,
+       "carb": 72.8
+      }
+     }
+    }
+   },
+   "b9": {
+    "denominator": "satisfiable-planned−degenerate (553 days)",
+    "cumulativeFatRatioBySlotOrder": [
+     {
+      "slotPosition": 1,
+      "days": 553,
+      "medianDayRatio": 1.004,
+      "pooledRatio": 0.977,
+      "slotTypes": {
+       "meal": 553
+      }
+     },
+     {
+      "slotPosition": 2,
+      "days": 553,
+      "medianDayRatio": 1.024,
+      "pooledRatio": 0.979,
+      "slotTypes": {
+       "meal": 553
+      }
+     },
+     {
+      "slotPosition": 3,
+      "days": 542,
+      "medianDayRatio": 1.031,
+      "pooledRatio": 0.987,
+      "slotTypes": {
+       "meal": 483,
+       "snack": 59
+      }
+     },
+     {
+      "slotPosition": 4,
+      "days": 448,
+      "medianDayRatio": 1.05,
+      "pooledRatio": 1.04,
+      "slotTypes": {
+       "meal": 198,
+       "snack": 250
+      }
+     },
+     {
+      "slotPosition": 5,
+      "days": 299,
+      "medianDayRatio": 1.071,
+      "pooledRatio": 1.12,
+      "slotTypes": {
+       "snack": 211,
+       "meal": 88
+      }
+     },
+     {
+      "slotPosition": 6,
+      "days": 133,
+      "medianDayRatio": 1.091,
+      "pooledRatio": 1.151,
+      "slotTypes": {
+       "snack": 115,
+       "meal": 18
+      }
+     },
+     {
+      "slotPosition": 7,
+      "days": 48,
+      "medianDayRatio": 1.174,
+      "pooledRatio": 1.212,
+      "slotTypes": {
+       "snack": 30,
+       "meal": 18
+      }
+     },
+     {
+      "slotPosition": 8,
+      "days": 28,
+      "medianDayRatio": 1.263,
+      "pooledRatio": 1.232,
+      "slotTypes": {
+       "snack": 10,
+       "meal": 18
+      }
+     },
+     {
+      "slotPosition": 9,
+      "days": 18,
+      "medianDayRatio": 1.305,
+      "pooledRatio": 1.224,
+      "slotTypes": {
+       "meal": 18
+      }
+     },
+     {
+      "slotPosition": 10,
+      "days": 10,
+      "medianDayRatio": 1.762,
+      "pooledRatio": 1.688,
+      "slotTypes": {
+       "snack": 10
+      }
+     },
+     {
+      "slotPosition": 11,
+      "days": 2,
+      "medianDayRatio": 1.506,
+      "pooledRatio": 1.482,
+      "slotTypes": {
+       "snack": 2
+      }
+     }
+    ],
+    "flooredFatTarget": {
+     "note": "slots SOLVED (recipe shipped) whose carry-forward fatTarget = max(0, (budgetFat-achieved)*share) had already floored to 0",
+     "slots": 193,
+     "medianFatShippedG": 8.54,
+     "meanFatShippedG": 13.02,
+     "totalFatShippedG": 2513,
+     "zeroG": 0
+    },
+    "perSlotFatVsNominalShare": [
+     {
+      "slotPosition": 1,
+      "slots": 553,
+      "filled": 537,
+      "medianRatio": 1.01
+     },
+     {
+      "slotPosition": 2,
+      "slots": 553,
+      "filled": 537,
+      "medianRatio": 1.008
+     },
+     {
+      "slotPosition": 3,
+      "slots": 542,
+      "filled": 522,
+      "medianRatio": 1.028
+     },
+     {
+      "slotPosition": 4,
+      "slots": 448,
+      "filled": 425,
+      "medianRatio": 1.215
+     },
+     {
+      "slotPosition": 5,
+      "slots": 299,
+      "filled": 284,
+      "medianRatio": 1.341
+     },
+     {
+      "slotPosition": 6,
+      "slots": 133,
+      "filled": 120,
+      "medianRatio": 1.736
+     },
+     {
+      "slotPosition": 7,
+      "slots": 48,
+      "filled": 43,
+      "medianRatio": 1.729
+     },
+     {
+      "slotPosition": 8,
+      "slots": 28,
+      "filled": 28,
+      "medianRatio": 1.4
+     },
+     {
+      "slotPosition": 9,
+      "slots": 18,
+      "filled": 18,
+      "medianRatio": 1.33
+     },
+     {
+      "slotPosition": 10,
+      "slots": 10,
+      "filled": 10,
+      "medianRatio": 2.526
+     },
+     {
+      "slotPosition": 11,
+      "slots": 2,
+      "filled": 2,
+      "medianRatio": 2.098
+     }
+    ]
+   },
+   "b8": {
+    "denominator": "all slots of the 553 canonical days",
+    "byNominalKcalTarget": [
+     {
+      "band": "0-150",
+      "slots": 126,
+      "unsolved": 22,
+      "unsolvedPct": 17.5,
+      "snackSlots": 119,
+      "mealSlots": 7,
+      "snackShareOfBand": 94.4,
+      "snackUnsolved": 22,
+      "mealUnsolved": 0,
+      "mealOnlyUnsolvedPct": 0,
+      "snackOnlyUnsolvedPct": 18.5,
+      "medianFatOverPctVsEffTarget": 66.1,
+      "medianFatOverPctMealsOnly": 90.6
+     },
+     {
+      "band": "150-250",
+      "slots": 503,
+      "unsolved": 31,
+      "unsolvedPct": 6.2,
+      "snackSlots": 353,
+      "mealSlots": 150,
+      "snackShareOfBand": 70.2,
+      "snackUnsolved": 31,
+      "mealUnsolved": 0,
+      "mealOnlyUnsolvedPct": 0,
+      "snackOnlyUnsolvedPct": 8.8,
+      "medianFatOverPctVsEffTarget": 70.8,
+      "medianFatOverPctMealsOnly": 42.1
+     },
+     {
+      "band": "250-400",
+      "slots": 615,
+      "unsolved": 23,
+      "unsolvedPct": 3.7,
+      "snackSlots": 199,
+      "mealSlots": 416,
+      "snackShareOfBand": 32.4,
+      "snackUnsolved": 6,
+      "mealUnsolved": 17,
+      "mealOnlyUnsolvedPct": 4.1,
+      "snackOnlyUnsolvedPct": 3,
+      "medianFatOverPctVsEffTarget": 12.9,
+      "medianFatOverPctMealsOnly": 8.5
+     },
+     {
+      "band": "400-500",
+      "slots": 360,
+      "unsolved": 19,
+      "unsolvedPct": 5.3,
+      "snackSlots": 11,
+      "mealSlots": 349,
+      "snackShareOfBand": 3.1,
+      "snackUnsolved": 0,
+      "mealUnsolved": 19,
+      "mealOnlyUnsolvedPct": 5.4,
+      "snackOnlyUnsolvedPct": 0,
+      "medianFatOverPctVsEffTarget": 4.6,
+      "medianFatOverPctMealsOnly": 4.5
+     },
+     {
+      "band": "500-700",
+      "slots": 613,
+      "unsolved": 8,
+      "unsolvedPct": 1.3,
+      "snackSlots": 4,
+      "mealSlots": 609,
+      "snackShareOfBand": 0.7,
+      "snackUnsolved": 0,
+      "mealUnsolved": 8,
+      "mealOnlyUnsolvedPct": 1.3,
+      "snackOnlyUnsolvedPct": 0,
+      "medianFatOverPctVsEffTarget": 1.1,
+      "medianFatOverPctMealsOnly": 1.1
+     },
+     {
+      "band": "700+",
+      "slots": 417,
+      "unsolved": 5,
+      "unsolvedPct": 1.2,
+      "snackSlots": 1,
+      "mealSlots": 416,
+      "snackShareOfBand": 0.2,
+      "snackUnsolved": 0,
+      "mealUnsolved": 5,
+      "mealOnlyUnsolvedPct": 1.2,
+      "snackOnlyUnsolvedPct": 0,
+      "medianFatOverPctVsEffTarget": -3.4,
+      "medianFatOverPctMealsOnly": -3.4
+     }
+    ],
+    "byEffectiveKcalTarget": [
+     {
+      "band": "0-150",
+      "slots": 230,
+      "unsolved": 20,
+      "unsolvedPct": 8.7,
+      "snackSlots": 175,
+      "mealSlots": 55,
+      "snackShareOfBand": 76.1,
+      "snackUnsolved": 20,
+      "mealUnsolved": 0,
+      "mealOnlyUnsolvedPct": 0,
+      "snackOnlyUnsolvedPct": 11.4,
+      "medianFatOverPctVsEffTarget": 124.4,
+      "medianFatOverPctMealsOnly": 164.4
+     },
+     {
+      "band": "150-250",
+      "slots": 392,
+      "unsolved": 23,
+      "unsolvedPct": 5.9,
+      "snackSlots": 278,
+      "mealSlots": 114,
+      "snackShareOfBand": 70.9,
+      "snackUnsolved": 23,
+      "mealUnsolved": 0,
+      "mealOnlyUnsolvedPct": 0,
+      "snackOnlyUnsolvedPct": 8.3,
+      "medianFatOverPctVsEffTarget": 60.5,
+      "medianFatOverPctMealsOnly": 27.6
+     },
+     {
+      "band": "250-400",
+      "slots": 609,
+      "unsolved": 28,
+      "unsolvedPct": 4.6,
+      "snackSlots": 208,
+      "mealSlots": 401,
+      "snackShareOfBand": 34.2,
+      "snackUnsolved": 16,
+      "mealUnsolved": 12,
+      "mealOnlyUnsolvedPct": 3,
+      "snackOnlyUnsolvedPct": 7.7,
+      "medianFatOverPctVsEffTarget": 13.7,
+      "medianFatOverPctMealsOnly": 8.5
+     },
+     {
+      "band": "400-500",
+      "slots": 350,
+      "unsolved": 5,
+      "unsolvedPct": 1.4,
+      "snackSlots": 16,
+      "mealSlots": 334,
+      "snackShareOfBand": 4.6,
+      "snackUnsolved": 0,
+      "mealUnsolved": 5,
+      "mealOnlyUnsolvedPct": 1.5,
+      "snackOnlyUnsolvedPct": 0,
+      "medianFatOverPctVsEffTarget": 4.3,
+      "medianFatOverPctMealsOnly": 4.3
+     },
+     {
+      "band": "500-700",
+      "slots": 626,
+      "unsolved": 23,
+      "unsolvedPct": 3.7,
+      "snackSlots": 8,
+      "mealSlots": 618,
+      "snackShareOfBand": 1.3,
+      "snackUnsolved": 0,
+      "mealUnsolved": 23,
+      "mealOnlyUnsolvedPct": 3.7,
+      "snackOnlyUnsolvedPct": 0,
+      "medianFatOverPctVsEffTarget": 1.3,
+      "medianFatOverPctMealsOnly": 1.3
+     },
+     {
+      "band": "700+",
+      "slots": 427,
+      "unsolved": 9,
+      "unsolvedPct": 2.1,
+      "snackSlots": 2,
+      "mealSlots": 425,
+      "snackShareOfBand": 0.5,
+      "snackUnsolved": 0,
+      "mealUnsolved": 9,
+      "mealOnlyUnsolvedPct": 2.1,
+      "snackOnlyUnsolvedPct": 0,
+      "medianFatOverPctVsEffTarget": -4,
+      "medianFatOverPctMealsOnly": -4
+     }
+    ]
+   },
+   "b6": {
+    "denominator": "shipped (filled) slots of the 553 canonical days",
+    "shippedSlots": 2526,
+    "fallbackSlots": 388,
+    "fallbackPctOfShipped": 15.4,
+    "totalFatOverageG": 8420,
+    "fallbackFatOverageG": 3483,
+    "fallbackShareOfFatOveragePct": 41.4,
+    "fatOveragePerFallbackSlotG": 8.98,
+    "fatOveragePerOtherSlotG": 2.31,
+    "medianFatOverageFallbackG": 6.33,
+    "medianFatOverageOtherG": 0.65,
+    "kcalOveragePerFallbackSlot": 79,
+    "kcalOveragePerOtherSlot": 5
+   },
+   "b5": {
+    "denominator": "satisfiable-planned−degenerate (553 days)",
+    "proteinOver12PctOfMid": {
+     "days": 33,
+     "n": 553,
+     "pct": 6,
+     "pctOfFilledDays": 6.1,
+     "filledDays": 537
+    },
+    "medianProteinVsMidPct": 0.1,
+    "p90ProteinVsMidPct": 6.9,
+    "medianFatVs28pctEAskPct": -3.7,
+    "medianFatVsFatMidPct": 7.1,
+    "aPrioriGeometry": {
+     "method": "share of the 910-recipe library whose fat-per-kcal density falls BELOW the day's graded low edge vs ABOVE its graded high edge (D3 window: fatLo-0.25*fatMid .. fatHi+0.25*fatMid), averaged over the 553 days. Library-wide, not per-persona pool.",
+     "meanShareLowOnlyPct": 15.13,
+     "meanShareHighOnlyPct": 54.96
+    }
+   },
+   "i7": {
+    "denominator": "all slots of the 553 canonical days; personas measured over the 218 satisfiable personas present",
+    "poolMaxMethod": "max / p99 of (recipe protein g per kcal) over W1-5's per-DIET-STYLE pool (allergen stacking NOT applied, so these bounds are GENEROUS — the real per-persona pool is smaller and the true counts can only be higher)",
+    "slots": 2634,
+    "ratioEffOverNominalDensity": {
+     "median": 1,
+     "p90": 1.029,
+     "p99": 1.428,
+     "max": 1.857,
+     "theoreticalMax": 1.857
+    },
+    "slotsWithRatioAbove1_2": 72,
+    "slotsWithRatioAbove1_5": 22,
+    "personas": 217,
+    "nominalAskAbovePoolMaxPersonas": 1,
+    "carryAskAbovePoolMaxPersonas": 11,
+    "carryAskAbovePoolP99Personas": 25,
+    "slotsAbovePoolMax": 29,
+    "slotsAbovePoolP99": 78,
+    "poolMaxPer100kcal": {
+     "none": {
+      "n": 910,
+      "maxProteinPer100kcal": 22.18,
+      "p99": 12.8
+     },
+     "mediterranean": {
+      "n": 814,
+      "maxProteinPer100kcal": 22.18,
+      "p99": 12.8
+     },
+     "vegetarian": {
+      "n": 401,
+      "maxProteinPer100kcal": 12.27,
+      "p99": 11.35
+     },
+     "vegan": {
+      "n": 169,
+      "maxProteinPer100kcal": 12.27,
+      "p99": 12.09
+     },
+     "paleo": {
+      "n": 167,
+      "maxProteinPer100kcal": 22.18,
+      "p99": 13.23
+     },
+     "keto": {
+      "n": 53,
+      "maxProteinPer100kcal": 22.18,
+      "p99": 22.18
+     },
+     "carnivore": {
+      "n": 3,
+      "maxProteinPer100kcal": 8.28,
+      "p99": 8.28
+     },
+     "halal": {
+      "n": 758,
+      "maxProteinPer100kcal": 22.18,
+      "p99": 12.94
+     },
+     "kosher": {
+      "n": 680,
+      "maxProteinPer100kcal": 14.53,
+      "p99": 12.27
+     }
+    },
+    "worstSample": [
+     {
+      "dayKey": "p022#5",
+      "slot": 4,
+      "ratio": 1.857,
+      "dEff": 14.803,
+      "poolMax": 14.527
+     },
+     {
+      "dayKey": "p034#3",
+      "slot": 3,
+      "ratio": 1.857,
+      "dEff": 17.328,
+      "poolMax": 14.527
+     },
+     {
+      "dayKey": "p047#3",
+      "slot": 4,
+      "ratio": 1.857,
+      "dEff": 15.49,
+      "poolMax": 12.275
+     },
+     {
+      "dayKey": "p086#4",
+      "slot": 5,
+      "ratio": 1.857,
+      "dEff": 19.757,
+      "poolMax": 12.275
+     },
+     {
+      "dayKey": "p163#0",
+      "slot": 4,
+      "ratio": 1.857,
+      "dEff": 18.394,
+      "poolMax": 12.275
+     }
+    ]
+   },
+   "d7": {
+    "denominatorNote": "classifyBinding is HORIZON-level: one key per persona-plan. Reported over personas AND over the days those plans cover.",
+    "personas": 250,
+    "days": 640,
+    "horizonKeyHistogram": {
+     "snack-pool": 21,
+     "null": 174,
+     "macro-composition": 41,
+     "meal-pool": 1,
+     "pool-depth": 1,
+     "protein-density": 10,
+     "variety-cap": 1,
+     "max-prep": 1
+    },
+    "proteinDensityPersonas": 10,
+    "proteinDensityDays": 28,
+    "misclassifiedPersonas": 10,
+    "misclassifiedDays": 28,
+    "ratePersonasAll": 4,
+    "rateDaysAll": 4.4,
+    "ratePersonasWithAMiss": 13,
+    "rateDaysOfPlansWithAMiss": 9.6,
+    "plansWithAMiss": 77,
+    "daysOfPlansWithAMiss": 293,
+    "shareOfProteinDensityPlansThatAreWrong": 100,
+    "examples": [
+     {
+      "personaId": "p049",
+      "diet": "vegetarian",
+      "days": 1,
+      "fatOff": 0,
+      "carbOff": 1,
+      "kcalOff": 0,
+      "protShort": 0,
+      "emittedKey": "protein-density",
+      "correctedKey": "macro-composition"
+     },
+     {
+      "personaId": "p051",
+      "diet": "vegan",
+      "days": 7,
+      "fatOff": 3,
+      "carbOff": 7,
+      "kcalOff": 0,
+      "protShort": 7,
+      "emittedKey": "protein-density",
+      "correctedKey": "macro-composition"
+     },
+     {
+      "personaId": "p071",
+      "diet": "vegetarian",
+      "days": 1,
+      "fatOff": 0,
+      "carbOff": 1,
+      "kcalOff": 0,
+      "protShort": 0,
+      "emittedKey": "protein-density",
+      "correctedKey": "macro-composition"
+     },
+     {
+      "personaId": "p086",
+      "diet": "vegetarian",
+      "days": 7,
+      "fatOff": 0,
+      "carbOff": 7,
+      "kcalOff": 0,
+      "protShort": 0,
+      "emittedKey": "protein-density",
+      "correctedKey": "macro-composition"
+     },
+     {
+      "personaId": "p111",
+      "diet": "carnivore",
+      "days": 1,
+      "fatOff": 1,
+      "carbOff": 1,
+      "kcalOff": 0,
+      "protShort": 0,
+      "emittedKey": "protein-density",
+      "correctedKey": "macro-composition"
+     },
+     {
+      "personaId": "p127",
+      "diet": "vegetarian",
+      "days": 1,
+      "fatOff": 0,
+      "carbOff": 1,
+      "kcalOff": 0,
+      "protShort": 0,
+      "emittedKey": "protein-density",
+      "correctedKey": "macro-composition"
+     }
+    ]
+   },
+   "b1": {
+    "planned": {
+     "fatOver": 95,
+     "fatShort": 17,
+     "carbOver": 87,
+     "carbShort": 22,
+     "kcalOver": 24,
+     "kcalShort": 50,
+     "proteinShort": 81,
+     "fatOnly": 55,
+     "fatOnlyOver": 55
+    },
+    "planned-degenerate": {
+     "fatOver": 95,
+     "fatShort": 17,
+     "carbOver": 87,
+     "carbShort": 22,
+     "kcalOver": 24,
+     "kcalShort": 50,
+     "proteinShort": 81,
+     "fatOnly": 55,
+     "fatOnlyOver": 55
+    },
+    "judged": {
+     "fatOver": 95,
+     "fatShort": 1,
+     "carbOver": 87,
+     "carbShort": 6,
+     "kcalOver": 24,
+     "kcalShort": 34,
+     "proteinShort": 65,
+     "fatOnly": 55,
+     "fatOnlyOver": 55
+    },
+    "satisfiable-planned": {
+     "fatOver": 81,
+     "fatShort": 16,
+     "carbOver": 44,
+     "carbShort": 21,
+     "kcalOver": 22,
+     "kcalShort": 18,
+     "proteinShort": 19,
+     "fatOnly": 54,
+     "fatOnlyOver": 54
+    },
+    "satisfiable-planned-degenerate": {
+     "fatOver": 81,
+     "fatShort": 16,
+     "carbOver": 44,
+     "carbShort": 21,
+     "kcalOver": 22,
+     "kcalShort": 18,
+     "proteinShort": 19,
+     "fatOnly": 54,
+     "fatOnlyOver": 54
+    },
+    "satisfiable-judged": {
+     "fatOver": 81,
+     "fatShort": 0,
+     "carbOver": 44,
+     "carbShort": 5,
+     "kcalOver": 22,
+     "kcalShort": 2,
+     "proteinShort": 3,
+     "fatOnly": 54,
+     "fatOnlyOver": 54
+    }
+   },
+   "b10": {
+    "canonical553": {
+     "axes": {
+      "over": 147,
+      "short": 74,
+      "byAxis": {
+       "kcal-over": 22,
+       "fat-over": 81,
+       "kcal-under": 18,
+       "protein-short": 19,
+       "fat-under": 16,
+       "carb-under": 21,
+       "carb-over": 44
+      },
+      "total": 221,
+      "overPct": 66.5,
+      "exProtein": {
+       "over": 147,
+       "short": 55,
+       "total": 202,
+       "overPct": 72.8
+      }
+     },
+     "days": {
+      "pureOver": 110,
+      "mixed": 7,
+      "pureShort": 18,
+      "noAxis": 0,
+      "total": 135,
+      "emptySlotDays": 16,
+      "pureOverPct": 81.5,
+      "overTouchedPct": 86.7
+     },
+     "slots": {
+      "slots": 2634,
+      "filled": 2526,
+      "axisOver": 2114,
+      "axisShort": 1117,
+      "byAxis": {
+       "kcal-over": 288,
+       "fat-over": 833,
+       "carb-over": 993,
+       "protein-over(UNPENALISED)": 452,
+       "carb-short": 209,
+       "fat-short": 267,
+       "protein-short": 153,
+       "kcal-short": 36
+      },
+      "gramsOver": {
+       "fat": 8420,
+       "carb": 20462,
+       "protein": 0
+      },
+      "gramsShort": {
+       "fat": 3344,
+       "carb": 7644,
+       "protein": 0
+      },
+      "kcalOver": 30445,
+      "kcalUnder": 9975,
+      "axisTotal": 3231,
+      "overPct": 65.4,
+      "gramsOverPct": {
+       "fat": 71.6,
+       "carb": 72.8
+      }
+     }
+    }
+   }
+  },
+  "route-s8675309": {
+   "file": "fleet/out/W1-2/daydump-route-s8675309.jsonl",
+   "seed": 8675309,
+   "poolShape": "route (applyFilterStack ON)",
+   "dbSha256": "d9037dce9754b4524943069fff7e0f3e396598c108426f370b0a189458b623a1",
+   "gitSha": "8cd1480c085cb6860025851b370925d56b963bc5",
+   "replayCheck": {
+    "days": 640,
+    "replayFailures": 1,
+    "slotOrderFailures": 0,
+    "warningKcalTargets": 364,
+    "matched": 364,
+    "mismatchRate": 0,
+    "warningProteinTargets": 349,
+    "proteinMatched": 349,
+    "worstMismatches": []
+   },
+   "denominators": {
+    "planned": 640,
+    "planned-degenerate": 639,
+    "judged": 623,
+    "satisfiable-planned": 554,
+    "satisfiable-planned-degenerate": 553,
+    "satisfiable-judged": 537
+   },
+   "levels": {
+    "planned": {
+     "n": 640,
+     "inBand": 433,
+     "pct": 67.7
+    },
+    "planned-degenerate": {
+     "n": 639,
+     "inBand": 433,
+     "pct": 67.8
+    },
+    "judged": {
+     "n": 623,
+     "inBand": 433,
+     "pct": 69.5
+    },
+    "satisfiable-planned": {
+     "n": 554,
+     "inBand": 413,
+     "pct": 74.5
+    },
+    "satisfiable-planned-degenerate": {
+     "n": 553,
+     "inBand": 413,
+     "pct": 74.7
+    },
+    "satisfiable-judged": {
+     "n": 537,
+     "inBand": 413,
+     "pct": 76.9
+    }
+   },
+   "buckets": {
+    "canonical": {
+     "denominator": "satisfiable-planned−degenerate (553)",
+     "n": 553,
+     "inBand": 413,
+     "failing": 140,
+     "bucketSum": 140,
+     "reconciles": true,
+     "buckets": {
+      "fat-over": 54,
+      "carb-over": 35,
+      "multi:kcal-over+fat-over": 19,
+      "empty-slot": 16,
+      "multi:kcal-over+fat-over+carb-over": 6,
+      "multi:fat-over+carb-under": 5,
+      "multi:fat-over+carb-over": 2,
+      "multi:kcal-over+carb-over": 1,
+      "kcal-under": 1,
+      "multi:protein-short+carb-over": 1
+     }
+    },
+    "satisfiableJudged": {
+     "denominator": "satisfiable-judged (537)",
+     "n": 537,
+     "inBand": 413,
+     "failing": 124,
+     "bucketSum": 124,
+     "reconciles": true,
+     "buckets": {
+      "fat-over": 54,
+      "carb-over": 35,
+      "multi:kcal-over+fat-over": 19,
+      "multi:kcal-over+fat-over+carb-over": 6,
+      "multi:fat-over+carb-under": 5,
+      "multi:fat-over+carb-over": 2,
+      "multi:kcal-over+carb-over": 1,
+      "kcal-under": 1,
+      "multi:protein-short+carb-over": 1
+     }
+    },
+    "planned": {
+     "denominator": "planned (640)",
+     "n": 640,
+     "inBand": 433,
+     "failing": 207,
+     "bucketSum": 207,
+     "reconciles": true,
+     "buckets": {
+      "fat-over": 55,
+      "carb-over": 38,
+      "multi:protein-short+carb-over": 23,
+      "multi:kcal-over+fat-over": 19,
+      "empty-slot": 16,
+      "multi:kcal-under+protein-short+carb-over": 15,
+      "multi:kcal-under+protein-short": 11,
+      "multi:kcal-over+fat-over+carb-over": 6,
+      "multi:fat-over+carb-under": 5,
+      "protein-short": 3,
+      "multi:kcal-under+protein-short+fat-over": 3,
+      "multi:protein-short+fat-over": 3,
+      "multi:kcal-over+protein-short+fat-over+carb-over": 2,
+      "multi:protein-short+fat-over+carb-over": 2,
+      "multi:fat-over+carb-over": 2,
+      "multi:kcal-over+carb-over": 1,
+      "multi:kcal-under+protein-short+fat-under+carb-under": 1,
+      "kcal-under": 1,
+      "degenerate": 1
+     }
+    },
+    "plannedMinusDegenerate": {
+     "denominator": "planned−degenerate (639)",
+     "n": 639,
+     "inBand": 433,
+     "failing": 206,
+     "bucketSum": 206,
+     "reconciles": true,
+     "buckets": {
+      "fat-over": 55,
+      "carb-over": 38,
+      "multi:protein-short+carb-over": 23,
+      "multi:kcal-over+fat-over": 19,
+      "empty-slot": 16,
+      "multi:kcal-under+protein-short+carb-over": 15,
+      "multi:kcal-under+protein-short": 11,
+      "multi:kcal-over+fat-over+carb-over": 6,
+      "multi:fat-over+carb-under": 5,
+      "protein-short": 3,
+      "multi:kcal-under+protein-short+fat-over": 3,
+      "multi:protein-short+fat-over": 3,
+      "multi:kcal-over+protein-short+fat-over+carb-over": 2,
+      "multi:protein-short+fat-over+carb-over": 2,
+      "multi:fat-over+carb-over": 2,
+      "multi:kcal-over+carb-over": 1,
+      "multi:kcal-under+protein-short+fat-under+carb-under": 1,
+      "kcal-under": 1
+     }
+    }
+   },
+   "bucketsPerDiet": {
+    "none": {
+     "denominator": "none",
+     "n": 275,
+     "inBand": 244,
+     "failing": 31,
+     "bucketSum": 31,
+     "reconciles": true,
+     "buckets": {
+      "fat-over": 21,
+      "multi:kcal-over+fat-over": 4,
+      "carb-over": 4,
+      "multi:kcal-over+fat-over+carb-over": 2
+     }
+    },
+    "keto": {
+     "denominator": "keto",
+     "n": 58,
+     "inBand": 34,
+     "failing": 24,
+     "bucketSum": 24,
+     "reconciles": true,
+     "buckets": {
+      "empty-slot": 11,
+      "carb-over": 11,
+      "kcal-under": 1,
+      "multi:kcal-over+fat-over": 1
+     }
+    },
+    "vegetarian": {
+     "denominator": "vegetarian",
+     "n": 57,
+     "inBand": 36,
+     "failing": 21,
+     "bucketSum": 21,
+     "reconciles": true,
+     "buckets": {
+      "carb-over": 17,
+      "fat-over": 3,
+      "multi:fat-over+carb-over": 1
+     }
+    },
+    "mediterranean": {
+     "denominator": "mediterranean",
+     "n": 49,
+     "inBand": 43,
+     "failing": 6,
+     "bucketSum": 6,
+     "reconciles": true,
+     "buckets": {
+      "fat-over": 4,
+      "multi:protein-short+carb-over": 1,
+      "multi:kcal-over+fat-over+carb-over": 1
+     }
+    },
+    "kosher": {
+     "denominator": "kosher",
+     "n": 35,
+     "inBand": 18,
+     "failing": 17,
+     "bucketSum": 17,
+     "reconciles": true,
+     "buckets": {
+      "fat-over": 7,
+      "multi:kcal-over+fat-over": 7,
+      "carb-over": 1,
+      "multi:kcal-over+fat-over+carb-over": 1,
+      "multi:kcal-over+carb-over": 1
+     }
+    },
+    "vegan": {
+     "denominator": "vegan",
+     "n": 35,
+     "inBand": 16,
+     "failing": 19,
+     "bucketSum": 19,
+     "reconciles": true,
+     "buckets": {
+      "fat-over": 14,
+      "multi:kcal-over+fat-over": 3,
+      "multi:kcal-over+fat-over+carb-over": 2
+     }
+    },
+    "paleo": {
+     "denominator": "paleo",
+     "n": 24,
+     "inBand": 10,
+     "failing": 14,
+     "bucketSum": 14,
+     "reconciles": true,
+     "buckets": {
+      "fat-over": 5,
+      "multi:fat-over+carb-under": 3,
+      "multi:kcal-over+fat-over": 3,
+      "carb-over": 2,
+      "multi:fat-over+carb-over": 1
+     }
+    },
+    "halal": {
+     "denominator": "halal",
+     "n": 12,
+     "inBand": 12,
+     "failing": 0,
+     "bucketSum": 0,
+     "reconciles": true,
+     "buckets": {}
+    },
+    "carnivore": {
+     "denominator": "carnivore",
+     "n": 8,
+     "inBand": 0,
+     "failing": 8,
+     "bucketSum": 8,
+     "reconciles": true,
+     "buckets": {
+      "empty-slot": 5,
+      "multi:fat-over+carb-under": 2,
+      "multi:kcal-over+fat-over": 1
+     }
+    }
+   },
+   "bucketsPerTier": {
+    "EASY": {
+     "denominator": "EASY",
+     "n": 340,
+     "inBand": 264,
+     "failing": 76,
+     "bucketSum": 76,
+     "reconciles": true,
+     "buckets": {
+      "fat-over": 36,
+      "carb-over": 15,
+      "empty-slot": 9,
+      "multi:kcal-over+fat-over": 6,
+      "multi:fat-over+carb-under": 4,
+      "multi:kcal-over+fat-over+carb-over": 3,
+      "multi:fat-over+carb-over": 1,
+      "kcal-under": 1,
+      "multi:protein-short+carb-over": 1
+     }
+    },
+    "HARD": {
+     "denominator": "HARD",
+     "n": 175,
+     "inBand": 127,
+     "failing": 48,
+     "bucketSum": 48,
+     "reconciles": true,
+     "buckets": {
+      "carb-over": 19,
+      "fat-over": 11,
+      "empty-slot": 7,
+      "multi:kcal-over+fat-over": 5,
+      "multi:kcal-over+fat-over+carb-over": 3,
+      "multi:kcal-over+carb-over": 1,
+      "multi:fat-over+carb-under": 1,
+      "multi:fat-over+carb-over": 1
+     }
+    },
+    "ROBUSTNESS": {
+     "denominator": "ROBUSTNESS",
+     "n": 38,
+     "inBand": 22,
+     "failing": 16,
+     "bucketSum": 16,
+     "reconciles": true,
+     "buckets": {
+      "multi:kcal-over+fat-over": 8,
+      "fat-over": 7,
+      "carb-over": 1
+     }
+    }
+   },
+   "overside": {
+    "planned": {
+     "axes": {
+      "over": 214,
+      "short": 165,
+      "byAxis": {
+       "kcal-over": 28,
+       "fat-over": 97,
+       "carb-over": 89,
+       "kcal-under": 47,
+       "protein-short": 79,
+       "fat-under": 17,
+       "carb-under": 22
+      },
+      "total": 379,
+      "overPct": 56.5,
+      "exProtein": {
+       "over": 214,
+       "short": 86,
+       "total": 300,
+       "overPct": 71.3
+      }
+     },
+     "days": {
+      "pureOver": 121,
+      "mixed": 53,
+      "pureShort": 32,
+      "noAxis": 0,
+      "total": 206,
+      "emptySlotDays": 16,
+      "pureOverPct": 58.7,
+      "overTouchedPct": 84.5
+     },
+     "slots": {
+      "slots": 3011,
+      "filled": 2820,
+      "axisOver": 2417,
+      "axisShort": 1490,
+      "byAxis": {
+       "protein-over(UNPENALISED)": 452,
+       "fat-over": 920,
+       "carb-short": 250,
+       "carb-over": 1213,
+       "kcal-over": 284,
+       "protein-short": 349,
+       "fat-short": 359,
+       "kcal-short": 80
+      },
+      "gramsOver": {
+       "fat": 9796,
+       "carb": 30132,
+       "protein": 0
+      },
+      "gramsShort": {
+       "fat": 4634,
+       "carb": 7805,
+       "protein": 0
+      },
+      "kcalOver": 32521,
+      "kcalUnder": 22545,
+      "axisTotal": 3907,
+      "overPct": 61.9,
+      "gramsOverPct": {
+       "fat": 67.9,
+       "carb": 79.4
+      }
+     }
+    },
+    "planned-degenerate": {
+     "axes": {
+      "over": 214,
+      "short": 165,
+      "byAxis": {
+       "kcal-over": 28,
+       "fat-over": 97,
+       "carb-over": 89,
+       "kcal-under": 47,
+       "protein-short": 79,
+       "fat-under": 17,
+       "carb-under": 22
+      },
+      "total": 379,
+      "overPct": 56.5,
+      "exProtein": {
+       "over": 214,
+       "short": 86,
+       "total": 300,
+       "overPct": 71.3
+      }
+     },
+     "days": {
+      "pureOver": 121,
+      "mixed": 53,
+      "pureShort": 32,
+      "noAxis": 0,
+      "total": 206,
+      "emptySlotDays": 16,
+      "pureOverPct": 58.7,
+      "overTouchedPct": 84.5
+     },
+     "slots": {
+      "slots": 3011,
+      "filled": 2820,
+      "axisOver": 2417,
+      "axisShort": 1490,
+      "byAxis": {
+       "protein-over(UNPENALISED)": 452,
+       "fat-over": 920,
+       "carb-short": 250,
+       "carb-over": 1213,
+       "kcal-over": 284,
+       "protein-short": 349,
+       "fat-short": 359,
+       "kcal-short": 80
+      },
+      "gramsOver": {
+       "fat": 9796,
+       "carb": 30132,
+       "protein": 0
+      },
+      "gramsShort": {
+       "fat": 4634,
+       "carb": 7805,
+       "protein": 0
+      },
+      "kcalOver": 32521,
+      "kcalUnder": 22545,
+      "axisTotal": 3907,
+      "overPct": 61.9,
+      "gramsOverPct": {
+       "fat": 67.9,
+       "carb": 79.4
+      }
+     }
+    },
+    "judged": {
+     "axes": {
+      "over": 214,
+      "short": 101,
+      "byAxis": {
+       "kcal-over": 28,
+       "fat-over": 97,
+       "carb-over": 89,
+       "carb-under": 6,
+       "protein-short": 63,
+       "kcal-under": 31,
+       "fat-under": 1
+      },
+      "total": 315,
+      "overPct": 67.9,
+      "exProtein": {
+       "over": 214,
+       "short": 38,
+       "total": 252,
+       "overPct": 84.9
+      }
+     },
+     "days": {
+      "pureOver": 121,
+      "mixed": 53,
+      "pureShort": 16,
+      "noAxis": 0,
+      "total": 190,
+      "emptySlotDays": 0,
+      "pureOverPct": 63.7,
+      "overTouchedPct": 91.6
+     },
+     "slots": {
+      "slots": 2954,
+      "filled": 2820,
+      "axisOver": 2417,
+      "axisShort": 1490,
+      "byAxis": {
+       "protein-over(UNPENALISED)": 452,
+       "fat-over": 920,
+       "carb-short": 250,
+       "carb-over": 1213,
+       "kcal-over": 284,
+       "protein-short": 349,
+       "fat-short": 359,
+       "kcal-short": 80
+      },
+      "gramsOver": {
+       "fat": 9796,
+       "carb": 30132,
+       "protein": 0
+      },
+      "gramsShort": {
+       "fat": 4634,
+       "carb": 7805,
+       "protein": 0
+      },
+      "kcalOver": 32521,
+      "kcalUnder": 22545,
+      "axisTotal": 3907,
+      "overPct": 61.9,
+      "gramsOverPct": {
+       "fat": 67.9,
+       "carb": 79.4
+      }
+     }
+    },
+    "satisfiable-planned": {
+     "axes": {
+      "over": 157,
+      "short": 71,
+      "byAxis": {
+       "kcal-over": 26,
+       "fat-over": 86,
+       "kcal-under": 17,
+       "protein-short": 17,
+       "fat-under": 16,
+       "carb-under": 21,
+       "carb-over": 45
+      },
+      "total": 228,
+      "overPct": 68.9,
+      "exProtein": {
+       "over": 157,
+       "short": 54,
+       "total": 211,
+       "overPct": 74.4
+      }
+     },
+     "days": {
+      "pureOver": 117,
+      "mixed": 6,
+      "pureShort": 17,
+      "noAxis": 0,
+      "total": 140,
+      "emptySlotDays": 16,
+      "pureOverPct": 83.6,
+      "overTouchedPct": 87.9
+     },
+     "slots": {
+      "slots": 2634,
+      "filled": 2527,
+      "axisOver": 2067,
+      "axisShort": 1126,
+      "byAxis": {
+       "protein-over(UNPENALISED)": 447,
+       "fat-over": 826,
+       "carb-short": 221,
+       "carb-over": 980,
+       "kcal-over": 261,
+       "protein-short": 153,
+       "fat-short": 263,
+       "kcal-short": 42
+      },
+      "gramsOver": {
+       "fat": 8453,
+       "carb": 20277,
+       "protein": 0
+      },
+      "gramsShort": {
+       "fat": 3516,
+       "carb": 7129,
+       "protein": 0
+      },
+      "kcalOver": 28746,
+      "kcalUnder": 10792,
+      "axisTotal": 3193,
+      "overPct": 64.7,
+      "gramsOverPct": {
+       "fat": 70.6,
+       "carb": 74
+      }
+     }
+    },
+    "satisfiable-planned-degenerate": {
+     "axes": {
+      "over": 157,
+      "short": 71,
+      "byAxis": {
+       "kcal-over": 26,
+       "fat-over": 86,
+       "kcal-under": 17,
+       "protein-short": 17,
+       "fat-under": 16,
+       "carb-under": 21,
+       "carb-over": 45
+      },
+      "total": 228,
+      "overPct": 68.9,
+      "exProtein": {
+       "over": 157,
+       "short": 54,
+       "total": 211,
+       "overPct": 74.4
+      }
+     },
+     "days": {
+      "pureOver": 117,
+      "mixed": 6,
+      "pureShort": 17,
+      "noAxis": 0,
+      "total": 140,
+      "emptySlotDays": 16,
+      "pureOverPct": 83.6,
+      "overTouchedPct": 87.9
+     },
+     "slots": {
+      "slots": 2634,
+      "filled": 2527,
+      "axisOver": 2067,
+      "axisShort": 1126,
+      "byAxis": {
+       "protein-over(UNPENALISED)": 447,
+       "fat-over": 826,
+       "carb-short": 221,
+       "carb-over": 980,
+       "kcal-over": 261,
+       "protein-short": 153,
+       "fat-short": 263,
+       "kcal-short": 42
+      },
+      "gramsOver": {
+       "fat": 8453,
+       "carb": 20277,
+       "protein": 0
+      },
+      "gramsShort": {
+       "fat": 3516,
+       "carb": 7129,
+       "protein": 0
+      },
+      "kcalOver": 28746,
+      "kcalUnder": 10792,
+      "axisTotal": 3193,
+      "overPct": 64.7,
+      "gramsOverPct": {
+       "fat": 70.6,
+       "carb": 74
+      }
+     }
+    },
+    "satisfiable-judged": {
+     "axes": {
+      "over": 157,
+      "short": 7,
+      "byAxis": {
+       "kcal-over": 26,
+       "fat-over": 86,
+       "carb-over": 45,
+       "carb-under": 5,
+       "kcal-under": 1,
+       "protein-short": 1
+      },
+      "total": 164,
+      "overPct": 95.7,
+      "exProtein": {
+       "over": 157,
+       "short": 6,
+       "total": 163,
+       "overPct": 96.3
+      }
+     },
+     "days": {
+      "pureOver": 117,
+      "mixed": 6,
+      "pureShort": 1,
+      "noAxis": 0,
+      "total": 124,
+      "emptySlotDays": 0,
+      "pureOverPct": 94.4,
+      "overTouchedPct": 99.2
+     },
+     "slots": {
+      "slots": 2577,
+      "filled": 2527,
+      "axisOver": 2067,
+      "axisShort": 1126,
+      "byAxis": {
+       "protein-over(UNPENALISED)": 447,
+       "fat-over": 826,
+       "carb-short": 221,
+       "carb-over": 980,
+       "kcal-over": 261,
+       "protein-short": 153,
+       "fat-short": 263,
+       "kcal-short": 42
+      },
+      "gramsOver": {
+       "fat": 8453,
+       "carb": 20277,
+       "protein": 0
+      },
+      "gramsShort": {
+       "fat": 3516,
+       "carb": 7129,
+       "protein": 0
+      },
+      "kcalOver": 28746,
+      "kcalUnder": 10792,
+      "axisTotal": 3193,
+      "overPct": 64.7,
+      "gramsOverPct": {
+       "fat": 70.6,
+       "carb": 74
+      }
+     }
+    }
+   },
+   "b9": {
+    "denominator": "satisfiable-planned−degenerate (553 days)",
+    "cumulativeFatRatioBySlotOrder": [
+     {
+      "slotPosition": 1,
+      "days": 553,
+      "medianDayRatio": 1.023,
+      "pooledRatio": 0.982,
+      "slotTypes": {
+       "meal": 553
+      }
+     },
+     {
+      "slotPosition": 2,
+      "days": 553,
+      "medianDayRatio": 1.024,
+      "pooledRatio": 0.979,
+      "slotTypes": {
+       "meal": 553
+      }
+     },
+     {
+      "slotPosition": 3,
+      "days": 542,
+      "medianDayRatio": 1.026,
+      "pooledRatio": 0.988,
+      "slotTypes": {
+       "meal": 483,
+       "snack": 59
+      }
+     },
+     {
+      "slotPosition": 4,
+      "days": 448,
+      "medianDayRatio": 1.052,
+      "pooledRatio": 1.038,
+      "slotTypes": {
+       "meal": 198,
+       "snack": 250
+      }
+     },
+     {
+      "slotPosition": 5,
+      "days": 299,
+      "medianDayRatio": 1.063,
+      "pooledRatio": 1.119,
+      "slotTypes": {
+       "snack": 211,
+       "meal": 88
+      }
+     },
+     {
+      "slotPosition": 6,
+      "days": 133,
+      "medianDayRatio": 1.074,
+      "pooledRatio": 1.151,
+      "slotTypes": {
+       "snack": 115,
+       "meal": 18
+      }
+     },
+     {
+      "slotPosition": 7,
+      "days": 48,
+      "medianDayRatio": 1.147,
+      "pooledRatio": 1.212,
+      "slotTypes": {
+       "snack": 30,
+       "meal": 18
+      }
+     },
+     {
+      "slotPosition": 8,
+      "days": 28,
+      "medianDayRatio": 1.241,
+      "pooledRatio": 1.243,
+      "slotTypes": {
+       "snack": 10,
+       "meal": 18
+      }
+     },
+     {
+      "slotPosition": 9,
+      "days": 18,
+      "medianDayRatio": 1.339,
+      "pooledRatio": 1.226,
+      "slotTypes": {
+       "meal": 18
+      }
+     },
+     {
+      "slotPosition": 10,
+      "days": 10,
+      "medianDayRatio": 1.739,
+      "pooledRatio": 1.649,
+      "slotTypes": {
+       "snack": 10
+      }
+     },
+     {
+      "slotPosition": 11,
+      "days": 2,
+      "medianDayRatio": 1.346,
+      "pooledRatio": 1.323,
+      "slotTypes": {
+       "snack": 2
+      }
+     }
+    ],
+    "flooredFatTarget": {
+     "note": "slots SOLVED (recipe shipped) whose carry-forward fatTarget = max(0, (budgetFat-achieved)*share) had already floored to 0",
+     "slots": 178,
+     "medianFatShippedG": 8.87,
+     "meanFatShippedG": 13.31,
+     "totalFatShippedG": 2369,
+     "zeroG": 0
+    },
+    "perSlotFatVsNominalShare": [
+     {
+      "slotPosition": 1,
+      "slots": 553,
+      "filled": 537,
+      "medianRatio": 1.029
+     },
+     {
+      "slotPosition": 2,
+      "slots": 553,
+      "filled": 537,
+      "medianRatio": 1.009
+     },
+     {
+      "slotPosition": 3,
+      "slots": 542,
+      "filled": 522,
+      "medianRatio": 1.024
+     },
+     {
+      "slotPosition": 4,
+      "slots": 448,
+      "filled": 425,
+      "medianRatio": 1.193
+     },
+     {
+      "slotPosition": 5,
+      "slots": 299,
+      "filled": 285,
+      "medianRatio": 1.445
+     },
+     {
+      "slotPosition": 6,
+      "slots": 133,
+      "filled": 120,
+      "medianRatio": 1.599
+     },
+     {
+      "slotPosition": 7,
+      "slots": 48,
+      "filled": 43,
+      "medianRatio": 1.586
+     },
+     {
+      "slotPosition": 8,
+      "slots": 28,
+      "filled": 28,
+      "medianRatio": 1.678
+     },
+     {
+      "slotPosition": 9,
+      "slots": 18,
+      "filled": 18,
+      "medianRatio": 1.074
+     },
+     {
+      "slotPosition": 10,
+      "slots": 10,
+      "filled": 10,
+      "medianRatio": 2.526
+     },
+     {
+      "slotPosition": 11,
+      "slots": 2,
+      "filled": 2,
+      "medianRatio": 2.098
+     }
+    ]
+   },
+   "b8": {
+    "denominator": "all slots of the 553 canonical days",
+    "byNominalKcalTarget": [
+     {
+      "band": "0-150",
+      "slots": 126,
+      "unsolved": 22,
+      "unsolvedPct": 17.5,
+      "snackSlots": 119,
+      "mealSlots": 7,
+      "snackShareOfBand": 94.4,
+      "snackUnsolved": 22,
+      "mealUnsolved": 0,
+      "mealOnlyUnsolvedPct": 0,
+      "snackOnlyUnsolvedPct": 18.5,
+      "medianFatOverPctVsEffTarget": 59.6,
+      "medianFatOverPctMealsOnly": 68.3
+     },
+     {
+      "band": "150-250",
+      "slots": 503,
+      "unsolved": 30,
+      "unsolvedPct": 6,
+      "snackSlots": 353,
+      "mealSlots": 150,
+      "snackShareOfBand": 70.2,
+      "snackUnsolved": 30,
+      "mealUnsolved": 0,
+      "mealOnlyUnsolvedPct": 0,
+      "snackOnlyUnsolvedPct": 8.5,
+      "medianFatOverPctVsEffTarget": 68.1,
+      "medianFatOverPctMealsOnly": 50.2
+     },
+     {
+      "band": "250-400",
+      "slots": 615,
+      "unsolved": 23,
+      "unsolvedPct": 3.7,
+      "snackSlots": 199,
+      "mealSlots": 416,
+      "snackShareOfBand": 32.4,
+      "snackUnsolved": 6,
+      "mealUnsolved": 17,
+      "mealOnlyUnsolvedPct": 4.1,
+      "snackOnlyUnsolvedPct": 3,
+      "medianFatOverPctVsEffTarget": 13,
+      "medianFatOverPctMealsOnly": 8
+     },
+     {
+      "band": "400-500",
+      "slots": 360,
+      "unsolved": 19,
+      "unsolvedPct": 5.3,
+      "snackSlots": 11,
+      "mealSlots": 349,
+      "snackShareOfBand": 3.1,
+      "snackUnsolved": 0,
+      "mealUnsolved": 19,
+      "mealOnlyUnsolvedPct": 5.4,
+      "snackOnlyUnsolvedPct": 0,
+      "medianFatOverPctVsEffTarget": 6.3,
+      "medianFatOverPctMealsOnly": 6.1
+     },
+     {
+      "band": "500-700",
+      "slots": 613,
+      "unsolved": 8,
+      "unsolvedPct": 1.3,
+      "snackSlots": 4,
+      "mealSlots": 609,
+      "snackShareOfBand": 0.7,
+      "snackUnsolved": 0,
+      "mealUnsolved": 8,
+      "mealOnlyUnsolvedPct": 1.3,
+      "snackOnlyUnsolvedPct": 0,
+      "medianFatOverPctVsEffTarget": 1.2,
+      "medianFatOverPctMealsOnly": 1.2
+     },
+     {
+      "band": "700+",
+      "slots": 417,
+      "unsolved": 5,
+      "unsolvedPct": 1.2,
+      "snackSlots": 1,
+      "mealSlots": 416,
+      "snackShareOfBand": 0.2,
+      "snackUnsolved": 0,
+      "mealUnsolved": 5,
+      "mealOnlyUnsolvedPct": 1.2,
+      "snackOnlyUnsolvedPct": 0,
+      "medianFatOverPctVsEffTarget": -2.3,
+      "medianFatOverPctMealsOnly": -2.3
+     }
+    ],
+    "byEffectiveKcalTarget": [
+     {
+      "band": "0-150",
+      "slots": 225,
+      "unsolved": 21,
+      "unsolvedPct": 9.3,
+      "snackSlots": 173,
+      "mealSlots": 52,
+      "snackShareOfBand": 76.9,
+      "snackUnsolved": 21,
+      "mealUnsolved": 0,
+      "mealOnlyUnsolvedPct": 0,
+      "snackOnlyUnsolvedPct": 12.1,
+      "medianFatOverPctVsEffTarget": 111,
+      "medianFatOverPctMealsOnly": 213.7
+     },
+     {
+      "band": "150-250",
+      "slots": 388,
+      "unsolved": 22,
+      "unsolvedPct": 5.7,
+      "snackSlots": 271,
+      "mealSlots": 117,
+      "snackShareOfBand": 69.8,
+      "snackUnsolved": 22,
+      "mealUnsolved": 0,
+      "mealOnlyUnsolvedPct": 0,
+      "snackOnlyUnsolvedPct": 8.1,
+      "medianFatOverPctVsEffTarget": 63.4,
+      "medianFatOverPctMealsOnly": 28.1
+     },
+     {
+      "band": "250-400",
+      "slots": 595,
+      "unsolved": 27,
+      "unsolvedPct": 4.5,
+      "snackSlots": 214,
+      "mealSlots": 381,
+      "snackShareOfBand": 36,
+      "snackUnsolved": 15,
+      "mealUnsolved": 12,
+      "mealOnlyUnsolvedPct": 3.1,
+      "snackOnlyUnsolvedPct": 7,
+      "medianFatOverPctVsEffTarget": 14,
+      "medianFatOverPctMealsOnly": 7.9
+     },
+     {
+      "band": "400-500",
+      "slots": 376,
+      "unsolved": 5,
+      "unsolvedPct": 1.3,
+      "snackSlots": 16,
+      "mealSlots": 360,
+      "snackShareOfBand": 4.3,
+      "snackUnsolved": 0,
+      "mealUnsolved": 5,
+      "mealOnlyUnsolvedPct": 1.4,
+      "snackOnlyUnsolvedPct": 0,
+      "medianFatOverPctVsEffTarget": 5.7,
+      "medianFatOverPctMealsOnly": 5.7
+     },
+     {
+      "band": "500-700",
+      "slots": 628,
+      "unsolved": 23,
+      "unsolvedPct": 3.7,
+      "snackSlots": 10,
+      "mealSlots": 618,
+      "snackShareOfBand": 1.6,
+      "snackUnsolved": 0,
+      "mealUnsolved": 23,
+      "mealOnlyUnsolvedPct": 3.7,
+      "snackOnlyUnsolvedPct": 0,
+      "medianFatOverPctVsEffTarget": 1.3,
+      "medianFatOverPctMealsOnly": 1.2
+     },
+     {
+      "band": "700+",
+      "slots": 422,
+      "unsolved": 9,
+      "unsolvedPct": 2.1,
+      "snackSlots": 3,
+      "mealSlots": 419,
+      "snackShareOfBand": 0.7,
+      "snackUnsolved": 0,
+      "mealUnsolved": 9,
+      "mealOnlyUnsolvedPct": 2.1,
+      "snackOnlyUnsolvedPct": 0,
+      "medianFatOverPctVsEffTarget": -2.3,
+      "medianFatOverPctMealsOnly": -2.3
+     }
+    ]
+   },
+   "b6": {
+    "denominator": "shipped (filled) slots of the 553 canonical days",
+    "shippedSlots": 2527,
+    "fallbackSlots": 370,
+    "fallbackPctOfShipped": 14.6,
+    "totalFatOverageG": 8453,
+    "fallbackFatOverageG": 3391,
+    "fallbackShareOfFatOveragePct": 40.1,
+    "fatOveragePerFallbackSlotG": 9.17,
+    "fatOveragePerOtherSlotG": 2.35,
+    "medianFatOverageFallbackG": 6.71,
+    "medianFatOverageOtherG": 0.64,
+    "kcalOveragePerFallbackSlot": 79,
+    "kcalOveragePerOtherSlot": 5
+   },
+   "b5": {
+    "denominator": "satisfiable-planned−degenerate (553 days)",
+    "proteinOver12PctOfMid": {
+     "days": 29,
+     "n": 553,
+     "pct": 5.2,
+     "pctOfFilledDays": 5.4,
+     "filledDays": 537
+    },
+    "medianProteinVsMidPct": 0.1,
+    "p90ProteinVsMidPct": 6.7,
+    "medianFatVs28pctEAskPct": -2.8,
+    "medianFatVsFatMidPct": 7,
+    "aPrioriGeometry": {
+     "method": "share of the 910-recipe library whose fat-per-kcal density falls BELOW the day's graded low edge vs ABOVE its graded high edge (D3 window: fatLo-0.25*fatMid .. fatHi+0.25*fatMid), averaged over the 553 days. Library-wide, not per-persona pool.",
+     "meanShareLowOnlyPct": 15.13,
+     "meanShareHighOnlyPct": 54.96
+    }
+   },
+   "i7": {
+    "denominator": "all slots of the 553 canonical days; personas measured over the 218 satisfiable personas present",
+    "poolMaxMethod": "max / p99 of (recipe protein g per kcal) over W1-5's per-DIET-STYLE pool (allergen stacking NOT applied, so these bounds are GENEROUS — the real per-persona pool is smaller and the true counts can only be higher)",
+    "slots": 2634,
+    "ratioEffOverNominalDensity": {
+     "median": 1,
+     "p90": 1.024,
+     "p99": 1.418,
+     "max": 1.857,
+     "theoreticalMax": 1.857
+    },
+    "slotsWithRatioAbove1_2": 66,
+    "slotsWithRatioAbove1_5": 20,
+    "personas": 217,
+    "nominalAskAbovePoolMaxPersonas": 1,
+    "carryAskAbovePoolMaxPersonas": 10,
+    "carryAskAbovePoolP99Personas": 23,
+    "slotsAbovePoolMax": 29,
+    "slotsAbovePoolP99": 69,
+    "poolMaxPer100kcal": {
+     "none": {
+      "n": 910,
+      "maxProteinPer100kcal": 22.18,
+      "p99": 12.8
+     },
+     "mediterranean": {
+      "n": 814,
+      "maxProteinPer100kcal": 22.18,
+      "p99": 12.8
+     },
+     "vegetarian": {
+      "n": 401,
+      "maxProteinPer100kcal": 12.27,
+      "p99": 11.35
+     },
+     "vegan": {
+      "n": 169,
+      "maxProteinPer100kcal": 12.27,
+      "p99": 12.09
+     },
+     "paleo": {
+      "n": 167,
+      "maxProteinPer100kcal": 22.18,
+      "p99": 13.23
+     },
+     "keto": {
+      "n": 53,
+      "maxProteinPer100kcal": 22.18,
+      "p99": 22.18
+     },
+     "carnivore": {
+      "n": 3,
+      "maxProteinPer100kcal": 8.28,
+      "p99": 8.28
+     },
+     "halal": {
+      "n": 758,
+      "maxProteinPer100kcal": 22.18,
+      "p99": 12.94
+     },
+     "kosher": {
+      "n": 680,
+      "maxProteinPer100kcal": 14.53,
+      "p99": 12.27
+     }
+    },
+    "worstSample": [
+     {
+      "dayKey": "p022#4",
+      "slot": 4,
+      "ratio": 1.857,
+      "dEff": 14.803,
+      "poolMax": 14.527
+     },
+     {
+      "dayKey": "p034#2",
+      "slot": 3,
+      "ratio": 1.857,
+      "dEff": 17.328,
+      "poolMax": 14.527
+     },
+     {
+      "dayKey": "p034#5",
+      "slot": 3,
+      "ratio": 1.857,
+      "dEff": 17.328,
+      "poolMax": 14.527
+     },
+     {
+      "dayKey": "p047#1",
+      "slot": 4,
+      "ratio": 1.857,
+      "dEff": 15.49,
+      "poolMax": 12.275
+     },
+     {
+      "dayKey": "p047#5",
+      "slot": 4,
+      "ratio": 1.857,
+      "dEff": 15.49,
+      "poolMax": 12.275
+     }
+    ]
+   },
+   "d7": {
+    "denominatorNote": "classifyBinding is HORIZON-level: one key per persona-plan. Reported over personas AND over the days those plans cover.",
+    "personas": 250,
+    "days": 640,
+    "horizonKeyHistogram": {
+     "snack-pool": 21,
+     "null": 171,
+     "macro-composition": 44,
+     "meal-pool": 1,
+     "pool-depth": 1,
+     "protein-density": 10,
+     "variety-cap": 1,
+     "max-prep": 1
+    },
+    "proteinDensityPersonas": 10,
+    "proteinDensityDays": 28,
+    "misclassifiedPersonas": 10,
+    "misclassifiedDays": 28,
+    "ratePersonasAll": 4,
+    "rateDaysAll": 4.4,
+    "ratePersonasWithAMiss": 12.5,
+    "rateDaysOfPlansWithAMiss": 9.1,
+    "plansWithAMiss": 80,
+    "daysOfPlansWithAMiss": 308,
+    "shareOfProteinDensityPlansThatAreWrong": 100,
+    "examples": [
+     {
+      "personaId": "p049",
+      "diet": "vegetarian",
+      "days": 1,
+      "fatOff": 0,
+      "carbOff": 1,
+      "kcalOff": 0,
+      "protShort": 0,
+      "emittedKey": "protein-density",
+      "correctedKey": "macro-composition"
+     },
+     {
+      "personaId": "p051",
+      "diet": "vegan",
+      "days": 7,
+      "fatOff": 1,
+      "carbOff": 7,
+      "kcalOff": 1,
+      "protShort": 7,
+      "emittedKey": "protein-density",
+      "correctedKey": "macro-composition"
+     },
+     {
+      "personaId": "p071",
+      "diet": "vegetarian",
+      "days": 1,
+      "fatOff": 0,
+      "carbOff": 1,
+      "kcalOff": 0,
+      "protShort": 0,
+      "emittedKey": "protein-density",
+      "correctedKey": "macro-composition"
+     },
+     {
+      "personaId": "p086",
+      "diet": "vegetarian",
+      "days": 7,
+      "fatOff": 0,
+      "carbOff": 7,
+      "kcalOff": 0,
+      "protShort": 0,
+      "emittedKey": "protein-density",
+      "correctedKey": "macro-composition"
+     },
+     {
+      "personaId": "p111",
+      "diet": "carnivore",
+      "days": 1,
+      "fatOff": 1,
+      "carbOff": 1,
+      "kcalOff": 0,
+      "protShort": 0,
+      "emittedKey": "protein-density",
+      "correctedKey": "macro-composition"
+     },
+     {
+      "personaId": "p127",
+      "diet": "vegetarian",
+      "days": 1,
+      "fatOff": 0,
+      "carbOff": 1,
+      "kcalOff": 0,
+      "protShort": 0,
+      "emittedKey": "protein-density",
+      "correctedKey": "macro-composition"
+     }
+    ]
+   },
+   "b1": {
+    "planned": {
+     "fatOver": 97,
+     "fatShort": 17,
+     "carbOver": 89,
+     "carbShort": 22,
+     "kcalOver": 28,
+     "kcalShort": 47,
+     "proteinShort": 79,
+     "fatOnly": 55,
+     "fatOnlyOver": 55
+    },
+    "planned-degenerate": {
+     "fatOver": 97,
+     "fatShort": 17,
+     "carbOver": 89,
+     "carbShort": 22,
+     "kcalOver": 28,
+     "kcalShort": 47,
+     "proteinShort": 79,
+     "fatOnly": 55,
+     "fatOnlyOver": 55
+    },
+    "judged": {
+     "fatOver": 97,
+     "fatShort": 1,
+     "carbOver": 89,
+     "carbShort": 6,
+     "kcalOver": 28,
+     "kcalShort": 31,
+     "proteinShort": 63,
+     "fatOnly": 55,
+     "fatOnlyOver": 55
+    },
+    "satisfiable-planned": {
+     "fatOver": 86,
+     "fatShort": 16,
+     "carbOver": 45,
+     "carbShort": 21,
+     "kcalOver": 26,
+     "kcalShort": 17,
+     "proteinShort": 17,
+     "fatOnly": 54,
+     "fatOnlyOver": 54
+    },
+    "satisfiable-planned-degenerate": {
+     "fatOver": 86,
+     "fatShort": 16,
+     "carbOver": 45,
+     "carbShort": 21,
+     "kcalOver": 26,
+     "kcalShort": 17,
+     "proteinShort": 17,
+     "fatOnly": 54,
+     "fatOnlyOver": 54
+    },
+    "satisfiable-judged": {
+     "fatOver": 86,
+     "fatShort": 0,
+     "carbOver": 45,
+     "carbShort": 5,
+     "kcalOver": 26,
+     "kcalShort": 1,
+     "proteinShort": 1,
+     "fatOnly": 54,
+     "fatOnlyOver": 54
+    }
+   },
+   "b10": {
+    "canonical553": {
+     "axes": {
+      "over": 157,
+      "short": 71,
+      "byAxis": {
+       "kcal-over": 26,
+       "fat-over": 86,
+       "kcal-under": 17,
+       "protein-short": 17,
+       "fat-under": 16,
+       "carb-under": 21,
+       "carb-over": 45
+      },
+      "total": 228,
+      "overPct": 68.9,
+      "exProtein": {
+       "over": 157,
+       "short": 54,
+       "total": 211,
+       "overPct": 74.4
+      }
+     },
+     "days": {
+      "pureOver": 117,
+      "mixed": 6,
+      "pureShort": 17,
+      "noAxis": 0,
+      "total": 140,
+      "emptySlotDays": 16,
+      "pureOverPct": 83.6,
+      "overTouchedPct": 87.9
+     },
+     "slots": {
+      "slots": 2634,
+      "filled": 2527,
+      "axisOver": 2067,
+      "axisShort": 1126,
+      "byAxis": {
+       "protein-over(UNPENALISED)": 447,
+       "fat-over": 826,
+       "carb-short": 221,
+       "carb-over": 980,
+       "kcal-over": 261,
+       "protein-short": 153,
+       "fat-short": 263,
+       "kcal-short": 42
+      },
+      "gramsOver": {
+       "fat": 8453,
+       "carb": 20277,
+       "protein": 0
+      },
+      "gramsShort": {
+       "fat": 3516,
+       "carb": 7129,
+       "protein": 0
+      },
+      "kcalOver": 28746,
+      "kcalUnder": 10792,
+      "axisTotal": 3193,
+      "overPct": 64.7,
+      "gramsOverPct": {
+       "fat": 70.6,
+       "carb": 74
+      }
+     }
+    }
+   }
+  },
+  "rigshape-s424242": {
+   "file": "fleet/out/W1-2/daydump-rigshape-s424242.jsonl",
+   "seed": 424242,
+   "poolShape": "rig (no applyFilterStack)",
+   "dbSha256": "d9037dce9754b4524943069fff7e0f3e396598c108426f370b0a189458b623a1",
+   "gitSha": "8cd1480c085cb6860025851b370925d56b963bc5",
+   "replayCheck": {
+    "days": 640,
+    "replayFailures": 1,
+    "slotOrderFailures": 0,
+    "warningKcalTargets": 362,
+    "matched": 362,
+    "mismatchRate": 0,
+    "warningProteinTargets": 325,
+    "proteinMatched": 323,
+    "worstMismatches": []
+   },
+   "denominators": {
+    "planned": 640,
+    "planned-degenerate": 639,
+    "judged": 623,
+    "satisfiable-planned": 554,
+    "satisfiable-planned-degenerate": 553,
+    "satisfiable-judged": 537
+   },
+   "levels": {
+    "planned": {
+     "n": 640,
+     "inBand": 437,
+     "pct": 68.3
+    },
+    "planned-degenerate": {
+     "n": 639,
+     "inBand": 437,
+     "pct": 68.4
+    },
+    "judged": {
+     "n": 623,
+     "inBand": 437,
+     "pct": 70.1
+    },
+    "satisfiable-planned": {
+     "n": 554,
+     "inBand": 417,
+     "pct": 75.3
+    },
+    "satisfiable-planned-degenerate": {
+     "n": 553,
+     "inBand": 417,
+     "pct": 75.4
+    },
+    "satisfiable-judged": {
+     "n": 537,
+     "inBand": 417,
+     "pct": 77.7
+    }
+   },
+   "buckets": {
+    "canonical": {
+     "denominator": "satisfiable-planned−degenerate (553)",
+     "n": 553,
+     "inBand": 417,
+     "failing": 136,
+     "bucketSum": 136,
+     "reconciles": true,
+     "buckets": {
+      "fat-over": 49,
+      "carb-over": 32,
+      "multi:kcal-over+fat-over": 17,
+      "empty-slot": 16,
+      "multi:kcal-over+fat-over+carb-over": 9,
+      "multi:fat-over+carb-under": 5,
+      "multi:fat-over+carb-over": 3,
+      "multi:kcal-over+carb-over": 2,
+      "kcal-over": 1,
+      "kcal-under": 1,
+      "multi:protein-short+carb-over": 1
+     }
+    },
+    "satisfiableJudged": {
+     "denominator": "satisfiable-judged (537)",
+     "n": 537,
+     "inBand": 417,
+     "failing": 120,
+     "bucketSum": 120,
+     "reconciles": true,
+     "buckets": {
+      "fat-over": 49,
+      "carb-over": 32,
+      "multi:kcal-over+fat-over": 17,
+      "multi:kcal-over+fat-over+carb-over": 9,
+      "multi:fat-over+carb-under": 5,
+      "multi:fat-over+carb-over": 3,
+      "multi:kcal-over+carb-over": 2,
+      "kcal-over": 1,
+      "kcal-under": 1,
+      "multi:protein-short+carb-over": 1
+     }
+    },
+    "planned": {
+     "denominator": "planned (640)",
+     "n": 640,
+     "inBand": 437,
+     "failing": 203,
+     "bucketSum": 203,
+     "reconciles": true,
+     "buckets": {
+      "fat-over": 50,
+      "carb-over": 35,
+      "multi:protein-short+carb-over": 23,
+      "multi:kcal-over+fat-over": 17,
+      "empty-slot": 16,
+      "multi:kcal-under+protein-short": 14,
+      "multi:kcal-under+protein-short+carb-over": 11,
+      "multi:kcal-over+fat-over+carb-over": 9,
+      "multi:fat-over+carb-under": 5,
+      "multi:protein-short+fat-over": 4,
+      "multi:protein-short+fat-over+carb-over": 4,
+      "multi:fat-over+carb-over": 3,
+      "multi:kcal-under+protein-short+fat-over": 3,
+      "protein-short": 2,
+      "multi:kcal-over+carb-over": 2,
+      "kcal-over": 1,
+      "multi:kcal-under+protein-short+fat-under+carb-under": 1,
+      "kcal-under": 1,
+      "multi:kcal-over+protein-short+fat-over+carb-over": 1,
+      "degenerate": 1
+     }
+    },
+    "plannedMinusDegenerate": {
+     "denominator": "planned−degenerate (639)",
+     "n": 639,
+     "inBand": 437,
+     "failing": 202,
+     "bucketSum": 202,
+     "reconciles": true,
+     "buckets": {
+      "fat-over": 50,
+      "carb-over": 35,
+      "multi:protein-short+carb-over": 23,
+      "multi:kcal-over+fat-over": 17,
+      "empty-slot": 16,
+      "multi:kcal-under+protein-short": 14,
+      "multi:kcal-under+protein-short+carb-over": 11,
+      "multi:kcal-over+fat-over+carb-over": 9,
+      "multi:fat-over+carb-under": 5,
+      "multi:protein-short+fat-over": 4,
+      "multi:protein-short+fat-over+carb-over": 4,
+      "multi:fat-over+carb-over": 3,
+      "multi:kcal-under+protein-short+fat-over": 3,
+      "protein-short": 2,
+      "multi:kcal-over+carb-over": 2,
+      "kcal-over": 1,
+      "multi:kcal-under+protein-short+fat-under+carb-under": 1,
+      "kcal-under": 1,
+      "multi:kcal-over+protein-short+fat-over+carb-over": 1
+     }
+    }
+   },
+   "bucketsPerDiet": {
+    "none": {
+     "denominator": "none",
+     "n": 275,
+     "inBand": 245,
+     "failing": 30,
+     "bucketSum": 30,
+     "reconciles": true,
+     "buckets": {
+      "fat-over": 19,
+      "carb-over": 4,
+      "multi:kcal-over+fat-over": 3,
+      "multi:kcal-over+fat-over+carb-over": 3,
+      "multi:kcal-over+carb-over": 1
+     }
+    },
+    "keto": {
+     "denominator": "keto",
+     "n": 58,
+     "inBand": 33,
+     "failing": 25,
+     "bucketSum": 25,
+     "reconciles": true,
+     "buckets": {
+      "empty-slot": 11,
+      "carb-over": 11,
+      "kcal-over": 1,
+      "kcal-under": 1,
+      "multi:kcal-over+fat-over": 1
+     }
+    },
+    "vegetarian": {
+     "denominator": "vegetarian",
+     "n": 57,
+     "inBand": 35,
+     "failing": 22,
+     "bucketSum": 22,
+     "reconciles": true,
+     "buckets": {
+      "carb-over": 14,
+      "fat-over": 6,
+      "multi:kcal-over+carb-over": 1,
+      "multi:fat-over+carb-over": 1
+     }
+    },
+    "mediterranean": {
+     "denominator": "mediterranean",
+     "n": 49,
+     "inBand": 44,
+     "failing": 5,
+     "bucketSum": 5,
+     "reconciles": true,
+     "buckets": {
+      "fat-over": 3,
+      "multi:protein-short+carb-over": 1,
+      "multi:kcal-over+fat-over+carb-over": 1
+     }
+    },
+    "kosher": {
+     "denominator": "kosher",
+     "n": 35,
+     "inBand": 18,
+     "failing": 17,
+     "bucketSum": 17,
+     "reconciles": true,
+     "buckets": {
+      "multi:kcal-over+fat-over": 8,
+      "fat-over": 6,
+      "multi:kcal-over+fat-over+carb-over": 2,
+      "carb-over": 1
+     }
+    },
+    "vegan": {
+     "denominator": "vegan",
+     "n": 35,
+     "inBand": 20,
+     "failing": 15,
+     "bucketSum": 15,
+     "reconciles": true,
+     "buckets": {
+      "fat-over": 9,
+      "multi:kcal-over+fat-over": 3,
+      "multi:kcal-over+fat-over+carb-over": 2,
+      "multi:fat-over+carb-over": 1
+     }
+    },
+    "paleo": {
+     "denominator": "paleo",
+     "n": 24,
+     "inBand": 10,
+     "failing": 14,
+     "bucketSum": 14,
+     "reconciles": true,
+     "buckets": {
+      "fat-over": 6,
+      "multi:fat-over+carb-under": 3,
+      "carb-over": 2,
+      "multi:fat-over+carb-over": 1,
+      "multi:kcal-over+fat-over": 1,
+      "multi:kcal-over+fat-over+carb-over": 1
+     }
+    },
+    "halal": {
+     "denominator": "halal",
+     "n": 12,
+     "inBand": 12,
+     "failing": 0,
+     "bucketSum": 0,
+     "reconciles": true,
+     "buckets": {}
+    },
+    "carnivore": {
+     "denominator": "carnivore",
+     "n": 8,
+     "inBand": 0,
+     "failing": 8,
+     "bucketSum": 8,
+     "reconciles": true,
+     "buckets": {
+      "empty-slot": 5,
+      "multi:fat-over+carb-under": 2,
+      "multi:kcal-over+fat-over": 1
+     }
+    }
+   },
+   "bucketsPerTier": {
+    "EASY": {
+     "denominator": "EASY",
+     "n": 340,
+     "inBand": 268,
+     "failing": 72,
+     "bucketSum": 72,
+     "reconciles": true,
+     "buckets": {
+      "fat-over": 30,
+      "carb-over": 14,
+      "empty-slot": 9,
+      "multi:kcal-over+fat-over": 6,
+      "multi:fat-over+carb-under": 5,
+      "multi:kcal-over+fat-over+carb-over": 3,
+      "multi:fat-over+carb-over": 2,
+      "kcal-over": 1,
+      "kcal-under": 1,
+      "multi:protein-short+carb-over": 1
+     }
+    },
+    "HARD": {
+     "denominator": "HARD",
+     "n": 175,
+     "inBand": 127,
+     "failing": 48,
+     "bucketSum": 48,
+     "reconciles": true,
+     "buckets": {
+      "carb-over": 16,
+      "fat-over": 14,
+      "empty-slot": 7,
+      "multi:kcal-over+fat-over+carb-over": 5,
+      "multi:kcal-over+fat-over": 3,
+      "multi:kcal-over+carb-over": 2,
+      "multi:fat-over+carb-over": 1
+     }
+    },
+    "ROBUSTNESS": {
+     "denominator": "ROBUSTNESS",
+     "n": 38,
+     "inBand": 22,
+     "failing": 16,
+     "bucketSum": 16,
+     "reconciles": true,
+     "buckets": {
+      "multi:kcal-over+fat-over": 8,
+      "fat-over": 5,
+      "carb-over": 2,
+      "multi:kcal-over+fat-over+carb-over": 1
+     }
+    }
+   },
+   "overside": {
+    "planned": {
+     "axes": {
+      "over": 214,
+      "short": 164,
+      "byAxis": {
+       "fat-over": 96,
+       "kcal-over": 30,
+       "carb-over": 88,
+       "kcal-under": 46,
+       "protein-short": 79,
+       "fat-under": 17,
+       "carb-under": 22
+      },
+      "total": 378,
+      "overPct": 56.6,
+      "exProtein": {
+       "over": 214,
+       "short": 85,
+       "total": 299,
+       "overPct": 71.6
+      }
+     },
+     "days": {
+      "pureOver": 117,
+      "mixed": 51,
+      "pureShort": 34,
+      "noAxis": 0,
+      "total": 202,
+      "emptySlotDays": 16,
+      "pureOverPct": 57.9,
+      "overTouchedPct": 83.2
+     },
+     "slots": {
+      "slots": 3011,
+      "filled": 2820,
+      "axisOver": 2422,
+      "axisShort": 1366,
+      "byAxis": {
+       "fat-over": 945,
+       "protein-over(UNPENALISED)": 469,
+       "carb-over": 1183,
+       "carb-short": 210,
+       "kcal-over": 294,
+       "protein-short": 325,
+       "fat-short": 294,
+       "kcal-short": 68
+      },
+      "gramsOver": {
+       "fat": 10108,
+       "carb": 28672,
+       "protein": 0
+      },
+      "gramsShort": {
+       "fat": 3956,
+       "carb": 7802,
+       "protein": 0
+      },
+      "kcalOver": 32244,
+      "kcalUnder": 18428,
+      "axisTotal": 3788,
+      "overPct": 63.9,
+      "gramsOverPct": {
+       "fat": 71.9,
+       "carb": 78.6
+      }
+     }
+    },
+    "planned-degenerate": {
+     "axes": {
+      "over": 214,
+      "short": 164,
+      "byAxis": {
+       "fat-over": 96,
+       "kcal-over": 30,
+       "carb-over": 88,
+       "kcal-under": 46,
+       "protein-short": 79,
+       "fat-under": 17,
+       "carb-under": 22
+      },
+      "total": 378,
+      "overPct": 56.6,
+      "exProtein": {
+       "over": 214,
+       "short": 85,
+       "total": 299,
+       "overPct": 71.6
+      }
+     },
+     "days": {
+      "pureOver": 117,
+      "mixed": 51,
+      "pureShort": 34,
+      "noAxis": 0,
+      "total": 202,
+      "emptySlotDays": 16,
+      "pureOverPct": 57.9,
+      "overTouchedPct": 83.2
+     },
+     "slots": {
+      "slots": 3011,
+      "filled": 2820,
+      "axisOver": 2422,
+      "axisShort": 1366,
+      "byAxis": {
+       "fat-over": 945,
+       "protein-over(UNPENALISED)": 469,
+       "carb-over": 1183,
+       "carb-short": 210,
+       "kcal-over": 294,
+       "protein-short": 325,
+       "fat-short": 294,
+       "kcal-short": 68
+      },
+      "gramsOver": {
+       "fat": 10108,
+       "carb": 28672,
+       "protein": 0
+      },
+      "gramsShort": {
+       "fat": 3956,
+       "carb": 7802,
+       "protein": 0
+      },
+      "kcalOver": 32244,
+      "kcalUnder": 18428,
+      "axisTotal": 3788,
+      "overPct": 63.9,
+      "gramsOverPct": {
+       "fat": 71.9,
+       "carb": 78.6
+      }
+     }
+    },
+    "judged": {
+     "axes": {
+      "over": 214,
+      "short": 100,
+      "byAxis": {
+       "fat-over": 96,
+       "kcal-over": 30,
+       "carb-over": 88,
+       "carb-under": 6,
+       "protein-short": 63,
+       "kcal-under": 30,
+       "fat-under": 1
+      },
+      "total": 314,
+      "overPct": 68.2,
+      "exProtein": {
+       "over": 214,
+       "short": 37,
+       "total": 251,
+       "overPct": 85.3
+      }
+     },
+     "days": {
+      "pureOver": 117,
+      "mixed": 51,
+      "pureShort": 18,
+      "noAxis": 0,
+      "total": 186,
+      "emptySlotDays": 0,
+      "pureOverPct": 62.9,
+      "overTouchedPct": 90.3
+     },
+     "slots": {
+      "slots": 2954,
+      "filled": 2820,
+      "axisOver": 2422,
+      "axisShort": 1366,
+      "byAxis": {
+       "fat-over": 945,
+       "protein-over(UNPENALISED)": 469,
+       "carb-over": 1183,
+       "carb-short": 210,
+       "kcal-over": 294,
+       "protein-short": 325,
+       "fat-short": 294,
+       "kcal-short": 68
+      },
+      "gramsOver": {
+       "fat": 10108,
+       "carb": 28672,
+       "protein": 0
+      },
+      "gramsShort": {
+       "fat": 3956,
+       "carb": 7802,
+       "protein": 0
+      },
+      "kcalOver": 32244,
+      "kcalUnder": 18428,
+      "axisTotal": 3788,
+      "overPct": 63.9,
+      "gramsOverPct": {
+       "fat": 71.9,
+       "carb": 78.6
+      }
+     }
+    },
+    "satisfiable-planned": {
+     "axes": {
+      "over": 159,
+      "short": 71,
+      "byAxis": {
+       "fat-over": 83,
+       "kcal-over": 29,
+       "kcal-under": 17,
+       "protein-short": 17,
+       "fat-under": 16,
+       "carb-under": 21,
+       "carb-over": 47
+      },
+      "total": 230,
+      "overPct": 69.1,
+      "exProtein": {
+       "over": 159,
+       "short": 54,
+       "total": 213,
+       "overPct": 74.6
+      }
+     },
+     "days": {
+      "pureOver": 113,
+      "mixed": 6,
+      "pureShort": 17,
+      "noAxis": 0,
+      "total": 136,
+      "emptySlotDays": 16,
+      "pureOverPct": 83.1,
+      "overTouchedPct": 87.5
+     },
+     "slots": {
+      "slots": 2634,
+      "filled": 2527,
+      "axisOver": 2060,
+      "axisShort": 1008,
+      "byAxis": {
+       "fat-over": 838,
+       "protein-over(UNPENALISED)": 464,
+       "carb-over": 951,
+       "carb-short": 187,
+       "kcal-over": 271,
+       "protein-short": 130,
+       "fat-short": 195,
+       "kcal-short": 32
+      },
+      "gramsOver": {
+       "fat": 8623,
+       "carb": 19082,
+       "protein": 0
+      },
+      "gramsShort": {
+       "fat": 2873,
+       "carb": 7309,
+       "protein": 0
+      },
+      "kcalOver": 28582,
+      "kcalUnder": 6988,
+      "axisTotal": 3068,
+      "overPct": 67.1,
+      "gramsOverPct": {
+       "fat": 75,
+       "carb": 72.3
+      }
+     }
+    },
+    "satisfiable-planned-degenerate": {
+     "axes": {
+      "over": 159,
+      "short": 71,
+      "byAxis": {
+       "fat-over": 83,
+       "kcal-over": 29,
+       "kcal-under": 17,
+       "protein-short": 17,
+       "fat-under": 16,
+       "carb-under": 21,
+       "carb-over": 47
+      },
+      "total": 230,
+      "overPct": 69.1,
+      "exProtein": {
+       "over": 159,
+       "short": 54,
+       "total": 213,
+       "overPct": 74.6
+      }
+     },
+     "days": {
+      "pureOver": 113,
+      "mixed": 6,
+      "pureShort": 17,
+      "noAxis": 0,
+      "total": 136,
+      "emptySlotDays": 16,
+      "pureOverPct": 83.1,
+      "overTouchedPct": 87.5
+     },
+     "slots": {
+      "slots": 2634,
+      "filled": 2527,
+      "axisOver": 2060,
+      "axisShort": 1008,
+      "byAxis": {
+       "fat-over": 838,
+       "protein-over(UNPENALISED)": 464,
+       "carb-over": 951,
+       "carb-short": 187,
+       "kcal-over": 271,
+       "protein-short": 130,
+       "fat-short": 195,
+       "kcal-short": 32
+      },
+      "gramsOver": {
+       "fat": 8623,
+       "carb": 19082,
+       "protein": 0
+      },
+      "gramsShort": {
+       "fat": 2873,
+       "carb": 7309,
+       "protein": 0
+      },
+      "kcalOver": 28582,
+      "kcalUnder": 6988,
+      "axisTotal": 3068,
+      "overPct": 67.1,
+      "gramsOverPct": {
+       "fat": 75,
+       "carb": 72.3
+      }
+     }
+    },
+    "satisfiable-judged": {
+     "axes": {
+      "over": 159,
+      "short": 7,
+      "byAxis": {
+       "fat-over": 83,
+       "kcal-over": 29,
+       "carb-over": 47,
+       "carb-under": 5,
+       "kcal-under": 1,
+       "protein-short": 1
+      },
+      "total": 166,
+      "overPct": 95.8,
+      "exProtein": {
+       "over": 159,
+       "short": 6,
+       "total": 165,
+       "overPct": 96.4
+      }
+     },
+     "days": {
+      "pureOver": 113,
+      "mixed": 6,
+      "pureShort": 1,
+      "noAxis": 0,
+      "total": 120,
+      "emptySlotDays": 0,
+      "pureOverPct": 94.2,
+      "overTouchedPct": 99.2
+     },
+     "slots": {
+      "slots": 2577,
+      "filled": 2527,
+      "axisOver": 2060,
+      "axisShort": 1008,
+      "byAxis": {
+       "fat-over": 838,
+       "protein-over(UNPENALISED)": 464,
+       "carb-over": 951,
+       "carb-short": 187,
+       "kcal-over": 271,
+       "protein-short": 130,
+       "fat-short": 195,
+       "kcal-short": 32
+      },
+      "gramsOver": {
+       "fat": 8623,
+       "carb": 19082,
+       "protein": 0
+      },
+      "gramsShort": {
+       "fat": 2873,
+       "carb": 7309,
+       "protein": 0
+      },
+      "kcalOver": 28582,
+      "kcalUnder": 6988,
+      "axisTotal": 3068,
+      "overPct": 67.1,
+      "gramsOverPct": {
+       "fat": 75,
+       "carb": 72.3
+      }
+     }
+    }
+   },
+   "b9": {
+    "denominator": "satisfiable-planned−degenerate (553 days)",
+    "cumulativeFatRatioBySlotOrder": [
+     {
+      "slotPosition": 1,
+      "days": 553,
+      "medianDayRatio": 1.017,
+      "pooledRatio": 0.998,
+      "slotTypes": {
+       "meal": 553
+      }
+     },
+     {
+      "slotPosition": 2,
+      "days": 553,
+      "medianDayRatio": 1.027,
+      "pooledRatio": 0.992,
+      "slotTypes": {
+       "meal": 553
+      }
+     },
+     {
+      "slotPosition": 3,
+      "days": 542,
+      "medianDayRatio": 1.027,
+      "pooledRatio": 0.999,
+      "slotTypes": {
+       "meal": 483,
+       "snack": 59
+      }
+     },
+     {
+      "slotPosition": 4,
+      "days": 448,
+      "medianDayRatio": 1.061,
+      "pooledRatio": 1.05,
+      "slotTypes": {
+       "meal": 198,
+       "snack": 250
+      }
+     },
+     {
+      "slotPosition": 5,
+      "days": 299,
+      "medianDayRatio": 1.064,
+      "pooledRatio": 1.119,
+      "slotTypes": {
+       "snack": 211,
+       "meal": 88
+      }
+     },
+     {
+      "slotPosition": 6,
+      "days": 133,
+      "medianDayRatio": 1.076,
+      "pooledRatio": 1.135,
+      "slotTypes": {
+       "snack": 115,
+       "meal": 18
+      }
+     },
+     {
+      "slotPosition": 7,
+      "days": 48,
+      "medianDayRatio": 1.139,
+      "pooledRatio": 1.208,
+      "slotTypes": {
+       "snack": 30,
+       "meal": 18
+      }
+     },
+     {
+      "slotPosition": 8,
+      "days": 28,
+      "medianDayRatio": 1.215,
+      "pooledRatio": 1.247,
+      "slotTypes": {
+       "snack": 10,
+       "meal": 18
+      }
+     },
+     {
+      "slotPosition": 9,
+      "days": 18,
+      "medianDayRatio": 1.398,
+      "pooledRatio": 1.238,
+      "slotTypes": {
+       "meal": 18
+      }
+     },
+     {
+      "slotPosition": 10,
+      "days": 10,
+      "medianDayRatio": 1.886,
+      "pooledRatio": 1.711,
+      "slotTypes": {
+       "snack": 10
+      }
+     },
+     {
+      "slotPosition": 11,
+      "days": 2,
+      "medianDayRatio": 1.489,
+      "pooledRatio": 1.442,
+      "slotTypes": {
+       "snack": 2
+      }
+     }
+    ],
+    "flooredFatTarget": {
+     "note": "slots SOLVED (recipe shipped) whose carry-forward fatTarget = max(0, (budgetFat-achieved)*share) had already floored to 0",
+     "slots": 183,
+     "medianFatShippedG": 9.6,
+     "meanFatShippedG": 14.43,
+     "totalFatShippedG": 2641,
+     "zeroG": 0
+    },
+    "perSlotFatVsNominalShare": [
+     {
+      "slotPosition": 1,
+      "slots": 553,
+      "filled": 537,
+      "medianRatio": 1.025
+     },
+     {
+      "slotPosition": 2,
+      "slots": 553,
+      "filled": 537,
+      "medianRatio": 1.01
+     },
+     {
+      "slotPosition": 3,
+      "slots": 542,
+      "filled": 522,
+      "medianRatio": 1.026
+     },
+     {
+      "slotPosition": 4,
+      "slots": 448,
+      "filled": 425,
+      "medianRatio": 1.219
+     },
+     {
+      "slotPosition": 5,
+      "slots": 299,
+      "filled": 285,
+      "medianRatio": 1.427
+     },
+     {
+      "slotPosition": 6,
+      "slots": 133,
+      "filled": 120,
+      "medianRatio": 1.595
+     },
+     {
+      "slotPosition": 7,
+      "slots": 48,
+      "filled": 43,
+      "medianRatio": 1.763
+     },
+     {
+      "slotPosition": 8,
+      "slots": 28,
+      "filled": 28,
+      "medianRatio": 1.546
+     },
+     {
+      "slotPosition": 9,
+      "slots": 18,
+      "filled": 18,
+      "medianRatio": 1.286
+     },
+     {
+      "slotPosition": 10,
+      "slots": 10,
+      "filled": 10,
+      "medianRatio": 2.526
+     },
+     {
+      "slotPosition": 11,
+      "slots": 2,
+      "filled": 2,
+      "medianRatio": 2.098
+     }
+    ]
+   },
+   "b8": {
+    "denominator": "all slots of the 553 canonical days",
+    "byNominalKcalTarget": [
+     {
+      "band": "0-150",
+      "slots": 126,
+      "unsolved": 22,
+      "unsolvedPct": 17.5,
+      "snackSlots": 119,
+      "mealSlots": 7,
+      "snackShareOfBand": 94.4,
+      "snackUnsolved": 22,
+      "mealUnsolved": 0,
+      "mealOnlyUnsolvedPct": 0,
+      "snackOnlyUnsolvedPct": 18.5,
+      "medianFatOverPctVsEffTarget": 72.6,
+      "medianFatOverPctMealsOnly": 87.7
+     },
+     {
+      "band": "150-250",
+      "slots": 503,
+      "unsolved": 30,
+      "unsolvedPct": 6,
+      "snackSlots": 353,
+      "mealSlots": 150,
+      "snackShareOfBand": 70.2,
+      "snackUnsolved": 30,
+      "mealUnsolved": 0,
+      "mealOnlyUnsolvedPct": 0,
+      "snackOnlyUnsolvedPct": 8.5,
+      "medianFatOverPctVsEffTarget": 67.3,
+      "medianFatOverPctMealsOnly": 28.3
+     },
+     {
+      "band": "250-400",
+      "slots": 615,
+      "unsolved": 23,
+      "unsolvedPct": 3.7,
+      "snackSlots": 199,
+      "mealSlots": 416,
+      "snackShareOfBand": 32.4,
+      "snackUnsolved": 6,
+      "mealUnsolved": 17,
+      "mealOnlyUnsolvedPct": 4.1,
+      "snackOnlyUnsolvedPct": 3,
+      "medianFatOverPctVsEffTarget": 13.7,
+      "medianFatOverPctMealsOnly": 9.8
+     },
+     {
+      "band": "400-500",
+      "slots": 360,
+      "unsolved": 19,
+      "unsolvedPct": 5.3,
+      "snackSlots": 11,
+      "mealSlots": 349,
+      "snackShareOfBand": 3.1,
+      "snackUnsolved": 0,
+      "mealUnsolved": 19,
+      "mealOnlyUnsolvedPct": 5.4,
+      "snackOnlyUnsolvedPct": 0,
+      "medianFatOverPctVsEffTarget": 5.9,
+      "medianFatOverPctMealsOnly": 5.5
+     },
+     {
+      "band": "500-700",
+      "slots": 613,
+      "unsolved": 8,
+      "unsolvedPct": 1.3,
+      "snackSlots": 4,
+      "mealSlots": 609,
+      "snackShareOfBand": 0.7,
+      "snackUnsolved": 0,
+      "mealUnsolved": 8,
+      "mealOnlyUnsolvedPct": 1.3,
+      "snackOnlyUnsolvedPct": 0,
+      "medianFatOverPctVsEffTarget": 1.8,
+      "medianFatOverPctMealsOnly": 1.9
+     },
+     {
+      "band": "700+",
+      "slots": 417,
+      "unsolved": 5,
+      "unsolvedPct": 1.2,
+      "snackSlots": 1,
+      "mealSlots": 416,
+      "snackShareOfBand": 0.2,
+      "snackUnsolved": 0,
+      "mealUnsolved": 5,
+      "mealOnlyUnsolvedPct": 1.2,
+      "snackOnlyUnsolvedPct": 0,
+      "medianFatOverPctVsEffTarget": -2.7,
+      "medianFatOverPctMealsOnly": -2.7
+     }
+    ],
+    "byEffectiveKcalTarget": [
+     {
+      "band": "0-150",
+      "slots": 237,
+      "unsolved": 19,
+      "unsolvedPct": 8,
+      "snackSlots": 183,
+      "mealSlots": 54,
+      "snackShareOfBand": 77.2,
+      "snackUnsolved": 19,
+      "mealUnsolved": 0,
+      "mealOnlyUnsolvedPct": 0,
+      "snackOnlyUnsolvedPct": 10.4,
+      "medianFatOverPctVsEffTarget": 93.5,
+      "medianFatOverPctMealsOnly": 172.9
+     },
+     {
+      "band": "150-250",
+      "slots": 394,
+      "unsolved": 23,
+      "unsolvedPct": 5.8,
+      "snackSlots": 280,
+      "mealSlots": 114,
+      "snackShareOfBand": 71.1,
+      "snackUnsolved": 23,
+      "mealUnsolved": 0,
+      "mealOnlyUnsolvedPct": 0,
+      "snackOnlyUnsolvedPct": 8.2,
+      "medianFatOverPctVsEffTarget": 58.9,
+      "medianFatOverPctMealsOnly": 24.3
+     },
+     {
+      "band": "250-400",
+      "slots": 575,
+      "unsolved": 28,
+      "unsolvedPct": 4.9,
+      "snackSlots": 196,
+      "mealSlots": 379,
+      "snackShareOfBand": 34.1,
+      "snackUnsolved": 16,
+      "mealUnsolved": 12,
+      "mealOnlyUnsolvedPct": 3.2,
+      "snackOnlyUnsolvedPct": 8.2,
+      "medianFatOverPctVsEffTarget": 14.4,
+      "medianFatOverPctMealsOnly": 9.7
+     },
+     {
+      "band": "400-500",
+      "slots": 372,
+      "unsolved": 5,
+      "unsolvedPct": 1.3,
+      "snackSlots": 12,
+      "mealSlots": 360,
+      "snackShareOfBand": 3.2,
+      "snackUnsolved": 0,
+      "mealUnsolved": 5,
+      "mealOnlyUnsolvedPct": 1.4,
+      "snackOnlyUnsolvedPct": 0,
+      "medianFatOverPctVsEffTarget": 6.4,
+      "medianFatOverPctMealsOnly": 6.4
+     },
+     {
+      "band": "500-700",
+      "slots": 632,
+      "unsolved": 23,
+      "unsolvedPct": 3.6,
+      "snackSlots": 14,
+      "mealSlots": 618,
+      "snackShareOfBand": 2.2,
+      "snackUnsolved": 0,
+      "mealUnsolved": 23,
+      "mealOnlyUnsolvedPct": 3.7,
+      "snackOnlyUnsolvedPct": 0,
+      "medianFatOverPctVsEffTarget": 1.8,
+      "medianFatOverPctMealsOnly": 1.8
+     },
+     {
+      "band": "700+",
+      "slots": 424,
+      "unsolved": 9,
+      "unsolvedPct": 2.1,
+      "snackSlots": 2,
+      "mealSlots": 422,
+      "snackShareOfBand": 0.5,
+      "snackUnsolved": 0,
+      "mealUnsolved": 9,
+      "mealOnlyUnsolvedPct": 2.1,
+      "snackOnlyUnsolvedPct": 0,
+      "medianFatOverPctVsEffTarget": -2.7,
+      "medianFatOverPctMealsOnly": -2.7
+     }
+    ]
+   },
+   "b6": {
+    "denominator": "shipped (filled) slots of the 553 canonical days",
+    "shippedSlots": 2527,
+    "fallbackSlots": 357,
+    "fallbackPctOfShipped": 14.1,
+    "totalFatOverageG": 8623,
+    "fallbackFatOverageG": 3266,
+    "fallbackShareOfFatOveragePct": 37.9,
+    "fatOveragePerFallbackSlotG": 9.15,
+    "fatOveragePerOtherSlotG": 2.47,
+    "medianFatOverageFallbackG": 6.87,
+    "medianFatOverageOtherG": 0.84,
+    "kcalOveragePerFallbackSlot": 81,
+    "kcalOveragePerOtherSlot": 6
+   },
+   "b5": {
+    "denominator": "satisfiable-planned−degenerate (553 days)",
+    "proteinOver12PctOfMid": {
+     "days": 32,
+     "n": 553,
+     "pct": 5.8,
+     "pctOfFilledDays": 6,
+     "filledDays": 537
+    },
+    "medianProteinVsMidPct": 0.2,
+    "p90ProteinVsMidPct": 6.8,
+    "medianFatVs28pctEAskPct": -3.8,
+    "medianFatVsFatMidPct": 7.8,
+    "aPrioriGeometry": {
+     "method": "share of the 910-recipe library whose fat-per-kcal density falls BELOW the day's graded low edge vs ABOVE its graded high edge (D3 window: fatLo-0.25*fatMid .. fatHi+0.25*fatMid), averaged over the 553 days. Library-wide, not per-persona pool.",
+     "meanShareLowOnlyPct": 15.13,
+     "meanShareHighOnlyPct": 54.96
+    }
+   },
+   "i7": {
+    "denominator": "all slots of the 553 canonical days; personas measured over the 218 satisfiable personas present",
+    "poolMaxMethod": "max / p99 of (recipe protein g per kcal) over W1-5's per-DIET-STYLE pool (allergen stacking NOT applied, so these bounds are GENEROUS — the real per-persona pool is smaller and the true counts can only be higher)",
+    "slots": 2634,
+    "ratioEffOverNominalDensity": {
+     "median": 1,
+     "p90": 1.024,
+     "p99": 1.409,
+     "max": 1.857,
+     "theoreticalMax": 1.857
+    },
+    "slotsWithRatioAbove1_2": 66,
+    "slotsWithRatioAbove1_5": 21,
+    "personas": 217,
+    "nominalAskAbovePoolMaxPersonas": 1,
+    "carryAskAbovePoolMaxPersonas": 11,
+    "carryAskAbovePoolP99Personas": 26,
+    "slotsAbovePoolMax": 30,
+    "slotsAbovePoolP99": 82,
+    "poolMaxPer100kcal": {
+     "none": {
+      "n": 910,
+      "maxProteinPer100kcal": 22.18,
+      "p99": 12.8
+     },
+     "mediterranean": {
+      "n": 814,
+      "maxProteinPer100kcal": 22.18,
+      "p99": 12.8
+     },
+     "vegetarian": {
+      "n": 401,
+      "maxProteinPer100kcal": 12.27,
+      "p99": 11.35
+     },
+     "vegan": {
+      "n": 169,
+      "maxProteinPer100kcal": 12.27,
+      "p99": 12.09
+     },
+     "paleo": {
+      "n": 167,
+      "maxProteinPer100kcal": 22.18,
+      "p99": 13.23
+     },
+     "keto": {
+      "n": 53,
+      "maxProteinPer100kcal": 22.18,
+      "p99": 22.18
+     },
+     "carnivore": {
+      "n": 3,
+      "maxProteinPer100kcal": 8.28,
+      "p99": 8.28
+     },
+     "halal": {
+      "n": 758,
+      "maxProteinPer100kcal": 22.18,
+      "p99": 12.94
+     },
+     "kosher": {
+      "n": 680,
+      "maxProteinPer100kcal": 14.53,
+      "p99": 12.27
+     }
+    },
+    "worstSample": [
+     {
+      "dayKey": "p022#0",
+      "slot": 4,
+      "ratio": 1.857,
+      "dEff": 14.803,
+      "poolMax": 14.527
+     },
+     {
+      "dayKey": "p034#6",
+      "slot": 3,
+      "ratio": 1.857,
+      "dEff": 17.328,
+      "poolMax": 14.527
+     },
+     {
+      "dayKey": "p036#1",
+      "slot": 4,
+      "ratio": 1.857,
+      "dEff": 16.139,
+      "poolMax": 22.184
+     },
+     {
+      "dayKey": "p086#5",
+      "slot": 5,
+      "ratio": 1.857,
+      "dEff": 19.757,
+      "poolMax": 12.275
+     },
+     {
+      "dayKey": "p093#4",
+      "slot": 4,
+      "ratio": 1.857,
+      "dEff": 14.337,
+      "poolMax": 22.184
+     }
+    ]
+   },
+   "d7": {
+    "denominatorNote": "classifyBinding is HORIZON-level: one key per persona-plan. Reported over personas AND over the days those plans cover.",
+    "personas": 250,
+    "days": 640,
+    "horizonKeyHistogram": {
+     "snack-pool": 21,
+     "null": 174,
+     "macro-composition": 42,
+     "meal-pool": 1,
+     "pool-depth": 1,
+     "protein-density": 9,
+     "variety-cap": 1,
+     "max-prep": 1
+    },
+    "proteinDensityPersonas": 9,
+    "proteinDensityDays": 27,
+    "misclassifiedPersonas": 9,
+    "misclassifiedDays": 27,
+    "ratePersonasAll": 3.6,
+    "rateDaysAll": 4.2,
+    "ratePersonasWithAMiss": 11.7,
+    "rateDaysOfPlansWithAMiss": 8.9,
+    "plansWithAMiss": 77,
+    "daysOfPlansWithAMiss": 305,
+    "shareOfProteinDensityPlansThatAreWrong": 100,
+    "examples": [
+     {
+      "personaId": "p049",
+      "diet": "vegetarian",
+      "days": 1,
+      "fatOff": 0,
+      "carbOff": 1,
+      "kcalOff": 0,
+      "protShort": 0,
+      "emittedKey": "protein-density",
+      "correctedKey": "macro-composition"
+     },
+     {
+      "personaId": "p051",
+      "diet": "vegan",
+      "days": 7,
+      "fatOff": 3,
+      "carbOff": 6,
+      "kcalOff": 0,
+      "protShort": 7,
+      "emittedKey": "protein-density",
+      "correctedKey": "macro-composition"
+     },
+     {
+      "personaId": "p071",
+      "diet": "vegetarian",
+      "days": 1,
+      "fatOff": 0,
+      "carbOff": 1,
+      "kcalOff": 0,
+      "protShort": 0,
+      "emittedKey": "protein-density",
+      "correctedKey": "macro-composition"
+     },
+     {
+      "personaId": "p086",
+      "diet": "vegetarian",
+      "days": 7,
+      "fatOff": 0,
+      "carbOff": 7,
+      "kcalOff": 1,
+      "protShort": 0,
+      "emittedKey": "protein-density",
+      "correctedKey": "macro-composition"
+     },
+     {
+      "personaId": "p111",
+      "diet": "carnivore",
+      "days": 1,
+      "fatOff": 1,
+      "carbOff": 1,
+      "kcalOff": 0,
+      "protShort": 0,
+      "emittedKey": "protein-density",
+      "correctedKey": "macro-composition"
+     },
+     {
+      "personaId": "p166",
+      "diet": "paleo",
+      "days": 1,
+      "fatOff": 1,
+      "carbOff": 0,
+      "kcalOff": 0,
+      "protShort": 0,
+      "emittedKey": "protein-density",
+      "correctedKey": "macro-composition"
+     }
+    ]
+   },
+   "b1": {
+    "planned": {
+     "fatOver": 96,
+     "fatShort": 17,
+     "carbOver": 88,
+     "carbShort": 22,
+     "kcalOver": 30,
+     "kcalShort": 46,
+     "proteinShort": 79,
+     "fatOnly": 50,
+     "fatOnlyOver": 50
+    },
+    "planned-degenerate": {
+     "fatOver": 96,
+     "fatShort": 17,
+     "carbOver": 88,
+     "carbShort": 22,
+     "kcalOver": 30,
+     "kcalShort": 46,
+     "proteinShort": 79,
+     "fatOnly": 50,
+     "fatOnlyOver": 50
+    },
+    "judged": {
+     "fatOver": 96,
+     "fatShort": 1,
+     "carbOver": 88,
+     "carbShort": 6,
+     "kcalOver": 30,
+     "kcalShort": 30,
+     "proteinShort": 63,
+     "fatOnly": 50,
+     "fatOnlyOver": 50
+    },
+    "satisfiable-planned": {
+     "fatOver": 83,
+     "fatShort": 16,
+     "carbOver": 47,
+     "carbShort": 21,
+     "kcalOver": 29,
+     "kcalShort": 17,
+     "proteinShort": 17,
+     "fatOnly": 49,
+     "fatOnlyOver": 49
+    },
+    "satisfiable-planned-degenerate": {
+     "fatOver": 83,
+     "fatShort": 16,
+     "carbOver": 47,
+     "carbShort": 21,
+     "kcalOver": 29,
+     "kcalShort": 17,
+     "proteinShort": 17,
+     "fatOnly": 49,
+     "fatOnlyOver": 49
+    },
+    "satisfiable-judged": {
+     "fatOver": 83,
+     "fatShort": 0,
+     "carbOver": 47,
+     "carbShort": 5,
+     "kcalOver": 29,
+     "kcalShort": 1,
+     "proteinShort": 1,
+     "fatOnly": 49,
+     "fatOnlyOver": 49
+    }
+   },
+   "b10": {
+    "canonical553": {
+     "axes": {
+      "over": 159,
+      "short": 71,
+      "byAxis": {
+       "fat-over": 83,
+       "kcal-over": 29,
+       "kcal-under": 17,
+       "protein-short": 17,
+       "fat-under": 16,
+       "carb-under": 21,
+       "carb-over": 47
+      },
+      "total": 230,
+      "overPct": 69.1,
+      "exProtein": {
+       "over": 159,
+       "short": 54,
+       "total": 213,
+       "overPct": 74.6
+      }
+     },
+     "days": {
+      "pureOver": 113,
+      "mixed": 6,
+      "pureShort": 17,
+      "noAxis": 0,
+      "total": 136,
+      "emptySlotDays": 16,
+      "pureOverPct": 83.1,
+      "overTouchedPct": 87.5
+     },
+     "slots": {
+      "slots": 2634,
+      "filled": 2527,
+      "axisOver": 2060,
+      "axisShort": 1008,
+      "byAxis": {
+       "fat-over": 838,
+       "protein-over(UNPENALISED)": 464,
+       "carb-over": 951,
+       "carb-short": 187,
+       "kcal-over": 271,
+       "protein-short": 130,
+       "fat-short": 195,
+       "kcal-short": 32
+      },
+      "gramsOver": {
+       "fat": 8623,
+       "carb": 19082,
+       "protein": 0
+      },
+      "gramsShort": {
+       "fat": 2873,
+       "carb": 7309,
+       "protein": 0
+      },
+      "kcalOver": 28582,
+      "kcalUnder": 6988,
+      "axisTotal": 3068,
+      "overPct": 67.1,
+      "gramsOverPct": {
+       "fat": 75,
+       "carb": 72.3
+      }
+     }
+    }
+   }
+  }
+ },
+ "HEADLINE": {
+  "route": {
+   "canonical": 553,
+   "failing": 138,
+   "emptyPlateDays": 16,
+   "failingDaysWithFood": 122,
+   "axes": {
+    "all failing days": {
+     "over": 162,
+     "short": 73,
+     "total": 235,
+     "overPct": 68.9,
+     "exProtein": {
+      "over": 162,
+      "short": 54,
+      "overPct": 75
+     }
+    },
+    "empty-plate days only": {
+     "over": 0,
+     "short": 64,
+     "nonProteinShort": 48,
+     "note": "a plan containing no food is short on EVERY axis by arithmetic; 0 over-side axes exist here by construction"
+    },
+    "failing days that contain food": {
+     "over": 162,
+     "short": 9,
+     "total": 171,
+     "overPct": 94.7,
+     "exProtein": {
+      "over": 162,
+      "short": 6,
+      "overPct": 96.4
+     }
+    }
+   },
+   "days": {
+    "all failing": {
+     "n": 138,
+     "pureOver": 113,
+     "pureOverPct": 81.9
+    },
+    "failing with food": {
+     "n": 122,
+     "pureOver": 113,
+     "mixed": 8,
+     "pureShort": 1,
+     "pureOverPct": 92.6
+    }
+   },
+   "slots": {
+    "all canonical days": {
+     "filled": 2527,
+     "over": 2100,
+     "short": 624,
+     "byAxis": {
+      "fat-over": 833,
+      "carb-over": 988,
+      "carb-short": 193,
+      "kcal-over": 279,
+      "protein-short": 152,
+      "fat-short": 236,
+      "kcal-short": 43
+     },
+     "fatOverG": 8594,
+     "fatShortG": 3210,
+     "carbOverG": 20495,
+     "carbShortG": 6919,
+     "total": 2724,
+     "overPct": 77.1,
+     "fatOverSharePct": 72.8
+    },
+    "failing days with food": {
+     "filled": 644,
+     "over": 867,
+     "short": 291,
+     "byAxis": {
+      "carb-over": 315,
+      "kcal-over": 220,
+      "fat-over": 332,
+      "carb-short": 87,
+      "protein-short": 94,
+      "fat-short": 87,
+      "kcal-short": 23
+     },
+     "fatOverG": 4595,
+     "fatShortG": 1133,
+     "carbOverG": 6748,
+     "carbShortG": 4547,
+     "total": 1158,
+     "overPct": 74.9,
+     "fatOverSharePct": 80.2
+    },
+    "in-band days": {
+     "filled": 1883,
+     "over": 1233,
+     "short": 333,
+     "byAxis": {
+      "fat-over": 501,
+      "carb-over": 673,
+      "carb-short": 106,
+      "kcal-over": 59,
+      "fat-short": 149,
+      "protein-short": 58,
+      "kcal-short": 20
+     },
+     "fatOverG": 3999,
+     "fatShortG": 2076,
+     "carbOverG": 13746,
+     "carbShortG": 2372,
+     "total": 1566,
+     "overPct": 78.7,
+     "fatOverSharePct": 65.8
+    }
+   }
+  },
+  "rig": {
+   "canonical": 553,
+   "failing": 136,
+   "emptyPlateDays": 16,
+   "failingDaysWithFood": 120,
+   "axes": {
+    "all failing days": {
+     "over": 159,
+     "short": 71,
+     "total": 230,
+     "overPct": 69.1,
+     "exProtein": {
+      "over": 159,
+      "short": 54,
+      "overPct": 74.6
+     }
+    },
+    "empty-plate days only": {
+     "over": 0,
+     "short": 64,
+     "nonProteinShort": 48,
+     "note": "a plan containing no food is short on EVERY axis by arithmetic; 0 over-side axes exist here by construction"
+    },
+    "failing days that contain food": {
+     "over": 159,
+     "short": 7,
+     "total": 166,
+     "overPct": 95.8,
+     "exProtein": {
+      "over": 159,
+      "short": 6,
+      "overPct": 96.4
+     }
+    }
+   },
+   "days": {
+    "all failing": {
+     "n": 136,
+     "pureOver": 113,
+     "pureOverPct": 83.1
+    },
+    "failing with food": {
+     "n": 120,
+     "pureOver": 113,
+     "mixed": 6,
+     "pureShort": 1,
+     "pureOverPct": 94.2
+    }
+   },
+   "slots": {
+    "all canonical days": {
+     "filled": 2527,
+     "over": 2060,
+     "short": 544,
+     "byAxis": {
+      "fat-over": 838,
+      "carb-over": 951,
+      "carb-short": 187,
+      "kcal-over": 271,
+      "protein-short": 130,
+      "fat-short": 195,
+      "kcal-short": 32
+     },
+     "fatOverG": 8623,
+     "fatShortG": 2873,
+     "carbOverG": 19082,
+     "carbShortG": 7309,
+     "total": 2604,
+     "overPct": 79.1,
+     "fatOverSharePct": 75
+    },
+    "failing days with food": {
+     "filled": 636,
+     "over": 856,
+     "short": 266,
+     "byAxis": {
+      "carb-over": 307,
+      "kcal-over": 218,
+      "fat-over": 331,
+      "carb-short": 86,
+      "protein-short": 81,
+      "fat-short": 82,
+      "kcal-short": 17
+     },
+     "fatOverG": 4607,
+     "fatShortG": 1089,
+     "carbOverG": 6319,
+     "carbShortG": 4916,
+     "total": 1122,
+     "overPct": 76.3,
+     "fatOverSharePct": 80.9
+    },
+    "in-band days": {
+     "filled": 1891,
+     "over": 1204,
+     "short": 278,
+     "byAxis": {
+      "fat-over": 507,
+      "carb-over": 644,
+      "carb-short": 101,
+      "kcal-over": 53,
+      "fat-short": 113,
+      "protein-short": 49,
+      "kcal-short": 15
+     },
+     "fatOverG": 4016,
+     "fatShortG": 1783,
+     "carbOverG": 12763,
+     "carbShortG": 2392,
+     "total": 1482,
+     "overPct": 81.2,
+     "fatOverSharePct": 69.3
+    }
+   }
+  },
+  "RECONCILIATION": {
+   "question": "74.2% (prompt block) vs 95.8% axes / 94.2% days (W1-6) vs W1-2's per-macro split — all three, resolved",
+   "answer": [
+    "All three are correct arithmetic on DIFFERENT denominators. Nothing disagrees; the label was missing.",
+    "W1-6's 95.8% axes / 94.2% days reproduces BYTE-EXACT on fleet/out/W1-2/daydump-rigshape-s424242.jsonl at satisfiable-JUDGED (537): 159/166 axes = 95.8%, 113/120 days = 94.2%. Confirmed by W1-3 independently.",
+    "The prompt block's 74.2% is the same over-side share computed on satisfiable-PLANNED with protein excluded: measured 74.6% (rig s424242), 75.0/72.8/74.4% (route, 3 seeds). Within 0.4 pt of 74.2.",
+    "The ENTIRE gap is the 16 A6 total-failure days. A plan containing no food is arithmetically SHORT on kcal, fat and carb — 3 non-protein short axes each, 48 axes. 165 axes + 48 = 213; 159/165 = 96.4% becomes 159/213 = 74.6%. That is the whole difference, to the axis.",
+    "W1-2's per-macro split (fat 82/0, carb 50/5, kcal 30/1, protein 3 short) is satisfiable-JUDGED and reproduces exactly."
+   ],
+   "recommendationForW34": "Cite the DAY framing on failing days that contain food. A trimmer's addressable population is days that HAVE a plate. Empty-plate days are pool-caused (W1-5 F5: 141 of 191 empty slots are snacks, 135 arithmetically unfillable before any search runs) and no trimmer, and no adder, can reach them. Quoting 74% silently books 16 zero-food days as 'the solver undershot'."
+  }
+ },
+ "ADDENDUM_framingSweep": {
+  "note": "W1-3 addendum — framing sweeps",
+  "framings": [
+   {
+    "run": "route-s424242",
+    "set": "planned(640)",
+    "failingDays": 204,
+    "AXES over%": 56.7,
+    "AXES over% ex-protein": 71.9,
+    "DAYS pure-over%": 57.4,
+    "DAYS over-touched%": 83.3,
+    "DAYS over-vs-short (mixed dropped)%": 77.5
+   },
+   {
+    "run": "route-s424242",
+    "set": "planned−degen(639)",
+    "failingDays": 204,
+    "AXES over%": 56.7,
+    "AXES over% ex-protein": 71.9,
+    "DAYS pure-over%": 57.4,
+    "DAYS over-touched%": 83.3,
+    "DAYS over-vs-short (mixed dropped)%": 77.5
+   },
+   {
+    "run": "route-s424242",
+    "set": "judged(623)",
+    "failingDays": 188,
+    "AXES over%": 68,
+    "AXES over% ex-protein": 85.4,
+    "DAYS pure-over%": 62.2,
+    "DAYS over-touched%": 90.4,
+    "DAYS over-vs-short (mixed dropped)%": 86.7
+   },
+   {
+    "run": "route-s424242",
+    "set": "sat-planned(554)",
+    "failingDays": 138,
+    "AXES over%": 68.9,
+    "AXES over% ex-protein": 75,
+    "DAYS pure-over%": 81.9,
+    "DAYS over-touched%": 87.7,
+    "DAYS over-vs-short (mixed dropped)%": 86.9
+   },
+   {
+    "run": "route-s424242",
+    "set": "sat-planned−degen(553)",
+    "failingDays": 138,
+    "AXES over%": 68.9,
+    "AXES over% ex-protein": 75,
+    "DAYS pure-over%": 81.9,
+    "DAYS over-touched%": 87.7,
+    "DAYS over-vs-short (mixed dropped)%": 86.9
+   },
+   {
+    "run": "route-s424242",
+    "set": "sat-judged(537)",
+    "failingDays": 122,
+    "AXES over%": 94.7,
+    "AXES over% ex-protein": 96.4,
+    "DAYS pure-over%": 92.6,
+    "DAYS over-touched%": 99.2,
+    "DAYS over-vs-short (mixed dropped)%": 99.1
+   },
+   {
+    "run": "route-s20260730",
+    "set": "planned(640)",
+    "failingDays": 200,
+    "AXES over%": 54.8,
+    "AXES over% ex-protein": 69.8,
+    "DAYS pure-over%": 56.5,
+    "DAYS over-touched%": 83,
+    "DAYS over-vs-short (mixed dropped)%": 76.9
+   },
+   {
+    "run": "route-s20260730",
+    "set": "planned−degen(639)",
+    "failingDays": 200,
+    "AXES over%": 54.8,
+    "AXES over% ex-protein": 69.8,
+    "DAYS pure-over%": 56.5,
+    "DAYS over-touched%": 83,
+    "DAYS over-vs-short (mixed dropped)%": 76.9
+   },
+   {
+    "run": "route-s20260730",
+    "set": "judged(623)",
+    "failingDays": 184,
+    "AXES over%": 66,
+    "AXES over% ex-protein": 83.4,
+    "DAYS pure-over%": 61.4,
+    "DAYS over-touched%": 90.2,
+    "DAYS over-vs-short (mixed dropped)%": 86.3
+   },
+   {
+    "run": "route-s20260730",
+    "set": "sat-planned(554)",
+    "failingDays": 135,
+    "AXES over%": 66.5,
+    "AXES over% ex-protein": 72.8,
+    "DAYS pure-over%": 81.5,
+    "DAYS over-touched%": 86.7,
+    "DAYS over-vs-short (mixed dropped)%": 85.9
+   },
+   {
+    "run": "route-s20260730",
+    "set": "sat-planned−degen(553)",
+    "failingDays": 135,
+    "AXES over%": 66.5,
+    "AXES over% ex-protein": 72.8,
+    "DAYS pure-over%": 81.5,
+    "DAYS over-touched%": 86.7,
+    "DAYS over-vs-short (mixed dropped)%": 85.9
+   },
+   {
+    "run": "route-s20260730",
+    "set": "sat-judged(537)",
+    "failingDays": 119,
+    "AXES over%": 93.6,
+    "AXES over% ex-protein": 95.5,
+    "DAYS pure-over%": 92.4,
+    "DAYS over-touched%": 98.3,
+    "DAYS over-vs-short (mixed dropped)%": 98.2
+   },
+   {
+    "run": "route-s8675309",
+    "set": "planned(640)",
+    "failingDays": 206,
+    "AXES over%": 56.5,
+    "AXES over% ex-protein": 71.3,
+    "DAYS pure-over%": 58.7,
+    "DAYS over-touched%": 84.5,
+    "DAYS over-vs-short (mixed dropped)%": 79.1
+   },
+   {
+    "run": "route-s8675309",
+    "set": "planned−degen(639)",
+    "failingDays": 206,
+    "AXES over%": 56.5,
+    "AXES over% ex-protein": 71.3,
+    "DAYS pure-over%": 58.7,
+    "DAYS over-touched%": 84.5,
+    "DAYS over-vs-short (mixed dropped)%": 79.1
+   },
+   {
+    "run": "route-s8675309",
+    "set": "judged(623)",
+    "failingDays": 190,
+    "AXES over%": 67.9,
+    "AXES over% ex-protein": 84.9,
+    "DAYS pure-over%": 63.7,
+    "DAYS over-touched%": 91.6,
+    "DAYS over-vs-short (mixed dropped)%": 88.3
+   },
+   {
+    "run": "route-s8675309",
+    "set": "sat-planned(554)",
+    "failingDays": 140,
+    "AXES over%": 68.9,
+    "AXES over% ex-protein": 74.4,
+    "DAYS pure-over%": 83.6,
+    "DAYS over-touched%": 87.9,
+    "DAYS over-vs-short (mixed dropped)%": 87.3
+   },
+   {
+    "run": "route-s8675309",
+    "set": "sat-planned−degen(553)",
+    "failingDays": 140,
+    "AXES over%": 68.9,
+    "AXES over% ex-protein": 74.4,
+    "DAYS pure-over%": 83.6,
+    "DAYS over-touched%": 87.9,
+    "DAYS over-vs-short (mixed dropped)%": 87.3
+   },
+   {
+    "run": "route-s8675309",
+    "set": "sat-judged(537)",
+    "failingDays": 124,
+    "AXES over%": 95.7,
+    "AXES over% ex-protein": 96.3,
+    "DAYS pure-over%": 94.4,
+    "DAYS over-touched%": 99.2,
+    "DAYS over-vs-short (mixed dropped)%": 99.2
+   },
+   {
+    "run": "rigshape-s424242",
+    "set": "planned(640)",
+    "failingDays": 202,
+    "AXES over%": 56.6,
+    "AXES over% ex-protein": 71.6,
+    "DAYS pure-over%": 57.9,
+    "DAYS over-touched%": 83.2,
+    "DAYS over-vs-short (mixed dropped)%": 77.5
+   },
+   {
+    "run": "rigshape-s424242",
+    "set": "planned−degen(639)",
+    "failingDays": 202,
+    "AXES over%": 56.6,
+    "AXES over% ex-protein": 71.6,
+    "DAYS pure-over%": 57.9,
+    "DAYS over-touched%": 83.2,
+    "DAYS over-vs-short (mixed dropped)%": 77.5
+   },
+   {
+    "run": "rigshape-s424242",
+    "set": "judged(623)",
+    "failingDays": 186,
+    "AXES over%": 68.2,
+    "AXES over% ex-protein": 85.3,
+    "DAYS pure-over%": 62.9,
+    "DAYS over-touched%": 90.3,
+    "DAYS over-vs-short (mixed dropped)%": 86.7
+   },
+   {
+    "run": "rigshape-s424242",
+    "set": "sat-planned(554)",
+    "failingDays": 136,
+    "AXES over%": 69.1,
+    "AXES over% ex-protein": 74.6,
+    "DAYS pure-over%": 83.1,
+    "DAYS over-touched%": 87.5,
+    "DAYS over-vs-short (mixed dropped)%": 86.9
+   },
+   {
+    "run": "rigshape-s424242",
+    "set": "sat-planned−degen(553)",
+    "failingDays": 136,
+    "AXES over%": 69.1,
+    "AXES over% ex-protein": 74.6,
+    "DAYS pure-over%": 83.1,
+    "DAYS over-touched%": 87.5,
+    "DAYS over-vs-short (mixed dropped)%": 86.9
+   },
+   {
+    "run": "rigshape-s424242",
+    "set": "sat-judged(537)",
+    "failingDays": 120,
+    "AXES over%": 95.8,
+    "AXES over% ex-protein": 96.4,
+    "DAYS pure-over%": 94.2,
+    "DAYS over-touched%": 99.2,
+    "DAYS over-vs-short (mixed dropped)%": 99.1
+   }
+  ],
+  "b5": {
+   "proteinOvershoot": {
+    "vs proteinMid (closer's target, macroCloser.js:124) | all 553 canonical days": {
+     "k": 32,
+     "n": 553,
+     "pct": 5.8
+    },
+    "vs proteinMid (closer's target, macroCloser.js:124) | the 138 failing days": {
+     "k": 11,
+     "n": 138,
+     "pct": 8
+    },
+    "vs proteinMid (closer's target, macroCloser.js:124) | all 640 planned": {
+     "k": 32,
+     "n": 640,
+     "pct": 5
+    },
+    "vs proteinLo | all 553 canonical days": {
+     "k": 52,
+     "n": 553,
+     "pct": 9.4
+    },
+    "vs proteinLo | the 138 failing days": {
+     "k": 14,
+     "n": 138,
+     "pct": 10.1
+    },
+    "vs proteinLo | all 640 planned": {
+     "k": 52,
+     "n": 640,
+     "pct": 8.1
+    },
+    "vs proteinHi | all 553 canonical days": {
+     "k": 21,
+     "n": 553,
+     "pct": 3.8
+    },
+    "vs proteinHi | the 138 failing days": {
+     "k": 10,
+     "n": 138,
+     "pct": 7.2
+    },
+    "vs proteinHi | all 640 planned": {
+     "k": 21,
+     "n": 640,
+     "pct": 3.3
+    },
+    "vs the GRADED floor 0.85*proteinMid (D3) | all 553 canonical days": {
+     "k": 522,
+     "n": 553,
+     "pct": 94.4
+    },
+    "vs the GRADED floor 0.85*proteinMid (D3) | the 138 failing days": {
+     "k": 109,
+     "n": 138,
+     "pct": 79
+    },
+    "vs the GRADED floor 0.85*proteinMid (D3) | all 640 planned": {
+     "k": 545,
+     "n": 640,
+     "pct": 85.2
+    },
+    "vs NOMINAL slot protein share | filled slots": {
+     "k": 474,
+     "n": 2527,
+     "pct": 18.8
+    }
+   },
+   "fatVsAsk": {
+    "28%E of targetKcal / 9  (literal reading) | 553 canonical": {
+     "medianPct": -3.9,
+     "n": 553
+    },
+    "28%E of targetKcal / 9  (literal reading) | 138 failing": {
+     "medianPct": 23.6,
+     "n": 138
+    },
+    "28%E of targetKcal / 9  (literal reading) | 640 planned": {
+     "medianPct": -3.3,
+     "n": 640
+    },
+    "fatMid (the engine's own ask) | 553 canonical": {
+     "medianPct": 7.2,
+     "n": 553
+    },
+    "fatMid (the engine's own ask) | 138 failing": {
+     "medianPct": 42.4,
+     "n": 138
+    },
+    "fatMid (the engine's own ask) | 640 planned": {
+     "medianPct": 6.6,
+     "n": 640
+    },
+    "fatLo | 553 canonical": {
+     "medianPct": 17.1,
+     "n": 553
+    },
+    "fatLo | 138 failing": {
+     "medianPct": 55.5,
+     "n": 138
+    },
+    "fatLo | 640 planned": {
+     "medianPct": 16.4,
+     "n": 640
+    },
+    "the engine's own fat ask expressed as %E of target | 553 canonical": {
+     "medianPct": 7.2,
+     "n": 553
+    },
+    "the engine's own fat ask expressed as %E of target | 138 failing": {
+     "medianPct": 42.4,
+     "n": 138
+    },
+    "the engine's own fat ask expressed as %E of target | 640 planned": {
+     "medianPct": 6.6,
+     "n": 640
+    }
+   },
+   "fatEnergyShare": {
+    "medianAskPctE": 24.1,
+    "medianAchievedPctE": 26.9,
+    "note": "if the ask really were 28%E the achieved median would be BELOW it, not above"
+   }
+  },
+  "d7broad": {
+   "plans": 250,
+   "plansWithAKey": 78,
+   "plansWithAMiss": 79,
+   "proteinDensityPlans": 10,
+   "proteinDensityWrong": 10,
+   "poolKeyPlansWithZeroEmptySlots": 0,
+   "ofThoseWithCompositionMisses": 0,
+   "totalStructurallyWrongKeys": 10,
+   "rates": {
+    "wrong / plans with a key": 12.8,
+    "wrong / plans with a miss": 12.7,
+    "PROTEIN_DENSITY-only wrong / plans with a key": 12.8,
+    "PROTEIN_DENSITY-only wrong / plans with a miss": 12.7,
+    "PROTEIN_DENSITY-only wrong / plans emitting PROTEIN_DENSITY": 100
+   },
+   "rows": [
+    {
+     "pid": "p049",
+     "key": "protein-density",
+     "why": "composition observed, PROTEIN_DENSITY returned first (:1121 before :1131)"
+    },
+    {
+     "pid": "p051",
+     "key": "protein-density",
+     "why": "composition observed, PROTEIN_DENSITY returned first (:1121 before :1131)"
+    },
+    {
+     "pid": "p071",
+     "key": "protein-density",
+     "why": "composition observed, PROTEIN_DENSITY returned first (:1121 before :1131)"
+    },
+    {
+     "pid": "p086",
+     "key": "protein-density",
+     "why": "composition observed, PROTEIN_DENSITY returned first (:1121 before :1131)"
+    },
+    {
+     "pid": "p111",
+     "key": "protein-density",
+     "why": "composition observed, PROTEIN_DENSITY returned first (:1121 before :1131)"
+    },
+    {
+     "pid": "p127",
+     "key": "protein-density",
+     "why": "composition observed, PROTEIN_DENSITY returned first (:1121 before :1131)"
+    },
+    {
+     "pid": "p166",
+     "key": "protein-density",
+     "why": "composition observed, PROTEIN_DENSITY returned first (:1121 before :1131)"
+    },
+    {
+     "pid": "p175",
+     "key": "protein-density",
+     "why": "composition observed, PROTEIN_DENSITY returned first (:1121 before :1131)"
+    },
+    {
+     "pid": "p219",
+     "key": "protein-density",
+     "why": "composition observed, PROTEIN_DENSITY returned first (:1121 before :1131)"
+    },
+    {
+     "pid": "p227",
+     "key": "protein-density",
+     "why": "composition observed, PROTEIN_DENSITY returned first (:1121 before :1131)"
+    }
+   ]
+  },
+  "mixVsLab": {
+   "lab": {
+    "source": "weeklyPlanner.js:227-230, campaign qa-fleet-20260729-2032, 275 customers",
+    "fatShareOfFailingDays": 59,
+    "fatOnlyDays": 74,
+    "fatOnlyAllOver": true,
+    "fatOnlyMedianOverMidPct": 49
+   },
+   "now": {
+    "canonical553": {
+     "denominator": "satisfiable-planned−degenerate (553)",
+     "failing": 138,
+     "fatInvolvedDays": 98,
+     "fatInvolvedPct": 71,
+     "carbInvolvedPct": 51.4,
+     "kcalInvolvedPct": 34.1,
+     "proteinInvolvedPct": 13.8,
+     "fatOnlyDays": 48,
+     "fatOnlyOver": 48,
+     "fatOnlyMedianOverMidPct": 54.2
+    },
+    "satJudged537": {
+     "denominator": "satisfiable-judged (537)",
+     "failing": 122,
+     "fatInvolvedDays": 82,
+     "fatInvolvedPct": 67.2,
+     "carbInvolvedPct": 45.1,
+     "kcalInvolvedPct": 25.4,
+     "proteinInvolvedPct": 2.5,
+     "fatOnlyDays": 48,
+     "fatOnlyOver": 48,
+     "fatOnlyMedianOverMidPct": 54.2
+    },
+    "planned640": {
+     "denominator": "planned (640)",
+     "failing": 204,
+     "fatInvolvedDays": 112,
+     "fatInvolvedPct": 54.9,
+     "carbInvolvedPct": 55.4,
+     "kcalInvolvedPct": 37.7,
+     "proteinInvolvedPct": 39.7,
+     "fatOnlyDays": 49,
+     "fatOnlyOver": 49,
+     "fatOnlyMedianOverMidPct": 54.3
+    },
+    "canonical553@route-s20260730": {
+     "denominator": "canonical 553 route-s20260730",
+     "failing": 135,
+     "fatInvolvedDays": 97,
+     "fatInvolvedPct": 71.9,
+     "carbInvolvedPct": 48.1,
+     "kcalInvolvedPct": 29.6,
+     "proteinInvolvedPct": 14.1,
+     "fatOnlyDays": 54,
+     "fatOnlyOver": 54,
+     "fatOnlyMedianOverMidPct": 52
+    },
+    "canonical553@route-s8675309": {
+     "denominator": "canonical 553 route-s8675309",
+     "failing": 140,
+     "fatInvolvedDays": 102,
+     "fatInvolvedPct": 72.9,
+     "carbInvolvedPct": 47.1,
+     "kcalInvolvedPct": 30.7,
+     "proteinInvolvedPct": 12.1,
+     "fatOnlyDays": 54,
+     "fatOnlyOver": 54,
+     "fatOnlyMedianOverMidPct": 54
+    }
+   }
+  },
+  "candidates74": [
+   {
+    "run": "route-s424242",
+    "set": "planned(640)",
+    "failingDays": 204,
+    "AXES over%": 56.7,
+    "AXES over% ex-protein": 71.9,
+    "DAYS pure-over%": 57.4,
+    "DAYS over-touched%": 83.3,
+    "DAYS over-vs-short (mixed dropped)%": 77.5
+   },
+   {
+    "run": "route-s424242",
+    "set": "planned−degen(639)",
+    "failingDays": 204,
+    "AXES over%": 56.7,
+    "AXES over% ex-protein": 71.9,
+    "DAYS pure-over%": 57.4,
+    "DAYS over-touched%": 83.3,
+    "DAYS over-vs-short (mixed dropped)%": 77.5
+   },
+   {
+    "run": "route-s424242",
+    "set": "sat-planned(554)",
+    "failingDays": 138,
+    "AXES over%": 68.9,
+    "AXES over% ex-protein": 75,
+    "DAYS pure-over%": 81.9,
+    "DAYS over-touched%": 87.7,
+    "DAYS over-vs-short (mixed dropped)%": 86.9
+   },
+   {
+    "run": "route-s424242",
+    "set": "sat-planned−degen(553)",
+    "failingDays": 138,
+    "AXES over%": 68.9,
+    "AXES over% ex-protein": 75,
+    "DAYS pure-over%": 81.9,
+    "DAYS over-touched%": 87.7,
+    "DAYS over-vs-short (mixed dropped)%": 86.9
+   },
+   {
+    "run": "route-s20260730",
+    "set": "sat-planned(554)",
+    "failingDays": 135,
+    "AXES over%": 66.5,
+    "AXES over% ex-protein": 72.8,
+    "DAYS pure-over%": 81.5,
+    "DAYS over-touched%": 86.7,
+    "DAYS over-vs-short (mixed dropped)%": 85.9
+   },
+   {
+    "run": "route-s20260730",
+    "set": "sat-planned−degen(553)",
+    "failingDays": 135,
+    "AXES over%": 66.5,
+    "AXES over% ex-protein": 72.8,
+    "DAYS pure-over%": 81.5,
+    "DAYS over-touched%": 86.7,
+    "DAYS over-vs-short (mixed dropped)%": 85.9
+   },
+   {
+    "run": "route-s8675309",
+    "set": "sat-planned(554)",
+    "failingDays": 140,
+    "AXES over%": 68.9,
+    "AXES over% ex-protein": 74.4,
+    "DAYS pure-over%": 83.6,
+    "DAYS over-touched%": 87.9,
+    "DAYS over-vs-short (mixed dropped)%": 87.3
+   },
+   {
+    "run": "route-s8675309",
+    "set": "sat-planned−degen(553)",
+    "failingDays": 140,
+    "AXES over%": 68.9,
+    "AXES over% ex-protein": 74.4,
+    "DAYS pure-over%": 83.6,
+    "DAYS over-touched%": 87.9,
+    "DAYS over-vs-short (mixed dropped)%": 87.3
+   },
+   {
+    "run": "rigshape-s424242",
+    "set": "sat-planned(554)",
+    "failingDays": 136,
+    "AXES over%": 69.1,
+    "AXES over% ex-protein": 74.6,
+    "DAYS pure-over%": 83.1,
+    "DAYS over-touched%": 87.5,
+    "DAYS over-vs-short (mixed dropped)%": 86.9
+   },
+   {
+    "run": "rigshape-s424242",
+    "set": "sat-planned−degen(553)",
+    "failingDays": 136,
+    "AXES over%": 69.1,
+    "AXES over% ex-protein": 74.6,
+    "DAYS pure-over%": 83.1,
+    "DAYS over-touched%": 87.5,
+    "DAYS over-vs-short (mixed dropped)%": 86.9
+   }
+  ],
+  "slotOnFailingDays": {
+   "note": "computed in taxonomy.mjs for all slots; this subset restricted to the 138 failing canonical days is in taxonomy.json's per-set slot block via `satisfiable-*` sets"
+  }
+ },
+ "ADDENDUM2_b9_b5_b1": {
+  "b9": {
+   "planned(640)": {
+    "cumulative": [
+     {
+      "pos": 1,
+      "days": 639,
+      "medianDayRatio": 1.009,
+      "pooled": 1.008
+     },
+     {
+      "pos": 2,
+      "days": 639,
+      "medianDayRatio": 1.022,
+      "pooled": 0.994
+     },
+     {
+      "pos": 3,
+      "days": 628,
+      "medianDayRatio": 1.02,
+      "pooled": 0.988
+     },
+     {
+      "pos": 4,
+      "days": 508,
+      "medianDayRatio": 1.056,
+      "pooled": 1.037
+     },
+     {
+      "pos": 5,
+      "days": 337,
+      "medianDayRatio": 1.064,
+      "pooled": 1.106
+     },
+     {
+      "pos": 6,
+      "days": 153,
+      "medianDayRatio": 1.061,
+      "pooled": 1.107
+     },
+     {
+      "pos": 7,
+      "days": 49,
+      "medianDayRatio": 1.137,
+      "pooled": 1.195
+     },
+     {
+      "pos": 8,
+      "days": 28,
+      "medianDayRatio": 1.215,
+      "pooled": 1.245
+     }
+    ],
+    "perSlot": [
+     {
+      "pos": 1,
+      "n": 623,
+      "median": 1.014,
+      "mealMedian": 1.014,
+      "snackMedian": null,
+      "meals": 623,
+      "snacks": 0
+     },
+     {
+      "pos": 2,
+      "n": 623,
+      "median": 0.993,
+      "mealMedian": 0.993,
+      "snackMedian": null,
+      "meals": 623,
+      "snacks": 0
+     },
+     {
+      "pos": 3,
+      "n": 598,
+      "median": 1.006,
+      "mealMedian": 0.993,
+      "snackMedian": 1.736,
+      "meals": 541,
+      "snacks": 57
+     },
+     {
+      "pos": 4,
+      "n": 452,
+      "median": 1.26,
+      "mealMedian": 1.023,
+      "snackMedian": 1.719,
+      "meals": 217,
+      "snacks": 235
+     },
+     {
+      "pos": 5,
+      "n": 299,
+      "median": 1.449,
+      "mealMedian": 1.064,
+      "snackMedian": 1.662,
+      "meals": 91,
+      "snacks": 208
+     },
+     {
+      "pos": 6,
+      "n": 124,
+      "median": 1.595,
+      "mealMedian": 1.062,
+      "snackMedian": 1.636,
+      "meals": 18,
+      "snacks": 106
+     },
+     {
+      "pos": 7,
+      "n": 43,
+      "median": 1.763,
+      "mealMedian": 1.239,
+      "snackMedian": 2.156,
+      "meals": 18,
+      "snacks": 25
+     },
+     {
+      "pos": 8,
+      "n": 28,
+      "median": 1.62,
+      "mealMedian": 1.217,
+      "snackMedian": 2.257,
+      "meals": 18,
+      "snacks": 10
+     }
+    ]
+   },
+   "planned−degen(639)": {
+    "cumulative": [
+     {
+      "pos": 1,
+      "days": 639,
+      "medianDayRatio": 1.009,
+      "pooled": 1.008
+     },
+     {
+      "pos": 2,
+      "days": 639,
+      "medianDayRatio": 1.022,
+      "pooled": 0.994
+     },
+     {
+      "pos": 3,
+      "days": 628,
+      "medianDayRatio": 1.02,
+      "pooled": 0.988
+     },
+     {
+      "pos": 4,
+      "days": 508,
+      "medianDayRatio": 1.056,
+      "pooled": 1.037
+     },
+     {
+      "pos": 5,
+      "days": 337,
+      "medianDayRatio": 1.064,
+      "pooled": 1.106
+     },
+     {
+      "pos": 6,
+      "days": 153,
+      "medianDayRatio": 1.061,
+      "pooled": 1.107
+     },
+     {
+      "pos": 7,
+      "days": 49,
+      "medianDayRatio": 1.137,
+      "pooled": 1.195
+     },
+     {
+      "pos": 8,
+      "days": 28,
+      "medianDayRatio": 1.215,
+      "pooled": 1.245
+     }
+    ],
+    "perSlot": [
+     {
+      "pos": 1,
+      "n": 623,
+      "median": 1.014,
+      "mealMedian": 1.014,
+      "snackMedian": null,
+      "meals": 623,
+      "snacks": 0
+     },
+     {
+      "pos": 2,
+      "n": 623,
+      "median": 0.993,
+      "mealMedian": 0.993,
+      "snackMedian": null,
+      "meals": 623,
+      "snacks": 0
+     },
+     {
+      "pos": 3,
+      "n": 598,
+      "median": 1.006,
+      "mealMedian": 0.993,
+      "snackMedian": 1.736,
+      "meals": 541,
+      "snacks": 57
+     },
+     {
+      "pos": 4,
+      "n": 452,
+      "median": 1.26,
+      "mealMedian": 1.023,
+      "snackMedian": 1.719,
+      "meals": 217,
+      "snacks": 235
+     },
+     {
+      "pos": 5,
+      "n": 299,
+      "median": 1.449,
+      "mealMedian": 1.064,
+      "snackMedian": 1.662,
+      "meals": 91,
+      "snacks": 208
+     },
+     {
+      "pos": 6,
+      "n": 124,
+      "median": 1.595,
+      "mealMedian": 1.062,
+      "snackMedian": 1.636,
+      "meals": 18,
+      "snacks": 106
+     },
+     {
+      "pos": 7,
+      "n": 43,
+      "median": 1.763,
+      "mealMedian": 1.239,
+      "snackMedian": 2.156,
+      "meals": 18,
+      "snacks": 25
+     },
+     {
+      "pos": 8,
+      "n": 28,
+      "median": 1.62,
+      "mealMedian": 1.217,
+      "snackMedian": 2.257,
+      "meals": 18,
+      "snacks": 10
+     }
+    ]
+   },
+   "judged(623)": {
+    "cumulative": [
+     {
+      "pos": 1,
+      "days": 623,
+      "medianDayRatio": 1.014,
+      "pooled": 1.046
+     },
+     {
+      "pos": 2,
+      "days": 623,
+      "medianDayRatio": 1.027,
+      "pooled": 1.03
+     },
+     {
+      "pos": 3,
+      "days": 612,
+      "medianDayRatio": 1.024,
+      "pooled": 1.027
+     },
+     {
+      "pos": 4,
+      "days": 499,
+      "medianDayRatio": 1.057,
+      "pooled": 1.067
+     },
+     {
+      "pos": 5,
+      "days": 337,
+      "medianDayRatio": 1.064,
+      "pooled": 1.106
+     },
+     {
+      "pos": 6,
+      "days": 153,
+      "medianDayRatio": 1.061,
+      "pooled": 1.107
+     },
+     {
+      "pos": 7,
+      "days": 49,
+      "medianDayRatio": 1.137,
+      "pooled": 1.195
+     },
+     {
+      "pos": 8,
+      "days": 28,
+      "medianDayRatio": 1.215,
+      "pooled": 1.245
+     }
+    ],
+    "perSlot": [
+     {
+      "pos": 1,
+      "n": 623,
+      "median": 1.014,
+      "mealMedian": 1.014,
+      "snackMedian": null,
+      "meals": 623,
+      "snacks": 0
+     },
+     {
+      "pos": 2,
+      "n": 623,
+      "median": 0.993,
+      "mealMedian": 0.993,
+      "snackMedian": null,
+      "meals": 623,
+      "snacks": 0
+     },
+     {
+      "pos": 3,
+      "n": 598,
+      "median": 1.006,
+      "mealMedian": 0.993,
+      "snackMedian": 1.736,
+      "meals": 541,
+      "snacks": 57
+     },
+     {
+      "pos": 4,
+      "n": 452,
+      "median": 1.26,
+      "mealMedian": 1.023,
+      "snackMedian": 1.719,
+      "meals": 217,
+      "snacks": 235
+     },
+     {
+      "pos": 5,
+      "n": 299,
+      "median": 1.449,
+      "mealMedian": 1.064,
+      "snackMedian": 1.662,
+      "meals": 91,
+      "snacks": 208
+     },
+     {
+      "pos": 6,
+      "n": 124,
+      "median": 1.595,
+      "mealMedian": 1.062,
+      "snackMedian": 1.636,
+      "meals": 18,
+      "snacks": 106
+     },
+     {
+      "pos": 7,
+      "n": 43,
+      "median": 1.763,
+      "mealMedian": 1.239,
+      "snackMedian": 2.156,
+      "meals": 18,
+      "snacks": 25
+     },
+     {
+      "pos": 8,
+      "n": 28,
+      "median": 1.62,
+      "mealMedian": 1.217,
+      "snackMedian": 2.257,
+      "meals": 18,
+      "snacks": 10
+     }
+    ]
+   },
+   "sat-planned−degen(553) CANONICAL": {
+    "cumulative": [
+     {
+      "pos": 1,
+      "days": 553,
+      "medianDayRatio": 1.023,
+      "pooled": 1.006
+     },
+     {
+      "pos": 2,
+      "days": 553,
+      "medianDayRatio": 1.028,
+      "pooled": 0.99
+     },
+     {
+      "pos": 3,
+      "days": 542,
+      "medianDayRatio": 1.023,
+      "pooled": 0.99
+     },
+     {
+      "pos": 4,
+      "days": 448,
+      "medianDayRatio": 1.057,
+      "pooled": 1.042
+     },
+     {
+      "pos": 5,
+      "days": 299,
+      "medianDayRatio": 1.064,
+      "pooled": 1.118
+     },
+     {
+      "pos": 6,
+      "days": 133,
+      "medianDayRatio": 1.073,
+      "pooled": 1.137
+     },
+     {
+      "pos": 7,
+      "days": 48,
+      "medianDayRatio": 1.139,
+      "pooled": 1.203
+     },
+     {
+      "pos": 8,
+      "days": 28,
+      "medianDayRatio": 1.215,
+      "pooled": 1.245
+     }
+    ],
+    "perSlot": [
+     {
+      "pos": 1,
+      "n": 537,
+      "median": 1.026,
+      "mealMedian": 1.026,
+      "snackMedian": null,
+      "meals": 537,
+      "snacks": 0
+     },
+     {
+      "pos": 2,
+      "n": 537,
+      "median": 0.998,
+      "mealMedian": 0.998,
+      "snackMedian": null,
+      "meals": 537,
+      "snacks": 0
+     },
+     {
+      "pos": 3,
+      "n": 522,
+      "median": 1.018,
+      "mealMedian": 1.006,
+      "snackMedian": 1.731,
+      "meals": 466,
+      "snacks": 56
+     },
+     {
+      "pos": 4,
+      "n": 425,
+      "median": 1.23,
+      "mealMedian": 1.02,
+      "snackMedian": 1.691,
+      "meals": 198,
+      "snacks": 227
+     },
+     {
+      "pos": 5,
+      "n": 285,
+      "median": 1.44,
+      "mealMedian": 1.066,
+      "snackMedian": 1.595,
+      "meals": 88,
+      "snacks": 197
+     },
+     {
+      "pos": 6,
+      "n": 120,
+      "median": 1.595,
+      "mealMedian": 1.062,
+      "snackMedian": 1.636,
+      "meals": 18,
+      "snacks": 102
+     },
+     {
+      "pos": 7,
+      "n": 43,
+      "median": 1.763,
+      "mealMedian": 1.239,
+      "snackMedian": 2.156,
+      "meals": 18,
+      "snacks": 25
+     },
+     {
+      "pos": 8,
+      "n": 28,
+      "median": 1.62,
+      "mealMedian": 1.217,
+      "snackMedian": 2.257,
+      "meals": 18,
+      "snacks": 10
+     }
+    ]
+   },
+   "sat-judged(537)": {
+    "cumulative": [
+     {
+      "pos": 1,
+      "days": 537,
+      "medianDayRatio": 1.026,
+      "pooled": 1.049
+     },
+     {
+      "pos": 2,
+      "days": 537,
+      "medianDayRatio": 1.03,
+      "pooled": 1.031
+     },
+     {
+      "pos": 3,
+      "days": 526,
+      "medianDayRatio": 1.027,
+      "pooled": 1.035
+     },
+     {
+      "pos": 4,
+      "days": 439,
+      "medianDayRatio": 1.06,
+      "pooled": 1.076
+     },
+     {
+      "pos": 5,
+      "days": 299,
+      "medianDayRatio": 1.064,
+      "pooled": 1.118
+     },
+     {
+      "pos": 6,
+      "days": 133,
+      "medianDayRatio": 1.073,
+      "pooled": 1.137
+     },
+     {
+      "pos": 7,
+      "days": 48,
+      "medianDayRatio": 1.139,
+      "pooled": 1.203
+     },
+     {
+      "pos": 8,
+      "days": 28,
+      "medianDayRatio": 1.215,
+      "pooled": 1.245
+     }
+    ],
+    "perSlot": [
+     {
+      "pos": 1,
+      "n": 537,
+      "median": 1.026,
+      "mealMedian": 1.026,
+      "snackMedian": null,
+      "meals": 537,
+      "snacks": 0
+     },
+     {
+      "pos": 2,
+      "n": 537,
+      "median": 0.998,
+      "mealMedian": 0.998,
+      "snackMedian": null,
+      "meals": 537,
+      "snacks": 0
+     },
+     {
+      "pos": 3,
+      "n": 522,
+      "median": 1.018,
+      "mealMedian": 1.006,
+      "snackMedian": 1.731,
+      "meals": 466,
+      "snacks": 56
+     },
+     {
+      "pos": 4,
+      "n": 425,
+      "median": 1.23,
+      "mealMedian": 1.02,
+      "snackMedian": 1.691,
+      "meals": 198,
+      "snacks": 227
+     },
+     {
+      "pos": 5,
+      "n": 285,
+      "median": 1.44,
+      "mealMedian": 1.066,
+      "snackMedian": 1.595,
+      "meals": 88,
+      "snacks": 197
+     },
+     {
+      "pos": 6,
+      "n": 120,
+      "median": 1.595,
+      "mealMedian": 1.062,
+      "snackMedian": 1.636,
+      "meals": 18,
+      "snacks": 102
+     },
+     {
+      "pos": 7,
+      "n": 43,
+      "median": 1.763,
+      "mealMedian": 1.239,
+      "snackMedian": 2.156,
+      "meals": 18,
+      "snacks": 25
+     },
+     {
+      "pos": 8,
+      "n": 28,
+      "median": 1.62,
+      "mealMedian": 1.217,
+      "snackMedian": 2.257,
+      "meals": 18,
+      "snacks": 10
+     }
+    ]
+   },
+   "FAILING days of the canonical 553 (138)": {
+    "cumulative": [
+     {
+      "pos": 1,
+      "days": 138,
+      "medianDayRatio": 0.998,
+      "pooled": 0.991
+     },
+     {
+      "pos": 2,
+      "days": 138,
+      "medianDayRatio": 1.02,
+      "pooled": 0.931
+     },
+     {
+      "pos": 3,
+      "days": 137,
+      "medianDayRatio": 1.041,
+      "pooled": 0.925
+     },
+     {
+      "pos": 4,
+      "days": 123,
+      "medianDayRatio": 1.303,
+      "pooled": 1.091
+     },
+     {
+      "pos": 5,
+      "days": 82,
+      "medianDayRatio": 1.485,
+      "pooled": 1.325
+     },
+     {
+      "pos": 6,
+      "days": 40,
+      "medianDayRatio": 1.491,
+      "pooled": 1.373
+     },
+     {
+      "pos": 7,
+      "days": 17,
+      "medianDayRatio": 1.733,
+      "pooled": 1.635
+     },
+     {
+      "pos": 8,
+      "days": 13,
+      "medianDayRatio": 1.789,
+      "pooled": 1.664
+     }
+    ],
+    "perSlot": [
+     {
+      "pos": 1,
+      "n": 122,
+      "median": 1.03,
+      "mealMedian": 1.03,
+      "snackMedian": null,
+      "meals": 122,
+      "snacks": 0
+     },
+     {
+      "pos": 2,
+      "n": 122,
+      "median": 1.019,
+      "mealMedian": 1.019,
+      "snackMedian": null,
+      "meals": 122,
+      "snacks": 0
+     },
+     {
+      "pos": 3,
+      "n": 120,
+      "median": 1.091,
+      "mealMedian": 1.031,
+      "snackMedian": 3.096,
+      "meals": 102,
+      "snacks": 18
+     },
+     {
+      "pos": 4,
+      "n": 111,
+      "median": 1.961,
+      "mealMedian": 1.125,
+      "snackMedian": 3.178,
+      "meals": 41,
+      "snacks": 70
+     },
+     {
+      "pos": 5,
+      "n": 82,
+      "median": 1.967,
+      "mealMedian": 1.271,
+      "snackMedian": 3.198,
+      "meals": 32,
+      "snacks": 50
+     },
+     {
+      "pos": 6,
+      "n": 39,
+      "median": 2.153,
+      "mealMedian": 1.957,
+      "snackMedian": 2.363,
+      "meals": 9,
+      "snacks": 30
+     },
+     {
+      "pos": 7,
+      "n": 17,
+      "median": 2.414,
+      "mealMedian": 2.145,
+      "snackMedian": 2.988,
+      "meals": 9,
+      "snacks": 8
+     },
+     {
+      "pos": 8,
+      "n": 13,
+      "median": 2.789,
+      "mealMedian": 2.446,
+      "snackMedian": 3.202,
+      "meals": 9,
+      "snacks": 4
+     }
+    ]
+   },
+   "IN-BAND days of the canonical 553 (415)": {
+    "cumulative": [
+     {
+      "pos": 1,
+      "days": 415,
+      "medianDayRatio": 1.026,
+      "pooled": 1.012
+     },
+     {
+      "pos": 2,
+      "days": 415,
+      "medianDayRatio": 1.029,
+      "pooled": 1.01
+     },
+     {
+      "pos": 3,
+      "days": 405,
+      "medianDayRatio": 1.02,
+      "pooled": 1.013
+     },
+     {
+      "pos": 4,
+      "days": 325,
+      "medianDayRatio": 1.044,
+      "pooled": 1.024
+     },
+     {
+      "pos": 5,
+      "days": 217,
+      "medianDayRatio": 1.045,
+      "pooled": 1.049
+     },
+     {
+      "pos": 6,
+      "days": 93,
+      "medianDayRatio": 1.051,
+      "pooled": 1.061
+     },
+     {
+      "pos": 7,
+      "days": 31,
+      "medianDayRatio": 1.053,
+      "pooled": 1.069
+     },
+     {
+      "pos": 8,
+      "days": 15,
+      "medianDayRatio": 1.044,
+      "pooled": 1.06
+     }
+    ],
+    "perSlot": [
+     {
+      "pos": 1,
+      "n": 415,
+      "median": 1.026,
+      "mealMedian": 1.026,
+      "snackMedian": null,
+      "meals": 415,
+      "snacks": 0
+     },
+     {
+      "pos": 2,
+      "n": 415,
+      "median": 0.997,
+      "mealMedian": 0.997,
+      "snackMedian": null,
+      "meals": 415,
+      "snacks": 0
+     },
+     {
+      "pos": 3,
+      "n": 402,
+      "median": 1.008,
+      "mealMedian": 1.003,
+      "snackMedian": 1.279,
+      "meals": 364,
+      "snacks": 38
+     },
+     {
+      "pos": 4,
+      "n": 314,
+      "median": 1.115,
+      "mealMedian": 1.006,
+      "snackMedian": 1.527,
+      "meals": 157,
+      "snacks": 157
+     },
+     {
+      "pos": 5,
+      "n": 203,
+      "median": 1.227,
+      "mealMedian": 0.983,
+      "snackMedian": 1.513,
+      "meals": 56,
+      "snacks": 147
+     },
+     {
+      "pos": 6,
+      "n": 81,
+      "median": 1.321,
+      "mealMedian": 0.975,
+      "snackMedian": 1.427,
+      "meals": 9,
+      "snacks": 72
+     },
+     {
+      "pos": 7,
+      "n": 26,
+      "median": 1.352,
+      "mealMedian": 1.055,
+      "snackMedian": 1.755,
+      "meals": 9,
+      "snacks": 17
+     },
+     {
+      "pos": 8,
+      "n": 15,
+      "median": 1.193,
+      "mealMedian": 1.045,
+      "snackMedian": 1.62,
+      "meals": 9,
+      "snacks": 6
+     }
+    ]
+   }
+  },
+  "flooredFat": {
+   "planned(640)": {
+    "slots": 195,
+    "medianG": 10.63,
+    "meanG": 14.536
+   },
+   "planned−degen(639)": {
+    "slots": 195,
+    "medianG": 10.63,
+    "meanG": 14.536
+   },
+   "judged(623)": {
+    "slots": 195,
+    "medianG": 10.63,
+    "meanG": 14.536
+   },
+   "sat-planned−degen(553) CANONICAL": {
+    "slots": 181,
+    "medianG": 10.59,
+    "meanG": 14.381
+   },
+   "sat-judged(537)": {
+    "slots": 181,
+    "medianG": 10.59,
+    "meanG": 14.381
+   },
+   "FAILING days of the canonical 553 (138)": {
+    "slots": 132,
+    "medianG": 12.45,
+    "meanG": 16.522
+   },
+   "IN-BAND days of the canonical 553 (415)": {
+    "slots": 49,
+    "medianG": 8.39,
+    "meanG": 8.615
+   }
+  },
+  "b5decisive": {
+   "statistic": "share of dishes whose fat-per-kcal density puts a day ABOVE / INSIDE / BELOW the D3 graded fat window, per-diet-style pool",
+   "aPriori": {
+    "above": 59.9,
+    "inside": 28.9,
+    "below": 11.2,
+    "overShortRatio": 5.347,
+    "poolDrawsCounted": 358910
+   },
+   "aPrioriMeanPerDay": {
+    "abovePct": 55.7,
+    "belowPct": 10.7
+   },
+   "shipped": {
+    "above": 26.7,
+    "inside": 67.4,
+    "below": 5.9,
+    "overShortRatio": 4.493,
+    "slots": 2527
+   },
+   "verdict": "if SHIPPED's above/below ratio is no worse than A-PRIORI's, the asymmetry is inherited from the library, not manufactured by the search",
+   "libraryFatPctE": {
+    "median": 38.1,
+    "n": 910
+   }
+  },
+  "b1": {
+   "planned(640)": {
+    "failing": 204,
+    "fatFailingDays": 112,
+    "over": 95,
+    "short": 17,
+    "fatOnlyMisses": 49,
+    "fatOnlyOver": 49,
+    "fatOnlyMedianOverMidPct": 54.3
+   },
+   "planned−degen(639)": {
+    "failing": 204,
+    "fatFailingDays": 112,
+    "over": 95,
+    "short": 17,
+    "fatOnlyMisses": 49,
+    "fatOnlyOver": 49,
+    "fatOnlyMedianOverMidPct": 54.3
+   },
+   "judged(623)": {
+    "failing": 188,
+    "fatFailingDays": 96,
+    "over": 95,
+    "short": 1,
+    "fatOnlyMisses": 49,
+    "fatOnlyOver": 49,
+    "fatOnlyMedianOverMidPct": 54.3
+   },
+   "sat-planned−degen(553) CANONICAL": {
+    "failing": 138,
+    "fatFailingDays": 98,
+    "over": 82,
+    "short": 16,
+    "fatOnlyMisses": 48,
+    "fatOnlyOver": 48,
+    "fatOnlyMedianOverMidPct": 54.2
+   },
+   "sat-judged(537)": {
+    "failing": 122,
+    "fatFailingDays": 82,
+    "over": 82,
+    "short": 0,
+    "fatOnlyMisses": 48,
+    "fatOnlyOver": 48,
+    "fatOnlyMedianOverMidPct": 54.2
+   },
+   "FAILING days of the canonical 553 (138)": {
+    "failing": 138,
+    "fatFailingDays": 98,
+    "over": 82,
+    "short": 16,
+    "fatOnlyMisses": 48,
+    "fatOnlyOver": 48,
+    "fatOnlyMedianOverMidPct": 54.2
+   },
+   "IN-BAND days of the canonical 553 (415)": {
+    "failing": 0,
+    "fatFailingDays": 0,
+    "over": 0,
+    "short": 0,
+    "fatOnlyMisses": 0,
+    "fatOnlyOver": 0,
+    "fatOnlyMedianOverMidPct": null
+   }
+  }
+ },
+ "I7_persona_denominators": [
+  {
+   "label": "all planned (250 personas)",
+   "personas": 249,
+   "slots": 3011,
+   "maxRatio": 1.857,
+   "slotsRatio_gt1_2": 186,
+   "slotsRatio_gt1_5": 35,
+   "nominalAbovePoolMax": 1,
+   "carryAbovePoolMax": 22,
+   "carryAbovePoolP99": 41,
+   "slotsAbovePoolMax": 77,
+   "slotsAbovePoolP99": 162
+  },
+  {
+   "label": "canonical 553",
+   "personas": 217,
+   "slots": 2634,
+   "maxRatio": 1.857,
+   "slotsRatio_gt1_2": 74,
+   "slotsRatio_gt1_5": 21,
+   "nominalAbovePoolMax": 1,
+   "carryAbovePoolMax": 11,
+   "carryAbovePoolP99": 27,
+   "slotsAbovePoolMax": 29,
+   "slotsAbovePoolP99": 83
+  }
+ ],
+ "B6_alternate_denominators": {
+  "note": "fat overage vs the EFFECTIVE (carry-forward) slot fat target and vs the NOMINAL share; brief B6 reconciles best on planned-640",
+  "planned640": {
+   "shippedSlots": 2820,
+   "fallbackSlots": 586,
+   "fallbackPct": 20.8,
+   "fatOverageShareOfFallbackPct": 48.3,
+   "gPerFallbackSlot": 8.3,
+   "gPerOtherSlot": 2.33
+  },
+  "canonical553": {
+   "shippedSlots": 2527,
+   "fallbackSlots": 386,
+   "fallbackPct": 15.3,
+   "fatOverageShareOfFallbackPct": 40.2,
+   "gPerFallbackSlot": 8.94,
+   "gPerOtherSlot": 2.4
+  },
+  "failingDays138": {
+   "shippedSlots": 644,
+   "fallbackSlots": 273,
+   "fallbackPct": 42.4,
+   "fatOverageShareOfFallbackPct": 62.2,
+   "gPerFallbackSlot": 10.47,
+   "gPerOtherSlot": 4.68
+  }
+ }
+}

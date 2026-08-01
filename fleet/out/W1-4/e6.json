@@ -1,0 +1,110 @@
+{
+  "claim": "E6 — a locked slot carrying >=100% of the day's calorie budget floors budgetKcal to 0 (weeklyPlanner.js:889 Math.max(0,...)). Every open slot then gets kcalTarget=0 and proteinTarget=0 (:896-897). kcalOffPct(0,x) and proteinShortfallPct(0,x) BOTH return 0 by their `target > 0 ? ... : 0` guard (:420-428), so worstRatio=0 and the accept gate at :630 passes on the FIRST recipe drawn, for every slot, with warning:null.",
+  "arms": {
+    "lock_0pct": {
+      "lockedKcal": 0,
+      "budgetKcal": 2000,
+      "openSlotTargetKcalEach": 95.2,
+      "OPEN_SLOTS_ONLY": {
+        "count": 21,
+        "filled": 21,
+        "kcal": 2539,
+        "protein": 182.1,
+        "fat": 121.5,
+        "carb": 195.4,
+        "warnings": 18,
+        "recipeIds": "cmrj2ucsg08pewlws564i92mo,cmrj2u8i807s9wlwsulprd9bc,cmrj2u4x606zgwlws2jrn8ltv,cmrj2u50c0703wlwss0r9duo6,cmrj2uga409hawlwsesxiffo0,cmrujhgyd001mwlbo1yhlk5mq,cmrj2u7ov07lqwlwsay8ehel9,cmrj2u8e307rawlwsmkr05qs8,cmrj2u9ra081lwlws844dgis7,cmrj2tm5a02u1wlwsy7d5gmx7,cmrj2uicm09xuwlwspn72puao,cmrj2tcxw00s5wlwsnxal50uf,cmrj2uin00a02wlwsdfrwpv2r,cmrj2udxf08yhwlws7zzndep6,cmrj2tmdt02vwwlws5yawf66s,cmrj2u26706dkwlws7cep88rd,cmrj2ucvs08q6wlwscb1ruusi,cmrj2u98w07xowlws455b09xq,cmrj2uf52097ywlwshw2jiqil,cmrj2ti9z01yqwlws29w1qujh,cmrj2ul5r0akewlws0alkbsci"
+      }
+    },
+    "lock_50pct": {
+      "lockedKcal": 1000,
+      "budgetKcal": 1000,
+      "openSlotTargetKcalEach": 50,
+      "OPEN_SLOTS_ONLY": {
+        "count": 20,
+        "filled": 20,
+        "kcal": 1829,
+        "protein": 140.4,
+        "fat": 85.4,
+        "carb": 139.1,
+        "warnings": 20,
+        "recipeIds": "cmrj2ufzx09f2wlws8iffm9zw,cmrj2ucsg08pewlws564i92mo,cmrj2u6zj07fzwlws5aii9mvy,cmrj2topb03e0wlwsd9g6lmnq,cmrj2ueil0930wlwspr9stmgf,cmrj2topb03e0wlwsd9g6lmnq,cmrj2u9hc07zhwlws6zritzfu,cmrj2u3p306pnwlwsljzil38z,cmrj2ujq00a8nwlwsd0yu5nrk,cmrj2u589071swlwshgfim8ca,cmrj2tm5a02u1wlwsy7d5gmx7,cmrj2uf52097ywlwshw2jiqil,cmrqrc5sw000awl00knoxkkuk,cmrj2tzz605wbwlwsx0pparce,cmrj2u2lc06gywlws2wtyomxg,cmrj2u4m506x0wlws6o7m0cnl,cmrj2u7ov07lqwlwsay8ehel9,cmrj2tlko02pbwlwsja3ems5q,cmrj2tnj0034qwlws12zoyrei,cmrj2tcxw00s5wlwsnxal50uf"
+      }
+    },
+    "lock_99pct": {
+      "lockedKcal": 1980,
+      "budgetKcal": 20,
+      "openSlotTargetKcalEach": 1,
+      "OPEN_SLOTS_ONLY": {
+        "count": 20,
+        "filled": 20,
+        "kcal": 1813,
+        "protein": 99.3,
+        "fat": 74.1,
+        "carb": 204,
+        "warnings": 20,
+        "recipeIds": "cmrj2ufbg099fwlwszp0hrthr,cmrj2topb03e0wlwsd9g6lmnq,cmrj2uet0095awlws6e4lxsa8,cmrj2uba708dgwlwssfpkdu9w,cmrj2u2lc06gywlws2wtyomxg,cmrj2uh6109o9wlws7j4etwqa,cmrj2tnj0034qwlws12zoyrei,cmrj2tphm03k7wlwsknvdu89i,cmrj2ueil0930wlwspr9stmgf,cmrj2u3p306pnwlwsljzil38z,cmrj2ugbu09hnwlwszvfjypxf,cmrj2u589071swlwshgfim8ca,cmrj2u97207x9wlwsczv1mv7p,cmrj2uk4r0ac5wlws8cr7de8c,cmrj2uhy709ulwlwsr3m22lon,cmrj2uihc09yuwlwsdezcf7wg,cmrj2u8z307viwlwsmr30mcxr,cmrj2u4x606zgwlws2jrn8ltv,cmrj2ucb308ljwlwshp004cle,cmrj2uif109ydwlws6vccg4sr"
+      }
+    },
+    "lock_100pct": {
+      "lockedKcal": 2000,
+      "budgetKcal": 0,
+      "openSlotTargetKcalEach": 0,
+      "OPEN_SLOTS_ONLY": {
+        "count": 20,
+        "filled": 20,
+        "kcal": 2623,
+        "protein": 176.7,
+        "fat": 90.5,
+        "carb": 287.4,
+        "warnings": 0,
+        "recipeIds": "cmrj2uel4093jwlws8wr3dqxv,cmrj2tivn023jwlws2kbiwer3,cmrj2tku402j5wlws1zhfqftr,cmrj2tisd022uwlwsj9ss5frl,cms7pjmhu000pwlbkj68lki4w,cmrj2topb03e0wlwsd9g6lmnq,cmrj2tzbn05r3wlwstzd6frs0,cmrj2u7ov07lqwlwsay8ehel9,cmrj2u8e307rawlwsmkr05qs8,cmrj2u98w07xowlws455b09xq,cmrul4e5l004iwl68pym8uxr2,cmrj2ucvs08q6wlwscb1ruusi,cmrj2uk7n0acswlws2l00m4wh,cmrj2u6zj07fzwlws5aii9mvy,cmrj2ub3t08c0wlwsqpb80uv0,cmrj2u5a70727wlws0g47mw6v,cmrj2tphm03k7wlwsknvdu89i,cmrj2ueqf094nwlws7xp7xk44,cmrj2ufzx09f2wlws8iffm9zw,cmrj2ujys0aaswlws9xb8z2b2"
+      }
+    },
+    "lock_130pct": {
+      "lockedKcal": 2600,
+      "budgetKcal": 0,
+      "openSlotTargetKcalEach": 0,
+      "OPEN_SLOTS_ONLY": {
+        "count": 20,
+        "filled": 20,
+        "kcal": 2623,
+        "protein": 176.7,
+        "fat": 90.5,
+        "carb": 287.4,
+        "warnings": 0,
+        "recipeIds": "cmrj2uel4093jwlws8wr3dqxv,cmrj2tivn023jwlws2kbiwer3,cmrj2tku402j5wlws1zhfqftr,cmrj2tisd022uwlwsj9ss5frl,cms7pjmhu000pwlbkj68lki4w,cmrj2topb03e0wlwsd9g6lmnq,cmrj2tzbn05r3wlwstzd6frs0,cmrj2u7ov07lqwlwsay8ehel9,cmrj2u8e307rawlwsmkr05qs8,cmrj2u98w07xowlws455b09xq,cmrul4e5l004iwl68pym8uxr2,cmrj2ucvs08q6wlwscb1ruusi,cmrj2uk7n0acswlws2l00m4wh,cmrj2u6zj07fzwlws5aii9mvy,cmrj2ub3t08c0wlwsqpb80uv0,cmrj2u5a70727wlws0g47mw6v,cmrj2tphm03k7wlwsknvdu89i,cmrj2ueqf094nwlws7xp7xk44,cmrj2ufzx09f2wlws8iffm9zw,cmrj2ujys0aaswlws9xb8z2b2"
+      }
+    },
+    "lock_200pct": {
+      "lockedKcal": 4000,
+      "budgetKcal": 0,
+      "openSlotTargetKcalEach": 0,
+      "OPEN_SLOTS_ONLY": {
+        "count": 20,
+        "filled": 20,
+        "kcal": 2623,
+        "protein": 176.7,
+        "fat": 90.5,
+        "carb": 287.4,
+        "warnings": 0,
+        "recipeIds": "cmrj2uel4093jwlws8wr3dqxv,cmrj2tivn023jwlws2kbiwer3,cmrj2tku402j5wlws1zhfqftr,cmrj2tisd022uwlwsj9ss5frl,cms7pjmhu000pwlbkj68lki4w,cmrj2topb03e0wlwsd9g6lmnq,cmrj2tzbn05r3wlwstzd6frs0,cmrj2u7ov07lqwlwsay8ehel9,cmrj2u8e307rawlwsmkr05qs8,cmrj2u98w07xowlws455b09xq,cmrul4e5l004iwl68pym8uxr2,cmrj2ucvs08q6wlwscb1ruusi,cmrj2uk7n0acswlws2l00m4wh,cmrj2u6zj07fzwlws5aii9mvy,cmrj2ub3t08c0wlwsqpb80uv0,cmrj2u5a70727wlws0g47mw6v,cmrj2tphm03k7wlwsknvdu89i,cmrj2ueqf094nwlws7xp7xk44,cmrj2ufzx09f2wlws8iffm9zw,cmrj2ujys0aaswlws9xb8z2b2"
+      }
+    }
+  },
+  "gateIsDead_at100pct": true,
+  "gateIsAlive_justBelow": {
+    "at99pct_warnings": 20,
+    "at100pct_warnings": 0
+  },
+  "lock100_vs_130_openSolveIdentical": true,
+  "lock100_vs_200_openSolveIdentical": true,
+  "worstCase": {
+    "dayTargetKcal": 2000,
+    "fatBand": "55-65 g",
+    "at100pctLock_shippedByOpenSlots": "2623 kcal, 90.5 g fat, 287.4 g carb",
+    "dayTotalAt100pctLock": "4623 kcal on a 2000 kcal target",
+    "slotWarnings": 0
+  },
+  "populationVisibility": "0 of 250 fleet personas lock any slot, so this vector is INVISIBLE to every fleet level number. It is reachable only through the Plan tab's lock affordance."
+}

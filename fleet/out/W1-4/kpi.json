@@ -1,0 +1,117 @@
+{
+  "e3ByDenominator": {
+    "planned": {
+      "n": 640,
+      "outOfBandDays": 205,
+      "kcalAndProteinBothFine": 45.85,
+      "noSlotWarning": 10.73,
+      "fullySilent": 0.49,
+      "fullySilentCount": 1
+    },
+    "plannedMinusDegen": {
+      "n": 639,
+      "outOfBandDays": 204,
+      "kcalAndProteinBothFine": 46.08,
+      "noSlotWarning": 10.29,
+      "fullySilent": 0,
+      "fullySilentCount": 0
+    },
+    "judged": {
+      "n": 623,
+      "outOfBandDays": 188,
+      "kcalAndProteinBothFine": 50,
+      "noSlotWarning": 11.17,
+      "fullySilent": 0,
+      "fullySilentCount": 0
+    },
+    "satPlanned": {
+      "n": 554,
+      "outOfBandDays": 139,
+      "kcalAndProteinBothFine": 64.75,
+      "noSlotWarning": 15.11,
+      "fullySilent": 0.72,
+      "fullySilentCount": 1
+    },
+    "satPlanned-degenerate (CANONICAL 553)": {
+      "n": 553,
+      "outOfBandDays": 138,
+      "kcalAndProteinBothFine": 65.22,
+      "noSlotWarning": 14.49,
+      "fullySilent": 0,
+      "fullySilentCount": 0
+    },
+    "satJudged": {
+      "n": 537,
+      "outOfBandDays": 122,
+      "kcalAndProteinBothFine": 73.77,
+      "noSlotWarning": 16.39,
+      "fullySilent": 0,
+      "fullySilentCount": 0
+    }
+  },
+  "slotLevel": {
+    "filledSlots": 2820,
+    "slotsWithWarning": 586,
+    "slotWarningRatePct": 20.78,
+    "outOfBandDaysWithNoSlotWarningAtAll": 22,
+    "ofOutOfBandDaysPct": 10.73
+  },
+  "inBandSplit": {
+    "n": 435,
+    "withOwnSlotWarning": 89,
+    "withRunDiagnosisOnly": 50,
+    "clean": 296,
+    "note": "A slot warning on an in-band DAY is not a false surrender: the slot genuinely missed its own share while the day still landed. The run diagnosis on an in-band day comes from a DIFFERENT day of the same week."
+  },
+  "inflationTrap": {
+    "mechanism": "A1/rig/schema.mjs:83 `judged: filled.length > 0`. Refusing a day empties its slots, so the day leaves the JUDGED denominator entirely while ALL PLANNED DAYS is unchanged. Zero behaviour improvement, large apparent gain.",
+    "baseline": {
+      "judged": "435/623 = 69.82%",
+      "planned": "435/640 = 67.97%"
+    },
+    "ladder": [
+      {
+        "refused": 0,
+        "judgedRate": 69.82,
+        "plannedRate": 67.97,
+        "satJudgedRate": 77.28
+      },
+      {
+        "refused": 50,
+        "judgedRate": 75.92,
+        "plannedRate": 67.97,
+        "satJudgedRate": 85.22
+      },
+      {
+        "refused": 100,
+        "judgedRate": 83.17,
+        "plannedRate": 67.97,
+        "satJudgedRate": 94.97
+      },
+      {
+        "refused": 150,
+        "judgedRate": 91.97,
+        "plannedRate": 67.97,
+        "satJudgedRate": 100
+      },
+      {
+        "refused": 188,
+        "judgedRate": 100,
+        "plannedRate": 67.97,
+        "satJudgedRate": 100
+      }
+    ],
+    "maxGainOnJudged": 30.18,
+    "maxGainOnPlanned": 0,
+    "falseRefusalsRequired": 188,
+    "note": "Refusing ALL 188 out-of-band judged days scores a PERFECT 100% on `judged` and EXACTLY +0.00 on ALL PLANNED DAYS. That is E11's inflation trap in this tree's own arithmetic."
+  },
+  "c10": {
+    "provablyInfeasiblePersonas": 18,
+    "theirPlannedDays": 54,
+    "theirInBandDays": 0,
+    "deltaOnPlannedIfSoundlyRefused": 0,
+    "deltaOnJudgedIfSoundlyRefused": 6.63000000000001,
+    "verdict": "C10 CONFIRMED: a SOUND refusal moves ALL PLANNED DAYS by exactly +0.00, because the days it refuses were already contributing 0 to the numerator. It still scores on `judged` — which is precisely why `judged` must never be the headline."
+  }
+}

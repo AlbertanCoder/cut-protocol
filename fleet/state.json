@@ -6,7 +6,7 @@
     "branch": "fleet/measure-2026-08",
     "rescueBranch": "campaign-2026-07",
     "agentCap": 50,
-    "agentsSpawned": 10,
+    "agentsSpawned": 13,
     "currentWave": "W1-3/W1-4 then W3",
     "notes": "Resume protocol: read this ledger, skip every agent with status=done, continue from the first unfinished agent.",
     "dbSha256": "d9037dce9754b4524943069fff7e0f3e396598c108426f370b0a189458b623a1",
@@ -62,16 +62,23 @@
     "W1-3": {
       "wave": "W1",
       "name": "taxonomy",
-      "status": "pending",
-      "artifacts": [],
-      "headline": ""
+      "status": "done",
+      "artifacts": [
+        "fleet/out/W1-3/FINDINGS.md",
+        "fleet/out/W1-3/taxonomy.json"
+      ],
+      "headline": "RECONCILED the over-side dispute EXACTLY: all three numbers are correct on different denominators. 94.7%% of failing AXES / 92.6%% of failing DAYS THAT CONTAIN FOOD are pure-over (113/122); 74.6%% is the same quantity with the 16 zero-food plates booked as undershoot -- a plan with no food is arithmetically SHORT on every axis, and those 48 short axes ARE the entire 74-vs-96 gap. W3-4 must cite 92.6%%. Buckets sum EXACTLY (138 = 553-415) at every denominator/diet/tier/seed; largest is fat-over 48. NEW: CARB, not fat, is the largest overage MASS (20,495g over vs fat 8,594g) -- a fat-only trimmer leaves the bigger pile. B9 CONFIRMED and named: the worst offender scheduled last IS THE SNACK (snacks ship 1.6-2.3x their nominal fat share at every position; meals ~1.0 until pos 7) = direct evidence for C2. B8 must be SPLIT: meal-only unsolved is 0.0%% in both small bands (52/52 unsolved small slots are snacks) but meals-only fat overshoot is +172.9%%. B5 CONCLUSION REFUTED: a-priori geometry is 10.7 low / 55.7 high (5.35:1 AGAINST), and the search HALVES the skew -- the pantry is a first-order co-cause, so the fix cannot be objective-only."
     },
     "W1-4": {
       "wave": "W1",
       "name": "honesty-detection",
-      "status": "pending",
-      "artifacts": [],
-      "headline": ""
+      "status": "done",
+      "artifacts": [
+        "fleet/out/W1-4/FINDINGS.md",
+        "fleet/out/W1-4/honesty.json",
+        "fleet/out/W1-4/kpi.json"
+      ],
+      "headline": "ADJUDICATION: THE BRIEF WINS. The prompt premise is TRUE (diagnoseFromResult hardcodes feasible:false at mealSolver.js:443, one return, no true path) but its CONCLUSION IS REFUTED -- all three call sites are gated, so a converged run never reaches it. FALSE-SURRENDER RATE 0.00%% at all 3 seeds (prompt claimed 95.8%%); precision 100%%, recall 98.73%%; 171/171 converged runs correctly carry diagnosis:null. Silent misses: 1 (p233, the 0-slot config). Detection 18/18 = 100%% on the PROVABLE set; the 8 label-only misses CONVERGED so silence was correct. Reproduced E5 (silent half portion), E6 (4,623 kcal on a 2,000 kcal day, ZERO warnings -- worse than the brief 2,953), E7, D6 (by counterexample: a 4/4 in-band day the app calls unreachable), E9, E10. THE REAL DEFECT IS PERSISTENCE AND DISPLAY: no day-verdict column exists, genMeta is React state, TodayTab matches /warning/i on ZERO lines, and TodayTab draws fat as kind=floor so an over-fat day RENDERS AS A MET FLOOR. Inflation trap measured: +30.18pts free on judged, +0.00 on planned."
     },
     "W1-5": {
       "wave": "W1",
@@ -165,9 +172,13 @@
     "W3-1": {
       "wave": "W3",
       "name": "ruler-share",
-      "status": "pending",
-      "artifacts": [],
-      "headline": ""
+      "status": "done",
+      "artifacts": [
+        "fleet/out/W3-1/FINDINGS.md",
+        "fleet/out/W3-1/ruler-share.json",
+        "fleet/out/W3-1/decompose.json"
+      ],
+      "headline": "THE DECOMPOSITION: ruler share ~ +2.2 to +2.8 pts, SOLVER SHARE ~ 22 pts (n=553, gap 24.89). Arithmetic ceiling for ANY fat/carb re-grade is +16.82 (ruler Z); 8.08pts miss kcal/protein and no ruler can touch them. Big ruler numbers are real but INADMISSIBLE: B +9.34, D +8.56, A15 +5.36 all bought by deleting the fat ceiling (D would tell 64 days/seed you are on target that today are correctly flagged, 22 of them above every published fat reference). C9 +4.0 cap REFUTED (+5.36) and it never bounded a floor ruler anyway -- A15 loosens 18.8%%, a floor ruler 62-93%%. Prompt right on DIAGNOSIS, brief right on PRESCRIPTION; never actually in contradiction. D3 CONFIRMED exactly (1920/1920, 0 mismatches). D4 confirmed and extended to OUTPUT: A grades 48.3 days/seed = 11.6%% of its passes above AMDR 35%%E. RECOMMENDS E35k (+2.77) then R35k (+2.17) plus F (-0.30 for a correctness bug). W2-6 instrument as written DESTROYS KETO (58 days -> 0.0%%). E11 test: b-term ~0 = inflation; b/c = 1/3 = re-calibration."
     },
     "W3-2": {
       "wave": "W3",

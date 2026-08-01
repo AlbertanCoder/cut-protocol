@@ -1,0 +1,895 @@
+{
+  "agent": "W1-4",
+  "mission": "honesty-detection — adjudicate the prompt-vs-brief contradiction on diagnosis, then measure where honesty actually breaks",
+  "provenance": {
+    "dbSha256": "d9037dce9754b452",
+    "recipeRows": 910,
+    "personas": 250,
+    "personasSha256": "e564b1ddcc36b952",
+    "SCALE_BOUNDS": {
+      "min": 0.5,
+      "max": 2
+    },
+    "DAY_KCAL_TOLERANCE_PCT": 0.15,
+    "DAY_FAT_TOLERANCE_PCT": 0.25,
+    "canonicalDump": "fleet/out/W1-2/daydump-route-s424242.jsonl (+ s20260730, s8675309)",
+    "schema": "fleet/W1-1/day/v2",
+    "ruler": "product/dayTolerance+dayInTolerance (mealSolver.js:229,:256)",
+    "brain": "off",
+    "networkCallsAttempted": 0,
+    "productSourceModified": false
+  },
+  "ADJUDICATION": {
+    "question": "Does `diagnoseFromResult` return feasible:false unconditionally, mislabelling perfect weeks (prompt), or does the constitution hold on /generate (brief)?",
+    "verdict": "BRIEF WINS. Both statements are literally true of DIFFERENT things and the prompt draws the wrong conclusion from its true premise.",
+    "theFunctionIsUnconditional": {
+      "confirmed": true,
+      "location": "backend/src/lib/mealSolver.js:443",
+      "code": "return { feasible: false, reasons, suggestions };",
+      "detail": "diagnoseFromResult has exactly ONE return statement and it hardcodes feasible:false. There is no path through it that returns feasible:true. The prompt's structural claim is CORRECT (its line number 405 is stale; the symbol is at :379-444)."
+    },
+    "butEveryCallSiteIsGated": {
+      "confirmed": true,
+      "sites": [
+        {
+          "where": "mealSolver.js:562-567 (generateDayCandidates)",
+          "gate": "needDiagnosis (:548-559) — candidates empty, matchPct<60, all candidates warned, candidates[0].inTolerance===false, or a protein-floor miss",
+          "elseValue": "diagnosis: null"
+        },
+        {
+          "where": "mealSolver.js:754-756 (generateBestWeekPlan)",
+          "gate": "anyDayMissed || anyUnfilledSlot || floorMissed || noDaysAtAll",
+          "elseValue": "best.diagnosis = null"
+        },
+        {
+          "where": "mealSolver.js:1296-1322 (generateHorizonPlan)",
+          "gate": "anyMissed || unfilledSlots>0 || varietyBreached",
+          "elseValue": "diagnosis = null"
+        }
+      ],
+      "consequence": "A converged run never reaches :443. `feasible:false` is therefore not a FEASIBILITY claim the app makes about clean weeks — it is a constant on an object that only exists when something genuinely missed."
+    },
+    "measuredOnThisTree": {
+      "denominator": "250 /generate runs, seed 424242 (route shape, canonical personas)",
+      "perfectRunsMislabeled": 0,
+      "perfectRunsCorrectlySilent": 171,
+      "falseSurrenderRatePct": 0,
+      "promptClaimedFalseSurrenderPct": 95.8,
+      "promptClaimed_41of41PerfectWeeksMislabeled": "REFUTED — 171 of 171 converged runs carry diagnosis: null",
+      "crossSeed": {
+        "s424242": 0,
+        "s20260730": 0,
+        "s8675309": 0
+      }
+    },
+    "residualDefect": {
+      "severity": "cosmetic-to-moderate, NOT the 95.8% claim",
+      "what": "`feasible:false` is a SEVERITY-FREE constant. A week that landed 6 of 7 days and a week whose pool is empty carry the identical machine flag, and frontend/src/components/PlanTab.jsx:388 (`diag.feasible === false` -> `infeasible`) renders both in warn colour with a '->' prefix. diagnose() at :369 computes a real `feasible: reasons.length === 0`; diagnoseFromResult DISCARDS its preSolve's verdict and overwrites it.",
+      "recommendation": "Do NOT re-fix the gating (the brief is right). Replace the constant with a graded severity so the UI can distinguish 'one day rough' from 'this ask is impossible'."
+    }
+  },
+  "twoByTwo": {
+    "runLevel": {
+      "note": "THE headline 2x2. A 'run' = one /generate call = one persona. oracle-feasible := every planned day in band AND zero empty slots. declared := the run carries a diagnosis (always feasible:false when present).",
+      "denominator": 250,
+      "matrix": {
+        "convergedDeclared": 0,
+        "convergedSilent": 171,
+        "missedDeclared": 78,
+        "missedSilent": 1
+      },
+      "precisionPct": 100,
+      "recallPct": 98.73,
+      "falseSurrenderRatePct_ofDeclared": 0,
+      "falseSurrenderRatePct_ofConverged": 0,
+      "specificityPct": 100,
+      "certifiedFalseSurrenders": 0,
+      "certifiedFalseSurrenderDetail": "runs that converged (all days in band, no empty slots) AND were told they had not: ZERO, at all three seeds.",
+      "silentMissRuns": [
+        {
+          "personaId": "p233",
+          "tier": "ROBUSTNESS",
+          "daysInBand": 0,
+          "days": 1,
+          "anyEmptySlot": false
+        }
+      ],
+      "crossSeed": {
+        "424242": {
+          "convergedDeclared": 0,
+          "convergedSilent": 171,
+          "missedDeclared": 78,
+          "missedSilent": 1
+        },
+        "8675309": {
+          "convergedDeclared": 0,
+          "convergedSilent": 170,
+          "missedDeclared": 79,
+          "missedSilent": 1
+        },
+        "20260730": {
+          "convergedDeclared": 0,
+          "convergedSilent": 173,
+          "missedDeclared": 76,
+          "missedSilent": 1
+        }
+      }
+    },
+    "dayLevel": {
+      "note": "Day-level 'declared' inherits the RUN's diagnosis (hasDiagnosis is a run flag replicated onto every day). An in-band day inside a week where a DIFFERENT day missed therefore reads as 'declared' — that is correct behaviour, not a mislabel.",
+      "denominator": 640,
+      "matrix": {
+        "inBandDeclared": 139,
+        "inBandSilent": 296,
+        "outDeclared": 204,
+        "outSilent": 1
+      },
+      "inBandSplit": {
+        "n": 435,
+        "withOwnSlotWarning": 89,
+        "withRunDiagnosisOnly": 50,
+        "clean": 296,
+        "note": "A slot warning on an in-band DAY is not a false surrender: the slot genuinely missed its own share while the day still landed. The run diagnosis on an in-band day comes from a DIFFERENT day of the same week."
+      },
+      "silentMissDays": [
+        {
+          "dayKey": "p233#0",
+          "tier": "ROBUSTNESS",
+          "slotsFilled": 0,
+          "slotsTotal": 0
+        }
+      ],
+      "silentMissCount": 1,
+      "silentMissIdentity": "p233 — the 0-slot config (mealsPerDay:0, snacksPerDay:0). A plan containing no food, diagnosis:null, no warning. Reproduces W1-1's A6+ exactly; it is the ONLY declared===false record in the corpus."
+    }
+  },
+  "tierDetection": {
+    "warning": "W1-2 established 'IMPOSSIBLE' is a persona-generator LABEL, not a proof. Scored against BOTH denominators, as required.",
+    "label32": {
+      "label": "IMPOSSIBLE label (32)",
+      "runs": 32,
+      "declaredInfeasible": 24,
+      "declaredRate": 75,
+      "convergedRuns": 8,
+      "runsWithAtLeastOneInBandDay": 10,
+      "falseSurrenders": 0,
+      "silentMisses": 0
+    },
+    "provable18": {
+      "label": "provably infeasible (18, W1-5 aboveMax_gate)",
+      "runs": 18,
+      "declaredInfeasible": 18,
+      "declaredRate": 100,
+      "convergedRuns": 0,
+      "runsWithAtLeastOneInBandDay": 0,
+      "falseSurrenders": 0,
+      "silentMisses": 0
+    },
+    "mislabeled14": {
+      "label": "IMPOSSIBLE label but NOT provable (14)",
+      "runs": 14,
+      "declaredInfeasible": 6,
+      "declaredRate": 42.86,
+      "convergedRuns": 8,
+      "runsWithAtLeastOneInBandDay": 10,
+      "falseSurrenders": 0,
+      "silentMisses": 0
+    },
+    "satisfiable218": {
+      "label": "satisfiable (218)",
+      "runs": 218,
+      "declaredInfeasible": 54,
+      "declaredRate": 24.77,
+      "convergedRuns": 163,
+      "runsWithAtLeastOneInBandDay": 187,
+      "falseSurrenders": 0,
+      "silentMisses": 1
+    },
+    "all250": {
+      "label": "all runs (250)",
+      "runs": 250,
+      "declaredInfeasible": 78,
+      "declaredRate": 31.2,
+      "convergedRuns": 171,
+      "runsWithAtLeastOneInBandDay": 197,
+      "falseSurrenders": 0,
+      "silentMisses": 1
+    },
+    "reading": {
+      "against32Label": "24 of 32 declared = 75.0% detection. The 8 undeclared are runs that CONVERGED — 8 of the 32 'impossible' personas produced a fully compliant plan, so silence is CORRECT and the 75% is not a miss rate.",
+      "against18Provable": "18 of 18 declared = 100.0% detection, 0 false surrenders, 0 silent misses. Every provably-infeasible persona is correctly refused, and none of them produced a single in-band day (0 of 54).",
+      "theGapIsTheLabel": "Scoring against the 32-label alone would report 75% and read as a detector failure. It is a POPULATION failure: the 14 non-provable personas pass 62.5% of their days. Detection on the provable set is perfect."
+    }
+  },
+  "vectors": {
+    "E5": {
+      "claim": "non-finite kcalTarget -> clamp falls to min 0.5 -> half portion shipped with warning:null",
+      "clampProbe": {
+        "source": "weeklyPlanner.js:294",
+        "SCALE_BOUNDS": {
+          "min": 0.5,
+          "max": 2
+        }
+      },
+      "baseRecipe": {
+        "name": "Cast-Iron Sirloin, Rice & Peppers",
+        "kcal": 880.7,
+        "protein": 79.5
+      },
+      "scaleRecipe_direct": {
+        "NaN": {
+          "proteinScale": 0.5,
+          "sidesScale": 0.5,
+          "kcal": 440.4
+        },
+        "Infinity": {
+          "proteinScale": 0.5,
+          "sidesScale": 0.5,
+          "kcal": 440.4
+        },
+        "normal": {
+          "proteinScale": 0.5,
+          "sidesScale": 1.83,
+          "kcal": 940.1
+        }
+      },
+      "resolveSlot_shipped": {
+        "NaN": {
+          "recipeId": "(filled)",
+          "proteinScale": 0.5,
+          "sidesScale": 0.5,
+          "kcal": 440.4,
+          "protein": 39.7,
+          "warning": null
+        },
+        "Infinity": {
+          "recipeId": "(filled)",
+          "proteinScale": 0.5,
+          "sidesScale": 0.5,
+          "kcal": 440.4,
+          "protein": 39.7,
+          "warning": "Tried 1 recipe(s) for this slot, none fit within tolerance — closest was \"Cast-Iron Sirloin, Rice & Peppers\" ()."
+        },
+        "undefined": {
+          "recipeId": "(filled)",
+          "proteinScale": 0.5,
+          "sidesScale": 0.5,
+          "kcal": 440.4,
+          "protein": 39.7,
+          "warning": null
+        },
+        "normal": {
+          "recipeId": "(filled)",
+          "proteinScale": 0.5,
+          "sidesScale": 1.83,
+          "kcal": 940.1,
+          "protein": 49,
+          "warning": null
+        }
+      },
+      "reachability": "backend/src/lib/brain/tools.js:74 scaleRecipeTool({recipeId,kcalTarget,proteinTarget}) — only recipeId is validated (throws when not in pool); kcalTarget/proteinTarget are passed straight through with no finiteness check.",
+      "verdict": "REPRODUCED, ADJUSTED",
+      "finding": "NaN and undefined kcalTarget both ship a 0.5x half portion with warning:null — fully silent. Infinity ships the same half portion but emits a MALFORMED warning with an empty parenthesis ('closest was \"X\" ().') because NaN>0.15 is false for both miss tests, so the misses[] array is empty. The brief said Infinity yields warning:null; on this tree it yields a degenerate string. Either way an INFINITE ask produces the SMALLEST plate."
+    },
+    "E6": {
+      "claim": "E6 — a locked slot carrying >=100% of the day's calorie budget floors budgetKcal to 0 (weeklyPlanner.js:889 Math.max(0,...)). Every open slot then gets kcalTarget=0 and proteinTarget=0 (:896-897). kcalOffPct(0,x) and proteinShortfallPct(0,x) BOTH return 0 by their `target > 0 ? ... : 0` guard (:420-428), so worstRatio=0 and the accept gate at :630 passes on the FIRST recipe drawn, for every slot, with warning:null.",
+      "arms": {
+        "lock_0pct": {
+          "lockedKcal": 0,
+          "budgetKcal": 2000,
+          "openSlotTargetKcalEach": 95.2,
+          "OPEN_SLOTS_ONLY": {
+            "count": 21,
+            "filled": 21,
+            "kcal": 2539,
+            "protein": 182.1,
+            "fat": 121.5,
+            "carb": 195.4,
+            "warnings": 18,
+            "recipeIds": "cmrj2ucsg08pewlws564i92mo,cmrj2u8i807s9wlwsulprd9bc,cmrj2u4x606zgwlws2jrn8ltv,cmrj2u50c0703wlwss0r9duo6,cmrj2uga409hawlwsesxiffo0,cmrujhgyd001mwlbo1yhlk5mq,cmrj2u7ov07lqwlwsay8ehel9,cmrj2u8e307rawlwsmkr05qs8,cmrj2u9ra081lwlws844dgis7,cmrj2tm5a02u1wlwsy7d5gmx7,cmrj2uicm09xuwlwspn72puao,cmrj2tcxw00s5wlwsnxal50uf,cmrj2uin00a02wlwsdfrwpv2r,cmrj2udxf08yhwlws7zzndep6,cmrj2tmdt02vwwlws5yawf66s,cmrj2u26706dkwlws7cep88rd,cmrj2ucvs08q6wlwscb1ruusi,cmrj2u98w07xowlws455b09xq,cmrj2uf52097ywlwshw2jiqil,cmrj2ti9z01yqwlws29w1qujh,cmrj2ul5r0akewlws0alkbsci"
+          }
+        },
+        "lock_50pct": {
+          "lockedKcal": 1000,
+          "budgetKcal": 1000,
+          "openSlotTargetKcalEach": 50,
+          "OPEN_SLOTS_ONLY": {
+            "count": 20,
+            "filled": 20,
+            "kcal": 1829,
+            "protein": 140.4,
+            "fat": 85.4,
+            "carb": 139.1,
+            "warnings": 20,
+            "recipeIds": "cmrj2ufzx09f2wlws8iffm9zw,cmrj2ucsg08pewlws564i92mo,cmrj2u6zj07fzwlws5aii9mvy,cmrj2topb03e0wlwsd9g6lmnq,cmrj2ueil0930wlwspr9stmgf,cmrj2topb03e0wlwsd9g6lmnq,cmrj2u9hc07zhwlws6zritzfu,cmrj2u3p306pnwlwsljzil38z,cmrj2ujq00a8nwlwsd0yu5nrk,cmrj2u589071swlwshgfim8ca,cmrj2tm5a02u1wlwsy7d5gmx7,cmrj2uf52097ywlwshw2jiqil,cmrqrc5sw000awl00knoxkkuk,cmrj2tzz605wbwlwsx0pparce,cmrj2u2lc06gywlws2wtyomxg,cmrj2u4m506x0wlws6o7m0cnl,cmrj2u7ov07lqwlwsay8ehel9,cmrj2tlko02pbwlwsja3ems5q,cmrj2tnj0034qwlws12zoyrei,cmrj2tcxw00s5wlwsnxal50uf"
+          }
+        },
+        "lock_99pct": {
+          "lockedKcal": 1980,
+          "budgetKcal": 20,
+          "openSlotTargetKcalEach": 1,
+          "OPEN_SLOTS_ONLY": {
+            "count": 20,
+            "filled": 20,
+            "kcal": 1813,
+            "protein": 99.3,
+            "fat": 74.1,
+            "carb": 204,
+            "warnings": 20,
+            "recipeIds": "cmrj2ufbg099fwlwszp0hrthr,cmrj2topb03e0wlwsd9g6lmnq,cmrj2uet0095awlws6e4lxsa8,cmrj2uba708dgwlwssfpkdu9w,cmrj2u2lc06gywlws2wtyomxg,cmrj2uh6109o9wlws7j4etwqa,cmrj2tnj0034qwlws12zoyrei,cmrj2tphm03k7wlwsknvdu89i,cmrj2ueil0930wlwspr9stmgf,cmrj2u3p306pnwlwsljzil38z,cmrj2ugbu09hnwlwszvfjypxf,cmrj2u589071swlwshgfim8ca,cmrj2u97207x9wlwsczv1mv7p,cmrj2uk4r0ac5wlws8cr7de8c,cmrj2uhy709ulwlwsr3m22lon,cmrj2uihc09yuwlwsdezcf7wg,cmrj2u8z307viwlwsmr30mcxr,cmrj2u4x606zgwlws2jrn8ltv,cmrj2ucb308ljwlwshp004cle,cmrj2uif109ydwlws6vccg4sr"
+          }
+        },
+        "lock_100pct": {
+          "lockedKcal": 2000,
+          "budgetKcal": 0,
+          "openSlotTargetKcalEach": 0,
+          "OPEN_SLOTS_ONLY": {
+            "count": 20,
+            "filled": 20,
+            "kcal": 2623,
+            "protein": 176.7,
+            "fat": 90.5,
+            "carb": 287.4,
+            "warnings": 0,
+            "recipeIds": "cmrj2uel4093jwlws8wr3dqxv,cmrj2tivn023jwlws2kbiwer3,cmrj2tku402j5wlws1zhfqftr,cmrj2tisd022uwlwsj9ss5frl,cms7pjmhu000pwlbkj68lki4w,cmrj2topb03e0wlwsd9g6lmnq,cmrj2tzbn05r3wlwstzd6frs0,cmrj2u7ov07lqwlwsay8ehel9,cmrj2u8e307rawlwsmkr05qs8,cmrj2u98w07xowlws455b09xq,cmrul4e5l004iwl68pym8uxr2,cmrj2ucvs08q6wlwscb1ruusi,cmrj2uk7n0acswlws2l00m4wh,cmrj2u6zj07fzwlws5aii9mvy,cmrj2ub3t08c0wlwsqpb80uv0,cmrj2u5a70727wlws0g47mw6v,cmrj2tphm03k7wlwsknvdu89i,cmrj2ueqf094nwlws7xp7xk44,cmrj2ufzx09f2wlws8iffm9zw,cmrj2ujys0aaswlws9xb8z2b2"
+          }
+        },
+        "lock_130pct": {
+          "lockedKcal": 2600,
+          "budgetKcal": 0,
+          "openSlotTargetKcalEach": 0,
+          "OPEN_SLOTS_ONLY": {
+            "count": 20,
+            "filled": 20,
+            "kcal": 2623,
+            "protein": 176.7,
+            "fat": 90.5,
+            "carb": 287.4,
+            "warnings": 0,
+            "recipeIds": "cmrj2uel4093jwlws8wr3dqxv,cmrj2tivn023jwlws2kbiwer3,cmrj2tku402j5wlws1zhfqftr,cmrj2tisd022uwlwsj9ss5frl,cms7pjmhu000pwlbkj68lki4w,cmrj2topb03e0wlwsd9g6lmnq,cmrj2tzbn05r3wlwstzd6frs0,cmrj2u7ov07lqwlwsay8ehel9,cmrj2u8e307rawlwsmkr05qs8,cmrj2u98w07xowlws455b09xq,cmrul4e5l004iwl68pym8uxr2,cmrj2ucvs08q6wlwscb1ruusi,cmrj2uk7n0acswlws2l00m4wh,cmrj2u6zj07fzwlws5aii9mvy,cmrj2ub3t08c0wlwsqpb80uv0,cmrj2u5a70727wlws0g47mw6v,cmrj2tphm03k7wlwsknvdu89i,cmrj2ueqf094nwlws7xp7xk44,cmrj2ufzx09f2wlws8iffm9zw,cmrj2ujys0aaswlws9xb8z2b2"
+          }
+        },
+        "lock_200pct": {
+          "lockedKcal": 4000,
+          "budgetKcal": 0,
+          "openSlotTargetKcalEach": 0,
+          "OPEN_SLOTS_ONLY": {
+            "count": 20,
+            "filled": 20,
+            "kcal": 2623,
+            "protein": 176.7,
+            "fat": 90.5,
+            "carb": 287.4,
+            "warnings": 0,
+            "recipeIds": "cmrj2uel4093jwlws8wr3dqxv,cmrj2tivn023jwlws2kbiwer3,cmrj2tku402j5wlws1zhfqftr,cmrj2tisd022uwlwsj9ss5frl,cms7pjmhu000pwlbkj68lki4w,cmrj2topb03e0wlwsd9g6lmnq,cmrj2tzbn05r3wlwstzd6frs0,cmrj2u7ov07lqwlwsay8ehel9,cmrj2u8e307rawlwsmkr05qs8,cmrj2u98w07xowlws455b09xq,cmrul4e5l004iwl68pym8uxr2,cmrj2ucvs08q6wlwscb1ruusi,cmrj2uk7n0acswlws2l00m4wh,cmrj2u6zj07fzwlws5aii9mvy,cmrj2ub3t08c0wlwsqpb80uv0,cmrj2u5a70727wlws0g47mw6v,cmrj2tphm03k7wlwsknvdu89i,cmrj2ueqf094nwlws7xp7xk44,cmrj2ufzx09f2wlws8iffm9zw,cmrj2ujys0aaswlws9xb8z2b2"
+          }
+        }
+      },
+      "gateIsDead_at100pct": true,
+      "gateIsAlive_justBelow": {
+        "at99pct_warnings": 20,
+        "at100pct_warnings": 0
+      },
+      "lock100_vs_130_openSolveIdentical": true,
+      "lock100_vs_200_openSolveIdentical": true,
+      "worstCase": {
+        "dayTargetKcal": 2000,
+        "fatBand": "55-65 g",
+        "at100pctLock_shippedByOpenSlots": "2623 kcal, 90.5 g fat, 287.4 g carb",
+        "dayTotalAt100pctLock": "4623 kcal on a 2000 kcal target",
+        "slotWarnings": 0
+      },
+      "populationVisibility": "0 of 250 fleet personas lock any slot, so this vector is INVISIBLE to every fleet level number. It is reachable only through the Plan tab's lock affordance.",
+      "verdict": "REPRODUCED, WORSE THAN THE BRIEF",
+      "finding": "Cliff edge is exact: at a 99% lock (budgetKcal=20) the open slots ship 1,813 kcal with 20 warnings; at a 100% lock (budgetKcal=0) they ship 2,623 kcal with ZERO warnings. 100% / 130% / 200% locks produce BYTE-IDENTICAL open solves (same 20 recipe ids, same 2,623 kcal, same 90.5 g fat). Day total 4,623 kcal on a 2,000 kcal target, silent. Brief measured 2,953 kcal / 123 g fat; this tree is worse."
+    },
+    "E7": {
+      "claim": "a solve pinned at the 0.5x portion floor is clamped silently — the shipped slot object carries no field naming the pin",
+      "askedKcal": 60,
+      "baseRecipeKcal": 880.7,
+      "shippedKcal": 440.4,
+      "overshootPct": 633.9,
+      "proteinScale": 0.5,
+      "sidesScale": 0.5,
+      "atLoBound": true,
+      "resultKeys": [
+        "recipeId",
+        "warning",
+        "proteinScale",
+        "sidesScale",
+        "ingredients",
+        "kcal",
+        "protein",
+        "fat",
+        "carb"
+      ],
+      "keysMatchingPinBoundClampLimitFloorCeil": [],
+      "warning": "Tried 1 recipe(s) for this slot, none fit within tolerance — closest was \"Cast-Iron Sirloin, Rice & Peppers\" (landed 440 kcal vs a 60 target).",
+      "warningNamesThePin": false,
+      "dumpMeasurements": {
+        "daysWithLoPin": 327,
+        "daysWithHiPin": 327,
+        "loPinSlots": 796,
+        "hiPinSlots": 524,
+        "scaledSlots": 3011,
+        "loPinDays_kcalDeltaPct": {
+          "median": 0.016,
+          "p90": 0.149
+        },
+        "noPinDays_kcalDeltaPct": {
+          "median": 0,
+          "p90": 0.005
+        },
+        "loPinDays_inBand": 63.3,
+        "noPinDays_inBand": 86.44,
+        "loPinDays_warningRate": 53.82,
+        "loPinSlot_overVsEqualSplitProxy": {
+          "n": 796,
+          "median": 0.108,
+          "p90": 0.427,
+          "p10": -0.479,
+          "shareOver": 61.06,
+          "note": "PROXY denominator (day kcal / filled slot count), NOT the solver's weighted+carry-forward share. Direction only."
+        }
+      },
+      "verdict": "REPRODUCED",
+      "finding": "The shipped slot object's keys are [recipeId, warning, proteinScale, sidesScale, ingredients, kcal, protein, fat, carb] — ZERO match /pin|bound|clamp|limit|floor|ceil/. On the real dump: 796 lo-pinned slots and 524 hi-pinned of 3,011. Days carrying a lo-pinned slot are in band 63.3% vs 86.4% for unpinned days — a 23.1-point compliance gap. The kcal warning fires when the pin causes a big enough miss, but nothing ever states the CAUSE ('this dish cannot go smaller'), so the user is told the number and never the wall."
+    },
+    "D6": {
+      "claim": "D6 — compositionReach() evaluates the pool's fat-per-kcal at the EXACT kcal target (mealSolver.js:1047-1048) while dayTolerance grades kcal at +/-15%, so `unreachable` is decided on a strict SUBSET of the reachable interval and false-fires by ~15% in both directions.",
+      "band": {
+        "fatLo": 60,
+        "fatHi": 80,
+        "allowLoG": 42.5,
+        "allowHiG": 97.5
+      },
+      "poolFatPerKcal": {
+        "poolLo": 0.0205,
+        "poolHi": 0.0205
+      },
+      "whatCompositionReachTests": {
+        "atKcal": 2000,
+        "reachLoG": 41,
+        "reachHiG": 41,
+        "verdict": "short (UNREACHABLE)"
+      },
+      "whatTheRulerActuallyAllows": {
+        "kcalLo": 1700,
+        "kcalHi": 2300,
+        "reachHiG_atKcalHi": 47.15,
+        "insideAllowedFatWindow": true
+      },
+      "bindingEmitted": {
+        "key": "macro-composition",
+        "label": "fat in your recipe pool",
+        "detail": "every one of the 30 compliant dishes carries less fat than your 60-80 g range allows — at 2000 kcal they land between 41 and 41 g. Portion scaling changes a dish's size, not its fat-per-calorie, so no mix of these recipes reaches the band."
+      },
+      "emitsTheUnsoundSentence": true,
+      "counterexampleDay": {
+        "kcal": 2300,
+        "protein": 195.5,
+        "fat": 47.1,
+        "carb": 253,
+        "kcalOk": true,
+        "proteinOk": true,
+        "fatOk": true,
+        "carbOk": true
+      },
+      "falseFireMagnitudePct": 15,
+      "directionality": "Symmetric: the OVER side false-fires the same way at kcalLo (reachLoG is tested at 1.00x when the day may legally ship at 0.85x, which lowers delivered grams by 15%).",
+      "verdict": "REPRODUCED END-TO-END — UNSOUND, PROVEN BY COUNTEREXAMPLE"
+    },
+    "E9": {
+      "claim": "generateDayCandidates ranks on score.matchPct alone (mealSolver.js:503-505); the 4-macro `inTolerance` verdict computed at :482-490 is carried on every candidate but is NOT a sort key. An out-of-tolerance day can therefore be offered first while an in-tolerance one is demoted.",
+      "runsWithAtLeast2Candidates": 241,
+      "runsWhereAnInToleranceCandidateExisted": 194,
+      "runsWhereAnOutOfToleranceDayWasOfferedFirst": 2,
+      "ratePctOfRunsWithAnInToleranceOption": 1.03,
+      "examples": [
+        {
+          "personaId": "p159",
+          "diet": "none",
+          "offeredFirst": {
+            "matchPct": 85,
+            "inTolerance": false,
+            "miss": "75 g carbs vs a 38–62 g range — 13 g over"
+          },
+          "demotedInTolerance": {
+            "matchPct": 84,
+            "inTolerance": true
+          },
+          "rankOfFirstInTolerance": 3,
+          "candidateCount": 3
+        },
+        {
+          "personaId": "p218",
+          "diet": "vegan",
+          "offeredFirst": {
+            "matchPct": 83,
+            "inTolerance": false,
+            "miss": "67 g fat vs a 37–43 g range — 24 g over"
+          },
+          "demotedInTolerance": {
+            "matchPct": 82,
+            "inTolerance": true
+          },
+          "rankOfFirstInTolerance": 3,
+          "candidateCount": 3
+        }
+      ],
+      "verdict": "REPRODUCED (mechanism), MAGNITUDE ADJUSTED DOWN",
+      "finding": "matchPct is the ONLY sort key at mealSolver.js:503-505; the 4-macro `inTolerance` verdict is computed at :482-490, attached to every candidate, and never consulted for ranking. Measured: 2 of 194 runs that HAD an in-tolerance option offered an out-of-tolerance day first (1.03%). Both inversions were 1 match-point (85 vs 84; 83 vs 82), not the brief's 95-vs-77. In BOTH cases the first in-tolerance candidate sat at rank 3 of 3 — the default pick is the non-compliant one. W1-6 established /day-options also lacks the macro closer (11 args vs a 12-param declaration), so it is weaker on two independent axes."
+    },
+    "E10": {
+      "claim": "alternatesForSlot (mealSolver.js:821-863) pushes alternates in DRAW order and returns them unsorted; mealSolver.js:1388 (solveOneMeal) and routes/plans.js:260 both assign options[0] to `best`.",
+      "sortCallsInAlternatesForSlot": 0,
+      "draws": 1126,
+      "drawsWhereOptions0IsNotTopScoring": 504,
+      "ratePct": 44.76,
+      "meanGapPtsWhenWrong": 4.26,
+      "maxGapPts": 44,
+      "examples": [
+        {
+          "personaId": "p000",
+          "slotType": "meal",
+          "slotIndex": 0,
+          "offeredAsBest": 99,
+          "actualBest": 100,
+          "gapPts": 1,
+          "order": [
+            99,
+            100,
+            98
+          ]
+        },
+        {
+          "personaId": "p000",
+          "slotType": "meal",
+          "slotIndex": 1,
+          "offeredAsBest": 99,
+          "actualBest": 100,
+          "gapPts": 1,
+          "order": [
+            99,
+            99,
+            100
+          ]
+        },
+        {
+          "personaId": "p000",
+          "slotType": "meal",
+          "slotIndex": 3,
+          "offeredAsBest": 99,
+          "actualBest": 100,
+          "gapPts": 1,
+          "order": [
+            99,
+            100,
+            100
+          ]
+        },
+        {
+          "personaId": "p000",
+          "slotType": "snack",
+          "slotIndex": 0,
+          "offeredAsBest": 97,
+          "actualBest": 100,
+          "gapPts": 3,
+          "order": [
+            97,
+            100,
+            85
+          ]
+        },
+        {
+          "personaId": "p000",
+          "slotType": "snack",
+          "slotIndex": 1,
+          "offeredAsBest": 97,
+          "actualBest": 100,
+          "gapPts": 3,
+          "order": [
+            97,
+            100,
+            85
+          ]
+        },
+        {
+          "personaId": "p001",
+          "slotType": "meal",
+          "slotIndex": 0,
+          "offeredAsBest": 96,
+          "actualBest": 100,
+          "gapPts": 4,
+          "order": [
+            96,
+            100,
+            100
+          ]
+        }
+      ],
+      "verdict": "REPRODUCED, MAGNITUDE ADJUSTED DOWN",
+      "finding": "alternatesForSlot (mealSolver.js:821-863) contains zero .sort() calls and returns alternates in draw order; mealSolver.js:1388 and routes/plans.js:260 both name options[0] `best`. Measured 504 of 1,126 draws (44.76%) where options[0] is not the top-scoring option, vs the brief's 67% of 200. Mean gap 4.26 match-points, max 44."
+    }
+  },
+  "E2_persistence": {
+    "verdict": "CONFIRMED VERBATIM",
+    "schema": {
+      "file": "backend/prisma/schema.prisma",
+      "Plan": {
+        "lines": "493-505",
+        "fields": [
+          "id",
+          "userId",
+          "user",
+          "startDate",
+          "createdAt",
+          "slots",
+          "groceryList"
+        ],
+        "dayVerdictColumn": null,
+        "diagnosisColumn": null
+      },
+      "PlanSlot": {
+        "lines": "506-527",
+        "hasWarningColumn": true,
+        "dayVerdictColumn": null
+      },
+      "consequence": "The four-macro verdict the solver computes for every day is never written to disk. GET /plans/current returns slots and their warnings; the day verdict and the diagnosis are not in the response because they are not in the model."
+    },
+    "genMeta": {
+      "file": "frontend/src/components/PlanTab.jsx",
+      "declaration": ":750 const [genMeta, setGenMeta] = useState(null)",
+      "writes": [
+        ":877 setGenMeta(null) — inside generate()",
+        ":890 setGenMeta(resMeta) — inside generate()"
+      ],
+      "totalSetGenMetaCallsInFile": 2,
+      "renderedAt": [
+        ":1116-1118 HorizonSummary",
+        ":1122-1124 SolverNarration"
+      ],
+      "consequence": "Ordinary React state with no persistence and no refetch. Unmount (tab switch), reload, or app restart sets it back to null and the entire miss narration disappears. The plan survives; the verdict on it does not."
+    }
+  },
+  "E3_display": {
+    "verdict": "CONFIRMED on the canonical denominator; the 'fully silent' leg ADJUSTED DOWN",
+    "theStructuralBlindSpot": {
+      "mechanism": "The surviving slot warning is formed at weeklyPlanner.js:661-671 only when best.kcalOff > KCAL_TOLERANCE_PCT or best.proteinShort > PROTEIN_TOLERANCE_PCT — a 2-MACRO trigger. The day verdict (mealSolver.js:229-256) is 4-macro. A day that fails ONLY on fat and/or carb cannot produce a slot warning by construction.",
+      "brief": "66.6%",
+      "measured": {
+        "planned": {
+          "n": 640,
+          "outOfBandDays": 205,
+          "kcalAndProteinBothFine": 45.85,
+          "noSlotWarning": 10.73,
+          "fullySilent": 0.49,
+          "fullySilentCount": 1
+        },
+        "plannedMinusDegen": {
+          "n": 639,
+          "outOfBandDays": 204,
+          "kcalAndProteinBothFine": 46.08,
+          "noSlotWarning": 10.29,
+          "fullySilent": 0,
+          "fullySilentCount": 0
+        },
+        "judged": {
+          "n": 623,
+          "outOfBandDays": 188,
+          "kcalAndProteinBothFine": 50,
+          "noSlotWarning": 11.17,
+          "fullySilent": 0,
+          "fullySilentCount": 0
+        },
+        "satPlanned": {
+          "n": 554,
+          "outOfBandDays": 139,
+          "kcalAndProteinBothFine": 64.75,
+          "noSlotWarning": 15.11,
+          "fullySilent": 0.72,
+          "fullySilentCount": 1
+        },
+        "satPlanned-degenerate (CANONICAL 553)": {
+          "n": 553,
+          "outOfBandDays": 138,
+          "kcalAndProteinBothFine": 65.22,
+          "noSlotWarning": 14.49,
+          "fullySilent": 0,
+          "fullySilentCount": 0
+        },
+        "satJudged": {
+          "n": 537,
+          "outOfBandDays": 122,
+          "kcalAndProteinBothFine": 73.77,
+          "noSlotWarning": 16.39,
+          "fullySilent": 0,
+          "fullySilentCount": 0
+        }
+      },
+      "headline": "65.22% of out-of-band days on the CANONICAL 553 denominator have kcal AND protein both fine — the warning structurally cannot fire on them. Brief's 66.6% CONFIRMED.",
+      "denominatorHazard": "The same quantity is 45.85% on all-planned (640) and 73.77% on satisfiable-judged (537). A4 in action: quoting it without the denominator makes it look like a refutation or an inflation."
+    },
+    "fullySilent": {
+      "brief": "30.6% of bad days end fully silent",
+      "measured_noSlotWarning_canonical553": 14.49,
+      "measured_fullySilent_canonical553": 0,
+      "verdict": "ADJUSTED DOWN. 14.49% of out-of-band days carry no slot warning at all; 0% are fully silent once the run diagnosis is counted (1 day of 640 corpus-wide, p233). The brief's 30.6% does not reproduce on any of the six live denominators.",
+      "butTheCaveatIsLoadBearing": "That 0% depends ENTIRELY on the run diagnosis — which E2 proves is never persisted. After a reload, the slot warning is the only surviving signal, and it is absent on 14.49% of bad days and structurally impossible on 65.22%."
+    },
+    "todayTabRendersNoWarning": {
+      "verdict": "CONFIRMED",
+      "method": "Node byte-read (hazard K1: rg/Grep negatives are void). frontend/src/components/TodayTab.jsx is 55,843 bytes, contains NO NUL bytes, and matches /warning/i on ZERO lines.",
+      "contrast": "PlanTab.jsx renders slot.warning at :543, :660-662 and :1161.",
+      "consequence": "The persisted PlanSlot.warning column — the ONLY honesty signal that survives a restart — is rendered on exactly one screen, and it is not the screen the user opens every day."
+    },
+    "todayFatRailCannotTint": {
+      "verdict": "CONFIRMED — and it matters more than the brief says",
+      "code": [
+        "TodayTab.jsx:137 <MacroRail label=\"Fat\" ... kind=\"floor\" />",
+        "TodayTab.jsx:92  const ceil = kind === \"range\" && Number.isFinite(hi) ? hi : null;   // null for fat",
+        "TodayTab.jsx:93  const over  = ceil != null && eaten > ceil;                          // always false for fat",
+        "TodayTab.jsx:110 color: over ? C.warn : C.ink                                        // fat can never go amber"
+      ],
+      "why_it_matters": "Fat is the DOMINANT failure macro on this tree — W1-2 measured fat failures 82 over / 0 short (perfectly one-sided); W1-6 measured fat OVER on 83 of 120 failing days. The solver grades fat two-sided (mealSolver.js:250 checks BOTH fat.shortPct and fat.overPct against 0.25). Today draws it one-sided. An over-fat day renders as a met floor — visually a success — on the one screen the user actually reads.",
+      "note": "TodayTab.jsx:76-87 shows this is a deliberate design decision ('fat is a floor'), which means it contradicts the engine's own ruler by intent, not by accident. Reconciling them is a product decision, not a bug fix."
+    }
+  },
+  "E8_serverTrust": {
+    "verdict": "CONFIRMED VERBATIM",
+    "clientSuppliedWarning": {
+      "location": "backend/src/routes/plans.js:110",
+      "code": "warning: typeof incoming.warning === \"string\" ? incoming.warning : null,",
+      "inFunction": "rebuildSlotFromClient",
+      "consumers": [
+        "POST /plans/accept-day (:503)",
+        "POST /plans/.../apply"
+      ],
+      "contrast": "Every other field on that path is re-derived or re-validated server-side: recipeId is looked up in the pool, each ingredient's foodId must belong to the recipe, grams are bounds-checked against 0.5x-2x with a 6 g tolerance and 400 on violation, kcal/protein/fat/carb are RECOMPUTED from raw Food rows (:89-100), and both scales are clamped (:103). The warning is the ONLY field taken on trust.",
+      "consequence": "A client can accept a day and send warning:null for every slot. The server recomputes the macros faithfully and stores the lie. Under this repo's constitution ('Solver declares unsolvable + why — silent target misses are forbidden') that is a rule violation regardless of whether any shipping client does it."
+    },
+    "placeRecipeHardcodesNull": {
+      "location": "backend/src/routes/plans.js:625",
+      "code": "ingredients, ...totals, warning: null, locked: false,",
+      "contrast": "The sibling path at :669-678 does the right thing — it computes kcalOff and writes a real warning when kcalOff > 0.15, with the comment 'instead of storing warning:null — the constitution bans silent misses.' The two paths disagree with each other inside one file."
+    },
+    "staleVerdictAfterMutation": {
+      "verdict": "CONFIRMED",
+      "mechanism": "setGenMeta is called at exactly 2 sites, both inside generate() (PlanTab.jsx:877, :890). applyAlternate (:594-607) calls api.applySlotAlternate then reloadPlan() and never touches genMeta.",
+      "consequence": "After a swap the plan data refreshes and the SolverNarration card (:1122-1124) keeps rendering the PRE-SWAP week's day counts, match percentages and diagnosis. The verdict on screen describes a week that no longer exists."
+    }
+  },
+  "C10_E11_inflationTrap": {
+    "mechanism": "A1/rig/schema.mjs:83 `judged: filled.length > 0`. Refusing a day empties its slots, so the day leaves the JUDGED denominator entirely while ALL PLANNED DAYS is unchanged. Zero behaviour improvement, large apparent gain.",
+    "baseline": {
+      "judged": "435/623 = 69.82%",
+      "planned": "435/640 = 67.97%"
+    },
+    "ladder": [
+      {
+        "refused": 0,
+        "judgedRate": 69.82,
+        "plannedRate": 67.97,
+        "satJudgedRate": 77.28
+      },
+      {
+        "refused": 50,
+        "judgedRate": 75.92,
+        "plannedRate": 67.97,
+        "satJudgedRate": 85.22
+      },
+      {
+        "refused": 100,
+        "judgedRate": 83.17,
+        "plannedRate": 67.97,
+        "satJudgedRate": 94.97
+      },
+      {
+        "refused": 150,
+        "judgedRate": 91.97,
+        "plannedRate": 67.97,
+        "satJudgedRate": 100
+      },
+      {
+        "refused": 188,
+        "judgedRate": 100,
+        "plannedRate": 67.97,
+        "satJudgedRate": 100
+      }
+    ],
+    "maxGainOnJudged": 30.18,
+    "maxGainOnPlanned": 0,
+    "falseRefusalsRequired": 188,
+    "note": "Refusing ALL 188 out-of-band judged days scores a PERFECT 100% on `judged` and EXACTLY +0.00 on ALL PLANNED DAYS. That is E11's inflation trap in this tree's own arithmetic.",
+    "c10": {
+      "provablyInfeasiblePersonas": 18,
+      "theirPlannedDays": 54,
+      "theirInBandDays": 0,
+      "deltaOnPlannedIfSoundlyRefused": 0,
+      "deltaOnJudgedIfSoundlyRefused": 6.63000000000001,
+      "verdict": "C10 CONFIRMED: a SOUND refusal moves ALL PLANNED DAYS by exactly +0.00, because the days it refuses were already contributing 0 to the numerator. It still scores on `judged` — which is precisely why `judged` must never be the headline."
+    },
+    "recommendedKPISet": {
+      "principle": "No lever may score by refusing more days. Every KPI below is either invariant under refusal or moves the WRONG way when a lever refuses, so refusal can never be a winning strategy.",
+      "kpis": [
+        {
+          "id": "K1",
+          "name": "COMPLIANCE — in-band days / ALL PLANNED DAYS",
+          "denominator": "planned (640) or satisfiable-planned-minus-degenerate (553, canonical)",
+          "current": "435/640 = 67.97% (all-planned) · 415/553 = 75.05% (canonical)",
+          "target": ">= 82% canonical",
+          "refusalProof": "YES — refusing a day leaves it in the denominator and removes it from the numerator, so refusal strictly LOWERS this. This is the anti-inflation anchor and must be the headline.",
+          "banned": "`judged` (623/537) may never be the headline: it is the +30.18 pt refusal lever."
+        },
+        {
+          "id": "K2",
+          "name": "SILENT-MISS COUNT — out-of-band days with neither a slot warning nor a diagnosis",
+          "denominator": "planned (640)",
+          "current": "1 (p233)",
+          "target": "0",
+          "refusalProof": "YES — a refused day is still a planned day and still owes an explanation; refusing without declaring makes this worse.",
+          "note": "Absolute count, never a rate. One silent miss is a constitution violation whatever the denominator."
+        },
+        {
+          "id": "K3",
+          "name": "PERSISTED-SIGNAL COVERAGE — out-of-band days whose explanation SURVIVES a reload",
+          "denominator": "out-of-band days on the canonical 553",
+          "current": "85.51% (14.49% carry no slot warning; the run diagnosis is not persisted at all)",
+          "target": "100%",
+          "refusalProof": "YES — refusing more days adds more days that must carry a persisted signal.",
+          "note": "THE KPI THIS LANE EXISTS TO ADD. It is the only one that fails today, and it fails because of E2, not because of diagnosis."
+        },
+        {
+          "id": "K4",
+          "name": "FALSE-SURRENDER COUNT — converged runs told they did not converge",
+          "denominator": "250 runs",
+          "current": "0",
+          "target": "0",
+          "refusalProof": "YES, and it is the DIRECT counterweight: a lever that refuses more days drives this up first.",
+          "note": "Pair with K2. K2 punishes under-declaring, K4 punishes over-declaring; a lever cannot game both."
+        },
+        {
+          "id": "K5",
+          "name": "WARNING FIDELITY — adjusted slots whose warning quotes a kcal the slot does not ship",
+          "denominator": "adjusted slots (250)",
+          "current": "15/250 = 6.0%, worst 701 kcal with the sign wrong (W1-6, E4)",
+          "target": "0%",
+          "refusalProof": "YES — refusal does not touch it; only recomputing warnings after mutation does.",
+          "note": "Inherited from W1-6. Hard prerequisite for any trimmer at weeklyPlanner.js:951."
+        },
+        {
+          "id": "K6",
+          "name": "REFUSAL SOUNDNESS — refused runs that were provably infeasible",
+          "denominator": "refused runs",
+          "current": "18 of 18 provable refused; 78 runs declared total, 0 of them converged",
+          "target": "100% of refusals justified by a miss or a proof",
+          "refusalProof": "YES — this is the gate that makes refusal expensive: every extra refusal must be justified or it lowers the ratio."
+        }
+      ],
+      "mandatoryCoReport": "Any A/B must publish K1 on ALL PLANNED DAYS first and again as the closing line, with `unjudged: baseline N -> treatment M` beside it (W1-1's rule). A rise in unjudged is a treatment refusing days, not solving them.",
+      "whyThisSetCloses_E11": "E11's +27.94 pt phantom is the same arithmetic as this tree's +30.18: it lives entirely in a denominator that drops refused days. K1 pins the denominator to PLANNED, so the phantom evaluates to exactly +0.00 (measured: 435/640 at 0 refusals and 435/640 at 188 refusals). K4 and K6 then make the 186 false refusals cost points rather than earn them."
+    }
+  },
+  "D7_bindingKeyMislabel": {
+    "verdict": "CONFIRMED (structure), ADJUSTED (magnitude)",
+    "mechanism": "classifyBinding evaluates the PROTEIN_DENSITY branch at mealSolver.js:1121-1124 BEFORE the fat/carb composition branch at :1131-1153. A day that missed purely on composition, in a pool that is also protein-thin, returns the machine key `protein-density` — naming a macro that was actually satisfied.",
+    "brief": "15.2%",
+    "measured": {
+      "denominator": "composition-only out-of-band days (kcal AND protein both fine), n=94 on all-planned 640",
+      "mislabeledAsProteinDensity": 11,
+      "ratePct": 11.7,
+      "onCanonicalSatisfiableSubset": {
+        "n": 90,
+        "count": 11,
+        "ratePct": 12.2
+      }
+    },
+    "histogram": {
+      "macro-composition": 76,
+      "protein-density": 11,
+      "snack-pool": 6,
+      "pool-depth": 1
+    },
+    "note": "The PROSE reasons[] stays truthful — diagnoseFromResult:432-438 emits the fat/carb sentence ungated. Only the machine key lies, exactly as the brief describes."
+  }
+}
