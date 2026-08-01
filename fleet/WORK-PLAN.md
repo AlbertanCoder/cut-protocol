@@ -61,10 +61,32 @@ overnight. Constitution law (b) forbids red; amber is the sanctioned treatment.
 
 ---
 
-## TIER 2 — Correctness bugs that gate the levers
+## TIER 2 — Correctness bugs that gate the levers ✅ COMPLETE 2026-08-01
 
 W3-4: *"Ship the G4 guard fix and the E4 warning re-derivation regardless —
 correctness, prerequisites, not levers."*
+
+| # | Commit | Outcome |
+|---|---|---|
+| 2.1 G4 | `f56a155` | Fixed — guard compares overage size, not band membership |
+| 2.2 E4 | `79523f6` | Fixed — closer reports `slotIndex`; planner restates the slot's real kcal |
+| 2.3 G6 | `602f06c` | Fixed — adjusters spread least-loaded-first across plates |
+| 2.4 G5 | `d368acd` | Fixed — **3 changes**, not 1: the trust columns were missing from the checksum too |
+| 2.5/2.6 optimizer | `e96df4f` | Step bound fixed; weight trap **pinned, not changed** — see below |
+| 2.7 A6+ | `bb83665` | **Not a product defect** — `mealsPerDay` is validated 1–8, so the 0-slot config is unreachable. Floor locked by test |
+
+Suite: **1,491 → 1,515 tests, 0 failures** at every step. Nothing pushed.
+
+Every fix carries a test verified to FAIL against the pre-fix source rather than
+assumed to. Four fleet findings were reproduced independently in the process
+(G4 101.48 g vs their 101.5; G6 358 g vs their 375 g; E4's p115 sign inversion;
+G5's mechanism) — their numbers hold up.
+
+**Open decision from 2.6:** the optimizer's default weights price raw squared
+errors, making fat ~11,000× cheaper than kcal. Deliberately left alone —
+nothing reads `residual`, and `brain/create.js` always passes k=2 so the
+gradient path is unreachable. **Whoever wires the brain up owns choosing the
+normalisation**; a test measures the current ratio so it cannot ship silently.
 
 | # | Defect | Location | Scale |
 |---|---|---|---|
