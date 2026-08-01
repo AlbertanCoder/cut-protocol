@@ -23,10 +23,39 @@ import http from "node:http";
 import https from "node:https";
 import { fileURLToPath } from "node:url";
 
+import { execFileSync } from "node:child_process";
+
 import prismaPkg from "../../src/lib/prisma.js";
 import { genProfile } from "./genProfile.mjs";
 import { runSolve } from "./runSolve.mjs";
 import { oracle } from "./oracle.mjs";
+
+// ── W1-1 (harness-truth): what this harness actually measures ──────────────
+// Stamped into the report because the campaign has three mutually incompatible
+// rulers on disk and a number with no ruler on it has already been mixed with
+// the wrong one. Nothing here changes what mc.mjs computes; it changes what the
+// report is willing to let a reader assume.
+const MC_RULER = {
+  id: "oracle/acceptOk",
+  rule: "|kcalDev| <= 5% AND protein >= target.proteinLo - 5 g. NO fat term. NO carb term.",
+  macros: 2,
+  notMixableWith: "the product's 4-macro dayTolerance/dayInTolerance verdict (\"days in band\")",
+  shape: "generateBestWeekPlan via runSolve.mjs — NO horizon (every persona solved as a 7-day week) "
+       + "and NO adjusters (macroCloser.js never runs). routes/plans.js:324 passes both.",
+  population: "genProfile.mjs — uniform sampling, NOT the 250-row persona fleet. Crash fuzzing only.",
+};
+
+function gitProvenance(repo) {
+  const run = (args) => { try { return execFileSync("git", args, { cwd: repo, encoding: "utf8" }).trim(); } catch { return null; } };
+  const stat = run(["diff", "--stat"]) || "";
+  const lines = stat ? stat.split("\n") : [];
+  const status = run(["status", "--porcelain"]) || "";
+  return {
+    sha: run(["rev-parse", "HEAD"]), branch: run(["rev-parse", "--abbrev-ref", "HEAD"]),
+    diffStat: lines.length ? lines[lines.length - 1].trim() : "clean",
+    porcelain: status ? status.split("\n").length : 0,
+  };
+}
 
 const { prisma } = prismaPkg;
 const HERE = path.dirname(fileURLToPath(import.meta.url));
@@ -70,6 +99,12 @@ async function main() {
   const macroHash = crypto.createHash("sha256")
     .update(foods.map((f) => `${f.id}:${f.kcal}:${f.protein}:${f.fat}:${f.carb}`).sort().join("|"))
     .digest("hex").slice(0, 16);
+  // Provenance the report header has to carry: the DB file itself, and the
+  // WORKING TREE (a git SHA alone does not pin this repo — see fleet/00-rescue.md).
+  const dbFile = (process.env.DATABASE_URL || "").startsWith("file:")
+    ? path.resolve(REPO, "backend", process.env.DATABASE_URL.slice(5)) : path.resolve(REPO, "backend/prisma/dev.db");
+  const dbSha = fs.existsSync(dbFile) ? crypto.createHash("sha256").update(fs.readFileSync(dbFile)).digest("hex") : null;
+  const git = gitProvenance(REPO);
 
   // ── ground rule #1: trap the network. Prisma is already warm and talks to a
   //    local engine (not http), so these guards never fire for the DB. ──
@@ -146,8 +181,23 @@ async function main() {
   const L = [];
   L.push(`# Cut Protocol — Monte Carlo QC report`);
   L.push("");
+  L.push(`> ## ⚠ RULER — read before quoting any number below`);
+  L.push(`>`);
+  L.push(`> This report grades on **\`${MC_RULER.id}\`**: ${MC_RULER.rule}`);
+  L.push(`> That is a **${MC_RULER.macros}-macro** bar. It is **NOT** ${MC_RULER.notMixableWith},`);
+  L.push(`> and no number from this file may appear in a table next to one.`);
+  L.push(`>`);
+  L.push(`> **Solve shape:** ${MC_RULER.shape}`);
+  L.push(`> **Population:** ${MC_RULER.population}`);
+  L.push(`>`);
+  L.push(`> For a four-macro, shipping-shape, per-day measurement use`);
+  L.push(`> \`backend/scripts/qc/dayDump.mjs\` + \`backend/scripts/qc/scoreDays.mjs\`.`);
+  L.push("");
   L.push(`- Runs: **${N.toLocaleString()}** · seed \`${SEED}\` · BRAIN=off`);
   L.push(`- Pool: ${rawPool.length} recipes / ${foods.length} foods · macro fingerprint \`${macroHash}\``);
+  L.push(`- **DB sha256** \`${dbSha}\` (\`${path.relative(REPO, dbFile).replace(/\\/g, "/")}\`)`);
+  L.push(`- **git** \`${git.sha}\` on \`${git.branch}\` · \`git diff --stat\`: ${git.diffStat} · \`git status --porcelain\`: ${git.porcelain} entries`);
+  L.push(`  (the baseline is a WORKING TREE, not a commit — a SHA alone does not pin it)`);
   L.push(`- Runtime: ${(runMs / 1000).toFixed(1)}s (${perRunMs.toFixed(1)} ms/run). Extrapolated: 10k ≈ ${((perRunMs * 10000) / 1000 / 60).toFixed(1)} min · 100k ≈ ${((perRunMs * 100000) / 1000 / 60).toFixed(1)} min.`);
   L.push(`- **Network calls during simulation: ${netCalls}** (ground rule #1: must be 0).`);
   L.push("");
@@ -168,7 +218,7 @@ async function main() {
   for (const [k, v] of Object.entries(P1)) L.push(`| ${k} | ${v} |`);
   const offTargetRate = feasibleDays ? (feasibleMisses / feasibleDays) : 0;
   L.push(`| feasible-day OFF-TARGET rate (outside ±5%, but declared — quality, not a bug) | ${(offTargetRate * 100).toFixed(2)}% |`);
-  L.push(`| feasible days within ±5% (acceptance bar: ≥90%) | ${feasibleDays ? ((daysInTol / totalDays) * 100).toFixed(1) : "—"}% of ${totalDays} days |`);
+  L.push(`| feasible days within ±5% — **\`${MC_RULER.id}\` ruler, NOT "days in band"** | ${feasibleDays ? ((daysInTol / totalDays) * 100).toFixed(1) : "—"}% of ${totalDays} days |`);
   L.push(`| **SILENT** misses (feasible, breaches solver's own ±15%, undeclared — the real bug) | ${P1["silent-solver-miss"]} |`);
   L.push("");
   L.push(`## Distributions (p50 / p95 / p99 / max)`);

@@ -207,16 +207,40 @@ export function oracle(res, ctx) {
   for (const [, n] of recipeCounts) if (n > REPEAT_CAP) { repeatCapViolations++; add("week-repeat-cap", "P2", `a recipe used ${n}× (cap ${REPEAT_CAP})`); }
 
   const totalDays = byDay.size || 1;
+
+  // W1-1 (harness-truth) FIX — the outcome label asserted a declaration it
+  // never checked for.
+  //
+  // `off-target-declared` and `honest-unsolvable` both contain a claim about
+  // HONESTY ("...-declared", "honest-..."), but the two branches below were
+  // selected on `feasibleMisses` / `honestMisses` alone. Those counters are
+  // graded at KCAL_ACCEPT (±5%), while the "was anything said?" test the
+  // silent-miss branch above uses is the solver's own ±15% promise. A day
+  // between the two — off-target by the oracle's bar, inside the solver's
+  // promise, with nothing said about it — fell through to a label that told
+  // the reader it had been declared.
+  //
+  // MEASURED on this tree (genProfile pop, seed 424242, n=200): **111 runs
+  // landed on `off-target-declared`; 7 of them (6.3%) carried no week
+  // diagnosis, and 4 (3.6%) carried neither a diagnosis nor a single slot
+  // warning** — a declaration claim with zero declaration behind it.
+  //
+  // The fix does not move any run between "converged" and "missed": it splits
+  // the miss labels on evidence that was already collected. A run that really
+  // was declared keeps its old label, so historical `off-target-declared`
+  // counts are an upper bound on the corrected ones.
+  const anySlotWarning = res.slots.some((s) => s.warning);
+  const declared = declaredWeek || anySlotWarning;
   let outcome;
   if (allergyLeaks || macroDrift || dessertInMeal || portionViolations) outcome = "unsafe";
   else if (silentMisses > 0 || unfilledSilent > 0) outcome = "silent-miss";
   else if (daysInTol === totalDays && unfilledSilent === 0 && unfilledDeclared === 0) outcome = "converged";
-  else if (feasibleMisses > 0) outcome = "off-target-declared";
-  else if (honestMisses > 0 || unfilledDeclared > 0) outcome = "honest-unsolvable";
+  else if (feasibleMisses > 0) outcome = declared ? "off-target-declared" : "off-target-undeclared";
+  else if (honestMisses > 0 || unfilledDeclared > 0) outcome = declared ? "honest-unsolvable" : "unsolvable-undeclared";
   else outcome = "partial";
 
   return baseSummary(res, {
-    crash: false, outcome, findings,
+    crash: false, outcome, findings, declared, anySlotWarning,
     daysInTol, daysFeasible, feasibleMisses, honestMisses, silentMisses, totalDays,
     allergyLeaks, portionViolations, dessertInMeal, macroDrift, sameRecipeSameDay, falseExclusion,
     repeatCapViolations, unfilledSilent, unfilledDeclared,
