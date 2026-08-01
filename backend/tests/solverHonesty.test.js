@@ -211,8 +211,20 @@ test("a week that misses only ONE day still gets a reason (no threshold lottery)
   // The old rule attached a diagnosis only BELOW 6/7 days, so a 6/7 week shipped
   // with one day off target and nothing saying why. This target/pool combination
   // lands on 6/7 for a known share of seeds, so the assertion is never vacuous.
+  //
+  // RETUNED 2026-07-30 (protein band 230-250 -> 195-215) after composition-aware
+  // sampling landed in pickRecipe. The assertions below are UNCHANGED — only the
+  // target that provokes a 6/7 week moved, which is what the guard on the last line
+  // asks for when it fires. The old band was a 230 g protein floor against a pool of
+  // two-ingredient protein+starch dishes, and the improved sampler now spends its
+  // draws defending fat/carb composition as well, so that combination stopped
+  // reaching 6/7 at all (it maxed at 5/7 across all 40 seeds — the test would have
+  // gone vacuous in the STRICT direction, which the guard correctly refused to
+  // allow). At 195-215 the sweep produces a healthy spread — 10 of 40 seeds land
+  // exactly 6/7, and outcomes range from 2/7 to 7/7 — so the property under test is
+  // exercised harder than before, not more softly.
   const pool = deepMealPool();
-  const stretchTarget = { kcal: 3400, proteinLo: 230, proteinHi: 250, fatLo: 50, fatHi: 95, carbLo: 150, carbHi: 320 };
+  const stretchTarget = { kcal: 3400, proteinLo: 195, proteinHi: 215, fatLo: 50, fatHi: 95, carbLo: 150, carbHi: 320 };
   let sixOfSeven = 0;
   for (let seed = 1; seed <= 40; seed++) {
     const week = await generateBestWeekPlan(stretchTarget, { meals: 3, snacks: 0 }, pool, { rng: makeRng(seed), attempts: 1 });

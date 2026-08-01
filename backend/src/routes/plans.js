@@ -203,7 +203,7 @@ const BRAIN_SLOT_TIMEOUT_MS = Number(process.env.BRAIN_SLOT_TIMEOUT_MS) > 0
 router.post("/generate", async (req, res) => {
   try {
     const horizon = resolveHorizon(req.body?.horizon); // throws 400 on junk/out-of-range
-    const { profile, dailyTarget, mealConfig, recipePool, rawPoolCount, ratings } = await planContext(req.userId);
+    const { profile, dailyTarget, mealConfig, recipePool, rawPoolCount, ratings, adjusters } = await planContext(req.userId);
     const filters = parseFilters(req.body);
     filters.ratings = ratings; // T (v2): soft taste re-rank
 
@@ -324,6 +324,8 @@ router.post("/generate", async (req, res) => {
     const result = await generateHorizonPlan({
       dailyTarget, mealConfig, recipePool: pool, horizon, filters,
       counts: poolCounts,
+      // Allergy-filtered in planContext; the solver only ever consumes this list.
+      adjusters,
       bias: buildBias(filters, costCache),
       priorPlans, lockedSlotsByWindow, startDayOfWeek,
       // BRAIN=off (or a keyless install) => omitted entirely => the horizon

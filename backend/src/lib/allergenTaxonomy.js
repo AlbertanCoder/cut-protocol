@@ -439,11 +439,32 @@ const ALLERGEN_TAXONOMY = [
       "jalapeño", "paprika", "cayenne", "pimento", "pimiento", "poblano",
       "serrano", "habanero", "chipotle", "ancho", "goji", "wolfberry",
       "ashwagandha", "ketchup", "marinara", "salsa",
+      // ── added after the 275-customer campaign (qa-fleet-20260729-2032) ──
+      // A customer was OFFERED "Grilled Chicken Breast & Perogies" at 99% match
+      // against a nightshade wall, recognised perogies as potato dumplings, and
+      // refused it. Chasing that offer found 3 customers who had already been
+      // SERVED a hidden nightshade. The dish name never says "potato" — and the
+      // gluten family already carries pierogi/perogi for exactly this reason, so
+      // the omission here was an oversight rather than a judgement call.
+      "perogi", "perogies", "pierogi", "pierogies", "gnocchi", "hash brown",
+      "hash browns", "tater", "tots", "rosti", "rösti", "latke", "latkes",
+      // "Red Pepper" and "Green Pepper" are Food rows in `fruit-veg` (29 and
+      // 21 kcal/100 g) that the exclusion gate could not see, because only the
+      // compound "bell pepper" was listed. Crushed red pepper and cayenne flakes
+      // are Capsicum annuum and remain nightshades at any dose; a 28 g green
+      // pepper in Szechuan Beef is plainly the vegetable. Both forms belong here.
+      // Bare "pepper" STILL does not — see the note below.
+      "red pepper", "green pepper", "yellow pepper", "orange pepper",
+      "sweet pepper", "red peppers", "green peppers", "pepper flakes",
+      "red pepper flakes", "chilli flakes", "chili flakes", "crushed red pepper",
     ],
     note:
       "SWEET potato is not a nightshade (Convolvulaceae) and is guarded out in dietaryFilter. " +
-      "Black pepper is not a nightshade either, which is why bare 'pepper' is absent and only " +
-      "the capsicum forms are listed.",
+      "Black pepper is not a nightshade either, which is why bare 'pepper' is STILL absent and " +
+      "only the capsicum forms are listed — that call was tested and held: the Food row named " +
+      "'Pepper' is used in 81 recipes at a median of 0.25 g, i.e. peppercorn, and it is now " +
+      "typed as such in foodOverrides.json. The colour-qualified forms above are the vegetable " +
+      "and the flake, both of which ARE Capsicum.",
   },
   {
     key: "alliums",
@@ -503,6 +524,103 @@ const ALLERGEN_TAXONOMY = [
       "Alpha-gal is a carbohydrate on non-primate MAMMAL tissue, so it covers mammalian meat, " +
       "mammalian fats and gelatin — but not poultry and not fish. Severe cases also react to " +
       "dairy; that is a separate box, not folded in here.",
+  },
+
+  // ── SINGLE-SPECIES MEAT ROWS ────────────────────────────────────────────
+  //
+  // WHY THESE EXIST, AND WHY THEY ARE NOT ALIASES OF `red meat`.
+  //
+  // The 275-customer campaign (qa-fleet-20260729-2032) found the single largest
+  // leak class in the app: 12 of the 46 customers who typed "pork" into
+  // excludedFoods were served pork. `resolveTaxonomyTerm("pork")` returned NULL —
+  // `red meat` carries the synonym "pork allergy" but not the bare word anyone
+  // actually types — so the term degraded to a literal substring match on the food
+  // NAME. That blocks "Pork tenderloin" and ships Bacon, Chorizo, Lard and
+  // Pepperoni. "beef" was worse: it blocked nothing but names containing "beef",
+  // so "Sirloin steak, cooked, lean" went straight through.
+  //
+  // The obvious fix — adding "pork" and "beef" to `red meat`'s synonyms — is WRONG,
+  // because it over-blocks. Someone who avoids pork for religious or personal
+  // reasons still eats beef; resolving their term to the whole alpha-gal family
+  // would silently delete every beef, lamb and venison dish too, and this app's
+  // whole problem is a pool that is already too thin. So these are their own rows
+  // with their own species keywords, and `red meat` keeps covering the genuine
+  // alpha-gal case (which IS all mammalian tissue at once).
+  {
+    key: "pork",
+    label: "Pork",
+    tier: TIER_COMMON,
+    family: "pork",
+    synonyms: ["no pork", "pork free", "pork-free", "swine", "pig", "avoid pork", "porc", "cerdo"],
+    nameKeywords: [
+      "pork", "bacon", "ham", "gammon", "chorizo", "pepperoni", "salami",
+      "prosciutto", "pancetta", "guanciale", "speck", "lardo", "coppa",
+      "capicola", "mortadella", "bratwurst", "kielbasa", "andouille",
+      "liverwurst", "headcheese", "pork rind", "pork rinds", "crackling",
+      "char siu", "bak kwa", "chicharron", "chicharrón", "lard", "spare rib",
+      "spareribs", "pulled pork", "pork belly", "pork loin", "pork chop",
+      "serrano ham", "jamon", "jamón", "cured sausage", "salt pork", "fatback",
+    ],
+    note:
+      "A single-species row, deliberately NOT folded into `red meat`. 'no pork' is the " +
+      "commonest religious/personal exclusion in the fleet data and the term must resolve " +
+      "on its own without also deleting beef and lamb. Poultry versions are excluded by the " +
+      "guards in dietaryFilter (turkey bacon, chicken sausage, beef salami are not pork).",
+  },
+  {
+    key: "beef",
+    label: "Beef",
+    tier: TIER_COMMON,
+    family: "beef",
+    synonyms: ["no beef", "beef free", "beef-free", "cow", "cattle", "avoid beef", "carne de res", "boeuf"],
+    nameKeywords: [
+      "beef", "steak", "sirloin", "ribeye", "rib eye", "brisket", "chuck roast",
+      "oxtail", "veal", "hamburger", "ground beef", "minced beef", "beef mince",
+      "tri-tip", "flank steak", "skirt steak", "t-bone", "porterhouse",
+      "short rib", "short ribs", "pastrami", "corned beef", "bresaola", "wagyu",
+      "tenderloin steak", "rump steak", "topside", "silverside", "beef jerky",
+      "bone marrow", "tallow", "suet",
+    ],
+    note:
+      "Same reasoning as `pork`. NOTE the deliberate omissions: bare 'mince' and 'meatball' " +
+      "are NOT here because they are species-ambiguous (lamb kofta, pork meatballs) and " +
+      "`red meat` already covers them for the alpha-gal case; 'buffalo' is absent because " +
+      "buffalo sauce, buffalo wings and buffalo mozzarella are all far commoner than bison.",
+  },
+  {
+    key: "lamb",
+    label: "Lamb & goat",
+    tier: TIER_COMMON,
+    family: "lamb",
+    synonyms: ["no lamb", "lamb free", "mutton", "goat meat", "sheep", "hogget", "avoid lamb", "cordero"],
+    nameKeywords: [
+      "lamb", "mutton", "hogget", "goat meat", "kid goat", "cabrito", "chevon",
+      "lamb mince", "lamb chop", "lamb chops", "lamb shank", "lamb shoulder",
+      "lamb leg", "kofta", "merguez", "birria",
+    ],
+    note:
+      "Added alongside `pork` and `beef` for symmetry — the fleet found no lamb leak, but a " +
+      "customer typing 'lamb' hit the same unresolved-term path and would have matched the " +
+      "literal word only, missing mutton and goat. Bare 'goat' is NOT a keyword here because " +
+      "goat CHEESE and goat's milk are dairy, not meat; 'goat meat' is the qualified form.",
+  },
+  {
+    key: "cilantro",
+    label: "Cilantro / coriander leaf",
+    tier: TIER_COMMON,
+    family: "cilantro",
+    synonyms: [
+      "coriander leaf", "coriander leaves", "fresh coriander", "chinese parsley",
+      "cilantro aversion", "no cilantro", "dhania", "kothmir",
+    ],
+    nameKeywords: ["cilantro", "coriander leaf", "coriander leaves", "fresh coriander", "chinese parsley"],
+    note:
+      "Not an allergy — a genetic aversion (OR6A2) that makes the leaf taste of soap to " +
+      "roughly one person in seven, and a real reason to reject a dish. It was silently " +
+      "inert before: a customer typed 'cilantro' and was served 'Coriander Leaves', the " +
+      "same plant under its other name (campaign persona p002). " +
+      "The SEED is deliberately excluded — ground coriander is a different flavour compound " +
+      "and is not what the aversion is to, which is why only the leaf forms appear above.",
   },
 
   // ══ RARE — the owner asked for these explicitly ═════════════════════════
