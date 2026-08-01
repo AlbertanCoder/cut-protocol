@@ -1,0 +1,760 @@
+{
+  "agent": "W2-4",
+  "lane": "competitor-teardown (online research)",
+  "date": "2026-07-31",
+  "branch": "fleet/measure-2026-08",
+  "source_modified": "none (research lane, read-only)",
+
+  "headline_findings": {
+    "publish_any_macro_accuracy_number": 0,
+    "of_products_examined": 5,
+    "statement": "ZERO of the five products publish any numeric accuracy or tolerance claim for how closely a generated day plan hits a personalised macro target. One (MacroFactor) publishes a rigorous validated accuracy study, but for a DIFFERENT quantity (energy-expenditure estimation), and MacroFactor does not generate meal plans at all.",
+    "corollary": "Cut Protocol's ~77% days-in-band is not a bad number relative to the field. It is an UNCOMPARABLE number, because no competitor publishes the metric. Absence of a competitor claim is the single most reproducible finding in this teardown.",
+    "sharpest_irony": "Eat This Much DOES publish a measured performance percentage — for grocery-waste efficiency ('80%-90% efficient with using up groceries'). It publishes no equivalent figure for macro accuracy. The company measured and published the thing it was proud of.",
+    "confidence": "HIGH on absence-of-published-claim (searched marketing pages, help centres, dev blogs, App Store/Play listings for all five). MEDIUM on absence-of-in-app-copy (in-app strings sit behind authentication and were not reachable)."
+  },
+
+  "scope_caveat": {
+    "category_mismatch": "Only THREE of the five are macro-targeted day-plan solvers comparable to Cut Protocol: Eat This Much, StrongrFastr, Prospre. MacroFactor is a tracker + adaptive coach with NO meal generator. Mealime is a convenience recipe planner with a per-recipe calorie FILTER and no day-level macro solve. Comparing all five on 'accuracy' is a category error; the table below flags it per-row.",
+    "in_app_copy_unreachable": "Every load-bearing 'none found' below means NOT PUBLISHED PUBLICLY. It does not mean the string does not exist inside the authenticated app.",
+    "webfetch_fidelity": "Quotes were extracted by WebFetch (a summarising model reading the page). Quotes marked verify:\"cross-checked\" were re-fetched with a targeted phrase-location prompt and the surrounding paragraph confirmed. Quotes marked verify:\"single-fetch\" were not independently re-read."
+  },
+
+  "products": [
+
+    {
+      "name": "Eat This Much",
+      "category": "macro-targeted day/week plan solver — DIRECTLY COMPARABLE",
+      "why_dug_hardest": "Historically the most open about its algorithm. Result: the openness is about FAILURE MODES, not about performance numbers.",
+
+      "stated_accuracy_claim": {
+        "numeric_tolerance": "NONE FOUND",
+        "detail": "No '±X%', no 'within N calories', no compliance rate, anywhere on marketing site, help centre, dev blog, or App Store listing.",
+        "marketing_promise_quoted": "Hit your macros and calorie targets every day",
+        "marketing_promise_source": "https://apps.apple.com/us/app/eat-this-much-meal-planner/id981637806",
+        "marketing_promise_verify": "single-fetch",
+        "the_only_published_performance_number": {
+          "quote": "The weekly planner will give priority to using up your pantry foods to reduce waste. During testing, we've found the planner to be 80%-90% efficient with using up groceries, and the average American is about 70% efficient with grocery usage.",
+          "measures": "grocery-waste efficiency — NOT macro accuracy",
+          "url": "https://www.eatthismuch.com/how-to/",
+          "verify": "cross-checked",
+          "significance": "Proves ETM is willing to publish a measured percentage. They published the grocery number and not a macro number. Read that as a deliberate choice."
+        },
+        "target_accuracy_disclaimer": {
+          "quote": "is a rough estimate",
+          "context": "applies to the macro CALCULATOR's target output, not to plan compliance",
+          "url": "https://www.eatthismuch.com/macro-calculator",
+          "verify": "single-fetch"
+        }
+      },
+
+      "admits_infeasibility": true,
+      "infeasibility_handling": {
+        "surface": "Dedicated help-centre article titled 'The generator isn't hitting my target macros. What's going on?' — the existence of this article, by that title, is itself the finding.",
+        "url": "https://help.eatthismuch.com/help/the-generator-isnt-hitting-my-target-macros-whats-going-on",
+        "verify": "cross-checked (full article text returned verbatim)",
+        "exact_copy": [
+          "Depending on how strict your settings are, the weekly meal generator can miss macronutrient targets. This is because the weekly generator places emphasis on trying to keep the grocery list manageable, only chooses from recipes that can be made as a single serving (unless it's being used for leftovers, or you're making the meal for a large number of people), and ensures there is variety between days.",
+          "Recurring foods can help dramatically. Adding some \"often\" or \"always\" recurring foods that you enjoy eating that also hit your macro targets well makes it much easier for the generator to figure out the rest of your plan. For example, if you're going for a high protein diet try adding a recurring protein shake or bar.",
+          "Try loosening some of your constraints. The following settings have a significant impact on how many foods the planner has to work with:",
+          "Try the single day generator instead of the weekly one. If you click the \"Generate\" button on a single day's meal plan, or regenerate individual meals/foods (as opposed to using the \"Regenerate entire week...\" button), the generator is much more likely to hit exact macro targets. This is because the in-browser generator places less emphasis on reusing ingredients from day to day, and much more on meeting the nutrition goals. If you can, look for the foods that are throwing the targets off the most, and regenerate those foods/meals specifically.",
+          "Of course, this isn't an ideal solution because it takes time to go through your meal plans and regenerate things if the generator is consistently missing. The root of this problem is when we don't have enough recipes to fit your exact preferences. The more strict your preferences, the fewer recipes the our have to work with and try to make meals that meets your nutrition targets. So if you select that you want a vegan diet, want lots of protein, and can't cook for any meal, the generator probably won't hit those targets.",
+          "That's a bit of an extreme example, and you might be experiencing this problem with more relaxed constraints. Even if we have a few dozen recipes that meet your preferences (maybe you have less than 5 minutes available time and a strict diet), we might use up the best ones in a few days of your meal plans, and then not have any good foods the next few days due to how the weekly planner attempts to add variety to your plans."
+        ],
+        "verbatim_note": "The phrase 'the fewer recipes the our have to work with' contains ETM's own typo. Preserved to evidence this is a genuine transcription, not a paraphrase.",
+        "named_causes_of_infeasibility": [
+          "Breakfast only foods on meal types",
+          "Very low available time on meal types",
+          "Ability to cook on meal types",
+          "Low Daily price limit",
+          "Simple meal complexity",
+          "Leftovers",
+          "High numbers of meals per day",
+          "Percentages in the nutrition profile instead of ranges",
+          "Food exclusions / preset diets"
+        ],
+        "assessment": "This is the closest thing in the industry to Cut Protocol's 'declare unsolvable + why'. CRITICAL DIFFERENCE: ETM's honesty lives in a HELP ARTICLE the user must go find. It is documentation, not product copy. Cut Protocol's constitutional requirement puts the explanation in the product at the moment of failure. That is a genuine and defensible differentiator.",
+        "root_cause_admitted": "Pool starvation caused by variety pressure and restrictive filters — the SAME root cause as Cut Protocol's F5 snack-starvation and F3 unservable-pool findings. Independent confirmation that this failure mode is structural to the product category, not a Cut Protocol defect."
+      },
+
+      "target_adjustment_flow": {
+        "silently_relaxes": false,
+        "asks_user": true,
+        "refuses": false,
+        "mechanism": "Ships a miss and tells the user to fix it themselves — loosen constraints, add recurring foods, or regenerate individual slots. The single-day generator is offered as a higher-accuracy fallback with weaker variety/grocery pressure.",
+        "does_user_learn_a_day_missed": "PARTIALLY — the planner displays running daily totals against targets, but no evidence found of an explicit per-day pass/fail verdict or a persisted miss record."
+      },
+
+      "target_setting": {
+        "exposes_a_band": true,
+        "quote": "you can adjust your macronutrient targets as either a range or a percentage of your calories",
+        "quote_url": "https://blog.eatthismuch.com/eat-this-much-tutorial-2-editing-and-creating-your-nutrition-target-profiles/",
+        "recommends_wide_bands": true,
+        "recommendation_quote": "We generally suggest wider ranges for your macronutrient targets because it allows for significantly greater food variety, but feel free to modify these to suit your preferences.",
+        "recommendation_url": "https://www.eatthismuch.com/how-to/",
+        "verify": "cross-checked",
+        "percentages_discouraged_quote": "they can be unnecessarily restrictive",
+        "percentages_discouraged_url": "https://www.eatthismuch.com/macro-calculator",
+        "fields": "Calories, grams of carbs, fat, and protein, plus minimum fiber, and maximum sodium and cholesterol",
+        "significance": "ETM treats band-width as a USER-TUNABLE knob and actively counsels widening it. The tolerance is a product control surface, not a hidden constant."
+      },
+
+      "display_behaviour": {
+        "shows_per_day_totals_vs_target": true,
+        "flags_miss_visually": "not confirmed from primary source",
+        "evidence": "Help article presupposes the user can see which foods 'are throwing the targets off the most', implying visible per-slot and per-day nutrition against target. No primary source located describing a colour/flag treatment.",
+        "confidence": "MEDIUM"
+      },
+
+      "engineering_writeups": {
+        "dev_blog": "https://devblog.eatthismuch.com/",
+        "finding": "Dev blog is a 2013-era product-announcement log. TEN posts total, all release announcements. NO optimization, constraint-solving, knapsack, LP, tolerance, or performance content.",
+        "closest_technical_quote": "I'm also working on improving the weekly planning algorithm to better match up with people's preferences, and one of the major ways I'm doing that is calculating recipe complexity.",
+        "quote_date": "2013-10-15",
+        "verify": "single-fetch",
+        "blog_algorithm_post_checked": {
+          "url": "https://blog.eatthismuch.com/smarter-meals-better-meal-plans/",
+          "result": "Announces a thumbs-up/down meal-ratings feature. Contains NO algorithm detail, NO tolerance, NO performance metric. Quote: \"Every time you use either the 'thumbs up' to tell us you like the combination of foods in your meal, or the 'thumbs down'...you're teaching the Eat This Much generator what kind of combinations you want\""
+        },
+        "verdict": "The 'Eat This Much is the most open about its algorithm' premise is HALF TRUE as of 2026. They are unusually open about WHY the generator fails. They publish essentially nothing about HOW it works or HOW WELL it performs. The historical dev blog is dormant."
+      }
+    },
+
+    {
+      "name": "StrongrFastr",
+      "category": "macro-targeted day/week plan solver — DIRECTLY COMPARABLE",
+      "significance": "The most valuable single find in this teardown: the only product of the five that EXPLICITLY DISCLAIMS exact macro accuracy in its own documentation.",
+
+      "stated_accuracy_claim": {
+        "numeric_tolerance": "NONE FOUND — explicitly confirmed 'NO NUMERIC TOLERANCE STATED' on re-fetch",
+        "explicit_disclaimer_quote": "Note that the app does not support hitting exact macronutrient targets.",
+        "explicit_disclaimer_section": "1. Meal Plan Settings > Macro Goals",
+        "flexibility_quote": "You can get pretty close to hitting macro targets by setting upper and lower limits, but the app requires a certain degree of flexibility in order to provide users with a meal plan with ample variety.",
+        "url": "https://www.strongrfastr.com/help/meal_plan_tutorial",
+        "url_professional": "https://www.strongrfastr.com/help/professionals/meal_plan_tutorial",
+        "verify": "cross-checked (phrase-location re-fetch confirmed section headings and surrounding text on both consumer and professional versions)",
+        "assessment": "They name the exact tradeoff Cut Protocol is fighting — variety pressure vs macro precision — and resolve it publicly in favour of variety, in writing, in their own help docs. This is the single strongest precedent for Cut Protocol publishing an honest sub-100% number.",
+        "marketing_page_contrast": {
+          "url": "https://www.strongrfastr.com/macro-meal-planner",
+          "finding": "The consumer-facing marketing page contains NO accuracy claim, NO precision guarantee, and NO tolerance — verified by direct fetch. The disclaimer lives only in the help docs. Same pattern as ETM: honesty in documentation, silence in marketing."
+        }
+      },
+
+      "admits_infeasibility": true,
+      "infeasibility_handling": {
+        "mechanism": "An in-product error alert, coloured RED.",
+        "exact_copy": [
+          "If your plan doesn't meet your calorie/macro targets, you will see a red error alert like the following:",
+          "If after this, you still can't make it fit your macros, it may be because your overall settings are so restrictive.",
+          "Pinning and regenerating is a great way to fill in gaps with random meals that meet your goals.",
+          "The app will replace any unpinned meal(s) with another that meets your targets."
+        ],
+        "sections": {
+          "error_alert": "2. Meal Plan Basics > If Your Meal Plan Isn't Matching Your Targets",
+          "pin_regenerate": "2. Meal Plan Basics > Pinning and Regenerating"
+        },
+        "url": "https://www.strongrfastr.com/help/meal_plan_tutorial",
+        "verify": "cross-checked",
+        "alert_string_not_public": "The exact TEXT of the red alert is not published — only its existence and colour. Screenshot-only in the help doc.",
+        "remedies_offered": [
+          "pin and regenerate unpinned meals",
+          "swap meals or adjust portion sizes",
+          "accept slightly missed macros",
+          "add custom recipes",
+          "limit meal variety",
+          "request new recipes from the company"
+        ],
+        "COLOUR_FINDING": "StrongrFastr uses RED for a macro miss on food data. Cut Protocol's design constitution (law b) FORBIDS this: 'NO RED, EVER, ON FOOD OR BODY DATA. Red on food reads as moral judgment and makes beginners under-log and quit.' This is a direct, documented, head-to-head divergence from an industry incumbent — and Cut Protocol's position is the defensible one."
+      },
+
+      "target_adjustment_flow": {
+        "silently_relaxes": false,
+        "asks_user": true,
+        "refuses": false,
+        "mechanism": "Raises a red error, then offers pin-and-regenerate. Explicitly lists 'accept slightly missed macros' as a legitimate user option — i.e. the product sanctions shipping a miss.",
+        "does_user_learn_a_day_missed": "YES — the red alert is the notification.",
+        "override_quote": "you can see the software's calorie and macronutrient recommendations it made based off of the client's profile, and to override these recommendations, check the box and input your own targets",
+        "verify": "single-fetch (search-result synthesis; treat as MEDIUM confidence)"
+      },
+
+      "target_setting": {
+        "exposes_a_band": true,
+        "mechanism": "upper and lower limits per macro",
+        "quote": "You can get pretty close to hitting macro targets by setting upper and lower limits",
+        "url": "https://www.strongrfastr.com/help/meal_plan_tutorial",
+        "protein_guidance_quote": "macro meal plans should have at least 0.8 - 1g of protein per pound of bodyweight",
+        "protein_guidance_url": "https://www.strongrfastr.com/macro-meal-planner",
+        "protein_guidance_verify": "single-fetch"
+      },
+
+      "display_behaviour": {
+        "shows_per_day_totals_vs_target": "plan-level confirmed; per-day granularity not confirmed from primary source",
+        "flags_miss_visually": true,
+        "flag_treatment": "red error alert",
+        "confidence": "HIGH on the existence and colour of the flag; MEDIUM on whether it is per-day or per-plan"
+      },
+
+      "engineering_writeups": {
+        "finding": "NONE FOUND. No dev blog, no changelog with algorithm detail, no conference talk, no developer forum posts located."
+      }
+    },
+
+    {
+      "name": "Prospre",
+      "category": "macro-targeted day/week plan solver — DIRECTLY COMPARABLE",
+      "significance": "Makes the STRONGEST unqualified promise of the five, backed by the LEAST published evidence. Also the only product with a user-facing accuracy KNOB — whose levels are undocumented.",
+
+      "stated_accuracy_claim": {
+        "numeric_tolerance": "NONE FOUND",
+        "detail": "No percentage, no calorie window, no gram tolerance on the marketing site, features page, meal-plan-generator page, App Store listing, or Play listing. App Store release notes are boilerplate across every version from 1.8.23 to 1.9.4.",
+        "unqualified_promises_quoted": [
+          {
+            "quote": "Prospre can create a meal plan that contains any amount of calories, protein, fat, and carbs.",
+            "url": "https://apps.apple.com/us/app/prospre-meal-planner/id1464400657",
+            "note": "'any amount' — an absolute feasibility claim with no stated bound"
+          },
+          {
+            "quote": "Why track macros or count calories when you can create a plan to hit your goals every time?",
+            "url": "https://apps.apple.com/us/app/prospre-meal-planner/id1464400657",
+            "note": "'every time' — the strongest accuracy promise found anywhere in this teardown, and it carries zero numeric backing"
+          },
+          {
+            "quote": "We make meal planning and meal prep simple, so you no longer have to worry about whether you will get enough protein or stay under your fat goal.",
+            "url": "https://apps.apple.com/us/app/prospre-meal-planner/id1464400657",
+            "note": "Directly promises the fat CEILING is held — which is precisely Cut Protocol's dominant measured failure (94% of failing days over-side, fat-over dominant). No evidence Prospre measures or publishes this."
+          },
+          {
+            "quote": "Instantly create personalized meal plans that match your calorie and macro goals.",
+            "url": "https://www.prospre.io/"
+          },
+          {
+            "quote": "Choose 'Fit Into Plan' to automatically adjust your plan to fit in a treat while still hitting your macros.",
+            "url": "https://www.prospre.io/",
+            "note": "A re-solve-on-perturbation feature — the closest analogue to Cut Protocol's macroCloser"
+          }
+        ],
+        "verify": "single-fetch"
+      },
+
+      "accuracy_knob": {
+        "exists": true,
+        "quote": "You can tell it which foods you like or dislike, how accurate you need your macros to be, and which meals you want to make sure you eat each day",
+        "url": "https://www.prospre.io/features",
+        "verify": "cross-checked (targeted re-read of the features page confirmed this is the ONLY accuracy reference on it)",
+        "levels_published": false,
+        "assessment": "Prospre exposes macro tolerance as a USER SETTING. This is the strongest precedent for making the ruler a product control rather than a hidden constant — directly relevant to Cut Protocol brief item D8 ('the ruler is not locked by any test'). But the levels, their numeric meaning, and their effect on solve success are ALL undocumented publicly. The knob exists; the contract does not."
+      },
+
+      "admits_infeasibility": {
+        "publicly": false,
+        "detail": "NO public infeasibility copy found. No help-centre article on missed targets, no documented error state, no 'what if it can't hit my macros' page. Given the 'every time' promise, this is coherent marketing and an unfalsifiable claim.",
+        "confidence": "MEDIUM — Prospre has no public help centre comparable to ETM's or StrongrFastr's, so silence here is weaker evidence than it is for those two."
+      },
+
+      "target_adjustment_flow": {
+        "silently_relaxes": "UNKNOWN — the undocumented accuracy setting is the likely mechanism",
+        "asks_user": "at configuration time, via the accuracy setting",
+        "refuses": "no evidence found",
+        "does_user_learn_a_day_missed": "UNKNOWN"
+      },
+
+      "target_setting": {
+        "exposes_a_band": "UNKNOWN — accuracy setting implies an internal band but its exposure is undocumented",
+        "basis_quote": "the recommendations of reputable medical sources, such as the USDA's Acceptable Macronutrient Distribution Ranges (AMDRs)",
+        "url": "https://www.prospre.io/meal-plan-generator",
+        "verify": "single-fetch",
+        "relevance": "AMDR-anchored targets. Cut Protocol brief D4 notes its graded window (14.6%E…29.0%E) sits BELOW the AMDR fat floor (20–35%E) — Prospre anchoring on AMDR is a live external reference point for that critique."
+      },
+
+      "display_behaviour": {
+        "shows_per_day_totals_vs_target": "presumed yes (macro-plan app) — NOT CONFIRMED from primary source",
+        "flags_miss_visually": "UNKNOWN"
+      },
+
+      "engineering_writeups": {
+        "finding": "NONE FOUND. No dev blog. App Store release notes are boilerplate: 'This version includes minor bug fixes and improvements to ensure you get the most out of your meal-planning experience.' repeated across all recent versions. Only substantive release note found: v1.8.29 (2024-10-17) Instacart integration."
+      }
+    },
+
+    {
+      "name": "MacroFactor",
+      "category": "TRACKER + ADAPTIVE COACH — NOT a meal-plan generator. Category mismatch; included for target-setting norms and for its accuracy-publishing playbook.",
+      "significance": "The ONLY product of the five that publishes a rigorous, quantified, validated accuracy study. It is about ENERGY EXPENDITURE ESTIMATION, not macro-plan compliance. This is the model Cut Protocol should copy — the methodology, not the metric.",
+
+      "generates_meal_plans": false,
+      "generator_note": "No meal generator exists. Therefore infeasibility, plan-level target misses, and days-in-band are ALL structurally inapplicable. Any table row comparing MacroFactor to Cut Protocol on plan accuracy is a category error.",
+
+      "stated_accuracy_claim": {
+        "for_meal_plan_compliance": "NOT APPLICABLE — no generator",
+        "for_expenditure_estimation": {
+          "published": true,
+          "url": "https://macrofactor.com/algorithm-accuracy/",
+          "verify": "single-fetch",
+          "headline_quote": "nearly three times more accurate than estimates derived from the types of TDEE formulas that other apps solely rely on",
+          "quantified_claims": [
+            "MacroFactor's energy expenditure estimation errors typically fall within the range of 60–240 Calories (median = 135 Calories)",
+            "prediction errors were smaller with MacroFactor for 94.1% of users",
+            "nearly 84% of users have errors below 10% of TDEE",
+            "typical errors are 55–63% smaller with MacroFactor",
+            "MacroFactor's nutrition recommendations are more accurate than the recommendations of a TDEE formula by about 262 Calories per day, on average",
+            "median prediction error decreases from approximately 1.9lb...to approximately 1.15lb from day 24 onward",
+            "0.023lb per day, equivalent to a median Caloric estimation error of approximately 80 Calories per day, or 3.25% of TDEE"
+          ],
+          "correlations": {
+            "formula_based_r": 0.595,
+            "macrofactor_r": 0.869,
+            "variance_explained_quote": "MacroFactor's predictions explain nearly 90% of the variance"
+          },
+          "methodology": {
+            "n": 748,
+            "population": "challenge participants",
+            "duration_days": 100,
+            "exclusions": "users with partial logging >5 days"
+          },
+          "WHY_THIS_MATTERS_FOR_CUT_PROTOCOL": "MacroFactor published a stated n, a stated duration, stated exclusion criteria, a full error DISTRIBUTION (not just a headline), a correlation coefficient, and a named comparator arm. That structure — not the number — is the transferable practice. It is also the single most useful competitor practice found in this entire teardown."
+        }
+      },
+
+      "adherence_philosophy": {
+        "url": "https://macrofactor.com/macrofactors-algorithms-and-core-philosophy/",
+        "verify": "single-fetch",
+        "quotes": [
+          "One of the first things users notice about MacroFactor is the way the app handles things when you go over your calorie or macro targets for a day. And by that, I mean: nothing happens.",
+          "You won't see a warning on the screen shaming you for exceeding your calorie target or your carbohydrate target, or anything of that nature.",
+          "MacroFactor doesn't use pop-ups or UI changes to tell people they're doing something 'bad,' because what you want to do is your own damn business.",
+          "You don't have to eat like a robot and perfectly adhere to your daily or weekly targets for MacroFactor to make appropriate adjustments to your weekly calorie and macro targets over time."
+        ],
+        "CONSTITUTIONAL_ALIGNMENT": "MacroFactor's stance is the closest published match to Cut Protocol's design law b (no red on food data, no moral judgement) and to 'no engagement bait'. TENSION TO NOTE: MacroFactor resolves it by showing NOTHING on an over-target day. Cut Protocol's constitution forbids silence ('Solver declares unsolvable + why — silent target misses are forbidden'). Cut Protocol's answer must therefore be CALM AMBER + EXPLANATION, which is a third position neither MacroFactor (silence) nor StrongrFastr/Cronometer (red) occupy. That third position is defensible and, on this evidence, unoccupied in the market."
+      },
+
+      "logging_tolerance": {
+        "url": "https://help.macrofactorapp.com/en/articles/201-how-accurately-do-i-need-to-log-my-food",
+        "verify": "single-fetch",
+        "quotes": [
+          "5-10% more or less energy than you end up logging",
+          "consistency trumps accuracy",
+          "account for and correct for consistent food logging inaccuracies of any reasonable magnitude",
+          "consistently log with as much accuracy as is convenient, feasible, and tolerable",
+          "if your primary goal is to attain the most accurate estimate of your energy expenditure, you will need to log your food and beverage intake as accurately as possible"
+        ],
+        "note": "5-10% is a stated tolerance — for USER LOGGING error, not for plan compliance. Do not mix into a days-in-band table."
+      },
+
+      "target_setting": {
+        "macros_exposed_as_band": false,
+        "macros_note": "Macro targets are point values. Guidance is qualitative: get 'fairly close to your protein target on a consistent basis' and 'consistently stay above your lower limit for fat intake' — implying a protein soft-floor and a fat hard-floor, but no published numeric band.",
+        "macros_verify": "single-fetch, search-result synthesis — MEDIUM confidence",
+        "micronutrients_exposed_as_band": true,
+        "micronutrient_quote": "Micronutrient goals in MacroFactor are defined by a range consisting of a floor, a target, and a ceiling.",
+        "micronutrient_url": "https://macrofactor.com/understanding-nutrient-targets/",
+        "micronutrient_structure": {
+          "floor": "Lower Threshold Intake (LTI)",
+          "target": "RDA or Adequate Intake (AI)",
+          "ceiling": "Tolerable Upper Intake Level (UL)"
+        },
+        "supporting_quotes": [
+          "it's more useful to think of DRIs as sets of numbers that define a range of intake targets",
+          "there's a pretty decent chance that intakes between the LTI and RDA will be sufficient",
+          "any intake between the RDA and the UL is very likely to have positive effects, and very unlikely to have negative effects"
+        ],
+        "IMPORTANT_DISTINCTION": "The floor/target/ceiling triple is documented for MICROnutrients. Do NOT cite it as a macro band. It is nonetheless a strong precedent for the SHAPE Cut Protocol could adopt: show a floor, a target, and a ceiling rather than a bare point."
+      },
+
+      "display_behaviour": {
+        "shows_per_day_totals_vs_target": true,
+        "flags_miss_visually": false,
+        "flag_treatment": "DELIBERATELY NONE — 'nothing happens'",
+        "confidence": "HIGH (stated as an explicit design philosophy in their own words)"
+      },
+
+      "engineering_writeups": {
+        "finding": "EXTENSIVE. macrofactor.com publishes a full algorithm/philosophy section, a dedicated accuracy-validation article with methodology, and a structured help centre. By a wide margin the most technically transparent of the five.",
+        "urls": [
+          "https://macrofactor.com/macrofactors-algorithms-and-core-philosophy/",
+          "https://macrofactor.com/algorithm-accuracy/",
+          "https://macrofactor.com/understanding-nutrient-targets/",
+          "https://help.macrofactorapp.com/"
+        ]
+      }
+    },
+
+    {
+      "name": "Mealime",
+      "category": "CONVENIENCE RECIPE PLANNER — per-recipe calorie FILTER, no day-level macro solve. Category mismatch.",
+      "significance": "Publishes the ONLY explicit numeric tolerance found in the entire teardown — '±20 calories' — and it is a per-recipe filter tolerance, not a plan accuracy claim.",
+
+      "stated_accuracy_claim": {
+        "for_plan_compliance": "NOT APPLICABLE — Mealime does not solve a day to a macro target. It filters a recipe LIST by a calorie predicate.",
+        "numeric_tolerance_found": {
+          "quote": "All recipes 600 calories (plus or minus 20 calories)",
+          "context_quotes": [
+            "For example, you could do something like: Calories: 500–650",
+            "All recipes between 500 and 650 calories",
+            "Or, Calories: >700",
+            "All recipes 700 calories or greater",
+            "Or simply, Calories: 600"
+          ],
+          "url": "https://medium.com/mealime/calorie-filters-are-now-available-for-pro-subscribers-b386898ff4cc",
+          "author": "Jeffrey Bunn (Mealime)",
+          "verify": "cross-checked (targeted phrase-location re-fetch confirmed the exact sentence and its surrounding paragraph)",
+          "scope": "PER RECIPE, applied as a search filter. NOT a day total. NOT a macro. NOT a solve guarantee.",
+          "significance": "This is what an honest numeric tolerance looks like when the underlying operation is a FILTER (trivially satisfiable — you just don't show non-matching recipes) rather than a SOLVE (where satisfaction is not guaranteed). It is precisely because filtering cannot fail that Mealime can publish a number. The three real solvers cannot, and don't."
+        },
+        "marketing_quotes": [
+          {
+            "quote": "Calorie filters allow you to get precise. Achieve your weight loss or weight gain goals with ease with calorie filters.",
+            "url": "https://support.mealime.com/article/79-mealime-pro"
+          },
+          {
+            "quote": "View calories, macronutrients and micronutrients for all recipes.",
+            "url": "https://support.mealime.com/article/79-mealime-pro"
+          }
+        ],
+        "filter_scope_quote": "Calorie filters are a Pro feature that allows you to set precise calorie ranges and targets for each recipe in your meal plans.",
+        "filter_scope_url": "https://support.mealime.com/article/105-filtering-recipes-by-calories",
+        "verify": "cross-checked"
+      },
+
+      "admits_infeasibility": {
+        "applicable": false,
+        "detail": "Structurally cannot have an infeasibility state at the day level, because it never commits to a day-level target. A filter that matches nothing returns an empty list — a search result, not a failure. NO infeasibility copy found, and none is required.",
+        "LESSON_FOR_CUT_PROTOCOL": "Mealime dodges the entire honesty problem by never making the promise. It is the control case that proves the point: the products that promise a day-level macro solve (ETM, StrongrFastr, Prospre) are exactly the ones with an infeasibility problem, and only two of those three admit it."
+      },
+
+      "target_adjustment_flow": {
+        "applicable": false,
+        "does_user_learn_a_day_missed": "NO — there is no day-level target to miss"
+      },
+
+      "target_setting": {
+        "exposes_a_band": true,
+        "scope": "per-recipe calorie band only (e.g. 500–650), plus 'Advanced Filters' with more-than/less-than logic for macros per meal",
+        "advanced_filters_verify": "single-fetch, search-result synthesis — MEDIUM confidence",
+        "day_level_macro_target": false
+      },
+
+      "display_behaviour": {
+        "shows_per_day_totals_vs_target": false,
+        "shows_per_recipe_nutrition": true,
+        "flags_miss_visually": "not applicable"
+      },
+
+      "engineering_writeups": {
+        "finding": "A Medium publication exists (medium.com/mealime) with product-announcement posts from the founder. The calorie-filters post is the only one with a numeric spec. No algorithm or performance content."
+      }
+    }
+  ],
+
+  "bonus_industry_norm_evidence": {
+    "note": "Cronometer is NOT one of the five assigned products. Included ONLY as evidence of the industry norm for band display and miss colouring, because it is the clearest documented case.",
+    "product": "Cronometer",
+    "exposes_a_band": true,
+    "band_structure": "Daily Target + Minimum Threshold + Maximum Threshold",
+    "staff_quote": "You can set a range for your energy and macronutrient targets! Click on those targets in the diary page to edit the values you would like to use.",
+    "staff_quote_attribution": "Karen Cronometer (staff)",
+    "url": "https://forums.cronometer.com/discussion/4047/target-range-instead-of-single-value-for-fixed-macro-targets",
+    "verify": "single-fetch",
+    "user_quote_on_point_targets": "I use the fixed macro targets. I'm finding having a single value for a target encourages unhealthy fixation on hitting the exact number",
+    "user_quote_attribution": "forum user Daedalus12",
+    "user_followup_quote": "I still think it would be useful to see in the diary view a visual indication of how much wiggle room is left in the range rather than just subtle visual feedback",
+    "colour_coding": {
+      "under_minimum": "yellow (older UI) / grey (post-redesign UI)",
+      "in_band": "green",
+      "over_maximum": "RED",
+      "quotes": [
+        "Yellow bars: you have not yet reached your minimum target",
+        "Green bars: you have met the minimum target and not yet exceeded your maximum target",
+        "Red bars: you have exceeded your maximum target"
+      ],
+      "url": "https://forums.cronometer.com/discussion/5568/red-green-and-grey-bars",
+      "verify": "cross-checked on the red/green semantics; the under-minimum colour differs between the older forum answer (yellow) and the current support article (grey) following a UI redesign",
+      "significance": "SECOND documented industry incumbent using RED for over-target on food data. Combined with StrongrFastr, red-on-over is demonstrably the category default. Cut Protocol's amber law is a deliberate, defensible, and MARKETABLE divergence — not an eccentricity."
+    }
+  },
+
+  "academic_context": {
+    "warning": "DIFFERENT RULERS AND DIFFERENT DENOMINATORS. These numbers must NEVER share a table with Cut Protocol's days-in-band. Recorded as context only.",
+    "findings": [
+      {
+        "claim": "Llama 3.1 8B and GPT-3.5 Turbo achieved the lowest Mean Absolute Error (MAE) of 34.14 and 54.16 calories respectively, with corresponding percentage errors of 1.55% and 3.68%",
+        "source": "NutriGen: Personalized Meal Plan Generator Leveraging Large Language Models to Enhance Dietary and Nutritional Adherence",
+        "url": "https://arxiv.org/pdf/2502.20601",
+        "metric": "calorie MAE only — no macro band, no per-day pass/fail",
+        "verify": "search-result synthesis — MEDIUM confidence"
+      },
+      {
+        "claim": "AMDR compliance was higher for the CVAE framework when compared to LLM methods, with 18.9% vs 11.9%, respectively, of meals generated being AMDR compliant",
+        "metric": "PER-MEAL AMDR compliance — a population-level range, not a personalised target; denominator is meals, not days",
+        "verify": "search-result synthesis — MEDIUM confidence",
+        "relevance": "The only published 'compliance rate' for automated meal generation located anywhere. At 11.9–18.9% on a LOOSER, non-personalised ruler with a per-meal denominator, it suggests the academic state of the art is far below Cut Protocol's ~77% — but the rulers are not commensurable and this must not be claimed as a comparison."
+      },
+      {
+        "claim": "ChatGPT 4.0 exhibited the highest precision in caloric adherence, while Gemini showed greater variability, with over 50% of its diet plans deviating from the target by more than 20%",
+        "source": "Diet Quality and Caloric Accuracy in AI-Generated Diet Plans: A Comparative Study Across Chatbots",
+        "url": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC11768065/",
+        "verify": "search-result synthesis — MEDIUM confidence"
+      }
+    ]
+  },
+
+  "promises_vs_reality_table": [
+    {
+      "product": "Eat This Much",
+      "comparable": true,
+      "stated_accuracy_claim": "NONE FOUND (numeric). Marketing: \"Hit your macros and calorie targets every day\". Only published performance % is for GROCERIES: \"we've found the planner to be 80%-90% efficient with using up groceries\"",
+      "admits_infeasibility": "YES — most fully of any product",
+      "how": "Dedicated help article: \"Depending on how strict your settings are, the weekly meal generator can miss macronutrient targets.\" Names 9 causal settings. Offers single-day generator as higher-accuracy fallback. Documentation, not in-product copy.",
+      "displays_per_day_error": "Per-day totals YES; explicit miss flag NOT CONFIRMED",
+      "exposes_a_band": "YES — ranges or percentages, and recommends WIDE ranges",
+      "source_urls": [
+        "https://help.eatthismuch.com/help/the-generator-isnt-hitting-my-target-macros-whats-going-on",
+        "https://www.eatthismuch.com/how-to/",
+        "https://apps.apple.com/us/app/eat-this-much-meal-planner/id981637806"
+      ]
+    },
+    {
+      "product": "StrongrFastr",
+      "comparable": true,
+      "stated_accuracy_claim": "NONE FOUND (numeric) — and an explicit DISCLAIMER: \"Note that the app does not support hitting exact macronutrient targets.\" / \"You can get pretty close to hitting macro targets by setting upper and lower limits, but the app requires a certain degree of flexibility in order to provide users with a meal plan with ample variety.\"",
+      "admits_infeasibility": "YES — in product",
+      "how": "\"If your plan doesn't meet your calorie/macro targets, you will see a red error alert like the following:\" then pin-and-regenerate. Falls back to \"it may be because your overall settings are so restrictive.\" Sanctions accepting a miss.",
+      "displays_per_day_error": "YES — flagged, in RED",
+      "exposes_a_band": "YES — upper and lower limits per macro",
+      "source_urls": [
+        "https://www.strongrfastr.com/help/meal_plan_tutorial",
+        "https://www.strongrfastr.com/help/professionals/meal_plan_tutorial"
+      ]
+    },
+    {
+      "product": "Prospre",
+      "comparable": true,
+      "stated_accuracy_claim": "NONE FOUND (numeric). Strongest unqualified promise of the five: \"Why track macros or count calories when you can create a plan to hit your goals every time?\" and \"Prospre can create a meal plan that contains any amount of calories, protein, fat, and carbs.\" Has an undocumented user knob: \"how accurate you need your macros to be\"",
+      "admits_infeasibility": "NO public infeasibility copy found",
+      "how": "n/a — no documented failure state. Accuracy is configured up front, not reported after.",
+      "displays_per_day_error": "UNKNOWN",
+      "exposes_a_band": "UNKNOWN — accuracy setting implies one internally; not documented",
+      "source_urls": [
+        "https://www.prospre.io/features",
+        "https://apps.apple.com/us/app/prospre-meal-planner/id1464400657",
+        "https://www.prospre.io/"
+      ]
+    },
+    {
+      "product": "MacroFactor",
+      "comparable": false,
+      "comparable_note": "NO meal generator — tracker + adaptive coach",
+      "stated_accuracy_claim": "NONE for plan compliance (structurally n/a). For EXPENDITURE: fully published and validated — \"nearly three times more accurate than estimates derived from the types of TDEE formulas that other apps solely rely on\"; \"errors typically fall within the range of 60–240 Calories (median = 135 Calories)\"; \"nearly 84% of users have errors below 10% of TDEE\"; n=748 over 100 days",
+      "admits_infeasibility": "n/a — nothing to solve",
+      "how": "On an over-target day: \"nothing happens.\" \"You won't see a warning on the screen shaming you for exceeding your calorie target...\"",
+      "displays_per_day_error": "Totals YES; miss flag DELIBERATELY ABSENT",
+      "exposes_a_band": "Macros NO (point targets, plus a fat lower limit). Micronutrients YES — \"a range consisting of a floor, a target, and a ceiling\"",
+      "source_urls": [
+        "https://macrofactor.com/algorithm-accuracy/",
+        "https://macrofactor.com/macrofactors-algorithms-and-core-philosophy/",
+        "https://macrofactor.com/understanding-nutrient-targets/"
+      ]
+    },
+    {
+      "product": "Mealime",
+      "comparable": false,
+      "comparable_note": "Per-recipe calorie FILTER, no day-level macro solve",
+      "stated_accuracy_claim": "The ONLY explicit numeric tolerance found in the teardown — but for a recipe FILTER: \"All recipes 600 calories (plus or minus 20 calories)\". Marketing: \"Calorie filters allow you to get precise.\"",
+      "admits_infeasibility": "n/a — never makes a day-level promise",
+      "how": "n/a. A filter that matches nothing returns an empty list, not a failure.",
+      "displays_per_day_error": "NO — per-recipe nutrition only",
+      "exposes_a_band": "YES at recipe level (e.g. 500–650); NO at day level",
+      "source_urls": [
+        "https://medium.com/mealime/calorie-filters-are-now-available-for-pro-subscribers-b386898ff4cc",
+        "https://support.mealime.com/article/105-filtering-recipes-by-calories",
+        "https://support.mealime.com/article/79-mealime-pro"
+      ]
+    }
+  ],
+
+  "target_setting_norms": {
+    "question_asked": "Cut Protocol grades against bands but shows users point targets — is showing a band industry practice or unusual?",
+    "answer": "SHOWING A BAND IS INDUSTRY PRACTICE. Cut Protocol's current configuration — grade against a band, display a point — is the unusual one, and it is the worst of the three available configurations.",
+    "evidence_for_bands": [
+      "Eat This Much: \"you can adjust your macronutrient targets as either a range or a percentage of your calories\" — and ACTIVELY COUNSELS WIDENING: \"We generally suggest wider ranges for your macronutrient targets because it allows for significantly greater food variety\"",
+      "StrongrFastr: \"setting upper and lower limits\"",
+      "Cronometer: Daily Target + Minimum Threshold + Maximum Threshold; staff: \"You can set a range for your energy and macronutrient targets!\"",
+      "MacroFactor (micronutrients): \"a range consisting of a floor, a target, and a ceiling\"",
+      "Mealime (per recipe): \"Calories: 500–650\""
+    ],
+    "evidence_for_points": [
+      "MacroFactor MACRO targets are point values (with a qualitative fat lower limit and protein consistency guidance)",
+      "Prospre: band exposure undocumented"
+    ],
+    "count": "4 of 5 assigned products expose a band SOMEWHERE (ETM, StrongrFastr, MacroFactor-micros, Mealime-per-recipe). Adding Cronometer, 5 of 6 products examined expose an explicit min/max on nutrient targets.",
+    "band_width_is_a_user_control": "ETM, StrongrFastr, and Cronometer all make band width USER-EDITABLE. Prospre exposes it as an abstracted 'accuracy' setting. In NO examined product is the tolerance a hidden constant the way Cut Protocol's is (brief D8: 'The ruler is not locked by any test').",
+    "the_asymmetry_finding": "ETM's guidance runs directly opposite to the instinct that a tighter ruler is better: they tell users to WIDEN the band, and they name the reason (food variety). That is the same variety-vs-precision tradeoff StrongrFastr names, and the same one Cut Protocol's brief F7 identifies as irreducible ('Anti-monotony rule and compliance target are in direct conflict'). Three independent products have converged on the same tradeoff, and two resolve it publicly in favour of variety.",
+    "recommendation": "Show the band. Cut Protocol already GRADES against fat/carb ranges with a ±25%-of-midpoint allowance and a one-sided protein floor. Displaying a point target while grading a band is the only configuration in which a user cannot tell whether they passed — it manufactures the perception of a miss on days that are graded as passes, and hides genuine misses on days near the edge. The MacroFactor floor/target/ceiling triple is the cleanest shape to copy: show the floor, the target, and the ceiling."
+  },
+
+  "defensible_accuracy_claim": {
+    "is_77_percent_bad": "UNKNOWABLE FROM COMPETITOR DATA, and that is the finding. No competitor publishes a comparable number. There is no external benchmark against which 77% is good or bad.",
+    "is_85_percent_a_strong_claim": {
+      "verdict": "INCOMPARABLE, not strong or weak — and DANGEROUS if published naked.",
+      "reasoning": [
+        "No competitor publishes a days-in-band rate, so '85%' cannot be positioned as better or worse than anything. It has no denominator in the reader's mind.",
+        "'Satisfiable days' is a term Cut Protocol defines. Publishing a satisfiable-only rate without the all-days rate is EXACTLY the shape of brief E11's inflation trap: re-badging diagnose() buys +27.94 pts and a perfect KPI with 186 false refusals and zero behaviour change. An external reader cannot audit the exclusion.",
+        "Brief A6 records that the rig already drops 16 satisfiable total-failure days from its own denominator. Any published number must state which denominator it used.",
+        "Brief A5 sets the minimum detectable effect at ~3.5 pts on n≈537. Publishing '77.3%' implies a precision the instrument does not have. Publish whole numbers."
+      ]
+    },
+    "recommended_public_claim": {
+      "wording": "On 250 generated user profiles, 77% of days land inside the target band — calories within ±15%, protein at or above 85% of target, fat and carbs inside their ranges. Days that miss are named in the app, with the macro, the number, and the reason. We publish this because we could not find a single competitor who publishes any macro-compliance rate at all.",
+      "why_this_wording": [
+        "States the ruler inline. A compliance rate without its ruler is noise, and every competitor's silence proves the ruler is the hard part.",
+        "States the population and n. Copies MacroFactor's playbook, which is the only validated accuracy publication in the category.",
+        "Uses a whole number, respecting the ~3.5 pt detection floor.",
+        "The final sentence converts an apparently weak number into a transparency differentiator — which is accurate, not spin: the search for a competitor number was genuine and came back empty.",
+        "Pairs the rate with the honesty behaviour ('days that miss are named'), which is the actual defensible product claim and is constitutionally required anyway."
+      ],
+      "mandatory_conditions": [
+        "Re-measure on the shipping tree before publishing. Brief A3: stored baselines are not a valid comparison arm.",
+        "Publish BOTH numbers — all-planned-days AND satisfiable-only — with the excluded-day count stated. Publishing satisfiable-only alone is the inflation trap.",
+        "Never publish 'satisfiable' without defining it in the same sentence or a one-click-away note.",
+        "Do not compare to the academic AMDR-compliance figures (11.9%/18.9%). Different ruler, different denominator (meals not days), non-personalised target.",
+        "Do not claim superiority over any named competitor on this metric. None of them published one; a comparison would be fabricated."
+      ]
+    },
+    "the_stronger_claim_available": "The defensible headline is NOT the percentage. It is: 'We are the only meal planner we could find that publishes how often it hits your macros — and that tells you, in the app, when it didn't.' Three of the five products promise macro accuracy; two admit failure only in help documentation; one (Prospre) promises 'every time' and documents no failure state at all. Cut Protocol's constitutional requirement that the solver 'declares unsolvable + why' is, on this evidence, unmatched in the market."
+  },
+
+  "risks_and_where_i_could_be_wrong": [
+    {
+      "risk": "In-app copy is invisible to this method",
+      "detail": "All five products ship their real infeasibility strings inside authenticated apps. Every 'none found' means 'not published on the public web'. StrongrFastr's red alert is documented to EXIST but its exact string is screenshot-only. Prospre's accuracy setting is confirmed by their own features page but its levels are in-app.",
+      "severity": "HIGH — this is the single largest limitation of the teardown",
+      "how_to_close": "Trial accounts on Prospre and StrongrFastr, deliberately over-constrained (vegan + multi-allergen + high protein), screenshotting the failure state."
+    },
+    {
+      "risk": "WebFetch quote fidelity",
+      "detail": "Quotes are extracted by a summarising model reading the page, not by raw text retrieval. I cross-checked the load-bearing quotes (ETM help article — full text returned; StrongrFastr disclaimer and red alert — targeted phrase-location re-fetch confirming section headings; Mealime ±20 — targeted re-fetch; ETM 80-90% grocery and 'wider ranges' — targeted re-fetch). Quotes marked verify:\"single-fetch\" in the JSON were NOT independently re-read and carry residual paraphrase risk.",
+      "severity": "MEDIUM, and concentrated in the Prospre and MacroFactor rows",
+      "how_to_close": "Raw HTML retrieval of the specific URLs before any of these quotes appears in public marketing."
+    },
+    {
+      "risk": "Absence of a published claim is not absence of internal measurement",
+      "detail": "All three comparable products almost certainly measure macro-hit rate internally. Their silence is most likely a MARKETING decision (an honest sub-100% number is hard to sell against a competitor promising 'every time'), not evidence they don't know. My finding is strictly about what is PUBLISHED.",
+      "severity": "MEDIUM — it does not weaken the 'incomparable' conclusion, but it does weaken any implication that competitors are engineering-naive",
+      "implication": "Cut Protocol publishing 77% enters a market where competitors promise 100% by implication. That is a real commercial risk, not just a virtue. The claim must be framed as transparency, and paired with the in-app honesty behaviour, or it reads as a confession."
+    },
+    {
+      "risk": "Category error contaminating the table",
+      "detail": "MacroFactor and Mealime are not macro-targeted day solvers. I flagged this per-row, but a reader skimming a 5-row table will average across incomparable products and conclude '2 of 5 publish a number' — which is wrong in both directions (MacroFactor's number is for a different quantity; Mealime's is for a filter that cannot fail).",
+      "severity": "MEDIUM",
+      "mitigation": "The comparable set is THREE: Eat This Much, StrongrFastr, Prospre. Of those three, ZERO publish a numeric plan-accuracy tolerance. That is the sentence that should be quoted, not '0 of 5'."
+    },
+    {
+      "risk": "Eat This Much's 'most open about its algorithm' premise is stale",
+      "detail": "The brief directed me to dig hardest there on that basis. The dev blog is a dormant 2013-era announcement log with ten posts and no algorithm content. Their genuine openness in 2026 is about FAILURE MODES, not mechanism or performance. If prior fleet work assumed ETM technical writeups exist, that assumption is wrong.",
+      "severity": "LOW for conclusions, HIGH for anyone planning to mine ETM for algorithm design"
+    },
+    {
+      "risk": "Cronometer is out of scope",
+      "detail": "It is not one of the assigned five. I used it only as norm evidence for band display and red-on-over colouring, because it is the best-documented case. If the fleet treats it as a sixth teardown, the depth is not there.",
+      "severity": "LOW"
+    },
+    {
+      "risk": "The under-minimum bar colour in Cronometer is ambiguous",
+      "detail": "The forum answer says yellow; the current support article (403 to WebFetch, reached only via search snippet) says grey. A UI redesign is the likely explanation. The load-bearing part — RED for over-maximum — is consistent across both sources.",
+      "severity": "LOW"
+    },
+    {
+      "risk": "US-only search",
+      "detail": "WebSearch is US-restricted. Non-US help centres, localised marketing, and non-English developer writeups were not reachable.",
+      "severity": "LOW"
+    },
+    {
+      "risk": "I did not find a Reddit/forum developer post for any of the five",
+      "detail": "Targeted searches for founder/developer explanations on Reddit returned nothing usable. This is a genuine gap, not a confirmed absence — Reddit is poorly indexed by this search tool. Do not cite 'no developer forum posts exist' as established.",
+      "severity": "MEDIUM for completeness, LOW for the conclusions drawn"
+    }
+  ],
+
+  "copy_blocks_for_cut_protocol": {
+    "design_constraints_applied": [
+      "law b — NO RED on food or body data; over-target uses --warn #E5A83B amber with supportive re-planning copy",
+      "law a — GREEN SCARCITY; --accent appears only on the in-band macros, never on a warning",
+      "law c — fixed macro triad with P/C/F letter labels wherever a macro is named in a chip or bar",
+      "constitution — solver declares unsolvable + why; silent misses forbidden",
+      "constitution — never suggest intake below the safety floor; floor blocks shown, not hidden",
+      "constitution — every automatic adjustment logged, visible, reversible",
+      "comms — blunt, data-first, no filler; show the math; no engagement bait, no shaming",
+      "reference tone — 'Over by 340 — tomorrow already adjusts.'"
+    ],
+    "note": "Numbers below are ILLUSTRATIVE placeholders showing the shape and specificity required. Every one must be bound to real solver output at implementation time. The structural rule: name the macro, name the number, name the cause, name the option, state the cost of doing nothing.",
+
+    "block_a": {
+      "situation": "Targets are arithmetically impossible for this user's pool (vegan + soy + gluten + nut + sesame; 15 eligible recipes, 0 eligible snacks; demanded protein density exceeds every recipe)",
+      "severity_token": "--warn (amber). NOT red — this is a configuration fact, not a system error.",
+      "heading": "This plan can't be built as configured.",
+      "body": "Your targets need 8.4 g protein per 100 kcal. The densest recipe your filters leave is 6.1 g — across all 15 that survive. No combination of them reaches 8.4 at any portion size between 0.5× and 2×. This isn't a near miss. It's arithmetic.\n\nYour snack slot has 0 eligible recipes, so the day is built from 3 meals carrying the full 2,180 kcal.\n\nThree ways forward, cheapest first:",
+      "options": [
+        {
+          "label": "Add a protein source",
+          "detail": "One soy-free, gluten-free unflavoured isolate raises the reachable ceiling to about 9.2 g/100 kcal and makes every day this week solvable.",
+          "action": "add_food"
+        },
+        {
+          "label": "Review your protein target",
+          "detail": "185 g is 2.4 g/kg. Dropping to 155 g (2.0 g/kg) is inside the evidence-supported range for a cut and clears the wall. Your calorie target does not move.",
+          "action": "open_profile_protein"
+        },
+        {
+          "label": "Review your restrictions",
+          "detail": "Sesame is the narrowest of the five — on its own it removes 41 recipes, 9 of them in the top protein decile. We will not suggest dropping an allergy. Review it only if it was set by preference.",
+          "action": "open_profile_restrictions"
+        }
+      ],
+      "footer": "We won't lower your calorie target to make the math close. 2,180 is your floor (RMR × 0.95).",
+      "notes_on_construction": "Leads with the impossibility, not an apology. Shows the two numbers that make it impossible (8.4 demanded vs 6.1 available) so the claim is checkable. Names the snack-pool zero rather than letting the user infer it. Orders options by cost to the user. Explicitly refuses to relax the allergy — the constitution forbids suggesting it, and F5/H-series findings show allergy filters are load-bearing safety, not preference. Closes by naming the floor, which is a refusal made visible rather than hidden."
+    },
+
+    "block_b": {
+      "situation": "Day landed over on fat, everything else in band — the dominant real failure (94% of failing days are over-side, fat-over dominant)",
+      "severity_token": "--warn (amber) on the fat figure only. The three in-band macros keep --accent. Nothing turns red.",
+      "heading": "Fat over by 14 g. Everything else landed.",
+      "body": "Tuesday: 2,412 kcal against a 2,384 target — in band. Protein 186 g, target 180 — met. Carbs 214 g against 195–240 — in band. Fat 88 g against 55–74 — over by 14.\n\nOne slot did it. Dinner's almond-crusted salmon carries 31 g of fat, 35% of the day, in 22% of the calories.",
+      "options": [
+        {
+          "label": "Swap dinner",
+          "detail": "The grilled version drops the day to 71 g fat — inside the band — and holds protein at 184 g.",
+          "action": "swap_slot",
+          "emphasis": "primary"
+        },
+        {
+          "label": "Keep it",
+          "detail": "126 kcal above plan for the week. Your remaining six days absorb 21 kcal each. No target changes, and tomorrow already adjusts.",
+          "action": "dismiss"
+        }
+      ],
+      "notes_on_construction": "Leads with what LANDED, not what failed — three of four macros are fine and the copy says so in the first line. Gives every number against its band so the user can check the verdict rather than trust it. Attributes the overage to one named slot with its share, which converts a verdict into an action. 'Keep it' is a first-class option with its cost stated, not a guilt path — this is the anti-shaming requirement, and it is the position MacroFactor takes by showing nothing at all; Cut Protocol takes the stronger position of showing the number AND making acceptance legitimate. Reuses the approved 'tomorrow already adjusts' tone. Amber on the fat number only, per law b and law c."
+    },
+
+    "block_c": {
+      "situation": "Snack slot could not be filled — 18 snack recipes library-wide, 0 eligible for this persona (measured: 20 personas have a literally empty snack pool)",
+      "severity_token": "--faint / neutral informational. This is not a target miss and must not be amber. The day's targets were met.",
+      "heading": "No snack today — that's our library, not your settings.",
+      "body": "The library has 18 snack recipes in total. None of them clear vegan + no soy + no sesame. That's a gap on our side.\n\nYour targets weren't affected: the other three slots carried the full 2,384 kcal — breakfast 620, lunch 780, dinner 984 — and all four macros landed in band.",
+      "options": [
+        {
+          "label": "Add your own snack",
+          "detail": "It joins your pool permanently and the solver will use it from the next plan onward.",
+          "action": "create_recipe"
+        },
+        {
+          "label": "Plan 3 meals a day",
+          "detail": "Removes the empty slot from your layout. Reversible any time.",
+          "action": "open_meal_layout"
+        }
+      ],
+      "footer": "We're authoring snack recipes now, allergen-restricted diets first — that's where the hole is.",
+      "notes_on_construction": "The heading assigns the cause in five words and assigns it to us. Publishes the actual library count (18) rather than a vague 'limited options', because a user who can see 18 can see this is not about them. Immediately states the targets were still met, which pre-empts the user reading an empty slot as a failed day. The footer is a commitment with a stated priority order, not a marketing promise — and it is checkable against F5, which measured exactly this hole. Deliberately NOT amber: nothing went over, nothing missed, and colouring this as a warning would teach the user to distrust a day that was actually fine."
+    }
+  },
+
+  "git_status_porcelain_at_end": "see final message"
+}

@@ -6,8 +6,8 @@
     "branch": "fleet/measure-2026-08",
     "rescueBranch": "campaign-2026-07",
     "agentCap": 50,
-    "agentsSpawned": 5,
-    "currentWave": "W1+W2",
+    "agentsSpawned": 10,
+    "currentWave": "W1-3/W1-4 then W3",
     "notes": "Resume protocol: read this ledger, skip every agent with status=done, continue from the first unfinished agent.",
     "dbSha256": "d9037dce9754b4524943069fff7e0f3e396598c108426f370b0a189458b623a1",
     "rescueCommit": "75baddd"
@@ -45,9 +45,19 @@
     "W1-2": {
       "wave": "W1",
       "name": "re-baseline",
-      "status": "pending",
-      "artifacts": [],
-      "headline": ""
+      "status": "done",
+      "artifacts": [
+        "fleet/out/W1-2/BASELINE.md",
+        "fleet/out/W1-2/BASELINE.json",
+        "fleet/out/W1-2/daydump-route-s424242.jsonl",
+        "fleet/out/W1-2/daydump-route-s20260730.jsonl",
+        "fleet/out/W1-2/daydump-route-s8675309.jsonl",
+        "fleet/out/W1-2/daydump-rigshape-s424242.jsonl",
+        "fleet/out/W1-2/scoreRulers.mjs",
+        "fleet/out/W1-2/scored.json",
+        "fleet/out/W1-2/analysis.json"
+      ],
+      "headline": "THE BASELINE. Ruler A satisfiable 77.3%% (537 judged) / 75.0%% (553 planned); Ruler D 86.4%% / 83.9%%. All-days A 69.8%%/68.0%%. Reproduced W1-1 BYTE-EXACT 640/640, 0 flips, at a different git SHA. CANONICAL DENOMINATOR RECOMMENDED: satisfiable-planned minus degenerate, n=553. Cross-seed spread 0.9pt on the shipping ruler (brief 0.4-0.5 is what a LOOSER ruler gives; Ruler D measures 0.47-0.56) => treat <3pts single-seed as unmeasured. Ruler D = +8.9pts net but costs 15-20 days on the carb floor and makes KETO WORSE (-2.1). A1 ADJUSTED (623 is judged, not all-planned). F1 ADJUSTED: 248/250-expressible REFUTED (18 provably infeasible, 0 in band under either ruler) but consequence holds (0 of 218 satisfiable). IMPOSSIBLE is a label not a proof: 10 of 32 produce a compliant day. 31s per full-fleet run => no budget excuse for stored baselines."
     },
     "W1-3": {
       "wave": "W1",
@@ -111,30 +121,46 @@
     "W2-3": {
       "wave": "W2",
       "name": "vegan-snack-market",
-      "status": "pending",
-      "artifacts": [],
-      "headline": ""
+      "status": "done",
+      "artifacts": [
+        "fleet/out/W2-3/FINDINGS.md",
+        "fleet/out/W2-3/candidates.json",
+        "fleet/out/W2-3/build-candidates.mjs"
+      ],
+      "headline": "The target box is a FAT problem, not a protein problem: >=32.6%%E protein AND <=23.4%%E fat kills the entire nut/seed category by 3.4x. Exactly ONE calorie-carrying whole plant food clears unaided under the full soy+gluten+nut+peanut+sesame wall (sprouted lentils) and it FAILS the repo Atwater gate. Only working architecture = near-zero-fat pulse/vegetable base + nutritional yeast (single-ingredient, outside the T-1 blocked class). 12 dishes proposed, 11 wall-safe, all pass real checkAtwater, Pd 8.18-12.40 vs current vegan median 3.23 (2.5-3.8x lift). 14 of 17 box-clearing foods ALREADY in dev.db with zero recipe uses. NEW SAFETY FINDING -> TRIAGE T-3: peanut-allergic users are NOT protected from lupin (foodMatchesExclusionTerm(lupin,peanuts)===false); allergenTaxonomy.js:635 documents the cross-reaction in PROSE with no code consuming it; 3 lupin rows already in DB, inert today."
     },
     "W2-4": {
       "wave": "W2",
       "name": "competitor-teardown",
-      "status": "pending",
-      "artifacts": [],
-      "headline": ""
+      "status": "done",
+      "artifacts": [
+        "fleet/out/W2-4/FINDINGS.md",
+        "fleet/out/W2-4/competitors.json"
+      ],
+      "headline": "ZERO of the THREE comparable products (Eat This Much, StrongrFastr, Prospre) publish any numeric plan-accuracy tolerance -- MacroFactor has no generator, Mealime has no day-level solve, so quote 0-of-3 not 0-of-5. StrongrFastr EXPLICITLY DISCLAIMS exact macro accuracy; Prospre promises hit your goals every time with no documented failure state; ETM publishes 80-90%% GROCERY efficiency and nothing for macros (they publish the number they are proud of). Mealime +/-20 kcal is the only explicit tolerance and it is on a FILTER that cannot fail. Showing a BAND is industry standard (5 of 6); Cut Protocol grading a band while DISPLAYING A POINT is the worst configuration -- the user cannot tell whether they passed. Red-on-over is the category default => amber is marketable divergence, and calm-amber-plus-explanation is a position NOBODY occupies. Delivered 3 constitution-compliant infeasibility copy blocks."
     },
     "W2-5": {
       "wave": "W2",
       "name": "weekly-metric",
-      "status": "pending",
-      "artifacts": [],
-      "headline": ""
+      "status": "done",
+      "artifacts": [
+        "fleet/out/W2-5/FINDINGS.md",
+        "fleet/out/W2-5/metric-designs.json",
+        "fleet/out/W2-5/weekmetric.mjs"
+      ],
+      "headline": "RESEARCH PLUS MEASUREMENT on the real 65 week-personas x 3 seeds. The proposed 7-day mean kcal +/-5%% HIDES 47 out-of-band days across 17 of 43 passing weeks with ZERO false alarms -- a pure concealment device; MAD recovers only 5 of 47 because failure is 83%% one-sided. kcal+protein headline is blind to 46-49%% of failing days. E11 measured directly: refusing the worst day of each week = +4.0pts on a judged-only denominator, -6.2pts on a fixed planned denominator => THE DENOMINATOR IS THE GAMING RESISTANCE. 7 days is statistically indefensible (95%% CI +/-28pts); no mature analogue uses <14 days (CGM 14, PDC 91, Basiotis 31+). RECOMMENDS 3-state day composition (in/over/short/both) over a denominator FIXED AT PLAN CREATION, 28-day window, no score anywhere. ENERGY AVERAGES, PROTEIN DOES NOT (median weekly protein ratio 1.0053 -- no surplus to bank). BLOCKED on E2: no day verdict is persisted."
     },
     "W2-6": {
       "wave": "W2",
       "name": "fresh-sweep",
-      "status": "pending",
-      "artifacts": [],
-      "headline": ""
+      "status": "done",
+      "artifacts": [
+        "fleet/out/W2-6/FINDINGS.md",
+        "fleet/out/W2-6/sweep.json",
+        "fleet/out/W2-6/rulershape.mjs",
+        "fleet/out/W2-6/rulershape.json"
+      ],
+      "headline": "REFRAMES D-3 with measurement: the brief refuted a WIDTH claim, the prompt made a POSITION claim -- they argued past each other. Width matches Helms (33.11%% vs 33.3%%) so too-tight is dead; POSITION is wrong in BOTH directions -- graded ceiling below AMDR for 159/250, graded floor below AMDR for 199/250, and 232/250 personas are graded COMPLIANT BELOW THE ENGINE OWN ESSENTIAL-FAT FLOOR (0.2475 vs ESSENTIAL_FAT_PER_LB_LBM 0.30). The +4.0/+5.0 figure does NOT bound a floor ruler (19%% vs 90%% loosening). But a PURE floor ruler FAILS on nutrition: implicit ceiling = 53.0%%E median, 250/250 above AMDR => re-anchor the ceiling to %%E, do not delete it. fatMid is fixed in grams while targetKcal falls => prescribed fat %%E RISES as the cut deepens, backwards from every source. Contrarian B PARTLY HOLDS: selection binds before portioning; 0.25x floor should be KILLED on literature (lowest measured normal portion = 70%% of reference; sub-norm portions trigger COMPENSATORY EATING). BRAIN=off confirmed MORE right in 2026 (every measured LLM study shows fat-over/carb-under/non-reproducible = same direction as the bug). No macro-compliance benchmark exists."
     },
     "W3-1": {
       "wave": "W3",

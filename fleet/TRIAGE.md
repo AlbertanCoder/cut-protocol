@@ -100,6 +100,58 @@ will keep producing one of these per vocabulary expansion.
 
 ---
 
+## T-3 — Peanut-allergic users are NOT protected from LUPIN (CONFIRMED on real DB, currently unreachable)
+
+**Severity: P1-latent** — same shape as T-1: the knowledge exists in the codebase,
+in prose, and no code acts on it. **Found by W2-3, 2026-07-31**, while researching
+the vegan snack niche — i.e. found *because* the fleet went looking for foods to
+add, which is exactly when it would have shipped.
+
+### Reproduction (real DB)
+
+```js
+foodMatchesExclusionTerm(lupinRow, 'peanuts') // -> false   ⚠️
+foodMatchesExclusionTerm(lupinRow, 'lupin')   // -> true
+```
+
+### Why this is a real hazard, not a technicality
+
+- **Health Canada advises every peanut-allergic consumer to avoid lupin.**
+  Cross-reactivity is reported at **5–37%**. There is a published first Canadian
+  paediatric anaphylaxis case.
+  <https://www.canada.ca/en/health-canada/services/food-nutrition/food-labelling/allergen-labelling/information-canadians-peanut-allergy-concerning-lupin.html>
+- **Lupin is not a Canadian priority allergen, so packages carry no "Contains"
+  statement.** The user cannot catch this at the shelf either.
+- `backend/src/lib/allergenTaxonomy.js:635` **already documents the cross-reaction
+  in a comment** — *"Cross-reacts strongly with peanut"*. `git grep` for any
+  cross-reactivity logic returns **two comment lines and nothing else.** No code
+  consumes it.
+- A peanut-allergic vegan is protected **only if they separately tick the
+  TIER_RARE "Lupin" checkbox** — i.e. only if they already knew.
+
+### Blast radius
+
+**Three USDA-verified lupin rows already sit in `dev.db` with ZERO recipe
+references.** Inert today — and **one authoring session from shipping**. Lupini is
+the single best box-clearing snack-shaped whole food W2-3 found (protein density
+13.11, fat density 2.45) for exactly the population with the worst pool, so the
+obvious "fix the vegan snack gap" move reaches for it first.
+
+### Hard gate on this fleet's own output
+
+**W3-6 must not insert any lupin/lupini row or dish into a probe DB, and W5-1 must
+not recommend one, until the gate enforces the peanut↔lupin cross-reaction.**
+W2-3's dish #12 (Lupini Snack Jar) is marked GATED in
+`fleet/out/W2-3/candidates.json` for this reason.
+
+> Note the pattern across T-1 and T-3: **both are the gate failing open on a food
+> nobody had reason to name.** T-1 is absence of metadata read as safety; T-3 is
+> documented knowledge that never became code. The brief's structural indictment
+> of `WORD_GUARDS` — *"a denylist of exceptions to a denylist… it will keep
+> producing one of these per vocabulary expansion"* — predicts both.
+
+---
+
 ## T-2 — (open) Full false-negative leak sweep — NOT YET PERFORMED
 
 Recorded so it is not mistaken for done. Every leak statement in the inherited

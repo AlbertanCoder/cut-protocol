@@ -1,0 +1,524 @@
+{
+  "schema": "fleet/W2-5/metric-designs/v1",
+  "agent": "W2-5 (weekly-metric)",
+  "lane": "online research",
+  "date": "2026-07-31",
+  "branch": "fleet/measure-2026-08",
+  "question": "Should Cut Protocol add a weekly-rolling adherence headline alongside the per-day verdict, and if so in what exact form?",
+  "headline": "A weekly metric can ship, but NOT in the proposed form. 'Mean kcal within +/-5%' and '>=6 of 7 protein-floor days' are both disqualified on measured evidence. The defensible form is a fixed-denominator 3-state day composition (in-band / over / short) over a 28-day window, with a severity tier, never displayed as a single score.",
+
+  "evidenceTiers": {
+    "MEASURED": "computed by this agent on fleet/out/W1-1 day dumps, 3 seeds",
+    "SOURCED": "external primary/secondary literature with URL",
+    "DERIVED": "arithmetic by this agent from MEASURED inputs",
+    "JUDGEMENT": "this agent's design opinion, explicitly not a fact"
+  },
+
+  "measurement": {
+    "tier": "MEASURED",
+    "source": "fleet/out/W1-1/daydump-route-{s424242,s20260730,s8675309}.jsonl",
+    "cohort": "65 personas with a 7-day horizon = 455 day records, 439 judged",
+    "ruler": "product/dayTolerance+dayInTolerance (backend/src/lib/mealSolver.js:229-256)",
+    "scripts": ["fleet/out/W2-5/weekmetric.mjs", "fleet/out/W2-5/weekmetric2.mjs"],
+    "caveat": "The 7-day cohort is 65 of 250 personas. It is the ONLY cohort that can exercise a 7-day metric, so every weekly number here rests on n=64-65 weeks, not on the full fleet denominator. Treat magnitudes as indicative, directions as solid (stable across 3 seeds).",
+
+    "threeStateComposition": {
+      "s424242": { "inBandPct": 66.1, "overPct": 21.6, "shortPct": 3.4, "bothPct": 8.9 },
+      "s20260730": { "inBandPct": 67.2, "overPct": 19.8, "shortPct": 3.0, "bothPct": 10.0 },
+      "s8675309": { "inBandPct": 66.1, "overPct": 22.1, "shortPct": 3.0, "bothPct": 8.9 },
+      "note": "Stable to ~1.5 pts across seeds. Over-side outnumbers short-side 6-7x."
+    },
+
+    "bandMacroDirection": {
+      "daysWithABandFailure": 147,
+      "pureOver": 122,
+      "pureUnder": 13,
+      "mixed": 12,
+      "pureOverPct": 83.0,
+      "fatOverDays": 77, "fatShortDays": 0,
+      "carbOverDays": 72, "carbShortDays": 1,
+      "briefClaimCompared": "B1/B10 and the task prompt's 94.2% pure-over. CONFIRMED in direction, ADJUSTED in magnitude: 83.0% on this cohort when protein-shortfall is excluded from the direction count (it is a one-sided floor, not a band). Fat is 77-0 over-vs-short; carb 72-1."
+    },
+
+    "structuralBlindness": {
+      "badDaysWithKcalOkAndProteinOk": { "s424242": "69/149 = 46.3%", "s20260730": "71/144 = 49.3%", "s8675309": "73/149 = 49.0%" },
+      "implication": "A weekly headline built ONLY on kcal and protein — exactly the live proposal — is structurally incapable of seeing ~half of all failing days. This is the weekly form of brief claim E3.",
+      "briefClaimCompared": "E3 says 66.6% of out-of-band days have kcal AND protein both fine. ADJUSTED: 46-49% on the 7-day cohort. Same defect, smaller magnitude."
+    },
+
+    "meanKcalConcealment": {
+      "weeksScored": 64,
+      "passWithin5pct": 43,
+      "ofThoseContainingAnOutOfBandDay": 17,
+      "outOfBandDaysHiddenUnderAPassingHeadline": 47,
+      "passWithin3pct": 37,
+      "pass3ContainingAnOutOfBandDay": 12,
+      "falseAlarms_failedButAllDaysInBand": 0,
+      "implication": "The metric NEVER fails a clean week and frequently passes a dirty one. It is a pure concealment device: it can only ever move the reported number up relative to the truth."
+    },
+
+    "cancellationMagnitude": {
+      "medianAbsSignedWeeklyMeanPct": 1.86,
+      "medianMeanAbsoluteDeviationPct": 2.60,
+      "weeksWhereMADExceedsSignedMeanBy2x": "19 of 64 (29.7%)",
+      "implication": "Real cancellation exists in ~30% of weeks, but see madVsSignedMean — swapping to MAD does NOT fix the concealment."
+    },
+
+    "madVsSignedMean": {
+      "signedMeanPass5": 43, "signedMeanPass5_hidingBadDays": 17, "badDaysHidden_signed": 47,
+      "madPass5": 41, "madPass5_hidingBadDays": 15, "badDaysHidden_mad": 42,
+      "verdict": "MAD recovers only 5 of 47 hidden bad days. It is NOT the fix. The concealment is not mainly caused by over/under cancellation (failure is 83% one-sided, so there is little to cancel) — it is caused by (a) summing 7 days loosens the effective per-day tolerance and (b) a kcal metric cannot see fat/carb at all."
+    },
+
+    "refusalExploit_E11": {
+      "test": "Refuse (blank) the single worst day of every week, then re-score.",
+      "judgedOnlyDenominator": { "before": 66.1, "after": 70.1, "deltaPts": 4.0 },
+      "fixedPlannedDaysDenominator": { "before": 66.1, "after": 59.9, "deltaPts": -6.2 },
+      "verdict": "DECISIVE. Under a judged-only denominator, refusing days buys +4.0 points with zero behaviour change — the E11 inflation trap reproduced in metric form. Under a fixed planned-days denominator the same action costs -6.2 points. The denominator choice IS the gaming-resistance."
+    },
+
+    "denominatorLadder": {
+      "allPlannedRecords": { "inBand": 290, "n": 455, "pct": 63.74 },
+      "judgedOnly": { "inBand": 290, "n": 439, "pct": 66.06 },
+      "completeDaysOnly": { "inBand": 271, "n": 383, "pct": 70.76 },
+      "spreadPts": 7.02,
+      "note": "Same days, same solver, three legitimate-sounding denominators, 7 points apart. Brief A4/A6."
+    },
+
+    "proteinWeekly": {
+      "weeksScored": 64,
+      "weeklyMeanMeetsMidpoint": 46,
+      "weeklyMeanMeetsFloor085": 57,
+      "meanClearsFloorButHasShortDay": 2,
+      "shortDaysHiddenUnderPassingMean": 3,
+      "worstHiddenShortfallPct": 32.85,
+      "medianWeeklyProteinRatio": 1.0053,
+      "weeksAbove120pctOfMidpoint": 1,
+      "verdict": "Protein concealment is RARE (2/64 weeks) but SEVERE when it happens (a 32.9%-short day inside a 'compliant' week). Critically, there is almost no protein surplus in the data to cancel with — median weekly ratio 1.005, only 1 week above 120% of midpoint. So a weekly protein mean buys the user nothing and costs a hidden floor breach. Strictly dominated by a count."
+    },
+
+    "sixOfSevenProteinRule": {
+      "weeksScoringExactly6of7": 1,
+      "freeDayShortfallPct": [15.6],
+      "dataStrength": "WEAK — n=1. The structural objection stands independent of the data: '>=6 of 7' grants one free day with NO depth limit, so a 100%-short day and a 1%-short day are scored identically."
+    },
+
+    "severitySpread": {
+      "fatOverageBeyondTolerance": { "n": 77, "medianPct": 57.7, "p90Pct": 113.8, "maxPct": 258.9, "beyond2xTolerance": 48 },
+      "carbOverageBeyondTolerance": { "n": 71, "medianPct": 50.7, "p90Pct": 106.0, "maxPct": 158.1, "beyond2xTolerance": 36 },
+      "kcalMissMagnitude": { "n": 54, "medianPct": 23.1, "p90Pct": 40.9, "maxPct": 79.3 },
+      "implication": "A flat in-band COUNT scores a 26% fat overage identically to a 259% one, and 48 of 77 fat-over days are beyond 2x tolerance. This is the exact criticism levelled at CGM time-in-range. The answer in that field is a SEVERITY TIER, not a mean."
+    },
+
+    "sevenDayNoise": {
+      "tier": "DERIVED",
+      "assumedTrueRate": 0.773,
+      "pAtMost4of7": 0.1974,
+      "pExactly7of7": 0.1649,
+      "pAtMost3of7": 0.0513,
+      "pSwingOf3PlusDaysBetweenTwoIndependentWeeks": 0.1051,
+      "wilson95_5of7": [35.9, 91.8],
+      "wilson95_6of7": [48.7, 97.4],
+      "wilson95_21of28": [56.6, 87.3],
+      "wilson95_68of90": [65.8, 83.3],
+      "minDetectableWeekOverWeek": {
+        "rule": "|b-c| > 1.96*sqrt(b+c) (fleet A5)",
+        "thresholdAtBPlusC7": 5.19,
+        "maxPossible": 7,
+        "verdict": "Only a 6-0 or 7-0 flip is detectable at 95%. Every realistic week-over-week move in a 7-day rate is noise."
+      },
+      "implication": "A 7-day rate has a 95% CI roughly +/-28 points wide. A user at a genuinely unchanged 77.3% sees 7/7 about one week in six and <=4/7 about one week in five. Any UI that narrates week-over-week movement on 7 points is narrating noise, and will train users to distrust the app."
+    }
+  },
+
+  "precedents": [
+    {
+      "domain": "Diabetes / CGM",
+      "metric": "Time in Range (TIR) + Time Above Range (TAR) + Time Below Range (TBR)",
+      "definition": "% of CGM readings in 70-180 mg/dL; TAR >180 and >250; TBR <70 and <54. Reported as a stacked composition summing to 100%, never as a single number.",
+      "threshold": ">70% TIR; <25% TAR; <4% TBR<70; <1% TBR<54; CV <36%",
+      "window": "14 days, requiring >=70% (~10 days) sensor wear; 14 days correlates well with 90 days",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7076978/",
+      "url2": "https://www.ncbi.nlm.nih.gov/books/NBK538967/",
+      "url3": "https://pubmed.ncbi.nlm.nih.gov/31177185/",
+      "citation": "Battelino T et al. Diabetes Care 2019;42(8):1593-1603. doi:10.2337/dci19-0028",
+      "whyItMatters": "Closest structural match: a BANDED target with a %-time-in-band headline. Three design decisions are directly transferable: (1) counts not means, (2) the out-of-band time is SPLIT BY DIRECTION and shown alongside, (3) an asymmetric, much stricter threshold on the dangerous side.",
+      "statedLimitation": "'TIR treats all values outside the target range as equally significant, without differentiating their severity' and 'TIR and HbA1c are not efficient for estimating the time in hypoglycemia' — hence the mandatory severity tiers and companion TBR."
+    },
+    {
+      "domain": "Diabetes / CGM display",
+      "metric": "Ambulatory Glucose Profile (AGP) report",
+      "definition": "One page = summary metrics + a modal-day aggregate + a set of INDIVIDUAL DAILY GLUCOSE PROFILES.",
+      "threshold": "n/a (display standard)",
+      "url": "https://www.ncbi.nlm.nih.gov/books/NBK538967/",
+      "whyItMatters": "The canonical precedent for 'rolling headline WITHOUT losing the specific bad day'. Daily traces are retained explicitly so clinicians can 'see if they are clustered on weekends or special activity days'. The aggregate never replaces the days.",
+      "quote": "Used in isolation, it provides no insight into glucose patterns. (on mean glucose)"
+    },
+    {
+      "domain": "Medication adherence",
+      "metric": "PDC — Proportion of Days Covered",
+      "definition": "(days in the measurement period on which the patient had medication available) / (days in the treatment period). Overlapping supply is SHIFTED FORWARD, so PDC cannot exceed 100%. Plan-level rate = % of PATIENTS at or above the threshold, not the mean PDC.",
+      "threshold": ">=80% (>=90% for antiretrovirals)",
+      "window": "measurement year; treatment period must be >=91 days for the patient to enter the denominator; >=2 fills on unique dates",
+      "url": "https://www.pqaalliance.org/adherence-measures",
+      "url2": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6287024/",
+      "whyItMatters": "The mature, heavily-studied 'proportion of periods meeting a standard' measure. Two transferable rules: (1) surplus in one period may NOT bank into another (the forward-shift/cap is precisely an anti-banking rule); (2) a hard MINIMUM WINDOW (91 days) before the number is allowed to exist at all."
+    },
+    {
+      "domain": "Medication adherence",
+      "metric": "MPR — Medication Possession Ratio (the rejected predecessor)",
+      "definition": "sum of days supply / days in period; overlapping early refills are counted, so MPR can exceed 100%.",
+      "threshold": "historically >=80%",
+      "url": "https://www.jmcp.org/doi/10.18553/jmcp.2019.25.10.1073",
+      "url2": "https://success.openhealth.fr/en/articles/3722666-differences-between-mpr-and-pdc",
+      "whyItMatters": "MPR was DEPRECATED by PQA/CMS/NASP specifically because surplus in one window inflated the score. This is the identical defect to 'a wild under-day cancels a wild over-day'. The field has already run this experiment and rejected the averaging form."
+    },
+    {
+      "domain": "Primary care P4P (UK QOF)",
+      "metric": "Exception reporting / Personalised Care Adjustment",
+      "definition": "Practices may EXCLUDE eligible patients from an indicator's denominator.",
+      "threshold": "n/a",
+      "url": "https://bjgp.org/content/61/585/e183",
+      "url2": "https://www.nejm.org/doi/full/10.1056/NEJMsa0800310",
+      "citation": "Doran T et al. Exclusion of Patients from Pay-for-Performance Targets by English Physicians. NEJM 2008;359:274-284. Median exclusion rate 5.3% in year 2.",
+      "whyItMatters": "The exact structural analogue of the E11 trap and of brief A6 (16 total-failure days dropped from the rig denominator). A denominator the measured party can shrink is a denominator that will shrink. Note the honest nuance: Doran found exception reporting was NOT evidence of widespread gaming (overall rates 4-7%) — the mechanism existed and was mostly used legitimately. The lesson is about the STRUCTURE being exploitable, not about people being dishonest.",
+      "url3": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3535413/"
+    },
+    {
+      "domain": "P4P design theory",
+      "metric": "Threshold vs continuous scoring",
+      "definition": "A single absolute cutoff creates discontinuous incentives.",
+      "threshold": "n/a",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3535413/",
+      "whyItMatters": "Direct answer to 'does a >=80%-style cutoff create a cliff users optimise against?' — yes. Quote: 'For improvement beyond targets and improvement not reaching targets, providers receive zero incremental payment.' Providers just below the threshold have maximal incentive; those far above or far below have none. Recommendation: tiered targets or 'eliminate targets altogether and use a continuous gradient'."
+    },
+    {
+      "domain": "Nutrition coaching app",
+      "metric": "Carbon Diet Coach — automatic weekly compliance",
+      "definition": "'Carbon considers you compliant when you meet two things: Your minimum protein target [and] Your total calorie target.' Carbs and fat are flexible. Compliance is computed automatically from logged macros, not self-reported.",
+      "threshold": "not publicly specified",
+      "window": "7-day check-in",
+      "url": "https://help.joincarbon.com/en/articles/6004813-the-importance-of-compliance",
+      "url2": "https://help.joincarbon.com/en/articles/6004812-weekly-check-in",
+      "whyItMatters": "The market leader in macro coaching grades on TWO macros (kcal + protein floor), not four — structurally identical to Cut Protocol's accept gate (brief B2). Their non-compliant branch HOLDS targets rather than adjusting: non-compliance costs the user information, it does not score them."
+    },
+    {
+      "domain": "Nutrition coaching app",
+      "metric": "MacroFactor — deliberately 'adherence neutral', no compliance score",
+      "definition": "'a lack of functional and visual elements within MacroFactor that would attempt to cajole people into adhering to their diet, or that would shame people for not adhering to their diet.'",
+      "threshold": "none by design",
+      "url": "https://macrofactor.com/adherence-neutral/",
+      "url2": "https://macrofactor.com/macrofactors-algorithms-and-core-philosophy/",
+      "whyItMatters": "The strongest counter-argument to shipping ANY headline. Names the exact self-corrupting mechanism: 'it's not uncommon for users to stop logging for the day when they exceed their calorie target' and users 'fudge food entries to avoid the appearance of exceeding your calorie target, or you don't track on days you know you'll exceed'. That is E11 driven by the USER: the metric erodes its own denominator.",
+      "quote2": "We don't expect people to eat like robots, and we don't shame people for the choices they make."
+    },
+    {
+      "domain": "Nutrition coaching app",
+      "metric": "MacroFactor — calorie rollover / weekly averaging stance",
+      "definition": "The app does NOT automatically average or roll over calories; manual only.",
+      "threshold": "n/a",
+      "url": "https://help.macrofactorapp.com/en/articles/108-how-to-adjust-calorie-targets-to-account-for-overages-or-to-roll-over-unused-calories",
+      "whyItMatters": "Direct, on-domain warning about the exact metric being proposed. Quote: 'For some people, this strategy may encourage (or at least facilitate) binge-purge behavior - intentionally undereating all week to save up for an uninhibited free-for-all on the weekend.' Also: 'We generally recommend that you just try to be relatively close to your calorie targets most days, and not worry much about underages or overages,' and pursuing perfect weekly adherence 'can create more problems than it solves... a hallmark of rigid cognitive restraint.'"
+    },
+    {
+      "domain": "Consumer weight loss",
+      "metric": "WeightWatchers Points — daily budget + capped weekly rollover",
+      "definition": "Daily Points budget plus a separate weekly budget. Up to 4 unused daily Points roll into the weekly budget. Weeklies RESET at weigh-in and never carry into the next week.",
+      "threshold": "4 Points/day rollover cap",
+      "url": "https://www.weightwatchers.com/us/blog/how-it-works/rollovers",
+      "whyItMatters": "The mainstream precedent for weekly energy banking, and it is gaming-resistant BY CONSTRUCTION: the daily-to-weekly transfer is CAPPED and the weekly bucket does not compound across weeks. Banking is permitted but bounded."
+    },
+    {
+      "domain": "Nutrition tracking",
+      "metric": "Cronometer — Nutrition Report averages with explicit denominator selector",
+      "definition": "Average daily nutrition over a range, with a user-visible choice of All Days / Non-Empty Days / Complete Days.",
+      "threshold": "n/a",
+      "url": "https://support.cronometer.com/hc/en-us/articles/360018569691-Nutrition-Report",
+      "whyItMatters": "Instructive as an ANTI-pattern made honest: Cronometer exposes the denominator choice to the user rather than hiding it. It is the same three-rung ladder this agent measured at 63.7 / 66.1 / 70.8%. If a denominator is selectable it must be labelled."
+    },
+    {
+      "domain": "Bodybuilding coaching app",
+      "metric": "RP Diet Coach — per-meal 3-state compliance",
+      "definition": "Each meal is checked in as 'roughly at' / 'over macros' / 'under macros'; weekly review adjusts.",
+      "threshold": "n/a",
+      "url": "https://rpstrength.com/pages/diet-coach-app",
+      "whyItMatters": "Existing in-domain precedent for SIGNED 3-state classification rather than a pass/fail bit — the same shape as CGM's TIR/TAR/TBR and the shape recommended below."
+    },
+    {
+      "domain": "Clinical trials / dietary adherence",
+      "metric": "Self-monitoring consistency tiers",
+      "definition": "Participants binned as rare (<33% of days tracked), inconsistent (33-66%), consistent (>66%).",
+      "threshold": "33% / 66%",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC9159560/",
+      "whyItMatters": "Dietary trials measure adherence as a PROPORTION OF DAYS over long windows, not as a mean intake, and they use graded tiers rather than a single cliff."
+    }
+  ],
+
+  "physiology": {
+    "verdict": "ENERGY AVERAGES ACROSS DAYS. PROTEIN DOES NOT. They require different metric forms.",
+    "energy": {
+      "claim": "Weekly energy balance is a defensible unit for body-composition change.",
+      "tier": "SOURCED",
+      "strongestEvidence": "Intermittent vs continuous energy restriction RCT meta-analyses: at matched weekly energy deficits, intermittent restriction (which by construction runs large day-to-day swings) produces comparable weight and fat loss to daily restriction. WMD -0.61 kg (95% CI -1.70 to 0.47; p=0.87) for weight loss; no significant difference in fat mass, fat-free mass, or waist circumference.",
+      "url": "https://translational-medicine.biomedcentral.com/articles/10.1186/s12967-018-1748-4",
+      "url2": "https://onlinelibrary.wiley.com/doi/10.1002/oby.23023",
+      "mechanism": "Adipose tissue is a genuine energy buffer. A surplus day is physically stored and a deficit day physically draws it down; the ledger is real and carries forward.",
+      "counterEvidence": {
+        "claim": "Day-to-day energy-intake VARIABILITY is independently associated with worse body composition, at equal mean intake.",
+        "tier": "SOURCED (cross-sectional, weak causally)",
+        "study": "n=220 adults (151F/69M), 7-day food records + BIA. Multiple linear regression: relative variability of daily energy intake vs body fat % coefficient 10.5 (p<0.01), BMI 6.2 (p<0.01), waist circumference 14.1 (p<0.05). Critically: 'the dependence of the anthropometric parameters on the average daily intake did not reach statistical significance (p>0.05) for any of the studied dependencies.'",
+        "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11241088/",
+        "honestCaveats": "Cross-sectional, so causality is unestablished. Self-reported intake, and the authors concede under-reporting 'especially in obese women' — which is the most likely explanation for the null on MEAN intake, so do NOT cite that null as evidence mean intake doesn't matter. Significant in women, not in men (n=69).",
+        "authorsOwnHedge": "'greater irregularity in the energy intake is likely to be associated with a higher percentage of body fat, PROVIDED THERE IS INADEQUATE COMPENSATION for the energy intake on the subsequent days' — i.e. compensated swings may be fine."
+      },
+      "netPosition": "Weekly energy averaging is physiologically defensible for the ENERGY LEDGER. It is not established as behaviourally or compositionally neutral. A metric may average energy across days; it should not celebrate variance."
+    },
+    "protein": {
+      "claim": "Protein does NOT average across days the way energy does. A weekly protein mean is physiologically unjustified.",
+      "tier": "SOURCED + JUDGEMENT",
+      "mechanism": "There is no protein storage depot. Amino acids in excess of synthetic demand are deaminated and oxidised, not banked. A 300 g day cannot pay for a 60 g day the way a surplus of energy pays for a deficit.",
+      "doseResponse": "Myofibrillar MPS is saturable at ~20 g whey in trained young men (Witard et al.), the classic basis for the 'excess is oxidised' position.",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/24257722/",
+      "honestComplication": {
+        "study": "Trommelen et al. 2023, Cell Reports Medicine: 'The anabolic response to protein ingestion during recovery from exercise has no upper limit in magnitude and duration in vivo in humans.' Incorporation was saturated at 25 g but still rising at 12 h with 100 g.",
+        "url": "https://www.cell.com/cell-reports-medicine/fulltext/S2666-3791(23)00540-2",
+        "whatItChanges": "It weakens the WITHIN-DAY per-meal ceiling argument (a big bolus is used better than once thought). It does NOT establish multi-day protein banking — nothing shows a high Monday funds a low Thursday. Report this; do not suppress it."
+      },
+      "distributionEvidence": {
+        "acute": "Mamerow et al. 2014: 24-h mixed muscle FSR 25% higher on EVEN vs SKEW protein distribution (0.075 vs 0.056 %/h, P=0.003), n=8, 7-day crossover.",
+        "url": "https://pubmed.ncbi.nlm.nih.gov/24477298/",
+        "chronic": "Hudson et al. 2020 systematic review is deliberately equivocal: 'the current available evidence is too limited and inconsistent to make a definitive conclusion about whether changing dietary patterns from consuming an unbalanced distribution to consuming an optimal protein distribution pattern will positively influence muscle-related outcomes' and 'it appears more important to ensure adequate total daily protein intake.'",
+        "url2": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7285146/",
+        "gap": "HONEST GAP: the distribution literature is almost entirely WITHIN-day. The review does not address between-day protein variability, cycling, or averaging at all. There is no direct RCT evidence I could find that answers 'may protein be averaged across days?' The position below is therefore mechanism + measurement, not a cited trial."
+      },
+      "measuredSupport": "MEASURED: median weekly protein ratio is 1.0053 of midpoint and only 1 of 64 weeks exceeds 120% of midpoint. There is essentially NO protein surplus in Cut Protocol's own plans to average with. A weekly protein mean would therefore give the user nothing while permitting a 32.9%-short day inside a 'compliant' week (measured worst case).",
+      "designConsequence": "Protein gets a COUNT of days meeting the floor, never a mean. Energy may carry a magnitude/averaging term. This asymmetry is the single most design-determining finding in this report."
+    }
+  },
+
+  "candidates": [
+    {
+      "id": "M1",
+      "name": "7-day mean kcal within +/-5% of target",
+      "status": "REJECTED",
+      "formula": "abs(sum(achieved.kcal over week) - sum(target.kcal over week)) / sum(target.kcal) <= 0.05",
+      "exploits": [
+        { "id": "M1-E1", "name": "Deliberate binge/purge cycling", "detail": "Under-eat all week to fund one enormous day; the headline stays green. Named as a real behavioural risk by MacroFactor in the exact context of calorie rollover: 'this strategy may encourage (or at least facilitate) binge-purge behavior'.", "tier": "SOURCED", "url": "https://help.macrofactorapp.com/en/articles/108-how-to-adjust-calorie-targets-to-account-for-overages-or-to-roll-over-unused-calories" },
+        { "id": "M1-E2", "name": "Silent concealment", "detail": "MEASURED: 43 of 64 weeks pass; 17 of those contain >=1 out-of-band day; 47 bad days hidden. False alarms: 0. The metric is one-directional — it can only make things look better.", "tier": "MEASURED" },
+        { "id": "M1-E3", "name": "Structural blindness to the dominant failure", "detail": "MEASURED: 46-49% of failing days have kcal AND protein both fine (3 seeds). Cut Protocol fails on FAT and CARB overage (fat 77-0 over-vs-short). A kcal metric cannot see it.", "tier": "MEASURED" },
+        { "id": "M1-E4", "name": "Constitutional violation", "detail": "'Solver declares unsolvable + why — silent target misses are forbidden.' M1 is a mechanism for silent target misses by construction.", "tier": "JUDGEMENT" }
+      ],
+      "priorArtRejection": "MPR was deprecated by PQA/CMS for precisely this defect (surplus in one window inflating the score) and replaced by PDC, which shifts overlap forward and caps at 100%."
+    },
+    {
+      "id": "M2",
+      "name": "7-day MEAN ABSOLUTE DEVIATION of kcal <= 5%",
+      "status": "REJECTED",
+      "formula": "mean(abs(day.kcalDeltaPct)) <= 0.05",
+      "rationale": "Proposed as the anti-cancellation fix.",
+      "exploits": [
+        { "id": "M2-E1", "name": "Does not actually fix it", "detail": "MEASURED: 41 weeks pass, 15 still hide a bad day, 42 of 47 hidden bad days survive the switch. MAD recovers only 5. Cancellation is not the main leak because failure is 83% one-sided.", "tier": "MEASURED" },
+        { "id": "M2-E2", "name": "Still kcal-only", "detail": "Inherits M1-E3 whole. Blind to ~half of failing days.", "tier": "MEASURED" }
+      ],
+      "verdict": "Rejecting M2 is as important as rejecting M1 — it is the obvious-looking fix that measurement shows does almost nothing. Do not let it ship as a compromise."
+    },
+    {
+      "id": "M3",
+      "name": ">=6 of 7 days met the protein floor",
+      "status": "REJECTED",
+      "formula": "count(day.proteinOk) >= 6",
+      "exploits": [
+        { "id": "M3-E1", "name": "Unbounded free day", "detail": "The 7th day has no depth limit: 1% short and 100% short score identically. MEASURED worst free-day shortfall in-sample 15.6%, but n=1 week at exactly 6/7 so the data is WEAK; the structural hole is the argument.", "tier": "MEASURED (weak) + JUDGEMENT" },
+        { "id": "M3-E2", "name": "Incentive to PLAN a bad day", "detail": "Once 6 days are secured the 7th is free, which converts a floor into a budget. This is the P4P threshold effect: providers just below a cutoff have maximal incentive, those already past it have none.", "tier": "SOURCED", "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3535413/" },
+        { "id": "M3-E3", "name": "Cliff at n=7 is pure noise", "detail": "DERIVED: at a true 77.3% rate, P(exactly 7/7)=16.5% and P(<=4/7)=19.7%. A 6-of-7 cliff will flip on chance alone most weeks.", "tier": "DERIVED" }
+      ],
+      "note": "The COUNT idea is right; the >=6/7 THRESHOLD is what fails. See R2."
+    },
+    {
+      "id": "M4",
+      "name": "Days-in-band rate over judged days (naive)",
+      "status": "DISQUALIFIED — E11 TRAP",
+      "formula": "count(day.inBand) / count(day.judged)",
+      "exploits": [
+        { "id": "M4-E1", "name": "Refusing a day RAISES the score", "detail": "MEASURED: refusing the single worst day of every week moves the rate 66.1% -> 70.1%, +4.0 pts, zero behaviour change. This is exactly the defect already found in the project's own rig (brief A6: 16 satisfiable total-failure days excluded via `judged: filled.length>0`), and exactly the E11 pattern.", "tier": "MEASURED" },
+        { "id": "M4-E2", "name": "Denominator drift", "detail": "MEASURED: all-planned 63.74% / judged-only 66.06% / complete-days-only 70.76% — 7.0 points of free movement between three defensible-sounding denominators.", "tier": "MEASURED" }
+      ],
+      "verdict": "DISQUALIFIED under the fleet's own rule: any metric where refusing a day raises the score is out."
+    },
+    {
+      "id": "M5",
+      "name": "Days-in-band rate over FIXED PLANNED days",
+      "status": "ACCEPTED as the core",
+      "formula": "count(day.inBand) / count(day.planned)  -- denominator fixed at plan creation; a refused, empty, or unsolved day counts as NOT in band",
+      "gamingResistance": [
+        { "detail": "MEASURED: the same refuse-the-worst-day attack now moves the rate 66.1% -> 59.9%, i.e. -6.2 pts. Refusal is correctly punished, not rewarded.", "tier": "MEASURED" },
+        { "detail": "Denominator is set when the plan is generated and cannot shrink afterwards. This is the PDC forward-shift discipline: the window is fixed before the outcome is known." }
+      ],
+      "residualWeakness": "Flat count discards severity — MEASURED fat overage beyond tolerance runs median 57.7%, p90 113.8%, max 258.9%, and 48 of 77 fat-over days exceed 2x tolerance. This is the documented TIR criticism. Fixed by R3."
+    },
+    {
+      "id": "M6",
+      "name": "3-state day composition (in-band / over / short), fixed denominator",
+      "status": "RECOMMENDED",
+      "formula": "For each planned day, classify into exactly one of: IN (dayInTolerance true) | OVER (any band macro over, none short) | SHORT (any macro short/below floor, none over) | BOTH. Report all four as % of PLANNED days, summing to 100%.",
+      "measured": { "in": 66.1, "over": 21.6, "short": 3.4, "both": 8.9, "crossSeedStability": "66.1 / 67.2 / 66.1 in-band" },
+      "gamingResistance": [
+        "Sums to 100% of a FIXED denominator by construction — a dropped day makes the bar visibly shrink rather than silently improving a ratio.",
+        "Directional split means the app cannot report 'better' by trading an over-day for an under-day; both are visible and separately named.",
+        "Directly mirrors the CGM TIR/TAR/TBR stacked bar, which exists because a single in-range number hid the dangerous direction."
+      ],
+      "sourceAnalogue": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7076978/"
+    },
+    {
+      "id": "M7",
+      "name": "Severity tier on out-of-band days (level 1 / level 2)",
+      "status": "RECOMMENDED as a companion to M6",
+      "formula": "An OVER day is level 2 if any band macro exceeds 2x its day tolerance (fat/carb overPct > 0.50; kcal |delta| > 0.30); otherwise level 1.",
+      "measured": { "fatOverBeyond2xTolerance": 48, "ofFatOverDays": 77, "carbOverBeyond2xTolerance": 36, "ofCarbOverDays": 71 },
+      "rationale": "Answers the one real criticism of a count metric, using the CGM field's own answer (the <54 mg/dL level-2 tier) rather than inventing a mean.",
+      "sourceAnalogue": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7076978/"
+    },
+    {
+      "id": "M8",
+      "name": "Protein floor DAY COUNT (no mean, no free day)",
+      "status": "RECOMMENDED",
+      "formula": "count(day.proteinOk) / count(day.planned), reported as a plain count 'protein floor met on 5 of 7 planned days'. NO threshold, NO pass/fail badge, NO mean.",
+      "rationale": "Protein cannot bank across days (see physiology). MEASURED: there is no surplus to average anyway (median weekly ratio 1.005; 1 week of 64 above 120%). A count with no cliff avoids both the M3 free-day hole and the P4P threshold effect.",
+      "gamingResistance": "No threshold means nothing to optimise against; a fixed planned-day denominator means refusal cannot help."
+    },
+    {
+      "id": "M9",
+      "name": "28-day rolling window instead of 7",
+      "status": "RECOMMENDED (window choice)",
+      "rationale": [
+        "DERIVED: a 7-day rate has a 95% Wilson CI of roughly [35.9, 91.8] at 5/7 and [48.7, 97.4] at 6/7 — about +/-28 points wide. At 28 days, 21/28 gives [56.6, 87.3]; at 90 days, 68/90 gives [65.8, 83.3].",
+        "DERIVED: at an UNCHANGED true rate of 77.3%, two consecutive independent weeks differ by >=3 days 10.5% of the time. Week-over-week narration on 7 points is narration of noise.",
+        "DERIVED: fleet A5 min-detectable-effect applied to 7 paired days gives a threshold of 1.96*sqrt(7)=5.19 against a maximum possible |b-c| of 7. Only a 6-0 or 7-0 flip is real.",
+        "SOURCED: every mature analogue uses a far longer window. CGM requires 14 days at >=70% wear ('14 days of CGM data correlate well with 3 months'). PDC requires a >=91-day treatment period. Basiotis et al. 1987 found 31+ days of records are needed to estimate an individual's usual energy intake within 10% at 95% confidence."
+      ],
+      "url": "https://www.ncbi.nlm.nih.gov/books/NBK538967/",
+      "url2": "https://pubmed.ncbi.nlm.nih.gov/3210073/",
+      "url3": "https://jn.nutrition.org/article/S0022-3166(23)08345-1/abstract",
+      "concession": "A 28-day window cannot exist for a new user. Show the raw count ('in band on 9 of 12 days so far') and withhold any rate, trend, or comparison until 14 planned days exist — the CGM data-sufficiency discipline."
+    },
+    {
+      "id": "M10",
+      "name": "Weekly energy ledger (kcal only), shown as a number not a grade",
+      "status": "CONDITIONALLY ACCEPTED",
+      "formula": "sum(achieved.kcal) - sum(target.kcal) over the window, displayed in kcal, with NO pass/fail threshold and NO colour.",
+      "rationale": "This is the one place the physiology genuinely supports averaging (matched-deficit intermittent vs continuous restriction meta-analyses). Presenting it as a ledger balance rather than a graded metric captures the true statement ('your week is 1,400 kcal above plan') without creating a score to game.",
+      "guards": [
+        "Never a threshold, never green/amber — it is an instrument reading, not a verdict.",
+        "Must never be able to overrule or recolour a per-day verdict.",
+        "Apply a WW-style asymmetric cap if it is ever used to fund a target adjustment: bank at most a bounded amount per day and never compound across windows.",
+        "Pair with the variance caveat: day-to-day intake variability is independently associated with worse body composition at equal mean intake (n=220, body fat coefficient 10.5, p<0.01), so the app must not present 'it averages out' as encouragement to swing."
+      ],
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11241088/",
+      "url2": "https://www.weightwatchers.com/us/blog/how-it-works/rollovers"
+    }
+  ],
+
+  "recommendation": {
+    "shipDecision": "SHIP A NARROW VERSION, OR SHIP NOTHING. Do not ship the proposal as written.",
+    "theMetric": {
+      "primary": "M6 + M9: 3-state day composition over a FIXED denominator of planned days, on a 28-day rolling window. `inBandPct / overPct / shortPct / bothPct`, summing to 100%.",
+      "companions": [
+        "M7 severity tier: mark OVER days that exceed 2x tolerance as level 2.",
+        "M8 protein floor count: 'protein floor met on N of M planned days'. Count only. No mean, no threshold.",
+        "M10 energy ledger: signed kcal sum vs plan, uncoloured, ungraded, optional."
+      ],
+      "explicitlyAbsent": [
+        "No single composite score.",
+        "No pass/fail threshold anywhere.",
+        "No streak.",
+        "No week-over-week delta narration."
+      ]
+    },
+    "implementationNote": "Every input already exists. `dayTolerance()` (mealSolver.js:229) already returns signed, per-macro, per-direction fields — kcalDeltaPct signed, proteinShortPct one-sided, fatShortPct/fatOverPct, carbShortPct/carbOverPct. The 3-state classification is a pure function of the existing tolerance object. The blocker is NOT computation: it is brief E2 — Plan/PlanSlot (schema.prisma:493-527) have no day-verdict column and genMeta is React state (PlanTab.jsx:750), discarded on tab switch. A rolling metric CANNOT be built until the per-day verdict is persisted. Persisting the verdict is a prerequisite, and is worth doing on its own merits regardless of whether this metric ships.",
+    "gamingResistanceArgument": [
+      "FIXED DENOMINATOR set at plan creation: refusing a day costs -6.2 pts instead of gaining +4.0 (MEASURED). Defeats E11 by construction, not by intention.",
+      "COUNTS NOT MEANS: no over-day can cancel an under-day. Defeats M1-E1/M1-E2 (47 hidden bad days).",
+      "DIRECTIONAL SPLIT: the over-side is separately named and, at 21.6% vs 3.4%, tells the true story of this solver. Prevents 'improvement' by trading direction.",
+      "SUMS TO 100%: a missing day shrinks the bar visibly. Denominator manipulation becomes a visual defect rather than a silent gain.",
+      "NO THRESHOLD: nothing to optimise against, no cliff, no just-below-the-line incentive (P4P threshold literature).",
+      "28-DAY WINDOW: the number stops swinging on noise, so users are not trained to distrust it.",
+      "PROTEIN COUNTED SEPARATELY AND NEVER AVERAGED: matches the physiology and closes the 32.9%-short-day hole."
+    ]
+  },
+
+  "rejected": [
+    { "metric": "7-day mean kcal +/-5%", "reason": "47 out-of-band days hidden across 17 of 43 passing weeks, 0 false alarms — a one-directional concealment device. Blind to ~half of failing days. Prior art: MPR deprecated for this exact defect." },
+    { "metric": "7-day MAD of kcal", "reason": "The obvious fix that measurement shows does almost nothing: recovers 5 of 47 hidden days. Failure is 83% one-sided, so there is little cancellation to prevent." },
+    { "metric": ">=6 of 7 protein-floor days", "reason": "Unbounded free 7th day; converts a floor into a budget; the cliff flips on noise (P(7/7)=16.5% at an unchanged true rate)." },
+    { "metric": "Days-in-band over JUDGED days", "reason": "DISQUALIFIED. Refusing the worst day of each week buys +4.0 pts for free. Reproduces brief A6 and E11." },
+    { "metric": "Days-in-band over COMPLETE days only", "reason": "Worse than the above: +7.0 pts of free movement versus the all-planned denominator." },
+    { "metric": "Any single composite 'adherence score'", "reason": "Cannot satisfy the constitution's ban on silent misses — a scalar necessarily averages a specific bad day into a number. Also invites the shame/logging-collapse failure MacroFactor documents." },
+    { "metric": "Any >=80%-style pass threshold (the PDC form)", "reason": "PDC's 80% works because it drives a clinical decision by a third party over a 91+ day window. A user-facing cliff on a self-tracked short window creates the P4P threshold effect with none of the benefit. Take PDC's anti-banking discipline; leave its threshold." },
+    { "metric": "Weekly protein MEAN", "reason": "No physiological basis for cross-day protein banking, and MEASURED there is no surplus to bank (median weekly ratio 1.005). Costs a hidden 32.9%-short day and buys nothing." },
+    { "metric": "Streaks / 'perfect week' badges", "reason": "Constitution: no engagement bait, no streak-shaming. Also the documented route to rigid restraint and to users abandoning logging on a bad day." },
+    { "metric": "Replacing the per-day verdict", "reason": "Non-negotiable. The weekly number is additive context only. The constitution forbids silent target misses and the per-day verdict is the only thing that names them." }
+  ],
+
+  "display": {
+    "principles": [
+      "The rolling metric is CONTEXT for the per-day verdict, never a substitute. AGP precedent: summary metrics AND the individual daily traces on the same page.",
+      "Every day in the window stays individually inspectable and individually named."
+    ],
+    "layout": {
+      "component": "A 28-cell day strip (one cell per planned day, chronological) directly above a 4-segment stacked composition bar.",
+      "dayStrip": "Each cell is a day. Click/hover reveals that day's existing dayMissLine() text verbatim — the specific bad day is one interaction away and is never aggregated out of existence. Empty/refused days render as an outlined cell with the refusal reason, so they are visibly present in the denominator.",
+      "compositionBar": "Four segments summing to the full width: In band / Over / Short / Both. Width IS the denominator — a shrunken bar means missing days."
+    },
+    "colour": {
+      "inBand": "--accent #2FD576. Legal: 'on-target' is one of the sanctioned green meanings. This is the ONLY green in the component.",
+      "over": "--warn #E5A83B. Law (b): over target is calm amber, never red.",
+      "overLevel2": "--warn at full opacity with a 1px --warn hairline; level 1 at reduced opacity. A LIGHTNESS/opacity step, not a new hue and not red.",
+      "short": "--faint over --card-2. A neutral lightness step, NOT a macro hue and NOT red. Short days are rare here (3.4%) and are a supply problem, not a user failure.",
+      "both": "--warn at the level-1 treatment with the --faint hairline of the short segment.",
+      "forbidden": "No --red anywhere in this component. No --protein/--carb/--fat hues — those three are reserved for their macros and must never be borrowed for a day-state legend (law c).",
+      "elevation": "Cells sit on --card-2 with --rule hairlines. No shadow token exists; do not add one."
+    },
+    "copy": {
+      "headline": "'In band on 19 of 28 planned days.' Plain count first, percentage second, never a grade.",
+      "overLine": "'6 days ran over — 4 of them on fat.' States direction and the binding macro, no judgement vocabulary.",
+      "proteinLine": "'Protein floor met on 24 of 28 days.'",
+      "energyLedger": "'Across 28 days you are 3,100 kcal above plan.' Uncoloured, no verdict.",
+      "insufficientData": "Below 14 planned days: show the raw count only and state 'too few days to show a rate yet' — no percentage, no trend, no comparison. CGM data-sufficiency discipline.",
+      "bannedCopy": [
+        "'You're on track this week' when any day in the window is out of band — that is the silent miss the constitution forbids.",
+        "Any phrasing implying an under-day earns an over-day.",
+        "Any week-over-week comparison ('up 2 days from last week') — DERIVED noise."
+      ]
+    },
+    "constitutionalCheck": {
+      "greenScarcity": "PASS — accent used only for in-band.",
+      "noRedOnFoodOrBodyData": "PASS — over is amber, short is neutral, no red anywhere.",
+      "fixedMacroTriad": "PASS — macro hues not borrowed for day states.",
+      "elevationIsLightness": "PASS — severity tier is opacity/hairline, not shadow.",
+      "noSilentMisses": "PASS — the day strip keeps every individual day and its miss line reachable; the metric can never report clean while a day is dirty because the composition bar shows the dirty days by construction."
+    }
+  },
+
+  "risks": [
+    { "risk": "The 7-day cohort is only 65 personas / 64 weeks. Every weekly magnitude here (43 pass, 17 concealing, 47 hidden days) rests on that n. Directions are stable across 3 seeds; magnitudes could move materially on a bigger cohort.", "severity": "medium" },
+    { "risk": "These are SOLVER-generated days, not LOGGED days. The proposal is about a user-facing adherence metric over what the user actually ate. My concealment numbers measure how the metric behaves over plans the app produced. A real logging distribution will be wider and more variable, which makes the concealment WORSE, not better — but I did not measure that and cannot claim it.", "severity": "high — this is the biggest gap in my evidence" },
+    { "risk": "Brief gap L: the adaptive target never fired in any corpus measurement, and real users get it from week 3 with +/-500 kcal drift — outside the +/-15% gate. A rolling window spanning a target change is measuring against a moving ruler. I have not modelled this and it could invalidate a 28-day window specifically.", "severity": "high" },
+    { "risk": "I may be wrong that MAD is useless. It recovers 5 of 47 in THIS data because failure is one-sided. If the trim arm (C5/A17) lands and failure becomes two-sided, cancellation becomes the dominant leak and MAD's value rises. Re-test after any trim lever ships.", "severity": "medium" },
+    { "risk": "The energy-variability finding (PMC11241088) is cross-sectional with self-reported intake in an obesity-skewed sample. I lean on it for 'do not celebrate variance'. It cannot bear more weight than that, and its null on mean intake is almost certainly a reporting artifact.", "severity": "medium" },
+    { "risk": "Between-day protein averaging has NO direct trial evidence either way that I could find. My verdict rests on mechanism (no storage depot) plus Cut Protocol's own measured absence of surplus. Trommelen 2023 genuinely complicates the within-day ceiling story. If someone produces a between-day protein-cycling RCT showing equivalence, M8's rationale weakens — though M8 would still be the safer default.", "severity": "medium" },
+    { "risk": "MacroFactor's position is that NO adherence metric should exist, and they are the most technically credible operator in this space. My recommendation is a partial rejection of that view, justified by Cut Protocol's different job (it PRESCRIBES plans, so it owes the user an account of how its own plans performed). Reasonable people would disagree, and if the metric is ever shown to the user as a grade rather than an instrument reading, MacroFactor is right and I am wrong.", "severity": "high" },
+    { "risk": "E2 blocks the whole thing: no day-verdict is persisted anywhere. If the metric is built on re-derived verdicts computed at read time, it will silently disagree with whatever the user saw on the day (brief E4 already documents warnings quoting stale numbers). Persist the verdict at write time or do not build this.", "severity": "high" },
+    { "risk": "I did not test whether a rolling metric changes SOLVER behaviour. It should not — it is a reporting layer — but if anyone wires it into scoring or target adjustment, every exploit above returns with real consequences.", "severity": "medium" }
+  ],
+
+  "briefClaimsTouched": [
+    { "id": "A5", "note": "Applied to a 7-day user-facing rate: threshold 1.96*sqrt(7)=5.19 vs max |b-c|=7. Only a 6-0/7-0 flip is detectable." },
+    { "id": "A6", "note": "Reproduced as a metric-design defect. Judged-only denominator = +4.0 pts for refusing the worst day per week (MEASURED)." },
+    { "id": "A4", "note": "Denominator ladder measured on the 7-day cohort at 63.74 / 66.06 / 70.76 — 7.0 pts spread." },
+    { "id": "B1/B10", "note": "ADJUSTED. Band-macro pure-over 83.0% (122/147) on this cohort; fat 77-0, carb 72-1. Direction confirmed, magnitude below the 94.2% in the task prompt." },
+    { "id": "E3", "note": "ADJUSTED. 46-49% of bad days have kcal AND protein both fine (3 seeds), vs 66.6% in the brief. Same defect, smaller magnitude — and it is the reason a kcal+protein weekly headline is structurally blind." },
+    { "id": "E11", "note": "Central to this report. Measured the inflation directly: +4.0 pts from denominator erosion with zero behaviour change. Also found the USER-side version of the same trap documented by MacroFactor (users stop logging or fudge entries on bad days)." },
+    { "id": "E2", "note": "Blocking prerequisite. No day-verdict is persisted; a rolling metric cannot be built until it is." },
+    { "id": "L (gaps)", "note": "The adaptive-target drift gap directly threatens a 28-day window. Flagged, not resolved." }
+  ]
+}

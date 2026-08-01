@@ -1,0 +1,324 @@
+{
+  "agent": "W2-6",
+  "lane": "fresh-sweep + CONTRARIAN (online research)",
+  "date": "2026-07-31",
+  "branch": "fleet/measure-2026-08",
+  "source_modified": false,
+  "evidence_marks": {
+    "SRC": "verified from the cited URL",
+    "CODE": "verified by reading this repo",
+    "MEAS": "measured by this agent on the real 250-persona fleet (fleet/out/W2-6/rulershape.mjs)",
+    "JUDGE": "judgement",
+    "NO_SOURCE": "looked, found nothing — reported as a real result"
+  },
+  "artifacts": [
+    "fleet/out/W2-6/sweep.json",
+    "fleet/out/W2-6/rulershape.mjs",
+    "fleet/out/W2-6/rulershape.json"
+  ],
+
+  "part1_fresh_sweep": [
+    {
+      "id": "P1-1",
+      "topic": "New optimisation approaches for multi-constraint meal planning (2025-2026)",
+      "finding": "The only 2026 primary paper that squarely addresses this problem is the MIGP paper W2-1 already found: integer serving variables + goal-programming deviation minimisation, inverse-target normalisation, scipy.optimize.milp/HiGHS. Solve times 13 ms (8 foods) / 47 ms (15) / 1.1 s (25). Implementation stated open-source Python; no GitHub URL located in the paper body.",
+      "mark": "SRC",
+      "urls": ["https://arxiv.org/abs/2605.13849", "https://arxiv.org/html/2605.13849v1"],
+      "changes_for_cut_protocol": "NO — already in W2-1's report. Confirms rather than adds. Its decision-variable choice (integer servings of individual foods) is the one Cut Protocol must reject; see P1-3.",
+      "novelty_vs_prior_sweep": "none"
+    },
+    {
+      "id": "P1-2",
+      "topic": "Multi-objective / RL food recommenders (2024-2026)",
+      "finding": "A distinct 2025-2026 strand optimises Pareto fronts over {preference, health, diversity} rather than macro-target deviation: MOPI-HFRS and its MORL-A2C reranker; and a Nutrients 2024 CFRL system with a weighted reward (ratings 0.3 / nutrition 0.4 / preference 0.3). CFRL measured, n=1000 simulated users, 10 runs: acceptance 4.5/5 with nutrition score 0.90; the nutrition-FOCUSED baseline scored nutrition 0.94 but acceptance 2.8/5.",
+      "mark": "SRC",
+      "urls": [
+        "https://pmc.ncbi.nlm.nih.gov/articles/PMC10857145/",
+        "https://arxiv.org/pdf/2606.23603"
+      ],
+      "changes_for_cut_protocol": "YES, indirectly — this is the only quantified precedent anywhere that maximising nutritional compliance ALONE costs user acceptance: +4% nutrition score bought -61% acceptance. It is the strongest external support for contrarian case C. Caveat: simulated users, not humans.",
+      "novelty_vs_prior_sweep": "new"
+    },
+    {
+      "id": "P1-3",
+      "topic": "Rounding-aware / integer optimisation in diet problems (directly relevant to K6)",
+      "finding": "MIGP vs goal-programming-then-round over 810 instances: median objective 0.141 vs 0.529 (3.8x better), median MAX macro deviation 6.3% vs 21.6%, MIGP strictly better in 66% of instances and never worse; hard-constraint IP feasible-and-better in only 48%. Mechanism named by the authors: GP deviation variables 'absorb' the integrality gap, so the gap is structurally smaller than in hard-constraint MIP. The paper does NOT break rounding sensitivity down per macronutrient.",
+      "mark": "SRC",
+      "urls": ["https://arxiv.org/html/2605.13849v1"],
+      "changes_for_cut_protocol": "YES — this is the single best external warrant for K6 and for W2-1's 'score on rounded grams' rule. The 21.6% max deviation for solve-then-round is the same order as this codebase's measured carb rounding max of 63.2%. It does NOT warrant adopting integer food servings as decision variables — that is what produces the '625 g chicken with 2 g pine nuts' class the closer's header records.",
+      "novelty_vs_prior_sweep": "sharpened (W2-1 had the headline; the per-instance win-rate mechanism is new)"
+    },
+    {
+      "id": "P1-4",
+      "topic": "LLM-assisted meal planning — is there a MEASURED accuracy result, not a demo?",
+      "finding": "Yes, three, and they disagree with the marketing. (a) NutriGen (arXiv 2502.20601): 1.55% (Llama 3.1 8B) / 3.68% (GPT-3.5 Turbo) percentage error — but CALORIES ONLY; no per-macro error is reported, and the system is LLM + a curated nutrition database, not an LLM alone. (b) Frontiers in Nutrition 2026, 5 models (ChatGPT-4o, Gemini 2.5 Pro, Claude 4.1, Bing/GPT-5, Perplexity), 60 three-day plans, 4 adolescent profiles, vs dietitian reference: energy mean bias 695.4 kcal (p<0.001, d=1.79); FAT +15.8 g reaching 41.5-44.5%E against a 25-35%E guideline; CARB -114.6 g landing at 32.4-36.3%E against 45-65%E; protein 21.5-23.7%E against 10-20%E. (c) Food Science & Nutrition 2025, 54 ChatGPT-4o menus vs dietitian: carbs 16-23%E vs ~52% target, fat 48-57%E, saturated fat 15.6% vs a 10% max, and energy for the SAME prompt drifted from 2180 to 1761.8 kcal between measurement periods (reproducibility failure).",
+      "mark": "SRC",
+      "urls": [
+        "https://arxiv.org/abs/2502.20601",
+        "https://pmc.ncbi.nlm.nih.gov/articles/PMC13017289/",
+        "https://pmc.ncbi.nlm.nih.gov/articles/PMC12267882/"
+      ],
+      "changes_for_cut_protocol": "YES — decisive, and it CONFIRMS BRAIN=off. Every measured LLM meal-plan study reports the same signature: fat over, carbs under, energy unreliable, output non-reproducible across runs. That is Cut Protocol's OWN dominant failure mode (B1: fat-failing days 97 over / 1 short). Putting an LLM in the solver's critical path would import a bias in the same direction as the bug being fixed, and would break determinism (K4, goldens). Keep BRAIN=off in the critical path. The defensible LLM roles are the ones outside it: naming, copy, ingredient decomposition (F1 0.894 for Llama-3-70B), and explanation.",
+      "novelty_vs_prior_sweep": "new and load-bearing"
+    },
+    {
+      "id": "P1-5",
+      "topic": "Open-source meal planners with a real, readable solver",
+      "finding": "Thin. cdm319/macro-meal-planner (self-described 'proof of concept stage'), petretiandrea/meal-planner (genetic algorithm over food weights), RikoNyberg/meal_planner (Fineli.fi dataset), wmarrujo/meal-planner, parkjan4/DietOptimization (Gurobi MIP — commercial solver, so not adoptable). The MIGP paper's own Python module is the best-quality readable implementation but no repo URL was located.",
+      "mark": "SRC",
+      "urls": [
+        "https://github.com/cdm319/macro-meal-planner",
+        "https://github.com/petretiandrea/meal-planner/",
+        "https://github.com/parkjan4/DietOptimization"
+      ],
+      "changes_for_cut_protocol": "NO. None of these solves the specific problem Cut Protocol has (bounded multipliers on fixed recipe bundles, scored on rounded grams, with acceptability constraints). Reinforces W2-1's hand-roll recommendation.",
+      "novelty_vs_prior_sweep": "confirms W2-1 section 3"
+    },
+    {
+      "id": "P1-6",
+      "topic": "Published dataset or benchmark for meal-plan MACRO COMPLIANCE — confirm or overturn 'none exists'",
+      "finding": "CONFIRMED — none exists. The nearest artifacts are adjacent, not the thing: NutriBench (11,857 meal descriptions with carb/protein/fat/kcal labels, 24 countries in v2) is a nutrition ESTIMATION benchmark — given a meal description, predict its macros — and its headline metric Acc@7.5 (within +/-7.5 g carbohydrate) is evaluated on CARBOHYDRATE ONLY across all 12 models; protein/fat/energy labels exist but are never scored. Best model GPT-4o+CoT 66.82%; three professional nutritionists scored 45.16-47.22% on 72 queries. MealRec is a meal-course recommendation dataset with no macro-target axis. The MIGP paper's 810-instance suite is synthetic and generated by its own script.",
+      "mark": "SRC",
+      "urls": [
+        "https://arxiv.org/html/2407.12843v2",
+        "https://openreview.net/forum?id=6LtdZCyuZR",
+        "https://arxiv.org/pdf/2205.12133"
+      ],
+      "changes_for_cut_protocol": "YES, but as licence rather than instruction: there is no external yardstick, so Cut Protocol's numbers cannot be benchmarked against anyone and must not be described as such. It also means the fleet's own instrument-hygiene work (A4's five non-interchangeable denominators, K8's golden-is-theatre) is the ONLY thing standing between these numbers and meaninglessness. Second-order: the human-expert baseline of 45-47% on a +/-7.5 g carbohydrate tolerance is a useful sanity anchor for how hard macro precision is for humans.",
+      "novelty_vs_prior_sweep": "confirms prior sweeps; adds the human baseline"
+    }
+  ],
+
+  "part2_contrarian": [
+    {
+      "id": "A",
+      "target": "Against the floor-ruler / any ruler change",
+      "verdict": "PARTLY HOLDS — and both inherited claims are wrong in a way neither side noticed",
+      "headline": "The brief refuted a WIDTH claim. The prompt made a POSITION claim. Measured on the real 250 personas, the width is right and the position is wrong in both directions. And the brief's +4.0/+5.0 number does not bound a floor ruler, because +/-50% symmetric widening and a floor ruler are not the same instrument.",
+      "measurements": {
+        "script": "fleet/out/W2-6/rulershape.mjs",
+        "data": "fleet/out/W2-6/rulershape.json",
+        "population": "docs/surgery/CAMPAIGN/qa/qa-fleet-20260729-2032/personas.jsonl, 250/250 computed, 0 skipped",
+        "method": "real bmrEngine.computeEnergy/deriveTarget/computeMacros + BRIEF-CLAIMS D3 tolerance algebra",
+        "graded_fat_window_pctE_median": [0.1602, 0.3203],
+        "graded_fat_floor_per_lb_lbm_median": 0.2475,
+        "personas_graded_below_engine_own_essential_fat_floor_0p30": 232,
+        "personas_graded_ceiling_below_AMDR_35pctE": 159,
+        "personas_graded_ceiling_below_Helms_30pctE": 104,
+        "personas_graded_floor_below_AMDR_20pctE": 199,
+        "personas_graded_floor_below_Helms_15pctE": 102,
+        "nonketo_personas_graded_carb_floor_below_engine_own_50g": 28,
+        "graded_carb_floor_g_median_nonketo": 133.5,
+        "carbLo_g_median_nonketo": 182,
+        "implicit_fat_ceiling_under_floor_ruler_as_graded_pctE_median": 0.5303,
+        "implicit_fat_ceiling_under_floor_ruler_carbfloor_repaired_pctE_median": 0.4519,
+        "personas_whose_implicit_ceiling_exceeds_AMDR_35pctE_as_graded": 250,
+        "personas_whose_implicit_ceiling_exceeds_AMDR_35pctE_repaired": 241,
+        "implicit_over_explicit_ceiling_ratio_median": 1.8995,
+        "fifty_pct_widening_ceiling_per_lb_lbm_median": 0.5856,
+        "explicit_graded_ceiling_per_lb_lbm": 0.4925
+      },
+      "sub_findings": [
+        {
+          "claim": "The graded fat band's WIDTH matches the best-matched primary source almost exactly.",
+          "detail": "Effective half-width +/-33.11% (BRIEF D1). Helms/Aragon/Fitschen prescribe 15-30%E, whose relative half-width is 33.3%. The brief's 'too tight is DEAD' is CORRECT on width.",
+          "mark": "SRC+CODE",
+          "urls": ["https://pmc.ncbi.nlm.nih.gov/articles/PMC4033492/"]
+        },
+        {
+          "claim": "The band's POSITION is shifted low against BOTH reference ranges, in both directions at once.",
+          "detail": "Measured: the graded ceiling sits below AMDR's 35%E for 159/250 personas (63.6%) and below Helms's 30%E for 104/250 (41.6%) — the ruler REJECTS days both references accept. Simultaneously the graded floor sits below AMDR's 20%E for 199/250 (79.6%) and below Helms's 15%E for 102/250 (40.8%) — it ACCEPTS days both references reject. This is exactly the prompt block's 'wrong both directions', vindicated as a POSITION defect, not the width defect the brief refuted.",
+          "mark": "MEAS"
+        },
+        {
+          "claim": "The ruler contradicts the engine's own safety constant for 92.8% of personas.",
+          "detail": "ESSENTIAL_FAT_PER_LB_LBM = 0.30 (bmrEngine.js:286), but the graded fat floor is fatLo - 0.25*fatMid = 0.2475 x lbm. 232/250 personas are GRADED AS COMPLIANT at a fat intake the engine itself calls below-essential. This is a correctness defect independent of any metric.",
+          "mark": "MEAS+CODE"
+        },
+        {
+          "claim": "But fixing the low side is worth approximately zero points.",
+          "detail": "B1 measures fat-failing days at 97 over / 1 short and fat-only misses 42/42 over. Raising the graded floor to 0.30 x lbm is a correctness fix with no compliance upside — and it makes the metric slightly WORSE. Ship it for honesty, not points (same category as C10).",
+          "mark": "JUDGE, grounded in B1"
+        },
+        {
+          "claim": "The brief's '+4.0 max' cannot be quoted against a floor ruler. They are different instruments.",
+          "detail": "MEASURED: +/-50% symmetric widening moves the fat ceiling from 0.4925 to 0.5856 g/lb LBM — a 19% loosening. A floor ruler removes the ceiling and lets kcalHi + protein floor + carb floor bind instead, which is a 90% loosening (implicit/explicit ratio median 1.90x). B5's median over-fat day sits at roughly +74.5% of a 28%E ask, i.e. near 0.65 g/lb LBM — ABOVE the +/-50% ceiling and therefore still failing after widening, but comfortably inside a floor ruler. The two measurements answer different questions and the fleet must not treat +5.0 as the floor-ruler number.",
+          "mark": "MEAS"
+        },
+        {
+          "claim": "Is a symmetric band the right SHAPE? Every primary source treats fat's upper end as a DISPLACEMENT constraint, not a physiological ceiling.",
+          "detail": "Helms et al. justify their upper end by what fat crowds out, not by fat itself: a lower-end 15-20%E 'can be deemed appropriate if higher percentages would reduce carbohydrate or protein below ideal ranges', and they warn 'low carbohydrate diets may degrade performance'. The macro order is explicit: protein first, then fat within a range, 'Carbohydrate: remaining'. ISSN 2017 conclusion #5: 'A wide range of dietary approaches (low-fat to low-carbohydrate/ketogenic, and all points between) can be similarly effective for improving body composition', with no isocaloric protein-matched trial showing a fat-loss advantage either way. NASEM's own 2024 letter report records that the AMDR's ancestor 30%E cap was set 'in the absence of data to support the supposition', that the AMDR was never intended for individual assessment, and that 'the DRIs are not therapeutic values'. NO PRIMARY SOURCE WAS FOUND prescribing an independent upper fat bound for an individual on a controlled energy budget with protein and carbohydrate floors in place.",
+          "mark": "SRC + NO_SOURCE",
+          "urls": [
+            "https://pmc.ncbi.nlm.nih.gov/articles/PMC4033492/",
+            "https://pmc.ncbi.nlm.nih.gov/articles/PMC5470183/",
+            "https://www.ncbi.nlm.nih.gov/books/NBK610333/",
+            "https://www.ncbi.nlm.nih.gov/books/NBK610328/"
+          ]
+        },
+        {
+          "claim": "...but 'ceiling enforced only implicitly through the calorie budget' FAILS on this codebase, measurably.",
+          "detail": "MEASURED: with the ruler as it grades today, removing the explicit fat ceiling leaves an implicit ceiling of 53.0%E median (p05 47.4%E) and puts 250/250 personas above AMDR's 35%E. Repairing the carb floor to the engine's own NONKETO_CARB_FLOOR_G=50 / carbLo only pulls it to 45.2%E median, still 241/250 above 35%E. The implicit ceiling is not a ceiling. The reason is I6: the graded carb floor is 133.5 g median against a carbLo of 182 g, and 28 non-keto personas are graded below the engine's own 50 g floor. Helms's displacement logic only works if the thing being displaced is actually defended.",
+          "mark": "MEAS"
+        },
+        {
+          "claim": "The band's endpoints are a coaching FLOOR heuristic, re-anchored and re-shaped without a source.",
+          "detail": "0.34-0.40 (bmrEngine.js:322-323) matches the widely repeated coaching figure of 0.3-0.4 g fat per POUND OF BODYWEIGHT, where 0.3 is quoted as a MINIMUM and the pair is a starting recommendation, never a two-sided compliance band. Cut Protocol applies it to LEAN mass and grades failure on both sides. NO SOURCE FOUND for a 0.34-0.40 g/lb LBM two-sided fat band. Related anchor defect: because fatMid is fixed in grams while targetKcal falls with the deficit, the prescribed fat %E RISES as the cut deepens — the opposite direction from every source, all of which express fat as %E.",
+          "mark": "NO_SOURCE + CODE",
+          "urls": [
+            "https://macrosinc.net/nutriwiki/minimum-fats/",
+            "https://legionathletics.com/how-many-grams-of-fat-per-day/"
+          ]
+        },
+        {
+          "claim": "The fat FLOOR itself is well supported — just not by the reason the constant's name gives.",
+          "detail": "True essential fatty acid need is small: linoleic acid ~3-6 g/d minimally adequate (AI 17 g/d M, 12 g/d F), ALA 1.6 g/d M / 1.1 g/d F — on the order of 5-25 g of fat, far below 0.30 x lbm (about 39 g at 130 lb LBM). So ESSENTIAL_FAT_PER_LB_LBM is not an EFA constant. Its real warrant is hormonal: Whittaker & Wu 2021 meta-analysis found significant reductions in total testosterone (SMD -0.38, p=0.04), free testosterone (-0.37, p=0.005) and DHT (-0.30, p=0.03) on low-fat vs high-fat diets. Helms cites the same effect but calls it 'modest' and notes 'body composition and caloric restriction may play greater roles... than fat intake'. Verdict: 0.30 x lbm is a defensible floor; the docstring should say hormonal, not essential.",
+          "mark": "SRC",
+          "urls": [
+            "https://www.sciencedirect.com/science/article/abs/pii/S0960076021000716",
+            "https://www.ncbi.nlm.nih.gov/books/NBK234930/",
+            "https://pmc.ncbi.nlm.nih.gov/articles/PMC4033492/"
+          ]
+        }
+      ],
+      "recommended_instrument": {
+        "shape": "kcal two-sided +/-15% (unchanged) · protein floor one-sided (unchanged, D3) · fat FLOOR at 0.30 x lbm (the engine's own constant) · fat CEILING re-anchored to %E, not to g/lb LBM · carb floor repaired to carbLo / NONKETO_CARB_FLOOR_G=50 · keto carb ceiling hard (unchanged)",
+        "why_not_pure_floor_ruler": "MEASURED: it admits 45-53%E fat for essentially every persona. Indefensible against AMDR and against Helms.",
+        "ceiling_candidates": {
+          "AMDR_35pctE": "looser than today for 159/250 personas, tighter for 91. Citable to NASEM, with the honest caveat that NASEM says the AMDR is not an individual-assessment tool.",
+          "Helms_30pctE": "looser for 104/250, tighter for 146. Best population match (cutting, resistance-trained), and it is the source the app's own protein constant already tracks (I4: 2.513-2.756 g/kg LBM sits inside Helms/Aragon/Fitschen 2.3-3.1)."
+        },
+        "expected_metric_effect": "UNMEASURED by this agent. It is a re-grade, not a re-solve, so W3-1 can settle it cheaply — and it MUST be run as its own arm, not inferred from the +/-50% arm."
+      },
+      "what_the_contrarian_gets_WRONG": "'The fat band is too tight' and 'the ruler is a major lever' are both dead. Width matches Helms to within 0.2 percentage points of relative half-width; the low side is 1 failing day in 98; and no re-grade of any shape can fix the 66.6% of out-of-band days (E3) that fail on something other than the ruler."
+    },
+    {
+      "id": "B",
+      "target": "Against repartition / a smarter portioner",
+      "verdict": "PARTLY HOLDS — strongly on sequencing and on the 0.25x floor; fails as an argument for skipping the portioner",
+      "sub_findings": [
+        {
+          "claim": "The bound-miss pattern is a SELECTION signal, not a portioning signal — and the fleet's own numbers say so three times.",
+          "detail": "66 of 70 bound misses sit at the 0.5x FLOOR, i.e. the solve wants LESS of this dish than half a serving. 22.5% of non-degenerate pairs want a physically NEGATIVE bundle, i.e. the solve wants the dish REMOVED. And only 6.2% of slots find a composition-good candidate while the pool exhaustively contains one for 57.3% — a shortlist that surfaces roughly one ninth of the feasible dishes. A negative multiplier is not a portioning answer that got clamped; it is the arithmetic saying 'wrong recipe'. B3 explains why the shortlist misses: the portioning solve is provably blind to fat and carb (207/207 byte-identical grams, max fat diff exactly 0), so candidates are ranked by a rule that cannot see the axis they fail on. F6 compounds it: GENERATED_TEMPLATE_WEIGHT=0.35 down-weights the 158 templates that actually sit in the target box (9.71 g P / 2.12 g F per 100 kcal vs a target of 8.16/2.60).",
+          "mark": "JUDGE, grounded in B3/B4/B7/F6",
+          "verdict_line": "HOLDS. If the shortlist is the binding constraint, a better portioner optimises inside an empty box."
+        },
+        {
+          "claim": "...but this is an argument about ORDER, not about whether to build the portioner.",
+          "detail": "The cheapest composition-aware SELECTION rule is 'rank candidates by the best achievable in-box portioning under the 4-macro objective' — which requires the portioner as a subroutine. W2-1's macroViolation.js + achievement() is the same artifact either way. The correct sequencing is therefore: build the shared violation function FIRST, wire it into candidate RANKING, and only then let it drive the portion search. That ordering is also the one that can be A/B'd against A5's 3.5-pt detection floor, because selection effects are large and portioning effects are small.",
+          "mark": "JUDGE",
+          "verdict_line": "The contrarian wins the ordering argument and loses the 'don't build it' argument."
+        },
+        {
+          "claim": "PLATE REALISM: there IS quantitative literature, nobody in this campaign has cited it, and it says the 0.25x floor is out of bounds.",
+          "detail": "Hollands et al.'s norm-range model (n=60 and n=46, portions varied in 10% increments, judged 'normal'/'not normal') gives the only quantified acceptability envelope anyone has published. Ranges judged normal by >=60% of participants: pasta 70-120% of reference, curry 80-160%, porridge 100-150%, chocolate cake + ice cream 90-170%, crisps 130-190%. THE LOWEST 'NORMAL' BOUND ACROSS ALL FIVE FOODS IS 70% OF REFERENCE. Cut Protocol's EXISTING 0.5x floor is already below every measured norm-range floor; the prototype 0.25x floor is 2.8x below the most permissive one, and it shipped 35.5% of slots there. The behavioural consequence is the part that matters: participants intended to COMPENSATE — to eat additional food — for portions judged smaller than normal, and to eat only part of portions judged larger than normal. Portions inside the range were 'intended to be consumed in their entirety without compensation'.",
+          "mark": "SRC",
+          "urls": ["https://pmc.ncbi.nlm.nih.gov/articles/PMC6333281/"],
+          "verdict_line": "HOLDS, and it is the strongest single finding in this report. A portioner that buys macro compliance by shipping sub-norm portions does not buy compliance — it buys a plan the user eats around. The metric improves and the outcome does not.",
+          "transfer_caveat": "The study judges whole single-dish portions visually, n small, intention not behaviour, UK foods. Cut Protocol scales ingredient bundles WITHIN a dish (proteinScale/sidesScale), which is a different and probably more forgiving object — a slightly smaller rice portion is less visible than a smaller plate of pasta. Direction is solid; the exact 70% number should not be treated as a threshold."
+        },
+        {
+          "claim": "Corroborating precedent from the regulatory and behavioural side.",
+          "detail": "FDA's RACC (21 CFR 101.12) exists precisely because 'how much of this food do people actually eat at one sitting' is a determinable quantity — FDA set it from the mean, median and mode of consumed amount per eating occasion. It is a ready-made, free, per-food-category realism table and nothing in this codebase uses it. Separately, unit bias (Geier, Rozin & Doros 2006, Psychological Science) shows people treat a unit as the appropriate amount regardless of its size, which is why sub-unit portions read as wrong rather than as small.",
+          "mark": "SRC",
+          "urls": [
+            "https://www.ecfr.gov/current/title-21/chapter-I/subchapter-B/part-101/subpart-A/section-101.12",
+            "https://journals.sagepub.com/doi/10.1111/j.1467-9280.2006.01738.x"
+          ]
+        },
+        {
+          "claim": "Is the honest fix 'fewer, better recipes' (authoring) instead of any solver change? NO — and the fleet already measured why.",
+          "detail": "On the satisfiable population r(demanded protein density, in-band success) = -0.001, i.e. exactly zero; F2's wider estimate of -0.057 is worth ~3.4 pts against a 3.45-pt detection floor and may measure ZERO. The library-weakness thesis measures as nothing FOR COMPLIANCE. It remains true that the library has real product defects (18 snack-eligible recipes library-wide per F5; 53-57 gluten-free pasta recipes wrongly hidden from celiacs per H3; 47 recipes that can never serve any slot per F12) — but those are safety and product-quality bugs with their own justification, and they must not be sold to the owner as a compliance lever. F5's snack starvation is the one genuine exception: 141 of 193 empty slots are snacks and slotAttemptBudget exceeds the candidate count for every diet, so those misses are provably pool-caused and no optimiser touches them.",
+          "mark": "JUDGE, grounded in F2/F5/H3/F12",
+          "verdict_line": "FAILS as a general thesis; HOLDS narrowly and only for the snack slot."
+        }
+      ],
+      "recommended_ordering": [
+        "1. Repair the shortlist / candidate ranking so it can see fat and carb (B3, F6). This is where 57.3%-available vs 6.2%-realised lives.",
+        "2. Then the 4-macro portioner (W2-1), scored on rounded grams, guarded by componentwise non-worsening.",
+        "3. DO NOT lower the portion floor to 0.25x until the plates are rendered and counted against a realism table. The literature predicts this arm degrades the outcome while improving the metric."
+      ]
+    },
+    {
+      "id": "C",
+      "target": "Against the whole framing — is '% of days with all four macros in band' the right objective?",
+      "verdict": "PARTLY HOLDS — right as an internal solver objective, wrong as the product's headline and wrong as this fleet's sole success criterion",
+      "sub_findings": [
+        {
+          "claim": "Two of the four graded macros have no measured outcome consequence once the other two are set.",
+          "detail": "ISSN 2017 position stand, conclusion #5: 'A wide range of dietary approaches (low-fat to low-carbohydrate/ketogenic, and all points between) can be similarly effective for improving body composition', and 'no controlled, inpatient isocaloric diet comparison where protein is matched between groups has reported a clinically meaningful fat loss... advantage to the lower-carbohydrate or ketogenic diet.' Cut Protocol grades four macros with equal standing. The evidence says energy and protein carry the outcome; the fat/carb SPLIT, within reason, does not. Half the grading dimensions are therefore ornamental with respect to the thing the user came for.",
+          "mark": "SRC",
+          "urls": ["https://pmc.ncbi.nlm.nih.gov/articles/PMC5470183/"]
+        },
+        {
+          "claim": "The measured predictor of outcome is adherence, not plan precision.",
+          "detail": "Dansinger et al. 2005 JAMA randomised Atkins/Ornish/Weight Watchers/Zone: 1-year weight reduction comparable across all four, and adherence was the only strong predictor of weight loss. Digital self-monitoring meta-analyses reproduce the pattern (high self-monitoring adherence 4.2% of baseline weight lost vs 1.9% for low). Adherence in controlled trials with prescribed plans runs 82-91%, i.e. even under supervision roughly one meal in eight is not the prescribed meal.",
+          "mark": "SRC",
+          "urls": [
+            "https://pubmed.ncbi.nlm.nih.gov/15632335/",
+            "https://onlinelibrary.wiley.com/doi/10.1111/obr.13306"
+          ]
+        },
+        {
+          "claim": "There is a measured trade-off, and it points the wrong way for a compliance-maximising app.",
+          "detail": "The CFRL study is the only quantified instance found: its nutrition-focused baseline achieved nutrition score 0.94 with user acceptance 2.8/5; the balanced policy achieved 0.90 nutrition with 4.5/5 acceptance. Trading 4% of nutritional score bought 61% more acceptance. Simulated users, so weak evidence — but it is the only evidence, and it points the same way as the norm-range compensation finding in case B.",
+          "mark": "SRC",
+          "urls": ["https://pmc.ncbi.nlm.nih.gov/articles/PMC10857145/"]
+        },
+        {
+          "claim": "Where the contrarian FAILS: the daily 4-macro rule is the right thing for the SOLVER to optimise.",
+          "detail": "(a) It is the app's own promise — the plan says these are your macros. (b) A weekly-average objective is gameable in exactly the way W2-5 is researching, and this codebase has already demonstrated the failure mode: E11 measured that re-badging diagnose() buys +27.94 pts and a perfect KPI with 186 false refusals and zero behaviour change. A softer metric in a codebase with a proven inflation trap is a hazard, not a simplification. (c) Keto is a hard carve-out: ketosis is a DAILY phenomenon, so the keto carb ceiling can never be averaged across a week. (d) The bands are also the honesty surface — 'unsolvable and why' needs a per-day predicate to be about."
+        },
+        {
+          "claim": "What would actually change, and what would be lost.",
+          "detail": "Proposed split: keep the daily 4-macro predicate as the SOLVER's objective and as the per-day honesty surface; make the headline metric energy + protein (7-day mean kcal within +/-5% AND >=6/7 days meeting the protein floor), with the keto carb ceiling kept daily and hard. What the app STOPS headlining is per-day fat/carb band compliance. That loss is acceptable on the evidence (ISSN #5) PROVIDED the fat FLOOR and carb FLOOR stay hard daily gates — those are the terms with real physiological warrant (Whittaker & Wu on fat; Helms on carbohydrate and training). What is NOT acceptable is dropping the daily predicate entirely: it would delete the only instrument that can say 'this day cannot be built', which is a constitutional requirement of this repo."
+        }
+      ]
+    }
+  ],
+
+  "stop_doing": [
+    {
+      "item": "Stop quoting the +4.0 / +5.0 widening number as the value of a floor ruler.",
+      "why": "MEASURED: +/-50% symmetric widening loosens the fat ceiling 19% (0.4925 -> 0.5856 g/lb LBM); a floor ruler loosens it 90% (implicit/explicit ratio median 1.90x). B5's median over-fat day sits above the widened ceiling and inside the floor ruler. Two different instruments, two different numbers. W3-1 must run ruler D as its own arm."
+    },
+    {
+      "item": "Stop treating the C4 0.25x portion floor as a live candidate.",
+      "why": "The only quantified acceptability envelope in the literature puts the lowest 'normal' portion bound at 70% of reference across five foods; 0.5x is already below all of them and 0.25x is 2.8x below the most permissive. Below the norm range, the measured intention is COMPENSATORY EATING — the user adds food back. The arm improves the plan metric by the same mechanism that destroys the plate outcome. Single seed, 35.5% of slots affected, zero plates ever rendered."
+    },
+    {
+      "item": "Stop calling ESSENTIAL_FAT_PER_LB_LBM an essential-fat constant, and stop grading 92.8% of personas below it.",
+      "why": "True EFA need is ~5-25 g/d (LA 3-6 g minimally adequate, ALA 1.1-1.6 g). 0.30 x lbm is a HORMONAL floor (Whittaker & Wu), which is a fine thing to have but a different claim. MEASURED: 232/250 personas are graded compliant at 0.2475 x lbm, below the engine's own floor."
+    },
+    {
+      "item": "Stop considering an LLM anywhere near the solver's critical path.",
+      "why": "Every measured LLM meal-plan study reports fat over / carbs under / energy unreliable / non-reproducible across runs — the same direction as this app's dominant failure. BRAIN=off is the right call and got MORE right in 2026, not less."
+    },
+    {
+      "item": "Stop selling library authoring as a compliance lever.",
+      "why": "r = -0.001 on the satisfiable population. Author for the snack slot (F5) and fix the safety defects (H3's hidden gluten-free pasta, F12's 47 unservable recipes) on their own merits, with their own justification, and do not attach a points estimate."
+    }
+  ],
+
+  "risks_where_id_be_wrong": [
+    "The %E figures are computed at the NOMINAL targetKcal. A day that lands at the top of the +/-15% kcal band has a lower fat %E than my numbers show, so the graded ceiling is slightly less restrictive in practice than 32.0%E median implies. Direction unaffected; magnitude soft by a few percentage points.",
+    "L1 gap: 'the ruler's position is wrong' is a NUTRITIONAL argument. It does not follow that re-anchoring it gains days. The re-grade is cheap — but the honest expectation is that a %E-anchored ceiling at 35%E is looser for 159 personas and TIGHTER for 91, so the net could be small or negative. I did not measure it.",
+    "The norm-range study is the weakest link carrying the heaviest load in case B: n=60/46, visual judgement of whole single-dish portions, stated intention rather than measured behaviour, UK foods. Cut Protocol scales bundles within a dish, which is a more forgiving object. If someone renders the 0.25x plates and they look fine, my case B collapses to 'unmeasured risk' rather than 'predicted harm'.",
+    "The CFRL acceptance/nutrition trade-off is on SIMULATED users with a synthetic acceptance model. It is suggestive, not evidence about humans.",
+    "I am arguing the shortlist binds using B7's 6.2%-vs-57.3% pair, but I did not verify that the two figures share a denominator or a definition of 'composition-good'. A4 published five non-interchangeable denominators in this campaign; if those two numbers come from different ones, my central case-B claim weakens sharply. W4-3 should reconcile them before anyone reorders the fix plan on my say-so.",
+    "Helms 2014 is twelve years old and is a narrative evidence-based review, not a systematic review or a guideline. I have leaned on it heavily because it is the best population match (natural, resistance-trained, energy-restricted). A newer position stand could move the 15-30%E numbers.",
+    "I have not measured a single compliance point. Every number I contribute is a property of the RULER and the TARGETS, not of the solver's output. Nothing here should reorder the fix plan without a re-grade arm behind it."
+  ],
+
+  "no_source_found": [
+    "Any primary source prescribing an independent UPPER bound on fat for an individual on a controlled energy budget with protein and carbohydrate floors already enforced.",
+    "Any source for a 0.34-0.40 g per lb of LEAN mass two-sided fat band (the coaching heuristic is 0.3-0.4 g/lb of TOTAL bodyweight, and 0.3 is quoted as a minimum).",
+    "Any published dataset or benchmark for MEAL-PLAN MACRO COMPLIANCE (as distinct from nutrition estimation). Prior sweeps' negative result CONFIRMED.",
+    "Any measured per-macronutrient accuracy result for an LLM meal-plan generator that reports protein/fat/carb error separately against a stated target (NutriGen reports calories only).",
+    "Any engineering writeup from a shipping consumer nutrition app describing minimum-portion or portion-realism constraints in its generator.",
+    "Any breakdown of which macronutrient is most rounding-sensitive in the diet-optimisation literature (the MIGP paper aggregates across all four)."
+  ],
+
+  "git_status_porcelain_at_end": "?? fleet/out/W2-3/\n?? fleet/out/W2-4/\n?? fleet/out/W2-5/\n?? fleet/out/W2-6/",
+  "git_status_note": "Only untracked fleet/out/ directories. W2-3/4/5 are sibling agents writing concurrently; W2-6 wrote only fleet/out/W2-6/{sweep.json,rulershape.mjs,rulershape.json}. Zero product source modified."
+}
