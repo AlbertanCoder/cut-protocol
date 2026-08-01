@@ -123,18 +123,38 @@ function closeDayMacros({ slots, dailyTarget, adjusters }) {
 
   // Only ever attach to a real, unlocked, filled slot. An empty slot has no dish for
   // a side to belong to, and a locked slot is the user's explicit choice.
-  const host = slots.find((s) => s.recipeId && !s.locked && Array.isArray(s.ingredients) && s.ingredients.length);
-  if (!host) return { slots, added };
-
   const out = slots.slice();
-  const hostIdx = out.indexOf(host);
-  const working = { ...host, ingredients: host.ingredients.slice() };
+  const hosts = [];
+  out.forEach((s, i) => {
+    if (s.recipeId && !s.locked && Array.isArray(s.ingredients) && s.ingredients.length) hosts.push(i);
+  });
+  if (!hosts.length) return { slots, added };
+
+  // Adjusters go on DIFFERENT plates. The round cap below is a per-plate limit —
+  // "the most a plate can absorb" — but `slots.find` picked one host up front and
+  // every round appended to that same object, so the cap could never bind and one
+  // plate absorbed the entire day's correction. Measured over the 250-persona
+  // fleet: 250/250 days put every adjuster on slot 0, worst case 123 -> 685 kcal
+  // (x5.56) and 375 g of added food on a single dish.
+  //
+  // Least-loaded-first, ties to the earliest slot. On a one-slot day this reduces
+  // to the old behaviour exactly, which is the only case where piling up is not a
+  // choice.
+  const workingBy = new Map();
+  const placedBy = new Map();
+  const workingAt = (i) => {
+    if (!workingBy.has(i)) workingBy.set(i, { ...out[i], ingredients: out[i].ingredients.slice() });
+    return workingBy.get(i);
+  };
+  const nextHost = () => hosts.reduce((best, i) => ((placedBy.get(i) || 0) < (placedBy.get(best) || 0) ? i : best), hosts[0]);
+
   let totals = totalsOf(out);
 
   const proteinMid = (dailyTarget.proteinLo + dailyTarget.proteinHi) / 2;
 
-  // One pass per macro, largest real gap first. Three additions is the most a plate
-  // can absorb before it stops being the dish it is named after.
+  // One pass per macro, largest real gap first. Three additions is the most a DAY
+  // takes before a plate stops being the dish it is named after — and they are now
+  // spread across plates, so with 3+ eligible slots no dish takes more than one.
   for (let round = 0; round < 3; round++) {
     const gaps = [];
     const pShort = proteinMid > 0 ? Math.max(0, proteinMid - totals.protein) : 0;
@@ -163,6 +183,9 @@ function closeDayMacros({ slots, dailyTarget, adjusters }) {
         }
         if (!use) continue;
         const f = use / 100;
+        const hostIdx = nextHost();
+        const working = workingAt(hostIdx);
+        placedBy.set(hostIdx, (placedBy.get(hostIdx) || 0) + 1);
         working.ingredients.push({
           foodId: cand.food.id, name: cand.food.name, role: gap.role, grams: use, adjuster: true,
         });
@@ -186,7 +209,7 @@ function closeDayMacros({ slots, dailyTarget, adjusters }) {
   }
 
   if (!added.length) return { slots, added };
-  out[hostIdx] = working;
+  for (const [i, w] of workingBy) out[i] = w;
   return { slots: out, added };
 }
 

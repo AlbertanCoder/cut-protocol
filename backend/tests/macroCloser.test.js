@@ -82,6 +82,83 @@ test("G4 control: the guard still permits a move that keeps fat inside its band"
   assert.equal(added[0].grams, 180, "the algorithm's own choice: capped by MAX_GRAMS.protein");
 });
 
+// ── G6 · adjusters must not all land on the same plate ───────────────────
+//
+// `slots.find(...)` chose one host before the loop and all three rounds appended
+// to that same object, so the round cap — justified in the source as "the most a
+// plate can absorb" — could never bind. Over the 250-persona fleet every adjuster
+// landed on slot 0 on 250 of 250 days; worst observed 123 -> 685 kcal (x5.56) and
+// 375 g of added food on one dish.
+//
+// A day short on all three macros, with three eligible plates to spread across.
+const SPREAD_TARGET = {
+  kcal: 2200,
+  proteinLo: 150, proteinHi: 190,
+  fatLo: 55, fatHi: 70,
+  carbLo: 180, carbHi: 260,
+};
+
+const threePlateDay = () => [0, 1, 2].map((i) => ({
+  recipeId: `r${i}`,
+  locked: false,
+  ingredients: [{ foodId: `f${i}`, name: `Dish ${i}`, grams: 200 }],
+  kcal: 400, protein: 100 / 3, fat: 10, carb: 100 / 3,
+}));
+
+const SPREAD_ADJUSTERS = [
+  { food: { id: "chicken", name: "Chicken breast", kcal: 165, protein: 31, fat: 3.6, carb: 0 }, role: "protein" },
+  { food: { id: "rice", name: "White rice", kcal: 130, protein: 2.7, fat: 0.3, carb: 28 }, role: "carb" },
+  { food: { id: "oil", name: "Olive Oil", kcal: 884, protein: 0, fat: 100, carb: 0 }, role: "fat" },
+];
+
+// How many adjuster ingredients each slot ended up carrying.
+const adjusterCounts = (slots) => slots.map(
+  (s) => (s.ingredients || []).filter((i) => i.adjuster).length,
+);
+
+test("G6: three adjusters land on three different plates, not all on slot 0", () => {
+  const { slots, added } = closeDayMacros({
+    slots: threePlateDay(), dailyTarget: SPREAD_TARGET, adjusters: SPREAD_ADJUSTERS,
+  });
+
+  assert.equal(added.length, 3, "the day is short on all three macros; expect three adds");
+  const counts = adjusterCounts(slots);
+  assert.deepEqual(counts, [1, 1, 1], "one adjuster per plate — pre-fix this was [3, 0, 0]");
+  assert.equal(Math.max(...counts), 1, "no single dish absorbs the whole day's correction");
+});
+
+test("G6: a one-plate day still works — spreading is least-loaded-first, not a refusal", () => {
+  // Only one eligible slot, so piling up is not a choice. This must behave exactly
+  // as it always did; a fix that made single-slot days no-op would be worse than
+  // the bug.
+  const slots = [{
+    recipeId: "solo", locked: false,
+    ingredients: [{ foodId: "f0", name: "Only dish", grams: 200 }],
+    kcal: 1200, protein: 100, fat: 30, carb: 100,
+  }];
+  const { slots: out, added } = closeDayMacros({
+    slots, dailyTarget: SPREAD_TARGET, adjusters: SPREAD_ADJUSTERS,
+  });
+
+  assert.ok(added.length >= 1, "a one-plate day must still be corrected");
+  assert.equal(adjusterCounts(out)[0], added.length, "with one host, every adjuster goes there");
+});
+
+test("G6: locked and empty slots never host an adjuster, however short the day is", () => {
+  const slots = [
+    { recipeId: "locked", locked: true, ingredients: [{ foodId: "fa", name: "User's pick", grams: 200 }], kcal: 400, protein: 33, fat: 10, carb: 33 },
+    { recipeId: null, locked: false, ingredients: [], kcal: 0, protein: 0, fat: 0, carb: 0 },
+    { recipeId: "open", locked: false, ingredients: [{ foodId: "fc", name: "Open dish", grams: 200 }], kcal: 800, protein: 67, fat: 20, carb: 67 },
+  ];
+  const { slots: out, added } = closeDayMacros({ slots, dailyTarget: SPREAD_TARGET, adjusters: SPREAD_ADJUSTERS });
+
+  assert.ok(added.length >= 1, "there is an eligible plate; the day should be corrected");
+  const counts = adjusterCounts(out);
+  assert.equal(counts[0], 0, "a locked slot is the user's explicit choice — never touched");
+  assert.equal(counts[1], 0, "an empty slot has no dish for a side to belong to");
+  assert.equal(counts[2], added.length, "everything lands on the one eligible plate");
+});
+
 test("G4: a NEUTRAL adjuster is still allowed on an already-over day — 'no worse', not 'no move'", () => {
   // Fat is over by 25 g and stays over by exactly 25 g: this add does not touch
   // fat. Refusing it would mean an already-failing day can never be helped at
