@@ -83,7 +83,13 @@ function filterRecipePool(recipePool, profile) {
 // on Recipe/Food, not a longer TTL.
 const LIBRARY_VERSION_SQL =
   "SELECT (SELECT COUNT(*)||'/'||IFNULL(SUM(LENGTH(name)+LENGTH(steps)+kcal+protein+fat+carb),0) FROM Recipe) r," +
-  " (SELECT COUNT(*)||'/'||IFNULL(SUM(LENGTH(name)+LENGTH(IFNULL(allergenTags,''))+LENGTH(IFNULL(fdcCategory,''))+LENGTH(IFNULL(mayContain,''))+kcal+protein+fat+carb+fiber),0) FROM Food) f," +
+  // source + dataQuality are in here because they are what macroTrustIssue()
+  // reads. Without them a row could be QUARANTINED — its macros declared another
+  // food's numbers — without moving the checksum, so a maintenance script that
+  // quarantines rows in another process (which is how the 2026-07-31 provenance
+  // repair ran) stayed invisible to every cache below. Everything else the gate
+  // and solver read was already covered; trust was the gap.
+  " (SELECT COUNT(*)||'/'||IFNULL(SUM(LENGTH(name)+LENGTH(IFNULL(allergenTags,''))+LENGTH(IFNULL(fdcCategory,''))+LENGTH(IFNULL(mayContain,''))+LENGTH(IFNULL(source,''))+LENGTH(IFNULL(dataQuality,''))+kcal+protein+fat+carb+fiber),0) FROM Food) f," +
   " (SELECT COUNT(*)||'/'||IFNULL(SUM(baseGrams),0) FROM RecipeIngredient) i";
 // Distinct rule-sets held at once. A single-user desktop app needs 1; the cap
 // exists so a future multi-tenant deployment cannot grow this without bound.
@@ -91,12 +97,21 @@ const POOL_CACHE_MAX = 32;
 let _epoch = 0;
 let _library = null; // { version, rows }
 let _pools = new Map(); // rulesKey -> filtered+stamped pool
+let _adjusterFoods = null; // { version, byLower } — see loadAdjusterFoods()
 
 // Called by every route that mutates a Recipe, RecipeIngredient or Food.
 function invalidateRecipeLibrary() {
   _epoch++;
   _library = null;
   _pools = new Map();
+  // The adjuster map is a Food cache too. It used to be missing from this list,
+  // so a Food row edited or quarantined through any route was correctly dropped
+  // from _library and every _pools entry while the adjuster map kept handing out
+  // the pre-edit object for the rest of the process lifetime — and the
+  // macroTrustIssue() re-check in loadAdjusters() reads that same cached object,
+  // so it could not catch it either. A row quarantined for bad macros kept being
+  // added to real users' days, with the bad macros, until restart.
+  _adjusterFoods = null;
 }
 
 async function libraryVersion() {
@@ -177,9 +192,13 @@ const ADJUSTER_CANDIDATES = [
   { name: "Lentils", role: "protein" },
 ];
 
-let _adjusterFoods = null;
+// Version-keyed for the same reason loadRecipeLibrary() is: invalidateRecipeLibrary()
+// only covers in-process mutation routes, and the paths that quarantine food rows in
+// bulk are maintenance scripts running in ANOTHER process. A null version means no
+// proof the cache is current, so it is not used — fails toward slow, never stale.
 async function loadAdjusterFoods() {
-  if (_adjusterFoods) return _adjusterFoods;
+  const version = await libraryVersion();
+  if (version && _adjusterFoods && _adjusterFoods.version === version) return _adjusterFoods.byLower;
   const rows = await prisma.food.findMany({
     where: { name: { in: ADJUSTER_CANDIDATES.map((a) => a.name) } },
     select: FOOD_GATE_SELECT,
@@ -189,8 +208,8 @@ async function loadAdjusterFoods() {
     const k = f.name.trim().toLowerCase();
     if (!byLower.has(k)) byLower.set(k, f);
   }
-  _adjusterFoods = byLower;
-  return _adjusterFoods;
+  _adjusterFoods = version ? { version, byLower } : null;
+  return byLower;
 }
 
 /**
@@ -265,4 +284,9 @@ module.exports = {
   // edits or deletes a Recipe / RecipeIngredient / Food must call
   // invalidateRecipeLibrary() after the write commits.
   invalidateRecipeLibrary, loadRecipeLibrary, loadRecipePool,
+  // Exported so a test can assert what the checksum actually covers. The columns
+  // in here are the contract: anything the gate or the solver reads to make a
+  // safety or trust decision must move it, or a cache goes stale on exactly the
+  // rows that matter most.
+  LIBRARY_VERSION_SQL,
 };
