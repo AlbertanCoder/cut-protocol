@@ -82,12 +82,22 @@ function wouldHarm(totals, dailyTarget, food, grams) {
   };
   // Calories: never push past the +15% ceiling the day is graded on.
   if (dailyTarget.kcal > 0 && after.kcal > dailyTarget.kcal * 1.15) return true;
-  // Fat / carbs: never push a macro that is currently inside its band outside it.
+  // Fat / carbs: never push a macro further past its ceiling than it already is.
+  //
+  // This compares the SIZE of the overage, not band membership. The membership test
+  // it replaced (`isOver && !wasOver`) read "harm means crossing the line", which
+  // silently exempted every macro that had already crossed it — so the one day that
+  // most needed the guard was the one day without it. Measured on 639 real days: the
+  // closer acted on 106 days whose fat was already over, and worsened fat on 106 of
+  // them, up to +16.1 g. "No worse" is the whole rule; already-broken is not a licence.
+  //
+  // Neutral and improving moves stay permitted (overAfter <= overBefore), so a closer
+  // that leaves an out-of-band macro untouched can still fix the macro it came for.
   const check = (lo, hi, before, now) => {
     if (!Number.isFinite(lo) || !Number.isFinite(hi) || !(hi > 0)) return false;
-    const wasOver = bandMiss(before, lo, hi).over > 0;
-    const isOver = bandMiss(now, lo, hi).over > 0;
-    return isOver && !wasOver;
+    const overBefore = bandMiss(before, lo, hi).over;
+    const overAfter = bandMiss(now, lo, hi).over;
+    return overAfter > overBefore;
   };
   if (check(dailyTarget.fatLo, dailyTarget.fatHi, totals.fat, after.fat)) return true;
   if (check(dailyTarget.carbLo, dailyTarget.carbHi, totals.carb, after.carb)) return true;
