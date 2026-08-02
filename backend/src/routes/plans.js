@@ -2,7 +2,10 @@ const express = require("express");
 const { prisma } = require("../lib/prisma.js");
 const { requireAuth } = require("../lib/auth.js");
 const { todayStr, mondayOf, dayNum, addDays } = require("../lib/dates.js");
-const { regenerateOneSlot, buildSlots, targetsForSlots, scaleRecipe, RECENCY_WEIGHTS } = require("../lib/weeklyPlanner.js");
+const {
+  regenerateOneSlot, buildSlots, targetsForSlots, scaleRecipe, RECENCY_WEIGHTS,
+  KCAL_TOLERANCE_PCT, PROTEIN_TOLERANCE_PCT,
+} = require("../lib/weeklyPlanner.js");
 const {
   generateDayCandidates, alternatesForSlot, buildBias, applyPrepFilter, applyFilterStack, varietyOutlook,
   resolveHorizon, horizonWindows, generateHorizonPlan, solveOneMeal, HORIZON_PRESETS, MAX_HORIZON_DAYS, DAYS_PER_WEEK,
@@ -60,11 +63,59 @@ async function upsertSlot(planId, slot, db = prisma) {
   });
 }
 
+// ── THE ONE WARNING DERIVATION (E8) ──────────────────────────────────────
+//
+// A slot's `warning` is the honesty signal the constitution rests on:
+// "Solver declares 'unsolvable + why' — silent target misses are forbidden."
+// It is therefore a SERVER CONCLUSION about the macros the server itself just
+// recomputed. It is never a field a client hands us (a client that wants a
+// clean-looking week simply sends null, and the miss disappears) and never a
+// hardcoded null.
+//
+// This is the derivation /fill-today-from-cart already did correctly, lifted
+// out so every write path states a miss in the same words against the same
+// thresholds the SOLVER gates on (KCAL_TOLERANCE_PCT / PROTEIN_TOLERANCE_PCT,
+// imported rather than re-typed as a literal 0.15).
+//
+// Protein is in here because resolveSlot() warns on a protein shortfall ALONE
+// (weeklyPlanner.js, the `best.proteinShort > PROTEIN_TOLERANCE_PCT` branch).
+// Deriving from kcal only would have silently dropped exactly those warnings
+// on the paths below — swapping a warning the client could forge for a warning
+// that never fires is not a fix. Shortfall is asymmetric, like the solver's:
+// over-delivering protein is inside the band by construction.
+//
+// No target (a slot the current meal config doesn't describe) => null: there
+// is no target to miss, which is not the same as a miss being hidden.
+function deriveSlotWarning(macros, slotTarget) {
+  if (!slotTarget) return null;
+  const kcalTarget = Number(slotTarget.kcalTarget) || 0;
+  const proteinTarget = Number(slotTarget.proteinTarget) || 0;
+  const kcal = Number(macros?.kcal) || 0;
+  const protein = Number(macros?.protein) || 0;
+
+  const misses = [];
+  const kcalOff = kcalTarget > 0 ? Math.abs(kcal - kcalTarget) / kcalTarget : 0;
+  if (kcalOff > KCAL_TOLERANCE_PCT) misses.push(`${Math.round(kcal)} kcal vs a ${Math.round(kcalTarget)} kcal slot`);
+  const proteinShort = proteinTarget > 0 ? Math.max(0, (proteinTarget - protein) / proteinTarget) : 0;
+  if (proteinShort > PROTEIN_TOLERANCE_PCT) misses.push(`${Math.round(protein)}g protein vs a ${Math.round(proteinTarget)}g target`);
+
+  return misses.length ? `${misses.join("; ")} — the 0.5-2x portion limit couldn't close the gap.` : null;
+}
+
+// The per-slot target for one day, keyed by (slotType, slotIndex). Same
+// lookup the alternates endpoint already does; hoisted so every path that
+// needs to JUDGE a slot can find the number it is judged against.
+function slotTargetFinder(dailyTarget, mealConfig) {
+  const targets = targetsForSlots(dailyTarget, buildSlots(mealConfig));
+  return (dayOfWeek, slotType, slotIndex) =>
+    targets.find((t) => t.dayOfWeek === dayOfWeek && t.slotType === slotType && t.slotIndex === slotIndex) || null;
+}
+
 // Server-side rebuild of an incoming candidate/alternate slot. The client
 // only nominates {recipeId, ingredients:[{foodId, grams}]} — names come
 // from the DB and macros are recomputed here, never trusted. Membership in
 // the user's FILTERED pool is the compliance check (diet + allergies).
-function rebuildSlotFromClient(incoming, recipePool) {
+function rebuildSlotFromClient(incoming, recipePool, slotTarget = null) {
   const recipe = recipePool.find((r) => r.id === incoming.recipeId);
   if (!recipe) throw Object.assign(new Error("recipe not in your allowed pool (diet/allergy rules or unknown id)"), { status: 400 });
   const byFoodId = new Map(recipe.ingredients.map((i) => [i.foodId, i]));
@@ -107,7 +158,13 @@ function rebuildSlotFromClient(incoming, recipePool) {
     sidesScale: clampScale(incoming.sidesScale),
     ingredients,
     kcal: totals.kcal, protein: totals.protein, fat: totals.fat, carb: totals.carb,
-    warning: typeof incoming.warning === "string" ? incoming.warning : null,
+    // E8: DERIVED, never `incoming.warning`. Everything else on this path is
+    // already re-established server-side — recipeId is pool-checked,
+    // ingredients are ownership-checked, grams are bounds-checked, macros are
+    // recomputed from raw Food rows, scales are clamped — and the honesty
+    // signal was the single field still taken on the client's word. A client
+    // could clear a real miss by sending null, or invent any sentence it liked.
+    warning: deriveSlotWarning(totals, slotTarget),
   };
 }
 
@@ -479,7 +536,7 @@ router.post("/day-options", async (req, res) => {
 // the (server-rebuilt, compliance-checked) accepted slots.
 router.post("/accept-day", async (req, res) => {
   try {
-    const { recipePool } = await planContext(req.userId);
+    const { dailyTarget, mealConfig, recipePool } = await planContext(req.userId);
     const dayOfWeek = req.body?.dayOfWeek;
     const incoming = req.body?.slots;
     if (!Number.isInteger(dayOfWeek) || dayOfWeek < 0 || dayOfWeek > 6) return res.status(400).json({ error: "dayOfWeek 0-6 required" });
@@ -494,13 +551,18 @@ router.post("/accept-day", async (req, res) => {
     });
     const lockedKeys = new Set((plan.slots || []).filter((s) => s.locked && s.dayOfWeek === dayOfWeek).map(slotKey));
 
+    // E8: the accepted day is judged against THIS user's current slot targets,
+    // so an accepted candidate that misses says so in the server's own words.
+    const targetFor = slotTargetFinder(dailyTarget, mealConfig);
+
     const rebuilt = [];
     for (const s of incoming) {
+      const slotType = s.slotType === "snack" ? "snack" : "meal";
+      const slotIndex = Number.isInteger(s.slotIndex) ? s.slotIndex : 0;
       const record = {
-        dayOfWeek, slotType: s.slotType === "snack" ? "snack" : "meal",
-        slotIndex: Number.isInteger(s.slotIndex) ? s.slotIndex : 0,
+        dayOfWeek, slotType, slotIndex,
         locked: false,
-        ...rebuildSlotFromClient(s, recipePool),
+        ...rebuildSlotFromClient(s, recipePool, targetFor(dayOfWeek, slotType, slotIndex)),
       };
       if (lockedKeys.has(slotKey(record))) continue; // locked slots keep their meal
       rebuilt.push(record);
@@ -569,11 +631,14 @@ router.put("/:planId/slots/:slotId/apply", async (req, res) => {
     if (!target) return res.status(404).json({ error: "slot not found" });
     if (target.locked) return res.status(409).json({ error: "slot is locked — unlock it first" });
 
-    const { recipePool } = await planContext(req.userId);
+    const { dailyTarget, mealConfig, recipePool } = await planContext(req.userId);
+    // E8: same slot target the /alternates endpoint scored against, so the
+    // applied slot's warning describes the plate we are about to store.
+    const slotTarget = slotTargetFinder(dailyTarget, mealConfig)(target.dayOfWeek, target.slotType, target.slotIndex);
     const record = {
       dayOfWeek: target.dayOfWeek, slotType: target.slotType, slotIndex: target.slotIndex,
       locked: false,
-      ...rebuildSlotFromClient(req.body || {}, recipePool),
+      ...rebuildSlotFromClient(req.body || {}, recipePool, slotTarget),
     };
     await upsertSlot(plan.id, record);
     const full = await prisma.planSlot.findFirst({ where: { planId: plan.id, dayOfWeek: target.dayOfWeek, slotType: target.slotType, slotIndex: target.slotIndex }, include: { recipe: true } });
@@ -595,7 +660,7 @@ router.post("/place-recipe", async (req, res) => {
     const s = Number(scale);
     if (!(s >= 0.5 && s <= 2)) return res.status(400).json({ error: "scale must be between 0.5 and 2" });
 
-    const { recipePool } = await planContext(req.userId);
+    const { dailyTarget, mealConfig, recipePool } = await planContext(req.userId);
     const recipe = recipePool.find((r) => r.id === recipeId);
     if (!recipe) return res.status(400).json({ error: "recipe not in your allowed pool (diet/allergy rules or unknown id)" });
 
@@ -619,10 +684,16 @@ router.post("/place-recipe", async (req, res) => {
       return { kcal: t.kcal + food.kcal * f, protein: t.protein + food.protein * f, fat: t.fat + food.fat * f, carb: t.carb + food.carb * f };
     }, { kcal: 0, protein: 0, fat: 0, carb: 0 });
 
+    // E8: this used to hardcode `warning: null` while its sibling below
+    // (/fill-today-from-cart) derived the same signal properly in this same
+    // file. Placing a 600-kcal dish by hand into a 300-kcal snack slot is
+    // exactly the miss the constitution forbids storing in silence — the user
+    // chose the recipe, but the server still owes them the number.
     await upsertSlot(plan.id, {
       dayOfWeek, slotType: type, slotIndex: idx,
       recipeId: recipe.id, proteinScale: s, sidesScale: s,
-      ingredients, ...totals, warning: null, locked: false,
+      ingredients, ...totals, locked: false,
+      warning: deriveSlotWarning(totals, slotTargetFinder(dailyTarget, mealConfig)(dayOfWeek, type, idx)),
     });
     const full = await prisma.plan.findUnique({ where: { id: plan.id }, include: PLAN_INCLUDE });
     res.json(full);
@@ -667,10 +738,10 @@ router.post("/fill-today-from-cart", async (req, res) => {
       // Stage-C fix (#33): the 0.5-2x scale can't always reach a slot's target
       // (a 600-kcal dish forced into a 300-kcal snack slot). Label the miss
       // instead of storing warning:null — the constitution bans silent misses.
-      const kcalOff = target.kcalTarget > 0 ? Math.abs(scaled.kcal - target.kcalTarget) / target.kcalTarget : 0;
-      const warning = kcalOff > 0.15
-        ? `${Math.round(scaled.kcal)} kcal vs a ${Math.round(target.kcalTarget)} kcal slot — the 0.5-2x portion limit couldn't close the gap.`
-        : null;
+      // This derivation is now deriveSlotWarning() above — E8 made it the ONE
+      // copy, shared with accept-day / apply / place-recipe, which either
+      // trusted the client or hardcoded null.
+      const warning = deriveSlotWarning(scaled, target);
       await upsertSlot(plan.id, {
         dayOfWeek: today, slotType: target.slotType, slotIndex: target.slotIndex,
         recipeId: recipe.id, proteinScale: scaled.proteinScale, sidesScale: scaled.sidesScale,
@@ -788,5 +859,7 @@ router.put("/:planId/grocery-list/check", async (req, res) => {
 module.exports = router;
 // Exposed for unit testing (attached to the router function; app.use unaffected).
 module.exports.rebuildSlotFromClient = rebuildSlotFromClient;
+module.exports.deriveSlotWarning = deriveSlotWarning;
+module.exports.slotTargetFinder = slotTargetFinder;
 module.exports.filterRecipePool = filterRecipePool;
 module.exports.slotIdsToKeep = slotIdsToKeep;
