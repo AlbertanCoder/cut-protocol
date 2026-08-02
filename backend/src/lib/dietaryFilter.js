@@ -1175,6 +1175,51 @@ function gfGrainQualified(n, noun) {
 const NAMES_A_GLUTEN_GRAIN = /\b(?:wheat|barley|rye|spelt|semolina|durum|kamut|triticale|farro|bulgur|malt|malted|seitan|graham)\b/i;
 const glutenFreeGrainForm = (n, noun) => gfGrainQualified(n, noun) && !NAMES_A_GLUTEN_GRAIN.test(String(n || ""));
 
+// ── the SAME rule for the pasta nouns, on a NARROWER grain set (H3) ──────
+// "pasta" and "noodle" are wheat-DEFAULT nouns exactly like "flour" and
+// "tortilla", and they are the two that never got the guard above. Measured on
+// the real library: 57 of 57 "High-Protein … with Lentil/Chickpea Pasta"
+// recipes were hidden from a celiac and 53 of them carry no gluten at all —
+// the library's best high-protein assets, deleted from the people who most
+// need them. Eight food rows go with them ("Lentil pasta, dry", "Rice
+// noodles", …). This is the over-exclusion mirror of a leak, the same class
+// b28bd17 fixed for free text.
+//
+// WHY A SEPARATE, SMALLER LIST INSTEAD OF REUSING GLUTEN_FREE_GRAINS. "X
+// flour" means flour milled FROM x — the qualifier IS the base, which is what
+// makes the adjacency rule safe there. "X noodles" does not carry that
+// meaning: "Peanut noodles" and "Chestnut noodles" are wheat noodles in a
+// sauce made of the thing, and "Potato noodles" (gnocchi, Schupfnudeln) are
+// potato bound with WHEAT flour. Reusing the flour list was measured and
+// clears all four — trading H3's over-block for a LEAK, which is strictly
+// worse. So the pasta guard drops the members that read as an accompaniment
+// rather than a base, and adds the three pulses sold as pasta that a FLOUR
+// list never needed to name.
+//
+// DERIVED, not retyped: a grain added to GLUTEN_FREE_GRAINS reaches the pasta
+// nouns automatically unless it is explicitly named below, so the two lists
+// cannot silently drift apart.
+const NOT_A_PASTA_BASE = new Set(["peanut", "almond", "coconut", "chestnut", "soy", "potato"]);
+const PASTA_BASE_GRAINS = GLUTEN_FREE_GRAINS
+  .filter((g) => !NOT_A_PASTA_BASE.has(g))
+  .concat(["edamame", "mung bean", "black bean"]);
+// Soba is the one noodle whose GF-sounding name is not a GF claim: Japanese
+// soba may legally be as little as 30% buckwheat and is normally cut with
+// wheat flour, so standard celiac guidance is "avoid unless labelled
+// gluten-free". Same reasoning the `cereal` guard uses for barley-malted corn
+// flakes. Vetoing the WORD covers "Buckwheat noodles" too, which names no
+// wheat and would otherwise clear on adjacency.
+const SOBA_OR_BUCKWHEAT = /\b(?:soba|buckwheat)\b/i;
+function glutenFreePastaForm(n, noun) {
+  const s = String(n || "");
+  if (NAMES_A_GLUTEN_GRAIN.test(s) || SOBA_OR_BUCKWHEAT.test(s)) return false;
+  const q = PASTA_BASE_GRAINS.map(escapeRe).join("|");
+  // "lentil pasta" | "brown rice noodles" | "corn flour pasta"
+  if (new RegExp(`\\b(?:${q})[a-z]*[\\s-]+(?:flour[\\s-]+)?${noun}(?:es|s)?\\b`, "i").test(s)) return true;
+  // FDC's inverted comma form: "Noodles, rice, cooked" · "Pasta, corn, dry"
+  return new RegExp(`\\b${noun}(?:es|s)?\\b\\s*,\\s*(?:[a-z0-9 '()/&-]+,\\s*){0,3}(?:${q})\\b`, "i").test(s);
+}
+
 // :253 promises "soybean oil stays permitted" (highly refined, protein-free) —
 // but the "soybean" keyword catches it anyway, so all 15 refined-soy-oil rows
 // were removed from a soy-allergic pool in direct contradiction of the comment.
@@ -1285,6 +1330,12 @@ const WORD_GUARDS = {
     && !(/^\s*cereals?\s*,/i.test(String(name || ""))
       && /\b(?:corn|hominy)\s+grits\b/i.test(String(name || ""))
       && !NAMES_A_GLUTEN_GRAIN.test(String(name || ""))),
+  // GLUTEN over-block, H3: the two wheat-DEFAULT nouns the guard above
+  // skipped. Same adjacency rule, narrower grain set — see
+  // glutenFreePastaForm(). "noodles" is a synonym in its own right and picks
+  // this up through the singular→plural mirror below.
+  pasta: (name) => hasWordOrPlural(name, "pasta") && !glutenFreePastaForm(name, "pasta"),
+  noodle: (name) => hasWordOrPlural(name, "noodle") && !glutenFreePastaForm(name, "noodle"),
 
   // SOY — the promise at :253 that "soybean oil stays permitted", finally kept.
   soy: (name) => hasWordOrPlural(name, "soy") && !isRefinedSoyOilRow(name),
