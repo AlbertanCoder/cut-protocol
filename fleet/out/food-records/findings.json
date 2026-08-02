@@ -1,0 +1,636 @@
+{
+  "schema": "fleet/food-records/provenance/v1",
+  "tool": "backend/scripts/qc/foodProvenanceAudit.mjs",
+  "generatedAt": "2026-08-02T04:02:58.586Z",
+  "mode": "APPLY",
+  "provenance": {
+    "dbSha256": "fb67a37f7f7890e68f7c053fa0c3f75bd37c59fa943ae483f33e0807cdf3ee4e",
+    "dbCopySha256": "d9037dce9754b4524943069fff7e0f3e396598c108426f370b0a189458b623a1",
+    "dbPath": "fleet/scratch/food-records/dev.db",
+    "fdcIndex": "backend/data/fdc-cache/fdc-index.json",
+    "fdcIndexBuiltAt": "2026-07-22T03:17:35.653Z",
+    "fdcRecords": 13545
+  },
+  "corpus": {
+    "foods": 14151,
+    "recipes": 910,
+    "recipeIngredients": 7119,
+    "foodsUsedByRecipes": 805
+  },
+  "pass1Census": {
+    "pass": {
+      "rows": 13020,
+      "trusted": 13020,
+      "inUse": 202
+    },
+    "exception": {
+      "rows": 503,
+      "trusted": 503,
+      "inUse": 13
+    },
+    "provenance-reviewed": {
+      "rows": 188,
+      "trusted": 188,
+      "inUse": 187
+    },
+    "undeclared": {
+      "rows": 155,
+      "trusted": 126,
+      "inUse": 119
+    },
+    "provenance-restored": {
+      "rows": 149,
+      "trusted": 149,
+      "inUse": 149
+    },
+    "quarantined": {
+      "rows": 77,
+      "trusted": 0,
+      "inUse": 77
+    },
+    "override-applied": {
+      "rows": 51,
+      "trusted": 51,
+      "inUse": 51
+    },
+    "needs-a-human": {
+      "rows": 4,
+      "trusted": 4,
+      "inUse": 4
+    },
+    "provenance-cleared": {
+      "rows": 2,
+      "trusted": 0,
+      "inUse": 2
+    },
+    "unverified-loose": {
+      "rows": 1,
+      "trusted": 1,
+      "inUse": 1
+    },
+    "unverifiable-fdcid": {
+      "rows": 1,
+      "trusted": 0,
+      "inUse": 0
+    }
+  },
+  "pass1TrustGapCount": 5,
+  "pass2Verdicts": {
+    "reconciles": 13736,
+    "negative-carb-clamped": 10,
+    "kcal-recomputed": 6,
+    "no-record": 1
+  },
+  "repairs": [
+    {
+      "id": "cmrj2t8w400axwlwsomrm3j7x",
+      "name": "Braeburn Apples",
+      "category": "fruit-veg",
+      "from": {
+        "kcal": 64.7
+      },
+      "to": {
+        "kcal": 58.2
+      },
+      "driftPct": 11.17,
+      "direction": "OVERSTATES calories",
+      "inUse": true,
+      "recipes": [
+        "Apple & Blackberry Crumble",
+        "Chinon Apple Tarts",
+        "Tarte Tatin"
+      ],
+      "pass1": "dataQuality declares \"provenance-restored\" and names FDC 1750340",
+      "pass2": "P/F/C match the record exactly, but kcal 64.7 equals the generic 4P+9F+4C recompute (64.84) rather than the record's own published energy (58.2), which USDA derived with food-specific factors 3.36/8.37/3.6 (P/F/C)",
+      "witness": "Food row \"Apples, fuji, with skin, raw\" holds fdcId 1750340 at 58.2 kcal — the same USDA record is already in this table at the published energy",
+      "macros": {
+        "protein": 0.15,
+        "fat": 0.16,
+        "carb": 15.7,
+        "fiber": 2.08
+      }
+    },
+    {
+      "id": "cmrj2t8xx00b4wlwsm2tbvosk",
+      "name": "Apples",
+      "category": "fruit-veg",
+      "from": {
+        "kcal": 64.7
+      },
+      "to": {
+        "kcal": 58.2
+      },
+      "driftPct": 11.17,
+      "direction": "OVERSTATES calories",
+      "inUse": true,
+      "recipes": [
+        "Apple Potato Mash (Hete bliksem) ",
+        "Apple cake",
+        "Dutch Apple Pie",
+        "Skillet Apple Pork Chops with Roasted Sweet Potatoes & Zucchini"
+      ],
+      "pass1": "dataQuality declares \"provenance-restored\" and names FDC 1750340",
+      "pass2": "P/F/C match the record exactly, but kcal 64.7 equals the generic 4P+9F+4C recompute (64.84) rather than the record's own published energy (58.2), which USDA derived with food-specific factors 3.36/8.37/3.6 (P/F/C)",
+      "witness": "Food row \"Apples, fuji, with skin, raw\" holds fdcId 1750340 at 58.2 kcal — the same USDA record is already in this table at the published energy",
+      "macros": {
+        "protein": 0.15,
+        "fat": 0.16,
+        "carb": 15.7,
+        "fiber": 2.08
+      }
+    },
+    {
+      "id": "cmrj2ta3i00fhwlwsuo42zdxt",
+      "name": "Tomato Purée",
+      "category": "fruit-veg",
+      "from": {
+        "kcal": 104
+      },
+      "to": {
+        "kcal": 88.5
+      },
+      "driftPct": 17.51,
+      "direction": "OVERSTATES calories",
+      "inUse": true,
+      "recipes": [
+        "Lamb Rogan josh"
+      ],
+      "pass1": "dataQuality declares \"provenance-restored\" and names FDC 2685580",
+      "pass2": "P/F/C match the record exactly, but kcal 104 equals the generic 4P+9F+4C recompute (104.29) rather than the record's own published energy (88.5), which USDA derived with food-specific factors 2.44/8.37/3.57 (P/F/C)",
+      "witness": "Food row \"Tomato, paste, canned, without salt added\" holds fdcId 2685580 at 88.5 kcal — the same USDA record is already in this table at the published energy",
+      "macros": {
+        "protein": 4.23,
+        "fat": 0.73,
+        "carb": 20.2,
+        "fiber": 4.7
+      }
+    },
+    {
+      "id": "cmrj2tarj00i2wlwsslsbohoo",
+      "name": "Bramley Apples",
+      "category": "fruit-veg",
+      "from": {
+        "kcal": 64.7
+      },
+      "to": {
+        "kcal": 58.2
+      },
+      "driftPct": 11.17,
+      "direction": "OVERSTATES calories",
+      "inUse": true,
+      "recipes": [
+        "Rosemary braised red cabbage with kabanos"
+      ],
+      "pass1": "dataQuality declares \"provenance-restored\" and names FDC 1750340",
+      "pass2": "P/F/C match the record exactly, but kcal 64.7 equals the generic 4P+9F+4C recompute (64.84) rather than the record's own published energy (58.2), which USDA derived with food-specific factors 3.36/8.37/3.6 (P/F/C)",
+      "witness": "Food row \"Apples, fuji, with skin, raw\" holds fdcId 1750340 at 58.2 kcal — the same USDA record is already in this table at the published energy",
+      "macros": {
+        "protein": 0.15,
+        "fat": 0.16,
+        "carb": 15.7,
+        "fiber": 2.08
+      }
+    },
+    {
+      "id": "cmrj2tbp000lnwlwskstd91o0",
+      "name": "Runner Beans",
+      "category": "fruit-veg",
+      "from": {
+        "kcal": 40
+      },
+      "to": {
+        "kcal": 33.6
+      },
+      "driftPct": 19.05,
+      "direction": "OVERSTATES calories",
+      "inUse": true,
+      "recipes": [
+        "Runner Bean Mash (Snijbonen Stamppot)"
+      ],
+      "pass1": "dataQuality declares \"provenance-restored\" and names FDC 2346400",
+      "pass2": "P/F/C match the record exactly, but kcal 40 equals the generic 4P+9F+4C recompute (40.04) rather than the record's own published energy (33.6), which USDA derived with food-specific factors 2.44/8.37/3.57 (P/F/C)",
+      "witness": "Food row \"Beans, snap, green, raw\" holds fdcId 2346400 at 33.6 kcal — the same USDA record is already in this table at the published energy",
+      "macros": {
+        "protein": 1.97,
+        "fat": 0.28,
+        "carb": 7.41,
+        "fiber": 3.01
+      }
+    }
+  ],
+  "rejected": [
+    {
+      "id": "cmrj2t7uz006gwlwsb7pufep6",
+      "name": "Skirty Steak",
+      "claimedFdcId": 2727573,
+      "fromProse": true,
+      "source": "quarantined",
+      "inUse": true,
+      "declared": "quarantined",
+      "productTrusts": false,
+      "verdict": "kcal-recomputed",
+      "note": "P/F/C match the record exactly, but kcal 143 equals the generic 4P+9F+4C recompute (143.26) rather than the record's own published energy (149), which USDA derived with food-specific factors 4.27/9.02/3.87 (P/F/C)",
+      "correctedKcal": 149,
+      "driftPct": -4.03,
+      "fdcId": 2727573,
+      "description": "Beef, tenderloin steak, raw",
+      "recKcal": 149,
+      "rowKcal": 143,
+      "classicAtwater": 143.26,
+      "energyBasis": "atwater-specific",
+      "atwaterFactors": {
+        "protein": 4.27,
+        "fat": 9.02,
+        "carb": 3.87
+      },
+      "twins": [
+        {
+          "name": "Beef, tenderloin steak, raw",
+          "kcal": 149,
+          "source": "usda-verified"
+        }
+      ],
+      "rejectedBecause": "row is QUARANTINED; an override entry would clear the quarantine as a side effect and return a known wrong-record row to service with three still-wrong macros. kcal 143 -> 149 is correct but must not be delivered this way"
+    }
+  ],
+  "flags": [
+    {
+      "id": "cmrj2t6lj000qwlwsea5gchwo",
+      "name": "Soured cream and chive dip",
+      "kind": "trust-gap",
+      "macros": {
+        "kcal": 198,
+        "protein": 2.44,
+        "fat": 19.4,
+        "carb": 4.63
+      },
+      "pass1": "dataQuality declares \"needs-a-human\" (DB declares: a reviewer looked and DECLINED to decide) — yet macroTrustIssue() returns null, so the product serves this number as verified fact",
+      "pass2": "no donor FDC id recoverable — the numeric channel has nothing to say",
+      "twins": [],
+      "recipes": [
+        "Aussie Burgers @ 15g"
+      ],
+      "dataQuality": "NEEDS A HUMAN DECISION — If homemade the dip is essentially cultured sour cream plus negligible chive mass (donor fits), but retail soured cream and chive dips run 300-350 kcal because of added oil/mayonnaise, so the intended product is genuinely ambiguous. (previously: another food's macros, unconfirmed)"
+    },
+    {
+      "id": "cmrj2t7to006awlwstqgwf8d3",
+      "name": "Hotsauce",
+      "kind": "trust-gap",
+      "macros": {
+        "kcal": 93,
+        "protein": 1.93,
+        "fat": 0.93,
+        "carb": 19.2
+      },
+      "pass1": "dataQuality declares \"needs-a-human\" (DB declares: a reviewer looked and DECLINED to decide) — yet macroTrustIssue() returns null, so the product serves this number as verified fact",
+      "pass2": "no donor FDC id recoverable — the numeric channel has nothing to say",
+      "twins": [],
+      "recipes": [
+        "15-minute chicken & halloumi burgers @ 9.375g",
+        "BBQ Pork Sloppy Joes @ 25g",
+        "Bigos (Hunters Stew) @ 0.125g",
+        "Hot and Sour Soup @ 0.4g",
+        "Kapsalon @ 25g",
+        "Szechuan Beef @ 0.4g",
+        "Thai fried rice with prawns & peas @ 25g",
+        "Tuna and Egg Briks @ 0.125g"
+      ],
+      "dataQuality": "NEEDS A HUMAN DECISION — Sriracha is genuinely a hot sauce, but it is a sweetened style at 93 kcal / 19.2 g carb whereas a generic vinegar-pepper hot sauce is ~11-20 kcal; the app name is too underspecified to pick between them. (previously: another food's macros, unconfirmed)"
+    },
+    {
+      "id": "cmrj2t7ur006fwlwsfbomilbd",
+      "name": "Corn Flour",
+      "kind": "trust-gap",
+      "macros": {
+        "kcal": 363,
+        "protein": 8.46,
+        "fat": 3.69,
+        "carb": 76.6
+      },
+      "pass1": "dataQuality declares \"needs-a-human\" (DB declares: a reviewer looked and DECLINED to decide) — yet macroTrustIssue() returns null, so the product serves this number as verified fact",
+      "pass2": "no donor FDC id recoverable — the numeric channel has nothing to say",
+      "twins": [],
+      "recipes": [
+        "Arepa @ 62.5g",
+        "Crema Catalana @ 5.625g",
+        "Kung Pao Chicken @ 3.9g",
+        "Kung Po Prawns @ 0.65g",
+        "Mbuzi Choma (Roasted Goat) @ 250g",
+        "Peach & Blueberry Grunt @ 0.325g",
+        "Portuguese custard tarts @ 6.25g",
+        "Purple sprouting broccoli tempura with nuoc cham @ 12.5g",
+        "Salt & pepper squid @ 21.25g",
+        "Seri muka kuih @ 4.8875g",
+        "Turkish lahmacun @ 25g"
+      ],
+      "dataQuality": "NEEDS A HUMAN DECISION — Genuine dialect fork: US 'corn flour' is ground corn and masa is a close match (361 vs 363 kcal), but UK 'cornflour' means cornstarch (381 kcal, ~91 g carb, ~0.3 g protein) and this library mixes UK terms (Courgettes, Muscovado) with US ones (Cilantro) — a human must check how the recipes use it; if UK, search 'Cornstarch'. (previously: another food's macros, unconfirmed)"
+    },
+    {
+      "id": "cmrj2ta9100g2wlws4reelywg",
+      "name": "Tarragon Leaves",
+      "kind": "trust-gap",
+      "macros": {
+        "kcal": 295,
+        "protein": 22.8,
+        "fat": 7.24,
+        "carb": 50.2
+      },
+      "pass1": "dataQuality declares \"needs-a-human\" (DB declares: a reviewer looked and DECLINED to decide) — yet macroTrustIssue() returns null, so the product serves this number as verified fact",
+      "pass2": "no donor FDC id recoverable — the numeric channel has nothing to say",
+      "twins": [],
+      "recipes": [
+        "French Omelette @ 75g"
+      ],
+      "dataQuality": "NEEDS A HUMAN DECISION — Genuine form ambiguity — 'Tarragon Leaves' is standard spice-jar labelling for the dried herb (295 kcal, correct) but recipes also write it for fresh picked leaves (~45 kcal); a human must confirm which the library entry means. (previously: another food's macros, unconfirmed)"
+    },
+    {
+      "id": "cmrj2tbp900lowlwsp6mpz0jk",
+      "name": "Rye",
+      "kind": "trust-gap",
+      "macros": {
+        "kcal": 259,
+        "protein": 8.5,
+        "fat": 3.3,
+        "carb": 48.3
+      },
+      "pass1": "dataQuality declares \"unverified-loose\" (DB declares unverified, but with a prefix the product does not recognise) — yet macroTrustIssue() returns null, so the product serves this number as verified fact",
+      "pass2": "donor FDC 172684 \"Bread, rye\"; row DOES carry that record's macros verbatim",
+      "twins": [
+        "Rye Bread (259 kcal, usda-verified)"
+      ],
+      "recipes": [
+        "Rye bread @ 100g"
+      ],
+      "dataQuality": "exception: unverified — carried fdcId 172684 \"Bread, rye\" (SR Legacy) under the name \"Rye\"; macros are rye BREAD's, not rye grain's. Needs real rye-grain data or deletion."
+    },
+    {
+      "id": "cmrzu1p5a005nwlo04iapnchn",
+      "name": "Green onion, (scallion), bulb and greens, root removed, raw",
+      "kind": "no-record",
+      "pass1": "declares \"undeclared\"",
+      "pass2": "the named FDC id is in no cached dataset — nothing to reconcile against",
+      "macros": null,
+      "twins": [],
+      "recipes": [],
+      "dataQuality": null
+    }
+  ],
+  "funnel": {
+    "raised": 25,
+    "repaired": 5,
+    "rejectedFalsePositive": 14,
+    "flaggedNoVerifiedRepair": 6,
+    "rows": [
+      {
+        "name": "Soured cream and chive dip",
+        "id": "cmrj2t6lj000qwlwsea5gchwo",
+        "channels": [
+          "pass1/declarative: DB declares provenance unresolved, product serves it as fact"
+        ],
+        "outcome": "FLAGGED — no verified repair",
+        "why": "the defect is real but the correct value is a judgment call the evidence cannot settle"
+      },
+      {
+        "name": "Hotsauce",
+        "id": "cmrj2t7to006awlwstqgwf8d3",
+        "channels": [
+          "pass1/declarative: DB declares provenance unresolved, product serves it as fact"
+        ],
+        "outcome": "FLAGGED — no verified repair",
+        "why": "the defect is real but the correct value is a judgment call the evidence cannot settle"
+      },
+      {
+        "name": "Corn Flour",
+        "id": "cmrj2t7ur006fwlwsfbomilbd",
+        "channels": [
+          "pass1/declarative: DB declares provenance unresolved, product serves it as fact"
+        ],
+        "outcome": "FLAGGED — no verified repair",
+        "why": "the defect is real but the correct value is a judgment call the evidence cannot settle"
+      },
+      {
+        "name": "Tarragon Leaves",
+        "id": "cmrj2ta9100g2wlws4reelywg",
+        "channels": [
+          "pass1/declarative: DB declares provenance unresolved, product serves it as fact"
+        ],
+        "outcome": "FLAGGED — no verified repair",
+        "why": "the defect is real but the correct value is a judgment call the evidence cannot settle"
+      },
+      {
+        "name": "Rye",
+        "id": "cmrj2tbp900lowlwsp6mpz0jk",
+        "channels": [
+          "pass1/declarative: DB declares provenance unresolved, product serves it as fact"
+        ],
+        "outcome": "FLAGGED — no verified repair",
+        "why": "the defect is real but the correct value is a judgment call the evidence cannot settle"
+      },
+      {
+        "name": "Shredded Meat",
+        "id": "cmrj2t6id000cwlws96hcabyp",
+        "channels": [
+          "pass1/string: prose description != record description (naive parse)"
+        ],
+        "outcome": "REJECTED — false positive",
+        "why": "raised only by the naive string parse breaking on an inch-mark inside the USDA description; arithmetic reconciles this row exactly"
+      },
+      {
+        "name": "Sirloin steak",
+        "id": "cmrj2t6mo000vwlws2107zlap",
+        "channels": [
+          "pass1/string: prose description != record description (naive parse)"
+        ],
+        "outcome": "REJECTED — false positive",
+        "why": "raised only by the naive string parse breaking on an inch-mark inside the USDA description; arithmetic reconciles this row exactly"
+      },
+      {
+        "name": "Pork Back Ribs",
+        "id": "cmrj2t79r003pwlwsamc49h8v",
+        "channels": [
+          "pass1/string: prose description != record description (naive parse)"
+        ],
+        "outcome": "REJECTED — false positive",
+        "why": "raised only by the naive string parse breaking on an inch-mark inside the USDA description; arithmetic reconciles this row exactly"
+      },
+      {
+        "name": "Skirty Steak",
+        "id": "cmrj2t7uz006gwlwsb7pufep6",
+        "channels": [
+          "pass2/numeric: kcal-recomputed"
+        ],
+        "outcome": "REJECTED",
+        "why": "row is QUARANTINED; an override entry would clear the quarantine as a side effect and return a known wrong-record row to service with three still-wrong macros. kcal 143 -> 149 is correct but must not be delivered this way"
+      },
+      {
+        "name": "Braeburn Apples",
+        "id": "cmrj2t8w400axwlwsomrm3j7x",
+        "channels": [
+          "pass2/numeric: kcal-recomputed"
+        ],
+        "outcome": "REPAIRED",
+        "why": "both passes agree; the corrected number comes from the USDA record and a twin row corroborates it"
+      },
+      {
+        "name": "Apples",
+        "id": "cmrj2t8xx00b4wlwsm2tbvosk",
+        "channels": [
+          "pass2/numeric: kcal-recomputed"
+        ],
+        "outcome": "REPAIRED",
+        "why": "both passes agree; the corrected number comes from the USDA record and a twin row corroborates it"
+      },
+      {
+        "name": "Tomato Purée",
+        "id": "cmrj2ta3i00fhwlwsuo42zdxt",
+        "channels": [
+          "pass2/numeric: kcal-recomputed"
+        ],
+        "outcome": "REPAIRED",
+        "why": "both passes agree; the corrected number comes from the USDA record and a twin row corroborates it"
+      },
+      {
+        "name": "Bramley Apples",
+        "id": "cmrj2tarj00i2wlwsslsbohoo",
+        "channels": [
+          "pass2/numeric: kcal-recomputed"
+        ],
+        "outcome": "REPAIRED",
+        "why": "both passes agree; the corrected number comes from the USDA record and a twin row corroborates it"
+      },
+      {
+        "name": "Runner Beans",
+        "id": "cmrj2tbp000lnwlwskstd91o0",
+        "channels": [
+          "pass2/numeric: kcal-recomputed"
+        ],
+        "outcome": "REPAIRED",
+        "why": "both passes agree; the corrected number comes from the USDA record and a twin row corroborates it"
+      },
+      {
+        "name": "Chicken, drumstick, meat and skin, raw",
+        "id": "cmrviilov0075wl1ksk5jqpja",
+        "channels": [
+          "pass2/numeric: negative-carb-clamped"
+        ],
+        "outcome": "REJECTED — false positive",
+        "why": "record's carb-by-difference is -0.47 g (negative, as USDA publishes it); the row clamps it to 0 and every other field matches exactly — a documented import model, not corruption"
+      },
+      {
+        "name": "Chicken, thigh, meat and skin, raw",
+        "id": "cmrviilov0076wl1ka8qrtvjz",
+        "channels": [
+          "pass2/numeric: negative-carb-clamped"
+        ],
+        "outcome": "REJECTED — false positive",
+        "why": "record's carb-by-difference is -0.17 g (negative, as USDA publishes it); the row clamps it to 0 and every other field matches exactly — a documented import model, not corruption"
+      },
+      {
+        "name": "Chicken, wing, meat and skin, raw",
+        "id": "cmrviilov0077wl1kngut3dwe",
+        "channels": [
+          "pass2/numeric: negative-carb-clamped"
+        ],
+        "outcome": "REJECTED — false positive",
+        "why": "record's carb-by-difference is -0.46 g (negative, as USDA publishes it); the row clamps it to 0 and every other field matches exactly — a documented import model, not corruption"
+      },
+      {
+        "name": "Chicken, breast, meat and skin, raw",
+        "id": "cmrviilov0078wl1kzzobblbe",
+        "channels": [
+          "pass2/numeric: negative-carb-clamped"
+        ],
+        "outcome": "REJECTED — false positive",
+        "why": "record's carb-by-difference is -0.43 g (negative, as USDA publishes it); the row clamps it to 0 and every other field matches exactly — a documented import model, not corruption"
+      },
+      {
+        "name": "Lamb, ground, raw",
+        "id": "cmrviilov0079wl1k5a5rvpgo",
+        "channels": [
+          "pass2/numeric: negative-carb-clamped"
+        ],
+        "outcome": "REJECTED — false positive",
+        "why": "record's carb-by-difference is -0.25 g (negative, as USDA publishes it); the row clamps it to 0 and every other field matches exactly — a documented import model, not corruption"
+      },
+      {
+        "name": "Bison, ground, raw",
+        "id": "cmrviilov007awl1k78l62nsx",
+        "channels": [
+          "pass2/numeric: negative-carb-clamped"
+        ],
+        "outcome": "REJECTED — false positive",
+        "why": "record's carb-by-difference is -0.15 g (negative, as USDA publishes it); the row clamps it to 0 and every other field matches exactly — a documented import model, not corruption"
+      },
+      {
+        "name": "Pork, chop, center cut, raw",
+        "id": "cmrviilov007ewl1k0wdmz8pm",
+        "channels": [
+          "pass2/numeric: negative-carb-clamped"
+        ],
+        "outcome": "REJECTED — false positive",
+        "why": "record's carb-by-difference is -0.56 g (negative, as USDA publishes it); the row clamps it to 0 and every other field matches exactly — a documented import model, not corruption"
+      },
+      {
+        "name": "Pork, belly, with skin, raw",
+        "id": "cmrviilov007fwl1kj3m2x39b",
+        "channels": [
+          "pass2/numeric: negative-carb-clamped"
+        ],
+        "outcome": "REJECTED — false positive",
+        "why": "record's carb-by-difference is -0.7 g (negative, as USDA publishes it); the row clamps it to 0 and every other field matches exactly — a documented import model, not corruption"
+      },
+      {
+        "name": "Halibut, frozen, wild caught",
+        "id": "cmrviilov007jwl1k9bge9d3s",
+        "channels": [
+          "pass2/numeric: negative-carb-clamped"
+        ],
+        "outcome": "REJECTED — false positive",
+        "why": "record's carb-by-difference is -0.06 g (negative, as USDA publishes it); the row clamps it to 0 and every other field matches exactly — a documented import model, not corruption"
+      },
+      {
+        "name": "Tuna, ahi or yellowfin, frozen, wild caught",
+        "id": "cmrviilov0080wl1k2hoeexx7",
+        "channels": [
+          "pass2/numeric: negative-carb-clamped"
+        ],
+        "outcome": "REJECTED — false positive",
+        "why": "record's carb-by-difference is -0.1 g (negative, as USDA publishes it); the row clamps it to 0 and every other field matches exactly — a documented import model, not corruption"
+      },
+      {
+        "name": "Green onion, (scallion), bulb and greens, root removed, raw",
+        "id": "cmrzu1p5a005nwlo04iapnchn",
+        "channels": [
+          "pass2/numeric: no-record"
+        ],
+        "outcome": "FLAGGED — no verified repair",
+        "why": "the defect is real but the correct value is a judgment call the evidence cannot settle"
+      }
+    ],
+    "stringChannel": {
+      "naiveRaised": [
+        "Shredded Meat",
+        "Sirloin steak",
+        "Pork Back Ribs"
+      ],
+      "strictRaised": [
+        "Rye"
+      ],
+      "artifactOnly": [
+        "Shredded Meat",
+        "Sirloin steak",
+        "Pork Back Ribs"
+      ],
+      "allRaised": [
+        "Shredded Meat",
+        "Sirloin steak",
+        "Pork Back Ribs",
+        "Rye"
+      ],
+      "realSignal": 0,
+      "note": "every string-channel raise on this corpus is a parser artifact, in BOTH parsers. The repair gate never consults this channel."
+    },
+    "rejectionRatePct": 80,
+    "falsePositiveRatePct": 56
+  }
+}
