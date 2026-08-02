@@ -110,6 +110,30 @@ phase of the staged overhaul (Phases 0–8, driven by an external prompt pack).
    hexes confirmed" is stale, and violations have since reappeared (see the
    corrections block below). If you need a tint of an existing token, add a
    token — do not inline the rgba.
+9. **`dietaryFilter.js` HAS NUL BYTES — grep calls it a binary and hides the
+   lines.** `backend/src/lib/dietaryFilter.js` (~118 KB) carries 3 NUL bytes,
+   so `file` reports it as `data` and both grep and ripgrep classify it as
+   binary. A **match** then prints one opaque line — `Binary file
+   dietaryFilter.js matches` — with **no line numbers and no content**, even
+   when the term is present seven times. Skimming that as "nothing found"
+   inverts the truth, and it has already cost one session ten minutes. Use
+   `grep -a` / `rg --text` (both restore normal output), or the Read tool /
+   Node, which are unaffected. Counts (`grep -c`) and genuine negatives are
+   still correct — what you lose is the located line. Two riders:
+   - The file is **CommonJS** (`module.exports = {` at the end). `grep
+     "^export"` finding nothing there is CORRECT and is *not* a NUL artifact —
+     the file contains no `export` statements. A Node import still reports 39
+     names, because cjs-module-lexer reads the `module.exports` object. Do not
+     go hunting NUL bytes to explain that one.
+   - `scripts/scanSecrets.mjs:84` returns early on any file containing a NUL
+     (`if (buf.includes(0)) return;`), so this file — the allergen and dietary
+     filter, among the most safety-critical source in the repo — is
+     **permanently exempt from the secret scan**, and
+     `backend/tests/scanSecrets.test.js:50` asserts that skip is correct, so a
+     passing suite defends the exemption. Verified 2026-08-01 on a copy: a
+     key-shaped literal appended to the file yields 0 findings with the NULs
+     intact and 1 with them stripped. Recorded, not fixed — do not rediscover
+     it a third time.
 
 ## Design constitution — AURORA RINGLIGHT color laws (binding, no session may violate)
 
