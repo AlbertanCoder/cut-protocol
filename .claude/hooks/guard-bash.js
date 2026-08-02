@@ -34,7 +34,24 @@ const RULES = [
   ['git push', /\bgit\s+push\b/i, 'Pushing is the owner\'s hand only (see .git/hooks/pre-push).'],
   ['git reset', /\bgit\s+reset\b/i, 'History rewriting is forbidden inside the cage.'],
   ['git rebase', /\bgit\s+rebase\b/i, 'History rewriting is forbidden inside the cage.'],
-  ['a --force flag', /--force\b|(^|\s)-f(\s|$)/i, 'Forced operations are forbidden inside the cage.'],
+  // The long form stays CASE-INSENSITIVE: --force, --Force, --FORCE, and
+  // --force-with-lease (the \b matches before the hyphen) all die here.
+  ['a --force flag', /--force\b/i, 'Forced operations are forbidden inside the cage.'],
+  // The short form is CASE-SENSITIVE on purpose (fleet DECISIONS.md D-5).
+  // These were one rule with a single /i, which made `-F` match the --force
+  // branch's intent and blocked `git commit -F <file>` — a flag that reads a
+  // commit message from a file and forces nothing. A guard that blocks a safe
+  // command teaches sessions to rephrase around guards, which is the failure
+  // mode this whole hook exists to prevent. Lowercase `-f` (checkout -f,
+  // clean -f, branch -f, rm -f) stays blocked, unchanged.
+  //
+  // What this gives up, stated plainly: PowerShell resolves parameter names
+  // case-insensitively, so a cmdlet where `-F` unambiguously abbreviates
+  // -Force is no longer caught. That class was never actually defended — the
+  // canonical spelled-out `Remove-Item -Recurse -Force` does not match this
+  // rule either, before or after this change. Do not "fix" that by putting
+  // the /i back; it would restore the false positive without closing the gap.
+  ['a -f force flag', /(^|\s)-f(\s|$)/, 'Forced operations are forbidden inside the cage.'],
   ['rm -rf', /\brm\s+(-[a-z]*r[a-z]*f|-[a-z]*f[a-z]*r)/i, 'Recursive force-delete is forbidden inside the cage.'],
   [
     'the golden relock invocation',
