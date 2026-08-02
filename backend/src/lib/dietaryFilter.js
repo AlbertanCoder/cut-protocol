@@ -195,6 +195,7 @@ const NON_BUTTER_DAIRY_KEYWORDS = ["cheese", "yogurt", "yoghurt", "whey", "casei
 // require this file back.
 const {
   ALLERGEN_TAXONOMY,
+  CROSS_REACTANTS,
   allergenCatalog,
   searchAllergens,
   categoryKeyOf,
@@ -1491,10 +1492,26 @@ function matchesExclusionTerm(rawName, term) {
     // entries ("seafood mix", "stock cube") use substring matching via
     // matchesTermList(); single-word entries keep the stricter
     // word-boundary/plural match.
-    return synonyms.some((word) => {
+    const hitsCategory = (list) => list.some((word) => {
       const guard = WORD_GUARDS[word];
       return guard ? guard(name) : matchesTermList(name, word);
     });
+    if (hitsCategory(synonyms)) return true;
+    // CROSS-REACTION. Excluding one allergen can oblige us to exclude another:
+    // lupin cross-reacts strongly with peanut and turns up in the gluten-free
+    // bakery blends a careful eater reaches for, so a peanut exclusion has to
+    // carry lupin with it. That fact was already in the taxonomy — as PROSE in a
+    // `note` field, which no code could read (allergenTaxonomy.js, the lupin
+    // entry). It is now `crossReactsInto`, and this is the one place it is read.
+    //
+    // Directional by construction: CROSS_REACTANTS maps the EXCLUDED term to the
+    // extra categories it drags in, never the reverse. Excluding lupin does not
+    // imply a peanut allergy.
+    for (const extra of CROSS_REACTANTS[resolved.synonymKey] || []) {
+      const extraSynonyms = CATEGORY_SYNONYMS[extra];
+      if (extraSynonyms && hitsCategory(extraSynonyms)) return true;
+    }
+    return false;
   }
   // Not a known category - literal substring fallback. Covers free-text
   // entries like "kiwi" and specific multi-word phrases like "soy protein"

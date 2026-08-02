@@ -633,6 +633,18 @@ const ALLERGEN_TAXONOMY = [
     nameKeywords: ["lupin", "lupine", "lupini"],
     offTags: ["lupin"],
     note: "EU-declarable. Cross-reacts strongly with peanut; common in gluten-free bakery flour blends.",
+    // DIRECTIONAL, and the direction is the whole point: someone who excluded
+    // PEANUTS must also be protected from lupin, because the clinical
+    // cross-reactivity runs that way and lupin flour turns up in exactly the
+    // gluten-free bakery blends a careful eater reaches for. The reverse is NOT
+    // asserted — excluding lupin does not imply a peanut allergy, and inventing
+    // that would delete peanut foods from people who can eat them.
+    //
+    // This used to live only in the `note` above, as prose no code could read.
+    // Compare the `mango` entry below, which documents a deliberate DECISION NOT
+    // to fold cashew/pistachio in; that one stays prose because it is a refusal,
+    // not an unimplemented rule.
+    crossReactsInto: ["peanuts"],
   },
   {
     key: "mustard",
@@ -873,6 +885,25 @@ for (const e of ALLERGEN_TAXONOMY) ALLERGEN_BY_KEY[e.key] = e;
 /** Rows that own a category (no parent). */
 const TOP_LEVEL_ALLERGENS = ALLERGEN_TAXONOMY.filter((e) => !e.parent);
 
+/**
+ * excluded category key → the OTHER category keys that must be excluded with it.
+ *
+ * Reverse index over `crossReactsInto`. An entry declaring
+ * `crossReactsInto: ["peanuts"]` means "if the user excluded peanuts, exclude me
+ * too" — so the index maps `peanuts → ["lupin"]`, not the other way round.
+ *
+ * Directional on purpose. Cross-reactivity is a clinical claim about one
+ * direction, and mirroring it automatically would delete foods from people who
+ * can eat them. A row that should protect BOTH ways has to say so twice, and
+ * the second one needs its own evidence.
+ */
+const CROSS_REACTANTS = Object.create(null);
+for (const e of ALLERGEN_TAXONOMY) {
+  for (const target of e.crossReactsInto || []) {
+    (CROSS_REACTANTS[target] || (CROSS_REACTANTS[target] = [])).push(categoryKeyOf(e));
+  }
+}
+
 /** The category a row resolves to: itself, or its parent. */
 function categoryKeyOf(entry) {
   return entry.parent || entry.key;
@@ -956,6 +987,7 @@ module.exports = {
   ALLERGEN_BY_KEY,
   ALLERGEN_TERM_INDEX,
   TOP_LEVEL_ALLERGENS,
+  CROSS_REACTANTS,
   TIER_MAJOR,
   TIER_COMMON,
   TIER_RARE,
