@@ -684,6 +684,63 @@ function ProvisionalBanner({ pref }) {
   );
 }
 
+// ── unsolved-slot warnings (fleet finding E3) ───────────────────────────────
+// The constitution requires the solver to declare "unsolvable + why" — silent
+// target misses are forbidden — and it does: weeklyPlanner writes a
+// plain-English reason onto PlanSlot.warning, the one honesty signal that
+// survives a restart. That reason then rendered on the Plan tab and NOWHERE
+// ELSE, so the screen the user actually opens every day could show a plan that
+// blew its target with no sign at all that anything had gone wrong. A 4,623
+// kcal day against a 2,000 kcal target carried zero visible warnings here.
+//
+// Amber, never red (design law b): an unsolved slot is a re-planning task, not
+// a verdict on the person. The full solver sentence is printed unabridged —
+// truncating the "why" would recreate the silent miss in a smaller font — and
+// the copy names the fix and says out loud that nothing needs undoing.
+function SlotWarnings({ slots }) {
+  const flagged = slots.filter((s) => typeof s.warning === "string" && s.warning.trim());
+  if (flagged.length === 0) return null;
+  return (
+    <div
+      role="group"
+      aria-label={`${flagged.length} planned slot${flagged.length === 1 ? "" : "s"} today did not fit your targets`}
+      className="mb-4 p-3.5 rounded-2xl"
+      style={{ background: C.warnBg, border: `1px solid ${C.warn}66` }}
+    >
+      <div className="flex items-start gap-2.5">
+        <AlertTriangle size={16} style={{ color: C.warn }} className="mt-0.5 shrink-0" aria-hidden="true" />
+        <div className="min-w-0 flex-1">
+          <div className="text-sm font-extrabold" style={{ color: C.ink }}>
+            {flagged.length === 1
+              ? "1 slot today couldn't be solved to your targets"
+              : `${flagged.length} slots today couldn't be solved to your targets`}
+          </div>
+          <ul className="flex flex-col gap-1.5 mt-2">
+            {flagged.map((s, i) => (
+              <li
+                key={s.id ?? `${s.slotType}:${s.slotIndex}:${i}`}
+                className="text-xs font-semibold leading-relaxed"
+                style={{ color: C.faint }}
+              >
+                <span style={{ color: C.ink }}>
+                  {s.recipe?.name || slotWord(s.slotType) || "Open meal"}
+                </span>
+                {" — "}
+                {s.warning}
+              </li>
+            ))}
+          </ul>
+          <div className="text-xs font-semibold mt-2 leading-relaxed" style={{ color: C.faint }}>
+            Nothing here needs undoing. Swap those slots on the <strong style={{ color: C.ink }}>Plan</strong> tab
+            (each one offers three other options), or regenerate with looser filters — diet, allergy and prep-time
+            caps are what usually leave the solver nothing that fits.
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function TodayTab({ profile, summary, refresh, openTrend, openWellbeing }) {
   const pref = profile.unitPref;
   const wUnit = weightUnit(pref);
@@ -864,6 +921,9 @@ export default function TodayTab({ profile, summary, refresh, openTrend, openWel
                   target itself.
                 </div>
               )}
+              {/* Day-level overage above, per-slot cause here: the ring can
+                  read on-target while an individual slot was never solved. */}
+              <SlotWarnings slots={todaySlots} />
               <MacroRails protein={planned.protein} carb={planned.carb} fat={planned.fat} macros={macros} />
             </>
           )}
