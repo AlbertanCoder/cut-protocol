@@ -234,9 +234,11 @@
     "W3-7": {
       "wave": "W3",
       "name": "best-stack-probe",
-      "status": "pending",
-      "artifacts": [],
-      "headline": ""
+      "status": "done",
+      "artifacts": [
+        "fleet/out/W3-7/FINDINGS.md"
+      ],
+      "headline": "RECOVERED 2026-08-01 from artifacts the killed run had already written. THE COMBINED ARM: portioner (c14+c2) +11.24pp, trim +12.60pp, naive sum +23.84pp, MEASURED COMBINED +14.96pp -- 8.88pp (37%) lost to overlap, so adding them would have overstated by 59%. Residuals are the real sequencing number: trim over a good portioner +3.72pp; portioner over trim +2.36pp. trim alone reproduces W3-4's +12.60 EXACTLY. b20 adds only +0.74pp on top of the portioner (corroborates W3-5: budget knob is noise). All-planned 68.07% -> 81.56%: one day in three misses -> one day in five. Measured on the PRE-FIX tree (962ac88); absolute values need re-measuring post-Tier-2."
     },
     "W4-1": {
       "wave": "W4",
