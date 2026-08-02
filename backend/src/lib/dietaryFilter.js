@@ -1500,12 +1500,35 @@ function matchesExclusionTerm(rawName, term) {
   // entries like "kiwi" and specific multi-word phrases like "soy protein"
   // that should NOT expand to the whole soy category.
   const lower = name.toLowerCase();
-  if (lower.includes(key)) return true;
+  // A single-word free-text term must land on the START of a word, not inside
+  // one. Plain substring made "oats" exclude "G-oat- cheese" (through the
+  // normalised singular "oat") and "rape" exclude "G-rape- juice" — H5, the
+  // over-exclusion mirror of a leak. It hides food from people who can eat it,
+  // and on a thin diet pool that is the difference between a plan and no plan.
+  //
+  // Anchoring the START rather than requiring a full word BOUNDARY is
+  // deliberate: "oat" must still catch "Oatmeal" and "Oat flour", which a
+  // \b…\b rule would have let straight through. Prefix-at-word-start keeps
+  // every compound that matters and drops the ones that were never the word.
+  //
+  // Multi-word phrases keep plain substring on purpose — "soy protein" is meant
+  // to catch "textured soy protein" without expanding to the whole soy
+  // category, and a phrase is already specific enough not to collide.
+  //
+  // Scope: this branch is reached ONLY for terms with no synonymKey, i.e.
+  // unrecognised free text. Category terms ("butter" → dairy, "nut" → tree
+  // nuts, "sesame") never arrive here, so this cannot loosen a known allergen.
+  const hitsFreeText = (needle) => {
+    if (!needle) return false;
+    if (/\s/.test(needle)) return lower.includes(needle);
+    return new RegExp("(?:^|[^a-z0-9])" + escapeRe(needle), "i").test(lower);
+  };
+  if (hitsFreeText(key)) return true;
   // ...and the normalised form of it, so an unrecognised phrasing still greps
   // for the thing the user meant ("no mushrooms" → "mushroom"). Union with the
-  // raw text above: strictly more exclusion than before, never less.
+  // raw text above.
   const norm = resolved.normalisedKey;
-  return Boolean(norm) && norm !== key && norm.length > 1 && lower.includes(norm);
+  return Boolean(norm) && norm !== key && norm.length > 1 && hitsFreeText(norm);
 }
 
 // ═════════════════════════════════════════════════════════════════════════
