@@ -29,6 +29,32 @@ function slotKey(s) {
   return `${s.dayOfWeek}:${s.slotType}:${s.slotIndex}`;
 }
 
+// ── The verdict's slot signature ─────────────────────────────────────────────
+// THE RECIPE is stated in backend/prisma/schema.prisma (model Plan,
+// verdictSlotSig) and implemented a second time in
+// frontend/src/components/PlanTab.jsx (planSlotSig). All three MUST agree — a
+// writer and a reader that disagree make every verdict look permanently stale,
+// which is the failure mode this column exists to prevent. There is a test
+// pinning the exact output string; change the recipe in one place and it fails.
+//
+// Keyed on the (dayOfWeek, slotType, slotIndex) natural key rather than
+// PlanSlot.id, because a regenerate deletes and recreates rows so ids churn
+// even when the meals are identical. `locked` is EXCLUDED on purpose: a lock
+// toggle moves no macro and must not stale a verdict that is still true.
+const round3 = (n) => Math.round((Number(n) || 0) * 1000) / 1000;
+
+function planSlotSig(plan) {
+  const slots = plan?.slots;
+  if (!Array.isArray(slots)) return null;
+  return slots
+    .map((s) => [
+      s.dayOfWeek, s.slotType, s.slotIndex, s.recipeId ?? "",
+      round3(s.proteinScale), round3(s.sidesScale),
+    ].join(":"))
+    .sort()
+    .join("|");
+}
+
 // Which existing slot ids survive a week regenerate. Two ways to survive:
 // the fresh week covers the same slot key (the row is overwritten in place
 // by upsert), or the slot is LOCKED and its recipe still complies with the
@@ -486,9 +512,43 @@ router.post("/generate", async (req, res) => {
         })),
       },
     };
+    // ── PERSIST THE VERDICT ─────────────────────────────────────────────────
+    // Until this landed, `meta` existed only in the HTTP response: it rode into
+    // one React useState and died at the next reload, so the user kept the meals
+    // and lost the reason they were the wrong meals. The columns and the reader
+    // shipped in 34452cb; this is the write half that commit did not own.
+    //
+    // Stored on the FIRST week's row: a multi-week horizon writes several Plan
+    // rows but produces ONE narration covering all of them, and that row is also
+    // the only one this route returns. `diagnosis` is a promoted copy of
+    // meta.diagnosis written in the same statement — deliberate duplication, kept
+    // in sync here, with meta.diagnosis authoritative if they ever disagree.
+    //
+    // A failed write must not cost the user a plan they already have: the plan
+    // rows are committed, and a verdict is an explanation of them. So this is
+    // best-effort and loud, never fatal.
+    const firstWeek = written.get(weekStarts[0]);
+    const verdictAt = new Date();
+    const verdictSlotSig = planSlotSig(firstWeek);
+    let persisted = false;
+    try {
+      await prisma.plan.update({
+        where: { id: firstWeek.id },
+        data: { verdict: meta, diagnosis: result.diagnosis ?? null, verdictAt, verdictSlotSig },
+      });
+      persisted = true;
+    } catch (e) {
+      console.warn(`[plan-verdict] user=${req.user.id} plan=${firstWeek.id} write failed: ${e.message} — plan stands, verdict not durable this time`);
+    }
     // The response plan is always THIS week's row (weekStarts[0] === monday),
-    // so the week board keeps rendering exactly what it always did.
-    res.json({ ...written.get(weekStarts[0]), meta });
+    // so the week board keeps rendering exactly what it always did. The verdict
+    // fields ride along so the client sees the same row a reload would fetch,
+    // and `meta` stays for every existing reader.
+    res.json({
+      ...firstWeek,
+      ...(persisted ? { verdict: meta, diagnosis: result.diagnosis ?? null, verdictAt, verdictSlotSig } : {}),
+      meta,
+    });
   } catch (e) {
     res.status(e.status || 500).json({ error: e.message });
   }
@@ -863,3 +923,4 @@ module.exports.deriveSlotWarning = deriveSlotWarning;
 module.exports.slotTargetFinder = slotTargetFinder;
 module.exports.filterRecipePool = filterRecipePool;
 module.exports.slotIdsToKeep = slotIdsToKeep;
+module.exports.planSlotSig = planSlotSig;
