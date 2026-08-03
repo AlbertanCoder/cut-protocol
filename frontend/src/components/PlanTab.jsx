@@ -353,6 +353,145 @@ function FiltersBar({ filters, setFilters, proteinFloorSource }) {
 // Anything that is not a finite number is ABSENT, not zero.
 const asPercent = (n) => (typeof n === "number" && Number.isFinite(n) ? Math.round(n) : null);
 
+// ── THE VERDICT HAS TO OUTLIVE THE RENDER ─────────────────────────────────
+// Everything SolverNarration draws — the per-day match strip, the miss lines,
+// the "unsolvable + why" diagnosis — used to live in ONE useState fed by the
+// generate response and written from nowhere else. Switch to Today and back,
+// reload, or restart the app and the meals were still there while the verdict
+// on them was gone. The constitution forbids a silent target miss; a miss
+// narrated once and then discarded is the same thing on a delay.
+//
+// Two independent problems, one mechanism:
+//
+//   PERSISTENCE — the verdict is stored, so it comes back.
+//   VALIDITY    — a verdict is only true of the exact meals it judged. Swap a
+//                 slot and the stored narration describes a week that no
+//                 longer exists. A stale verdict is worse than none, because
+//                 it reads as current.
+//
+// Validity is DETECTED, not signalled: the signature of the slots the verdict
+// judged is stored beside it and compared against the slots on screen. That
+// is deliberate — a "clear it on mutation" flag only works for mutations this
+// component performs, in this session, and dies at the next reload. The
+// comparison works for a slot changed from another screen, in another session,
+// or by a route this file has never heard of.
+//
+// THE RECIPE is duplicated in backend/prisma/schema.prisma (model Plan,
+// verdictSlotSig) and the two MUST agree. Keyed on the (dayOfWeek, slotType,
+// slotIndex) natural key rather than PlanSlot.id, because a regenerate deletes
+// and recreates rows so ids churn even when the meals are identical. `locked`
+// is excluded on purpose: a lock toggle moves no macro and must not invalidate
+// a verdict that is still true.
+const round3 = (n) => Math.round((Number(n) || 0) * 1000) / 1000;
+
+function planSlotSig(plan) {
+  const slots = plan?.slots;
+  if (!Array.isArray(slots)) return null;
+  return slots
+    .map((s) => [
+      s.dayOfWeek, s.slotType, s.slotIndex, s.recipeId ?? "",
+      round3(s.proteinScale), round3(s.sidesScale),
+    ].join(":"))
+    .sort()
+    .join("|");
+}
+
+// ── WHERE THE VERDICT IS KEPT ─────────────────────────────────────────────
+// Plan.verdict / .diagnosis / .verdictAt / .verdictSlotSig now exist (migration
+// 20260802034419_plan_verdict_persistence) and GET /plans/current returns them
+// with the plan, because PLAN_INCLUDE uses `include`, not `select`. That is the
+// authoritative home and the branch below reads it.
+//
+// It is not yet WRITTEN: the insert belongs in POST /plans/generate, which this
+// change does not own. Until it lands, the same record is mirrored to
+// localStorage from here so the verdict survives a reload today rather than
+// after the next backend change. The mirror is strictly subordinate — a plan
+// carrying a DB verdict never consults it — so when the route starts writing,
+// deleting readMirror/writeMirror and their two call sites removes this layer
+// with no behaviour change.
+const VERDICT_MIRROR_KEY = "cutprotocol.plan.verdict";
+
+function safeStorage() {
+  try { return window.localStorage; } catch { return null; }
+}
+
+/** The mirrored verdict for this exact plan row, or null. */
+function readMirror(planId) {
+  const s = safeStorage();
+  if (!s || !planId) return null;
+  try {
+    const rec = JSON.parse(s.getItem(VERDICT_MIRROR_KEY) || "null");
+    return rec && rec.planId === planId && rec.meta ? rec : null;
+  } catch {
+    return null; // unparseable mirror is a missing mirror, never a crash
+  }
+}
+
+/** Mirror one verdict. Only the newest is kept — this screen shows one week. */
+function writeMirror(rec) {
+  const s = safeStorage();
+  if (!s) return; // storage unavailable (private mode) — the session still works
+  try {
+    s.setItem(VERDICT_MIRROR_KEY, JSON.stringify(rec));
+  } catch { /* quota or disabled — persistence is a bonus, never a blocker */ }
+}
+
+// Is this verdict still about the meals on screen? `reason` is null when it is.
+// A record with no signature CANNOT be shown as current: we have no way to
+// prove it still applies, and asserting it anyway is the fabrication the
+// constitution rules out. It fails loudly ("unverifiable") rather than lying.
+function judgeVerdict(rec, planSig) {
+  if (!rec?.meta) return null;
+  const stale = rec.sig == null || planSig == null
+    ? "unverifiable"
+    : rec.sig !== planSig ? "mutated" : null;
+  return { ...rec, stale };
+}
+
+/**
+ * The verdict this screen is entitled to show, from the most authoritative
+ * source that has one: the database, then this session's generate, then the
+ * local mirror.
+ */
+function resolveVerdict(plan, planSig, sessionVerdict) {
+  if (!plan?.id) return null;
+  if (plan.verdict) {
+    return judgeVerdict({
+      // diagnosis is a promoted column (see schema.prisma); verdict.diagnosis
+      // stays authoritative if the two ever drift apart.
+      meta: { ...plan.verdict, diagnosis: plan.verdict.diagnosis ?? plan.diagnosis ?? null },
+      sig: plan.verdictSlotSig, at: plan.verdictAt, source: "db",
+    }, planSig);
+  }
+  if (sessionVerdict?.planId === plan.id) return judgeVerdict(sessionVerdict, planSig);
+  return judgeVerdict(readMirror(plan.id), planSig);
+}
+
+// The verdict is stored but no longer describes what is on screen. Say so —
+// clearing the numbers without a word would be the same silent miss in a new
+// costume. Amber, never red: this is food data (colour law b).
+function StaleVerdict({ reason }) {
+  return (
+    <Card section="MEAL PLANNER" title="This verdict is out of date">
+      <div className="flex items-start gap-2">
+        <AlertTriangle size={14} className="shrink-0 mt-0.5" style={{ color: C.warn }} />
+        <div className="text-xs font-semibold" style={{ color: C.faint }}>
+          {reason === "mutated" ? (
+            <>The meals changed after the meal planner last scored this week, so its match
+              percentages and miss lines described a different plan — they are hidden rather
+              than shown as current. Regenerate to score what is here now. Each meal&apos;s own
+              warning is still accurate.</>
+          ) : (
+            <>This verdict was stored without a record of which meals it judged, so it
+              cannot be confirmed to describe the week on screen. Regenerate for a
+              verdict that can be.</>
+          )}
+        </div>
+      </div>
+    </Card>
+  );
+}
+
 function SolverNarration({ meta }) {
   if (!meta) return null;
   const pc = meta.poolCounts || {};
@@ -747,7 +886,10 @@ export default function PlanTab({ profile, summary, refresh }) {
   const [optionsBusy, setOptionsBusy] = useState(false);
   const [accepting, setAccepting] = useState(false);
   const [cartIds, setCartIds] = useState(new Set());
-  const [genMeta, setGenMeta] = useState(null); // narration from the last generate
+  // This session's generate, as a { planId, meta, sig, at } record — the same
+  // shape the DB column and the mirror hold, so all three resolve identically.
+  // It is NOT the only copy any more: see resolveVerdict above.
+  const [sessionVerdict, setSessionVerdict] = useState(null);
   const [meta, setMeta] = useState(null); // /profile/meta — used here only for proteinFloorSource
 
   // ── THE DAY-OPTIONS RACE ────────────────────────────────────────────────
@@ -874,7 +1016,10 @@ export default function PlanTab({ profile, summary, refresh }) {
     setGenerating(true);
     setError(null);
     cancelDayOptions(); // a stale day solve must not land on top of a fresh plan
-    setGenMeta(null);
+    // Drop only THIS session's copy. The stored verdict stays until a new one
+    // replaces it, so a generate that fails or is cancelled leaves the week's
+    // last real verdict on screen instead of blanking it for nothing.
+    setSessionVerdict(null);
     setOneMeal(null);
     // A fresh AbortController per generate; the Cancel affordance aborts it and
     // request() throws an ABORTED ApiError, which we treat as a no-op (below).
@@ -887,14 +1032,24 @@ export default function PlanTab({ profile, summary, refresh }) {
       const body = JSON.stringify({ filters: apiFilters, horizon: horizonValue });
       const res = await api.generatePlan(apiFilters, { body, signal: controller.signal });
       const resMeta = res?.meta ?? null;
-      setGenMeta(resMeta);
       if (resMeta?.horizon?.kind === "meal") {
         // A single dish is an ANSWER, not a plan — nothing was written, so the
-        // meal plan must keep showing whatever it already was.
+        // meal plan must keep showing whatever it already was, and so must the
+        // verdict on it. Recording this as the week's verdict would overwrite a
+        // true statement about the week with one about a meal that was never
+        // stored.
         setOneMeal(resMeta.oneMeal ?? null);
         if (res?.id) setPlan(res);
       } else {
         setPlan(res);
+        // Stamp the verdict against the slots it actually judged — taken from
+        // the response, which IS the week the solver scored, not from `plan`
+        // state that has not re-rendered yet.
+        if (res?.id && resMeta) {
+          const rec = { planId: res.id, meta: resMeta, sig: planSlotSig(res), at: new Date().toISOString() };
+          setSessionVerdict(rec);
+          writeMirror(rec); // remove once POST /plans/generate writes Plan.verdict
+        }
       }
     } catch (e) {
       // Cancel is not a failure: leave the plan exactly as it was, show no error
@@ -1043,6 +1198,17 @@ export default function PlanTab({ profile, summary, refresh }) {
   const dayTotals = slotsByDay[activeDay].totals;
   const targetKcal = summary?.macros?.kcal ?? profile.targetKcal;
 
+  // Recomputed from whatever slots are on screen right now, so a swap, an
+  // accepted day or a recipe placed from another tab invalidates a stale
+  // verdict without anything having to remember to clear it. A lock toggle
+  // rebuilds the slots array too, but `locked` is not in the signature, so the
+  // string comes out identical and the verdict correctly survives.
+  const planSig = useMemo(() => planSlotSig(plan), [plan]);
+  const verdict = useMemo(
+    () => resolveVerdict(plan, planSig, sessionVerdict),
+    [plan, planSig, sessionVerdict],
+  );
+
   const groceryBySection = useMemo(() => {
     const gl = plan?.groceryList;
     if (!gl) return null;
@@ -1113,15 +1279,25 @@ export default function PlanTab({ profile, summary, refresh }) {
         </div>
       )}
 
-      {genMeta?.horizon?.weekPlans?.length > 1 && (
+      {/* The verdict, from wherever it survived — DB, this session, or the
+          mirror. When it no longer matches the meals on screen the numbers are
+          withheld and the reason is stated; showing either one silently would
+          be a target miss the user never sees. */}
+      {verdict?.stale && (
         <div className="mb-4">
-          <HorizonSummary horizon={genMeta.horizon} />
+          <StaleVerdict reason={verdict.stale} />
         </div>
       )}
 
-      {genMeta && genMeta.horizon?.kind !== "meal" && (
+      {verdict && !verdict.stale && verdict.meta.horizon?.weekPlans?.length > 1 && (
         <div className="mb-4">
-          <SolverNarration meta={genMeta} />
+          <HorizonSummary horizon={verdict.meta.horizon} />
+        </div>
+      )}
+
+      {verdict && !verdict.stale && verdict.meta.horizon?.kind !== "meal" && (
+        <div className="mb-4">
+          <SolverNarration meta={verdict.meta} />
         </div>
       )}
 
