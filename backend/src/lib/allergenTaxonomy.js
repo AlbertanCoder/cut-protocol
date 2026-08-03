@@ -87,6 +87,15 @@ const ALLERGEN_TAXONOMY = [
       // Ranch is a buttermilk/sour-cream dressing. Same measured class as the
       // mayonnaise emulsions on the eggs row; it is a carrier for BOTH.
       "ranch dressing",
+      // ── W4-2 hostile-name probe (2026-08-02), fleet/TRIAGE.md T-4 ─────────
+      // Dairy products under non-English names. The English list is thorough
+      // and stops at the language border, which is precisely the gap an
+      // independent oracle finds and a vocabulary-sharing one cannot.
+      //   labneh   — strained yogurt cheese.   khoya  — reduced milk solids.
+      //   smen     — fermented preserved butter.  mizithra — whey cheese.
+      //   paneer / halloumi / kefir — common enough to belong beside them.
+      "labneh", "khoya", "mawa", "smen", "mizithra", "paneer", "halloumi",
+      "kefir", "skyr", "quark",
     ],
     fdcCategories: [
       "Dairy and Egg Products", "Cheese", "Cottage/ricotta cheese",
@@ -134,6 +143,14 @@ const ALLERGEN_TAXONOMY = [
       "ladyfinger", "tiramisu", "creme brulee", "crème brûlée", "angel food",
       "brioche", "eclair", "éclair", "flan", "tempura", "egg wash", "crepe", "crêpe",
       "pavlova", "zabaglione", "tamagoyaki",
+      // W4-2 hostile-name probe (2026-08-02), T-4: the INGREDIENT-LABEL names
+      // for egg protein. A row listing "ovalbumin" or "albumen" never says
+      // "egg", which is the whole point of listing them.
+      "ovalbumin", "albumen", "lysozyme", "meringue",
+      // `Wonton Skin` is a real DB row, named in T-2 and never closed. Wonton
+      // and gyoza wrappers are egg-and-wheat dough, so the row belongs here AND
+      // on the gluten list — the same two-walls-one-food shape as Oyster Sauce.
+      "wonton", "won ton", "gyoza", "dumpling wrapper", "egg roll wrapper",
       // ── Stage-2 adversarial sweep (2026-07-24): the MAYONNAISE EMULSIONS ──
       // The lists knew "mayonnaise" and "aioli"; the four commercial dressings
       // BUILT on mayonnaise say neither word. 32 real rows reached an
@@ -177,6 +194,19 @@ const ALLERGEN_TAXONOMY = [
     nameKeywords: [
       "ground nut",     // agent 09 #1: the corpus writes peanut oil as "Ground Nut Oil"
       "groundnut oil", "kung pao", "pad thai", "peanut flour", "peanut sauce",
+      // ── W4-2 hostile-name probe (2026-08-02), fleet/TRIAGE.md T-4 ─────────
+      // Peanut under the names the rest of the world writes. "arachis oil" was
+      // already a SYNONYM (what a user types) but never a nameKeyword (what a
+      // food row is called), so the term resolved for the wall and then matched
+      // no food — the same synonym/keyword asymmetry that let `Oyster Sauce`
+      // through on gluten.
+      //   pindakaas — Dutch peanut butter.   mani  — Spanish (maní).
+      //   kacang    — Malay/Indonesian.      satay — peanut-sauce skewer.
+      // `tremoços` / `altramuces` are LUPINI, not peanut: they sit here because
+      // `6530fa0` (T-3) established that a peanut exclusion must carry lupin
+      // with it, and those are the Portuguese and Spanish market names.
+      "arachis oil", "arachis", "pindakaas", "mani", "maní", "kacang",
+      "satay", "sate", "tremoços", "tremocos", "altramuces",
     ],
     fdcCategories: [],
     offTags: ["peanuts", "peanut"],
@@ -195,6 +225,11 @@ const ALLERGEN_TAXONOMY = [
       "nut",            // agent 09 #1: bare "nut" was in `nuts` but not `tree nuts`
       "hazlenut",       // agent 09 #2: real misspelled corpus row "Hazlenuts"
       "pesto", "nougat", "baklava",
+      // W4-2 hostile-name probe (2026-08-02), T-4. Bare "nut" above catches a
+      // great deal, and these are exactly the carriers whose names never say
+      // "nut": `orgeat` is an almond syrup, `dukkah` an Egyptian nut-and-seed
+      // blend (also on the SESAME row), `marcona` an almond cultivar.
+      "orgeat", "dukkah", "duqqa", "marcona",
     ],
     offTags: ["nuts", "tree-nuts"],
     note:
@@ -234,6 +269,13 @@ const ALLERGEN_TAXONOMY = [
       "worcestershire",         // agent 05 P1-1: declared for gluten + fish, not soy
       "tamari", "shoyu", "ponzu", "gochujang", "doubanjiang", "okara", "yuba",
       "black bean sauce", "soy sauce", "bean curd",
+      // W4-2 hostile-name probe (2026-08-02), T-4: fermented soybean pastes the
+      // list missed. `doenjang` is the Korean counterpart of the miso already
+      // carried under legumes; `douchi` is Chinese fermented black soybean —
+      // the paste, not the "black bean sauce" already listed. `kecap manis` is
+      // a sweet soy sauce and is carried on the GLUTEN row too, since the
+      // commercial product is usually wheat-brewed.
+      "doenjang", "douchi", "kecap manis",
       // ── Stage-2 adversarial sweep (2026-07-24) ────────────────────────────
       // USDA's meat ANALOGUES are textured soy protein: "Chicken, meatless",
       // "Bacon, meatless", "Frankfurter, meatless", "Sausage, meatless". The
@@ -298,6 +340,19 @@ const ALLERGEN_TAXONOMY = [
       // deliberately non-evidence, so the metadata backstop was disarmed too.
       // Guarded in dietaryFilter so "(without granola)" is not excluded.
       "granola", "muesli",
+      // ── W4-2 leak sweep (2026-08-02), fleet/TRIAGE.md T-4 leak L-D ────────
+      // `Oyster Sauce` was served to three celiac personas 160 times. The row
+      // is ALREADY excluded for a shellfish wall (it is in the molluscs
+      // nameKeywords), so the gate knew the food perfectly well — it had just
+      // never been asked the second question. Standard oyster sauce is
+      // wheat-thickened, and the same is true of the sauces beside it here:
+      // hoisin, most commercial teriyaki, and kecap manis. This is the
+      // "one vocabulary expansion, one new leak" shape — a food can sit on two
+      // walls and being known to one is not being known to the other.
+      "oyster sauce", "hoisin", "teriyaki", "kecap manis",
+      // Wonton/gyoza wrappers are wheat dough. Also on the EGGS row — see the
+      // note there; `Wonton Skin` is a real row that T-2 named and nobody closed.
+      "wonton", "won ton", "gyoza", "dumpling wrapper", "egg roll wrapper",
     ],
     fdcCategories: [
       "Baked Products", "Yeast breads", "Rolls and buns", "Bagels and English muffins",
@@ -338,6 +393,19 @@ const ALLERGEN_TAXONOMY = [
       //   pho      — the broth is finished with nuoc mam (fish sauce);
       //              "Soup, pho, no meat" declares no MEAT, not no fish sauce.
       "kimchi", "tapenade", "pho",
+      // ── W4-2 hostile-name probe (2026-08-02), fleet/TRIAGE.md T-4 ─────────
+      // Non-English names for fish products the gate missed. None is a current
+      // DB row, so none has shipped yet — they ship the next time somebody
+      // authors or imports a recipe, which is exactly how the rows in the
+      // leak table above arrived. `nam pla` and `garum` were already here; the
+      // list simply stopped at the two romanisations somebody happened to know.
+      //   katsuobushi / hondashi  — dried bonito; the base of most dashi.
+      //   nuoc mam                — Vietnamese fish sauce.
+      //   bottarga                — cured mullet/tuna roe.
+      //   colatura di alici       — Italian anchovy sauce.
+      //   kamaboko / surimi       — fish paste. Often shellfish too.
+      "katsuobushi", "hondashi", "dashi", "nuoc mam", "bottarga",
+      "colatura", "kamaboko", "surimi",
     ],
     fdcCategories: ["Finfish and Shellfish Products", "Fish", "Seafood mixed dishes", "Seafood sandwiches"],
     offTags: ["fish"],
@@ -371,7 +439,12 @@ const ALLERGEN_TAXONOMY = [
   {
     key: "crustaceans", parent: "shellfish", label: "Crustacean shellfish", tier: TIER_MAJOR,
     synonyms: ["crustacean", "shrimp", "prawn", "prawns", "crab", "lobster", "crayfish", "crawfish", "langoustine", "scampi", "krill"],
-    nameKeywords: ["crustacean", "langostino", "krill", "barnacle", "shrimp paste", "crawdad"],
+    // W4-2 hostile-name probe (2026-08-02), T-4: "shrimp paste" was listed in
+    // English only. Belacan (Malay), terasi (Indonesian) and bagoong (Filipino)
+    // are the same product under the names a recipe actually writes, and XO
+    // sauce is built on dried scallop and shrimp. Kamaboko/surimi is listed
+    // under fish as well — commercial surimi commonly carries both.
+    nameKeywords: ["crustacean", "langostino", "krill", "barnacle", "shrimp paste", "crawdad", "belacan", "terasi", "bagoong", "xo sauce", "kamaboko", "surimi"],
     offTags: ["crustaceans"],
   },
   {
@@ -408,7 +481,12 @@ const ALLERGEN_TAXONOMY = [
     tier: TIER_MAJOR,
     family: "sesame",
     synonyms: ["sesame seed", "sesame seeds", "tahini", "benne", "gingelly", "til", "sesame free"],
-    nameKeywords: ["sesame oil", "zaatar", "za'atar", "goma", "simsim"],
+    // W4-2 hostile-name probe (2026-08-02), T-4: `gingelly` is the Indian trade
+    // name for sesame oil and `til` its Hindi name; `dukkah` is a nut-and-seed
+    // blend that is sesame-heavy (it is on the tree-nut row too). "goma" and
+    // "simsim" show the list already meant to cover non-English names — it just
+    // stopped at two of them.
+    nameKeywords: ["sesame oil", "zaatar", "za'atar", "goma", "simsim", "gingelly", "til oil", "dukkah", "duqqa", "halva", "halvah"],
     offTags: ["sesame-seeds", "sesame"],
   },
 
@@ -457,6 +535,35 @@ const ALLERGEN_TAXONOMY = [
       "red pepper", "green pepper", "yellow pepper", "orange pepper",
       "sweet pepper", "red peppers", "green peppers", "pepper flakes",
       "red pepper flakes", "chilli flakes", "chili flakes", "crushed red pepper",
+      // ── W4-2 leak sweep (2026-08-02), fleet/TRIAGE.md T-4 ─────────────────
+      // Three rows were SERVED against a live nightshade wall: `Scotch Bonnet`
+      // (242 placements, p088), `Enchilada sauce` (292, seven personas) and
+      // `Banana Pepper` (16, two personas). The list knew the GENERIC forms
+      // ("chilli", "bell pepper", "salsa") and neither the CULTIVAR names nor
+      // the composite SAUCE names, which is how each got through.
+      //
+      // The cultivars below are all Capsicum and are listed by the name a
+      // recipe actually writes. The sauces are listed because a nightshade is
+      // the defining ingredient, not a trace: enchilada sauce, harissa,
+      // gochujang and sambal are chilli-first by definition, and pico de gallo
+      // is tomato-first. `Pico De Gallo Sauce` also leaked past the CILANTRO
+      // wall (516 placements) and is added there too — one row, two walls, and
+      // fixing only the wall that happened to be measured is the half-closed
+      // shape T-4 criticises in `7327a84`.
+      "scotch bonnet", "banana pepper", "cherry pepper", "shishito", "padron",
+      "padrón", "guajillo", "pasilla", "de arbol", "árbol", "piquillo",
+      "peperoncino", "pepperoncini", "ghost pepper", "carolina reaper",
+      "hatch chile", "calabrian",
+      "enchilada", "pico de gallo", "harissa", "gochujang", "romesco",
+      // `Passata` is sieved tomato and is a real DB row that W4-2 re-confirmed
+      // leaking. It was already named in T-2 and never closed — "tomato" cannot
+      // reach it because the word does not appear in the name.
+      "passata", "sugo", "arrabbiata", "puttanesca", "nduja", "'nduja",
+      // Named by W4-2's independent hostile-name probe (35 of 72 caught, 37
+      // missed). These five are the nightshade misses; none is a current DB
+      // row, so each would have shipped the next time a recipe was authored.
+      "gochugaru", "sambal", "sambal oelek", "pimentón", "pimenton",
+      "piri piri", "peri peri", "aji amarillo", "aji panca",
     ],
     note:
       "SWEET potato is not a nightshade (Convolvulaceae) and is guarded out in dietaryFilter. " +
@@ -485,6 +592,10 @@ const ALLERGEN_TAXONOMY = [
       "tempeh", "edamame", "peanut", "lupin", "fava", "broad bean", "mung",
       "adzuki", "pinto", "black eyed pea", "split pea", "hummus", "houmous",
       "dal", "dhal", "miso", "carob",
+      // W4-2 hostile-name probe (2026-08-02), T-4: `besan` / `gram flour` is
+      // milled chickpea and is the base of pakora, farinata and socca. "dal"
+      // and "chickpea" were both here; the FLOUR made from them was not.
+      "besan", "gram flour", "chana", "channa", "pakora", "socca", "farinata",
     ],
     note: "Peanuts and soy are legumes and are intentionally listed here as well as in their own rows.",
   },
@@ -616,7 +727,12 @@ const ALLERGEN_TAXONOMY = [
     // "coriander" bare is the LEAF and carries a guard (dietaryFilter
     // WORD_GUARDS.coriander) that stands the seed forms down. It is listed last
     // so the explicit leaf spellings match first and never reach the guard.
-    nameKeywords: ["cilantro", "coriander leaf", "coriander leaves", "fresh coriander", "chinese parsley", "coriander"],
+    // W4-2 / T-4 leak L-E: `Pico De Gallo Sauce` reached two cilantro-averse
+    // personas 516 times. `7327a84` closed bare "Coriander" — the row T-2 had
+    // measured — and left this one, which T-2's own probeF had already named
+    // beside it. Cilantro is a defining ingredient of pico de gallo, not a
+    // trace. Salsa verde and chimichurri are here for the same reason.
+    nameKeywords: ["cilantro", "coriander leaf", "coriander leaves", "fresh coriander", "chinese parsley", "pico de gallo", "salsa verde", "chimichurri", "coriander"],
     note:
       "Not an allergy — a genetic aversion (OR6A2) that makes the leaf taste of soap to " +
       "roughly one person in seven, and a real reason to reject a dish. It was silently " +

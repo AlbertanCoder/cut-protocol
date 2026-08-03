@@ -138,6 +138,50 @@ test("describeExclusionTerms gives the UI the three cases it must render differe
   );
 });
 
+// ── T-5 (fleet W4-2, 2026-08-02) ─────────────────────────────────────────────
+// The header of this file claims an unrecognised term "still filters as a
+// literal substring — fail-safe". That is true of a WORD and false of a
+// SENTENCE, and the gap was measured: persona p101 typed "no cow dairy but
+// sheep and goat cheese are completely fine", the gate resolved it, matched
+// zero foods, and served 1,005 cow-dairy placements including a dish called
+// "Chicken Fajita Mac and Cheese" — while telling the user "exact text match".
+test("T-5: a CONDITIONAL exclusion is flagged as filtering nothing, not as a text match", () => {
+  const p101 = "no cow dairy but sheep and goat cheese are completely fine";
+  const r = resolveExclusionTerm(p101);
+
+  assert.equal(r.recognised, false);
+  assert.equal(r.expressible, false, "a rule with an exception in it cannot be represented as an exclusion");
+  assert.match(r.note, /nothing was filtered/i, "the note must say the consequence, not just the cause");
+
+  // The fail-open this documents: it really does match nothing. The test
+  // asserts the CURRENT behaviour so the flag stays honest — if a future
+  // change makes such a term filter, this assertion fires and the flag
+  // (and its UI copy) must be revisited rather than silently left wrong.
+  assert.ok(!matchesExclusionTerm("Cheddar Cheese", p101));
+  assert.ok(!matchesExclusionTerm("Milk", p101));
+
+  const [described] = describeExclusionTerms([p101]);
+  assert.equal(described.expressible, false, "describeExclusionTerms must carry it — it is the only path to the screen");
+});
+
+test("T-5: a contrastive conjunction alone is enough, and ordinary literals are untouched", () => {
+  assert.equal(resolveExclusionTerm("dairy except butter").expressible, false);
+  assert.equal(resolveExclusionTerm("nuts apart from almonds").expressible, false);
+
+  // The regression that matters in the other direction: a plain unrecognised
+  // WORD still filters and must NOT be labelled inert, or the loud new copy
+  // starts crying wolf on terms that are working perfectly.
+  const mushrooms = resolveExclusionTerm("mushrooms");
+  assert.equal(mushrooms.expressible, true);
+  assert.equal(mushrooms.note, "not a recognised allergen — matching on text only");
+  assert.ok(matchesExclusionTerm("Mushrooms, white, raw", "mushrooms"), "and it genuinely filters");
+
+  // Real multi-word terms are short; none of them may trip the length rule.
+  for (const t of ["black eyed pea", "soy protein", "textured vegetable protein", "my weird trigger food"]) {
+    assert.notEqual(resolveExclusionTerm(t).expressible, false, `"${t}" must not be called inexpressible`);
+  }
+});
+
 test("the existing scoped free-text behaviour is preserved: 'soy protein' still permits soybean oil", () => {
   // This account's original rule. "soy protein" is its own CATEGORY_SYNONYMS
   // key precisely so it does NOT expand to the whole soy category.
