@@ -263,7 +263,7 @@ function rateSafety(profile, weightKg, tdee, rmr) {
   return { unsafe: reasons.length > 0, reasons, pctOfBw: Math.round(pctOfBw * 100) / 100 };
 }
 
-// ── macros (unchanged heuristics, per-lb-LBM convention) ─────────────────
+// ── macros (protein per-lb-LBM; fat ENERGY-ANCHORED with a hard floor) ────
 
 const CARB_MIDPOINT_BUFFER_G = 25;
 // Keto: a real ketogenic target holds carbs to a hard low cap and lets FAT fill
@@ -281,15 +281,99 @@ const KETO_CARB_CEILING_G = 30;
 // (bfAssumed) so the UI can prompt for the real number. 21/28 % are the ACE
 // adult "average/acceptable" midpoints (M/F).
 const ASSUMED_BODY_FAT_PCT = { M: 21, F: 28 };
-// Essential-fat floor (single-sourced; the keto branch uses it too): fat never
-// drops below this per-lb-LBM amount.
+// Essential-fat floor (single-sourced; every branch goes through fatBandFor):
+// fat never drops below this per-lb-LBM amount.
 const ESSENTIAL_FAT_PER_LB_LBM = 0.3;
+
+// ── fat is a SHARE OF ENERGY, not a naked gram count ──────────────────────
+//
+// DEFECT 5.5 (fleet W2-6). Fat used to be prescribed as a fixed 0.34–0.40 g
+// per lb of lean mass — a number that does not know what the calorie target
+// is. Lean mass barely moves during a cut while targetKcal falls, so the same
+// gram count became a RISING share of energy the deeper the deficit went.
+// Measured, one 200 lb / 20% BF man (LBM 160 lb), fat held at 59 g / 531 kcal
+// the whole way down:
+//     3,200 kcal → 16.6 %E      2,000 kcal → 26.6 %E
+//     2,400 kcal → 22.1 %E      1,600 kcal → 33.2 %E
+//     2,200 kcal → 24.1 %E      1,500 kcal → 36.3 %E
+// Across the canonical 250-persona fleet the correlation between deficit depth
+// and prescribed fat %E was r = +0.51 (non-keto, n=232), spanning 16.8 %E at
+// the 5th percentile to 39.6 %E at the maximum, with 64 of 232 personas landing
+// outside the AMDR's 20–35 %E band entirely. Every published source has fat %E
+// holding or FALLING as a deficit deepens: protein is the fixed-gram
+// requirement whose share is supposed to rise against a shrinking budget, and
+// fat and carbohydrate are the two adjustable energy sources that give way to
+// it. The old model had the relationship backwards.
+//
+// The midpoint is 25 %E — the middle of 20–30 %E, which is the intersection of
+// the IOM/DRI AMDR for adult fat (20–35 %E) with the narrower range the
+// physique-nutrition literature gives for a hypocaloric high-protein diet
+// (~15–30 %E). It is a published constant, not a fit to this fleet: once
+// protein at 1.14–1.25 g/lb LBM has claimed ~30–35 %E of a deep cut, that is
+// the room fat can have without starving carbohydrate.
+//
+// The band's relative half-width is carried over UNCHANGED from the old
+// 0.34–0.40 g/lb shape (0.37 ± 0.03 → ± 3/37 ≈ ±8.1%), deliberately: this
+// commit moves the ANCHOR and nothing else. mealSolver's ±25%-of-midpoint
+// tolerance was explicitly calibrated against that width (mealSolver.js:204),
+// and widening the band here would silently re-tune a downstream rule that
+// belongs to another file.
+const FAT_PCT_ENERGY_MID = 0.25;
+const FAT_BAND_HALF_WIDTH = 3 / 37;
 // A NON-keto plan holds at least this many carb grams. Below ~50 g/day a diet
 // drifts into ketosis, so squeezing a "none"/omnivore target to 0 g carbs (which
 // a lean, heavy, aggressive-deficit profile used to do) is silently making the
 // plan ketogenic. When the leftover carb falls under this floor we hold carbs
 // here and pull the calories back out of fat (down to essential fat).
 const NONKETO_CARB_FLOOR_G = 50;
+
+/**
+ * The fat band for a prescription midpoint, with the essential-fat floor as a
+ * hard lower bound on every EDGE it publishes. The one place a fat band is
+ * built, so the default, keto and carb-floored paths cannot disagree about
+ * either the band's shape or where the floor is.
+ *
+ * DEFECT 5.6 (fleet W2-6). The engine declared ESSENTIAL_FAT_PER_LB_LBM and
+ * then never applied it to the band it published. It clamped the MIDPOINT in
+ * the keto and carb-floored branches and left the lower EDGE free
+ * (`fatLo = round(fatMid × 0.9)`), so those branches could emit
+ * fatLo = 0.9 × 0.30 = 0.27 g/lb LBM — beneath the engine's own floor with no
+ * downstream tolerance involved at all. A floor that constrains only a
+ * midpoint is not a floor.
+ *
+ * That is the half of 5.6 this file can close. The other half is downstream and
+ * is NOT closed here: mealSolver grades a day's fat against this band with an
+ * unconditional ±25%-of-midpoint allowance (mealSolver.js:212, 218-225, 250),
+ * so the lowest fat intake it will certify as compliant is
+ * `fatLo − 0.25 × fatMid`, which is below fatLo by construction and therefore
+ * below the floor no matter what band this function emits — algebraically:
+ * 0.875·fatLo − 0.125·fatHi ≥ fatLo has no solution for fatHi > 0. On the
+ * old band that arithmetic came out at 0.34 − 0.25×0.37 = 0.2475 g/lb LBM,
+ * which is what the fleet measured on 232 of 250 personas. `fatFloorG` is
+ * published on every target precisely so the solver can clamp its lower
+ * allowance to an absolute number instead of inferring one.
+ */
+function fatBandFor(lbmLb, midFromModelG) {
+  const fatFloorG = Math.round(lbmLb * ESSENTIAL_FAT_PER_LB_LBM);
+  const modelG = Number.isFinite(midFromModelG) ? Math.round(midFromModelG) : 0;
+  const mid = Math.max(fatFloorG, modelG);
+  const rawLo = Math.round(mid * (1 - FAT_BAND_HALF_WIDTH));
+  const fatLo = Math.max(fatFloorG, rawLo);
+  const fatHi = Math.max(fatLo, Math.round(mid * (1 + FAT_BAND_HALF_WIDTH)));
+  // A floor BLOCK, surfaced rather than silently absorbed (constitution: floor
+  // blocks are SHOWN, not hidden). True in BOTH degrees, because both change
+  // what the user is handed: the model asked for less fat than is essential
+  // (modelG < fatFloorG, which implies rawLo < fatFloorG), or the midpoint
+  // cleared the floor but the band's lower edge did not. The second is the
+  // quieter one and is exactly the case the old code got wrong.
+  const fatFloored = rawLo < fatFloorG;
+  // fatMid is the midpoint of the band as PUBLISHED — the same quantity every
+  // consumer reconstructs as (fatLo + fatHi) / 2 — so the carb leftover, the
+  // kcal gap and the solver's band arithmetic can never drift apart. When the
+  // floor lifts the lower edge the published midpoint sits a few percent above
+  // the bare floor, which errs toward more fat, never less.
+  return { fatLo, fatHi, fatMid: (fatLo + fatHi) / 2, fatFloorG, fatFloored };
+}
 
 function computeMacros(profile, weightKg, targetKcal) {
   const weightLb = kg2lb(weightKg);
@@ -305,24 +389,39 @@ function computeMacros(profile, weightKg, targetKcal) {
   // takes the byte-identical path below and its goldens are unaffected.
   if (profile.dietaryStyle === "keto") {
     const carbMid = KETO_CARB_TARGET_G;
-    const fatFromBalance = Math.round((targetKcal - proteinMid * 4 - carbMid * 4) / 9);
-    const fatMid = Math.max(Math.round(lbmLb * ESSENTIAL_FAT_PER_LB_LBM), fatFromBalance); // never below essential fat
+    // Keto is the ONE branch where a high fat %E is the diet's definition, not
+    // defect 5.5: carbs are capped by the diet and fat takes the balance, so
+    // FAT_PCT_ENERGY_MID deliberately does not apply here. The essential-fat
+    // floor still does — via fatBandFor, which now also holds the band's LOWER
+    // EDGE at that floor instead of emitting 0.9 × essential beneath it.
+    const fatFromBalance = (targetKcal - proteinMid * 4 - carbMid * 4) / 9;
+    const fat = fatBandFor(lbmLb, fatFromBalance);
     return {
       lbmLb, kcal: targetKcal,
       proteinLo, proteinHi,
-      fatLo: Math.round(fatMid * 0.9), fatHi: Math.round(fatMid * 1.12),
+      fatLo: fat.fatLo, fatHi: fat.fatHi,
+      fatFloorG: fat.fatFloorG, fatFloored: fat.fatFloored,
+      fatPctEnergy: targetKcal > 0 ? Math.round(((fat.fatMid * 9) / targetKcal) * 10000) / 10000 : null,
       carbLo: KETO_CARB_LO_G, carbMid, carbHi: KETO_CARB_CEILING_G,
       carbBufferG: 0,
-      macroKcalGap: Math.round(targetKcal - (proteinMid * 4 + fatMid * 9 + carbMid * 4)),
+      macroKcalGap: Math.round(targetKcal - (proteinMid * 4 + fat.fatMid * 9 + carbMid * 4)),
       keto: true,
       bfAssumed: !bfKnown, assumedBodyFatPct: bfKnown ? null : bfForLbm,
     };
   }
 
-  let fatLo = Math.round(lbmLb * 0.34);
-  let fatHi = Math.round(lbmLb * 0.4);
-  let fatMid = (fatLo + fatHi) / 2;
-  // Carbs are the leftover calories after LBM-based protein + fat.
+  // Fat is a share of the TARGET (defect 5.5), floored at essential fat. The
+  // old `lbmLb × 0.34 … × 0.40` ignored targetKcal entirely, which is the whole
+  // bug: the prescription could not respond to the deficit it was prescribed
+  // for. Below the floor-bind point the published fat %E does climb again —
+  // that is a floor doing its job, not the old drift returning, and it is
+  // reported as `fatFloored` rather than absorbed in silence.
+  const kcalForFat = Number.isFinite(targetKcal) && targetKcal > 0 ? targetKcal : 0;
+  let fat = fatBandFor(lbmLb, (kcalForFat * FAT_PCT_ENERGY_MID) / 9);
+  let fatLo = fat.fatLo;
+  let fatHi = fat.fatHi;
+  let fatMid = fat.fatMid;
+  // Carbs are the leftover calories after protein + fat.
   let carbMid = Math.round((targetKcal - proteinMid * 4 - fatMid * 9) / 4) - CARB_MIDPOINT_BUFFER_G;
   let carbFloored = false;
   if (carbMid < NONKETO_CARB_FLOOR_G) {
@@ -335,11 +434,13 @@ function computeMacros(profile, weightKg, targetKcal) {
     // whatever's left (never negative) and the overshoot surfaces honestly in
     // macroKcalGap rather than as negative carb grams.
     carbFloored = true;
-    const essentialFat = Math.round(lbmLb * ESSENTIAL_FAT_PER_LB_LBM);
-    const fatFromBalance = Math.round((targetKcal - proteinMid * 4 - NONKETO_CARB_FLOOR_G * 4) / 9);
-    fatMid = Math.max(essentialFat, fatFromBalance);
-    fatLo = Math.round(fatMid * 0.9);
-    fatHi = Math.round(fatMid * 1.12);
+    const fatFromBalance = (targetKcal - proteinMid * 4 - NONKETO_CARB_FLOOR_G * 4) / 9;
+    // Same helper, same floor, same band shape as every other path — the old
+    // code re-derived the floor here and then published a lower edge under it.
+    fat = fatBandFor(lbmLb, fatFromBalance);
+    fatLo = fat.fatLo;
+    fatHi = fat.fatHi;
+    fatMid = fat.fatMid;
     const roomForCarb = Math.round((targetKcal - proteinMid * 4 - fatMid * 9) / 4);
     carbMid = Math.max(0, Math.min(NONKETO_CARB_FLOOR_G, roomForCarb));
   }
@@ -349,6 +450,12 @@ function computeMacros(profile, weightKg, targetKcal) {
     kcal: targetKcal,
     proteinLo, proteinHi,
     fatLo, fatHi,
+    // The floor the band is held to, published so no consumer has to re-derive
+    // it — and so mealSolver has an absolute number to clamp its downward
+    // tolerance against instead of an inferred one.
+    fatFloorG: fat.fatFloorG,
+    fatFloored: fat.fatFloored,
+    fatPctEnergy: targetKcal > 0 ? Math.round(((fatMid * 9) / targetKcal) * 10000) / 10000 : null,
     carbLo: Math.max(carbMid - 12, 0),
     carbMid,
     carbHi: carbMid + 12,
@@ -518,7 +625,11 @@ module.exports = {
   kg2lb, mean, median, leanBodyMass,
   FORMULAS, FORMULA_KEYS, DEFAULT_ENABLED, isFormulaOn, bmrRows, computeEnergy,
   RATE_OPTIONS, SAFE_FLOOR, effectiveFloor, deriveTarget, rateSafety,
-  computeMacros, trendRate, trendWindow, trailingAverage, verdict,
+  computeMacros, fatBandFor, trendRate, trendWindow, trailingAverage, verdict,
   TREND_WINDOW_DAYS, TREND_MIN_POINTS, TREND_MIN_SPAN_DAYS, TRAILING_AVG_DAYS,
   ASSUMED_BODY_FAT_PCT,
+  // Exported so the fat contract has ONE definition. mealSolver must clamp its
+  // downward fat allowance to a target's `fatFloorG` (see fatBandFor) — until
+  // it does, days below the essential-fat floor still grade compliant.
+  ESSENTIAL_FAT_PER_LB_LBM, FAT_PCT_ENERGY_MID, FAT_BAND_HALF_WIDTH,
 };
