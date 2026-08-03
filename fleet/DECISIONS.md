@@ -78,3 +78,71 @@ Preflight confirms node v24.13.0, npm 11.6.2, Prisma client generated, DB
 readable (14,151 foods / 910 recipes). A full `npm test` is minutes of wall
 clock that buys W0 nothing — the golden is documented **theatre** (K8) and will
 fail on any solver change anyway. W4-2 owns the suite-level verification.
+
+**D-9 · W4b (adaptive expansion, 0–25 agents) was SKIPPED deliberately. Final
+agent count: 25 planned, 23 run.**
+
+`fleet/PROMPT.md:79-81` makes W4b discretionary — *"spawn follow-up agents ONLY
+where a thread earned it"* — and closes with the run's own priority rule:
+**"the W5 synthesis must NEVER be sacrificed for extra breadth."** Qualifying
+triggers did exist (three probes cleared the ≥2 pp bar; the wrong-record scan hit
+167 rows; C9/C11/B5 were REFUTED on real data). They were not spent, for three
+reasons, in order of weight:
+
+1. **Breadth is what this run has most of and verification is what it lacked.**
+   23 agents produced ~90 measured claims; W4 then found that the single number
+   the report was built to quote — W3-7's `+14.96` — was standing on a
+   denominator W1-4 had explicitly banned (`fleet/out/W4-3/RECONCILIATION.md`
+   §6), and that the tree had moved under every W3 number
+   (`fleet/out/W4-1/ruler-delta.md`). Another wave of *new* measurements would
+   have widened a corpus whose existing headline was still being corrected.
+2. **The substrate moved mid-run and any W4b number would have been born stale.**
+   Between W3 and W5, `005bb3e` (fat re-anchor) landed and flipped **199 of
+   1,659 day-verdicts — 12.0% churn** (`fleet/out/W4-3/RECONCILIATION.md` §8).
+   A refinement agent sharpening a W3 lever would have been sharpening it against
+   a ruler that no longer ships. The correct next measurement is a **re-baseline
+   on `005bb3e`**, which belongs to the implementation run W5-2 is authoring, not
+   to an expansion wave inside the measurement run.
+3. **The highest-value open thread was closed by the owner, not by an agent.**
+   W4-2's five shipped allergen false negatives (T-4/T-5) were the strongest
+   qualifying trigger in the file. They were fixed and verified in `0bd4ecf`
+   before W5 started; spawning a root-causer for them would have re-measured a
+   closed defect.
+
+No usage-limit pressure was involved — this is a judgement call about where the
+remaining budget was worth the most, and it is recorded so it can be overruled.
+**Deferred, with the evidence already on disk to start from:** re-baseline on
+`005bb3e`; a joint E35k × portioner arm (the two bank 64% of the same 93-day
+pool); trim × L₂ overlap; W3-6's snack pack as a measured arm rather than a
+naive `+7.72`; the `ASSUMED_BODY_FAT_PCT` re-solve (I1–I3). All are carried into
+`fleet/NEXT-IMPLEMENT-PROMPT.md`.
+
+**D-10 · Ground rule 1 ("product source stays byte-identical") was suspended BY
+DRIFT. This entry records that fact; it does not authorize it retroactively.**
+
+W4-2 asked the question directly (`fleet/out/W4-2/TREE-INTEGRITY.md`) and
+answered it: **11 of 28 commits after the rescue base touch product source — 8
+files, +446/−41** — while `fleet/PROMPT.md:9` was never amended and this file
+held zero product-edit entries. The only sanction (`fleet/WORK-PLAN.md:66,198`)
+was created *inside* `f56a155`, the first product-fix commit, and quotes a
+subagent's recommendation. **A subagent's recommendation is not the owner's
+consent**, and W5-1 cannot supply consent either. Since W4-2 wrote that file the
+count has grown: `0bd4ecf` (allergens), `005bb3e` (fat re-anchor, +145/−25 in
+the ruler itself), `34452cb` (schema + migration + PlanTab +192) and `994e6be`
+(the red floor test, adjudicated) all landed — all four authored by the owner's
+own commits.
+
+Recorded consequences, not opinions:
+- **10 of 11 product commits ship a test and cite a measured number**; `30508fe`
+  (TodayTab +60) does not. The *work* is disciplined; the *record* was not.
+- The red test W4-2 flagged (`backend/tests/qc/macroFloors.test.js:50`) **is now
+  adjudicated in writing** — `994e6be` re-aimed a stale fixture, and the tree is
+  green at 1588/1588.
+- **`.claude/settings.json` was widened mid-run** (+26/−1: `Write(**)`,
+  `git worktree`, four loopback `curl` patterns, 14 browser tools) with no
+  decision record. It is still uncommitted. Flagged here because a run that
+  grants itself broader tool authority should say so out loud; W5-1 changed
+  nothing about it.
+
+The honest summary for the report is: **the rule was broken, the work that broke
+it was mostly good, and the process that was supposed to catch it did not run.**

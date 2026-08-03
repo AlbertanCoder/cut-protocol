@@ -6,11 +6,17 @@
     "branch": "fleet/measure-2026-08",
     "rescueBranch": "campaign-2026-07",
     "agentCap": 50,
-    "agentsSpawned": 18,
-    "currentWave": "W1-3/W1-4 then W3",
-    "notes": "Resume protocol: read this ledger, skip every agent with status=done, continue from the first unfinished agent.",
+    "agentsPlanned": 25,
+    "agentsRun": 24,
+    "w4bSkipped": true,
+    "w4bDecision": "fleet/DECISIONS.md D-9",
+    "currentWave": "W5 (W5-1 done, W5-2 pending)",
+    "notes": "Resume protocol: read this ledger, skip every agent with status=done, continue from the first unfinished agent. W4b was deliberately skipped (D-9) and is NOT an unfinished agent.",
     "dbSha256": "d9037dce9754b4524943069fff7e0f3e396598c108426f370b0a189458b623a1",
-    "rescueCommit": "75baddd"
+    "dbSha256Warning": "The main tree's backend/prisma/dev.db has DRIFTED to fb67a37f. The canonical bytes survive only in backend/prisma/dev.db.pre-verdict-migration-backup. Do not delete it.",
+    "rescueCommit": "75baddd",
+    "productCommitsOnThisBranch": "14 of 33 commits since the rescue base 75baddd touch backend/src or frontend/src; ground rule 1 was suspended by drift, recorded retroactively in DECISIONS.md D-10.",
+    "treeMovedSince_W3": "005bb3e (fat re-anchor) flips 199 of 1659 day-verdicts = 12.0% churn. Every W3 number predates it."
   },
   "agents": {
     "W0-1": {
@@ -310,9 +316,16 @@
     "W5-1": {
       "wave": "W5",
       "name": "fleet-report",
-      "status": "pending",
-      "artifacts": [],
-      "headline": ""
+      "status": "done",
+      "artifacts": [
+        "fleet/FLEET-REPORT.md",
+        "fleet/DASHBOARD.md",
+        "fleet/BRIEF-CLAIMS.md (verdict column filled, 88 rows)",
+        "fleet/DECISIONS.md (D-9 W4b skip, D-10 ground-rule drift)",
+        "fleet/state.json",
+        "fleet/PROGRESS.md"
+      ],
+      "headline": "THE HEADLINE IS QUOTED ON THE CANONICAL DENOMINATOR: the best measured stack is +14.53 / level 89.63%% on n=553, NOT +14.96 / 92.30%% on the banned n=537 (W4-1 independently landed +14.52 on n=1,659). Baseline 75.11%% canonical / 68.07%% all-planned. Ruler share +2.2-2.8, SOLVER SHARE 22.12. NOTHING WAS GAMED BUT THE SCOREBOARD IS PLAYER-CONTROLLED: schema.mjs:83 pays +22.72 pt for refusing on 537 vs +0.00 on 553; membership verified invariant (empty=16 in all 24 dumps) so the deltas are honest. NEVER SUM TWO DELTAS: 37%% overlap, 59%% overstatement; b20's marginal is +0.72 not +2.17; E35k and the portioner bank 64%% of the same pool; W3-6's +7.72 is the same fat pile. THE TRIM ARM'S PREMISE IS DEAD: 005bb3e creates 35 fat-UNDER days where W1-3 measured structurally zero, subsumes ~74%% of E35k, costs paleo -19.5/halal -33.3, and flips 199 of 1659 verdicts (12.0%% churn) -- every W3 number predates it, so the fix plan is re-ranked, not copied. RE-RANKED TOP THREE: (1) C2 smallest-first +7.78, ONE LINE, mechanism is solve ORDER so the fat re-anchor cannot touch it; (2) TRIM +12.60 standalone / +3.62 over a portioner, all safety gates 0 and kills all 32 keto breaches, blocked on plate realism (83.2%% of trimmed slots below 0.7x reference) and on its now-two-sided premise; (3) C14 +6.27 (with C2 +10.91) but delivered-below-own-floor 10.9->15.4%%. GATE 0 = re-baseline on 005bb3e first; 31s per run, no budget excuse. SAFETY FIRST IN THE REPORT, ABOVE THE SOLVER: W4-2's independently-authored oracle found FIVE gate false negatives that had SHIPPED -- 1,226 placements across cilantro/nightshade/gluten walls on 14 real personas -- plus a conditional exclusion failing silently on 1,005 cow-dairy placements; both FIXED 0bd4ecf, verified 0 leaks and hostile-name probe 35/72 -> 72/72. T-1 powder rows STILL OPEN (13/17 fail open, 0 reachable) and block the obvious vegan-density fix. KPIs: false-surrender 0.00%% at 3 seeds (prompt's 95.8%% refuted by 95.8 points), precision 100%%, recall 98.73%%, silent misses 1. CORRECTION TO THE BRIEF: 34452cb only HALF-closes E2 -- columns + migration + PlanTab read + localStorage mirror ship, but git grep verdictAt over backend/src returns NOTHING; POST /plans/generate still writes no column, so K3 is not at 100%%. SCOPE CORRECTION: 'the fleet made zero network calls' is FALSE as written -- W2-1..W2-6 used the network by assignment; only 'no HARNESS did' is true, confirmed on 4 independent lines. BRIEF-CLAIMS filled: 88 rows, 52 CONFIRMED / 26 ADJUSTED / 8 REFUTED / 2 UNTESTED (both belong to the skipped W4b). THREATS: ground rule 1 suspended BY DRIFT (D-10); canonical DB survives only in dev.db.pre-verdict-migration-backup; backend/.env carries BRAIN=on + a live sk-ant key hoisted into every harness; the ruler is locked by no test (solverMacroTolerance.test.js computes its expected boundary from the constant under test); the adaptive target has still never fired."
     },
     "W5-2": {
       "wave": "W5",
