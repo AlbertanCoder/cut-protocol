@@ -49,7 +49,23 @@ test("female unknown BF uses the female assumption", () => {
 
 test("non-keto carbs never go below the floor when the target can hold them", () => {
   // Lean, heavy, aggressive deficit: leftover carb would be < 50 g.
-  const m = computeMacros({ sex: "M", bodyFatPct: 12, dietaryStyle: "none" }, 95, 1700);
+  //
+  // ── FIXTURE MOVED 1700 → 1600 kcal (2026-08-03) ──────────────────────────
+  // Not a weakened assertion — the same invariant, re-aimed at a target that
+  // still reaches it. Fat used to be a fixed 0.34–0.40 g per lb of LBM, a
+  // number that did not know the calorie target, so at 1700 kcal this profile
+  // was prescribed ~63–74 g of fat and the leftover carb fell under the floor.
+  // Fat is now anchored to a SHARE OF ENERGY (the DEFECT 5.5 rewrite in
+  // bmrEngine), so the same profile gets ~55–59 g, and the ~130 kcal that
+  // frees up lands in carbs: carbMid comes out at 52 g, just clear of the
+  // 50 g floor, and `carbFloored` is correctly false.
+  //
+  // In other words the old fixture stopped being an aggressive deficit — it
+  // was only ever aggressive because fat was over-prescribed. The floor
+  // itself is unchanged and still engages across the whole lean/heavy region
+  // (bf 8–15%, 95–115 kg, 1500–1800 kcal); 1600 puts this profile back inside
+  // it. The test failing loudly on the model change is the system working.
+  const m = computeMacros({ sex: "M", bodyFatPct: 12, dietaryStyle: "none" }, 95, 1600);
   assert.equal(m.carbFloored, true, "the floor should have engaged");
   assert.ok(m.carbMid >= 0, `carbMid must never be negative, got ${m.carbMid}`);
   assert.ok(m.carbMid <= 50, "carbs are held at the floor, not above");
@@ -58,7 +74,24 @@ test("non-keto carbs never go below the floor when the target can hold them", ()
   const lbmLb = 95 * 2.20462 * 0.88;
   assert.ok(fatMid(m) >= Math.round(lbmLb * 0.3) - 1, "fat stays at or above essential");
   // and the macros still reconstruct to the target
-  assert.ok(Math.abs(reconstruct(m) - 1700) < 20, `feasible floored macros reconstruct: ${Math.round(reconstruct(m))} vs 1700`);
+  assert.ok(Math.abs(reconstruct(m) - 1600) < 20, `feasible floored macros reconstruct: ${Math.round(reconstruct(m))} vs 1600`);
+});
+
+test("the old 1700 kcal fixture now clears the floor unaided — the boundary the fat rewrite moved", () => {
+  // Locks in WHY the fixture above moved, so the next person to see a diff on
+  // this file does not have to re-derive it. If a future change pushes this
+  // profile back under the floor, that is a real regression in fat
+  // prescription and this test names it rather than leaving it to look like a
+  // stale fixture again.
+  const m = computeMacros({ sex: "M", bodyFatPct: 12, dietaryStyle: "none" }, 95, 1700);
+  assert.equal(m.carbFloored, false, "at 1700 kcal the leftover carb clears 50 g on its own");
+  assert.ok(m.carbMid > 50, `carbs land above the floor unaided, got ${m.carbMid}`);
+  // Fat sits at essential here, which is the point of the energy-anchored
+  // model: it borrows fat DOWN to the floor and no further, and hands the
+  // difference to carbohydrate rather than holding a gram count that stopped
+  // making sense at this calorie level.
+  const lbmLb = 95 * 2.20462 * 0.88;
+  assert.ok(fatMid(m) >= Math.round(lbmLb * 0.3) - 1, "fat is at or above essential");
 });
 
 test("a genuinely infeasible non-keto target lands carbs at 0, never negative (Stage-C / #28)", () => {
