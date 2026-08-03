@@ -91,3 +91,11 @@ backend/.env.qc
 
 # fleet measurement scratch — agent DB copies, never committed
 fleet/scratch/
+
+# Local-only slash commands. Owner's call 2026-08-02: the internal multi-agent
+# review procedure stays off the public repo. SCOPED TO commands/ ON PURPOSE —
+# `.claude/settings.json` and all four `.claude/hooks/*.js` are TRACKED and must
+# stay that way; they are the permission config and the guard hooks, and an
+# untracked guard is a guard that vanishes on the next fresh clone. Never widen
+# this to a bare `.claude/`.
+.claude/commands/

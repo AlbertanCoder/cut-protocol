@@ -1,0 +1,240 @@
+{
+  "agent": "W4-1",
+  "role": "reproduce",
+  "date": "2026-08-02",
+  "env": {
+    "headAtStart": "748c524b77c548643949d01b6671a51d5469e604",
+    "headAtEnd": "748c524b77c548643949d01b6671a51d5469e604",
+    "headMoved": false,
+    "node": "v24.13.0",
+    "brain": "off",
+    "networkCallsAllRuns": 0,
+    "runsAudited": 19,
+    "reproductionCommit": "962ac882f9dcf035acd117b4f9421474dd2ec5e4",
+    "recordedCommitW12": "8cd1480c085cb6860025851b370925d56b963bc5",
+    "solveSourceDiffAcrossThose": "empty (backend/src, backend/scripts, backend/prisma)",
+    "dbUsed": "d9037dce9754b4524943069fff7e0f3e396598c108426f370b0a189458b623a1",
+    "dbInMainTreeToday": "fb67a37f7f7890e68f7c053fa0c3f75bd37c59fa943ae483f33e0807cdf3ee4e",
+    "dbDriftNote": "main-tree dev.db is NO LONGER canonical; canonical bytes survive in dev.db.pre-verdict-migration-backup",
+    "productSourceModifiedByThisAgent": false
+  },
+  "verdicts": {
+    "W1_2_baseline": {
+      "verdict": "CONFIRMED",
+      "deltaPP": 0,
+      "recorded": {
+        "satJudged_n537": 77.3,
+        "satPlannedMinusDegen_n553": 75,
+        "allPlanned_n640": 68
+      },
+      "reproduced": {
+        "satJudged_n537": [
+          77.28,
+          77.84,
+          76.91
+        ],
+        "satPlannedMinusDegen_n553": [
+          75.05,
+          75.59,
+          74.68
+        ],
+        "allPlanned_n640": [
+          67.97,
+          68.59,
+          67.66
+        ]
+      },
+      "recordLevel": {
+        "recordsCompared": 1920,
+        "verdictFlips": 0,
+        "fieldsDiffering": [
+          "solveMs"
+        ],
+        "denominatorDeltaPP": 0
+      },
+      "note": "77.3% is n=537 satisfiable-JUDGED; 75.0% is n=553 satisfiable-planned-minus-degenerate. Different denominators; both confirmed."
+    },
+    "W3_1_rulerShare": {
+      "verdict": "CONFIRMED",
+      "deltaPP": 0,
+      "recorded": {
+        "rulerShareRange": [
+          2.2,
+          2.8
+        ],
+        "solverSharePts": 22,
+        "levelA_n553": 75.11,
+        "gap": 24.89,
+        "rulerZCeiling": 16.82,
+        "solverIrreducible": 8.08,
+        "E35k": 2.77,
+        "R35k": 2.17
+      },
+      "reproduced": {
+        "levelA_n553": 75.11,
+        "gap": 24.89,
+        "rulerZCeiling": 16.82,
+        "solverIrreducible": 8.08,
+        "E35k": 2.77,
+        "R35k": 2.17,
+        "solverShare": 22.12
+      },
+      "inputs": [
+        "W1-2 committed dumps",
+        "W4-1 fresh Arm P dumps"
+      ],
+      "rulersAgreeing": 20,
+      "mismatches": 0
+    },
+    "W3_7_bestStack": {
+      "verdict": "CONFIRMED",
+      "deltaPP": 0,
+      "recorded": {
+        "portioner": 11.24,
+        "trim": 12.6,
+        "naiveSum": 23.84,
+        "combined": 14.96,
+        "overlapLost": 8.88,
+        "overstatementPct": 59,
+        "residualTrimGivenPort": 3.72,
+        "residualPortGivenTrim": 2.36,
+        "allPlannedBase": 68.07,
+        "allPlannedCombined": 81.56
+      },
+      "reDerivedFromOriginalDumps": {
+        "portioner": 11.24,
+        "trim": 12.6,
+        "combined": 14.96
+      },
+      "liveRerun12Solves": {
+        "portioner": 11.24,
+        "trim": 12.6,
+        "combined": 14.96,
+        "allPlannedBase": 68.07,
+        "allPlannedCombined": 81.56
+      },
+      "denominatorCaveat": {
+        "headlineDenominator": "satisfiable-judged n=1611",
+        "canonical_n1659": 14.53,
+        "allPlanned_n1920": 13.49
+      },
+      "recordLevelVsOriginal": {
+        "arms": 4,
+        "verdictFlips": 0,
+        "fieldsDiffering": [
+          "solveMs"
+        ]
+      }
+    }
+  },
+  "a6TrapCheck": {
+    "refusedDaysPerArmPooled": {
+      "base": 48,
+      "c14": 48,
+      "c2": 48,
+      "c14_c2": 48,
+      "trim": 48,
+      "c14_c2_trim": 48,
+      "b20": 48,
+      "c14_c2_b20": 48
+    },
+    "armPArmF": [
+      48,
+      48
+    ],
+    "inert": true,
+    "note": "refusals constant at 48 in every arm => schema.mjs:83 self-scoring hole did not inflate any number here"
+  },
+  "rulerDelta": {
+    "what": "uncommitted fat-prescription rewrite in backend/src/lib/bmrEngine.js",
+    "bmrOld": "0328fa4d22b4e74ca18f5e0adf76586ae0709bf1d2c2236f351ed90c59b5ace7 (== 8cd1480 == 962ac88 == HEAD)",
+    "bmrNew": "9978d09e6831ac46145812a37053740447265cb94b8da6e2fc2a16c4ab9753a6 (working tree)",
+    "pooled": {
+      "planned": {
+        "n": 1920,
+        "armP": 68.07,
+        "regradeOldPlatesNewRuler": 65.83,
+        "armF": 71.93,
+        "rulerOnlyPP": -2.24,
+        "solverResponsePP": 6.09,
+        "totalPP": 3.85
+      },
+      "plannedMinusDegen": {
+        "n": 1917,
+        "armP": 68.18,
+        "regradeOldPlatesNewRuler": 65.94,
+        "armF": 72.04,
+        "rulerOnlyPP": -2.24,
+        "solverResponsePP": 6.1,
+        "totalPP": 3.86
+      },
+      "judged": {
+        "n": 1869,
+        "armP": 69.93,
+        "regradeOldPlatesNewRuler": 67.63,
+        "armF": 73.89,
+        "rulerOnlyPP": -2.3,
+        "solverResponsePP": 6.26,
+        "totalPP": 3.96
+      },
+      "satPlanned": {
+        "n": 1662,
+        "armP": 74.97,
+        "regradeOldPlatesNewRuler": 73.1,
+        "armF": 79.48,
+        "rulerOnlyPP": -1.87,
+        "solverResponsePP": 6.38,
+        "totalPP": 4.51
+      },
+      "satPlannedMinusDegen": {
+        "n": 1659,
+        "armP": 75.11,
+        "regradeOldPlatesNewRuler": 73.24,
+        "armF": 79.63,
+        "rulerOnlyPP": -1.87,
+        "solverResponsePP": 6.39,
+        "totalPP": 4.52
+      },
+      "satJudged": {
+        "n": 1611,
+        "armP": 77.34,
+        "regradeOldPlatesNewRuler": 75.42,
+        "armF": 82,
+        "rulerOnlyPP": -1.92,
+        "solverResponsePP": 6.58,
+        "totalPP": 4.66
+      }
+    },
+    "rulerStepPaired": {
+      "b": 115,
+      "c": 84
+    },
+    "headline": "ruler-only -1.87pp (STRICTER), solver response +6.39pp, total +4.52pp on canonical n=1659",
+    "inflationTest": "b/c = 1.37 (b-term LARGER than c) => re-calibration, the inverse of the B/D/A15 inflation signature",
+    "nutritional": {
+      "satisfiableArmDaysAboveAMDR35pctE_perSeed": {
+        "armP": 48.3,
+        "armF": 35
+      },
+      "nonKetoAllPlanned_perSeed": {
+        "armP": 18,
+        "armF": 0.3
+      },
+      "prescribedNonKetoTargetsBelowAMDR20": {
+        "armP": 55,
+        "armF": 0
+      },
+      "prescribedNonKetoTargetsAboveAMDR35": {
+        "armP": 9,
+        "armF": 1
+      }
+    }
+  },
+  "surprises": [
+    "reproduction exact to solveMs only across 4480 records",
+    "personasSha256 is CRLF-checkout-dependent (8d98e2e0 worktree vs e564b1dd main, identical content) - not a valid population identity",
+    "main-tree dev.db drifted off canonical d9037dce to fb67a37f",
+    "the fat rewrite makes the ruler STRICTER on identical plates (b=115 > c=84)",
+    "reconLiveVsReplay 13.6% on the combined arm is a deliberate check, not a defect - it proves W3-7 one code edit was load-bearing"
+  ]
+}

@@ -1,0 +1,3475 @@
+{
+  "tool": "fleet/out/W1-2/scoreRulers.mjs",
+  "generatedAt": "2026-08-03T04:15:28.750Z",
+  "runs": [
+    {
+      "file": "fleet/out/W1-2/daydump-route-s424242.jsonl",
+      "run": {
+        "label": "route",
+        "seed": 424242,
+        "seedName": "primary",
+        "poolShape": "route (applyFilterStack ON)",
+        "dbSha256": "d9037dce9754b4524943069fff7e0f3e396598c108426f370b0a189458b623a1",
+        "foodFingerprint": "b961ac3afbdf3f53905ead1353ffb05a9a2b94b7f1e0cd7fa87bbf975291f26b",
+        "personasSha256": "e564b1ddcc36b95249b51819e03762a30da61f29f2a254312699290fae57704e",
+        "gitSha": "8cd1480c085cb6860025851b370925d56b963bc5",
+        "gitDiffStat": "clean",
+        "brain": "off"
+      },
+      "integrity": {
+        "rows": 640,
+        "rulerA_vs_stored_mismatch": 0,
+        "stored_AND_mismatch": 0,
+        "lbm_reconstruction_failures": 0,
+        "lbmFailIds": []
+      },
+      "cells": {
+        "planned": {
+          "desc": "every planned day record (n=640). Unjudged/degenerate count as MISSES.",
+          "A": {
+            "k": 435,
+            "n": 640,
+            "rate": 0.6796875,
+            "unjudged": 17,
+            "unjudgedSat": 16,
+            "degenerate": 1
+          },
+          "D": {
+            "k": 488,
+            "n": 640,
+            "rate": 0.7625,
+            "unjudged": 17,
+            "unjudgedSat": 16,
+            "degenerate": 1
+          }
+        },
+        "planned-minus-degen": {
+          "desc": "planned minus 0-slot-config days — the rig-comparable all-planned n (639).",
+          "A": {
+            "k": 435,
+            "n": 639,
+            "rate": 0.6807511737089202,
+            "unjudged": 16,
+            "unjudgedSat": 16,
+            "degenerate": 0
+          },
+          "D": {
+            "k": 488,
+            "n": 639,
+            "rate": 0.7636932707355243,
+            "unjudged": 16,
+            "unjudgedSat": 16,
+            "degenerate": 0
+          }
+        },
+        "judged": {
+          "desc": "slotsFilled>0 (A1/rig/schema.mjs:83). Drops total-failure days.",
+          "A": {
+            "k": 435,
+            "n": 623,
+            "rate": 0.6982343499197432,
+            "unjudged": 0,
+            "unjudgedSat": 0,
+            "degenerate": 0
+          },
+          "D": {
+            "k": 488,
+            "n": 623,
+            "rate": 0.78330658105939,
+            "unjudged": 0,
+            "unjudgedSat": 0,
+            "degenerate": 0
+          }
+        },
+        "satisfiable-judged": {
+          "desc": "judged AND tier!=IMPOSSIBLE. The historically published 'satisfiable'.",
+          "A": {
+            "k": 415,
+            "n": 537,
+            "rate": 0.7728119180633147,
+            "unjudged": 0,
+            "unjudgedSat": 0,
+            "degenerate": 0
+          },
+          "D": {
+            "k": 464,
+            "n": 537,
+            "rate": 0.8640595903165735,
+            "unjudged": 0,
+            "unjudgedSat": 0,
+            "degenerate": 0
+          }
+        },
+        "satisfiable-planned": {
+          "desc": "tier!=IMPOSSIBLE, ALL planned. Total failures counted as misses. THE HONEST ONE.",
+          "A": {
+            "k": 415,
+            "n": 554,
+            "rate": 0.7490974729241877,
+            "unjudged": 17,
+            "unjudgedSat": 16,
+            "degenerate": 1
+          },
+          "D": {
+            "k": 464,
+            "n": 554,
+            "rate": 0.8375451263537906,
+            "unjudged": 17,
+            "unjudgedSat": 16,
+            "degenerate": 1
+          }
+        }
+      },
+      "perDiet": {
+        "carnivore": {
+          "planned": {
+            "A": {
+              "k": 0,
+              "n": 8,
+              "rate": 0,
+              "unjudged": 5,
+              "unjudgedSat": 5,
+              "degenerate": 0
+            },
+            "D": {
+              "k": 0,
+              "n": 8,
+              "rate": 0,
+              "unjudged": 5,
+              "unjudgedSat": 5,
+              "degenerate": 0
+            }
+          },
+          "planned-minus-degen": {
+            "A": {
+              "k": 0,
+              "n": 8,
+              "rate": 0,
+              "unjudged": 5,
+              "unjudgedSat": 5,
+              "degenerate": 0
+            },
+            "D": {
+              "k": 0,
+              "n": 8,
+              "rate": 0,
+              "unjudged": 5,
+              "unjudgedSat": 5,
+              "degenerate": 0
+            }
+          },
+          "judged": {
+            "A": {
+              "k": 0,
+              "n": 3,
+              "rate": 0,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            },
+            "D": {
+              "k": 0,
+              "n": 3,
+              "rate": 0,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            }
+          },
+          "satisfiable-judged": {
+            "A": {
+              "k": 0,
+              "n": 3,
+              "rate": 0,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            },
+            "D": {
+              "k": 0,
+              "n": 3,
+              "rate": 0,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            }
+          },
+          "satisfiable-planned": {
+            "A": {
+              "k": 0,
+              "n": 8,
+              "rate": 0,
+              "unjudged": 5,
+              "unjudgedSat": 5,
+              "degenerate": 0
+            },
+            "D": {
+              "k": 0,
+              "n": 8,
+              "rate": 0,
+              "unjudged": 5,
+              "unjudgedSat": 5,
+              "degenerate": 0
+            }
+          },
+          "personas": 2
+        },
+        "halal": {
+          "planned": {
+            "A": {
+              "k": 13,
+              "n": 13,
+              "rate": 1,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            },
+            "D": {
+              "k": 13,
+              "n": 13,
+              "rate": 1,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            }
+          },
+          "planned-minus-degen": {
+            "A": {
+              "k": 13,
+              "n": 13,
+              "rate": 1,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            },
+            "D": {
+              "k": 13,
+              "n": 13,
+              "rate": 1,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            }
+          },
+          "judged": {
+            "A": {
+              "k": 13,
+              "n": 13,
+              "rate": 1,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            },
+            "D": {
+              "k": 13,
+              "n": 13,
+              "rate": 1,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            }
+          },
+          "satisfiable-judged": {
+            "A": {
+              "k": 12,
+              "n": 12,
+              "rate": 1,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            },
+            "D": {
+              "k": 12,
+              "n": 12,
+              "rate": 1,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            }
+          },
+          "satisfiable-planned": {
+            "A": {
+              "k": 12,
+              "n": 12,
+              "rate": 1,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            },
+            "D": {
+              "k": 12,
+              "n": 12,
+              "rate": 1,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            }
+          },
+          "personas": 7
+        },
+        "keto": {
+          "planned": {
+            "A": {
+              "k": 35,
+              "n": 60,
+              "rate": 0.5833333333333334,
+              "unjudged": 11,
+              "unjudgedSat": 11,
+              "degenerate": 0
+            },
+            "D": {
+              "k": 34,
+              "n": 60,
+              "rate": 0.5666666666666667,
+              "unjudged": 11,
+              "unjudgedSat": 11,
+              "degenerate": 0
+            }
+          },
+          "planned-minus-degen": {
+            "A": {
+              "k": 35,
+              "n": 60,
+              "rate": 0.5833333333333334,
+              "unjudged": 11,
+              "unjudgedSat": 11,
+              "degenerate": 0
+            },
+            "D": {
+              "k": 34,
+              "n": 60,
+              "rate": 0.5666666666666667,
+              "unjudged": 11,
+              "unjudgedSat": 11,
+              "degenerate": 0
+            }
+          },
+          "judged": {
+            "A": {
+              "k": 35,
+              "n": 49,
+              "rate": 0.7142857142857143,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            },
+            "D": {
+              "k": 34,
+              "n": 49,
+              "rate": 0.6938775510204082,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            }
+          },
+          "satisfiable-judged": {
+            "A": {
+              "k": 33,
+              "n": 47,
+              "rate": 0.7021276595744681,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            },
+            "D": {
+              "k": 32,
+              "n": 47,
+              "rate": 0.6808510638297872,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            }
+          },
+          "satisfiable-planned": {
+            "A": {
+              "k": 33,
+              "n": 58,
+              "rate": 0.5689655172413793,
+              "unjudged": 11,
+              "unjudgedSat": 11,
+              "degenerate": 0
+            },
+            "D": {
+              "k": 32,
+              "n": 58,
+              "rate": 0.5517241379310345,
+              "unjudged": 11,
+              "unjudgedSat": 11,
+              "degenerate": 0
+            }
+          },
+          "personas": 18
+        },
+        "kosher": {
+          "planned": {
+            "A": {
+              "k": 18,
+              "n": 36,
+              "rate": 0.5,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            },
+            "D": {
+              "k": 24,
+              "n": 36,
+              "rate": 0.6666666666666666,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            }
+          },
+          "planned-minus-degen": {
+            "A": {
+              "k": 18,
+              "n": 36,
+              "rate": 0.5,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            },
+            "D": {
+              "k": 24,
+              "n": 36,
+              "rate": 0.6666666666666666,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            }
+          },
+          "judged": {
+            "A": {
+              "k": 18,
+              "n": 36,
+              "rate": 0.5,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            },
+            "D": {
+              "k": 24,
+              "n": 36,
+              "rate": 0.6666666666666666,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            }
+          },
+          "satisfiable-judged": {
+            "A": {
+              "k": 17,
+              "n": 35,
+              "rate": 0.4857142857142857,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            },
+            "D": {
+              "k": 23,
+              "n": 35,
+              "rate": 0.6571428571428571,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            }
+          },
+          "satisfiable-planned": {
+            "A": {
+              "k": 17,
+              "n": 35,
+              "rate": 0.4857142857142857,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            },
+            "D": {
+              "k": 23,
+              "n": 35,
+              "rate": 0.6571428571428571,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            }
+          },
+          "personas": 12
+        },
+        "mediterranean": {
+          "planned": {
+            "A": {
+              "k": 45,
+              "n": 50,
+              "rate": 0.9,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            },
+            "D": {
+              "k": 46,
+              "n": 50,
+              "rate": 0.92,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            }
+          },
+          "planned-minus-degen": {
+            "A": {
+              "k": 45,
+              "n": 50,
+              "rate": 0.9,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            },
+            "D": {
+              "k": 46,
+              "n": 50,
+              "rate": 0.92,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            }
+          },
+          "judged": {
+            "A": {
+              "k": 45,
+              "n": 50,
+              "rate": 0.9,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            },
+            "D": {
+              "k": 46,
+              "n": 50,
+              "rate": 0.92,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            }
+          },
+          "satisfiable-judged": {
+            "A": {
+              "k": 44,
+              "n": 49,
+              "rate": 0.8979591836734694,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            },
+            "D": {
+              "k": 45,
+              "n": 49,
+              "rate": 0.9183673469387755,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            }
+          },
+          "satisfiable-planned": {
+            "A": {
+              "k": 44,
+              "n": 49,
+              "rate": 0.8979591836734694,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            },
+            "D": {
+              "k": 45,
+              "n": 49,
+              "rate": 0.9183673469387755,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            }
+          },
+          "personas": 20
+        },
+        "none": {
+          "planned": {
+            "A": {
+              "k": 257,
+              "n": 293,
+              "rate": 0.8771331058020477,
+              "unjudged": 1,
+              "unjudgedSat": 0,
+              "degenerate": 1
+            },
+            "D": {
+              "k": 265,
+              "n": 293,
+              "rate": 0.9044368600682594,
+              "unjudged": 1,
+              "unjudgedSat": 0,
+              "degenerate": 1
+            }
+          },
+          "planned-minus-degen": {
+            "A": {
+              "k": 257,
+              "n": 292,
+              "rate": 0.8801369863013698,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            },
+            "D": {
+              "k": 265,
+              "n": 292,
+              "rate": 0.9075342465753424,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            }
+          },
+          "judged": {
+            "A": {
+              "k": 257,
+              "n": 292,
+              "rate": 0.8801369863013698,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            },
+            "D": {
+              "k": 265,
+              "n": 292,
+              "rate": 0.9075342465753424,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            }
+          },
+          "satisfiable-judged": {
+            "A": {
+              "k": 243,
+              "n": 275,
+              "rate": 0.8836363636363637,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            },
+            "D": {
+              "k": 248,
+              "n": 275,
+              "rate": 0.9018181818181819,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            }
+          },
+          "satisfiable-planned": {
+            "A": {
+              "k": 243,
+              "n": 276,
+              "rate": 0.8804347826086957,
+              "unjudged": 1,
+              "unjudgedSat": 0,
+              "degenerate": 1
+            },
+            "D": {
+              "k": 248,
+              "n": 276,
+              "rate": 0.8985507246376812,
+              "unjudged": 1,
+              "unjudgedSat": 0,
+              "degenerate": 1
+            }
+          },
+          "personas": 125
+        },
+        "paleo": {
+          "planned": {
+            "A": {
+              "k": 10,
+              "n": 25,
+              "rate": 0.4,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            },
+            "D": {
+              "k": 18,
+              "n": 25,
+              "rate": 0.72,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            }
+          },
+          "planned-minus-degen": {
+            "A": {
+              "k": 10,
+              "n": 25,
+              "rate": 0.4,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            },
+            "D": {
+              "k": 18,
+              "n": 25,
+              "rate": 0.72,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            }
+          },
+          "judged": {
+            "A": {
+              "k": 10,
+              "n": 25,
+              "rate": 0.4,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            },
+            "D": {
+              "k": 18,
+              "n": 25,
+              "rate": 0.72,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            }
+          },
+          "satisfiable-judged": {
+            "A": {
+              "k": 10,
+              "n": 24,
+              "rate": 0.4166666666666667,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            },
+            "D": {
+              "k": 18,
+              "n": 24,
+              "rate": 0.75,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            }
+          },
+          "satisfiable-planned": {
+            "A": {
+              "k": 10,
+              "n": 24,
+              "rate": 0.4166666666666667,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            },
+            "D": {
+              "k": 18,
+              "n": 24,
+              "rate": 0.75,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            }
+          },
+          "personas": 13
+        },
+        "vegan": {
+          "planned": {
+            "A": {
+              "k": 20,
+              "n": 90,
+              "rate": 0.2222222222222222,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            },
+            "D": {
+              "k": 30,
+              "n": 90,
+              "rate": 0.3333333333333333,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            }
+          },
+          "planned-minus-degen": {
+            "A": {
+              "k": 20,
+              "n": 90,
+              "rate": 0.2222222222222222,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            },
+            "D": {
+              "k": 30,
+              "n": 90,
+              "rate": 0.3333333333333333,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            }
+          },
+          "judged": {
+            "A": {
+              "k": 20,
+              "n": 90,
+              "rate": 0.2222222222222222,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            },
+            "D": {
+              "k": 30,
+              "n": 90,
+              "rate": 0.3333333333333333,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            }
+          },
+          "satisfiable-judged": {
+            "A": {
+              "k": 20,
+              "n": 35,
+              "rate": 0.5714285714285714,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            },
+            "D": {
+              "k": 30,
+              "n": 35,
+              "rate": 0.8571428571428571,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            }
+          },
+          "satisfiable-planned": {
+            "A": {
+              "k": 20,
+              "n": 35,
+              "rate": 0.5714285714285714,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            },
+            "D": {
+              "k": 30,
+              "n": 35,
+              "rate": 0.8571428571428571,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            }
+          },
+          "personas": 30
+        },
+        "vegetarian": {
+          "planned": {
+            "A": {
+              "k": 37,
+              "n": 65,
+              "rate": 0.5692307692307692,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            },
+            "D": {
+              "k": 58,
+              "n": 65,
+              "rate": 0.8923076923076924,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            }
+          },
+          "planned-minus-degen": {
+            "A": {
+              "k": 37,
+              "n": 65,
+              "rate": 0.5692307692307692,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            },
+            "D": {
+              "k": 58,
+              "n": 65,
+              "rate": 0.8923076923076924,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            }
+          },
+          "judged": {
+            "A": {
+              "k": 37,
+              "n": 65,
+              "rate": 0.5692307692307692,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            },
+            "D": {
+              "k": 58,
+              "n": 65,
+              "rate": 0.8923076923076924,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            }
+          },
+          "satisfiable-judged": {
+            "A": {
+              "k": 36,
+              "n": 57,
+              "rate": 0.631578947368421,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            },
+            "D": {
+              "k": 56,
+              "n": 57,
+              "rate": 0.9824561403508771,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            }
+          },
+          "satisfiable-planned": {
+            "A": {
+              "k": 36,
+              "n": 57,
+              "rate": 0.631578947368421,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            },
+            "D": {
+              "k": 56,
+              "n": 57,
+              "rate": 0.9824561403508771,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            }
+          },
+          "personas": 23
+        }
+      },
+      "perTier": {
+        "EASY": {
+          "personas": 142,
+          "planned": {
+            "A": {
+              "k": 267,
+              "n": 340,
+              "rate": 0.7852941176470588,
+              "unjudged": 9,
+              "unjudgedSat": 9,
+              "degenerate": 0
+            },
+            "D": {
+              "k": 289,
+              "n": 340,
+              "rate": 0.85,
+              "unjudged": 9,
+              "unjudgedSat": 9,
+              "degenerate": 0
+            }
+          },
+          "judged": {
+            "A": {
+              "k": 267,
+              "n": 331,
+              "rate": 0.8066465256797583,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            },
+            "D": {
+              "k": 289,
+              "n": 331,
+              "rate": 0.8731117824773413,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            }
+          },
+          "personasWithZeroInBandDays": {
+            "A": 13,
+            "D": 9
+          },
+          "personasWithAtLeastOneInBandDay": {
+            "A": 129
+          }
+        },
+        "HARD": {
+          "personas": 61,
+          "planned": {
+            "A": {
+              "k": 126,
+              "n": 175,
+              "rate": 0.72,
+              "unjudged": 7,
+              "unjudgedSat": 7,
+              "degenerate": 0
+            },
+            "D": {
+              "k": 149,
+              "n": 175,
+              "rate": 0.8514285714285714,
+              "unjudged": 7,
+              "unjudgedSat": 7,
+              "degenerate": 0
+            }
+          },
+          "judged": {
+            "A": {
+              "k": 126,
+              "n": 168,
+              "rate": 0.75,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            },
+            "D": {
+              "k": 149,
+              "n": 168,
+              "rate": 0.8869047619047619,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            }
+          },
+          "personasWithZeroInBandDays": {
+            "A": 13,
+            "D": 2
+          },
+          "personasWithAtLeastOneInBandDay": {
+            "A": 48
+          }
+        },
+        "IMPOSSIBLE": {
+          "personas": 32,
+          "planned": {
+            "A": {
+              "k": 20,
+              "n": 86,
+              "rate": 0.23255813953488372,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            },
+            "D": {
+              "k": 24,
+              "n": 86,
+              "rate": 0.27906976744186046,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            }
+          },
+          "judged": {
+            "A": {
+              "k": 20,
+              "n": 86,
+              "rate": 0.23255813953488372,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            },
+            "D": {
+              "k": 24,
+              "n": 86,
+              "rate": 0.27906976744186046,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            }
+          },
+          "personasWithZeroInBandDays": {
+            "A": 22,
+            "D": 20
+          },
+          "personasWithAtLeastOneInBandDay": {
+            "A": 10
+          }
+        },
+        "ROBUSTNESS": {
+          "personas": 15,
+          "planned": {
+            "A": {
+              "k": 22,
+              "n": 39,
+              "rate": 0.5641025641025641,
+              "unjudged": 1,
+              "unjudgedSat": 0,
+              "degenerate": 1
+            },
+            "D": {
+              "k": 26,
+              "n": 39,
+              "rate": 0.6666666666666666,
+              "unjudged": 1,
+              "unjudgedSat": 0,
+              "degenerate": 1
+            }
+          },
+          "judged": {
+            "A": {
+              "k": 22,
+              "n": 38,
+              "rate": 0.5789473684210527,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            },
+            "D": {
+              "k": 26,
+              "n": 38,
+              "rate": 0.6842105263157895,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            }
+          },
+          "personasWithZeroInBandDays": {
+            "A": 5,
+            "D": 4
+          },
+          "personasWithAtLeastOneInBandDay": {
+            "A": 10
+          }
+        }
+      },
+      "flips": {
+        "a1d1": 420,
+        "a1d0": 15,
+        "a0d1": 68,
+        "a0d0": 137,
+        "flipCause": {
+          "A_pass_D_fail:carb<carbLo|ketoCeil": 15,
+          "A_fail_D_pass:fatBand": 39,
+          "A_fail_D_pass:carbBand": 26,
+          "A_fail_D_pass:fatBand+carbBand": 3
+        }
+      }
+    },
+    {
+      "file": "fleet/out/W1-2/daydump-route-s20260730.jsonl",
+      "run": {
+        "label": "route",
+        "seed": 20260730,
+        "seedName": "replicateA",
+        "poolShape": "route (applyFilterStack ON)",
+        "dbSha256": "d9037dce9754b4524943069fff7e0f3e396598c108426f370b0a189458b623a1",
+        "foodFingerprint": "b961ac3afbdf3f53905ead1353ffb05a9a2b94b7f1e0cd7fa87bbf975291f26b",
+        "personasSha256": "e564b1ddcc36b95249b51819e03762a30da61f29f2a254312699290fae57704e",
+        "gitSha": "8cd1480c085cb6860025851b370925d56b963bc5",
+        "gitDiffStat": "clean",
+        "brain": "off"
+      },
+      "integrity": {
+        "rows": 640,
+        "rulerA_vs_stored_mismatch": 0,
+        "stored_AND_mismatch": 0,
+        "lbm_reconstruction_failures": 0,
+        "lbmFailIds": []
+      },
+      "cells": {
+        "planned": {
+          "desc": "every planned day record (n=640). Unjudged/degenerate count as MISSES.",
+          "A": {
+            "k": 439,
+            "n": 640,
+            "rate": 0.6859375,
+            "unjudged": 17,
+            "unjudgedSat": 16,
+            "degenerate": 1
+          },
+          "D": {
+            "k": 487,
+            "n": 640,
+            "rate": 0.7609375,
+            "unjudged": 17,
+            "unjudgedSat": 16,
+            "degenerate": 1
+          }
+        },
+        "planned-minus-degen": {
+          "desc": "planned minus 0-slot-config days — the rig-comparable all-planned n (639).",
+          "A": {
+            "k": 439,
+            "n": 639,
+            "rate": 0.6870109546165885,
+            "unjudged": 16,
+            "unjudgedSat": 16,
+            "degenerate": 0
+          },
+          "D": {
+            "k": 487,
+            "n": 639,
+            "rate": 0.7621283255086072,
+            "unjudged": 16,
+            "unjudgedSat": 16,
+            "degenerate": 0
+          }
+        },
+        "judged": {
+          "desc": "slotsFilled>0 (A1/rig/schema.mjs:83). Drops total-failure days.",
+          "A": {
+            "k": 439,
+            "n": 623,
+            "rate": 0.7046548956661316,
+            "unjudged": 0,
+            "unjudgedSat": 0,
+            "degenerate": 0
+          },
+          "D": {
+            "k": 487,
+            "n": 623,
+            "rate": 0.7817014446227929,
+            "unjudged": 0,
+            "unjudgedSat": 0,
+            "degenerate": 0
+          }
+        },
+        "satisfiable-judged": {
+          "desc": "judged AND tier!=IMPOSSIBLE. The historically published 'satisfiable'.",
+          "A": {
+            "k": 418,
+            "n": 537,
+            "rate": 0.7783985102420856,
+            "unjudged": 0,
+            "unjudgedSat": 0,
+            "degenerate": 0
+          },
+          "D": {
+            "k": 463,
+            "n": 537,
+            "rate": 0.8621973929236499,
+            "unjudged": 0,
+            "unjudgedSat": 0,
+            "degenerate": 0
+          }
+        },
+        "satisfiable-planned": {
+          "desc": "tier!=IMPOSSIBLE, ALL planned. Total failures counted as misses. THE HONEST ONE.",
+          "A": {
+            "k": 418,
+            "n": 554,
+            "rate": 0.7545126353790613,
+            "unjudged": 17,
+            "unjudgedSat": 16,
+            "degenerate": 1
+          },
+          "D": {
+            "k": 463,
+            "n": 554,
+            "rate": 0.8357400722021661,
+            "unjudged": 17,
+            "unjudgedSat": 16,
+            "degenerate": 1
+          }
+        }
+      },
+      "perDiet": {
+        "carnivore": {
+          "planned": {
+            "A": {
+              "k": 0,
+              "n": 8,
+              "rate": 0,
+              "unjudged": 5,
+              "unjudgedSat": 5,
+              "degenerate": 0
+            },
+            "D": {
+              "k": 0,
+              "n": 8,
+              "rate": 0,
+              "unjudged": 5,
+              "unjudgedSat": 5,
+              "degenerate": 0
+            }
+          },
+          "planned-minus-degen": {
+            "A": {
+              "k": 0,
+              "n": 8,
+              "rate": 0,
+              "unjudged": 5,
+              "unjudgedSat": 5,
+              "degenerate": 0
+            },
+            "D": {
+              "k": 0,
+              "n": 8,
+              "rate": 0,
+              "unjudged": 5,
+              "unjudgedSat": 5,
+              "degenerate": 0
+            }
+          },
+          "judged": {
+            "A": {
+              "k": 0,
+              "n": 3,
+              "rate": 0,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            },
+            "D": {
+              "k": 0,
+              "n": 3,
+              "rate": 0,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            }
+          },
+          "satisfiable-judged": {
+            "A": {
+              "k": 0,
+              "n": 3,
+              "rate": 0,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            },
+            "D": {
+              "k": 0,
+              "n": 3,
+              "rate": 0,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            }
+          },
+          "satisfiable-planned": {
+            "A": {
+              "k": 0,
+              "n": 8,
+              "rate": 0,
+              "unjudged": 5,
+              "unjudgedSat": 5,
+              "degenerate": 0
+            },
+            "D": {
+              "k": 0,
+              "n": 8,
+              "rate": 0,
+              "unjudged": 5,
+              "unjudgedSat": 5,
+              "degenerate": 0
+            }
+          },
+          "personas": 2
+        },
+        "halal": {
+          "planned": {
+            "A": {
+              "k": 13,
+              "n": 13,
+              "rate": 1,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            },
+            "D": {
+              "k": 13,
+              "n": 13,
+              "rate": 1,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            }
+          },
+          "planned-minus-degen": {
+            "A": {
+              "k": 13,
+              "n": 13,
+              "rate": 1,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            },
+            "D": {
+              "k": 13,
+              "n": 13,
+              "rate": 1,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            }
+          },
+          "judged": {
+            "A": {
+              "k": 13,
+              "n": 13,
+              "rate": 1,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            },
+            "D": {
+              "k": 13,
+              "n": 13,
+              "rate": 1,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            }
+          },
+          "satisfiable-judged": {
+            "A": {
+              "k": 12,
+              "n": 12,
+              "rate": 1,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            },
+            "D": {
+              "k": 12,
+              "n": 12,
+              "rate": 1,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            }
+          },
+          "satisfiable-planned": {
+            "A": {
+              "k": 12,
+              "n": 12,
+              "rate": 1,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            },
+            "D": {
+              "k": 12,
+              "n": 12,
+              "rate": 1,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            }
+          },
+          "personas": 7
+        },
+        "keto": {
+          "planned": {
+            "A": {
+              "k": 37,
+              "n": 60,
+              "rate": 0.6166666666666667,
+              "unjudged": 11,
+              "unjudgedSat": 11,
+              "degenerate": 0
+            },
+            "D": {
+              "k": 36,
+              "n": 60,
+              "rate": 0.6,
+              "unjudged": 11,
+              "unjudgedSat": 11,
+              "degenerate": 0
+            }
+          },
+          "planned-minus-degen": {
+            "A": {
+              "k": 37,
+              "n": 60,
+              "rate": 0.6166666666666667,
+              "unjudged": 11,
+              "unjudgedSat": 11,
+              "degenerate": 0
+            },
+            "D": {
+              "k": 36,
+              "n": 60,
+              "rate": 0.6,
+              "unjudged": 11,
+              "unjudgedSat": 11,
+              "degenerate": 0
+            }
+          },
+          "judged": {
+            "A": {
+              "k": 37,
+              "n": 49,
+              "rate": 0.7551020408163265,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            },
+            "D": {
+              "k": 36,
+              "n": 49,
+              "rate": 0.7346938775510204,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            }
+          },
+          "satisfiable-judged": {
+            "A": {
+              "k": 35,
+              "n": 47,
+              "rate": 0.7446808510638298,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            },
+            "D": {
+              "k": 34,
+              "n": 47,
+              "rate": 0.723404255319149,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            }
+          },
+          "satisfiable-planned": {
+            "A": {
+              "k": 35,
+              "n": 58,
+              "rate": 0.603448275862069,
+              "unjudged": 11,
+              "unjudgedSat": 11,
+              "degenerate": 0
+            },
+            "D": {
+              "k": 34,
+              "n": 58,
+              "rate": 0.5862068965517241,
+              "unjudged": 11,
+              "unjudgedSat": 11,
+              "degenerate": 0
+            }
+          },
+          "personas": 18
+        },
+        "kosher": {
+          "planned": {
+            "A": {
+              "k": 19,
+              "n": 36,
+              "rate": 0.5277777777777778,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            },
+            "D": {
+              "k": 27,
+              "n": 36,
+              "rate": 0.75,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            }
+          },
+          "planned-minus-degen": {
+            "A": {
+              "k": 19,
+              "n": 36,
+              "rate": 0.5277777777777778,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            },
+            "D": {
+              "k": 27,
+              "n": 36,
+              "rate": 0.75,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            }
+          },
+          "judged": {
+            "A": {
+              "k": 19,
+              "n": 36,
+              "rate": 0.5277777777777778,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            },
+            "D": {
+              "k": 27,
+              "n": 36,
+              "rate": 0.75,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            }
+          },
+          "satisfiable-judged": {
+            "A": {
+              "k": 18,
+              "n": 35,
+              "rate": 0.5142857142857142,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            },
+            "D": {
+              "k": 26,
+              "n": 35,
+              "rate": 0.7428571428571429,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            }
+          },
+          "satisfiable-planned": {
+            "A": {
+              "k": 18,
+              "n": 35,
+              "rate": 0.5142857142857142,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            },
+            "D": {
+              "k": 26,
+              "n": 35,
+              "rate": 0.7428571428571429,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            }
+          },
+          "personas": 12
+        },
+        "mediterranean": {
+          "planned": {
+            "A": {
+              "k": 45,
+              "n": 50,
+              "rate": 0.9,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            },
+            "D": {
+              "k": 46,
+              "n": 50,
+              "rate": 0.92,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            }
+          },
+          "planned-minus-degen": {
+            "A": {
+              "k": 45,
+              "n": 50,
+              "rate": 0.9,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            },
+            "D": {
+              "k": 46,
+              "n": 50,
+              "rate": 0.92,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            }
+          },
+          "judged": {
+            "A": {
+              "k": 45,
+              "n": 50,
+              "rate": 0.9,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            },
+            "D": {
+              "k": 46,
+              "n": 50,
+              "rate": 0.92,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            }
+          },
+          "satisfiable-judged": {
+            "A": {
+              "k": 44,
+              "n": 49,
+              "rate": 0.8979591836734694,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            },
+            "D": {
+              "k": 45,
+              "n": 49,
+              "rate": 0.9183673469387755,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            }
+          },
+          "satisfiable-planned": {
+            "A": {
+              "k": 44,
+              "n": 49,
+              "rate": 0.8979591836734694,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            },
+            "D": {
+              "k": 45,
+              "n": 49,
+              "rate": 0.9183673469387755,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            }
+          },
+          "personas": 20
+        },
+        "none": {
+          "planned": {
+            "A": {
+              "k": 259,
+              "n": 293,
+              "rate": 0.8839590443686007,
+              "unjudged": 1,
+              "unjudgedSat": 0,
+              "degenerate": 1
+            },
+            "D": {
+              "k": 263,
+              "n": 293,
+              "rate": 0.8976109215017065,
+              "unjudged": 1,
+              "unjudgedSat": 0,
+              "degenerate": 1
+            }
+          },
+          "planned-minus-degen": {
+            "A": {
+              "k": 259,
+              "n": 292,
+              "rate": 0.886986301369863,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            },
+            "D": {
+              "k": 263,
+              "n": 292,
+              "rate": 0.9006849315068494,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            }
+          },
+          "judged": {
+            "A": {
+              "k": 259,
+              "n": 292,
+              "rate": 0.886986301369863,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            },
+            "D": {
+              "k": 263,
+              "n": 292,
+              "rate": 0.9006849315068494,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            }
+          },
+          "satisfiable-judged": {
+            "A": {
+              "k": 244,
+              "n": 275,
+              "rate": 0.8872727272727273,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            },
+            "D": {
+              "k": 246,
+              "n": 275,
+              "rate": 0.8945454545454545,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            }
+          },
+          "satisfiable-planned": {
+            "A": {
+              "k": 244,
+              "n": 276,
+              "rate": 0.8840579710144928,
+              "unjudged": 1,
+              "unjudgedSat": 0,
+              "degenerate": 1
+            },
+            "D": {
+              "k": 246,
+              "n": 276,
+              "rate": 0.8913043478260869,
+              "unjudged": 1,
+              "unjudgedSat": 0,
+              "degenerate": 1
+            }
+          },
+          "personas": 125
+        },
+        "paleo": {
+          "planned": {
+            "A": {
+              "k": 10,
+              "n": 25,
+              "rate": 0.4,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            },
+            "D": {
+              "k": 16,
+              "n": 25,
+              "rate": 0.64,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            }
+          },
+          "planned-minus-degen": {
+            "A": {
+              "k": 10,
+              "n": 25,
+              "rate": 0.4,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            },
+            "D": {
+              "k": 16,
+              "n": 25,
+              "rate": 0.64,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            }
+          },
+          "judged": {
+            "A": {
+              "k": 10,
+              "n": 25,
+              "rate": 0.4,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            },
+            "D": {
+              "k": 16,
+              "n": 25,
+              "rate": 0.64,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            }
+          },
+          "satisfiable-judged": {
+            "A": {
+              "k": 10,
+              "n": 24,
+              "rate": 0.4166666666666667,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            },
+            "D": {
+              "k": 16,
+              "n": 24,
+              "rate": 0.6666666666666666,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            }
+          },
+          "satisfiable-planned": {
+            "A": {
+              "k": 10,
+              "n": 24,
+              "rate": 0.4166666666666667,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            },
+            "D": {
+              "k": 16,
+              "n": 24,
+              "rate": 0.6666666666666666,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            }
+          },
+          "personas": 13
+        },
+        "vegan": {
+          "planned": {
+            "A": {
+              "k": 21,
+              "n": 90,
+              "rate": 0.23333333333333334,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            },
+            "D": {
+              "k": 31,
+              "n": 90,
+              "rate": 0.34444444444444444,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            }
+          },
+          "planned-minus-degen": {
+            "A": {
+              "k": 21,
+              "n": 90,
+              "rate": 0.23333333333333334,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            },
+            "D": {
+              "k": 31,
+              "n": 90,
+              "rate": 0.34444444444444444,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            }
+          },
+          "judged": {
+            "A": {
+              "k": 21,
+              "n": 90,
+              "rate": 0.23333333333333334,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            },
+            "D": {
+              "k": 31,
+              "n": 90,
+              "rate": 0.34444444444444444,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            }
+          },
+          "satisfiable-judged": {
+            "A": {
+              "k": 21,
+              "n": 35,
+              "rate": 0.6,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            },
+            "D": {
+              "k": 31,
+              "n": 35,
+              "rate": 0.8857142857142857,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            }
+          },
+          "satisfiable-planned": {
+            "A": {
+              "k": 21,
+              "n": 35,
+              "rate": 0.6,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            },
+            "D": {
+              "k": 31,
+              "n": 35,
+              "rate": 0.8857142857142857,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            }
+          },
+          "personas": 30
+        },
+        "vegetarian": {
+          "planned": {
+            "A": {
+              "k": 35,
+              "n": 65,
+              "rate": 0.5384615384615384,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            },
+            "D": {
+              "k": 55,
+              "n": 65,
+              "rate": 0.8461538461538461,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            }
+          },
+          "planned-minus-degen": {
+            "A": {
+              "k": 35,
+              "n": 65,
+              "rate": 0.5384615384615384,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            },
+            "D": {
+              "k": 55,
+              "n": 65,
+              "rate": 0.8461538461538461,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            }
+          },
+          "judged": {
+            "A": {
+              "k": 35,
+              "n": 65,
+              "rate": 0.5384615384615384,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            },
+            "D": {
+              "k": 55,
+              "n": 65,
+              "rate": 0.8461538461538461,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            }
+          },
+          "satisfiable-judged": {
+            "A": {
+              "k": 34,
+              "n": 57,
+              "rate": 0.5964912280701754,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            },
+            "D": {
+              "k": 53,
+              "n": 57,
+              "rate": 0.9298245614035088,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            }
+          },
+          "satisfiable-planned": {
+            "A": {
+              "k": 34,
+              "n": 57,
+              "rate": 0.5964912280701754,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            },
+            "D": {
+              "k": 53,
+              "n": 57,
+              "rate": 0.9298245614035088,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            }
+          },
+          "personas": 23
+        }
+      },
+      "perTier": {
+        "EASY": {
+          "personas": 142,
+          "planned": {
+            "A": {
+              "k": 271,
+              "n": 340,
+              "rate": 0.7970588235294118,
+              "unjudged": 9,
+              "unjudgedSat": 9,
+              "degenerate": 0
+            },
+            "D": {
+              "k": 286,
+              "n": 340,
+              "rate": 0.8411764705882353,
+              "unjudged": 9,
+              "unjudgedSat": 9,
+              "degenerate": 0
+            }
+          },
+          "judged": {
+            "A": {
+              "k": 271,
+              "n": 331,
+              "rate": 0.8187311178247734,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            },
+            "D": {
+              "k": 286,
+              "n": 331,
+              "rate": 0.8640483383685801,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            }
+          },
+          "personasWithZeroInBandDays": {
+            "A": 14,
+            "D": 14
+          },
+          "personasWithAtLeastOneInBandDay": {
+            "A": 128
+          }
+        },
+        "HARD": {
+          "personas": 61,
+          "planned": {
+            "A": {
+              "k": 126,
+              "n": 175,
+              "rate": 0.72,
+              "unjudged": 7,
+              "unjudgedSat": 7,
+              "degenerate": 0
+            },
+            "D": {
+              "k": 147,
+              "n": 175,
+              "rate": 0.84,
+              "unjudged": 7,
+              "unjudgedSat": 7,
+              "degenerate": 0
+            }
+          },
+          "judged": {
+            "A": {
+              "k": 126,
+              "n": 168,
+              "rate": 0.75,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            },
+            "D": {
+              "k": 147,
+              "n": 168,
+              "rate": 0.875,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            }
+          },
+          "personasWithZeroInBandDays": {
+            "A": 11,
+            "D": 6
+          },
+          "personasWithAtLeastOneInBandDay": {
+            "A": 50
+          }
+        },
+        "IMPOSSIBLE": {
+          "personas": 32,
+          "planned": {
+            "A": {
+              "k": 21,
+              "n": 86,
+              "rate": 0.2441860465116279,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            },
+            "D": {
+              "k": 24,
+              "n": 86,
+              "rate": 0.27906976744186046,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            }
+          },
+          "judged": {
+            "A": {
+              "k": 21,
+              "n": 86,
+              "rate": 0.2441860465116279,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            },
+            "D": {
+              "k": 24,
+              "n": 86,
+              "rate": 0.27906976744186046,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            }
+          },
+          "personasWithZeroInBandDays": {
+            "A": 22,
+            "D": 20
+          },
+          "personasWithAtLeastOneInBandDay": {
+            "A": 10
+          }
+        },
+        "ROBUSTNESS": {
+          "personas": 15,
+          "planned": {
+            "A": {
+              "k": 21,
+              "n": 39,
+              "rate": 0.5384615384615384,
+              "unjudged": 1,
+              "unjudgedSat": 0,
+              "degenerate": 1
+            },
+            "D": {
+              "k": 30,
+              "n": 39,
+              "rate": 0.7692307692307693,
+              "unjudged": 1,
+              "unjudgedSat": 0,
+              "degenerate": 1
+            }
+          },
+          "judged": {
+            "A": {
+              "k": 21,
+              "n": 38,
+              "rate": 0.5526315789473685,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            },
+            "D": {
+              "k": 30,
+              "n": 38,
+              "rate": 0.7894736842105263,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            }
+          },
+          "personasWithZeroInBandDays": {
+            "A": 6,
+            "D": 2
+          },
+          "personasWithAtLeastOneInBandDay": {
+            "A": 9
+          }
+        }
+      },
+      "flips": {
+        "a1d1": 419,
+        "a1d0": 20,
+        "a0d1": 68,
+        "a0d0": 133,
+        "flipCause": {
+          "A_fail_D_pass:fatBand": 41,
+          "A_pass_D_fail:carb<carbLo|ketoCeil": 20,
+          "A_fail_D_pass:carbBand": 24,
+          "A_fail_D_pass:fatBand+carbBand": 3
+        }
+      }
+    },
+    {
+      "file": "fleet/out/W1-2/daydump-route-s8675309.jsonl",
+      "run": {
+        "label": "route",
+        "seed": 8675309,
+        "seedName": "replicateB",
+        "poolShape": "route (applyFilterStack ON)",
+        "dbSha256": "d9037dce9754b4524943069fff7e0f3e396598c108426f370b0a189458b623a1",
+        "foodFingerprint": "b961ac3afbdf3f53905ead1353ffb05a9a2b94b7f1e0cd7fa87bbf975291f26b",
+        "personasSha256": "e564b1ddcc36b95249b51819e03762a30da61f29f2a254312699290fae57704e",
+        "gitSha": "8cd1480c085cb6860025851b370925d56b963bc5",
+        "gitDiffStat": "clean",
+        "brain": "off"
+      },
+      "integrity": {
+        "rows": 640,
+        "rulerA_vs_stored_mismatch": 0,
+        "stored_AND_mismatch": 0,
+        "lbm_reconstruction_failures": 0,
+        "lbmFailIds": []
+      },
+      "cells": {
+        "planned": {
+          "desc": "every planned day record (n=640). Unjudged/degenerate count as MISSES.",
+          "A": {
+            "k": 433,
+            "n": 640,
+            "rate": 0.6765625,
+            "unjudged": 17,
+            "unjudgedSat": 16,
+            "degenerate": 1
+          },
+          "D": {
+            "k": 485,
+            "n": 640,
+            "rate": 0.7578125,
+            "unjudged": 17,
+            "unjudgedSat": 16,
+            "degenerate": 1
+          }
+        },
+        "planned-minus-degen": {
+          "desc": "planned minus 0-slot-config days — the rig-comparable all-planned n (639).",
+          "A": {
+            "k": 433,
+            "n": 639,
+            "rate": 0.6776212832550861,
+            "unjudged": 16,
+            "unjudgedSat": 16,
+            "degenerate": 0
+          },
+          "D": {
+            "k": 485,
+            "n": 639,
+            "rate": 0.758998435054773,
+            "unjudged": 16,
+            "unjudgedSat": 16,
+            "degenerate": 0
+          }
+        },
+        "judged": {
+          "desc": "slotsFilled>0 (A1/rig/schema.mjs:83). Drops total-failure days.",
+          "A": {
+            "k": 433,
+            "n": 623,
+            "rate": 0.695024077046549,
+            "unjudged": 0,
+            "unjudgedSat": 0,
+            "degenerate": 0
+          },
+          "D": {
+            "k": 485,
+            "n": 623,
+            "rate": 0.7784911717495987,
+            "unjudged": 0,
+            "unjudgedSat": 0,
+            "degenerate": 0
+          }
+        },
+        "satisfiable-judged": {
+          "desc": "judged AND tier!=IMPOSSIBLE. The historically published 'satisfiable'.",
+          "A": {
+            "k": 413,
+            "n": 537,
+            "rate": 0.7690875232774674,
+            "unjudged": 0,
+            "unjudgedSat": 0,
+            "degenerate": 0
+          },
+          "D": {
+            "k": 461,
+            "n": 537,
+            "rate": 0.8584729981378026,
+            "unjudged": 0,
+            "unjudgedSat": 0,
+            "degenerate": 0
+          }
+        },
+        "satisfiable-planned": {
+          "desc": "tier!=IMPOSSIBLE, ALL planned. Total failures counted as misses. THE HONEST ONE.",
+          "A": {
+            "k": 413,
+            "n": 554,
+            "rate": 0.7454873646209387,
+            "unjudged": 17,
+            "unjudgedSat": 16,
+            "degenerate": 1
+          },
+          "D": {
+            "k": 461,
+            "n": 554,
+            "rate": 0.8321299638989169,
+            "unjudged": 17,
+            "unjudgedSat": 16,
+            "degenerate": 1
+          }
+        }
+      },
+      "perDiet": {
+        "carnivore": {
+          "planned": {
+            "A": {
+              "k": 0,
+              "n": 8,
+              "rate": 0,
+              "unjudged": 5,
+              "unjudgedSat": 5,
+              "degenerate": 0
+            },
+            "D": {
+              "k": 0,
+              "n": 8,
+              "rate": 0,
+              "unjudged": 5,
+              "unjudgedSat": 5,
+              "degenerate": 0
+            }
+          },
+          "planned-minus-degen": {
+            "A": {
+              "k": 0,
+              "n": 8,
+              "rate": 0,
+              "unjudged": 5,
+              "unjudgedSat": 5,
+              "degenerate": 0
+            },
+            "D": {
+              "k": 0,
+              "n": 8,
+              "rate": 0,
+              "unjudged": 5,
+              "unjudgedSat": 5,
+              "degenerate": 0
+            }
+          },
+          "judged": {
+            "A": {
+              "k": 0,
+              "n": 3,
+              "rate": 0,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            },
+            "D": {
+              "k": 0,
+              "n": 3,
+              "rate": 0,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            }
+          },
+          "satisfiable-judged": {
+            "A": {
+              "k": 0,
+              "n": 3,
+              "rate": 0,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            },
+            "D": {
+              "k": 0,
+              "n": 3,
+              "rate": 0,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            }
+          },
+          "satisfiable-planned": {
+            "A": {
+              "k": 0,
+              "n": 8,
+              "rate": 0,
+              "unjudged": 5,
+              "unjudgedSat": 5,
+              "degenerate": 0
+            },
+            "D": {
+              "k": 0,
+              "n": 8,
+              "rate": 0,
+              "unjudged": 5,
+              "unjudgedSat": 5,
+              "degenerate": 0
+            }
+          },
+          "personas": 2
+        },
+        "halal": {
+          "planned": {
+            "A": {
+              "k": 13,
+              "n": 13,
+              "rate": 1,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            },
+            "D": {
+              "k": 13,
+              "n": 13,
+              "rate": 1,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            }
+          },
+          "planned-minus-degen": {
+            "A": {
+              "k": 13,
+              "n": 13,
+              "rate": 1,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            },
+            "D": {
+              "k": 13,
+              "n": 13,
+              "rate": 1,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            }
+          },
+          "judged": {
+            "A": {
+              "k": 13,
+              "n": 13,
+              "rate": 1,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            },
+            "D": {
+              "k": 13,
+              "n": 13,
+              "rate": 1,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            }
+          },
+          "satisfiable-judged": {
+            "A": {
+              "k": 12,
+              "n": 12,
+              "rate": 1,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            },
+            "D": {
+              "k": 12,
+              "n": 12,
+              "rate": 1,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            }
+          },
+          "satisfiable-planned": {
+            "A": {
+              "k": 12,
+              "n": 12,
+              "rate": 1,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            },
+            "D": {
+              "k": 12,
+              "n": 12,
+              "rate": 1,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            }
+          },
+          "personas": 7
+        },
+        "keto": {
+          "planned": {
+            "A": {
+              "k": 36,
+              "n": 60,
+              "rate": 0.6,
+              "unjudged": 11,
+              "unjudgedSat": 11,
+              "degenerate": 0
+            },
+            "D": {
+              "k": 35,
+              "n": 60,
+              "rate": 0.5833333333333334,
+              "unjudged": 11,
+              "unjudgedSat": 11,
+              "degenerate": 0
+            }
+          },
+          "planned-minus-degen": {
+            "A": {
+              "k": 36,
+              "n": 60,
+              "rate": 0.6,
+              "unjudged": 11,
+              "unjudgedSat": 11,
+              "degenerate": 0
+            },
+            "D": {
+              "k": 35,
+              "n": 60,
+              "rate": 0.5833333333333334,
+              "unjudged": 11,
+              "unjudgedSat": 11,
+              "degenerate": 0
+            }
+          },
+          "judged": {
+            "A": {
+              "k": 36,
+              "n": 49,
+              "rate": 0.7346938775510204,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            },
+            "D": {
+              "k": 35,
+              "n": 49,
+              "rate": 0.7142857142857143,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            }
+          },
+          "satisfiable-judged": {
+            "A": {
+              "k": 34,
+              "n": 47,
+              "rate": 0.723404255319149,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            },
+            "D": {
+              "k": 33,
+              "n": 47,
+              "rate": 0.7021276595744681,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            }
+          },
+          "satisfiable-planned": {
+            "A": {
+              "k": 34,
+              "n": 58,
+              "rate": 0.5862068965517241,
+              "unjudged": 11,
+              "unjudgedSat": 11,
+              "degenerate": 0
+            },
+            "D": {
+              "k": 33,
+              "n": 58,
+              "rate": 0.5689655172413793,
+              "unjudged": 11,
+              "unjudgedSat": 11,
+              "degenerate": 0
+            }
+          },
+          "personas": 18
+        },
+        "kosher": {
+          "planned": {
+            "A": {
+              "k": 19,
+              "n": 36,
+              "rate": 0.5277777777777778,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            },
+            "D": {
+              "k": 25,
+              "n": 36,
+              "rate": 0.6944444444444444,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            }
+          },
+          "planned-minus-degen": {
+            "A": {
+              "k": 19,
+              "n": 36,
+              "rate": 0.5277777777777778,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            },
+            "D": {
+              "k": 25,
+              "n": 36,
+              "rate": 0.6944444444444444,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            }
+          },
+          "judged": {
+            "A": {
+              "k": 19,
+              "n": 36,
+              "rate": 0.5277777777777778,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            },
+            "D": {
+              "k": 25,
+              "n": 36,
+              "rate": 0.6944444444444444,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            }
+          },
+          "satisfiable-judged": {
+            "A": {
+              "k": 18,
+              "n": 35,
+              "rate": 0.5142857142857142,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            },
+            "D": {
+              "k": 24,
+              "n": 35,
+              "rate": 0.6857142857142857,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            }
+          },
+          "satisfiable-planned": {
+            "A": {
+              "k": 18,
+              "n": 35,
+              "rate": 0.5142857142857142,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            },
+            "D": {
+              "k": 24,
+              "n": 35,
+              "rate": 0.6857142857142857,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            }
+          },
+          "personas": 12
+        },
+        "mediterranean": {
+          "planned": {
+            "A": {
+              "k": 44,
+              "n": 50,
+              "rate": 0.88,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            },
+            "D": {
+              "k": 44,
+              "n": 50,
+              "rate": 0.88,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            }
+          },
+          "planned-minus-degen": {
+            "A": {
+              "k": 44,
+              "n": 50,
+              "rate": 0.88,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            },
+            "D": {
+              "k": 44,
+              "n": 50,
+              "rate": 0.88,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            }
+          },
+          "judged": {
+            "A": {
+              "k": 44,
+              "n": 50,
+              "rate": 0.88,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            },
+            "D": {
+              "k": 44,
+              "n": 50,
+              "rate": 0.88,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            }
+          },
+          "satisfiable-judged": {
+            "A": {
+              "k": 43,
+              "n": 49,
+              "rate": 0.8775510204081632,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            },
+            "D": {
+              "k": 43,
+              "n": 49,
+              "rate": 0.8775510204081632,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            }
+          },
+          "satisfiable-planned": {
+            "A": {
+              "k": 43,
+              "n": 49,
+              "rate": 0.8775510204081632,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            },
+            "D": {
+              "k": 43,
+              "n": 49,
+              "rate": 0.8775510204081632,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            }
+          },
+          "personas": 20
+        },
+        "none": {
+          "planned": {
+            "A": {
+              "k": 258,
+              "n": 293,
+              "rate": 0.8805460750853242,
+              "unjudged": 1,
+              "unjudgedSat": 0,
+              "degenerate": 1
+            },
+            "D": {
+              "k": 265,
+              "n": 293,
+              "rate": 0.9044368600682594,
+              "unjudged": 1,
+              "unjudgedSat": 0,
+              "degenerate": 1
+            }
+          },
+          "planned-minus-degen": {
+            "A": {
+              "k": 258,
+              "n": 292,
+              "rate": 0.8835616438356164,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            },
+            "D": {
+              "k": 265,
+              "n": 292,
+              "rate": 0.9075342465753424,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            }
+          },
+          "judged": {
+            "A": {
+              "k": 258,
+              "n": 292,
+              "rate": 0.8835616438356164,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            },
+            "D": {
+              "k": 265,
+              "n": 292,
+              "rate": 0.9075342465753424,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            }
+          },
+          "satisfiable-judged": {
+            "A": {
+              "k": 244,
+              "n": 275,
+              "rate": 0.8872727272727273,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            },
+            "D": {
+              "k": 248,
+              "n": 275,
+              "rate": 0.9018181818181819,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            }
+          },
+          "satisfiable-planned": {
+            "A": {
+              "k": 244,
+              "n": 276,
+              "rate": 0.8840579710144928,
+              "unjudged": 1,
+              "unjudgedSat": 0,
+              "degenerate": 1
+            },
+            "D": {
+              "k": 248,
+              "n": 276,
+              "rate": 0.8985507246376812,
+              "unjudged": 1,
+              "unjudgedSat": 0,
+              "degenerate": 1
+            }
+          },
+          "personas": 125
+        },
+        "paleo": {
+          "planned": {
+            "A": {
+              "k": 10,
+              "n": 25,
+              "rate": 0.4,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            },
+            "D": {
+              "k": 16,
+              "n": 25,
+              "rate": 0.64,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            }
+          },
+          "planned-minus-degen": {
+            "A": {
+              "k": 10,
+              "n": 25,
+              "rate": 0.4,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            },
+            "D": {
+              "k": 16,
+              "n": 25,
+              "rate": 0.64,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            }
+          },
+          "judged": {
+            "A": {
+              "k": 10,
+              "n": 25,
+              "rate": 0.4,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            },
+            "D": {
+              "k": 16,
+              "n": 25,
+              "rate": 0.64,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            }
+          },
+          "satisfiable-judged": {
+            "A": {
+              "k": 10,
+              "n": 24,
+              "rate": 0.4166666666666667,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            },
+            "D": {
+              "k": 16,
+              "n": 24,
+              "rate": 0.6666666666666666,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            }
+          },
+          "satisfiable-planned": {
+            "A": {
+              "k": 10,
+              "n": 24,
+              "rate": 0.4166666666666667,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            },
+            "D": {
+              "k": 16,
+              "n": 24,
+              "rate": 0.6666666666666666,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            }
+          },
+          "personas": 13
+        },
+        "vegan": {
+          "planned": {
+            "A": {
+              "k": 16,
+              "n": 90,
+              "rate": 0.17777777777777778,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            },
+            "D": {
+              "k": 28,
+              "n": 90,
+              "rate": 0.3111111111111111,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            }
+          },
+          "planned-minus-degen": {
+            "A": {
+              "k": 16,
+              "n": 90,
+              "rate": 0.17777777777777778,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            },
+            "D": {
+              "k": 28,
+              "n": 90,
+              "rate": 0.3111111111111111,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            }
+          },
+          "judged": {
+            "A": {
+              "k": 16,
+              "n": 90,
+              "rate": 0.17777777777777778,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            },
+            "D": {
+              "k": 28,
+              "n": 90,
+              "rate": 0.3111111111111111,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            }
+          },
+          "satisfiable-judged": {
+            "A": {
+              "k": 16,
+              "n": 35,
+              "rate": 0.45714285714285713,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            },
+            "D": {
+              "k": 28,
+              "n": 35,
+              "rate": 0.8,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            }
+          },
+          "satisfiable-planned": {
+            "A": {
+              "k": 16,
+              "n": 35,
+              "rate": 0.45714285714285713,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            },
+            "D": {
+              "k": 28,
+              "n": 35,
+              "rate": 0.8,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            }
+          },
+          "personas": 30
+        },
+        "vegetarian": {
+          "planned": {
+            "A": {
+              "k": 37,
+              "n": 65,
+              "rate": 0.5692307692307692,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            },
+            "D": {
+              "k": 59,
+              "n": 65,
+              "rate": 0.9076923076923077,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            }
+          },
+          "planned-minus-degen": {
+            "A": {
+              "k": 37,
+              "n": 65,
+              "rate": 0.5692307692307692,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            },
+            "D": {
+              "k": 59,
+              "n": 65,
+              "rate": 0.9076923076923077,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            }
+          },
+          "judged": {
+            "A": {
+              "k": 37,
+              "n": 65,
+              "rate": 0.5692307692307692,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            },
+            "D": {
+              "k": 59,
+              "n": 65,
+              "rate": 0.9076923076923077,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            }
+          },
+          "satisfiable-judged": {
+            "A": {
+              "k": 36,
+              "n": 57,
+              "rate": 0.631578947368421,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            },
+            "D": {
+              "k": 57,
+              "n": 57,
+              "rate": 1,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            }
+          },
+          "satisfiable-planned": {
+            "A": {
+              "k": 36,
+              "n": 57,
+              "rate": 0.631578947368421,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            },
+            "D": {
+              "k": 57,
+              "n": 57,
+              "rate": 1,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            }
+          },
+          "personas": 23
+        }
+      },
+      "perTier": {
+        "EASY": {
+          "personas": 142,
+          "planned": {
+            "A": {
+              "k": 264,
+              "n": 340,
+              "rate": 0.7764705882352941,
+              "unjudged": 9,
+              "unjudgedSat": 9,
+              "degenerate": 0
+            },
+            "D": {
+              "k": 282,
+              "n": 340,
+              "rate": 0.8294117647058824,
+              "unjudged": 9,
+              "unjudgedSat": 9,
+              "degenerate": 0
+            }
+          },
+          "judged": {
+            "A": {
+              "k": 264,
+              "n": 331,
+              "rate": 0.797583081570997,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            },
+            "D": {
+              "k": 282,
+              "n": 331,
+              "rate": 0.851963746223565,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            }
+          },
+          "personasWithZeroInBandDays": {
+            "A": 15,
+            "D": 9
+          },
+          "personasWithAtLeastOneInBandDay": {
+            "A": 127
+          }
+        },
+        "HARD": {
+          "personas": 61,
+          "planned": {
+            "A": {
+              "k": 127,
+              "n": 175,
+              "rate": 0.7257142857142858,
+              "unjudged": 7,
+              "unjudgedSat": 7,
+              "degenerate": 0
+            },
+            "D": {
+              "k": 150,
+              "n": 175,
+              "rate": 0.8571428571428571,
+              "unjudged": 7,
+              "unjudgedSat": 7,
+              "degenerate": 0
+            }
+          },
+          "judged": {
+            "A": {
+              "k": 127,
+              "n": 168,
+              "rate": 0.7559523809523809,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            },
+            "D": {
+              "k": 150,
+              "n": 168,
+              "rate": 0.8928571428571429,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            }
+          },
+          "personasWithZeroInBandDays": {
+            "A": 13,
+            "D": 4
+          },
+          "personasWithAtLeastOneInBandDay": {
+            "A": 48
+          }
+        },
+        "IMPOSSIBLE": {
+          "personas": 32,
+          "planned": {
+            "A": {
+              "k": 20,
+              "n": 86,
+              "rate": 0.23255813953488372,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            },
+            "D": {
+              "k": 24,
+              "n": 86,
+              "rate": 0.27906976744186046,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            }
+          },
+          "judged": {
+            "A": {
+              "k": 20,
+              "n": 86,
+              "rate": 0.23255813953488372,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            },
+            "D": {
+              "k": 24,
+              "n": 86,
+              "rate": 0.27906976744186046,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            }
+          },
+          "personasWithZeroInBandDays": {
+            "A": 22,
+            "D": 20
+          },
+          "personasWithAtLeastOneInBandDay": {
+            "A": 10
+          }
+        },
+        "ROBUSTNESS": {
+          "personas": 15,
+          "planned": {
+            "A": {
+              "k": 22,
+              "n": 39,
+              "rate": 0.5641025641025641,
+              "unjudged": 1,
+              "unjudgedSat": 0,
+              "degenerate": 1
+            },
+            "D": {
+              "k": 29,
+              "n": 39,
+              "rate": 0.7435897435897436,
+              "unjudged": 1,
+              "unjudgedSat": 0,
+              "degenerate": 1
+            }
+          },
+          "judged": {
+            "A": {
+              "k": 22,
+              "n": 38,
+              "rate": 0.5789473684210527,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            },
+            "D": {
+              "k": 29,
+              "n": 38,
+              "rate": 0.7631578947368421,
+              "unjudged": 0,
+              "unjudgedSat": 0,
+              "degenerate": 0
+            }
+          },
+          "personasWithZeroInBandDays": {
+            "A": 5,
+            "D": 2
+          },
+          "personasWithAtLeastOneInBandDay": {
+            "A": 10
+          }
+        }
+      },
+      "flips": {
+        "a1d1": 413,
+        "a1d0": 20,
+        "a0d1": 72,
+        "a0d0": 135,
+        "flipCause": {
+          "A_pass_D_fail:carb<carbLo|ketoCeil": 19,
+          "A_fail_D_pass:carbBand": 27,
+          "A_fail_D_pass:fatBand": 43,
+          "A_pass_D_fail:fat<essential": 1,
+          "A_fail_D_pass:fatBand+carbBand": 2
+        }
+      }
+    }
+  ]
+}

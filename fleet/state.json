@@ -243,23 +243,69 @@
     "W4-1": {
       "wave": "W4",
       "name": "reproduce",
-      "status": "pending",
-      "artifacts": [],
-      "headline": ""
+      "status": "done",
+      "artifacts": [
+        "fleet/out/W4-1/VERDICTS.md",
+        "fleet/out/W4-1/ruler-delta.md",
+        "fleet/out/W4-1/verdicts.json",
+        "fleet/out/W4-1/daydump-armP-s424242.jsonl",
+        "fleet/out/W4-1/daydump-armP-s20260730.jsonl",
+        "fleet/out/W4-1/daydump-armP-s8675309.jsonl",
+        "fleet/out/W4-1/daydump-armF-s424242.jsonl",
+        "fleet/out/W4-1/daydump-armF-s20260730.jsonl",
+        "fleet/out/W4-1/daydump-armF-s8675309.jsonl",
+        "fleet/out/W4-1/daydump-selfcheck-s424242.jsonl",
+        "fleet/out/W4-1/pooled-W37-original.json",
+        "fleet/out/W4-1/pooled-W37-rerun.json",
+        "fleet/out/W4-1/pooled-fatrewrite.json",
+        "fleet/out/W4-1/regrade-s424242.json",
+        "fleet/out/W4-1/regrade-s20260730.json",
+        "fleet/out/W4-1/regrade-s8675309.json",
+        "fleet/out/W4-1/ruler-share-orig.json",
+        "fleet/out/W4-1/ruler-share-armP.json",
+        "fleet/out/W4-1/scored-orig.json",
+        "fleet/out/W4-1/cmpDumps.mjs",
+        "fleet/out/W4-1/poolArms.mjs",
+        "fleet/out/W4-1/regrade.mjs",
+        "fleet/out/W4-1/dayDumpAlt.mjs",
+        "fleet/out/W4-1/bmrEngine.OLD.js",
+        "fleet/out/W4-1/bmrEngine.NEW.js"
+      ],
+      "headline": "ALL THREE CONFIRMED, 0.00pp deviation -- no gap even approached the 0.1pp root-cause threshold. W1-2 re-solved at 962ac88: 1920/1920 records identical to W1-2's own dumps, 0 verdict flips, ONLY solveMs differs; 77.28/75.05/67.97 at s424242. W3-1: all 20 rulers x 6 denominators x 3 seeds identical on BOTH W1-2's dumps and my fresh solve (Z +16.82, irreducible 8.08, E35k +2.77, R35k +2.17 => solver 22.12). W3-7 reproduced TWICE -- re-derived from its dumps AND a LIVE 12-solve re-run: +11.24/+12.60/naive +23.84/COMBINED +14.96/overlap 8.88(37%)/residuals +3.72,+2.36, per-seed overlap 8.94/8.75/8.94, 0 flips vs the killed run's dumps. RULER DELTA (the new number): the uncommitted fat rewrite = -1.87pp RULER (STRICTER: b=115>c=84, the INVERSE of the B/D/A15 inflation signature) + 6.39pp SOLVER = +4.52pp total on n=1659 (75.11->79.63); isolated by a --bmr override whose plumbing self-checks to 0 flips. It pulls the PRESCRIPTION inside AMDR (55->0 non-keto targets below 20%E, 9->1 above 35%E; non-keto compliant days above 35%E 18.0->0.3/seed). A6 trap INERT everywhere (refusals constant at 48 in all 10 arms). TRAPS FOUND: (a) main-tree dev.db has DRIFTED off canonical d9037dce -> fb67a37f (canonical bytes survive only in dev.db.pre-verdict-migration-backup) so any main-tree re-run today is a different substrate; (b) personasSha256 is CRLF-CHECKOUT-DEPENDENT (8d98e2e0 worktree vs e564b1dd main, byte-identical content, 250 CRs) => it is NOT a valid population identity and a worktree comparison will falsely read as a population change. HEAD 748c524 unmoved; zero product source modified in any tree."
     },
     "W4-2": {
       "wave": "W4",
       "name": "laws-sweep",
-      "status": "pending",
-      "artifacts": [],
-      "headline": ""
+      "status": "done",
+      "artifacts": [
+        "fleet/out/W4-2/LAWS-SWEEP.md",
+        "fleet/out/W4-2/TREE-INTEGRITY.md",
+        "fleet/out/W4-2/NETWORK.md",
+        "fleet/out/W4-2/oracleVocab.mjs",
+        "fleet/out/W4-2/lawsweep.mjs",
+        "fleet/out/W4-2/lawsweep.json",
+        "fleet/out/W4-2/lawsweep2.mjs",
+        "fleet/out/W4-2/lawsweep2.json",
+        "fleet/out/W4-2/reachability.mjs",
+        "fleet/out/W4-2/reachability.json",
+        "fleet/out/W4-2/hostileNames.mjs",
+        "fleet/out/W4-2/hostile-names.json",
+        "fleet/TRIAGE.md (T-4, T-5 appended)"
+      ],
+      "headline": "LAW 1 BREACHED: 5 gate false negatives SHIPPED and STILL OPEN at HEAD 748c524 -- Scotch Bonnet (242 placements, p088), Enchilada sauce (292, 7 personas), Banana Pepper (16), Oyster Sauce->gluten (160; the SAME row IS excluded for shellfish), Pico De Gallo->cilantro (516). 1,226 placements / 14 personas, filed TRIAGE T-4 with reproduction. Plus T-5: p101's free-text wall 'no cow dairy but sheep and goat cheese are fine' resolves recognised:false and matches NOTHING -- 1,005 cow-dairy placements; the gate knows it failed and never says so. ORACLE: fleet/out/W4-2/oracleVocab.mjs, authored from Health Canada/FDA + culinary transliterations BEFORE reading dietaryFilter/allergenTaxonomy; 316 of 887 terms absent from the app's vocabulary. MISSING-WORD PROBE: gate catches 35 of 72 hostile names, MISSES 37 (belacan, katsuobushi, labneh, doenjang, tremocos, gochugaru, besan...); negative controls 8/9. The 3 misses that are real DB rows ARE the 3 nightshade leaks -- probe predicts, placements confirm. POSITIVE CONTROLS FIRE: synthetic tahina/lupini/surimi/besan plate -> 10 findings across all 6 walls; gate controls (Tomato Puree/Red Chilli/Cheddar) -> excluded. T-3 lupin CLOSED (6530fa0) and L1 coriander CLOSED (7327a84), both VERIFIED. W3-6's 0-leak claim CORROBORATED under an independent oracle. LAW 2 HOLDS: 0 prescription-floor violations in 56,323 records (incl. W4-1's new-bmrEngine arms). Delivered-below-own-floor 13.2% strict; TRIM does not worsen it (10.4 vs 10.9 base) but c14 does (15.4) and floor25 does (23.3). LAW 3 HOLDS: 869 of 5,913 keto days breach the carb ceiling, 0 graded carbOk, 0 graded in-band -- and the TRIM arm eliminates all of them (32 -> 0), reproducing W3-4 exactly. SCOPE: 144 dumps, 78,286 day records, 344,600 placements, 0 unresolved. NO PROBE INTRODUCED A VIOLATION. TREE INTEGRITY: ground rule 1 was suspended BY DRIFT, not by decision -- PROMPT.md:9 never amended, DECISIONS.md has zero product-edit entries and is untouched since 750e2ae, and the only sanction (WORK-PLAN.md:66/198) was created INSIDE the first product-fix commit f56a155 and quotes a subagent. 11 of 28 commits touch product source (8 files, +446/-41); 10 of 11 carry a test and cite measured evidence (30508fe TodayTab +60 does not). Uncommitted: bmrEngine fat rewrite, schema+migration, PlanTab +192, .claude/settings.json permission widening. THE TREE IS RED: backend/tests/qc/macroFloors.test.js:50 'the floor should have engaged' FAILS on the uncommitted bmrEngine change and no decision adjudicates it. TRIAGE.md still says 'nothing here is fixed by this fleet' while T-3 is fixed; state.json/PROGRESS.md record none of the 11 product commits; WORK-PLAN.md:72 cites 79523f6, unreachable from any ref (real one is e50c10a). NETWORK: zero harness LLM/network calls CONFIRMED on 4 lines -- 285/285 jsonl brain headers 'off', 134 netCalls counters all 0, LlmUsage newest row 32h BEFORE the fleet window (14 rows, unchanged in all 23 DBs), and every network-capable module gated behind llm.js:90 BRAIN!=='on'. P1-latent: backend/.env carries BRAIN=on + a live sk-ant key and dotenv/config is HOISTED, so the key sits in process.env before each harness overwrites BRAIN (only dayDump.mjs scrubs it). Scope correction: W2-1..W2-6 DID use the network via their own research tools -- 'the fleet made zero network calls' is false as written; 'no harness did' is true."
     },
     "W4-3": {
       "wave": "W4",
       "name": "reconcile",
-      "status": "pending",
-      "artifacts": [],
-      "headline": ""
+      "status": "done",
+      "artifacts": [
+        "fleet/out/W4-3/RECONCILIATION.md",
+        "fleet/out/W4-3/DENOMINATORS.md",
+        "fleet/out/W4-3/KNIFE-EDGES.md",
+        "fleet/scratch/W4-3/regrade-tree.mjs",
+        "fleet/scratch/W4-3/regrade-tax.mjs"
+      ],
+      "headline": "SELF-SCORING EXPOSURE FOUND IN THE HEADLINE ITSELF: W3-7's whole table is on n=537 (satisfiable-JUDGED), the denominator W1-4 BANNED -- levels +2.67 inflated (92.30%% -> 89.63%% canonical), deltas x1.0298 (+14.96 -> +14.53), and 537 carries +22.72pts of refusal headroom vs +0.00 on 553. Membership VERIFIED invariant (empty=16 in all 24 dumps) so nothing was gamed. RE-DERIVED W3-7 from its own 24 reports: on 553 its arms are +6.27/+7.78/+10.91 = W3-2's published numbers TO THE DAY (104/129/181 flips), b20 +2.17 = W3-5's, c2 level 82.88%% = W3-5's -- the W3-2/W3-5/W3-7 family reconciles EXACTLY once everything sits on 553. W3-7's 'trim reproduces W3-4's +12.60 exactly' is a COINCIDENCE: 209 days/1659 (rig) vs 203/1611 (route); honest cross-check is +12.97 vs +12.60. Taxonomy buckets sum at every seed and shape (138/135/140/136), re-derived independently with 2212/2212 verdict agreement -- a THIRD implementation of Ruler A with zero disagreements; W1-3's rendered table says '4 further multi keys' where the data says 3 (table sums 139, its own proof line and the JSON say 138). Over-side 92.6/94.2/74.6 ALL CORRECT: bridge is 16 empty plates x 4 axes = 64 short (48 ex-protein) = the entire 74-vs-96 gap. DENOMINATOR TABLE: 495/502/526 = campaign HTTP fleet (578 days, DB UNRECOVERABLE), 536 = campaign rig, 537/553 = this fleet; within-fleet factor 553->537 = x1.02979 exactly; ACROSS FAMILIES NO CONVERSION EXISTS. 495 published TWICE with different membership (385/495=77.8%% brief vs 405/495=81.8%% A24 SAT-certified) -- 4.0pt apart. 85.6%% and 97.2%% are the TWO ENDS OF ONE INTERVAL (67 UNKNOWN days = 11.6pt), not rival estimates; per A24 the proof WEAKENED. 578 does NOT reconcile to 553 -- declared irreconcilable (different population, DB, code, refusal treatment); this tree's analogue all-days ceiling is 585/639 = 91.55%%. 70.1%%<->77.3%%<->75.0%% CLOSED EXACTLY: same in-band count, drop IMPOSSIBLE +7.46, restore the 16 zero-slot -2.23, rig->route -0.32. THE TREE COLUMN, PRICED: HEAD's computeMacros reproduces the stored targets 1917/1917 (proof of which ruler the fleet used); the UNCOMMITTED bmrEngine energy-anchored fat rewrite re-grades 75.11%%->73.24%% (-1.87, under MDE) but flips 199 of 1659 verdicts (12.0%% CHURN), creates 35 fat-UNDER days where W1-3 measured structurally ZERO, cuts non-keto above-AMDR compliant days 14.3->3.7/seed (SUBSUMES ~74%% of E35k's entire justification), and costs paleo -19.5 / halal -33.3. W3-1's '48.3 days above AMDR' is 70%% KETO -- its own E35k exempts keto, so the motivating number is 14.3/seed = 3.5%% of passes, not 11.6%%. Label-cut vs proof-cut for 'satisfiable' agree within 0.69pt (415/553 vs 435/585) = the canonical denominator's weakest link is NOT a knife-edge. SCORE_WEIGHTS inertness CONFIRMED as a PROOF (avgMatch is a tie-break at :690 behind daysInTolerance at :686; the :697 early exit is gated on an already-perfect week; all 250 personas single-window so the residual channel is unreachable). Pinning REFUTED as published: 95.7%% is a campaign ARM (D10:448, baseline 74.1%%); this tree measures 77.4%% of PASSING days touching a bound -- P(fail|pinned)=26.7%% vs base 22.7%%, P(fail|not pinned)=4.7%%: absence informative, presence not. 22 knife-edges listed, 11 over the 3.5pt MDE. LIVE SUM HAZARDS: W3-6 +7.72 onto the stack (99/145 rescues are fat:over, same pile; naive +22.25 vs a +22.95 all-lever cap), W3-5's '~+10' for C2+flat20 (b20's marginal over a portioner measures +0.72, not +2.17), ruler+solver (E35k and the portioner bank 64%% of the same 93-day pool), trim x L2 still unmeasured."
     },
     "W5-1": {
       "wave": "W5",
