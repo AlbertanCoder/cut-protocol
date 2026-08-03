@@ -488,3 +488,19 @@ fixture, which contains personal data — is preserved locally in
 `CLAUDE_RECOMP_ARCHIVE.md` (gitignored on purpose; personal data stays out
 of the repo even though it is private). `AUDIT.md` and `PABLO_REVIEW.md`
 are likewise local-only.
+
+The **2026-07-29 systems audit** (10 stages, 169 findings) lives at
+`docs/audit/systems-2026-07-29/` — 41 files, gitignored, start at
+`00-EXECUTIVE-SUMMARY.md`; `01-FINDINGS.md` is the 250 KB main body.
+It is recorded here because it spent three days existing in exactly ONE
+place — untracked, inside a throwaway clone at `Desktop/cut-protocol-audit`
+that was queued for deletion — and nothing in the repo mentioned it.
+Rescued into the live tree 2026-08-02.
+
+Two caveats travel with it, both from its own stage-9 self-audit: check
+whether a number was machine-measured or model arithmetic before quoting it
+(corrections are marked in place with `CORRECTED BY STAGE 9` / `!!`), and
+treat it as evidence about the ~28% of tracked files it actually names and
+silent about the rest. Known-live and unfixed from it: `docs/DISCLAIMER.md`
+is not in the installer allowlist so it never ships, and the API keys it
+names still want rotating.
