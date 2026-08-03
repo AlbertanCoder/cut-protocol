@@ -688,9 +688,37 @@ function resolveExclusionTerm(term) {
   // The most-normalised candidate (last in the list) is the one worth grepping
   // for: "no mushrooms" should find "mushroom", not "no mushrooms".
   const normalised = [...candidates].reverse().find((c) => c && c !== key && c.length > 1) || key;
+  // ── T-5 (fleet W4-2, 2026-08-02): "still filters" was NOT true of every
+  //    unrecognised term, and the comment above said it was. ─────────────────
+  // A one-word literal like "mushrooms" does filter — it greps the food names
+  // and finds mushrooms. A CONDITIONAL sentence cannot: persona p101 typed
+  // "no cow dairy but sheep and goat cheese are completely fine", which
+  // resolved here, matched zero foods, and let 1,005 cow-dairy placements
+  // through including a dish named "Chicken Fajita Mac and Cheese". The gate
+  // recorded `recognised: false` and the user was told "exact text match",
+  // which is worse than silence — it implies the text matched something.
+  //
+  // The distinction is not "did we recognise the allergen" but "can this
+  // shape of request be represented at all". An exclusion list holds FOODS;
+  // it cannot hold a rule with an exception in it. Detected two ways, both
+  // conservative: an explicit contrastive conjunction (the strong signal —
+  // "but", "except", "apart from"), or a phrase long enough that it is plainly
+  // prose rather than a food name. Real multi-word terms are short — "black
+  // eyed pea" and "textured vegetable protein" are three words and both
+  // resolve above this line anyway.
+  const CONTRASTIVE = /\b(but|except|apart from|other than|unless|however|besides|as long as|only if)\b/;
+  const wordCount = key.split(/\s+/).filter(Boolean).length;
+  const conditional = CONTRASTIVE.test(key);
+  const expressible = !conditional && wordCount < 5;
   return {
     term, key, normalisedKey: normalised, synonymKey: null, family: null, kind: "literal", recognised: false,
-    note: "not a recognised allergen — matching on text only",
+    // NEW. `false` means this term filters NOTHING and the user must be told
+    // so — a silent no-op on an exclusion is the fail-open the constitution
+    // forbids ("Solver declares unsolvable + why").
+    expressible,
+    note: expressible
+      ? "not a recognised allergen — matching on text only"
+      : "this is a CONDITION, not a food, and an exclusion list can only hold foods — so nothing was filtered for it. Enter the individual foods you want removed instead.",
   };
 }
 
@@ -707,8 +735,11 @@ function describeExclusionTerms(terms) {
     // `normalisedKey` is what we UNDERSTOOD the term as ("cow's milk" → "cows
     // milk"). The screen should show it whenever it differs from what the user
     // typed — silent reinterpretation is as dishonest as a silent miss.
-    .map(({ term, key, normalisedKey, synonymKey, family, kind, recognised, note }) =>
-      ({ term, key, normalisedKey, synonymKey, family, kind, recognised, note }));
+    // `expressible` is carried through explicitly: a term that filters NOTHING
+    // is the one case the screen must state most loudly, and this map is the
+    // only path to it (T-5).
+    .map(({ term, key, normalisedKey, synonymKey, family, kind, recognised, expressible, note }) =>
+      ({ term, key, normalisedKey, synonymKey, family, kind, recognised, expressible: expressible !== false, note }));
 }
 
 // Default keto threshold is on carb-per-100g of the raw ingredient, not a

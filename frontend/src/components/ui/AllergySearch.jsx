@@ -350,9 +350,16 @@ export default function AllergySearch({
                 {notes.map((n) => (
                   <li key={n.term} className="text-xs font-semibold" style={{ color: C.ink }}>
                     <b>{n.term}</b>{" — "}
-                    {n.kind === "literal"
-                      ? <>exact text match{n.suggestion ? <> — did you mean <b>{n.suggestion.label}</b>?</> : " — no allergen category recognised"}</>
-                      : n.note}
+                    {/* T-5: a CONDITIONAL request ("no cow dairy but sheep is
+                        fine") filters nothing at all. Saying "exact text match"
+                        there is worse than saying nothing, because it implies
+                        the text matched something. The backend now separates
+                        the two cases; this renders the difference. */}
+                    {n.expressible === false
+                      ? <><b>nothing was filtered for this.</b> {n.note}</>
+                      : n.kind === "literal"
+                        ? <>exact text match{n.suggestion ? <> — did you mean <b>{n.suggestion.label}</b>?</> : " — no allergen category recognised"}</>
+                        : n.note}
                     {n.kind === "literal" && n.suggestion && onReplace && (
                       <button
                         type="button"
