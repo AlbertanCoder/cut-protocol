@@ -497,6 +497,69 @@ model Plan {
   startDate String // ISO date, Monday of the week
   createdAt DateTime @default(now())
 
+  // ── THE VERDICT ON THIS PLAN ────────────────────────────────────────────
+  // The solver has always produced a full narration — per-day match %, the
+  // deltas, the plain-English miss line for every day that landed outside
+  // tolerance, and the "unsolvable + why" diagnosis — and has always thrown
+  // it away. It rode back on POST /plans/generate as a `meta` sidecar into
+  // one React useState in PlanTab.jsx and nowhere else, so the plan survived
+  // a tab switch or a reload and the VERDICT ON IT did not. The user kept
+  // the meals and lost the reason they were the wrong meals.
+  //
+  // That is a silent target miss by expiry, which the constitution forbids
+  // ("Solver declares 'unsolvable + why' — silent target misses are
+  // forbidden"). PlanSlot.warning already persists the PER-SLOT miss; these
+  // columns give the per-DAY and per-WEEK verdict the same durability.
+  //
+  //   verdict   — the solver's narration meta, whole and verbatim as it was
+  //               returned: matchPct, attempts, score{avgMatch,
+  //               daysInTolerance, days[]}, poolCounts, variety, horizon.
+  //               The per-DAY verdicts are the score.days[] array.
+  //   diagnosis — { feasible, reasons, suggestions, binding } | null. This
+  //               is a PROMOTED COPY of verdict.diagnosis, written in the
+  //               same statement, so the "why" is a first-class column that
+  //               a query or an audit can reach without a JSON walk and that
+  //               a future change to the verdict shape cannot silently drop.
+  //               DUPLICATION IS DELIBERATE AND MUST STAY IN SYNC; if the
+  //               two ever disagree, verdict.diagnosis is authoritative.
+  //   verdictAt — when the verdict was produced (not when the plan was).
+  //
+  // A horizon longer than a week writes several Plan rows but produces ONE
+  // narration covering all of them; it is stored on the first week's row,
+  // which is also the only row POST /plans/generate returns.
+  verdict   Json?
+  diagnosis Json?
+  verdictAt DateTime?
+
+  // ── WHAT THE VERDICT WAS ABOUT ──────────────────────────────────────────
+  // A verdict is only true of the exact set of meals it judged. Swap a slot,
+  // apply an alternate, accept a re-solved day or place a recipe and the
+  // narration above describes a week that no longer exists — a stale verdict
+  // is worse than none, because it reads as current.
+  //
+  // Nothing clears it on mutation today (the mutation routes do not know the
+  // verdict exists), so staleness is DETECTED rather than signalled: the
+  // signature of the slots the verdict judged is stored beside it, and any
+  // reader recomputes the signature of the slots it currently holds. Equal
+  // means the verdict still applies; different means it must not be shown as
+  // current. This survives a reload, which a cleared-on-mutation flag held in
+  // component state does not.
+  //
+  // THE RECIPE, which every writer and reader must implement identically:
+  //
+  //   slots
+  //     .map(s => [s.dayOfWeek, s.slotType, s.slotIndex, s.recipeId ?? "",
+  //                round(s.proteinScale, 3), round(s.sidesScale, 3)].join(":"))
+  //     .sort()
+  //     .join("|")
+  //
+  // Keyed on (dayOfWeek, slotType, slotIndex) — the @@unique natural key —
+  // and NOT on PlanSlot.id, because a regenerate deletes and recreates rows,
+  // so ids churn even when the meals are materially identical. `locked` is
+  // deliberately EXCLUDED: a lock toggle moves no macro and must not stale a
+  // verdict that is still true.
+  verdictSlotSig String?
+
   slots       PlanSlot[]
   groceryList GroceryList?
 
