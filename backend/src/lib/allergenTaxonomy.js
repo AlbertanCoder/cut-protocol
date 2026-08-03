@@ -613,7 +613,10 @@ const ALLERGEN_TAXONOMY = [
       "coriander leaf", "coriander leaves", "fresh coriander", "chinese parsley",
       "cilantro aversion", "no cilantro", "dhania", "kothmir",
     ],
-    nameKeywords: ["cilantro", "coriander leaf", "coriander leaves", "fresh coriander", "chinese parsley"],
+    // "coriander" bare is the LEAF and carries a guard (dietaryFilter
+    // WORD_GUARDS.coriander) that stands the seed forms down. It is listed last
+    // so the explicit leaf spellings match first and never reach the guard.
+    nameKeywords: ["cilantro", "coriander leaf", "coriander leaves", "fresh coriander", "chinese parsley", "coriander"],
     note:
       "Not an allergy — a genetic aversion (OR6A2) that makes the leaf taste of soap to " +
       "roughly one person in seven, and a real reason to reject a dish. It was silently " +

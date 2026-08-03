@@ -1210,6 +1210,13 @@ const PASTA_BASE_GRAINS = GLUTEN_FREE_GRAINS
 // flakes. Vetoing the WORD covers "Buckwheat noodles" too, which names no
 // wheat and would otherwise clear on adjacency.
 const SOBA_OR_BUCKWHEAT = /\b(?:soba|buckwheat)\b/i;
+// Coriander leaf vs seed — see WORD_GUARDS.coriander. Leaf markers are checked
+// FIRST and win outright, so a row that names the leaf can never be stood down
+// by a seed word appearing elsewhere in the same string.
+const CORIANDER_LEAF_FORM = /\b(?:cilantro|coriander\s+leaf|coriander\s+leaves|fresh\s+coriander|chinese\s+parsley)\b/i;
+// The seed forms this corpus actually uses, plus the sazon blend, which is seed.
+const CORIANDER_SEED_FORM = /\bcoriander\s+seeds?\b|\bground\s+coriander\b|\bcoriander\s+powder\b|\bwhole\s+coriander\b|\bcoriander\s*(?:&|and)\s*annatto\b/i;
+
 function glutenFreePastaForm(n, noun) {
   const s = String(n || "");
   if (NAMES_A_GLUTEN_GRAIN.test(s) || SOBA_OR_BUCKWHEAT.test(s)) return false;
@@ -1334,6 +1341,22 @@ const WORD_GUARDS = {
   // skipped. Same adjacency rule, narrower grain set — see
   // glutenFreePastaForm(). "noodles" is a synonym in its own right and picks
   // this up through the singular→plural mirror below.
+  // L1 (T-2 sweep, 2026-08-02). The corpus writes the fresh leaf as bare
+  // "Coriander" — 54 recipes, more than every explicit leaf spelling combined —
+  // and the original cilantro fix added "coriander leaf/leaves/fresh coriander"
+  // and stopped. So the row the aversion is actually about kept shipping: all 13
+  // cilantro personas were offered it, 198 times across 44 recipes, INCLUDING
+  // p002, the persona whose incident is quoted in allergenTaxonomy's own note as
+  // the reason that fix existed. A fix applied to the spelling that was reported,
+  // while the commoner spelling of the same food went on shipping.
+  //
+  // The SEED is deliberately NOT the aversion — ground coriander is a different
+  // flavour compound, and the taxonomy note says so. The corpus separates them
+  // cleanly (leaf rows 23 kcal, seed rows 298), but a name matcher cannot read
+  // kcal, so the veto keys on the words the seed rows actually use. A leaf
+  // marker always wins, so "Spices, coriander leaf, dried" stays excluded.
+  coriander: (name) => hasWordOrPlural(name, "coriander")
+    && (CORIANDER_LEAF_FORM.test(name) || !CORIANDER_SEED_FORM.test(name)),
   pasta: (name) => hasWordOrPlural(name, "pasta") && !glutenFreePastaForm(name, "pasta"),
   noodle: (name) => hasWordOrPlural(name, "noodle") && !glutenFreePastaForm(name, "noodle"),
 
