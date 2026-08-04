@@ -160,6 +160,15 @@ test("the calorie band may narrow a day, never widen it past the safety floor", 
   // At the floor is fine; over the band is still over.
   assert.equal(dayTolerance(floored, { ...under, kcal: 1834 }).kcalOk, true);
   assert.equal(dayTolerance(floored, { ...under, kcal: 2100 }).kcalOk, false, "the ceiling is unchanged");
+
+  // A floored target sets kcal === floorKcal and the solver aims at kcal, so real
+  // totals CLUSTER on this edge — where two arithmetically identical sums of the
+  // same plate disagree in the last bits by addition order. Measured on the fleet:
+  // 1,469.5 from the solver vs 1,469.4999999999998 recomputed from raw food rows,
+  // one passing and one failing. The epsilon covers that scale and nothing more.
+  assert.equal(dayTolerance(floored, { ...under, kcal: 1834 - 1e-13 }).kcalOk, true, "float noise below the floor is AT the floor");
+  assert.equal(dayTolerance(floored, { ...under, kcal: 1833.5 }).kcalOk, false, "half a calorie under is genuinely under — this is not nutritional slack");
+  assert.equal(dayTolerance(floored, { ...under, kcal: 1833.99 }).kcalOk, false, "nor is a hundredth");
 });
 
 test("an unfloored target keeps the full ±10% band, and a target with no floor known is not given one", () => {
