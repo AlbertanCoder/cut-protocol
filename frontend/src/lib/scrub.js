@@ -12,6 +12,10 @@
 //   at loadData (C:\Users\<account>\AppData\Local\Programs\Cut Protocol\…)
 //   could not persist the session secret at C:\Users\<account>\AppData\…
 //
+// Those examples use a PLACEHOLDER on purpose. They used to carry the real
+// account name — which put this file, the scrubber itself, on the list of files
+// leaking the exact string its entire job is to keep off a public repo.
+//
 // Phase 9 of this project rewrote git history specifically to get that username
 // off a public repo. Filing one bug report put it straight back. The username
 // is not the only thing a home directory leaks either — the path shape names
