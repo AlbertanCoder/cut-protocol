@@ -1,16 +1,11 @@
-// solver-core-2 — FAT AND CARBS ARE FIRST-CLASS IN THE VERDICT, THE MISS
-// LINE, AND THE DIAGNOSIS.
+// solver-core-2 / goal-ruler (2026-08-03) — FAT AND CARBS ARE FIRST-CLASS IN THE VERDICT.
 //
-// The bug these lock down: scoreDay already computed fatInRange/carbInRange,
-// but dayTolerance / dayMissLine / diagnoseFromResult were kcal + protein
-// ONLY. A day that hit calories and protein while sitting far outside its fat
-// range shipped as "in tolerance", with nothing on screen saying otherwise —
-// the app prescribing a macro and then declining to report on it.
-//
-// (Related but NOT this: commit c2015b8's non-keto carb FLOOR changes what
-// computeMacros TARGETS. This is about what the solver REPORTS.)
-//
-// Pure fixtures only — no DB, no clock, no network.
+// The goal ruler:
+// Kcal: ±10%
+// Protein: floor only (>= proteinLo)
+// Fat: 15–35 %E guardrail (except Keto, which has no ceiling)
+// Carbs: Goal-dependent (floor for muscle gain/recomp, otherwise ungraded, Keto ceiling survives)
+
 process.env.BRAIN = "off";
 
 const { test } = require("node:test");
@@ -22,72 +17,76 @@ const {
 } = require("../src/lib/mealSolver.js");
 
 // 2,000 kcal, protein 140–160, fat 60–75 (mid 67.5), carbs 180–220 (mid 200).
-const T = { kcal: 2000, proteinLo: 140, proteinHi: 160, fatLo: 60, fatHi: 75, carbLo: 180, carbHi: 220 };
+const T = { kcal: 2000, proteinLo: 140, proteinHi: 160, fatLo: 60, fatHi: 75, carbLo: 180, carbHi: 220, goal: "fat loss" };
 
 // ── 1. the headline property ──────────────────────────────────────────────
 
 test("a day that meets kcal + protein but is badly short on FAT is NOT in tolerance", () => {
-  // Calories and protein are exactly on target; the fat that should have been
-  // there arrived as carbohydrate instead. Under the old rule this was green.
+  // Below 15% E fat is a miss. 15% of 2000 is 300 kcal (33.3g).
   const totals = { kcal: 2000, protein: 150, fat: 25, carb: 275 };
   const tol = dayTolerance(T, totals);
   assert.equal(tol.kcalOk, true, "calories are on target");
   assert.equal(tol.proteinOk, true, "protein is on target");
-  assert.equal(tol.fatOk, false, "35 g under a 60–75 g range is not in tolerance");
+  assert.equal(tol.fatOk, false, "25 g fat is below the 15% guardrail");
   assert.equal(dayInTolerance(tol), false, "and therefore the DAY is not in tolerance");
 });
 
-test("a day that meets kcal + protein but is badly over on CARBS is NOT in tolerance", () => {
+test("carbs are NOT graded for fat loss targets (the remainder) — overshoot is fine", () => {
   const totals = { kcal: 2000, protein: 150, fat: 62, carb: 300 };
   const tol = dayTolerance(T, totals);
   assert.equal(tol.kcalOk, true);
   assert.equal(tol.proteinOk, true);
   assert.equal(tol.fatOk, true);
-  assert.equal(tol.carbOk, false, "80 g over a 180–220 g range is not in tolerance");
+  assert.equal(tol.carbOk, true, "carbs take the remainder and are not graded");
+  assert.equal(dayInTolerance(tol), true);
+});
+
+test("carbs ARE graded against a floor for muscle gain targets", () => {
+  const target = { ...T, goal: "muscle gain" };
+  const totals = { kcal: 2000, protein: 150, fat: 62, carb: 100 }; // short of 180g floor
+  const tol = dayTolerance(target, totals);
+  assert.equal(tol.carbOk, false, "short of the glycogen floor is a miss");
   assert.equal(dayInTolerance(tol), false);
 });
 
-test("the fat/carb allowance is measured against the BAND MIDPOINT, and the boundary is exact", () => {
-  // fat mid = 67.5, so the allowance is 67.5 × 0.25 = 16.875 g outside the band.
-  const fatMid = (T.fatLo + T.fatHi) / 2;
-  const slack = fatMid * DAY_FAT_TOLERANCE_PCT;
-  const atEdge = { kcal: 2000, protein: 150, fat: T.fatLo - slack, carb: 200 };
-  const pastEdge = { kcal: 2000, protein: 150, fat: T.fatLo - slack - 0.01, carb: 200 };
-  assert.equal(dayTolerance(T, atEdge).fatOk, true, "exactly at the allowance is inside it");
-  assert.equal(dayTolerance(T, pastEdge).fatOk, false, "a hair past it is not");
-
-  const carbMid = (T.carbLo + T.carbHi) / 2;
-  const carbSlack = carbMid * DAY_CARB_TOLERANCE_PCT;
-  assert.equal(dayTolerance(T, { kcal: 2000, protein: 150, fat: 67, carb: T.carbHi + carbSlack }).carbOk, true);
-  assert.equal(dayTolerance(T, { kcal: 2000, protein: 150, fat: 67, carb: T.carbHi + carbSlack + 0.01 }).carbOk, false);
+test("the fat allowance is a 15–35 %E guardrail measured on the day's ACTUAL kcal", () => {
+  // At 2000 kcal, 15% is 300 kcal (33.3 g fat), 35% is 700 kcal (77.7 g fat).
+  const lowFat = { kcal: 2000, protein: 150, fat: 33, carb: 200 }; // just under 15% (33 * 9 / 2000 = 14.85%)
+  const okFatLo = { kcal: 2000, protein: 150, fat: 34, carb: 200 }; // 15.3%
+  const okFatHi = { kcal: 2000, protein: 150, fat: 77, carb: 200 }; // 34.6%
+  const hiFat = { kcal: 2000, protein: 150, fat: 78, carb: 200 }; // 35.1%
+  assert.equal(dayTolerance(T, lowFat).fatOk, false, "below 15% E is a miss");
+  assert.equal(dayTolerance(T, okFatLo).fatOk, true);
+  assert.equal(dayTolerance(T, okFatHi).fatOk, true);
+  assert.equal(dayTolerance(T, hiFat).fatOk, false, "above 35% E is a miss");
 });
 
-test("inside the band is always inside tolerance, in both directions", () => {
-  for (const fat of [T.fatLo, 67, T.fatHi]) {
-    for (const carb of [T.carbLo, 200, T.carbHi]) {
-      const tol = dayTolerance(T, { kcal: 2000, protein: 150, fat, carb });
-      assert.equal(dayInTolerance(tol), true, `fat ${fat} / carb ${carb} sits inside both bands and must pass`);
-    }
+test("inside the guardrail is always inside tolerance, in both directions", () => {
+  const target = { ...T, goal: "muscle gain" }; // enforce carb floor
+  for (const fat of [34, 50, 77]) {
+    const tol = dayTolerance(target, { kcal: 2000, protein: 150, fat, carb: 180 });
+    assert.equal(dayInTolerance(tol), true, `fat ${fat} sits inside %E guardrail and must pass`);
   }
 });
 
 // ── 2. the miss line says it out loud ─────────────────────────────────────
 
-test("dayMissLine names the fat and carb misses with the range and the gram gap", () => {
-  const line = dayMissLine(T, { kcal: 2000, protein: 150, fat: 25, carb: 275 });
+test("dayMissLine names the fat guardrail and carb floor misses with plain numbers", () => {
+  const target = { ...T, goal: "muscle gain" };
+  const line = dayMissLine(target, { kcal: 2000, protein: 150, fat: 25, carb: 100 });
   assert.ok(line, "a day outside fat/carb tolerance must not report a silent null");
-  assert.match(line, /25 g fat vs a 60–75 g range — 35 g short/);
-  assert.match(line, /275 g carbs vs a 180–220 g range — 55 g over/);
-  // …and the kcal/protein lines stay silent, because those really were fine.
+  assert.match(line, /25 g fat vs a 33–78 g range — 8 g short/);
+  assert.match(line, /100 g carbs vs 180 g floor — 80 g short/);
   assert.doesNotMatch(line, /kcal/);
   assert.doesNotMatch(line, /protein/);
 });
 
 test("dayMissLine keeps the no-guilt vocabulary on the new lines too (design law b)", () => {
+  const target = { ...T, goal: "muscle gain" };
   const lines = [
-    dayMissLine(T, { kcal: 2000, protein: 150, fat: 20, carb: 290 }),
-    dayMissLine(T, { kcal: 2000, protein: 150, fat: 130, carb: 90 }),
-    dayMissLine(T, { kcal: 1200, protein: 80, fat: 20, carb: 90 }),
+    dayMissLine(target, { kcal: 2000, protein: 150, fat: 20, carb: 290 }),
+    dayMissLine(target, { kcal: 2000, protein: 150, fat: 130, carb: 90 }),
+    dayMissLine(target, { kcal: 1200, protein: 80, fat: 20, carb: 90 }),
   ];
   for (const line of lines) {
     assert.ok(line);
@@ -95,11 +94,29 @@ test("dayMissLine keeps the no-guilt vocabulary on the new lines too (design law
   }
 });
 
-test("a day inside all four macro tolerances still states no miss at all", () => {
+test("a day inside all macro tolerances still states no miss at all", () => {
   assert.equal(dayMissLine(T, { kcal: 2000, protein: 150, fat: 67, carb: 200 }), null);
 });
 
 // ── 3. keto's carb ceiling is a law, not a preference ─────────────────────
+
+test("KETO is exempt from the fat CEILING only — the floor still binds", () => {
+  // Reproduced against the pre-fix source: computeMacros() prescribes 157–185 g
+  // fat for this profile, and a day delivering 13 g (4.9 %E) graded green with
+  // dayMissLine() returning null. `dailyTarget.keto` short-circuited the whole
+  // guardrail, floor included, while the comment above it said "ceiling".
+  const keto = { kcal: 2400, proteinLo: 181, proteinHi: 199, fatLo: 157, fatHi: 185, carbLo: 10, carbHi: 30, keto: true };
+  const starved = { kcal: 2400, protein: 181, fat: 13, carb: 20 };
+  assert.equal(dayTolerance(keto, starved).fatOk, false, "4.9 %E fat on a keto day is a miss, not the diet");
+  assert.equal(dayInTolerance(dayTolerance(keto, starved)), false);
+  assert.match(dayMissLine(keto, starved), /13 g fat vs a 40 g floor — 27 g short/);
+
+  // The ceiling is still waived — that part is the diet's definition.
+  const high = { kcal: 2400, protein: 181, fat: 160, carb: 20 }; // 60 %E
+  assert.equal(dayTolerance(keto, high).fatOk, true, "high fat IS keto");
+  // …and a non-keto target with the same numbers is over the ceiling.
+  assert.equal(dayTolerance({ ...keto, keto: false }, high).fatOk, false);
+});
 
 test("a KETO target gets no upward allowance on carbs (the ceiling is a diet law)", () => {
   const keto = { kcal: 2000, proteinLo: 150, proteinHi: 170, fatLo: 130, fatHi: 160, carbLo: 20, carbHi: 30, keto: true };
@@ -117,13 +134,15 @@ test("a KETO target gets no upward allowance on carbs (the ceiling is a diet law
 
 test("a target carrying no fat/carb band is not judged on one (honest absence)", () => {
   const partial = { kcal: 2000, proteinLo: 140, proteinHi: 160 };
-  const tol = dayTolerance(partial, { kcal: 2000, protein: 150, fat: 0, carb: 0 });
+  const tol = dayTolerance(partial, { kcal: 2000, protein: 150, fat: 50, carb: 0 });
   assert.equal(tol.fatJudged, false);
   assert.equal(tol.carbJudged, false);
-  assert.equal(tol.fatOk, true, "unjudgeable is not a failure");
+  assert.equal(tol.fatOk, true, "within %E guardrail");
   assert.equal(tol.carbOk, true);
   assert.equal(dayInTolerance(tol), true);
-  assert.equal(dayMissLine(partial, { kcal: 2000, protein: 150 }), null);
+
+  const partialShort = dayTolerance(partial, { kcal: 2000, protein: 150, fat: 0, carb: 0 });
+  assert.equal(partialShort.fatOk, false, "0% E fat fails the guardrail even if fatLo/fatHi are missing");
 });
 
 // ── 5. the week report and the diagnosis carry it through ─────────────────
@@ -138,7 +157,7 @@ test("scoreWeek: a fat-starved day does not count toward daysInTolerance and car
   const score = scoreWeek(T, slots);
   assert.equal(score.days[0].inTolerance, false, "the fat-starved day must not ship green");
   assert.equal(score.days[0].fatOk, false, "and the per-day row must publish WHICH macro failed");
-  assert.match(score.days[0].miss, /g fat vs a 60–75 g range/);
+  assert.match(score.days[0].miss, /25 g fat vs a 33–78 g range — 8 g short/);
   assert.equal(score.days[1].inTolerance, true);
   assert.equal(score.daysInTolerance, 1);
 });
@@ -146,27 +165,27 @@ test("scoreWeek: a fat-starved day does not count toward daysInTolerance and car
 test("diagnoseFromResult names the fat/carb shortfall — never gated behind another reason", () => {
   const slots = [0, 1, 2].map((d) => ({
     dayOfWeek: d, slotType: "meal", slotIndex: 0, recipeId: "a",
-    kcal: 2000, protein: 150, fat: 25, carb: 275, ingredients: [], warning: null,
+    kcal: 2000, protein: 150, fat: 25, carb: 100, ingredients: [], warning: null,
   }));
-  const pool = [{ id: "a", name: "Carb Plate", slotType: "meal", mealCategory: null, kcal: 2000, protein: 150, fat: 25, carb: 275, ingredients: [] }];
-  const d = diagnoseFromResult({ dailyTarget: T, slots, pool, mealConfig: { meals: 1, snacks: 0 }, filters: {} });
+  const pool = [{ id: "a", name: "Plate", slotType: "meal", mealCategory: null, kcal: 2000, protein: 150, fat: 25, carb: 100, ingredients: [] }];
+  const target = { ...T, goal: "muscle gain" };
+  const d = diagnoseFromResult({ dailyTarget: target, slots, pool, mealConfig: { meals: 1, snacks: 0 }, filters: {} });
 
-  const fatReason = d.reasons.find((r) => /fat range/.test(r));
+  const fatReason = d.reasons.find((r) => /fat guardrail/.test(r));
   assert.ok(fatReason, `no fat reason in:\n${d.reasons.join("\n")}`);
-  assert.match(fatReason, /3 day\(s\) landed outside your 60–75 g fat range/);
-  assert.match(fatReason, /3 day\(s\) landed outside your 180–220 g carb range/);
+  assert.match(fatReason, /3 day\(s\) landed outside the 15-35% fat guardrail/);
+  assert.match(fatReason, /3 day\(s\) landed below your 180 g carb floor/);
   assert.ok(d.suggestions.some((s) => /macro you keep missing/.test(s)), "and it must offer something actionable");
-  // The one rule that outranks everything here.
   for (const s of d.suggestions) assert.doesNotMatch(s, /allerg/i);
 });
 
-test("diagnoseFromResult says nothing about fat/carbs when every day landed inside both bands", () => {
+test("diagnoseFromResult says nothing about fat/carbs when every day landed inside guardrails", () => {
   const slots = [0, 1].map((d) => ({
     dayOfWeek: d, slotType: "meal", slotIndex: 0, recipeId: "a",
-    kcal: 1200, protein: 150, fat: 67, carb: 200, ingredients: [], warning: null, // kcal-short only
+    kcal: 1200, protein: 150, fat: 40, carb: 200, ingredients: [], warning: null, // kcal-short only, 40g fat = 30% of 1200 kcal
   }));
-  const pool = [{ id: "a", name: "Plate", slotType: "meal", mealCategory: null, kcal: 1200, protein: 150, fat: 67, carb: 200, ingredients: [] }];
+  const pool = [{ id: "a", name: "Plate", slotType: "meal", mealCategory: null, kcal: 1200, protein: 150, fat: 40, carb: 200, ingredients: [] }];
   const d = diagnoseFromResult({ dailyTarget: T, slots, pool, mealConfig: { meals: 1, snacks: 0 }, filters: {} });
-  assert.ok(!d.reasons.some((r) => /fat range|carb range/.test(r)), `invented a fat/carb reason:\n${d.reasons.join("\n")}`);
+  assert.ok(!d.reasons.some((r) => /fat guardrail|carb floor|carb range/.test(r)), `invented a fat/carb reason:\n${d.reasons.join("\n")}`);
   assert.ok(d.reasons.length > 0, "but the kcal miss still owes a reason");
 });
