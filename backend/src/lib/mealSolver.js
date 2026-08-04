@@ -236,10 +236,23 @@ const DAY_CARB_TOLERANCE_PCT = 0.25;
 // clearest possible miss, not the diet working. Keto's carb ceiling stays a hard
 // diet law.
 //
-// The gram-level essential-fat floor is NOT replaced by this — it lives on the
-// target (bmrEngine's fatFloorG) and still binds. This is the upper guardrail
-// and a generous lower one.
-const DAY_FAT_PCT_ENERGY_MIN = 0.15;
+// THE LOWER EDGE IS TWO FLOORS, WHICHEVER IS HIGHER.
+//
+// 20 %E is the AMDR's lower bound (IOM 2005) and the band computeMacros() itself
+// prescribes to — `fatPrescriptionDrift.test.js` asserts 20-35 %E on every
+// unfloored prescription. It was 15% here, which meant the GRADER blessed days
+// the ENGINE would never prescribe. That gap is not harmless: best-of-N selects
+// on what passes, so the achieved distribution drifts toward the loosest
+// admissible edge rather than toward the prescription.
+//
+// And a share is not a gram. The gram-level essential-fat floor lives on the
+// target as bmrEngine's `fatFloorG` — and until now it did not bind here at all:
+// `fatFloorG` appeared in this file exactly once, inside a comment claiming it
+// still did. bmrEngine's own export block already recorded the gap. A 2,000 kcal
+// target with a 48 g essential floor passed a 44 g day (19.8 %E), and 20 %E alone
+// would still pass it at 44.4 g. Neither floor subsumes the other, so the edge is
+// max(both).
+const DAY_FAT_PCT_ENERGY_MIN = 0.20;
 const DAY_FAT_PCT_ENERGY_MAX = 0.35;
 
 // How far `v` sits outside [lo, hi], as a fraction of the band midpoint.
@@ -293,6 +306,13 @@ function dayTolerance(dailyTarget, totals) {
   // True when the FLOOR is what the day fell under, not merely the band — so the
   // miss line can name the real constraint instead of reporting a generic "under".
   const kcalFloorBinding = kcalFloor != null && kcalFloor > kcalBandLo && totals.kcal < kcalFloor;
+  // Fat's lower edge in GRAMS: the AMDR share of this day's energy, or the
+  // target's absolute essential-fat floor, whichever is higher. Published so
+  // dayMissLine states the same edge the verdict used.
+  const essentialFatG = Number.isFinite(dailyTarget.fatFloorG) && dailyTarget.fatFloorG > 0
+    ? dailyTarget.fatFloorG : 0;
+  const fatLoEdgeG = Math.max((totals.kcal * DAY_FAT_PCT_ENERGY_MIN) / 9, essentialFatG);
+  const fatHiEdgeG = (totals.kcal * DAY_FAT_PCT_ENERGY_MAX) / 9;
   return {
     kcalDeltaPct, proteinShortPct,
     kcalFloor, kcalFloorBinding,
@@ -315,8 +335,9 @@ function dayTolerance(dailyTarget, totals) {
     // to short-circuit the whole guardrail, so a keto target prescribing 157-185 g
     // of fat graded a 13 g day (4.9 %E) green with no miss line at all. That is a
     // silent target miss on the diet's own defining macro.
+    fatLoEdgeG, fatHiEdgeG, essentialFatG,
     fatOk: !fatBand || !(totals.kcal > 0)
-      || (fatPctEnergy >= DAY_FAT_PCT_ENERGY_MIN
+      || ((totals.fat || 0) >= fatLoEdgeG
           && (dailyTarget.keto || fatPctEnergy <= DAY_FAT_PCT_ENERGY_MAX)),
     needsCarbFloor,
     // Carbs take the remainder and are not graded on their own — EXCEPT keto's
@@ -356,9 +377,9 @@ function dayMissLine(dailyTarget, totals) {
   // Fat and carbs state the RANGE they missed and by how much — same plain
   // shape as the two lines above, same no-guilt vocabulary.
   if (!t.fatOk && totals.kcal > 0) {
-    const minG = (totals.kcal * DAY_FAT_PCT_ENERGY_MIN) / 9;
-    const maxG = (totals.kcal * DAY_FAT_PCT_ENERGY_MAX) / 9;
-    const short = t.fatPctEnergy < DAY_FAT_PCT_ENERGY_MIN;
+    const minG = t.fatLoEdgeG;
+    const maxG = t.fatHiEdgeG;
+    const short = (totals.fat || 0) < minG;
     const edge = short ? minG : maxG;
     const by = Math.round(Math.abs((totals.fat || 0) - edge));
     // A keto day has no ceiling, so quoting it a range would name a limit that

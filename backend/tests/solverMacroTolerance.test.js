@@ -49,21 +49,41 @@ test("carbs ARE graded against a floor for muscle gain targets", () => {
   assert.equal(dayInTolerance(tol), false);
 });
 
-test("the fat allowance is a 15–35 %E guardrail measured on the day's ACTUAL kcal", () => {
-  // At 2000 kcal, 15% is 300 kcal (33.3 g fat), 35% is 700 kcal (77.7 g fat).
-  const lowFat = { kcal: 2000, protein: 150, fat: 33, carb: 200 }; // just under 15% (33 * 9 / 2000 = 14.85%)
-  const okFatLo = { kcal: 2000, protein: 150, fat: 34, carb: 200 }; // 15.3%
-  const okFatHi = { kcal: 2000, protein: 150, fat: 77, carb: 200 }; // 34.6%
-  const hiFat = { kcal: 2000, protein: 150, fat: 78, carb: 200 }; // 35.1%
-  assert.equal(dayTolerance(T, lowFat).fatOk, false, "below 15% E is a miss");
+test("the fat allowance is a 20–35 %E guardrail measured on the day's ACTUAL kcal", () => {
+  // At 2000 kcal: 20% is 400 kcal (44.4 g fat), 35% is 700 kcal (77.7 g fat).
+  // Literal grams on purpose — computing the edge from the constant under test
+  // makes an assertion that passes at any value of it.
+  const lowFat = { kcal: 2000, protein: 150, fat: 44, carb: 200 };  // 19.8%
+  const okFatLo = { kcal: 2000, protein: 150, fat: 45, carb: 200 }; // 20.3%
+  const okFatHi = { kcal: 2000, protein: 150, fat: 77, carb: 200 }; // 34.7%
+  const hiFat = { kcal: 2000, protein: 150, fat: 78, carb: 200 };   // 35.1%
+  assert.equal(dayTolerance(T, lowFat).fatOk, false, "below 20 %E is a miss");
   assert.equal(dayTolerance(T, okFatLo).fatOk, true);
   assert.equal(dayTolerance(T, okFatHi).fatOk, true);
-  assert.equal(dayTolerance(T, hiFat).fatOk, false, "above 35% E is a miss");
+  assert.equal(dayTolerance(T, hiFat).fatOk, false, "above 35 %E is a miss");
+  // 15 %E used to pass here. The grader must not bless what the engine would
+  // never prescribe — fatPrescriptionDrift.test.js asserts 20–35 on the target.
+  assert.equal(dayTolerance(T, { kcal: 2000, protein: 150, fat: 35, carb: 200 }).fatOk, false, "15.8 %E is no longer inside the guardrail");
+});
+
+test("the target's essential-fat floor binds even when the %E share clears", () => {
+  // Reproduced on a real target: M/40/178cm/20%BF/90.7kg @ 2,000 kcal prescribes
+  // fatFloorG = 48 g. A 44 g day is 19.8 %E — and even at a 20 %E floor the share
+  // edge is only 44.4 g, so the share alone still passes it 4 g under essential
+  // fat. `fatFloorG` appeared in mealSolver.js exactly once before this: inside a
+  // comment claiming it still bound.
+  const withFloor = { ...T, fatFloorG: 48 };
+  const under = { kcal: 2000, protein: 150, fat: 46, carb: 200 }; // 20.7 %E — share is fine
+  assert.equal(dayTolerance(T, under).fatOk, true, "no floor published ⇒ judged on the share alone");
+  assert.equal(dayTolerance(withFloor, under).fatOk, false, "46 g is under the 48 g essential floor");
+  assert.equal(dayTolerance(withFloor, under).fatLoEdgeG, 48, "the higher of the two floors is the edge");
+  assert.match(dayMissLine(withFloor, under), /46 g fat vs a 48–78 g range — 2 g short/);
+  assert.equal(dayTolerance(withFloor, { ...under, fat: 48 }).fatOk, true);
 });
 
 test("inside the guardrail is always inside tolerance, in both directions", () => {
   const target = { ...T, goal: "muscle gain" }; // enforce carb floor
-  for (const fat of [34, 50, 77]) {
+  for (const fat of [45, 50, 77]) { // 20.3 %E … 34.7 %E at 2,000 kcal
     const tol = dayTolerance(target, { kcal: 2000, protein: 150, fat, carb: 180 });
     assert.equal(dayInTolerance(tol), true, `fat ${fat} sits inside %E guardrail and must pass`);
   }
@@ -109,7 +129,7 @@ test("dayMissLine names the fat guardrail and carb floor misses with plain numbe
   const target = { ...T, goal: "muscle gain" };
   const line = dayMissLine(target, { kcal: 2000, protein: 150, fat: 25, carb: 100 });
   assert.ok(line, "a day outside fat/carb tolerance must not report a silent null");
-  assert.match(line, /25 g fat vs a 33–78 g range — 8 g short/);
+  assert.match(line, /25 g fat vs a 44–78 g range — 19 g short/);
   assert.match(line, /100 g carbs vs 180 g floor — 80 g short/);
   assert.doesNotMatch(line, /kcal/);
   assert.doesNotMatch(line, /protein/);
@@ -143,7 +163,7 @@ test("KETO is exempt from the fat CEILING only — the floor still binds", () =>
   const starved = { kcal: 2400, protein: 181, fat: 13, carb: 20 };
   assert.equal(dayTolerance(keto, starved).fatOk, false, "4.9 %E fat on a keto day is a miss, not the diet");
   assert.equal(dayInTolerance(dayTolerance(keto, starved)), false);
-  assert.match(dayMissLine(keto, starved), /13 g fat vs a 40 g floor — 27 g short/);
+  assert.match(dayMissLine(keto, starved), /13 g fat vs a 53 g floor — 40 g short/);
 
   // The ceiling is still waived — that part is the diet's definition.
   const high = { kcal: 2400, protein: 181, fat: 160, carb: 20 }; // 60 %E
@@ -191,7 +211,7 @@ test("scoreWeek: a fat-starved day does not count toward daysInTolerance and car
   const score = scoreWeek(T, slots);
   assert.equal(score.days[0].inTolerance, false, "the fat-starved day must not ship green");
   assert.equal(score.days[0].fatOk, false, "and the per-day row must publish WHICH macro failed");
-  assert.match(score.days[0].miss, /25 g fat vs a 33–78 g range — 8 g short/);
+  assert.match(score.days[0].miss, /25 g fat vs a 44–78 g range — 19 g short/);
   assert.equal(score.days[1].inTolerance, true);
   assert.equal(score.daysInTolerance, 1);
 });
