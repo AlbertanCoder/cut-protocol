@@ -72,7 +72,7 @@ router.get("/summary", async (req, res) => {
   const { energy, target, safety } = ctx;
   const weightNowKg = ctx.weightKg;
   const v = verdict({ rate, chosenRate: profile.rateLbPerWeek, daysIn, atFloor: target.floored });
-  const macros = computeMacros(profile, weightNowKg, target.target);
+  const macros = computeMacros(profile, weightNowKg, target.target, target.floor);
   // onboarding-flow-4: the protein target is per-lb of LEAN mass, and when
   // bodyFatPct is unset that lean mass is an ASSUMPTION (a sex-typical body fat,
   // see bmrEngine.ASSUMED_BODY_FAT_PCT), not a measurement. computeMacros

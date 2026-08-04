@@ -394,7 +394,7 @@ async function main() {
     const energy = bmr.computeEnergy(c.profile, c.weightKg);
     const derived = bmr.deriveTarget(c.profile, energy.tdee, energy.rmr);
     const floor = bmr.effectiveFloor(c.profile, energy.rmr);
-    const target = bmr.computeMacros(c.profile, c.weightKg, derived.target);
+    const target = bmr.computeMacros(c.profile, c.weightKg, derived.target, floor);
 
     // The route's exact two-stage narrowing, plus the Stage-3 filter stack it
     // applies at routes/plans.js:220 and which runSolve.mjs / A1-rig omit.

@@ -375,7 +375,19 @@ function fatBandFor(lbmLb, midFromModelG) {
   return { fatLo, fatHi, fatMid: (fatLo + fatHi) / 2, fatFloorG, fatFloored };
 }
 
-function computeMacros(profile, weightKg, targetKcal) {
+// `floorKcal` — the effective safety floor this target was clamped to, carried
+// onto the target object so the SOLVER has an absolute number instead of an
+// inferred one. Same reason `fatFloorG` is published: a consumer that has to
+// re-derive a floor will eventually derive a different one.
+//
+// It matters because deriveTarget() clamps the target UP to the floor, and
+// mealSolver then graded a symmetric ±10% band around it with no lower clamp —
+// so an 1,834 kcal floored target shipped a 1,651 kcal day as green, 183 kcal
+// beneath the floor the engine had just refused to prescribe below. Optional
+// and nullable: a caller with no derived target in hand publishes null, and the
+// solver treats null as "no floor known" rather than inventing one.
+function computeMacros(profile, weightKg, targetKcal, floorKcal = null) {
+  const floorOnTarget = Number.isFinite(floorKcal) && floorKcal > 0 ? Math.round(floorKcal) : null;
   const weightLb = kg2lb(weightKg);
   const bfKnown = profile.bodyFatPct != null && profile.bodyFatPct > 0;
   const bfForLbm = bfKnown ? profile.bodyFatPct : (profile.sex === "F" ? ASSUMED_BODY_FAT_PCT.F : ASSUMED_BODY_FAT_PCT.M);
@@ -404,6 +416,7 @@ function computeMacros(profile, weightKg, targetKcal) {
       fatPctEnergy: targetKcal > 0 ? Math.round(((fat.fatMid * 9) / targetKcal) * 10000) / 10000 : null,
       carbLo: KETO_CARB_LO_G, carbMid, carbHi: KETO_CARB_CEILING_G,
       carbBufferG: 0,
+      floorKcal: floorOnTarget,
       macroKcalGap: Math.round(targetKcal - (proteinMid * 4 + fat.fatMid * 9 + carbMid * 4)),
       keto: true,
       bfAssumed: !bfKnown, assumedBodyFatPct: bfKnown ? null : bfForLbm,
@@ -460,6 +473,7 @@ function computeMacros(profile, weightKg, targetKcal) {
     carbMid,
     carbHi: carbMid + 12,
     carbBufferG: CARB_MIDPOINT_BUFFER_G,
+    floorKcal: floorOnTarget,
     macroKcalGap,
     carbFloored,
     bfAssumed: !bfKnown, assumedBodyFatPct: bfKnown ? null : bfForLbm,

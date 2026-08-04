@@ -69,6 +69,40 @@ test("inside the guardrail is always inside tolerance, in both directions", () =
   }
 });
 
+// ── 1b. the safety floor outranks the calorie band ────────────────────────
+
+test("the calorie band may narrow a day, never widen it past the safety floor", () => {
+  // Reproduced on a real derived target: M/40/178cm/20%BF/90.7kg at 2.0 lb/wk
+  // wants 1,470 kcal, is clamped UP to an 1,834 floor (RMR×0.95) — and the old
+  // symmetric ±10% band then graded 1,651 kcal green, 183 beneath the number the
+  // engine had just refused to prescribe below.
+  const floored = { kcal: 1834, floorKcal: 1834, proteinLo: 180, proteinHi: 200, fatLo: 50, fatHi: 70, carbLo: 100, carbHi: 130 };
+  const under = { kcal: 1651, protein: 185, fat: 55, carb: 110 };
+  assert.equal(dayTolerance(floored, under).kcalOk, false, "a day below the floor is never in tolerance");
+  assert.match(dayMissLine(floored, under), /1,651 kcal vs your 1,834 floor — 183 under/);
+  // The floor is named, not the target — the floor is the constraint that bound.
+  assert.doesNotMatch(dayMissLine(floored, under), /target/);
+
+  // At the floor is fine; over the band is still over.
+  assert.equal(dayTolerance(floored, { ...under, kcal: 1834 }).kcalOk, true);
+  assert.equal(dayTolerance(floored, { ...under, kcal: 2100 }).kcalOk, false, "the ceiling is unchanged");
+});
+
+test("an unfloored target keeps the full ±10% band, and a target with no floor known is not given one", () => {
+  // The common case: the floor sits well below the band, so it never binds.
+  const roomy = { kcal: 2400, floorKcal: 1500, proteinLo: 180, proteinHi: 200, fatLo: 60, fatHi: 90, carbLo: 200, carbHi: 260 };
+  assert.equal(dayTolerance(roomy, { kcal: 2160, protein: 185, fat: 75, carb: 220 }).kcalOk, true, "−10% exactly");
+  assert.equal(dayTolerance(roomy, { kcal: 2159, protein: 185, fat: 75, carb: 220 }).kcalOk, false);
+
+  // No floorKcal on the target ⇒ no floor is invented. Same rule as the absent
+  // fat/carb bands: absent is absent.
+  const unknown = { kcal: 2400, proteinLo: 180, proteinHi: 200, fatLo: 60, fatHi: 90, carbLo: 200, carbHi: 260 };
+  const tol = dayTolerance(unknown, { kcal: 2160, protein: 185, fat: 75, carb: 220 });
+  assert.equal(tol.kcalFloor, null);
+  assert.equal(tol.kcalFloorBinding, false);
+  assert.equal(tol.kcalOk, true);
+});
+
 // ── 2. the miss line says it out loud ─────────────────────────────────────
 
 test("dayMissLine names the fat guardrail and carb floor misses with plain numbers", () => {

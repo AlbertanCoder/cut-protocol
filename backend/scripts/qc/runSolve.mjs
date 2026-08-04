@@ -46,7 +46,7 @@ export async function runSolve(gen, rawPool, rng) {
   const energy = computeEnergy(profile, weightKg);
   const derived = deriveTarget(profile, energy.tdee, energy.rmr);
   const floor = effectiveFloor(profile, energy.rmr);
-  const target = computeMacros(profile, weightKg, derived.target);
+  const target = computeMacros(profile, weightKg, derived.target, floor);
 
   // ── pool, the same THREE-stage narrowing the route applies ────────────
   // `stackExplain` rides along in counts because classifyBinding (mealSolver.js:
