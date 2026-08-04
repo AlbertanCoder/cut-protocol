@@ -195,7 +195,30 @@ async function weekOutcome(solveTarget, pool) {
       days++;
       if (tol.kcalOk) kcalOk++;
       if (tol.proteinOk) proteinOk++;
-      if (tol.fatOk) fatOk++;
+      // `fatBandOk`, not `fatOk` — and the difference is the whole point of this
+      // counter. This test asks a question about the SEARCH: does a solver that
+      // can see the fat band hit that band more often than one that cannot? The
+      // band is what the search aims at (solveDay derives its fat budget from
+      // fatLo/fatHi), so the band is what the search must be scored against.
+      //
+      // `fatOk` is the VERDICT, and since 2026-08-03 the verdict grades a 20–35
+      // %E share plus the target's absolute essential-fat floor — a different
+      // question, on a different scale, that the search never optimised for.
+      // Scoring search behaviour with it made this test read as a regression
+      // every time ruler POLICY moved: at the 20 %E floor this fixture's 34–44 g
+      // band (15.3–19.8 %E at 2,000 kcal) sits entirely underneath the floor, so
+      // the search hits its target and the verdict fails all 70 days.
+      //
+      // That is a stale fixture, not a product defect — the band predates 005bb3e,
+      // when fat was a fixed gram count per lb of lean mass. A sweep of 280 real
+      // energy-anchored prescriptions (2 sexes × 5 body-fat levels × 4 weights × 7
+      // calorie targets) puts a band's LOWER EDGE below 20 %E exactly zero times,
+      // so no real target can land where this fixture does. The fixture is left
+      // as written on purpose: its lean/rich trap is calibrated to this band, and
+      // re-aiming the target without re-calibrating the pool made the measured
+      // gain go NEGATIVE (37 blind → 18 seeing), which would have quietly turned
+      // a real property into a broken one.
+      if (tol.fatBandOk) fatOk++;
     }
   }
   return { kcalOk, proteinOk, fatOk, days, unfilled };
