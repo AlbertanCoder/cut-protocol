@@ -268,6 +268,49 @@ const atLo = (s) => s != null && Math.abs(s - 0.5) <= EPS;
 const atHi = (s) => s != null && Math.abs(s - 2.0) <= EPS;
 
 /**
+ * The target, serialized so a re-grade can REPRODUCE the verdict.
+ *
+ * This lived twice, inline, and both copies stored only the bands. That was
+ * survivable while the ruler was band-relative and is not any more: the verdict
+ * now also consults two ABSOLUTE floors — `floorKcal` (the safety floor the
+ * calorie band may not re-open downward) and `fatFloorG` (essential fat) — plus
+ * the target's own `carbMid` for the anti-ketosis floor. Dropping them did not
+ * corrupt the LIVE numbers, which are computed from the real target object, but
+ * it made every downstream re-grade silently apply a WEAKER ruler: 22 of 622
+ * judged days flipped, +3.7 pp on the satisfiable rate, and scoreDays'
+ * recompute-mismatch counter was reporting exactly this.
+ *
+ * A dump you cannot re-grade is a dump you have to re-solve to ask a second
+ * question of, which is the whole reason this file exists.
+ */
+function serializeTarget(target) {
+  const band = (lo, hi) => (Number.isFinite(lo) && Number.isFinite(hi) ? r2((lo + hi) / 2) : null);
+  return {
+    kcal: target.kcal ?? null,
+    proteinLo: target.proteinLo ?? null, proteinHi: target.proteinHi ?? null,
+    proteinMid: band(target.proteinLo, target.proteinHi),
+    fatLo: target.fatLo ?? null, fatHi: target.fatHi ?? null,
+    fatMid: band(target.fatLo, target.fatHi),
+    carbLo: target.carbLo ?? null, carbHi: target.carbHi ?? null,
+    // The target's OWN carbMid, not the band midpoint re-derived from the edges.
+    // They coincide on a non-keto target by construction and do NOT on keto
+    // (10-30 with a real carbMid of 25), and this is the field the anti-ketosis
+    // floor is capped at.
+    carbMid: target.carbMid ?? band(target.carbLo, target.carbHi),
+    keto: !!target.keto,
+    // The two absolute floors the verdict consults. Without these a re-grade
+    // cannot reproduce it.
+    floorKcal: target.floorKcal ?? null,
+    fatFloorG: target.fatFloorG ?? null,
+    // Disclosure flags — not graded on, but they explain WHY a floor sits where
+    // it does, and an analyst reading a sub-floor day needs them.
+    fatFloored: target.fatFloored ?? null,
+    carbFloored: target.carbFloored ?? null,
+    macroKcalGap: target.macroKcalGap ?? null,
+  };
+}
+
+/**
  * The per-day binding-miss key, DERIVED from the day's own four-macro verdict.
  *
  * Deliberately distinct from the product's `classifyBinding()`, which is a
@@ -535,16 +578,16 @@ async function main() {
           slotsEmpty: slotRows.length - filled.length,
 
           target: {
-            kcal: target.kcal ?? null,
-            proteinLo: target.proteinLo ?? null, proteinHi: target.proteinHi ?? null,
-            proteinMid: r2(tol.proteinMid),
-            fatLo: target.fatLo ?? null, fatHi: target.fatHi ?? null,
-            fatMid: Number.isFinite(target.fatLo) && Number.isFinite(target.fatHi) ? r2((target.fatLo + target.fatHi) / 2) : null,
-            carbLo: target.carbLo ?? null, carbHi: target.carbHi ?? null,
-            carbMid: Number.isFinite(target.carbLo) && Number.isFinite(target.carbHi) ? r2((target.carbLo + target.carbHi) / 2) : null,
-            keto: !!target.keto,
+            ...serializeTarget(target),
           },
-          achieved: { kcal: r2(ach.kcal), protein: r2(ach.protein), fat: r2(ach.fat), carb: r2(ach.carb) },
+          // FULL PRECISION, not r2. These are the exact numbers the verdict was
+          // computed from, and rounding them defeats the point of the file: a
+          // re-grade then compares a rounded value against a full-precision edge
+          // and flips days sitting on one. Measured — 1,469.4972 kcal against a
+          // 1,470 floor stored as 1,469.5, which lands exactly ON the floor's
+          // half-calorie epsilon and re-grades the other way. Display rounding is
+          // the reporting layer's job; the substrate keeps what it saw.
+          achieved: { kcal: ach.kcal, protein: ach.protein, fat: ach.fat, carb: ach.carb },
           achievedSolver: { kcal: r2(solv.kcal), protein: r2(solv.protein), fat: r2(solv.fat), carb: r2(solv.carb) },
           drift: {
             kcal: r2(solv.kcal - ach.kcal), protein: r2(solv.protein - ach.protein),
@@ -623,15 +666,7 @@ async function main() {
           // this from a solver total failure: nothing was attempted here.
           degenerate: true,
           slotsTotal: 0, slotsFilled: 0, slotsEmpty: 0,
-          target: {
-            kcal: target.kcal ?? null, proteinLo: target.proteinLo ?? null, proteinHi: target.proteinHi ?? null,
-            proteinMid: r2((target.proteinLo + target.proteinHi) / 2),
-            fatLo: target.fatLo ?? null, fatHi: target.fatHi ?? null,
-            fatMid: Number.isFinite(target.fatLo) && Number.isFinite(target.fatHi) ? r2((target.fatLo + target.fatHi) / 2) : null,
-            carbLo: target.carbLo ?? null, carbHi: target.carbHi ?? null,
-            carbMid: Number.isFinite(target.carbLo) && Number.isFinite(target.carbHi) ? r2((target.carbLo + target.carbHi) / 2) : null,
-            keto: !!target.keto,
-          },
+          target: serializeTarget(target),
           achieved: { kcal: 0, protein: 0, fat: 0, carb: 0 },
           achievedSolver: { kcal: 0, protein: 0, fat: 0, carb: 0 },
           drift: { kcal: 0, protein: 0, fat: 0, carb: 0, missingFoodRows: 0 },

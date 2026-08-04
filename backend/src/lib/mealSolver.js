@@ -337,7 +337,27 @@ function dayTolerance(dailyTarget, totals) {
   const kcalFloor = Number.isFinite(dailyTarget.floorKcal) && dailyTarget.floorKcal > 0
     ? dailyTarget.floorKcal : null;
   const kcalBandLo = dailyTarget.kcal * (1 - DAY_KCAL_TOLERANCE_PCT);
-  const kcalLoEdge = kcalFloor != null ? Math.max(kcalBandLo, kcalFloor) : kcalBandLo;
+  // FLOAT NOISE ONLY — deliberately not a nutritional slack.
+  //
+  // A floored target sets kcal === floorKcal, and the solver optimises toward
+  // kcal, so achieved totals CLUSTER on this edge by construction. Two
+  // arithmetically identical sums of the same plate differ in the last bits
+  // depending on addition order: the fleet has a day where the solver's own total
+  // is 1,469.5 and an independent recompute from the raw food rows is
+  // 1,469.4999999999998. One passed and one failed, which is an instrument that
+  // cannot agree with itself.
+  //
+  // The first attempt here was half a calorie of "no human resolves this" slack.
+  // That was the wrong KIND of fix and it failed on the same day: a wide window
+  // does not remove the knife edge, it moves it — to floor−0.5, which that day
+  // landed on exactly. The epsilon must cover the scale the two computations
+  // actually differ at (~1e-13) and nothing else, so real totals cannot sit on it.
+  //
+  // This does not soften the "judge on EXACT totals, never display-rounded ones"
+  // rule stated elsewhere in this file. That rule exists so rounding cannot HIDE
+  // a miss. A day 0.5 kcal under its floor still fails, as it should.
+  const FLOOR_EPSILON_KCAL = 1e-6;
+  const kcalLoEdge = kcalFloor != null ? Math.max(kcalBandLo, kcalFloor - FLOOR_EPSILON_KCAL) : kcalBandLo;
   // True when the FLOOR is what the day fell under, not merely the band — so the
   // miss line can name the real constraint instead of reporting a generic "under".
   const kcalFloorBinding = kcalFloor != null && kcalFloor > kcalBandLo && totals.kcal < kcalFloor;
