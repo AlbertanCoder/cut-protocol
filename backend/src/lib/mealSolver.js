@@ -274,9 +274,31 @@ function dayTolerance(dailyTarget, totals) {
   // TARGET's calories instead would let an over-eaten day look leaner than it is.
   const fatPctEnergy = totals.kcal > 0 ? ((totals.fat || 0) * 9) / totals.kcal : 0;
   const needsCarbFloor = dailyTarget.goal === "muscle gain" || dailyTarget.goal === "recomp";
+  // THE SAFETY FLOOR OUTRANKS THE BAND. deriveTarget() clamps a target UP to
+  // max(RMR×0.95, 1500 M / 1200 F, the user's own stricter floor) — the
+  // constitution's hard floor — and for anyone on an aggressive rate the target
+  // IS the floor. A symmetric ±10% band around it then re-opened the whole
+  // clamp downward: a floored 1,834 kcal target graded a 1,651 kcal day green,
+  // 183 kcal below the number the engine had just refused to go under. The band
+  // may narrow the day, never widen it past the floor.
+  //
+  // adaptiveTarget.js:212 already states this rule for its own cap ("the safety
+  // floor outranks the cap… it may never hold one BELOW the floor"). It is not
+  // a property of that mechanism; it is constitutional, so it is restated here
+  // rather than imported.
+  const kcalFloor = Number.isFinite(dailyTarget.floorKcal) && dailyTarget.floorKcal > 0
+    ? dailyTarget.floorKcal : null;
+  const kcalBandLo = dailyTarget.kcal * (1 - DAY_KCAL_TOLERANCE_PCT);
+  const kcalLoEdge = kcalFloor != null ? Math.max(kcalBandLo, kcalFloor) : kcalBandLo;
+  // True when the FLOOR is what the day fell under, not merely the band — so the
+  // miss line can name the real constraint instead of reporting a generic "under".
+  const kcalFloorBinding = kcalFloor != null && kcalFloor > kcalBandLo && totals.kcal < kcalFloor;
   return {
     kcalDeltaPct, proteinShortPct,
-    kcalOk: Math.abs(kcalDeltaPct) <= DAY_KCAL_TOLERANCE_PCT,
+    kcalFloor, kcalFloorBinding,
+    kcalOk: dailyTarget.kcal > 0
+      && totals.kcal >= kcalLoEdge
+      && kcalDeltaPct <= DAY_KCAL_TOLERANCE_PCT,
     proteinOk: totals.protein >= dailyTarget.proteinLo,
     proteinMid: pMid,
     fatShortPct: fat.shortPct, fatOverPct: fat.overPct,
@@ -318,8 +340,15 @@ function dayMissLine(dailyTarget, totals) {
   const t = dayTolerance(dailyTarget, totals);
   const parts = [];
   if (!t.kcalOk) {
-    const diff = Math.round(totals.kcal - dailyTarget.kcal);
-    parts.push(`${Math.round(totals.kcal).toLocaleString("en-CA")} kcal vs a ${Math.round(dailyTarget.kcal).toLocaleString("en-CA")} target — ${Math.abs(diff).toLocaleString("en-CA")} ${diff > 0 ? "over" : "under"}`);
+    if (t.kcalFloorBinding) {
+      // Name the floor, because the floor is what it fell under. Saying "under
+      // target" here would describe a smaller, softer constraint than the one
+      // that actually bound, and floor blocks are SHOWN, never absorbed.
+      parts.push(`${Math.round(totals.kcal).toLocaleString("en-CA")} kcal vs your ${Math.round(t.kcalFloor).toLocaleString("en-CA")} floor — ${Math.round(t.kcalFloor - totals.kcal).toLocaleString("en-CA")} under`);
+    } else {
+      const diff = Math.round(totals.kcal - dailyTarget.kcal);
+      parts.push(`${Math.round(totals.kcal).toLocaleString("en-CA")} kcal vs a ${Math.round(dailyTarget.kcal).toLocaleString("en-CA")} target — ${Math.abs(diff).toLocaleString("en-CA")} ${diff > 0 ? "over" : "under"}`);
+    }
   }
   if (!t.proteinOk) {
     parts.push(`${Math.round(totals.protein)} g protein vs ${Math.round(dailyTarget.proteinLo)} g floor — ${Math.round(dailyTarget.proteinLo - totals.protein)} g short`);

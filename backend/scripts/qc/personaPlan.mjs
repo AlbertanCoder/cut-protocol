@@ -44,7 +44,7 @@ async function main() {
   const energy = bmr.computeEnergy(profile, weightKg);
   const derived = bmr.deriveTarget(profile, energy.tdee, energy.rmr);
   const floor = bmr.effectiveFloor(profile, energy.rmr);
-  const target = bmr.computeMacros(profile, weightKg, derived.target);
+  const target = bmr.computeMacros(profile, weightKg, derived.target, floor);
 
   const rawPool = await prisma.recipe.findMany({ include: { ingredients: { include: { food: true } } } });
   const afterDiet = ctx.filterRecipePool(rawPool, { dietaryStyle: profile.dietaryStyle, excludedFoods: profile.excludedFoods });

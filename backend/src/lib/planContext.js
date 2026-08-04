@@ -243,7 +243,10 @@ async function planContext(userId) {
   // calorie goal, and the drift is invisible because the plan looks internally
   // consistent. The resolver is authoritative; the row is a cache.
   const reconciled = await reconcileTarget(userId, { profile, reason: "planContext" });
-  const dailyTarget = computeMacros(profile, weightNowKg, reconciled.target);
+  // `reconciled.floor` is deriveTarget()'s effective floor, carried through
+  // report(). The solver needs it as an absolute number: its calorie band is
+  // symmetric, and without the floor the band re-opens the clamp downward.
+  const dailyTarget = computeMacros(profile, weightNowKg, reconciled.target, reconciled.floor);
   const mealConfig = { meals: profile.mealsPerDay, snacks: profile.snacksPerDay };
   const { pool: recipePool, rawPoolCount } = await loadRecipePool(profile);
   // T (v2): the user's SOFT taste ratings, as a Map for the solver's bias. A
