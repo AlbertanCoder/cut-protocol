@@ -207,10 +207,40 @@ function scoreDay(dailyTarget, slots, opts = {}) {
 // would fail nearly every real plan and make the flag meaningless. 25% of the
 // band midpoint is the "badly off" line: far enough out to matter, not a
 // rounding complaint.
-const DAY_KCAL_TOLERANCE_PCT = 0.15;
+const DAY_KCAL_TOLERANCE_PCT = 0.10;
 const DAY_PROTEIN_TOLERANCE_PCT = 0.15;
 const DAY_FAT_TOLERANCE_PCT = 0.25;
 const DAY_CARB_TOLERANCE_PCT = 0.25;
+
+// ── THE GOAL RULER (owner decision, 2026-08-03) ──────────────────────────
+//
+// The bands above grade a day on four macros at once. Measured over the real
+// 250-persona fleet, that is not what was failing days: of 166 failing axes,
+// fat-over was 83 and carb-over 47 — 78% of all failures were fat/carb RATIO
+// misses — while protein failed ONCE and kcal-under ONCE.
+//
+// A fat/carb ratio miss does not change the calorie deficit, and the deficit is
+// what drives fat loss. So the app was refusing four days in five over a number
+// that does not move the goal — and the trim arm built to fix those days is
+// what mangled portions, because squashing fat and carb into bands is the only
+// way to hit them (83.2% of trimmed slots landed below 0.7x a normal portion).
+//
+// So: grade what the goal is made of. Calories are the deficit. Protein is a
+// FLOOR (muscle retention; more is never a miss). Fat is a GUARDRAIL, not a
+// target — wide enough to be a nutrition limit rather than a ratio preference.
+// Carbs take the remainder and are not graded on their own.
+//
+// KETO IS EXEMPT from the fat CEILING — and from the ceiling only. There, a high
+// fat share is the diet's definition, not a defect. The FLOOR still binds: a keto
+// target prescribes more fat than any other, so a keto day starved of it is the
+// clearest possible miss, not the diet working. Keto's carb ceiling stays a hard
+// diet law.
+//
+// The gram-level essential-fat floor is NOT replaced by this — it lives on the
+// target (bmrEngine's fatFloorG) and still binds. This is the upper guardrail
+// and a generous lower one.
+const DAY_FAT_PCT_ENERGY_MIN = 0.15;
+const DAY_FAT_PCT_ENERGY_MAX = 0.35;
 
 // How far `v` sits outside [lo, hi], as a fraction of the band midpoint.
 // Direction is kept separate: a fat SHORTFALL and a keto carb OVERSHOOT are
@@ -239,16 +269,38 @@ function dayTolerance(dailyTarget, totals) {
   // Keto's carb ceiling is a diet LAW, not a preference: there is no upward
   // allowance on carbs for a ketogenic target (computeMacros stamps `keto`).
   const carbOverAllowance = dailyTarget.keto ? 0 : DAY_CARB_TOLERANCE_PCT;
+  // Energy share of fat in what the day ACTUALLY delivers — the composition the
+  // person eats, which is what a %E reference describes. Judging it against the
+  // TARGET's calories instead would let an over-eaten day look leaner than it is.
+  const fatPctEnergy = totals.kcal > 0 ? ((totals.fat || 0) * 9) / totals.kcal : 0;
+  const needsCarbFloor = dailyTarget.goal === "muscle gain" || dailyTarget.goal === "recomp";
   return {
     kcalDeltaPct, proteinShortPct,
     kcalOk: Math.abs(kcalDeltaPct) <= DAY_KCAL_TOLERANCE_PCT,
-    proteinOk: proteinShortPct <= DAY_PROTEIN_TOLERANCE_PCT,
+    proteinOk: totals.protein >= dailyTarget.proteinLo,
     proteinMid: pMid,
     fatShortPct: fat.shortPct, fatOverPct: fat.overPct,
     carbShortPct: carb.shortPct, carbOverPct: carb.overPct,
     fatJudged: fatBand, carbJudged: carbBand,
-    fatOk: !fatBand || (fat.shortPct <= DAY_FAT_TOLERANCE_PCT && fat.overPct <= DAY_FAT_TOLERANCE_PCT),
-    carbOk: !carbBand || (carb.shortPct <= DAY_CARB_TOLERANCE_PCT && carb.overPct <= carbOverAllowance),
+    // Reported for diagnosis and for any caller that still wants band distance —
+    // no longer what the day is JUDGED on. See the goal-ruler note above.
+    fatBandOk: !fatBand || (fat.shortPct <= DAY_FAT_TOLERANCE_PCT && fat.overPct <= DAY_FAT_TOLERANCE_PCT),
+    carbBandOk: !carbBand || (carb.shortPct <= DAY_CARB_TOLERANCE_PCT && carb.overPct <= carbOverAllowance),
+    fatPctEnergy,
+    // Fat is a GUARDRAIL on energy share. A day with no calories has no share to
+    // judge and is not silently failed on it; targets with no fat band are not
+    // judged. KETO IS EXEMPT FROM THE CEILING ONLY — see the note above. It used
+    // to short-circuit the whole guardrail, so a keto target prescribing 157-185 g
+    // of fat graded a 13 g day (4.9 %E) green with no miss line at all. That is a
+    // silent target miss on the diet's own defining macro.
+    fatOk: !fatBand || !(totals.kcal > 0)
+      || (fatPctEnergy >= DAY_FAT_PCT_ENERGY_MIN
+          && (dailyTarget.keto || fatPctEnergy <= DAY_FAT_PCT_ENERGY_MAX)),
+    needsCarbFloor,
+    // Carbs take the remainder and are not graded on their own — EXCEPT keto's
+    // carb ceiling, which is a diet law and survives the reframe untouched.
+    carbOk: (!dailyTarget.keto || !carbBand || carb.overPct <= 0) &&
+            (!needsCarbFloor || totals.carb >= dailyTarget.carbLo),
   };
 }
 
@@ -270,17 +322,29 @@ function dayMissLine(dailyTarget, totals) {
     parts.push(`${Math.round(totals.kcal).toLocaleString("en-CA")} kcal vs a ${Math.round(dailyTarget.kcal).toLocaleString("en-CA")} target — ${Math.abs(diff).toLocaleString("en-CA")} ${diff > 0 ? "over" : "under"}`);
   }
   if (!t.proteinOk) {
-    parts.push(`${Math.round(totals.protein)} g protein vs ${Math.round(t.proteinMid)} g — ${Math.round(t.proteinMid - totals.protein)} g short`);
+    parts.push(`${Math.round(totals.protein)} g protein vs ${Math.round(dailyTarget.proteinLo)} g floor — ${Math.round(dailyTarget.proteinLo - totals.protein)} g short`);
   }
   // Fat and carbs state the RANGE they missed and by how much — same plain
   // shape as the two lines above, same no-guilt vocabulary.
-  const rangeLine = (label, value, lo, hi, short) => {
-    const edge = short ? lo : hi;
-    const by = Math.round(Math.abs(value - edge));
-    return `${Math.round(value)} g ${label} vs a ${Math.round(lo)}–${Math.round(hi)} g range — ${by} g ${short ? "short" : "over"}`;
-  };
-  if (!t.fatOk) parts.push(rangeLine("fat", totals.fat || 0, dailyTarget.fatLo, dailyTarget.fatHi, t.fatShortPct > 0));
-  if (!t.carbOk) parts.push(rangeLine("carbs", totals.carb || 0, dailyTarget.carbLo, dailyTarget.carbHi, t.carbShortPct > 0));
+  if (!t.fatOk && totals.kcal > 0) {
+    const minG = (totals.kcal * DAY_FAT_PCT_ENERGY_MIN) / 9;
+    const maxG = (totals.kcal * DAY_FAT_PCT_ENERGY_MAX) / 9;
+    const short = t.fatPctEnergy < DAY_FAT_PCT_ENERGY_MIN;
+    const edge = short ? minG : maxG;
+    const by = Math.round(Math.abs((totals.fat || 0) - edge));
+    // A keto day has no ceiling, so quoting it a range would name a limit that
+    // does not exist for it. It gets the floor it actually missed, and nothing else.
+    parts.push(dailyTarget.keto
+      ? `${Math.round(totals.fat || 0)} g fat vs a ${Math.round(minG)} g floor — ${by} g short`
+      : `${Math.round(totals.fat || 0)} g fat vs a ${Math.round(minG)}–${Math.round(maxG)} g range — ${by} g ${short ? "short" : "over"}`);
+  }
+  if (!t.carbOk) {
+    if (dailyTarget.keto && t.carbOverPct > 0) {
+      parts.push(`${Math.round(totals.carb || 0)} g carbs vs a ${Math.round(dailyTarget.carbLo)}–${Math.round(dailyTarget.carbHi)} g range — ${Math.round(totals.carb - dailyTarget.carbHi)} g over`);
+    } else if (t.needsCarbFloor && totals.carb < dailyTarget.carbLo) {
+      parts.push(`${Math.round(totals.carb || 0)} g carbs vs ${Math.round(dailyTarget.carbLo)} g floor — ${Math.round(dailyTarget.carbLo - totals.carb)} g short`);
+    }
+  }
   return parts.length ? parts.join("; ") : null;
 }
 
@@ -431,8 +495,11 @@ function diagnoseFromResult({ dailyTarget, slots, pool, mealConfig, filters = {}
   // reason the user cannot deduce from the calorie and protein lines.
   if (fatOffDays > 0 || carbOffDays > 0) {
     const bits = [];
-    if (fatOffDays > 0) bits.push(`${fatOffDays} day(s) landed outside your ${Math.round(dailyTarget.fatLo)}–${Math.round(dailyTarget.fatHi)} g fat range`);
-    if (carbOffDays > 0) bits.push(`${carbOffDays} day(s) landed outside your ${Math.round(dailyTarget.carbLo)}–${Math.round(dailyTarget.carbHi)} g carb range`);
+    if (fatOffDays > 0) bits.push(`${fatOffDays} day(s) landed outside the 15-35% fat guardrail`);
+    if (carbOffDays > 0) {
+      if (dailyTarget.keto) bits.push(`${carbOffDays} day(s) exceeded the keto carb ceiling`);
+      else bits.push(`${carbOffDays} day(s) landed below your ${Math.round(dailyTarget.carbLo)} g carb floor`);
+    }
     reasons.push(`${bits.join(", and ")} — portion scaling moves a dish's calories, not its fat/carb ratio, so the pool's composition is what binds here.`);
     suggestions.push("Add (or AI-generate) a few recipes built around the macro you keep missing, or drop the cuisine/protein preference so the solver can reach dishes that carry it.");
   }
