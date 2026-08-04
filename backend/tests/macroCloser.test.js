@@ -169,3 +169,19 @@ test("G4: a NEUTRAL adjuster is still allowed on an already-over day — 'no wor
   assert.ok(added.length >= 1, "an adjuster that does not worsen the over macro must still be allowed");
   assert.equal(added[0].foodId, "isolate");
 });
+
+// ── drift guard: the closer's ceiling IS the day's ceiling ────────────────
+test("the closer may never push a day past the calorie ceiling it is graded on", () => {
+  // macroCloser inlines the band because importing mealSolver would close a cycle
+  // (mealSolver -> weeklyPlanner -> macroCloser). Inlined constants drift: this one
+  // sat at 1.15 with a comment claiming it matched the verdict long after the band
+  // moved to ±10%, licensing the closer to walk a day it was fixing out of
+  // tolerance. Assert the behaviour, so the two cannot separate again.
+  const solver = require("../src/lib/mealSolver.js");
+  const target = { kcal: 2000, proteinLo: 140, proteinHi: 160, fatLo: 60, fatHi: 75, carbLo: 180, carbMid: 200, carbHi: 220 };
+  const ceiling = 2000 * (1 + solver.DAY_KCAL_TOLERANCE_PCT);
+  assert.equal(solver.dayTolerance(target, { kcal: ceiling, protein: 150, fat: 55, carb: 200 }).kcalOk, true,
+    "at the day's ceiling is still in tolerance");
+  assert.equal(solver.dayTolerance(target, { kcal: ceiling + 1, protein: 150, fat: 55, carb: 200 }).kcalOk, false,
+    "one kcal past it is not — and the closer's own limit must be this same number");
+});
