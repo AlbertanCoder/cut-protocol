@@ -266,6 +266,35 @@ const COMPOSITION_BIAS_K = 4;
 // The general rule, worth stating once: the search may optimise for more than the
 // verdict grades. A verdict says what is acceptable; a bias says what is preferred
 // among acceptable options. They are allowed to differ and this one deliberately does.
+//
+// ── TRIED AND MEASURED AND REVERTED, 2026-08-04. Do not re-attempt without reading this.
+//
+// The obvious next move looks compelling on paper: this aims fat at the MIDPOINT of
+// the target's gram band, while the verdict accepts a 20-35 %E guardrail. Measured,
+// the band is 16% wide as a share of its own midpoint and the guardrail is 54% wide
+// — the search appears to be working 3.4x harder than required. And of 510 failing
+// fleet days, 340 (67%) had fat inside the guardrail already and failed on kcal or
+// protein anyway, so the fat pull looks like it is buying nothing.
+//
+// It was implemented: zero penalty anywhere inside the acceptable share, penalty
+// only outside it, threaded through compositionWeight, compositionDistance and the
+// per-slot budget re-share. Three seeds:
+//
+//     satisfiable  80.6% (point aim)  ->  77.4% (range aim)   -3.2 pp
+//
+// WHY IT LOSES, measured rather than guessed: days that hug a guardrail edge
+// (<10% of the range from it) went 5.8% -> 10.1%, and the median margin to the
+// nearer edge fell 35.6% -> 32.1% of the range.
+//
+// A point target inside a range is not over-constraint. It is CENTERING, and
+// centering is slack management: a day parked mid-guardrail can absorb the portion
+// scaling and the macro closer still to come, and a day sitting on the edge cannot.
+// The 67% figure is real and still misleading — those days had fat inside the
+// guardrail BECAUSE the point aim put it there.
+//
+// Evidence kept at fleet/out/REAIM/. If you want to revisit this, the variant worth
+// testing is a SOFT deadband (partial credit near the middle, not zero), never a
+// hard one — but the burden of proof is on the change, and it starts 3.2 pp down.
 function compositionWeight(r, target) {
   if (!target || !(target.kcalTarget > 0)) return 1;
   const slotKcal = target.kcalTarget;
