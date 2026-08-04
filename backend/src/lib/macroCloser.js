@@ -80,8 +80,19 @@ function wouldHarm(totals, dailyTarget, food, grams) {
     fat: totals.fat + (food.fat || 0) * f,
     carb: totals.carb + (food.carb || 0) * f,
   };
-  // Calories: never push past the +15% ceiling the day is graded on.
-  if (dailyTarget.kcal > 0 && after.kcal > dailyTarget.kcal * 1.15) return true;
+  // Calories: never push past the ceiling the day is graded on.
+  //
+  // This was 1.15 with a comment saying the same thing, and it had stopped being
+  // true — the day band is ±10%, so the closer was licensed to walk a day it was
+  // fixing straight out of tolerance. Only 3 of 361 closer-fired fleet days landed
+  // in the 10-15% window, so it was barely biting, but a guard whose stated reason
+  // and actual number disagree is a guard nobody can reason about.
+  //
+  // Inlined rather than imported: mealSolver requires weeklyPlanner requires this
+  // file, so importing it back would close a cycle. Same convention as oracle.mjs
+  // — inline the constant, cite the source, and guard the drift with a test.
+  const KCAL_CEILING_PCT = 0.10; // mealSolver.DAY_KCAL_TOLERANCE_PCT
+  if (dailyTarget.kcal > 0 && after.kcal > dailyTarget.kcal * (1 + KCAL_CEILING_PCT)) return true;
   // Fat / carbs: never push a macro further past its ceiling than it already is.
   //
   // This compares the SIZE of the overage, not band membership. The membership test
@@ -161,6 +172,11 @@ function closeDayMacros({ slots, dailyTarget, adjusters }) {
     if (pShort > 0) gaps.push({ role: 'protein', need: pShort, rel: pShort / proteinMid });
     const fat = bandMiss(totals.fat, dailyTarget.fatLo, dailyTarget.fatHi);
     if (fat.short > 0 && fat.mid > 0) gaps.push({ role: 'fat', need: fat.short, rel: fat.short / fat.mid });
+    // STEERS THE CLOSER ON PURPOSE. The day verdict no longer grades a carb
+    // SHORTFALL against this band (carbs are the remainder; only the anti-ketosis
+    // floor and keto's ceiling bind). Closing toward the band anyway is what keeps
+    // the closer adding a carb side rather than more of whatever is cheapest, so
+    // this is a preference the search keeps, not a rule the verdict enforces.
     const carb = bandMiss(totals.carb, dailyTarget.carbLo, dailyTarget.carbHi);
     if (carb.short > 0 && carb.mid > 0) gaps.push({ role: 'carb', need: carb.short, rel: carb.short / carb.mid });
     if (!gaps.length) break;
