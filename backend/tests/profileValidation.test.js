@@ -92,13 +92,50 @@ test("onboarding-flow-4: unknown body fat derives lean mass from an ASSUMED body
   for (const bf of [0, null, undefined]) {
     const m = computeMacros({ ...M232, bodyFatPct: bf }, KG232, 2202);
     assert.ok(Math.abs(m.lbmLb - 183.28) < 0.01, `bf=${bf} lbmLb ${m.lbmLb} should be 183.28`);
-    assert.equal(m.proteinLo, 209);
-    assert.equal(m.proteinHi, 229);
     // the bug, named so it can never quietly return
     assert.notEqual(m.proteinLo, 264);
     assert.notEqual(m.proteinHi, 290);
     assert.ok(Math.abs(m.lbmLb - kg2lb(KG232)) > 40, "lean mass must not be total bodyweight");
+    // The band's TOP is still lean-mass-derived — it is a display target.
+    assert.equal(m.proteinHi, 229);
   }
+});
+
+// UPDATED 2026-08-04. The test above still owns lean mass; this one owns the
+// GRADED FLOOR, which stopped being the same thing when the ruler made proteinLo
+// a hard daily minimum (a day 1 g under it fails).
+//
+// Deriving that from an assumed body fat means failing someone every day against
+// a number nobody measured. Measured on the 103 fleet personas who DO know their
+// body fat, recomputing their floor as if they had left it blank: it moves by
+// >=10 g for 69% of them and is >=10 g TOO HIGH for 42%, worst case +59 g.
+//
+// So when body fat is unknown the floor comes off TOTAL BODYWEIGHT, which needs no
+// guess. Note the direction: 232 lb here gives 168 g, well BELOW the 209 g the
+// assumption produced and nowhere near the 264 g of the original bug. For a floor,
+// too low is harmless (easy to clear) and too high fails days that should pass —
+// the substitute is chosen to minimise over-prescription, not mean error.
+test("onboarding-flow-4: with body fat unknown, the graded floor comes off bodyweight, not off a guess", () => {
+  const results = [0, null, undefined].map((bf) => computeMacros({ ...M232, bodyFatPct: bf }, KG232, 2202));
+  for (const m of results) {
+    assert.equal(m.proteinFloorG, Math.round(KG232 * 1.6), "1.6 g per kg of bodyweight");
+    assert.equal(m.proteinFloorG, 168);
+    assert.ok(m.proteinFloorG < 209, "below what the assumed-body-fat lean mass would have demanded");
+    // THE BAND IS UNTOUCHED. Only the graded floor moved — lowering proteinLo
+    // itself was tried and cost 0.18 g/kg of delivered protein, because
+    // proteinMid is what the search aims at.
+    assert.equal(m.proteinLo, 209, "the prescription does not move");
+    assert.equal(m.proteinHi, 229);
+  }
+  // All three spellings of "unknown" still agree with EACH OTHER.
+  assert.equal(results[0].proteinFloorG, results[1].proteinFloorG);
+  assert.equal(results[1].proteinFloorG, results[2].proteinFloorG);
+
+  // A KNOWN body fat is untouched by any of this — its floor IS the band's bottom.
+  const known = computeMacros({ ...M232, bodyFatPct: 21 }, KG232, 2202);
+  assert.equal(known.bfAssumed, false);
+  assert.equal(known.proteinFloorG, 209, "measured body fat still floors on lean mass");
+  assert.equal(known.proteinFloorG, known.proteinLo);
 });
 
 test("onboarding-flow-4: the assumption is LABELLED in the returned data, per sex", () => {

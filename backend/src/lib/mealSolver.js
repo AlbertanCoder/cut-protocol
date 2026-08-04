@@ -302,6 +302,24 @@ const hasBand = (lo, hi) => Number.isFinite(lo) && Number.isFinite(hi) && hi > 0
 
 function dayTolerance(dailyTarget, totals) {
   const pMid = (dailyTarget.proteinLo + dailyTarget.proteinHi) / 2;
+  // THE GRADED FLOOR IS NOT THE BAND'S BOTTOM when body composition is a guess.
+  //
+  // proteinLo derives from lean mass, and lean mass from body fat — which the
+  // engine ASSUMES (21% M / 28% F) when the user has not measured it. Measured on
+  // the 103 fleet personas who DO know theirs, recomputing as if they had left it
+  // blank moves the floor by >=10 g for 69% of them and >=10 g TOO HIGH for 42%,
+  // worst case +59 g. Failing someone every day against that is the defect.
+  //
+  // bmrEngine publishes `proteinFloorG` separately: proteinLo when body fat is
+  // measured, 1.6 g/kg of BODYWEIGHT when it is not — a number needing no guess.
+  // The BAND is untouched, so the search still aims where it always did and only
+  // the grade moved. Lowering proteinLo itself was tried first and cost 0.18 g/kg
+  // of delivered protein, because proteinMid is what the search aims at.
+  //
+  // Falls back to proteinLo when absent, so partial targets and older fixtures
+  // grade exactly as they did.
+  const proteinFloor = Number.isFinite(dailyTarget.proteinFloorG)
+    ? dailyTarget.proteinFloorG : dailyTarget.proteinLo;
   const kcalDeltaPct = dailyTarget.kcal > 0 ? (totals.kcal - dailyTarget.kcal) / dailyTarget.kcal : 1;
   const proteinShortPct = pMid > 0 ? Math.max(0, (pMid - totals.protein) / pMid) : 0;
   // A target that carries no fat/carb band (older fixtures, partial targets)
@@ -413,7 +431,7 @@ function dayTolerance(dailyTarget, totals) {
   const carbMissSide = carbOk ? null : (dailyTarget.keto ? "over" : "short");
   return {
     kcalDeltaPct, proteinShortPct,
-    kcalFloor, kcalFloorBinding,
+    kcalFloor, kcalFloorBinding, proteinFloor,
     kcalOk: dailyTarget.kcal > 0
       && totals.kcal >= kcalLoEdge
       && kcalDeltaPct <= DAY_KCAL_TOLERANCE_PCT,
@@ -424,7 +442,7 @@ function dayTolerance(dailyTarget, totals) {
     // rule it replaced (a shortfall against the band midpoint) failed safe here,
     // so this was a straight robustness regression, and NaN is the one thing a
     // number that can reach the screen must never be.
-    proteinOk: !Number.isFinite(dailyTarget.proteinLo) || totals.protein >= dailyTarget.proteinLo,
+    proteinOk: !Number.isFinite(proteinFloor) || totals.protein >= proteinFloor,
     proteinMid: pMid,
     fatShortPct: fat.shortPct, fatOverPct: fat.overPct,
     carbShortPct: carb.shortPct, carbOverPct: carb.overPct,
@@ -475,8 +493,8 @@ function dayMissLine(dailyTarget, totals) {
       parts.push(`${Math.round(totals.kcal).toLocaleString("en-CA")} kcal vs a ${Math.round(dailyTarget.kcal).toLocaleString("en-CA")} target — ${Math.abs(diff).toLocaleString("en-CA")} ${diff > 0 ? "over" : "under"}`);
     }
   }
-  if (!t.proteinOk && Number.isFinite(dailyTarget.proteinLo)) {
-    parts.push(`${Math.round(totals.protein)} g protein vs ${Math.round(dailyTarget.proteinLo)} g floor — ${Math.round(dailyTarget.proteinLo - totals.protein)} g short`);
+  if (!t.proteinOk && Number.isFinite(t.proteinFloor)) {
+    parts.push(`${Math.round(totals.protein)} g protein vs ${Math.round(t.proteinFloor)} g floor — ${Math.round(t.proteinFloor - totals.protein)} g short`);
   }
   // Fat and carbs state the RANGE they missed and by how much — same plain
   // shape as the two lines above, same no-guilt vocabulary.

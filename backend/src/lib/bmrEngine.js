@@ -392,9 +392,52 @@ function computeMacros(profile, weightKg, targetKcal, floorKcal = null) {
   const bfKnown = profile.bodyFatPct != null && profile.bodyFatPct > 0;
   const bfForLbm = bfKnown ? profile.bodyFatPct : (profile.sex === "F" ? ASSUMED_BODY_FAT_PCT.F : ASSUMED_BODY_FAT_PCT.M);
   const lbmLb = weightLb * (1 - bfForLbm / 100);
+  // WHEN BODY COMPOSITION IS A GUESS, THE FLOOR IS NOT DERIVED FROM IT.
+  //
+  // proteinLo stopped being a display number when the ruler made it a HARD DAILY
+  // FLOOR — a day 1 g under it fails. Deriving that from an assumed body fat means
+  // failing someone every day against a number nobody measured.
+  //
+  // MEASURED on the 103 fleet personas who DO know their body fat, by recomputing
+  // their floor as if they had left it blank: it moves by >=10 g for 69% of them,
+  // and is >=10 g TOO HIGH for 42%. Worst case +59 g (a woman at 46% true body fat
+  // assumed at 28%: floor 175 -> 234 g).
+  //
+  // For a FLOOR the two directions are not symmetric. Too low is harmless — the
+  // floor is simply easy to clear. Too high fails days that should have passed. So
+  // the substitute is chosen to minimise OVER-prescription, not mean error:
+  //
+  //     assumed BF -> lean mass   mean err 16.5 g   >=10 g too high for 42%
+  //     1.6 g/kg bodyweight       mean err 27.2 g   >=10 g too high for  7%
+  //     1.8 g/kg bodyweight       mean err 17.5 g   >=10 g too high for 19%
+  //
+  // 1.6 g/kg of BODYWEIGHT needs no guess at all, and is Morton et al. 2018's
+  // meta-regression plateau (1.62 g/kg/d, BJSM 52:376-84) — a bodyweight-based
+  // number by construction, which is why it can stand in for one that isn't.
+  //
+  // NOT a better estimator, deliberately. Deurenberg (BMI+age+sex) was tried on the
+  // same 103 people and is WORSE here: mean body-fat error 13.0 pp against the flat
+  // constant's 7.0, and double the floor error. That test is not conclusive about
+  // Deurenberg in general — these personas are synthetic and their body-fat/BMI
+  // relationship may not be lifelike — which is the point: the fix must not depend
+  // on which guess is better.
+  // THE PRESCRIPTION IS UNCHANGED. Only the GRADED FLOOR moves.
+  //
+  // First attempt lowered proteinLo itself. Measured: delivered protein for
+  // assumed-body-fat users fell from 2.07 to 1.89 g/kg bodyweight (median, p10
+  // 1.85 -> 1.76), while the known-body-fat control sat still at 2.00. Lowering
+  // proteinLo lowers proteinMid, which is what the SEARCH aims at — so it quietly
+  // reduced how much protein plans actually deliver, on a cut, which is the last
+  // place to spend it. The evidence only ever supported changing what is GRADED.
+  //
+  // So the band stays exactly where it was and a separate floor is published.
+  // Aim at the middle, grade at a boundary that is defensible — the same split as
+  // the search/verdict distinction in weeklyPlanner.
+  const PROTEIN_FLOOR_G_PER_KG_BW = 1.6;
   const proteinLo = Math.round(lbmLb * 1.14);
   const proteinHi = Math.round(lbmLb * 1.25);
   const proteinMid = (proteinLo + proteinHi) / 2;
+  const proteinFloorG = bfKnown ? proteinLo : Math.round(weightKg * PROTEIN_FLOOR_G_PER_KG_BW);
 
   // Keto branch — carbs capped, fat fills the balance. Only for dietaryStyle
   // "keto", so every other profile (including the diet="none" golden fixture)
@@ -410,7 +453,7 @@ function computeMacros(profile, weightKg, targetKcal, floorKcal = null) {
     const fat = fatBandFor(lbmLb, fatFromBalance);
     return {
       lbmLb, kcal: targetKcal,
-      proteinLo, proteinHi,
+      proteinLo, proteinHi, proteinFloorG,
       fatLo: fat.fatLo, fatHi: fat.fatHi,
       fatFloorG: fat.fatFloorG, fatFloored: fat.fatFloored,
       fatPctEnergy: targetKcal > 0 ? Math.round(((fat.fatMid * 9) / targetKcal) * 10000) / 10000 : null,
@@ -461,7 +504,7 @@ function computeMacros(profile, weightKg, targetKcal, floorKcal = null) {
   return {
     lbmLb,
     kcal: targetKcal,
-    proteinLo, proteinHi,
+    proteinLo, proteinHi, proteinFloorG,
     fatLo, fatHi,
     // The floor the band is held to, published so no consumer has to re-derive
     // it — and so mealSolver has an absolute number to clamp its downward

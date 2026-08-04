@@ -23,13 +23,21 @@ test("unknown body fat (null/0/undefined) falls back to a disclosed assumption, 
     const m = computeMacros({ sex: "M", bodyFatPct: bf, dietaryStyle: "none" }, 80, 2000);
     assert.equal(m.bfAssumed, true, `bf=${bf} must flag the assumption`);
     assert.equal(m.assumedBodyFatPct, 21, `bf=${bf} assumes the M midpoint`);
+    // The assumption still drives lean mass (and therefore fat and the band's top);
+    // what it no longer drives is the graded protein floor. Both are asserted below.
     // LBM is off ~21% BF, not 0% BF: protein is nowhere near the ~200 g the old
     // full-bodyweight bug produced for a 176 lb man.
     assert.ok(m.proteinHi < 185, `unknown-BF protein ${m.proteinHi} must not be bodyweight-based`);
     assert.ok(!Number.isNaN(m.proteinLo) && !Number.isNaN(m.carbMid), `bf=${bf} must not produce NaN`);
-    // all three unknown spellings collapse to the same assumed-BF result
+    // The GRADED FLOOR is bodyweight-derived when body fat is unknown (2026-08-04)
+    // — see profileValidation.test.js for the measurement behind that. It is LOWER
+    // than the assumed-body-fat floor, so the old full-bodyweight over-prescription
+    // this test was written against (~200 g for a 176 lb man) stays impossible.
+    assert.equal(m.proteinFloorG, Math.round(80 * 1.6), `bf=${bf} floors on bodyweight`);
+    assert.ok(m.proteinFloorG < known.proteinFloorG, "a guess must not out-demand a measurement");
+    // The PRESCRIPTION is identical either way — only the graded floor differs.
     assert.equal(m.proteinLo, known.proteinLo);
-    assert.equal(m.carbMid, known.carbMid);
+    assert.equal(m.carbMid, known.carbMid, "everything not the floor is unaffected by the guess");
   }
 });
 

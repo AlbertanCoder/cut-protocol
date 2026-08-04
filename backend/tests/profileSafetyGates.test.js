@@ -33,6 +33,11 @@ test("the number that makes this necessary: the engine really does prescribe 1,2
   assert.equal(t.target, 1212, "50 kg / 160 cm / 2.0 lb-wk lands on 1,212 kcal");
   assert.equal(m.proteinLo, 90);
   assert.equal(m.proteinHi, 99);
+  // She has no body fat on file, so the GRADED floor comes off bodyweight
+  // (50 kg x 1.6 = 80 g) rather than off an assumed 28%. The prescribed band is
+  // unchanged. Not the subject of this test — the 1,212 kcal is — but pinned so
+  // the floor policy cannot drift here silently.
+  assert.equal(m.proteinFloorG, 80);
   // Adolescent EER is roughly 1,800-2,200. The engine is ~600-1,000 under it
   // and has no growth term with which to know that.
   assert.ok(t.target < 1500, "and it is far under any published adolescent requirement");
