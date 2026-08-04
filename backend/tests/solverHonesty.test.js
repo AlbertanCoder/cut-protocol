@@ -125,7 +125,7 @@ test("dayMissLine: plain English, names the direction, silent only when on targe
   const over = dayMissLine(t, { kcal: 2600, protein: 150 });
   assert.match(over, /600 over/);
   const short = dayMissLine(t, { kcal: 2000, protein: 90 });
-  assert.match(short, /90 g protein vs 150 g — 60 g short/);
+  assert.match(short, /90 g protein vs 140 g floor — 50 g short/);
   // No guilt language anywhere — this text renders on food data (CLAUDE.md law b).
   for (const line of [under, over, short]) {
     assert.doesNotMatch(line, /fail|bad|wrong|blew|ruin/i);
@@ -145,11 +145,11 @@ test("scoreWeek: a marginal miss is judged on exact totals, never on display-rou
   assert.equal(score.daysInTolerance, 0);
 });
 
-test("dayTolerance: ±15% calories, protein shortfall only (over-delivering protein is never a miss)", () => {
+test("dayTolerance: ±10% calories, protein floor only (over-delivering protein is never a miss)", () => {
   const t = { kcal: 2000, proteinLo: 140, proteinHi: 160 };
-  assert.equal(dayTolerance(t, { kcal: 2300, protein: 150 }).kcalOk, true);   // +15% exactly
-  assert.equal(dayTolerance(t, { kcal: 2301, protein: 150 }).kcalOk, false);
-  assert.equal(dayTolerance(t, { kcal: 1700, protein: 150 }).kcalOk, true);   // -15% exactly
+  assert.equal(dayTolerance(t, { kcal: 2200, protein: 150 }).kcalOk, true);   // +10% exactly
+  assert.equal(dayTolerance(t, { kcal: 2201, protein: 150 }).kcalOk, false);
+  assert.equal(dayTolerance(t, { kcal: 1800, protein: 150 }).kcalOk, true);   // -10% exactly
   assert.equal(dayTolerance(t, { kcal: 2000, protein: 260 }).proteinOk, true, "protein over the band is not a miss");
   assert.equal(dayTolerance(t, { kcal: 2000, protein: 120 }).proteinOk, false);
 });
@@ -224,7 +224,7 @@ test("a week that misses only ONE day still gets a reason (no threshold lottery)
   // exactly 6/7, and outcomes range from 2/7 to 7/7 — so the property under test is
   // exercised harder than before, not more softly.
   const pool = deepMealPool();
-  const stretchTarget = { kcal: 3400, proteinLo: 195, proteinHi: 215, fatLo: 50, fatHi: 95, carbLo: 150, carbHi: 320 };
+  const stretchTarget = { kcal: 3200, proteinLo: 170, proteinHi: 215, fatLo: 50, fatHi: 95, carbLo: 150, carbMid: 235, carbHi: 320 };
   let sixOfSeven = 0;
   for (let seed = 1; seed <= 40; seed++) {
     const week = await generateBestWeekPlan(stretchTarget, { meals: 3, snacks: 0 }, pool, { rng: makeRng(seed), attempts: 1 });

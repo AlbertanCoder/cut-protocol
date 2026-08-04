@@ -14,6 +14,8 @@ const {
   KCAL_TOLERANCE_PCT,
 } = require("./weeklyPlanner.js");
 const { buildCostCache, explainPool } = require("./recipeCost.js");
+// The anti-ketosis floor has ONE definition, in the file that prescribes to it.
+const { NONKETO_CARB_FLOOR_G } = require("./bmrEngine.js");
 // Protein-priority / recomposition mode — shared weighting + honesty-check
 // primitives (also consumed by brain/scorer.js so the floor means the same
 // number in both places). Pure math, no LLM: safe on this always-on path.
@@ -286,7 +288,30 @@ function dayTolerance(dailyTarget, totals) {
   // person eats, which is what a %E reference describes. Judging it against the
   // TARGET's calories instead would let an over-eaten day look leaner than it is.
   const fatPctEnergy = totals.kcal > 0 ? ((totals.fat || 0) * 9) / totals.kcal : 0;
-  const needsCarbFloor = dailyTarget.goal === "muscle gain" || dailyTarget.goal === "recomp";
+  // THE ANTI-KETOSIS FLOOR. Carbs are the remainder and are not graded as a
+  // target — but "not a target" is not "unbounded". bmrEngine holds a non-keto
+  // target at NONKETO_CARB_FLOOR_G for a stated reason: below ~50 g/day a diet
+  // drifts into ketosis, so squeezing an omnivore plan toward zero carbs makes
+  // it silently ketogenic. The verdict has to grade against the SAME number, or
+  // the app ships exactly the day the engine refused to prescribe.
+  //
+  // Measured: 20 green non-keto days below 50 g across a sweep of lean/heavy
+  // profiles at aggressive deficits — protein at its floor and fat at the 35 %E
+  // ceiling squeeze the remainder, and nothing was watching it.
+  //
+  // Capped at the target's own carbMid so this never demands MORE than the
+  // prescription could allocate: on a target the engine had to squeeze below the
+  // floor itself (`carbFloored`), the day owes what was prescribed, not 50. That
+  // overshoot is already disclosed as carbFloored + macroKcalGap.
+  //
+  // This replaces a `dailyTarget.goal === "muscle gain" || "recomp"` branch that
+  // could never fire: nothing in the codebase sets `goal` (Profile has no such
+  // column), so six passing tests were dressing up dead code as shipped
+  // behaviour. Goal-parameterised carb floors can sit ON TOP of this one when a
+  // goal field exists; a safety floor is true for everyone and needs no schema.
+  const carbFloorG = !dailyTarget.keto && carbBand && Number.isFinite(dailyTarget.carbMid)
+    ? Math.min(NONKETO_CARB_FLOOR_G, dailyTarget.carbMid)
+    : null;
   // THE SAFETY FLOOR OUTRANKS THE BAND. deriveTarget() clamps a target UP to
   // max(RMR×0.95, 1500 M / 1200 F, the user's own stricter floor) — the
   // constitution's hard floor — and for anyone on an aggressive rate the target
@@ -346,11 +371,12 @@ function dayTolerance(dailyTarget, totals) {
     fatOk: !fatBand || !(totals.kcal > 0)
       || ((totals.fat || 0) >= fatLoEdgeG
           && (dailyTarget.keto || fatPctEnergy <= DAY_FAT_PCT_ENERGY_MAX)),
-    needsCarbFloor,
-    // Carbs take the remainder and are not graded on their own — EXCEPT keto's
-    // carb ceiling, which is a diet law and survives the reframe untouched.
-    carbOk: (!dailyTarget.keto || !carbBand || carb.overPct <= 0) &&
-            (!needsCarbFloor || totals.carb >= dailyTarget.carbLo),
+    carbFloorG,
+    // Carbs take the remainder and are not graded as a TARGET — but two floors
+    // still hold: keto's carb ceiling, a diet law that survives the reframe
+    // untouched, and the non-keto anti-ketosis floor above.
+    carbOk: (!dailyTarget.keto || !carbBand || carb.overPct <= 0)
+            && (carbFloorG == null || (totals.carb || 0) >= carbFloorG),
   };
 }
 
@@ -398,8 +424,8 @@ function dayMissLine(dailyTarget, totals) {
   if (!t.carbOk) {
     if (dailyTarget.keto && t.carbOverPct > 0) {
       parts.push(`${Math.round(totals.carb || 0)} g carbs vs a ${Math.round(dailyTarget.carbLo)}–${Math.round(dailyTarget.carbHi)} g range — ${Math.round(totals.carb - dailyTarget.carbHi)} g over`);
-    } else if (t.needsCarbFloor && totals.carb < dailyTarget.carbLo) {
-      parts.push(`${Math.round(totals.carb || 0)} g carbs vs ${Math.round(dailyTarget.carbLo)} g floor — ${Math.round(dailyTarget.carbLo - totals.carb)} g short`);
+    } else if (t.carbFloorG != null && (totals.carb || 0) < t.carbFloorG) {
+      parts.push(`${Math.round(totals.carb || 0)} g carbs vs ${Math.round(t.carbFloorG)} g floor — ${Math.round(t.carbFloorG - (totals.carb || 0))} g short`);
     }
   }
   return parts.length ? parts.join("; ") : null;
@@ -552,10 +578,10 @@ function diagnoseFromResult({ dailyTarget, slots, pool, mealConfig, filters = {}
   // reason the user cannot deduce from the calorie and protein lines.
   if (fatOffDays > 0 || carbOffDays > 0) {
     const bits = [];
-    if (fatOffDays > 0) bits.push(`${fatOffDays} day(s) landed outside the 15-35% fat guardrail`);
+    if (fatOffDays > 0) bits.push(`${fatOffDays} day(s) landed outside the ${Math.round(DAY_FAT_PCT_ENERGY_MIN * 100)}-${Math.round(DAY_FAT_PCT_ENERGY_MAX * 100)}% fat guardrail`);
     if (carbOffDays > 0) {
       if (dailyTarget.keto) bits.push(`${carbOffDays} day(s) exceeded the keto carb ceiling`);
-      else bits.push(`${carbOffDays} day(s) landed below your ${Math.round(dailyTarget.carbLo)} g carb floor`);
+      else bits.push(`${carbOffDays} day(s) landed below the ${Math.round(Math.min(NONKETO_CARB_FLOOR_G, dailyTarget.carbMid ?? NONKETO_CARB_FLOOR_G))} g carb floor a non-keto plan holds`);
     }
     reasons.push(`${bits.join(", and ")} — portion scaling moves a dish's calories, not its fat/carb ratio, so the pool's composition is what binds here.`);
     suggestions.push("Add (or AI-generate) a few recipes built around the macro you keep missing, or drop the cuisine/protein preference so the solver can reach dishes that carry it.");

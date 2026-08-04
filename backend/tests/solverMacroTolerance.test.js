@@ -1,10 +1,13 @@
 // solver-core-2 / goal-ruler (2026-08-03) — FAT AND CARBS ARE FIRST-CLASS IN THE VERDICT.
 //
 // The goal ruler:
-// Kcal: ±10%
-// Protein: floor only (>= proteinLo)
-// Fat: 15–35 %E guardrail (except Keto, which has no ceiling)
-// Carbs: Goal-dependent (floor for muscle gain/recomp, otherwise ungraded, Keto ceiling survives)
+// Kcal:    ±10%, and never below the target's safety floor
+// Protein: floor only (>= proteinLo); a target without one is not judged on it
+// Fat:     20–35 %E, floored at the target's essential fatFloorG.
+//          KETO is exempt from the CEILING only — the floor still binds.
+// Carbs:   not graded as a target. Two floors survive: keto's carb ceiling
+//          (a diet law) and the non-keto anti-ketosis floor (50 g, capped at
+//          the target's own carbMid so it never demands more than was prescribed).
 
 process.env.BRAIN = "off";
 
@@ -17,17 +20,18 @@ const {
 } = require("../src/lib/mealSolver.js");
 
 // 2,000 kcal, protein 140–160, fat 60–75 (mid 67.5), carbs 180–220 (mid 200).
-const T = { kcal: 2000, proteinLo: 140, proteinHi: 160, fatLo: 60, fatHi: 75, carbLo: 180, carbHi: 220, goal: "fat loss" };
+// carbMid 200 => the anti-ketosis floor binds at min(50, 200) = 50 g.
+const T = { kcal: 2000, proteinLo: 140, proteinHi: 160, fatLo: 60, fatHi: 75, carbLo: 180, carbMid: 200, carbHi: 220 };
 
 // ── 1. the headline property ──────────────────────────────────────────────
 
 test("a day that meets kcal + protein but is badly short on FAT is NOT in tolerance", () => {
-  // Below 15% E fat is a miss. 15% of 2000 is 300 kcal (33.3g).
+  // Below 20 %E is a miss. 20% of 2,000 kcal is 400 kcal = 44.4 g.
   const totals = { kcal: 2000, protein: 150, fat: 25, carb: 275 };
   const tol = dayTolerance(T, totals);
   assert.equal(tol.kcalOk, true, "calories are on target");
   assert.equal(tol.proteinOk, true, "protein is on target");
-  assert.equal(tol.fatOk, false, "25 g fat is below the 15% guardrail");
+  assert.equal(tol.fatOk, false, "25 g fat is below the 20 %E guardrail");
   assert.equal(dayInTolerance(tol), false, "and therefore the DAY is not in tolerance");
 });
 
@@ -41,12 +45,40 @@ test("carbs are NOT graded for fat loss targets (the remainder) — overshoot is
   assert.equal(dayInTolerance(tol), true);
 });
 
-test("carbs ARE graded against a floor for muscle gain targets", () => {
-  const target = { ...T, goal: "muscle gain" };
-  const totals = { kcal: 2000, protein: 150, fat: 62, carb: 100 }; // short of 180g floor
-  const tol = dayTolerance(target, totals);
-  assert.equal(tol.carbOk, false, "short of the glycogen floor is a miss");
+test("a NON-KETO day below the anti-ketosis floor is a miss, however the calories land", () => {
+  // Measured: 20 green non-keto days under 50 g carbs across lean/heavy profiles
+  // at aggressive deficits — protein at its floor and fat at the 35 %E ceiling
+  // squeeze the remainder toward zero, which is bmrEngine's stated reason for
+  // NONKETO_CARB_FLOOR_G. The verdict has to grade against the same number or
+  // the app ships exactly the day the engine refused to prescribe.
+  const ketogenic = { kcal: 2000, protein: 150, fat: 62, carb: 37 };
+  const tol = dayTolerance(T, ketogenic);
+  assert.equal(tol.kcalOk, true, "calories are on target");
+  assert.equal(tol.proteinOk, true);
+  assert.equal(tol.fatOk, true, "and the fat share is fine — nothing else catches this");
+  assert.equal(tol.carbOk, false, "37 g on a non-keto plan is a silently ketogenic day");
   assert.equal(dayInTolerance(tol), false);
+  assert.equal(dayTolerance(T, { ...ketogenic, carb: 50 }).carbOk, true);
+});
+
+test("the anti-ketosis floor never demands more carbs than the target could prescribe", () => {
+  // bmrEngine squeezes carbMid BELOW its own 50 g floor for a lean, heavy,
+  // floor-clamped profile — it surfaces that as carbFloored + macroKcalGap. The
+  // day then owes what was prescribed, not 50, or the verdict would fail a day
+  // for missing a number the engine never asked it to hit.
+  const squeezed = { ...T, carbLo: 17, carbMid: 29, carbHi: 41 };
+  assert.equal(dayTolerance(squeezed, { kcal: 2000, protein: 150, fat: 62, carb: 29 }).carbFloorG, 29);
+  assert.equal(dayTolerance(squeezed, { kcal: 2000, protein: 150, fat: 62, carb: 29 }).carbOk, true);
+  assert.equal(dayTolerance(squeezed, { kcal: 2000, protein: 150, fat: 62, carb: 28 }).carbOk, false);
+});
+
+test("KETO is judged on its ceiling, never on the non-keto carb floor", () => {
+  // 25 g is the whole point of the diet there. Applying a 50 g floor to a keto
+  // target would fail every compliant keto day.
+  const keto = { kcal: 2000, proteinLo: 150, proteinHi: 170, fatLo: 130, fatHi: 160, carbLo: 10, carbMid: 25, carbHi: 30, keto: true };
+  const tol = dayTolerance(keto, { kcal: 2000, protein: 160, fat: 145, carb: 25 });
+  assert.equal(tol.carbFloorG, null, "no anti-ketosis floor on a ketogenic target");
+  assert.equal(tol.carbOk, true);
 });
 
 test("the fat allowance is a 20–35 %E guardrail measured on the day's ACTUAL kcal", () => {
@@ -82,7 +114,7 @@ test("the target's essential-fat floor binds even when the %E share clears", () 
 });
 
 test("inside the guardrail is always inside tolerance, in both directions", () => {
-  const target = { ...T, goal: "muscle gain" }; // enforce carb floor
+  const target = { ...T };
   for (const fat of [45, 50, 77]) { // 20.3 %E … 34.7 %E at 2,000 kcal
     const tol = dayTolerance(target, { kcal: 2000, protein: 150, fat, carb: 180 });
     assert.equal(dayInTolerance(tol), true, `fat ${fat} sits inside %E guardrail and must pass`);
@@ -126,17 +158,17 @@ test("an unfloored target keeps the full ±10% band, and a target with no floor 
 // ── 2. the miss line says it out loud ─────────────────────────────────────
 
 test("dayMissLine names the fat guardrail and carb floor misses with plain numbers", () => {
-  const target = { ...T, goal: "muscle gain" };
-  const line = dayMissLine(target, { kcal: 2000, protein: 150, fat: 25, carb: 100 });
+  const target = { ...T };
+  const line = dayMissLine(target, { kcal: 2000, protein: 150, fat: 25, carb: 30 });
   assert.ok(line, "a day outside fat/carb tolerance must not report a silent null");
   assert.match(line, /25 g fat vs a 44–78 g range — 19 g short/);
-  assert.match(line, /100 g carbs vs 180 g floor — 80 g short/);
+  assert.match(line, /30 g carbs vs 50 g floor — 20 g short/);
   assert.doesNotMatch(line, /kcal/);
   assert.doesNotMatch(line, /protein/);
 });
 
 test("dayMissLine keeps the no-guilt vocabulary on the new lines too (design law b)", () => {
-  const target = { ...T, goal: "muscle gain" };
+  const target = { ...T };
   const lines = [
     dayMissLine(target, { kcal: 2000, protein: 150, fat: 20, carb: 290 }),
     dayMissLine(target, { kcal: 2000, protein: 150, fat: 130, carb: 90 }),
@@ -240,16 +272,16 @@ test("scoreWeek: a fat-starved day does not count toward daysInTolerance and car
 test("diagnoseFromResult names the fat/carb shortfall — never gated behind another reason", () => {
   const slots = [0, 1, 2].map((d) => ({
     dayOfWeek: d, slotType: "meal", slotIndex: 0, recipeId: "a",
-    kcal: 2000, protein: 150, fat: 25, carb: 100, ingredients: [], warning: null,
+    kcal: 2000, protein: 150, fat: 25, carb: 30, ingredients: [], warning: null,
   }));
-  const pool = [{ id: "a", name: "Plate", slotType: "meal", mealCategory: null, kcal: 2000, protein: 150, fat: 25, carb: 100, ingredients: [] }];
-  const target = { ...T, goal: "muscle gain" };
+  const pool = [{ id: "a", name: "Plate", slotType: "meal", mealCategory: null, kcal: 2000, protein: 150, fat: 25, carb: 30, ingredients: [] }];
+  const target = { ...T };
   const d = diagnoseFromResult({ dailyTarget: target, slots, pool, mealConfig: { meals: 1, snacks: 0 }, filters: {} });
 
   const fatReason = d.reasons.find((r) => /fat guardrail/.test(r));
   assert.ok(fatReason, `no fat reason in:\n${d.reasons.join("\n")}`);
-  assert.match(fatReason, /3 day\(s\) landed outside the 15-35% fat guardrail/);
-  assert.match(fatReason, /3 day\(s\) landed below your 180 g carb floor/);
+  assert.match(fatReason, /3 day\(s\) landed outside the 20-35% fat guardrail/);
+  assert.match(fatReason, /3 day\(s\) landed below the 50 g carb floor a non-keto plan holds/);
   assert.ok(d.suggestions.some((s) => /macro you keep missing/.test(s)), "and it must offer something actionable");
   for (const s of d.suggestions) assert.doesNotMatch(s, /allerg/i);
 });
