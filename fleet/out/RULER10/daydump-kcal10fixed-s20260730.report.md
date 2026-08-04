@@ -7,15 +7,15 @@
 | DB sha256 | `fb67a37f7f7890e68f7c053fa0c3f75bd37c59fa943ae483f33e0807cdf3ee4e` |
 | DB copy sha256 | `2b36d74b9e0769f4a71ea2099b4c142f6f54dd351dd744073146c122a874b9fb` *** MISMATCH *** |
 | food fingerprint | `b961ac3afbdf3f53` (14151 foods / 910 recipes) |
-| git SHA | `223e4289a292cfaf6bf8667f1e35aea098cbfb96` on `fleet/measure-2026-08` |
-| git diff --stat | 8 files changed, 410 insertions(+), 1588 deletions(-) — **the baseline is a WORKING TREE, not a commit** |
-| git status --porcelain | 14 entries |
+| git SHA | `075edaf8fb18205fcea32cfbce78b92d3d38ad1f` on `fleet/measure-2026-08` |
+| git diff --stat | 4 files changed, 112 insertions(+), 49 deletions(-) — **the baseline is a WORKING TREE, not a commit** |
+| git status --porcelain | 6 entries |
 | persona file | `docs/surgery/CAMPAIGN/qa/qa-fleet-20260729-2032/personas.jsonl` sha256 `e564b1ddcc36b95249b51819e03762a30da61f29f2a254312699290fae57704e` |
 | seed | 20260730 (replicateA) · customers 250 |
 | POOL SHAPE | **route (applyFilterStack ON)** — `route` and `rig` numbers are NOT interchangeable |
 | RULER | **product/dayTolerance+dayInTolerance** — kcal ±10% (lower edge clamped at the target's floorKcal) · protein ≥ proteinLo (one-sided floor) · fat 20–35 %E of max(achieved, target) kcal, floored at the target's fatFloorG, **keto exempt from the CEILING only** · carbs ungraded as a target, keto ceiling + a 50 g non-keto anti-ketosis floor survive |
 | BRAIN | off · network calls **0** (must be 0) |
-| generated | 2026-08-04T02:07:41.784Z · 33.8s |
+| generated | 2026-08-04T02:41:27.937Z · 33.8s |
 
 ## INSTRUMENT CHECKS (all must be 0)
 
