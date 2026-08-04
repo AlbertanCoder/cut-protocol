@@ -99,3 +99,10 @@ fleet/scratch/
 # untracked guard is a guard that vanishes on the next fresh clone. Never widen
 # this to a bare `.claude/`.
 .claude/commands/
+
+# Python bytecode caches. Tracked once by accident (a campaign analysis script
+# under docs/surgery/), and a .pyc embeds the ABSOLUTE SOURCE PATH of the file it
+# was compiled from — which on Windows carries the account name. It survived a
+# text scrub because it is binary. Build output, never a tracked artifact.
+__pycache__/
+*.pyc
