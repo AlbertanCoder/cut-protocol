@@ -284,10 +284,20 @@ function dayTolerance(dailyTarget, totals) {
   // Keto's carb ceiling is a diet LAW, not a preference: there is no upward
   // allowance on carbs for a ketogenic target (computeMacros stamps `keto`).
   const carbOverAllowance = dailyTarget.keto ? 0 : DAY_CARB_TOLERANCE_PCT;
-  // Energy share of fat in what the day ACTUALLY delivers — the composition the
-  // person eats, which is what a %E reference describes. Judging it against the
-  // TARGET's calories instead would let an over-eaten day look leaner than it is.
-  const fatPctEnergy = totals.kcal > 0 ? ((totals.fat || 0) * 9) / totals.kcal : 0;
+  // Energy share of fat, measured against the LARGER of what the day delivered
+  // and what it was supposed to deliver.
+  //
+  // Achieved-only was the first attempt, to stop an over-eaten day looking leaner
+  // than it is — max() keeps that intact, because an over-eaten day IS the larger
+  // number. What it fixes is the other direction, which inverted the verdict: on
+  // an under-delivered day the denominator collapses and the guardrail
+  // manufactures a fat MISS out of a calorie miss. A day landing 1,061 of 2,200
+  // kcal with 46 g of fat was told "46 g fat vs a 24-41 g range - 5 g over" while
+  // being 1,139 kcal short. Against the 2,200 it owed, 46 g is 18.8 %E — UNDER the
+  // floor. The old line named the wrong macro, in the wrong direction, on a day
+  // whose only real problem was that it was empty.
+  const fatPctEnergyBase = Math.max(totals.kcal || 0, dailyTarget.kcal > 0 ? dailyTarget.kcal : 0);
+  const fatPctEnergy = fatPctEnergyBase > 0 ? ((totals.fat || 0) * 9) / fatPctEnergyBase : 0;
   // THE ANTI-KETOSIS FLOOR. Carbs are the remainder and are not graded as a
   // target — but "not a target" is not "unbounded". bmrEngine holds a non-keto
   // target at NONKETO_CARB_FLOOR_G for a stated reason: below ~50 g/day a diet
@@ -336,8 +346,8 @@ function dayTolerance(dailyTarget, totals) {
   // dayMissLine states the same edge the verdict used.
   const essentialFatG = Number.isFinite(dailyTarget.fatFloorG) && dailyTarget.fatFloorG > 0
     ? dailyTarget.fatFloorG : 0;
-  const fatLoEdgeG = Math.max((totals.kcal * DAY_FAT_PCT_ENERGY_MIN) / 9, essentialFatG);
-  const fatHiEdgeG = (totals.kcal * DAY_FAT_PCT_ENERGY_MAX) / 9;
+  const fatLoEdgeG = Math.max((fatPctEnergyBase * DAY_FAT_PCT_ENERGY_MIN) / 9, essentialFatG);
+  const fatHiEdgeG = (fatPctEnergyBase * DAY_FAT_PCT_ENERGY_MAX) / 9;
   return {
     kcalDeltaPct, proteinShortPct,
     kcalFloor, kcalFloorBinding,

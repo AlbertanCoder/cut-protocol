@@ -16,7 +16,11 @@ const assert = require("node:assert/strict");
 
 const {
   dayTolerance, dayMissLine, dayInTolerance, scoreWeek, diagnoseFromResult,
-  DAY_FAT_TOLERANCE_PCT, DAY_CARB_TOLERANCE_PCT,
+  // NOTE: DAY_FAT_TOLERANCE_PCT and DAY_CARB_TOLERANCE_PCT are deliberately NOT
+  // imported. Deriving an expected boundary from the constant under test yields an
+  // assertion that passes at ANY value of it — 005bb3e moved the fat band and the
+  // tests here could not have noticed. Every edge below is a literal.
+
 } = require("../src/lib/mealSolver.js");
 
 // 2,000 kcal, protein 140–160, fat 60–75 (mid 67.5), carbs 180–220 (mid 200).
@@ -111,6 +115,24 @@ test("the target's essential-fat floor binds even when the %E share clears", () 
   assert.equal(dayTolerance(withFloor, under).fatLoEdgeG, 48, "the higher of the two floors is the edge");
   assert.match(dayMissLine(withFloor, under), /46 g fat vs a 48–78 g range — 2 g short/);
   assert.equal(dayTolerance(withFloor, { ...under, fat: 48 }).fatOk, true);
+});
+
+test("an under-delivered day is never told its fat is OVER — the share is judged on what the day OWED", () => {
+  // The denominator collapse. A day landing 1,061 of 2,200 kcal with 46 g of fat
+  // used to report "46 g fat vs a 24–41 g range — 5 g over" while being 1,139 kcal
+  // short: wrong macro, wrong direction, on a day whose only real problem was that
+  // it was nearly empty. Against the 2,200 it owed, 46 g is 18.8 %E — under.
+  const starved = { kcal: 1061, protein: 100, fat: 46, carb: 77 };
+  const line = dayMissLine({ ...T, kcal: 2200, proteinLo: 180, proteinHi: 200 }, starved);
+  assert.doesNotMatch(line, /g fat.*over/, `manufactured a fat overshoot: ${line}`);
+  assert.match(line, /46 g fat vs a 49–86 g range — 3 g short/);
+
+  // The reason achieved-kcal was chosen originally is preserved: an OVER-eaten day
+  // is still judged on what it actually delivered, so it cannot look leaner than
+  // it is by hiding behind a smaller target.
+  const overEaten = { kcal: 3000, protein: 190, fat: 130, carb: 250 }; // 39 %E of 3,000
+  assert.equal(dayTolerance({ ...T, kcal: 2200 }, overEaten).fatOk, false, "39 %E is over the ceiling on the day's own calories");
+  assert.match(dayMissLine({ ...T, kcal: 2200, proteinLo: 180, proteinHi: 200 }, overEaten), /g fat .* g over/);
 });
 
 test("inside the guardrail is always inside tolerance, in both directions", () => {
@@ -219,16 +241,34 @@ test("a KETO target gets no upward allowance on carbs (the ceiling is a diet law
 // ── 4. absent bands are never invented ────────────────────────────────────
 
 test("a target carrying no fat/carb band is not judged on one (honest absence)", () => {
+  // This test contradicted the implementation and had never been run: it asserted
+  // that 0 %E fat fails "even if fatLo/fatHi are missing", while `fatOk` short-
+  // circuits on `!fatBand`. The section heading is the tiebreak — a target that
+  // never prescribed fat is not graded on fat, the same rule the absent protein
+  // floor and the absent kcal floor follow. In production computeMacros() always
+  // emits a fat band, so this governs partial targets and fixtures only.
   const partial = { kcal: 2000, proteinLo: 140, proteinHi: 160 };
   const tol = dayTolerance(partial, { kcal: 2000, protein: 150, fat: 50, carb: 0 });
   assert.equal(tol.fatJudged, false);
   assert.equal(tol.carbJudged, false);
-  assert.equal(tol.fatOk, true, "within %E guardrail");
   assert.equal(tol.carbOk, true);
   assert.equal(dayInTolerance(tol), true);
+  // NOT "within the %E guardrail" — the guardrail is never evaluated here. 50 g at
+  // 2,000 kcal happens to be 22.5 %E, so the old message was accidentally true and
+  // would have stayed green no matter what the guardrail said. Assert the reason
+  // that actually holds.
+  assert.equal(tol.fatOk, true, "no band ⇒ not judged, regardless of the share");
 
-  const partialShort = dayTolerance(partial, { kcal: 2000, protein: 150, fat: 0, carb: 0 });
-  assert.equal(partialShort.fatOk, false, "0% E fat fails the guardrail even if fatLo/fatHi are missing");
+  // The discriminating case, and the one the old assertion got backwards: 0 g of
+  // fat is 0 %E and would fail any guardrail — and still passes, because there is
+  // no band to judge against. That is the policy, stated out loud.
+  const noFat = dayTolerance(partial, { kcal: 2000, protein: 150, fat: 0, carb: 0 });
+  assert.equal(noFat.fatOk, true, "absent band beats a failing share — absent is absent");
+  assert.equal(dayMissLine(partial, { kcal: 2000, protein: 150, fat: 0, carb: 0 }), null);
+
+  // …and the moment a band exists, the same day is judged and fails.
+  const banded = dayTolerance({ ...partial, fatLo: 60, fatHi: 75 }, { kcal: 2000, protein: 150, fat: 0, carb: 0 });
+  assert.equal(banded.fatOk, false);
 });
 
 test("a target carrying no protein floor is not judged on one, and never renders NaN", () => {
@@ -289,9 +329,14 @@ test("diagnoseFromResult names the fat/carb shortfall — never gated behind ano
 test("diagnoseFromResult says nothing about fat/carbs when every day landed inside guardrails", () => {
   const slots = [0, 1].map((d) => ({
     dayOfWeek: d, slotType: "meal", slotIndex: 0, recipeId: "a",
-    kcal: 1200, protein: 150, fat: 40, carb: 200, ingredients: [], warning: null, // kcal-short only, 40g fat = 30% of 1200 kcal
+    // kcal-short ONLY. 50 g of fat is 22.5 %E of the 2,000 kcal this day owed —
+    // inside the guardrail — and 200 g of carbs clears the 50 g floor. The fixture
+    // used to carry 40 g, which was 30% of the 1,200 it DELIVERED but only 18% of
+    // what it owed; once the share stopped being judged on the collapsed
+    // denominator, that day was genuinely fat-short and the premise no longer held.
+    kcal: 1200, protein: 150, fat: 50, carb: 200, ingredients: [], warning: null,
   }));
-  const pool = [{ id: "a", name: "Plate", slotType: "meal", mealCategory: null, kcal: 1200, protein: 150, fat: 40, carb: 200, ingredients: [] }];
+  const pool = [{ id: "a", name: "Plate", slotType: "meal", mealCategory: null, kcal: 1200, protein: 150, fat: 50, carb: 200, ingredients: [] }];
   const d = diagnoseFromResult({ dailyTarget: T, slots, pool, mealConfig: { meals: 1, snacks: 0 }, filters: {} });
   assert.ok(!d.reasons.some((r) => /fat guardrail|carb floor|carb range/.test(r)), `invented a fat/carb reason:\n${d.reasons.join("\n")}`);
   assert.ok(d.reasons.length > 0, "but the kcal miss still owes a reason");
