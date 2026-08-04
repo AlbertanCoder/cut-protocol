@@ -642,8 +642,12 @@ module.exports = {
   computeMacros, fatBandFor, trendRate, trendWindow, trailingAverage, verdict,
   TREND_WINDOW_DAYS, TREND_MIN_POINTS, TREND_MIN_SPAN_DAYS, TRAILING_AVG_DAYS,
   ASSUMED_BODY_FAT_PCT,
-  // Exported so the fat contract has ONE definition. mealSolver must clamp its
-  // downward fat allowance to a target's `fatFloorG` (see fatBandFor) — until
-  // it does, days below the essential-fat floor still grade compliant.
+  // Exported so the fat contract has ONE definition. mealSolver clamps its
+  // downward fat allowance to a target's `fatFloorG` (see fatBandFor) as of
+  // 0aa3235 — the note that used to live here asking for it is discharged.
   ESSENTIAL_FAT_PER_LB_LBM, FAT_PCT_ENERGY_MID, FAT_BAND_HALF_WIDTH,
+  // Same reason, for carbs: this file holds carbs at the floor when the leftover
+  // falls under it, and mealSolver has to grade against the SAME number or a plan
+  // can deliver a ketogenic day against a target that refused to prescribe one.
+  NONKETO_CARB_FLOOR_G,
 };
