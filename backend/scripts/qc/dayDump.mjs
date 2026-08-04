@@ -289,6 +289,9 @@ function serializeTarget(target) {
     kcal: target.kcal ?? null,
     proteinLo: target.proteinLo ?? null, proteinHi: target.proteinHi ?? null,
     proteinMid: band(target.proteinLo, target.proteinHi),
+    // The GRADED protein floor, which is not the band's bottom when body fat was
+    // assumed. Without it a re-grade cannot reproduce the verdict.
+    proteinFloorG: target.proteinFloorG ?? null,
     fatLo: target.fatLo ?? null, fatHi: target.fatHi ?? null,
     fatMid: band(target.fatLo, target.fatHi),
     carbLo: target.carbLo ?? null, carbHi: target.carbHi ?? null,

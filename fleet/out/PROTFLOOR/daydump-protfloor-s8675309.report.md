@@ -1,0 +1,71 @@
+# dayDump — protfloor · seed 8675309 (replicateB)
+
+| provenance | value |
+|---|---|
+| tool | `backend/scripts/qc/dayDump.mjs` |
+| dump | `fleet/out/PROTFLOOR/daydump-protfloor-s8675309.jsonl` |
+| DB sha256 | `fb67a37f7f7890e68f7c053fa0c3f75bd37c59fa943ae483f33e0807cdf3ee4e` |
+| DB copy sha256 | `2b36d74b9e0769f4a71ea2099b4c142f6f54dd351dd744073146c122a874b9fb` *** MISMATCH *** |
+| food fingerprint | `b961ac3afbdf3f53` (14151 foods / 910 recipes) |
+| git SHA | `0ec5ea936312d4fe277856847e116ec27d16d81a` on `fleet/measure-2026-08` |
+| git diff --stat | 9 files changed, 220 insertions(+), 60 deletions(-) — **the baseline is a WORKING TREE, not a commit** |
+| git status --porcelain | 13 entries |
+| persona file | `docs/surgery/CAMPAIGN/qa/qa-fleet-20260729-2032/personas.jsonl` sha256 `e564b1ddcc36b95249b51819e03762a30da61f29f2a254312699290fae57704e` |
+| seed | 8675309 (replicateB) · customers 250 |
+| POOL SHAPE | **route (applyFilterStack ON)** — `route` and `rig` numbers are NOT interchangeable |
+| RULER | **product/dayTolerance+dayInTolerance** — kcal ±10% (lower edge clamped at the target's floorKcal) · protein ≥ proteinLo (one-sided floor) · fat 20–35 %E of max(achieved, target) kcal, floored at the target's fatFloorG, **keto exempt from the CEILING only** · carbs ungraded as a target, keto ceiling + a 50 g non-keto anti-ketosis floor survive |
+| BRAIN | off · network calls **0** (must be 0) |
+| generated | 2026-08-04T10:34:31.513Z · 34.5s |
+
+## INSTRUMENT CHECKS (all must be 0)
+
+| check | count |
+|---|--:|
+| verdict disagreements (engine vs re-derived) | 0 |
+| kcal drift > 1 (solver claim vs raw Food rows) | 0 |
+| missing Food rows referenced by a slot | 0 |
+| crashes | 0 |
+| network calls | 0 |
+
+## LEVEL — all three denominators, never mixed
+
+| denominator | in band | n | rate | 95% CI (Wilson) |
+|---|--:|--:|--:|---|
+| SATISFIABLE-ONLY (tier != IMPOSSIBLE, judged days) | 445 | 537 |  82.9% |  79.5%– 85.8% |
+| ALL DAYS (every tier, judged days) | 467 | 622 |  75.1% |  71.5%– 78.3% |
+| **ALL PLANNED DAYS (mandatory co-report — refusals counted as misses)** | 467 | 640 | ** 73.0%** |  69.4%– 76.3% |
+
+- **unjudged days: 18 of 640** (zero slots filled) — dropped by the `judged` denominator.
+- of those, **16 are SATISFIABLE solver total failures** (claim A6). A treatment that refuses more days RAISES the judged rate and is flat on the planned rate. This is why the planned line is mandatory.
+- **degenerate days: 1** — a meal config asking for ZERO slots per day. `A1/rig/runRig.mjs` emits no record at all for these, which is why every previously published all-planned denominator on this campaign is **639, not 640**.
+- days where the macro closer fired: 114 of 640.
+
+## PER-DAY BINDING-MISS KEY (DERIVED — not the engine's classifyBinding)
+
+| key | days |
+|---|--:|
+| `none` | 467 |
+| `multi:kcal:short+protein:short` | 35 |
+| `kcal:short` | 21 |
+| `kcal:over` | 19 |
+| `multi:kcal:over+fat:over` | 18 |
+| `empty` | 17 |
+| `protein:short` | 11 |
+| `fat:over` | 10 |
+| `multi:kcal:short+protein:short+fat:short` | 9 |
+| `carb:over` | 8 |
+| `multi:kcal:short+protein:short+fat:over` | 6 |
+| `multi:kcal:over+protein:short` | 5 |
+| `multi:protein:short+fat:over` | 5 |
+| `multi:protein:short+fat:short` | 2 |
+| `fat:short` | 2 |
+| `multi:kcal:short+carb:over` | 1 |
+| `multi:fat:over+carb:short` | 1 |
+| `multi:kcal:short+fat:short` | 1 |
+| `multi:kcal:over+protein:short+fat:over` | 1 |
+| `degenerate:zero-slot-config` | 1 |
+
+## REPRODUCE
+```
+node backend/scripts/qc/dayDump.mjs --seed=8675309 --label=protfloor --out=fleet/out/PROTFLOOR/daydump-protfloor-s8675309.jsonl
+```
