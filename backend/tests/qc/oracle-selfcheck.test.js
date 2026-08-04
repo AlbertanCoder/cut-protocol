@@ -27,7 +27,15 @@ test("0.5 drift-guard: oracle constants equal the engine's", () => {
   assert.equal(c.SCALE_HI, planner.SCALE_BOUNDS.max, "SCALE_HI drifted");
   assert.equal(c.REPEAT_CAP, planner.DEFAULT_REPEAT_CAP, "REPEAT_CAP drifted");
   assert.equal(c.KCAL_SILENT, solver.DAY_KCAL_TOLERANCE_PCT, "KCAL_SILENT drifted");
-  assert.equal(c.PROTEIN_SILENT, solver.DAY_PROTEIN_TOLERANCE_PCT, "PROTEIN_SILENT drifted");
+  // Protein is pinned BEHAVIOURALLY, not to a constant. It used to be pinned to
+  // DAY_PROTEIN_TOLERANCE_PCT — a constant the product stopped using for protein
+  // when the rule became a hard floor, so the assertion stayed green while
+  // guarding nothing. Assert what the product actually does instead: no shortfall
+  // is tolerated, so the oracle may not tolerate one either.
+  assert.equal(c.PROTEIN_SILENT, 0, "the product's protein promise is a floor — the oracle may allow no shortfall");
+  const pinTarget = { kcal: 2000, proteinLo: 180, proteinHi: 200, fatLo: 50, fatHi: 70, carbLo: 180, carbMid: 200, carbHi: 220 };
+  assert.equal(solver.dayTolerance(pinTarget, { kcal: 2000, protein: 180, fat: 60, carb: 200 }).proteinOk, true, "at the floor is met");
+  assert.equal(solver.dayTolerance(pinTarget, { kcal: 2000, protein: 179, fat: 60, carb: 200 }).proteinOk, false, "1 g under the floor is a miss — if this ever passes, PROTEIN_SILENT must move with it");
 });
 
 // ── (2) allergen matcher: positives AND false-exclusion negatives ──────────

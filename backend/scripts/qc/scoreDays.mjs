@@ -38,6 +38,14 @@
 // interval is the one to judge on.
 import fs from "node:fs";
 import path from "node:path";
+import { createRequire } from "node:module";
+
+// The product's ruler, imported rather than restated. See productRule() below for
+// why this file no longer carries a copy of it.
+process.env.BRAIN = process.env.BRAIN || "off";
+const require_ = createRequire(import.meta.url);
+const solver = require_(path.join(path.resolve(path.join(import.meta.dirname, "../..")), "src/lib/mealSolver.js"));
+const { dayTolerance, dayInTolerance } = solver;
 
 const Z = 1.959964;
 
@@ -60,32 +68,34 @@ const pc = (x) => (x == null ? "   —  " : (x * 100).toFixed(1).padStart(5) + "
 const pp = (x) => (x == null ? "—" : (x >= 0 ? "+" : "") + (x * 100).toFixed(2) + " pts");
 
 // ── rulers. Every one is a pure function of a stored record. ────────────────
-const bandMiss = (v, lo, hi) => {
-  const mid = (lo + hi) / 2;
-  if (!(mid > 0)) return { shortPct: 0, overPct: 0, mid };
-  const val = Number.isFinite(v) ? v : 0;
-  if (val < lo) return { shortPct: (lo - val) / mid, overPct: 0, mid };
-  if (val > hi) return { shortPct: 0, overPct: (val - hi) / mid, mid };
-  return { shortPct: 0, overPct: 0, mid };
-};
-const hasBand = (lo, hi) => Number.isFinite(lo) && Number.isFinite(hi) && hi > 0;
+// (bandMiss and hasBand used to be copied here to support a hand-written copy of
+// the product rule. Both are gone with it — dayTolerance owns them.)
 
-/** Recompute the PRODUCT rule from stored fields, with optional per-macro overrides. */
-function productRule(r, { kcalTol = 0.15, proteinTol = 0.15, fatTol = 0.25, carbTol = 0.25, dropFat = false, dropCarb = false } = {}) {
-  const t = r.target || {}, a = r.achieved || {};
-  const pMid = Number.isFinite(t.proteinMid) ? t.proteinMid : ((t.proteinLo + t.proteinHi) / 2);
-  const kcalDeltaPct = t.kcal > 0 ? (a.kcal - t.kcal) / t.kcal : 1;
-  const proteinShortPct = pMid > 0 ? Math.max(0, (pMid - a.protein) / pMid) : 0;
-  const fatBand = !dropFat && hasBand(t.fatLo, t.fatHi);
-  const carbBand = !dropCarb && hasBand(t.carbLo, t.carbHi);
-  const fat = fatBand ? bandMiss(a.fat, t.fatLo, t.fatHi) : { shortPct: 0, overPct: 0 };
-  const carb = carbBand ? bandMiss(a.carb, t.carbLo, t.carbHi) : { shortPct: 0, overPct: 0 };
-  const carbOverAllowance = t.keto ? 0 : carbTol;
-  const kcalOk = Math.abs(kcalDeltaPct) <= kcalTol;
-  const proteinOk = proteinShortPct <= proteinTol;
-  const fatOk = !fatBand || (fat.shortPct <= fatTol && fat.overPct <= fatTol);
-  const carbOk = !carbBand || (carb.shortPct <= carbTol && carb.overPct <= carbOverAllowance);
-  return { inBand: kcalOk && proteinOk && fatOk && carbOk, kcalOk, proteinOk, fatOk, carbOk };
+/**
+ * The PRODUCT rule, recomputed from stored fields by CALLING IT rather than by
+ * restating it.
+ *
+ * This used to be a hand-written copy of dayTolerance, and it rotted exactly the
+ * way a copy does: the goal-ruler work moved the product to a %E fat guardrail, a
+ * protein floor, a calorie floor and an anti-ketosis carb floor, and this function
+ * went on grading the old band-relative rule under the name `product`. Two things
+ * called `product` disagreeing is the precise failure this file's header warns
+ * about, committed by the file itself.
+ *
+ * Ablations are expressed by REMOVING FIELDS FROM THE TARGET, not by
+ * reimplementing the rule with different constants — an absent band is already a
+ * first-class case in dayTolerance ("absent is absent"), so `nofat` is just a
+ * target with no fat band, and the ablation cannot drift from the thing it ablates.
+ */
+function productRule(r, { dropFat = false, dropCarb = false } = {}) {
+  const a = r.achieved || {};
+  let t = r.target || {};
+  if (dropFat) t = { ...t, fatLo: undefined, fatHi: undefined, fatFloorG: undefined };
+  // carbMid carries the anti-ketosis floor, so dropping the carb TERM means
+  // dropping it too — otherwise "minus the carb term" still grades a carb floor.
+  if (dropCarb) t = { ...t, carbLo: undefined, carbHi: undefined, carbMid: undefined };
+  const tol = dayTolerance(t, a);
+  return { inBand: dayInTolerance(tol), kcalOk: tol.kcalOk, proteinOk: tol.proteinOk, fatOk: tol.fatOk, carbOk: tol.carbOk };
 }
 
 /** oracle.mjs's acceptOk (oracle.mjs:38-39, :194). A DIFFERENT RULER — labelled as such. */
@@ -105,8 +115,19 @@ function makeRuler(spec) {
   if (s === "nocarb") return { id: "product minus the carb term", fn: (r) => productRule(r, { dropCarb: true }) };
   const w = s.match(/^(fat|carb)wide:([0-9.]+)$/);
   if (w) {
-    const x = Number(w[2]);
-    return { id: `product with the ${w[1]} allowance widened to +-${(x * 100).toFixed(0)}% of band mid`, fn: (r) => productRule(r, w[1] === "fat" ? { fatTol: x } : { carbTol: x }) };
+    // RETIRED, deliberately, rather than left to grade with a dead rule. These
+    // widened a "+-x% of the band MIDPOINT" allowance. The product has no such
+    // allowance any more: fat is a %E share floored at the target's essential-fat
+    // grams, and carbs are ungraded as a target. Silently reinterpreting the flag
+    // against the new ruler would answer a different question than the one the
+    // brief (C9/A15) asked, under the old question's name.
+    throw new Error(
+      `--ruler=${s} is retired. It widened a band-midpoint allowance that the ` +
+      `product no longer uses (fat is now a ${solver.DAY_FAT_PCT_ENERGY_MIN * 100}-` +
+      `${solver.DAY_FAT_PCT_ENERGY_MAX * 100} %E guardrail; carbs are ungraded as a ` +
+      `target). Use --ruler=nofat / nocarb to isolate a macro, and re-derive any ` +
+      `C9/A15 number rather than quoting the old one.`
+    );
   }
   throw new Error(`unknown --ruler=${s}`);
 }

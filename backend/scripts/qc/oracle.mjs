@@ -32,7 +32,14 @@
 export const ORACLE_CONSTANTS = {
   SCALE_LO: 0.5, SCALE_HI: 2,          // weeklyPlanner.SCALE_BOUNDS
   REPEAT_CAP: 2,                        // weeklyPlanner.DEFAULT_REPEAT_CAP
-  KCAL_SILENT: 0.15, PROTEIN_SILENT: 0.15, // mealSolver.DAY_{KCAL,PROTEIN}_TOLERANCE_PCT
+  KCAL_SILENT: 0.10,        // mealSolver.DAY_KCAL_TOLERANCE_PCT
+  // The product's protein promise is a FLOOR at proteinLo, not a percentage
+  // shortfall against the band midpoint. This was 0.15, which meant the
+  // independent verifier certified days sitting 15% UNDER the floor as "within
+  // the solver's promise" — days the solver itself grades as protein misses. An
+  // auditor with a looser bar than the thing it audits cannot find the misses it
+  // exists to find, and protein is the single largest failure axis on the fleet.
+  PROTEIN_SILENT: 0,
 };
 const { SCALE_LO, SCALE_HI, REPEAT_CAP, KCAL_SILENT, PROTEIN_SILENT } = ORACLE_CONSTANTS;
 const KCAL_ACCEPT = 0.05;   // gauntlet acceptance bar
@@ -198,7 +205,7 @@ export function oracle(res, ctx) {
     if (reachable) daysFeasible++;
     if (!acceptOk && reachable) feasibleMisses++;
     if (!acceptOk && !reachable) honestMisses++;
-    if (reachable && !withinSolverPromise && !declaredWeek) { silentMisses++; add("silent-solver-miss", "P1", `day ${dow} feasible, outside solver's ±15% (kcal ${Math.round(dKcal)}/${target.kcal}, protein ${Math.round(dProt)}/${target.proteinLo}), no diagnosis`); }
+    if (reachable && !withinSolverPromise && !declaredWeek) { silentMisses++; add("silent-solver-miss", "P1", `day ${dow} feasible, outside solver's ±${KCAL_SILENT * 100}% (kcal ${Math.round(dKcal)}/${target.kcal}, protein ${Math.round(dProt)}/${target.proteinLo}), no diagnosis`); }
   }
 
   const recipeCounts = new Map();

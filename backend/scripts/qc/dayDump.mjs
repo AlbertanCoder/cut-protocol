@@ -136,11 +136,19 @@ const RULER = {
   source: "backend/src/lib/mealSolver.js::dayTolerance / ::dayInTolerance",
   macros: 4,
   kcalTolerancePct: solver.DAY_KCAL_TOLERANCE_PCT,
-  proteinTolerancePct: solver.DAY_PROTEIN_TOLERANCE_PCT,
-  fatTolerancePct: solver.DAY_FAT_TOLERANCE_PCT,
-  carbTolerancePct: solver.DAY_CARB_TOLERANCE_PCT,
-  note: "kcal +/-15% symmetric on target; protein one-sided shortfall vs proteinMid, no ceiling; "
-      + "fat/carb band-relative, 25% of the band MIDPOINT outside [lo,hi]; keto carb overshoot allowance = 0.",
+  fatPctEnergyMin: solver.DAY_FAT_PCT_ENERGY_MIN,
+  fatPctEnergyMax: solver.DAY_FAT_PCT_ENERGY_MAX,
+  nonKetoCarbFloorG: bmr.NONKETO_CARB_FLOOR_G,
+  note: "kcal +/-DAY_KCAL_TOLERANCE_PCT symmetric on target, lower edge clamped at the target's "
+      + "safety floor (floorKcal); protein one-sided floor at proteinLo, no ceiling; fat is a "
+      + "%E guardrail on max(achieved, target) kcal, lower edge max(share, the target's essential "
+      + "fatFloorG), KETO EXEMPT FROM THE CEILING ONLY; carbs are the remainder and are not graded "
+      + "as a target -- two floors survive, keto's carb ceiling (overshoot allowance 0) and the "
+      + "non-keto anti-ketosis floor at min(NONKETO_CARB_FLOOR_G, the target's carbMid).",
+  // DAY_{FAT,CARB}_TOLERANCE_PCT are deliberately NOT stamped here any more. They
+  // still exist and still drive `fatBandOk`/`carbBandOk`, but neither is what a day
+  // is JUDGED on, and printing them in the ruler line is what let three reports on
+  // disk describe a band-relative ruler they had not used.
 };
 
 // ── seeded RNG (identical to backend/scripts/qc/rng.mjs and A1/rig) ─────────
@@ -278,16 +286,25 @@ function bindingMissKey(tol, inBand, slotsFilled) {
   const miss = [];
   if (!tol.kcalOk) miss.push(`kcal:${tol.kcalDeltaPct > 0 ? "over" : "short"}`);
   if (!tol.proteinOk) miss.push("protein:short");
-  if (!tol.fatOk) miss.push(`fat:${tol.fatOverPct > 0 ? "over" : "short"}`);
-  if (!tol.carbOk) miss.push(`carb:${tol.carbOverPct > 0 ? "over" : "short"}`);
+  // DIRECTION COMES FROM THE RULE THAT FAILED, not from the band distance.
+  //
+  // `fatOverPct`/`carbOverPct` measure distance outside the target's GRAM band,
+  // which is no longer what `fatOk`/`carbOk` are decided by. Reading direction off
+  // them mislabelled 5 days per seed as `fat:short` when they were %E-OVER — the
+  // published `multi:kcal:short+protein:short+fat:short | 5` row in all three
+  // RULER reports is exactly those days, counted with the wrong sign.
+  if (!tol.fatOk) miss.push(`fat:${tol.fatMissSide}`);
+  if (!tol.carbOk) miss.push(`carb:${tol.carbMissSide}`);
   if (!miss.length) return "none";
   return miss.length === 1 ? miss[0] : `multi:${miss.join("+")}`;
 }
 
 function missSideOf(tol) {
-  const over = (!tol.kcalOk && tol.kcalDeltaPct > 0) || (!tol.fatOk && tol.fatOverPct > 0) || (!tol.carbOk && tol.carbOverPct > 0);
+  // Same correction as bindingMissKey: direction comes from the verdict's own
+  // published fatMissSide/carbMissSide, never from distance outside the gram band.
+  const over = (!tol.kcalOk && tol.kcalDeltaPct > 0) || tol.fatMissSide === "over" || tol.carbMissSide === "over";
   const short = (!tol.kcalOk && tol.kcalDeltaPct < 0) || !tol.proteinOk
-    || (!tol.fatOk && tol.fatShortPct > 0) || (!tol.carbOk && tol.carbShortPct > 0);
+    || tol.fatMissSide === "short" || tol.carbMissSide === "short";
   if (over && short) return "mixed";
   if (over) return "over";
   if (short) return "short";
@@ -685,7 +702,7 @@ async function main() {
   L.push(`| persona file | \`${run.personasPath}\` sha256 \`${run.personasSha256}\` |`);
   L.push(`| seed | ${SEED} (${seedName(SEED)}) · customers ${run.customers} |`);
   L.push(`| POOL SHAPE | **${run.poolShape}** — \`route\` and \`rig\` numbers are NOT interchangeable |`);
-  L.push(`| RULER | **${RULER.id}** — ${RULER.macros} macros · kcal ±${RULER.kcalTolerancePct * 100}% · protein ≥ mid−${RULER.proteinTolerancePct * 100}% (one-sided) · fat ±${RULER.fatTolerancePct * 100}% of band mid · carb ±${RULER.carbTolerancePct * 100}% (keto over-allowance 0) |`);
+  L.push(`| RULER | **${RULER.id}** — kcal ±${RULER.kcalTolerancePct * 100}% (lower edge clamped at the target's floorKcal) · protein ≥ proteinLo (one-sided floor) · fat ${RULER.fatPctEnergyMin * 100}–${RULER.fatPctEnergyMax * 100} %E of max(achieved, target) kcal, floored at the target's fatFloorG, **keto exempt from the CEILING only** · carbs ungraded as a target, keto ceiling + a ${RULER.nonKetoCarbFloorG} g non-keto anti-ketosis floor survive |`);
   L.push(`| BRAIN | off · network calls **${netCalls}** (must be 0) |`);
   L.push(`| generated | ${new Date().toISOString()} · ${((Date.now() - t00) / 1000).toFixed(1)}s |`);
   L.push("");

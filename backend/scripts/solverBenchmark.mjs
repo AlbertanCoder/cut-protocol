@@ -162,9 +162,15 @@ function buildScenarios() {
   return out;
 }
 
-// ── tolerance rules (the SAME ones scoreWeek uses) ────────────────────────
-const KCAL_DAY_TOL = 0.15;
-const PROTEIN_DAY_TOL = 0.15;
+// ── tolerance rule: the product's, called rather than restated ────────────
+//
+// The comment here used to say "the SAME ones scoreWeek uses" above a hand-copied
+// two-macro rule at kcal ±15% / protein mid−15%. It had not been the same for some
+// time: scoreWeek grades four macros, the calorie band is ±10% with a safety-floor
+// clamp, and protein is a hard floor at proteinLo. A benchmark measuring a solver
+// against a ruler the solver is not graded by reports a number nobody can act on,
+// and `bench:solver:check` asserts on it.
+const { dayTolerance: productDayTolerance, dayInTolerance: productDayInTolerance } = solverPkg;
 
 function dayTotals(slots) {
   return slots.reduce(
@@ -174,10 +180,8 @@ function dayTotals(slots) {
 }
 
 function dayInTolerance(target, totals) {
-  const pMid = (target.proteinLo + target.proteinHi) / 2;
-  const kcalOk = target.kcal > 0 ? Math.abs(totals.kcal - target.kcal) / target.kcal <= KCAL_DAY_TOL : false;
-  const proteinOk = pMid > 0 ? (pMid - totals.protein) / pMid <= PROTEIN_DAY_TOL : false;
-  return { kcalOk, proteinOk, ok: kcalOk && proteinOk };
+  const tol = productDayTolerance(target, totals);
+  return { kcalOk: tol.kcalOk, proteinOk: tol.proteinOk, fatOk: tol.fatOk, carbOk: tol.carbOk, ok: productDayInTolerance(tol) };
 }
 
 // ── per-week analysis ─────────────────────────────────────────────────────
