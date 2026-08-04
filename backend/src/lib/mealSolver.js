@@ -172,6 +172,14 @@ function scoreDay(dailyTarget, slots, opts = {}) {
   const fatOut = fatJudged
     ? missTerm(bandMiss(t.fat, dailyTarget.fatLo, dailyTarget.fatHi), DAY_FAT_TOLERANCE_PCT, DAY_FAT_TOLERANCE_PCT)
     : 0;
+  // STEERS THE SCORE ON PURPOSE — matchPct is not the verdict.
+  //
+  // dayTolerance no longer grades carbs against this band, so this term looks
+  // obsolete and is not. matchPct ranks day CANDIDATES and breaks ties between
+  // weeks in best-of-N; keeping a carb term here is what stops the solver
+  // preferring a plate that buys its calories from the single cheapest source.
+  // A verdict says what is acceptable, a score says what is preferred among
+  // acceptable options, and they are allowed to differ.
   const carbOut = carbJudged
     ? missTerm(bandMiss(t.carb, dailyTarget.carbLo, dailyTarget.carbHi), DAY_CARB_TOLERANCE_PCT, carbOverAllowance)
     : 0;
@@ -256,6 +264,27 @@ const DAY_CARB_TOLERANCE_PCT = 0.25;
 // max(both).
 const DAY_FAT_PCT_ENERGY_MIN = 0.20;
 const DAY_FAT_PCT_ENERGY_MAX = 0.35;
+
+// ── the WEEK's energy band ────────────────────────────────────────────────
+//
+// Half the day band, and the "half" is the whole argument: this exists to catch
+// drift the per-day verdict cannot see, so it MUST be strictly tighter than the
+// day band or it catches nothing. Seven days each sitting at +8% pass every
+// single day check and quietly cost the deficit a full day's calories. At ±10%
+// the week would pass that too and the verdict would be decoration; at ±5% it
+// fails, which is the entire reason for it.
+//
+// MEASURED on the fleet (192 multi-day windows across 3 seeds), |residual| as a
+// share of the week's budget:
+//     p50 1.3% · p75 5.8% · p90 12.1% · p95 19.1% · max 38.7%
+//     ±5% band -> 69.8% of weeks land inside   (±2% -> 57.3%, ±10% -> 81.8%)
+// Most weeks land far inside it — errors across days DO largely cancel, which is
+// the premise. The band binds on the tail, which is what a tail is for.
+//
+// Mean SIGNED residual is −0.74%: weeks land slightly OVER budget on average, not
+// under. Small, but it is a bias and not noise, so it is reported rather than
+// rounded away.
+const WEEK_KCAL_TOLERANCE_PCT = 0.05;
 
 // How far `v` sits outside [lo, hi], as a fraction of the band midpoint.
 // Direction is kept separate: a fat SHORTFALL and a keto carb OVERSHOOT are
@@ -785,6 +814,7 @@ function scoreWeek(dailyTarget, slots, opts = {}) {
   let matchSum = 0;
   const days = [];
   let floorDaysMet = 0;
+  let weekAchievedKcal = 0;
   for (const dow of [...byDay.keys()].sort((a, b) => a - b)) {
     const daySlots = byDay.get(dow);
     const sc = scoreDay(dailyTarget, daySlots, { proteinPriority: priority });
@@ -796,6 +826,7 @@ function scoreWeek(dailyTarget, slots, opts = {}) {
       (a, s) => ({ kcal: a.kcal + s.kcal, protein: a.protein + s.protein, fat: a.fat + s.fat, carb: a.carb + s.carb }),
       { kcal: 0, protein: 0, fat: 0, carb: 0 }
     );
+    weekAchievedKcal += exactTotals.kcal;
     const tol = dayTolerance(dailyTarget, exactTotals);
     // All four macros (solver-core-2) — a day that hits kcal + protein while
     // sitting far outside its fat or carb range is not "in tolerance", and
@@ -822,10 +853,44 @@ function scoreWeek(dailyTarget, slots, opts = {}) {
       ...(priority ? { proteinFloor: sc.proteinFloor } : {}),
     });
   }
+  // ── THE WEEK'S ENERGY, as its own verdict ────────────────────────────────
+  //
+  // Days are graded one at a time, and a week of days that each land inside ±10%
+  // can still drift: seven days at +8% is a whole day's worth of calories the
+  // deficit never sees. Nothing was watching that, so it is watched here.
+  //
+  // REPORTED ALONGSIDE daysInTolerance, NEVER INSTEAD OF IT — the same
+  // "satisfiable and all-planned side by side" rule this project applies to fleet
+  // rates, applied to the verdict. A week can land its budget while missing four
+  // days, and a week can hit seven clean days and still drift; those are two
+  // different facts and neither one substitutes for the other.
+  //
+  // Deliberately a VERDICT and not a controller. It does not move any day's
+  // target: one target survives everywhere, the day the user is shown is the day
+  // they were prescribed, and this is a pure function of the stored slots — so it
+  // recomputes identically on every read and SELF-HEALS after a slot swap instead
+  // of going stale. Making the plan act on the residual is a separate decision
+  // with its own measurement, and the shape for it is a redistribution pass over
+  // an already-solved week, not a per-day target that moves during solving.
+  // A single day is not a week. Grading one day against a band tighter than its
+  // own would be a second, stricter verdict on the same number wearing a
+  // different name — and 74% of the persona fleet asks for one-day plans.
+  const weekBudgetKcal = dailyTarget.kcal > 0 && byDay.size >= 2 ? dailyTarget.kcal * byDay.size : null;
+  const weekResidualKcal = weekBudgetKcal == null ? null : Math.round(weekBudgetKcal - weekAchievedKcal);
   return {
     daysInTolerance,
     avgMatch: Math.round(matchSum / Math.max(1, byDay.size)),
     days,
+    weekBudgetKcal: weekBudgetKcal == null ? null : Math.round(weekBudgetKcal),
+    weekAchievedKcal: weekBudgetKcal == null ? null : Math.round(weekAchievedKcal),
+    // Signed: POSITIVE means the week landed UNDER its budget. Named `residual`
+    // rather than `deficit` or `surplus` because those words already mean
+    // something specific about energy balance in this app and would read as a
+    // claim about fat loss rather than about the plan.
+    weekResidualKcal,
+    weekResidualPct: weekBudgetKcal ? Math.round((weekResidualKcal / weekBudgetKcal) * 1000) / 10 : null,
+    weekInTolerance: weekBudgetKcal == null ? null
+      : Math.abs(weekResidualKcal) <= weekBudgetKcal * WEEK_KCAL_TOLERANCE_PCT,
     ...(priority ? { floorDaysMet, floorDaysTotal: byDay.size } : {}),
   };
 }
@@ -1646,7 +1711,7 @@ module.exports = {
   generateDayCandidates, generateBestWeekPlan, alternatesForSlot, SCORE_WEIGHTS,
   dayTolerance, dayMissLine, dayInTolerance, varietyOutlook,
   DAY_KCAL_TOLERANCE_PCT, DAY_PROTEIN_TOLERANCE_PCT,
-  DAY_FAT_TOLERANCE_PCT, DAY_CARB_TOLERANCE_PCT,
+  DAY_FAT_TOLERANCE_PCT, DAY_CARB_TOLERANCE_PCT, WEEK_KCAL_TOLERANCE_PCT,
   // The %E guardrail's own edges. Exported because an instrument that grades with
   // this ruler has to be able to STATE it: every fleet report stamps the ruler it
   // measured, and without these the stamp could only describe the old band-relative

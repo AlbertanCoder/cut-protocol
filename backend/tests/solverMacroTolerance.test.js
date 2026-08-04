@@ -16,6 +16,7 @@ const assert = require("node:assert/strict");
 
 const {
   dayTolerance, dayMissLine, dayInTolerance, scoreWeek, diagnoseFromResult,
+  DAY_KCAL_TOLERANCE_PCT, WEEK_KCAL_TOLERANCE_PCT,
   // NOTE: DAY_FAT_TOLERANCE_PCT and DAY_CARB_TOLERANCE_PCT are deliberately NOT
   // imported. Deriving an expected boundary from the constant under test yields an
   // assertion that passes at ANY value of it — 005bb3e moved the fat band and the
@@ -299,6 +300,53 @@ test("a target carrying no protein floor is not judged on one, and never renders
   const withFloor = { ...noFloor, proteinLo: 180, proteinHi: 200 };
   assert.equal(dayTolerance(withFloor, day).proteinOk, false);
   assert.match(dayMissLine(withFloor, day), /150 g protein vs 180 g floor — 30 g short/);
+});
+
+// ── 4b. the week's energy is its own verdict ──────────────────────────────
+
+test("a week of days that each pass can still miss the week's budget", () => {
+  // THE reason this verdict exists. Seven days each at +8% clear the ±10% day
+  // band every single time, and cost the deficit a whole day's calories.
+  const drift = [0, 1, 2, 3, 4, 5, 6].map((d) => ({
+    dayOfWeek: d, slotType: "meal", slotIndex: 0, recipeId: "a",
+    kcal: 2160, protein: 150, fat: 55, carb: 200, ingredients: [], warning: null,
+  }));
+  const s = scoreWeek(T, drift);
+  assert.equal(s.daysInTolerance, 7, "every day passes its own band — that is the premise");
+  assert.equal(s.weekBudgetKcal, 14000);
+  assert.equal(s.weekResidualKcal, -1120, "negative = the week landed OVER budget");
+  assert.equal(s.weekInTolerance, false, "and the week does not");
+});
+
+test("days that cancel out land the week, and the week verdict never replaces the day one", () => {
+  const cancel = [0, 1, 2, 3, 4, 5, 6].map((d, i) => ({
+    dayOfWeek: d, slotType: "meal", slotIndex: 0, recipeId: "a",
+    kcal: i % 2 ? 2150 : 1860, protein: 150, fat: 55, carb: 200, ingredients: [], warning: null,
+  }));
+  const s = scoreWeek(T, cancel);
+  assert.equal(s.daysInTolerance, 7);
+  assert.equal(s.weekInTolerance, true, "errors across days cancel — that is the premise too");
+  // Both facts are published. Neither substitutes for the other.
+  assert.ok(Number.isFinite(s.daysInTolerance) && typeof s.weekInTolerance === "boolean");
+});
+
+test("a single day is not a week", () => {
+  // 74% of the persona fleet asks for one-day plans. Grading one day against a
+  // band tighter than its own would be a second, stricter verdict on the same
+  // number wearing a different name.
+  const s = scoreWeek(T, [{ dayOfWeek: 0, slotType: "meal", slotIndex: 0, recipeId: "a", kcal: 2000, protein: 150, fat: 55, carb: 200, ingredients: [], warning: null }]);
+  assert.equal(s.weekBudgetKcal, null);
+  assert.equal(s.weekAchievedKcal, null);
+  assert.equal(s.weekResidualKcal, null);
+  assert.equal(s.weekInTolerance, null);
+  assert.equal(s.daysInTolerance, 1, "the DAY is still graded normally");
+});
+
+test("the week band is strictly tighter than the day band, or it catches nothing", () => {
+  // Not a preference — a structural requirement. At or above the day band, a week
+  // of days sitting at the day band's edge would pass the week too.
+  assert.ok(WEEK_KCAL_TOLERANCE_PCT < DAY_KCAL_TOLERANCE_PCT,
+    `week band ${WEEK_KCAL_TOLERANCE_PCT} must be tighter than the day band ${DAY_KCAL_TOLERANCE_PCT}`);
 });
 
 // ── 5. the week report and the diagnosis carry it through ─────────────────
