@@ -319,7 +319,14 @@ function dayTolerance(dailyTarget, totals) {
     kcalOk: dailyTarget.kcal > 0
       && totals.kcal >= kcalLoEdge
       && kcalDeltaPct <= DAY_KCAL_TOLERANCE_PCT,
-    proteinOk: totals.protein >= dailyTarget.proteinLo,
+    // A target with no protein floor is not judged on one — the same rule the
+    // absent fat/carb bands and the absent kcal floor already follow. Without
+    // this guard `150 >= undefined` is false, so a partial target FAILED on
+    // protein and then rendered the miss as "vs NaN g floor — NaN g short". The
+    // rule it replaced (a shortfall against the band midpoint) failed safe here,
+    // so this was a straight robustness regression, and NaN is the one thing a
+    // number that can reach the screen must never be.
+    proteinOk: !Number.isFinite(dailyTarget.proteinLo) || totals.protein >= dailyTarget.proteinLo,
     proteinMid: pMid,
     fatShortPct: fat.shortPct, fatOverPct: fat.overPct,
     carbShortPct: carb.shortPct, carbOverPct: carb.overPct,
@@ -371,7 +378,7 @@ function dayMissLine(dailyTarget, totals) {
       parts.push(`${Math.round(totals.kcal).toLocaleString("en-CA")} kcal vs a ${Math.round(dailyTarget.kcal).toLocaleString("en-CA")} target — ${Math.abs(diff).toLocaleString("en-CA")} ${diff > 0 ? "over" : "under"}`);
     }
   }
-  if (!t.proteinOk) {
+  if (!t.proteinOk && Number.isFinite(dailyTarget.proteinLo)) {
     parts.push(`${Math.round(totals.protein)} g protein vs ${Math.round(dailyTarget.proteinLo)} g floor — ${Math.round(dailyTarget.proteinLo - totals.protein)} g short`);
   }
   // Fat and carbs state the RANGE they missed and by how much — same plain

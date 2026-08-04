@@ -199,6 +199,27 @@ test("a target carrying no fat/carb band is not judged on one (honest absence)",
   assert.equal(partialShort.fatOk, false, "0% E fat fails the guardrail even if fatLo/fatHi are missing");
 });
 
+test("a target carrying no protein floor is not judged on one, and never renders NaN", () => {
+  // `150 >= undefined` is false, so a partial target FAILED on protein and then
+  // rendered "150 g protein vs NaN g floor — NaN g short". The rule this replaced
+  // (shortfall against the band midpoint) failed safe on the same input.
+  const noFloor = { kcal: 2000, fatLo: 60, fatHi: 75, carbLo: 180, carbHi: 220 };
+  const day = { kcal: 2000, protein: 150, fat: 62, carb: 200 };
+  assert.equal(dayTolerance(noFloor, day).proteinOk, true, "absent is absent — not a silent fail");
+  assert.equal(dayMissLine(noFloor, day), null);
+
+  // Nothing the app can render may contain NaN, whichever way the verdict lands.
+  for (const partial of [{ kcal: 2000 }, { kcal: 2000, proteinLo: null }, { kcal: 2000, proteinHi: 160 }]) {
+    const line = dayMissLine(partial, { kcal: 1200, protein: 40, fat: 20, carb: 100 }) || "";
+    assert.doesNotMatch(line, /NaN/, `NaN reached the miss line: ${line}`);
+  }
+
+  // A real floor still binds, and still says so.
+  const withFloor = { ...noFloor, proteinLo: 180, proteinHi: 200 };
+  assert.equal(dayTolerance(withFloor, day).proteinOk, false);
+  assert.match(dayMissLine(withFloor, day), /150 g protein vs 180 g floor — 30 g short/);
+});
+
 // ── 5. the week report and the diagnosis carry it through ─────────────────
 
 test("scoreWeek: a fat-starved day does not count toward daysInTolerance and carries a miss", () => {
