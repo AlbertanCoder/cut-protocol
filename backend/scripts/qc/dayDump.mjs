@@ -423,7 +423,17 @@ async function main() {
     // ── PROVENANCE. A level with no provenance is not a measurement. ───────
     dbSha256: DB.sourceSha256,
     dbCopySha256: DB.copySha256,
-    dbPath: DB.dbPath,
+    // REPO-RELATIVE, never absolute. This was `DB.dbPath`, and on Windows an
+    // absolute path contains the account name — so every record of every dump
+    // carried it, 640 times per file. `fleet/out/` is TRACKED and this repo is
+    // PUBLIC, and Phase 9 rewrote git history specifically to remove that
+    // username from it. `frontend/src/lib/scrub.js` exists for the same reason on
+    // the bug-report path, guarded by backend/tests/scrubPaths.test.js.
+    //
+    // The provenance value here is "which DB copy did this run read", which the
+    // relative path and the sha256 beside it carry completely. The absolute
+    // prefix was never information; it was only exposure.
+    dbPath: path.relative(REPO, DB.dbPath).replace(/\\/g, "/"),
     foodFingerprint,
     foodRows: foods.length, recipeRows: rawPool.length,
     personasPath: path.relative(REPO, PERSONAS_PATH).replace(/\\/g, "/"),
