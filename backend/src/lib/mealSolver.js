@@ -348,6 +348,20 @@ function dayTolerance(dailyTarget, totals) {
     ? dailyTarget.fatFloorG : 0;
   const fatLoEdgeG = Math.max((fatPctEnergyBase * DAY_FAT_PCT_ENERGY_MIN) / 9, essentialFatG);
   const fatHiEdgeG = (fatPctEnergyBase * DAY_FAT_PCT_ENERGY_MAX) / 9;
+  const fatOk = !fatBand || !(totals.kcal > 0)
+    || ((totals.fat || 0) >= fatLoEdgeG
+        && (dailyTarget.keto || fatPctEnergy <= DAY_FAT_PCT_ENERGY_MAX));
+  const carbOk = (!dailyTarget.keto || !carbBand || carb.overPct <= 0)
+    && (carbFloorG == null || (totals.carb || 0) >= carbFloorG);
+  // WHICH WAY a macro missed, decided by the rule that actually failed and
+  // published so no instrument has to re-derive it. Three QC harnesses were
+  // reading direction off `fatOverPct`/`carbOverPct` — distances from the target's
+  // GRAM band, which is no longer what fatOk/carbOk are decided by — and
+  // mislabelled 5 days per seed as `fat:short` when they were %E-over. Carbs now
+  // have exactly two failure modes: a non-keto day under the anti-ketosis floor,
+  // or a keto day over its ceiling.
+  const fatMissSide = fatOk ? null : ((totals.fat || 0) > fatLoEdgeG ? "over" : "short");
+  const carbMissSide = carbOk ? null : (dailyTarget.keto ? "over" : "short");
   return {
     kcalDeltaPct, proteinShortPct,
     kcalFloor, kcalFloorBinding,
@@ -378,15 +392,13 @@ function dayTolerance(dailyTarget, totals) {
     // of fat graded a 13 g day (4.9 %E) green with no miss line at all. That is a
     // silent target miss on the diet's own defining macro.
     fatLoEdgeG, fatHiEdgeG, essentialFatG,
-    fatOk: !fatBand || !(totals.kcal > 0)
-      || ((totals.fat || 0) >= fatLoEdgeG
-          && (dailyTarget.keto || fatPctEnergy <= DAY_FAT_PCT_ENERGY_MAX)),
+    fatMissSide, carbMissSide,
+    fatOk,
     carbFloorG,
     // Carbs take the remainder and are not graded as a TARGET — but two floors
     // still hold: keto's carb ceiling, a diet law that survives the reframe
     // untouched, and the non-keto anti-ketosis floor above.
-    carbOk: (!dailyTarget.keto || !carbBand || carb.overPct <= 0)
-            && (carbFloorG == null || (totals.carb || 0) >= carbFloorG),
+    carbOk,
   };
 }
 
@@ -1615,6 +1627,11 @@ module.exports = {
   dayTolerance, dayMissLine, dayInTolerance, varietyOutlook,
   DAY_KCAL_TOLERANCE_PCT, DAY_PROTEIN_TOLERANCE_PCT,
   DAY_FAT_TOLERANCE_PCT, DAY_CARB_TOLERANCE_PCT,
+  // The %E guardrail's own edges. Exported because an instrument that grades with
+  // this ruler has to be able to STATE it: every fleet report stamps the ruler it
+  // measured, and without these the stamp could only describe the old band-relative
+  // one. A level with a wrong ruler on it is worse than a level with none.
+  DAY_FAT_PCT_ENERGY_MIN, DAY_FAT_PCT_ENERGY_MAX,
   PROTEIN_PRIORITY_WEIGHTS,
   // Stage 2 — any-horizon generation
   resolveHorizon, horizonWindows, varietyPlanFor, classifyBinding,
