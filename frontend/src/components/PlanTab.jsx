@@ -1312,16 +1312,45 @@ export default function PlanTab({ profile, summary, refresh }) {
         <div className="grid grid-cols-1 xl:grid-cols-12 gap-4 items-start">
           {/* ── left: the week ── */}
           <div className="xl:col-span-7 min-w-0">
-            {/* 7-column week board (≥ xl): every day's meals at a glance.
+            {/* 7-column week board (≥ xl): the shape of each day at a glance.
                 Click or ← / → selects a day; the full detail renders below.
-                Selection is a lightness step, not the brand green. */}
+                Selection is a lightness step, not the brand green.
+
+                A column here is ~100px wide, which is not enough for a recipe
+                name — the board used to stack four of them per card and every
+                one truncated, so "High-Protein Te…" and "High-Protein To…"
+                read as the same meal and the card became six competing lines
+                of grey with no entry point. ("Tajine de Poulet aux Carottes
+                et Patates Douces" arrived in that slot too.) Names are not
+                information at this width. So the card carries what IS legible
+                in 100px: the day, its calories as the one number worth
+                reading across seven columns, and a plain count of what fills
+                it. Exceptions — unfilled slots, flagged meals — get their own
+                amber line and are silent when there are none. The names live
+                where they can actually be read: the hover title, and the full
+                slot list below for the selected day. */}
             <div className="hidden xl:grid grid-cols-7 gap-1.5 mb-3">
               {DAY_NAMES.map((d, i) => {
                 const { slots, totals: tot } = slotsByDay[i];
                 const active = activeDay === i;
+                const snacks = slots.filter((s) => s.slotType === "snack").length;
+                const meals = slots.length - snacks;
+                const open = slots.filter((s) => !s.recipe).length;
+                const flagged = slots.filter((s) => s.warning).length;
+                const fill = [
+                  meals > 0 && `${meals} meal${meals === 1 ? "" : "s"}`,
+                  snacks > 0 && `${snacks} snack${snacks === 1 ? "" : "s"}`,
+                ].filter(Boolean).join(" · ");
+                const exceptions = [
+                  open > 0 && `${open} still to fill`,
+                  flagged > 0 && `${flagged} flagged`,
+                ].filter(Boolean).join(" · ");
                 return (
                   <button key={d} onClick={() => selectDay(i)} aria-current={active ? "true" : undefined}
-                    className="rounded-xl p-2 text-left flex flex-col gap-1 min-h-[112px]"
+                    title={slots.length > 0
+                      ? slots.map((s) => s.recipe ? s.recipe.name : "open meal").join(" · ")
+                      : undefined}
+                    className="rounded-xl px-2.5 py-2 text-left flex flex-col gap-1.5 min-h-[92px]"
                     style={{ background: active ? C.card2 : C.card, border: `1px solid ${active ? C.faintLight : C.rule}` }}>
                     <div className="flex items-baseline justify-between w-full">
                       <span className="text-[10px] font-extrabold uppercase" style={{ color: active ? C.ink : C.faint }}>{d}</span>
@@ -1331,18 +1360,20 @@ export default function PlanTab({ profile, summary, refresh }) {
                     </div>
                     {slots.length > 0 ? (
                       <>
-                        <div className="flex flex-col gap-0.5 w-full">
-                          {slots.map((s) => (
-                            <div key={s.id} className="text-[10.5px] font-semibold flex items-center gap-1 min-w-0" style={{ color: C.faint }}>
-                              {s.warning && <AlertTriangle size={9} className="shrink-0" style={{ color: C.warn }} />}
-                              <span className="truncate">{s.recipe ? s.recipe.name : "— open meal"}</span>
-                            </div>
-                          ))}
+                        <div className="flex items-baseline gap-1">
+                          <span className="mono stat-hero text-lg leading-none" style={{ color: active ? C.ink : C.faint }}>{kc(tot.kcal)}</span>
+                          <span className="text-[10px] font-bold" style={{ color: C.faint }}>kcal</span>
                         </div>
-                        <div className="mono text-[10.5px] font-bold mt-auto" style={{ color: active ? C.ink : C.faint }}>{kc(tot.kcal)} kcal</div>
+                        {fill && <div className="text-[10px] font-semibold" style={{ color: C.faint }}>{fill}</div>}
+                        {exceptions && (
+                          <div className="text-[10px] font-semibold flex items-center gap-1 mt-auto" style={{ color: C.warn }}>
+                            <AlertTriangle size={9} className="shrink-0" aria-hidden="true" />
+                            <span className="min-w-0">{exceptions}</span>
+                          </div>
+                        )}
                       </>
                     ) : (
-                      <div className="text-[10.5px] font-semibold" style={{ color: C.faint }}>{plan ? "no meals" : "—"}</div>
+                      <div className="text-[10px] font-semibold" style={{ color: C.faint }}>{plan ? "no meals" : "—"}</div>
                     )}
                   </button>
                 );

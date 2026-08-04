@@ -497,7 +497,12 @@ function defaultProfile() {
   return {
     sex: "M", age: 30, heightCm: 178, bodyFatPct: 0, bodyFatSource: null,
     occupationKey: "desk-office", activityOverride: null,
-    sessionsPerWeek: 3, trainingStyle: "mixed", minutesPerSession: 45,
+    // Training defaults to NOTHING claimed. The old seed was mixed / 3× /
+    // 45 min, so a profile that had never been asked about training already
+    // carried ~159 kcal/day of it (94 kg body) inside its TDEE. A default
+    // must not invent activity on the user's behalf — it is the one number
+    // here they cannot check against anything. They tell us, or it's zero.
+    sessionsPerWeek: 0, trainingStyle: "none", minutesPerSession: 0,
     startWeightKg: 90, goalWeightKg: 85,
     // todayStr(), never an inline toISOString().slice(0, 10). That inline form
     // is the date in UTC, so finishing setup after 18:00 local in Edmonton

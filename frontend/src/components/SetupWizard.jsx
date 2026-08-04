@@ -129,8 +129,8 @@ const PROVISIONAL_KEY = "cutprotocol.profile.provisional";
 // is recorded from the profile the SERVER returns, not from this constant.
 export const DEFAULT_ASSUMPTIONS = {
   sex: "M", age: 30, heightCm: 178, startWeightKg: 90, goalWeightKg: 85,
-  occupationKey: "desk-office", sessionsPerWeek: 3, trainingStyle: "mixed",
-  minutesPerSession: 45, rateLbPerWeek: 1.0,
+  occupationKey: "desk-office", sessionsPerWeek: 0, trainingStyle: "none",
+  minutesPerSession: 0, rateLbPerWeek: 1.0,
 };
 
 // The fields that make a profile PERSONAL. If any one of these no longer
@@ -204,7 +204,12 @@ export function describeAssumptions(pref = "imperial") {
     ["Current weight", `${displayWeight(a.startWeightKg, pref)} ${weightUnit(pref)}`],
     ["Goal weight", `${displayWeight(a.goalWeightKg, pref)} ${weightUnit(pref)}`],
     ["Job", "desk / office"],
-    ["Training", `${a.sessionsPerWeek}×/week, ${a.minutesPerSession} min, mixed`],
+    // Reads from the constant rather than restating it, so this line cannot
+    // drift from the default the way the old hardcoded "mixed" would have the
+    // moment the default stopped being mixed.
+    ["Training", a.trainingStyle === "none"
+      ? "none assumed — tell us if you train"
+      : `${a.sessionsPerWeek}×/week, ${a.minutesPerSession} min, ${a.trainingStyle}`],
     ["Rate of loss", `${a.rateLbPerWeek} lb/wk`],
   ];
 }
@@ -242,7 +247,12 @@ export default function SetupWizard({ onDone }) {
     unitPref: "imperial",
     // height is cm when metric; ft+in when imperial (most people know 6'1", not 73")
     sex: "M", age: "", height: "", heightFt: "", heightIn: "", weight: "", bf: "", goal: "",
-    occupationKey: "desk-office", sessions: 3, trainingStyle: "mixed", minutes: 45,
+    // Training starts at "none claimed" — the wizard asks about it on its own
+    // step, and pre-filling 3×45 of "mixed" meant anyone who clicked past that
+    // step bought ~159 kcal/day of training energy (94 kg) they never said
+    // they did. A default may describe a typical body; it may not invent a
+    // habit. See backend defaultProfile() and TRAINING_STYLES.
+    occupationKey: "desk-office", sessions: 0, trainingStyle: "none", minutes: 0,
     // One flat list of exclusion terms — the same shape the profile stores.
     // The old split (fixed checkbox keys + a comma-separated "custom" string)
     // made a typed allergen a second-class citizen; it isn't one.
@@ -538,6 +548,9 @@ export default function SetupWizard({ onDone }) {
 
   const inp = "text-sm px-3 py-2.5 rounded-xl w-full mt-1";
   const inpStyle = { background: C.card2, border: `1.5px solid ${C.rule}`, color: C.ink };
+  // Matches ProfileTab's treatment of a field the engine is ignoring.
+  const offStyle = { ...inpStyle, color: C.faint, cursor: "not-allowed" };
+  const notTraining = d.trainingStyle === "none";
   const badStyle = { ...inpStyle, border: `1.5px solid ${C.warn}` };
   const label = (t) => <span className="text-xs font-bold" style={{ color: C.faint }}>{t}</span>;
 
@@ -921,14 +934,24 @@ export default function SetupWizard({ onDone }) {
                         </select>
                       </label>
                       <label className="block">{label("Sessions / week")}
-                        <input type="number" min={0} max={14} value={d.sessions} onChange={(e) => set({ sessions: e.target.value })} className={inp} style={inpStyle} />
+                        <input type="number" min={0} max={14} value={notTraining ? "" : d.sessions} disabled={notTraining}
+                          onChange={(e) => set({ sessions: e.target.value })} className={inp}
+                          style={notTraining ? offStyle : inpStyle} />
                       </label>
                       <label className="block">{label("Minutes / session")}
-                        <input type="number" min={0} max={300} value={d.minutes} onChange={(e) => set({ minutes: e.target.value })} className={inp} style={inpStyle} />
+                        <input type="number" min={0} max={300} value={notTraining ? "" : d.minutes} disabled={notTraining}
+                          onChange={(e) => set({ minutes: e.target.value })} className={inp}
+                          style={notTraining ? offStyle : inpStyle} />
                       </label>
+                      {/* This hint used to tell people to "leave these at zero"
+                          while the wizard had already filled them with 3 and 45.
+                          The style list now carries the honest answer, so the
+                          hint points at it instead of at a state the form
+                          wasn't actually in. */}
                       <div className="text-[11px] font-semibold leading-relaxed self-end" style={{ color: C.faintLight }}>
-                        Leave these at zero if you don&apos;t train yet — the plan works either way, and the Engine tab
-                        shows exactly what each part contributes.
+                        {notTraining
+                          ? <>Nothing is being added for training — your job multiplier carries the whole estimate. That is a normal starting point, and you can change it any time in Profile.</>
+                          : <>Not training yet? Pick &ldquo;I don&apos;t train right now&rdquo; above — the plan works either way, and the Engine tab shows exactly what each part contributes.</>}
                       </div>
                     </div>
                   </div>

@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo, useCallback, useRef } from "react";
-import { Search, AlertTriangle, ShieldCheck, ChevronRight, Info } from "lucide-react";
+import { Search, AlertTriangle, ShieldCheck, ChevronRight, Info, Check } from "lucide-react";
 import { C } from "../lib/theme.js";
 import {
   displayWeight, parseWeight, displayHeight, parseHeight, displayRate,
@@ -111,13 +111,30 @@ export default function ProfileTab({ profile, summary, refresh, openToday }) {
 
   const clearFeedback = () => { setError(null); setFieldErrors({}); setGate(null); };
 
+  // "idle" | "saving" | "saved" — drives the header receipt. It is set ONLY on
+  // the real outcome of the request: never optimistically, so "Saved" cannot
+  // appear for an edit the server refused. The failure path deliberately
+  // returns it to idle rather than to a second error indicator, because
+  // handleSaveError already owns the loud one.
+  const [saveState, setSaveState] = useState("idle");
+  const savedTimer = useRef(null);
+  useEffect(() => () => clearTimeout(savedTimer.current), []);
+  const markSaved = () => {
+    setSaveState("saved");
+    clearTimeout(savedTimer.current);
+    savedTimer.current = setTimeout(() => setSaveState("idle"), 2200);
+  };
+
   const commit = async (patch) => {
     clearFeedback();
+    setSaveState("saving");
     try {
       await api.putProfile(patch, { signal: abort.signal });
       await refresh();
+      markSaved();
     } catch (e) {
       if (isAbortError(e)) return;
+      setSaveState("idle");
       handleSaveError(e, patch);
     }
   };
@@ -373,6 +390,13 @@ export default function ProfileTab({ profile, summary, refresh, openToday }) {
   const inp = "text-sm px-3 py-2 rounded-xl w-full mt-1";
   const inpStyle = { background: C.card2, border: `1.5px solid ${C.rule}`, color: C.ink };
   const badStyle = { ...inpStyle, border: `1.5px solid ${C.warn}` };
+  // A field the engine is currently ignoring — same treatment as the derived
+  // current-weight box above, so "you can't set this, and here's why" looks
+  // the same wherever it happens rather than being invented per-field.
+  const offStyle = { ...inpStyle, color: C.faint, cursor: "not-allowed" };
+  // No training style claimed → sessions × minutes × MET 0 is zero no matter
+  // what the boxes say, so the whole additive term is off.
+  const notTraining = profile.trainingStyle === "none";
   const label = (t) => <span className="text-xs font-bold" style={{ color: C.faint }}>{t}</span>;
 
   // ── COMMIT-ON-BLUR, WITHOUT THE SILENT REWRITE ────────────────────────
@@ -454,6 +478,22 @@ export default function ProfileTab({ profile, summary, refresh, openToday }) {
             stacks third, below the fold. A safety control may not be
             something you have to go hunting for — this puts it one keystroke
             from the top of the page and states the count out loud. */}
+        {/* There is no Save button on this tab and there should not be one:
+            every field commits the moment you leave it, and a failed commit
+            reverts the box to server truth (see commit()/revertDrafts). What
+            was missing was the other half of that contract — the tab did the
+            saving silently, so from the outside it was indistinguishable from
+            a form that had quietly dropped your edit. This is the receipt. */}
+        <span aria-live="polite" className="text-xs font-bold inline-flex items-center gap-1.5"
+          style={{ color: C.faint }}>
+          {saveState === "saving" ? (
+            <>Saving…</>
+          ) : saveState === "saved" ? (
+            <><Check size={13} aria-hidden="true" />Saved</>
+          ) : (
+            <>Changes save as you go</>
+          )}
+        </span>
         <button type="button" onClick={jumpToAllergies}
           className="text-xs font-bold px-3 py-2 rounded-xl inline-flex items-center gap-1.5"
           style={{ background: C.card2, border: `1px solid ${C.faintLight}`, color: C.ink }}>
@@ -683,23 +723,32 @@ export default function ProfileTab({ profile, summary, refresh, openToday }) {
               </select>
               <FieldError>{fieldErrors.trainingStyle}</FieldError>
             </label>
+            {/* Sessions and minutes multiply the style's MET, so when the
+                style is "none" they multiply zero — whatever sits in these
+                boxes changes nothing. Leaving them live would let someone type
+                "4 × 60" and reasonably expect it to count. They go quiet and
+                say why, rather than accepting input the engine discards. */}
             <label className="block">{label("Sessions / week")}
-              <input type="number" min={0} max={14} value={draft.sessions} aria-invalid={!!fieldErrors.sessionsPerWeek}
+              <input type="number" min={0} max={14} value={notTraining ? "" : draft.sessions}
+                disabled={notTraining} aria-invalid={!!fieldErrors.sessionsPerWeek}
                 onChange={(e) => setDraft((d) => ({ ...d, sessions: +e.target.value || 0 }))}
                 onBlur={() => commit({ sessionsPerWeek: draft.sessions })}
-                className={inp} style={fieldErrors.sessionsPerWeek ? badStyle : inpStyle} />
+                className={inp} style={notTraining ? offStyle : fieldErrors.sessionsPerWeek ? badStyle : inpStyle} />
               <FieldError>{fieldErrors.sessionsPerWeek}</FieldError>
             </label>
             <label className="block">{label("Minutes / session")}
-              <input type="number" min={0} max={300} value={draft.minutes} aria-invalid={!!fieldErrors.minutesPerSession}
+              <input type="number" min={0} max={300} value={notTraining ? "" : draft.minutes}
+                disabled={notTraining} aria-invalid={!!fieldErrors.minutesPerSession}
                 onChange={(e) => setDraft((d) => ({ ...d, minutes: +e.target.value || 0 }))}
                 onBlur={() => commit({ minutesPerSession: draft.minutes })}
-                className={inp} style={fieldErrors.minutesPerSession ? badStyle : inpStyle} />
+                className={inp} style={notTraining ? offStyle : fieldErrors.minutesPerSession ? badStyle : inpStyle} />
               <FieldError>{fieldErrors.minutesPerSession}</FieldError>
             </label>
           </div>
           <div className="text-xs font-semibold mt-3" style={{ color: C.faint }}>
-            Occupation sets the day-to-day multiplier; training adds its own kcal on top. The Engine tab shows the exact math.
+            {notTraining
+              ? "Your occupation multiplier is doing all the work — no training kcal are being added. That is a normal way to run a cut, and the target below is built for it. Pick a training style above if that changes."
+              : "Occupation sets the day-to-day multiplier; training adds its own kcal on top. The Engine tab shows the exact math."}
           </div>
         </Card>
 

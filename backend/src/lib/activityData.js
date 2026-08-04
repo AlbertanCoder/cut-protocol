@@ -71,7 +71,18 @@ const OCCUPATION_BY_KEY = Object.fromEntries(OCCUPATIONS.map((o) => [o.key, o]))
 
 // Training styles → METs for the additive training-energy component.
 // kcal/min = MET × 3.5 × kg / 200 (standard ACSM formula), shown in Engine.
+//
+// `none` is first and is not a formality. Every entry below used to be a
+// training modality, so a person who does not train had no way to say so —
+// they had to name a style they don't do and then zero the session count to
+// undo it. Worse, the app DEFAULTED them to mixed / 3× / 45 min, which on a
+// 94 kg body is 159 kcal/day of training energy nobody earned, added straight
+// to TDEE and therefore to the daily target. Over 30 days that is 4,776 kcal —
+// about 1.4 lb of fat loss that silently never happens, and the user has no
+// way to see where it came from. MET 0 makes the whole additive term vanish
+// arithmetically, so "I don't train" costs nothing and claims nothing.
 const TRAINING_STYLES = [
+  { key: "none", label: "I don't train right now", met: 0 },
   { key: "weights", label: "Weights / resistance", met: 3.5 },
   { key: "mixed", label: "Mixed (weights + cardio)", met: 5 },
   { key: "sport", label: "Sport / team training", met: 6 },
