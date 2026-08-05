@@ -1,4 +1,5 @@
 import { C } from "../../lib/theme.js";
+import { ModeToggle } from "@/components/mode-toggle";
 
 const kc = (n) => Math.round(n).toLocaleString("en-CA");
 
@@ -27,6 +28,7 @@ export default function HeaderBar({ profile, summary }) {
           Target <b className="mono ml-0.5" style={{ color: C.ink }}>{profile ? `${kc(profile.targetKcal)} kcal` : "—"}</b>
         </span>
       </div>
+      <ModeToggle />
     </header>
   );
 }

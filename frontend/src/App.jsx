@@ -25,7 +25,11 @@ import { onUncaughtError } from "./lib/bugLog.js";
 import { TRAINING, WELLBEING } from "./lib/flags.js";
 import { wellbeingScreenPref } from "./lib/storage.js";
 
-export default function App() {
+// Phase 1 Step 7: ThemeProvider import — the wrapper lives at the bottom of
+// this file; nothing inside App changes.
+import { ThemeProvider } from "@/components/theme-provider";
+
+function App() {
   // checking | out | unreachable | in
   //   out         = the server ANSWERED and said "not authenticated" (401)
   //   unreachable = the server never answered, or answered with a 5xx. The
@@ -353,5 +357,17 @@ export default function App() {
       </div>
       <BrainChat />
     </div>
+  );
+}
+
+// Phase 1 Step 7 (pack-sanctioned structural wrapper): the ThemeProvider wraps
+// the ENTIRE existing tree; every auth branch, prop, and handler inside App is
+// untouched. Dark is the shipped default; storageKey is the one sanctioned
+// storage write (Master Context THEMING carve-out).
+export default function AppWithTheme() {
+  return (
+    <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+      <App />
+    </ThemeProvider>
   );
 }
