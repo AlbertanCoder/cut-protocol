@@ -8,6 +8,9 @@ import '@fontsource/inter/latin-600.css'
 import '@fontsource/inter/latin-700.css'
 import '@fontsource/sora/latin-700.css'
 import '@fontsource/sora/latin-800.css'
+// SIGNAL BLACK direction heading font (Sora stays until legacy screens drain)
+import '@fontsource/space-grotesk/latin-600.css'
+import '@fontsource/space-grotesk/latin-700.css'
 import './index.css'
 // Legacy CSS quarantine (Phase 1 Step 2): the pre-restyle stylesheet,
 // imported AFTER index.css. Drained per-screen in Phases 2–5.
