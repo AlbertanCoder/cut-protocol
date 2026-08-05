@@ -1,3 +1,113 @@
+# Recomp — Claude Code Rules
+
+Standing guardrails for every session in this repo. Read fully before changing anything.
+
+## Project
+
+- **Recomp**: body-recomposition / cut-protocol app.
+- Frontend: React + Vite. Backend: Express 5 + Prisma 6 (Node).
+- The recomp/cut-protocol logic is the **sellable asset** of this business. It is **UNTOUCHABLE** and must be provably unmodified — every diff should read as styling-only.
+- Current mission: buyer-facing UI restyle (demo-quality polish). Presentation layer only.
+
+## The Boundary: Styling Only
+
+**Allowed to change:**
+
+- JSX structure/markup (layout, hierarchy, wrapper elements)
+- classNames / Tailwind utilities
+- Style and theme files: CSS entry, theme tokens, `components.json`, files in the `components/ui` folder
+- `index.html`, fonts, and static assets (favicon, images)
+- New purely presentational component files (e.g. theme provider, mode toggle, chart wrappers, pricing cards)
+
+**NEVER change:**
+
+- State management (hooks, stores, context, reducers). Sole carve-out: purely visual local component state (active tab, dialog open/closed, selected pricing period, theme choice) is presentation and allowed. State that reaches the network, storage (other than the theme storageKey `"vite-ui-theme"`), or a global store is logic and forbidden.
+- API calls, endpoints, fetching, request/response handling
+- Calculations, formulas, protocol logic — anything that computes numbers
+- Data flow: which data props are passed, transformations, business logic
+- Event-handler wiring (handlers may move with their JSX, never be rewritten)
+- Anything in the backend (Express + Prisma)
+- **If `DO-NOT-TOUCH.md` exists in the repo root, its list is BINDING.** Do not edit, reformat, rename, or move any file on it — not even "harmless cleanup." If `DO-NOT-TOUCH.md` does NOT exist, STOP — no restyle work is permitted until the Phase 0 audit has produced and committed it (running that read-only audit is the only permitted work in that state).
+
+No drive-by refactors. If a file mixes presentation and logic, change only the presentational lines.
+
+## Sole Exception: Chart Migration
+
+Existing charts may be swapped for shadcn charts (`npx shadcn@latest add chart` — installs Recharts automatically; do not npm-install it separately) under one strict rule:
+
+- The replacement chart component must consume the **exact same data props/shape** as the old one.
+- **Zero changes** to data computation, fetching, or transformation code — only the render layer swaps.
+- Any reshaping the new chart needs happens inside the presentational chart component, never upstream. If that can't work, stop and ask.
+
+## Form Safety (data-entry, logging, and selection controls)
+
+1. Submission logic, validation logic, state hooks, and API calls are untouchable. Never add react-hook-form, zod, or the shadcn `form` component.
+2. Native `<input>`/`<textarea>`: restyle via shadcn `Input`/`Textarea` (styled native elements — value/onChange/name/id/type carry over unchanged) or via classNames alone.
+3. Radix-based controls (Select, Checkbox, RadioGroup, Switch) change the event contract (onChange(event) → onValueChange(value)). Swap to one ONLY when a one-line inline JSX adapter can call the EXISTING handler unchanged, and flag every such swap "CONTROL SWAP — verify behavior" in the diff summary. Otherwise keep the native element styled with Tailwind.
+4. Keep native date/number input types. No calendar/date-picker components — changed value formats are a logic risk.
+5. Preserve label/id/htmlFor associations, required/min/max/step, autocomplete, and inputMode.
+
+## Workflow (all mandatory)
+
+1. All work on the `ui-restyle` branch — never on main.
+2. One component/screen at a time; finish it before starting the next.
+3. Show the diff and **wait for explicit approval** before continuing.
+4. One commit per approved screen.
+5. Before a screen is "done": visual check at **390px** (mobile) and **1440px** (desktop), in **dark AND light** themes — all four must pass.
+6. Never push, rebase, amend published history, or run destructive git commands (`reset --hard`, `checkout --`, `clean`) unless the owner or the current phase prompt explicitly instructs it for a named file.
+
+## Styling Conventions
+
+- Stack: **Tailwind CSS v4 + shadcn/ui**. v4 is CSS-first — config lives in the CSS entry (`@import "tailwindcss"`, `@theme`). Never create a `tailwind.config.js` or use `@tailwind` directives; those are stale v3 patterns.
+- Reuse existing components in the `components/ui` folder first. Need one that isn't there? Add it via the CLI: `npx shadcn@latest add <name>` — never hand-roll a shadcn-style component.
+- Theme via **CSS variable tokens only**: `bg-background`, `text-muted-foreground`, `border-border`, `var(--chart-1)`, etc. **No hardcoded hex** (or raw oklch) in components. New colors: define in `:root` + `.dark`, map in `@theme inline`.
+- **Dark is the default theme**; light is available via the toggle (`.dark` class on `<html>`, ThemeProvider `defaultTheme="dark"`). Every change must look right in **both** themes.
+- Charts: shadcn wrappers (`ChartContainer`, `ChartTooltip`, `ChartTooltipContent`, `ChartConfig`) from `@/components/ui/chart`; primitives imported from `recharts`. Give `ChartContainer` a height (`min-h-*` or `aspect-*`). Colors as `var(--chart-N)` — not the old `hsl(var(--chart-1))` wrapper.
+- Paywall/pricing UI: placeholder prices, stubbed CTA. Do **not** wire Stripe or any real payments — explicitly out of scope.
+
+## Escalation: Stop and Ask
+
+If a requested change appears to require touching logic — state, an API call, a calculation, a data transformation, a backend file, or anything on the DO-NOT-TOUCH.md list — **STOP**. Do not proceed, do not work around it, do not "just quickly fix" it. Report the conflict and wait for a decision.
+
+When unsure whether something counts as styling or logic: it's logic. Stop and ask.
+
+---
+
+# Part II — Cut Protocol standing knowledge (pre-restyle)
+
+Part I above governs the UI restyle on the `ui-restyle` branch. Everything
+below is the repo's accumulated standing ruleset and history — still binding
+wherever it does not conflict with Part I.
+
+**Reconciliation record (owner-approved 2026-08-04, Phase 1):**
+
+1. **Design system** — the AURORA RINGLIGHT constitution below is SUPERSEDED
+   on `ui-restyle` by the SIGNAL BLACK direction (shadcn semantic tokens in
+   `frontend/src/index.css`). The safety-derived UX laws survive ANY visual
+   direction (also recorded in DO-NOT-TOUCH.md): never red on food or body
+   data (over-target = calm amber + supportive copy); the macro triad stays
+   colorblind-distinguishable and always carries P/C/F letter labels; the
+   Wellbeing entry and its support resources are never hidden or greyed out;
+   progress indicators never fabricate percentages; `prefers-reduced-motion`
+   support and the a11y utilities survive.
+2. **Git** — standing rule 4's "push to GitHub (`origin master`)" is
+   SUSPENDED on `ui-restyle`: never push; one commit per approved unit;
+   Part I's workflow governs.
+3. **Theming** — "single dark mode / light mode retired" is superseded: dark
+   is the shipped default, light must keep working via the theme toggle.
+4. **Fonts** — the never-a-CDN law STANDS. Phase 1 Step 6 self-hosts the
+   direction fonts via @fontsource (`@fontsource/space-grotesk` + the
+   already-installed Inter) as JS imports in `main.jsx`, instead of the
+   restyle pack's Google Fonts `@import` line. Owner-approved deviation.
+5. **Stack correction** — the restyle pack's canonical text described the
+   backend as FastAPI (Python). The actual backend is Express 5 + Prisma 6
+   (Node); Part I is corrected accordingly. The boundary is unchanged: the
+   entire `backend/` tree is untouchable.
+6. **Rule 8 (no hardcoded colors)** — the principle carries forward
+   unchanged; on `ui-restyle` the token home migrates to the shadcn semantic
+   tokens in `frontend/src/index.css` as screens are restyled. `lib/theme.js`
+   keeps serving un-restyled legacy screens until they migrate.
+
 # Cut Protocol — Project Rules
 
 Desktop cutting/body-recomp app: TDEE engine, meal-plan solver, tracking.
@@ -69,7 +179,8 @@ phase of the staged overhaul (Phases 0–8, driven by an external prompt pack).
 1. **Desktop first.** This is a DESKTOP app. Every screen is designed for a
    full desktop window first. No phone-width centered columns, no bottom
    tab bars.
-2. **One design system — AURORA RINGLIGHT (v2).** Dark, athletic, calm:
+2. **One design system — AURORA RINGLIGHT (v2).** *[Superseded on
+   `ui-restyle` — see Part II reconciliation record #1.]* Dark, athletic, calm:
    green-tinted near-black canvas, glass cards with gradient hairlines,
    subtle layered aurora ambience + film grain, Sora display type over
    Inter body, oversized tabular stat numbers. All color/spacing/type
@@ -84,6 +195,8 @@ phase of the staged overhaul (Phases 0–8, driven by an external prompt pack).
 4. **Verify, then commit.** After every meaningful change: actually run the
    app and confirm the change works before moving on. At the end of every
    phase: commit with a clear message and push to GitHub (`origin master`).
+   *[Push clause SUSPENDED on `ui-restyle` — never push; see reconciliation
+   record #2.]*
 5. **Nutrition sanity gate.** Every food/recipe entry must satisfy
    kcal ≈ 4×protein + 4×carbs + 9×fat within ~15%, or carry a documented
    exception. Water, black coffee, plain spices ≈ 0 kcal. Anything failing
@@ -135,7 +248,7 @@ phase of the staged overhaul (Phases 0–8, driven by an external prompt pack).
      intact and 1 with them stripped. Recorded, not fixed — do not rediscover
      it a third time.
 
-## Design constitution — AURORA RINGLIGHT color laws (binding, no session may violate)
+## Design constitution — AURORA RINGLIGHT color laws *[superseded on `ui-restyle` by SIGNAL BLACK — safety laws b/c and reduced-motion survive; see Part II reconciliation record #1]*
 
 From the design research (2026-07-18). These are laws, not preferences:
 
