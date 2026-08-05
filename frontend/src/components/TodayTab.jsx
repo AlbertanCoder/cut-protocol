@@ -504,23 +504,23 @@ function DiaryCard({ date, macros, hasPlan }) {
   const over = macros?.kcal ? totals.kcal > macros.kcal : false;
 
   return (
-    <Card section="DIARY" title="Food diary — what you actually ate" className="xl:col-span-12">
+    <SectionCard section="DIARY" title="Food diary — what you actually ate" className="xl:col-span-12">
       <div className="flex flex-wrap items-center gap-2 mb-4">
-        <Btn small onClick={logPlanned} disabled={busy || !hasPlan}>
+        <Button size="sm" onClick={logPlanned} disabled={busy || !hasPlan}>
           <ClipboardCheck size={12} className="inline mr-1" />{busy ? "Working…" : "Ate as planned"}
-        </Btn>
-        <Btn small kind="ghost" onClick={() => (adding ? closeAdd() : openAdd())}>
+        </Button>
+        <Button size="sm" variant="outline" onClick={() => (adding ? closeAdd() : openAdd())}>
           <Plus size={12} className="inline mr-1" />{adding ? "Close" : "Add item"}
-        </Btn>
+        </Button>
         {!hasPlan && (
-          <span className="text-[10.5px] font-semibold" style={{ color: C.faint }}>
+          <span className="text-[10.5px] font-semibold text-muted-foreground">
             Generate a plan to enable "Ate as planned".
           </span>
         )}
       </div>
 
       {adding && (
-        <div className="mb-4 p-3 rounded-xl" style={{ background: C.card2, border: `1px solid ${C.rule}` }}>
+        <div className="mb-4 p-3 rounded-xl border border-border bg-secondary/50">
           {mode === "search" && (
             <FoodPicker
               autoFocus
@@ -563,13 +563,13 @@ function DiaryCard({ date, macros, hasPlan }) {
 
       {/* role="alert": food-logging feedback (save failures, validation) —
           ED-safety relevant that this reaches screen-reader users reliably. */}
-      {note && <div role="alert" className="text-xs font-semibold mb-3" style={{ color: C.warn }}>{note}</div>}
+      {note && <div role="alert" className="text-xs font-semibold mb-3 text-warn">{note}</div>}
 
       {/* The target recompute is best-effort on the server: the food is saved
           either way, but a failure used to be swallowed whole and the user was
           left reading a stale target with nothing to indicate it. */}
       {targetStale && (
-        <div role="status" className="text-[11px] font-semibold mb-3" style={{ color: C.faint }}>
+        <div role="status" className="text-[11px] font-semibold mb-3 text-muted-foreground">
           Saved. Your target didn't re-derive just now — it catches up on your next weigh-in or profile save.
         </div>
       )}
@@ -587,10 +587,10 @@ function DiaryCard({ date, macros, hasPlan }) {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
           {/* eaten vs target */}
           <div className="lg:col-span-5">
-            <div className="text-xs font-semibold" style={{ color: C.faint }}>Eaten today</div>
-            <div className="mono stat-hero text-3xl" style={{ color: over ? C.warn : C.ink }}>
+            <div className="text-[10px] font-semibold uppercase tracking-[0.08em] text-muted-foreground">Eaten today</div>
+            <div className={`font-heading text-3xl font-bold tabular-nums ${over ? "text-warn" : "text-foreground"}`}>
               {kc(totals.kcal)}
-              <span className="text-xs ml-1" style={{ color: C.faint, fontWeight: 600, letterSpacing: 0 }}>/ {kc(macros?.kcal)} kcal</span>
+              <span className="text-xs ml-1 font-semibold tracking-normal text-muted-foreground">/ {kc(macros?.kcal)} kcal</span>
             </div>
             {over && (
               // What the engine can actually promise. It moves on a WEEKLY
@@ -599,7 +599,7 @@ function DiaryCard({ date, macros, hasPlan }) {
               // target already adjusts" was a promise it cannot keep for a new
               // user, and a person who eats over on day 2 and sees no change
               // has been told the app is broken.
-              <div className="text-xs font-semibold mt-1 mb-2" style={{ color: C.warn }}>
+              <div className="text-xs font-semibold mt-1 mb-2 text-warn">
                 Over by {kc(totals.kcal - macros.kcal)}. Nothing to undo — as your weigh-ins build up, the engine
                 re-reads your real burn and moves the target itself.
               </div>
@@ -610,19 +610,19 @@ function DiaryCard({ date, macros, hasPlan }) {
           </div>
           {/* entries */}
           <div className="lg:col-span-7">
-            <div className="text-[10.5px] font-extrabold uppercase tracking-wide mb-1" style={{ color: C.faint }}>
+            <div className="text-[10.5px] font-extrabold uppercase tracking-wide mb-1 text-muted-foreground">
               {entries.length} item{entries.length === 1 ? "" : "s"} logged
             </div>
             {entries.map((e) => (
-              <div key={e.id} className="flex items-center justify-between gap-3 py-2 row-host" style={{ borderBottom: `1px solid ${C.rule}` }}>
+              <div key={e.id} className="flex items-center justify-between gap-3 py-2 row-host border-b border-border">
                 <div className="min-w-0">
-                  <div className="text-sm font-bold truncate" style={{ color: C.ink }}>{e.name}</div>
-                  <div className="text-[10.5px] font-semibold" style={{ color: C.faint }}>
+                  <div className="text-sm font-bold truncate text-foreground">{e.name}</div>
+                  <div className="text-[10.5px] font-semibold text-muted-foreground">
                     {[slotWord(e.slotType), DIARY_SOURCE_LABEL[e.source] || e.source].filter(Boolean).join(" · ") || "logged"}
                   </div>
                 </div>
                 <div className="flex items-center gap-2 shrink-0">
-                  <span className="mono text-sm font-extrabold" style={{ color: C.ink }}>{kc(e.kcal || 0)}</span>
+                  <span className="tabular-nums text-sm font-extrabold text-foreground">{kc(e.kcal || 0)}</span>
                   {/* P/C/F — the same order as the rails above and every other
                       macro triad in the app (design law c). */}
                   <span className="hidden md:flex gap-1">
@@ -630,7 +630,7 @@ function DiaryCard({ date, macros, hasPlan }) {
                     <Chip color={C.carbText} bg={`${C.carb}1F`}>{r1(e.carbG || 0)}C</Chip>
                     <Chip color={C.fatText} bg={`${C.fat}1F`}>{r1(e.fatG || 0)}F</Chip>
                   </span>
-                  <button onClick={() => removeEntry(e.id)} className="row-reveal" aria-label={`Remove ${e.name}`} style={{ color: C.faintLight }}>
+                  <button onClick={() => removeEntry(e.id)} className="row-reveal text-muted-foreground" aria-label={`Remove ${e.name}`}>
                     <Trash2 size={14} aria-hidden="true" />
                   </button>
                 </div>
@@ -639,7 +639,7 @@ function DiaryCard({ date, macros, hasPlan }) {
           </div>
         </div>
       )}
-    </Card>
+    </SectionCard>
   );
 }
 
@@ -963,8 +963,8 @@ export default function TodayTab({ profile, summary, refresh, openTrend, openWel
         </SectionCard>
 
         {/* ── weigh-in ── */}
-        <Card section="DAILY" title="Weigh-in" className="xl:col-span-3">
-          <div className="text-xs font-semibold mb-3" style={{ color: C.faint }}>
+        <SectionCard section="DAILY" title="Weigh-in" className="xl:col-span-3">
+          <div className="text-xs font-semibold mb-3 text-muted-foreground">
             Fasted · post-bathroom · pre-water. Same conditions every day.
           </div>
           <div className="flex flex-col gap-2">
@@ -983,13 +983,13 @@ export default function TodayTab({ profile, summary, refresh, openTrend, openWel
                 className="text-sm px-3 py-2.5 rounded-xl flex-1 min-w-0"
                 style={inpStyle}
               />
-              <Btn onClick={add} disabled={logBusy}>{logBusy ? "…" : "Log"}</Btn>
+              <Button onClick={add} disabled={logBusy}>{logBusy ? "…" : "Log"}</Button>
             </div>
             {/* role="alert": invalid-range / save-failure feedback for the
                 weigh-in — must reach screen readers without hunting for it. */}
-            {logMsg && <div role="alert" className="text-xs font-semibold" style={{ color: C.warn }}>{logMsg}</div>}
+            {logMsg && <div role="alert" className="text-xs font-semibold text-warn">{logMsg}</div>}
           </div>
-        </Card>
+        </SectionCard>
 
         {/* ── food diary (planned vs. actually-eaten) ── */}
         <DiaryCard date={today} macros={macros} hasPlan={todaySlots.length > 0} />
