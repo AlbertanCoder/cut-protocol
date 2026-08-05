@@ -936,19 +936,31 @@ export default function TodayTab({ profile, summary, refresh, openTrend, openWel
         </SectionCard>
 
         {/* ── verdict ── */}
-        <Card section="VERDICT" title="Verdict" className="xl:col-span-4">
+        <SectionCard section="VERDICT" title="Verdict" className="xl:col-span-4">
           <Stamp v={v} stampStyle={getStampStyle()} />
+          {/* SIGNAL BLACK stat tiles: small uppercase muted labels over large
+              font-heading tabular numerals (direction usage rules). Value
+              expressions are byte-identical to the old Stat call sites. */}
           <div className="grid grid-cols-3 gap-3 mt-3">
-            <Stat label="7-day avg" value={avg7Kg != null ? displayWeight(avg7Kg, pref) : "—"} unit={wUnit} />
-            <Stat label="Rate" value={rate != null ? displayRate(rate, pref) : "—"} unit={rateUnit(pref)} />
-            <Stat label="Target" value={kc(target?.target ?? profile.targetKcal)} unit="kcal" />
+            <div className="py-1.5">
+              <div className="text-[10px] font-semibold uppercase tracking-[0.08em] text-muted-foreground">7-day avg</div>
+              <div className="font-heading text-2xl font-bold tabular-nums text-foreground">{avg7Kg != null ? displayWeight(avg7Kg, pref) : "—"}<span className="ml-1 text-xs font-semibold text-muted-foreground">{wUnit}</span></div>
+            </div>
+            <div className="py-1.5">
+              <div className="text-[10px] font-semibold uppercase tracking-[0.08em] text-muted-foreground">Rate</div>
+              <div className="font-heading text-2xl font-bold tabular-nums text-foreground">{rate != null ? displayRate(rate, pref) : "—"}<span className="ml-1 text-xs font-semibold text-muted-foreground">{rateUnit(pref)}</span></div>
+            </div>
+            <div className="py-1.5">
+              <div className="text-[10px] font-semibold uppercase tracking-[0.08em] text-muted-foreground">Target</div>
+              <div className="font-heading text-2xl font-bold tabular-nums text-foreground">{kc(target?.target ?? profile.targetKcal)}<span className="ml-1 text-xs font-semibold text-muted-foreground">kcal</span></div>
+            </div>
           </div>
-          <div className="text-xs font-semibold mt-3" style={{ color: C.faint }}>
+          <div className="text-xs font-semibold mt-3 text-muted-foreground">
             {v.band
               ? <>Your band: {displayRate(v.band.lo, pref)}–{displayRate(v.band.hi, pref)} {rateUnit(pref)}, from your chosen {profile.rateLbPerWeek} lb/wk. Verdicts judge 7-day averages only; the fix for a wrong pace lives on the Profile tab.</>
               : "Verdicts judge 7-day averages only."}
           </div>
-        </Card>
+        </SectionCard>
 
         {/* ── weigh-in ── */}
         <Card section="DAILY" title="Weigh-in" className="xl:col-span-3">
