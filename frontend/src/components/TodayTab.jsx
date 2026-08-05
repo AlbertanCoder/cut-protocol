@@ -7,7 +7,7 @@ import { Camera, Trash2, CalendarDays, ArrowRight, LineChart, NotebookPen, Clipb
 import { C, getStampStyle } from "../lib/theme.js";
 import { todayStr, dayNum, addDays, fmtD } from "../lib/dates.js";
 import { displayWeight, parseWeight, weightUnit, rateUnit, displayRate, weightInputBounds } from "../lib/units.js";
-import { Card, Stat, Btn, Chip, Stamp, Ring, EmptyNote, ErrorNote } from "./ui/Parts.jsx";
+import { Btn, Chip, Stamp, Ring, EmptyNote, ErrorNote } from "./ui/Parts.jsx";
 import { SectionCard } from "./ui/section-card.jsx";
 import { Button } from "@/components/ui/button";
 import { Skeleton, SkeletonRows } from "./ui/Skeleton.jsx";
@@ -1000,23 +1000,23 @@ export default function TodayTab({ profile, summary, refresh, openTrend, openWel
             used to occupy says where it went. `openWellbeing` is optional —
             App.jsx can pass `openWellbeing={() => setTab("wellbeing")}` to turn
             this into a real link; without it the sentence still names the tab. */}
-        <Card section="MOVED" title="Micronutrients" className="xl:col-span-12">
+        <SectionCard section="MOVED" title="Micronutrients" className="xl:col-span-12">
           <div className="flex flex-wrap items-center gap-2.5">
-            <Heart size={15} style={{ color: C.faintLight }} aria-hidden="true" />
-            <span className="text-sm font-semibold" style={{ color: C.faint }}>
-              Today&apos;s vitamin and mineral breakdown moved to the <strong style={{ color: C.ink }}>Wellbeing</strong> tab,
+            <Heart size={15} className="text-muted-foreground" aria-hidden="true" />
+            <span className="text-sm font-semibold text-muted-foreground">
+              Today&apos;s vitamin and mineral breakdown moved to the <strong className="text-foreground">Wellbeing</strong> tab,
               alongside the rest of the health-check detail.
             </span>
             {openWellbeing && (
-              <button onClick={openWellbeing} className="text-xs font-bold flex items-center gap-1 hover:opacity-80" style={{ color: C.ink }}>
+              <button onClick={openWellbeing} className="text-xs font-bold flex items-center gap-1 text-foreground transition-colors duration-150 ease-out hover:text-primary">
                 Open Wellbeing <ArrowRight size={12} aria-hidden="true" />
               </button>
             )}
           </div>
-        </Card>
+        </SectionCard>
 
         {/* ── trend snapshot ── */}
-        <Card section="CURVE" title="Trend snapshot" className="xl:col-span-7">
+        <SectionCard section="CURVE" title="Trend snapshot" className="xl:col-span-7">
           {sorted.length === 0 ? (
             <EmptyNote icon={LineChart} height={200} title="No weigh-ins yet"
               hint="Log your first weight above to start the curve." />
@@ -1056,36 +1056,35 @@ export default function TodayTab({ profile, summary, refresh, openTrend, openWel
             </div>
           )}
           <div className="flex items-center justify-between mt-2">
-            <div className="text-xs font-semibold" style={{ color: C.faint }}>
+            <div className="text-xs font-semibold text-muted-foreground">
               thin = daily · heavy = 7-day average · dashed = goal
             </div>
-            <button onClick={openTrend} className="text-xs font-bold flex items-center gap-1 hover:opacity-80" style={{ color: C.ink }}>
+            <button onClick={openTrend} className="text-xs font-bold flex items-center gap-1 text-foreground transition-colors duration-150 ease-out hover:text-primary">
               Full trend <ArrowRight size={12} />
             </button>
           </div>
-        </Card>
+        </SectionCard>
 
         {/* ── recent entries ── */}
-        <Card section="LOG" title="Recent entries" className="xl:col-span-5">
+        <SectionCard section="LOG" title="Recent entries" className="xl:col-span-5">
           {sorted.length === 0 && (
             <EmptyNote title="No weigh-ins yet" hint="Log Day 1 above to start the log." />
           )}
           {[...sorted].reverse().slice(0, 8).map((e) => (
-            <div key={e.date} className="flex items-center justify-between py-2"
-              style={{ borderBottom: `1px solid ${C.rule}` }}>
-              <span className="text-sm font-semibold" style={{ color: C.faint }}>{fmtD(e.date)}</span>
-              <span className="mono text-sm font-bold" style={{ color: C.ink }}>{displayWeight(e.weightKg, pref)} {wUnit}</span>
-              <button onClick={() => del(e.date)} aria-label={`Delete weigh-in from ${fmtD(e.date)}`} style={{ color: C.faintLight }}>
+            <div key={e.date} className="flex items-center justify-between py-2 border-b border-border">
+              <span className="text-sm font-semibold text-muted-foreground">{fmtD(e.date)}</span>
+              <span className="tabular-nums text-sm font-bold text-foreground">{displayWeight(e.weightKg, pref)} {wUnit}</span>
+              <button onClick={() => del(e.date)} aria-label={`Delete weigh-in from ${fmtD(e.date)}`} className="text-muted-foreground">
                 <Trash2 size={15} aria-hidden="true" />
               </button>
             </div>
           ))}
-        </Card>
+        </SectionCard>
       </div>
 
       {/* footer notes */}
       <div className="flex flex-wrap items-center gap-x-6 gap-y-2 mt-4 px-1">
-        <div className="text-xs font-semibold flex items-center gap-2" style={{ color: photoDue ? C.warn : C.faint }}>
+        <div className={`text-xs font-semibold flex items-center gap-2 ${photoDue ? "text-warn" : "text-muted-foreground"}`}>
           <Camera size={13} /> {photoDue ? "4-week photo + tape audit due — same light, same poses." : `Next photo + tape audit: ${fmtD(nextPhoto)}`}
         </div>
       </div>
