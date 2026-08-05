@@ -10,6 +10,7 @@ import { displayWeight, parseWeight, weightUnit, rateUnit, displayRate, weightIn
 import { Btn, Chip, Stamp, Ring, EmptyNote, ErrorNote } from "./ui/Parts.jsx";
 import { SectionCard } from "./ui/section-card.jsx";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Skeleton, SkeletonRows } from "./ui/Skeleton.jsx";
 import { api, ApiError, ERR, isAbortError, describeError } from "../lib/api.js";
 import { useAbortSignal } from "../lib/useAbortable.js";
@@ -968,20 +969,20 @@ export default function TodayTab({ profile, summary, refresh, openTrend, openWel
             Fasted · post-bathroom · pre-water. Same conditions every day.
           </div>
           <div className="flex flex-col gap-2">
-            <input
+            {/* shadcn Input = styled NATIVE input (Form Safety rule 2):
+                type/value/onChange/aria carry over byte-identical. */}
+            <Input
               type="date" value={dIn} onChange={(e) => setDIn(e.target.value)}
               aria-label="Weigh-in date"
-              className="text-sm px-3 py-2.5 rounded-xl w-full"
-              style={inpStyle}
+              className="w-full"
             />
             <div className="flex gap-2">
-              <input
+              <Input
                 type="number" inputMode="decimal" step="0.1" placeholder={wUnit}
                 aria-label={`Weight (${wUnit})`}
                 value={wIn} onChange={(e) => { setWIn(e.target.value); if (logMsg) setLogMsg(null); }}
                 onKeyDown={(e) => e.key === "Enter" && !logBusy && add()}
-                className="text-sm px-3 py-2.5 rounded-xl flex-1 min-w-0"
-                style={inpStyle}
+                className="flex-1 min-w-0"
               />
               <Button onClick={add} disabled={logBusy}>{logBusy ? "…" : "Log"}</Button>
             </div>
