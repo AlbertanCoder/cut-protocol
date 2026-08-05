@@ -484,8 +484,7 @@ export default function ProfileTab({ profile, summary, refresh, openToday }) {
             was missing was the other half of that contract — the tab did the
             saving silently, so from the outside it was indistinguishable from
             a form that had quietly dropped your edit. This is the receipt. */}
-        <span aria-live="polite" className="text-xs font-bold inline-flex items-center gap-1.5"
-          style={{ color: C.faint }}>
+        <span aria-live="polite" className="text-xs font-bold inline-flex items-center gap-1.5 text-muted-foreground">
           {saveState === "saving" ? (
             <>Saving…</>
           ) : saveState === "saved" ? (
@@ -495,8 +494,7 @@ export default function ProfileTab({ profile, summary, refresh, openToday }) {
           )}
         </span>
         <button type="button" onClick={jumpToAllergies}
-          className="text-xs font-bold px-3 py-2 rounded-xl inline-flex items-center gap-1.5"
-          style={{ background: C.card2, border: `1px solid ${C.faintLight}`, color: C.ink }}>
+          className="text-xs font-bold px-3 py-2 rounded-xl inline-flex items-center gap-1.5 border border-border bg-secondary text-foreground">
           <ShieldCheck size={13} aria-hidden="true" />
           Allergies &amp; exclusions ({excluded.length})
         </button>

@@ -1071,7 +1071,7 @@ export default function RecipesTab({ openFoods, profile }) {
             </select>
           </div>
           {hiddenCount > 0 && (
-            <div className="text-xs font-semibold mb-2 flex items-center gap-1.5" style={{ color: C.faint }}>
+            <div className="text-xs font-semibold mb-2 flex items-center gap-1.5 text-muted-foreground">
               <EyeOff size={12} aria-hidden="true" /> {hiddenCount} recipe{hiddenCount === 1 ? "" : "s"} hidden by your diet & allergy rules.
             </div>
           )}

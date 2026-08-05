@@ -3,15 +3,17 @@ import { AlertTriangle } from "lucide-react";
 import { C } from "../../lib/theme.js";
 
 export const Eyebrow = ({ children }) => (
-  <div className="text-xs font-semibold tracking-wide uppercase" style={{ color: C.faint, letterSpacing: ".04em" }}>{children}</div>
+  <div className="text-xs font-semibold uppercase tracking-[.04em] text-muted-foreground">{children}</div>
 );
 
-// Standard tab header: Sora display title, optional subtitle, actions right.
+// Standard tab header: heading font title, optional subtitle, actions right.
+// Semantic tokens (light-mode fix): these sit on the canvas, not on a card,
+// so legacy ink was invisible on the light background.
 export const PageHead = ({ title, sub, children }) => (
   <div className="flex items-end justify-between gap-4 flex-wrap mb-6">
     <div>
-      <h1 className="text-[26px] disp uppercase tracking-tight leading-none" style={{ color: C.ink, letterSpacing: "-.01em" }}>{title}</h1>
-      {sub && <div className="text-xs font-semibold mt-1.5" style={{ color: C.faint }}>{sub}</div>}
+      <h1 className="text-[26px] font-heading font-bold uppercase tracking-tight leading-none text-foreground">{title}</h1>
+      {sub && <div className="text-xs font-semibold mt-1.5 text-muted-foreground">{sub}</div>}
     </div>
     {children && <div className="flex gap-2 items-center flex-wrap">{children}</div>}
   </div>
@@ -68,7 +70,9 @@ export const Btn = ({ children, onClick, kind = "ink", small, disabled }) => {
     ink: { bg: C.accent, fg: C.accentInk, border: C.accent },
     primary: { bg: C.accent, fg: C.accentInk, border: C.accent },
     red: { bg: C.red, fg: C.paper, border: C.red },
-    ghost: { bg: "transparent", fg: C.ink, border: C.rule },
+    // Theme-aware (light-mode fix): ghost buttons also render on the canvas,
+    // where the legacy ink was invisible on light.
+    ghost: { bg: "transparent", fg: "var(--foreground)", border: "var(--border)" },
   };
   const s = KIND_STYLES[kind] || KIND_STYLES.ink;
   return (
