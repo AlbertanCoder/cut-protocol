@@ -740,7 +740,6 @@ function SlotWarnings({ slots }) {
 export default function TodayTab({ profile, summary, refresh, openTrend, openWellbeing }) {
   const pref = profile.unitPref;
   const wUnit = weightUnit(pref);
-  const inpStyle = { background: C.card2, border: `1.5px solid ${C.rule}`, color: C.ink };
   // ONE reading of the local calendar per render, shared by every card below.
   // The helper itself is the fixed one in lib/dates.js — the backend used to
   // compute tomorrow's date after 18:00 local and roll tomorrow's meals up

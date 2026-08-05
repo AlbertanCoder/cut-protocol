@@ -1,8 +1,5 @@
 import { useState, useEffect, useMemo, useId } from "react";
-import {
-  ComposedChart, Line, Area, XAxis, YAxis, CartesianGrid, Tooltip,
-  ReferenceLine, ReferenceDot, ResponsiveContainer,
-} from "recharts";
+import { WeightTrendChart } from "./charts/weight-trend-chart.jsx";
 import { LineChart, Dumbbell, ArrowRight, Table2, ChevronUp } from "lucide-react";
 import { C } from "../lib/theme.js";
 import { todayStr, addDays, fmtDY, fmtD, dayNum } from "../lib/dates.js";
@@ -110,7 +107,7 @@ function LegendKey({ items }) {
   return (
     <ul className="flex flex-wrap gap-x-4 gap-y-1.5 mt-2 list-none p-0 m-0">
       {items.map((it) => (
-        <li key={it.label} className="flex items-center gap-1.5 text-[11px] font-semibold" style={{ color: C.faint }}>
+        <li key={it.label} className="flex items-center gap-1.5 text-[11px] font-semibold text-muted-foreground">
           <svg width="18" height="10" aria-hidden="true" className="shrink-0">
             {it.kind === "dot" ? (
               <>
@@ -414,12 +411,12 @@ export default function TrendTab({ profile, summary, openTraining }) {
   const shownRate = fit ? -fit.slope * 7 : (summary.rate != null ? displayRate(summary.rate, pref) : null);
 
   const legend = [
-    { label: "Each weigh-in", color: C.faintLight, kind: "dot", width: 1.5 },
+    { label: "Each weigh-in", color: "var(--muted-foreground)", kind: "dot", width: 1.5 },
     fit
-      ? { label: "Trend line, with its ±1 standard-error band", color: C.accent, width: 2.5 }
-      : { label: `Average of the last ${AVG_DAYS} days`, color: C.accent, width: 2.5 },
-    bfFrac != null && { label: "Lean mass (estimated)", color: C.ink, width: 2 },
-    yDomain.goalInView && { label: `Goal ${r1(goalW)} ${wUnit}`, color: C.faint, width: 1.5, dash: "6 4" },
+      ? { label: "Trend line, with its ±1 standard-error band", color: "var(--chart-1)", width: 2.5 }
+      : { label: `Average of the last ${AVG_DAYS} days`, color: "var(--chart-1)", width: 2.5 },
+    bfFrac != null && { label: "Lean mass (estimated)", color: "var(--chart-2)", width: 2 },
+    yDomain.goalInView && { label: `Goal ${r1(goalW)} ${wUnit}`, color: "var(--muted-foreground)", width: 1.5, dash: "6 4" },
   ].filter(Boolean);
 
   const a11ySummary = rows.length >= 2
@@ -453,66 +450,11 @@ export default function TrendTab({ profile, summary, openTraining }) {
                   mouse-only Recharts tooltip never was. */}
               <div role="img" aria-label={a11ySummary} style={{ width: "100%", height: 380 }}>
                 <div aria-hidden="true" style={{ width: "100%", height: "100%" }}>
-                  <ResponsiveContainer>
-                    <ComposedChart data={chart} margin={{ top: 10, right: 16, left: 0, bottom: 0 }}>
-                      {/* Solid hairlines. Dashed gridlines read as "projection"
-                          or "threshold" when they are just a grid — and this
-                          chart has a real threshold (the goal) that needs the
-                          dash to mean something. */}
-                      <CartesianGrid stroke={C.rule} vertical={false} />
-                      <XAxis
-                        type="number" dataKey="x" scale="linear"
-                        domain={[xAxis.lo, xAxis.hi]} ticks={xAxis.ticks} tickFormatter={xAxis.fmt}
-                        tick={{ fontSize: 11, fill: C.faint, fontWeight: 600 }}
-                        tickLine={false} axisLine={{ stroke: C.rule }} minTickGap={16} height={26}
-                      />
-                      <YAxis
-                        domain={[yDomain.lo, yDomain.hi]} allowDecimals={false}
-                        tick={{ fontSize: 11, fill: C.faint, fontWeight: 600 }}
-                        tickLine={false} axisLine={{ stroke: C.rule }} width={44}
-                      />
-                      <Tooltip content={<ChartTip wUnit={wUnit} avgDays={AVG_DAYS} />} cursor={{ stroke: C.rule }} />
-
-                      {/* uncertainty cone — the series hue as a ~10% wash */}
-                      {fit && fit.se != null && (
-                        <Area type="linear" dataKey="band" stroke="none" fill={C.accent} fillOpacity={0.12}
-                          isAnimationActive={false} connectNulls={false} activeDot={false} />
-                      )}
-
-                      {yDomain.goalInView && (
-                        <ReferenceLine y={goalW} stroke={C.faint} strokeDasharray="6 4"
-                          label={{ value: `GOAL ${r1(goalW)}`, fill: C.faint, fontSize: 10, fontWeight: 700, position: "insideBottomRight" }} />
-                      )}
-                      {leanNow != null && (
-                        // Solid, not dashed: the goal above is the only
-                        // threshold on this chart, so the dash means one thing.
-                        <ReferenceLine y={leanNow} stroke={C.faintLight}
-                          label={{ value: `LEAN MASS IF IT NEVER MOVED ${r1(leanNow)}`, fill: C.faint, fontSize: 9, fontWeight: 700, position: "insideTopRight" }} />
-                      )}
-
-                      <Line type="monotone" dataKey="w" stroke={C.faintLight} strokeWidth={1.5}
-                        dot={showDots ? { r: 2.5, fill: C.faintLight, strokeWidth: 0 } : false}
-                        activeDot={{ r: 4, fill: C.faintLight, stroke: C.card, strokeWidth: 2 }}
-                        isAnimationActive={false} connectNulls />
-                      {bfFrac != null && (
-                        <Line type="monotone" dataKey="lean" stroke={C.ink} strokeWidth={2}
-                          dot={false} activeDot={{ r: 4, fill: C.ink, stroke: C.card, strokeWidth: 2 }}
-                          isAnimationActive={false} connectNulls />
-                      )}
-                      {/* The heavy line is the server's fit when there is one,
-                          and the day-windowed average when there is not — the
-                          caption below says which, every time. */}
-                      <Line type={fit ? "linear" : "monotone"} dataKey={fit ? "fit" : "avg"} stroke={C.accent} strokeWidth={2.5}
-                        dot={false} activeDot={{ r: 4.5, fill: C.accent, stroke: C.card, strokeWidth: 2 }}
-                        isAnimationActive={false} connectNulls={false} />
-                      {/* endpoint marker: labelled selectively, never on every point */}
-                      {fit && (
-                        <ReferenceDot x={fit.drawEndX} y={fit.at(fit.drawEndX)} r={4.5}
-                          fill={C.accent} stroke={C.card} strokeWidth={2} isFront
-                          label={{ value: `${r1(fit.at(fit.drawEndX))}`, fill: C.ink, fontSize: 11, fontWeight: 800, position: "top" }} />
-                      )}
-                    </ComposedChart>
-                  </ResponsiveContainer>
+                  <WeightTrendChart
+                    data={chart} xAxis={xAxis} yDomain={yDomain} fit={fit}
+                    goalW={goalW} leanNow={leanNow} bfFrac={bfFrac} showDots={showDots}
+                    tooltip={<ChartTip wUnit={wUnit} avgDays={AVG_DAYS} />}
+                  />
                 </div>
               </div>
 
