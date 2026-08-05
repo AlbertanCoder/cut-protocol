@@ -7,7 +7,8 @@ import { displayRate, weightUnit, rateUnit, kg2lb } from "../lib/units.js";
 import { TRAINING } from "../lib/flags.js";
 import { api, isAbortError, describeError } from "../lib/api.js";
 import { useAbortSignal } from "../lib/useAbortable.js";
-import { Card, Stat, PageHead, EmptyNote } from "./ui/Parts.jsx";
+import { PageHead, EmptyNote } from "./ui/Parts.jsx";
+import { SectionCard } from "./ui/section-card.jsx";
 
 const r1 = (n) => (n == null || !Number.isFinite(n) ? null : Math.round(n * 10) / 10);
 
@@ -64,36 +65,36 @@ function TrainingNudge({ openTraining }) {
 
   const clickable = TRAINING === "on";
   return (
-    <Card section="RECOMP" title="The other lever">
+    <SectionCard section="RECOMP" title="The other lever">
       <div className="flex items-start gap-2.5">
-        <Dumbbell size={16} style={{ color: C.faint }} className="mt-0.5 shrink-0" aria-hidden="true" />
+        <Dumbbell size={16} className="mt-0.5 shrink-0 text-muted-foreground" aria-hidden="true" />
         <div className="flex-1">
           {loadError ? (
-            <div className="text-sm font-semibold" style={{ color: C.warn }}>
+            <div className="text-sm font-semibold text-warn">
               Couldn't check your training plan — {loadError} This says nothing about whether you have one.
             </div>
           ) : plan ? (
-            <div className="text-sm font-semibold" style={{ color: C.ink }}>
+            <div className="text-sm font-semibold text-foreground">
               {plan.style} training active, {plan.daysPerWeek}x/week. Protein alone slows lean-mass loss — resistance training is what actually signals the body to keep it.
             </div>
           ) : (
-            <div className="text-sm font-semibold" style={{ color: C.ink }}>
+            <div className="text-sm font-semibold text-foreground">
               No training plan yet. Protein-priority mode defends the floor, but without a training stimulus the body has less reason to hold onto the muscle it's fed.
             </div>
           )}
           {clickable && !loadError && (
-            <button onClick={openTraining} className="text-xs font-bold flex items-center gap-1 mt-2 hover:opacity-80" style={{ color: C.ink }}>
+            <button onClick={openTraining} className="text-xs font-bold flex items-center gap-1 mt-2 text-foreground transition-colors duration-150 ease-out hover:text-primary">
               {plan ? "View training plan" : "Generate a training plan"} <ArrowRight size={12} aria-hidden="true" />
             </button>
           )}
           {clickable && loadError && (
-            <button onClick={openTraining} className="text-xs font-bold flex items-center gap-1 mt-2 hover:opacity-80" style={{ color: C.ink }}>
+            <button onClick={openTraining} className="text-xs font-bold flex items-center gap-1 mt-2 text-foreground transition-colors duration-150 ease-out hover:text-primary">
               Open the Training tab <ArrowRight size={12} aria-hidden="true" />
             </button>
           )}
         </div>
       </div>
-    </Card>
+    </SectionCard>
   );
 }
 
@@ -434,7 +435,7 @@ export default function TrendTab({ profile, summary, openTraining }) {
       <PageHead title="Trend" sub="Scale weight and estimated lean mass — recomposition means what's LOST matters as much as how much." />
 
       <div className="grid grid-cols-1 xl:grid-cols-12 gap-4 items-start">
-        <Card section="CURVE" title={`Weight (${wUnit})`} className="xl:col-span-8">
+        <SectionCard section="CURVE" title={`Weight (${wUnit})`} className="xl:col-span-8">
           {rows.length === 0 ? (
             <EmptyNote icon={LineChart} height={380} title="No weigh-ins yet"
               hint="Log your first weight on the Today tab to start the curve." />
@@ -460,7 +461,7 @@ export default function TrendTab({ profile, summary, openTraining }) {
 
               <LegendKey items={legend} />
 
-              <div className="text-[11px] font-semibold mt-2 leading-relaxed" style={{ color: C.faint }}>
+              <div className="text-[11px] font-semibold mt-2 leading-relaxed text-muted-foreground">
                 {fit ? (
                   <>
                     The heavy line is the same fit the Engine runs on: a Huber-robust, exponentially-weighted
@@ -480,14 +481,14 @@ export default function TrendTab({ profile, summary, openTraining }) {
               </div>
 
               {!yDomain.goalInView && Number.isFinite(goalW) && (
-                <div className="text-[11px] font-semibold mt-1.5" style={{ color: C.faint }}>
+                <div className="text-[11px] font-semibold mt-1.5 text-muted-foreground">
                   Your goal of {r1(goalW)} {wUnit} sits {r1(Math.abs((avg7 ?? goalW) - goalW))} {wUnit} {goalW < (avg7 ?? goalW) ? "below" : "above"} this
                   view and is not drawn — at a scale that fit both, a month of real movement would be a few pixels tall.
                 </div>
               )}
 
               {outlierRows.length > 0 && (
-                <div className="text-[11px] font-semibold mt-1.5" style={{ color: C.warn }}>
+                <div className="text-[11px] font-semibold mt-1.5 text-warn">
                   {outlierRows.length} weigh-in{outlierRows.length === 1 ? "" : "s"} sit{outlierRows.length === 1 ? "s" : ""} far
                   outside the rest ({outlierRows.map((r) => `${r1(r.w)} ${wUnit} on ${fmtDY(r.date)}`).join(", ")}) and
                   {outlierRows.length === 1 ? " is" : " are"} off the edge of this view, so one mis-keyed entry can't flatten the
@@ -497,7 +498,7 @@ export default function TrendTab({ profile, summary, openTraining }) {
               )}
 
               {bfFrac != null ? (
-                <div className="text-[11px] font-semibold mt-1.5" style={{ color: C.faint }}>
+                <div className="text-[11px] font-semibold mt-1.5 text-muted-foreground">
                   Lean mass is estimated from a single current body-fat reading ({profile.bodyFatSource === "measured" ? "measured" : profile.bodyFatSource === "visual-estimate" ? "visual estimate" : "source unset"})
                   applied across your weigh-in history — not a measured trend. It is drawn off the smoothed weight, not
                   the raw scale readings, because raw readings are mostly water and lean mass cannot drop a pound
@@ -506,7 +507,7 @@ export default function TrendTab({ profile, summary, openTraining }) {
                   what the protein floor and training are for.
                 </div>
               ) : (
-                <div className="text-[11px] font-semibold mt-1.5" style={{ color: C.faint }}>
+                <div className="text-[11px] font-semibold mt-1.5 text-muted-foreground">
                   Add a body-fat % on the Profile tab to see an estimated lean-mass line alongside scale weight.
                 </div>
               )}
@@ -518,12 +519,12 @@ export default function TrendTab({ profile, summary, openTraining }) {
                   or assistive tech. A tooltip may enhance; it may never gate. */}
               <button type="button" onClick={() => setShowTable((v) => !v)}
                 aria-expanded={showTable} aria-controls={tableId}
-                className="text-xs font-bold flex items-center gap-1.5 mt-3 hover:opacity-80" style={{ color: C.ink }}>
+                className="text-xs font-bold flex items-center gap-1.5 mt-3 text-foreground transition-colors duration-150 ease-out hover:text-primary">
                 {showTable ? <ChevronUp size={13} aria-hidden="true" /> : <Table2 size={13} aria-hidden="true" />}
                 {showTable ? "Hide the numbers" : `Show all ${rows.length} weigh-ins as a table`}
               </button>
               <div id={tableId} hidden={!showTable}>
-                <div className="mt-2 overflow-auto rounded-xl" style={{ maxHeight: 320, border: `1px solid ${C.rule}` }}>
+                <div className="mt-2 overflow-auto rounded-xl border border-border" style={{ maxHeight: 320 }}>
                   <table className="w-full text-xs" style={{ borderCollapse: "collapse" }}>
                     <caption className="sr-only">
                       Every weigh-in, newest first, with the {AVG_DAYS}-day average, the fitted trend and the estimated lean mass at each date.
@@ -533,22 +534,21 @@ export default function TrendTab({ profile, summary, openTraining }) {
                         {["Date", `Weighed (${wUnit})`, `${AVG_DAYS}-day avg (${wUnit})`, `Trend (${wUnit})`, bfFrac != null ? `Lean mass (${wUnit})` : null]
                           .filter(Boolean)
                           .map((h) => (
-                            <th key={h} scope="col" className="text-left font-bold px-3 py-2 sticky top-0"
-                              style={{ color: C.faint, background: C.card2, borderBottom: `1px solid ${C.rule}` }}>{h}</th>
+                            <th key={h} scope="col" className="text-left font-bold px-3 py-2 sticky top-0 border-b border-border bg-secondary text-muted-foreground">{h}</th>
                           ))}
                       </tr>
                     </thead>
                     <tbody>
                       {[...chart].filter((r) => r.w != null).reverse().map((r) => (
-                        <tr key={r.date} style={{ borderBottom: `1px solid ${C.rule}` }}>
-                          <th scope="row" className="text-left font-semibold px-3 py-1.5 whitespace-nowrap" style={{ color: C.ink }}>
+                        <tr key={r.date} className="border-b border-border">
+                          <th scope="row" className="text-left font-semibold px-3 py-1.5 whitespace-nowrap text-foreground">
                             {fmtDY(r.date)}
-                            {outliers.has(r.date) && <span className="ml-1.5 font-bold" style={{ color: C.warn }}>· off-chart</span>}
+                            {outliers.has(r.date) && <span className="ml-1.5 font-bold text-warn">· off-chart</span>}
                           </th>
-                          <td className="mono px-3 py-1.5" style={{ color: C.ink }}>{r1(r.w)}</td>
-                          <td className="mono px-3 py-1.5" style={{ color: C.faint }}>{r1(r.avg)}</td>
-                          <td className="mono px-3 py-1.5" style={{ color: C.faint }}>{r.fit == null ? "—" : r1(r.fit)}</td>
-                          {bfFrac != null && <td className="mono px-3 py-1.5" style={{ color: C.faint }}>{r1(r.lean)}</td>}
+                          <td className="tabular-nums px-3 py-1.5 text-foreground">{r1(r.w)}</td>
+                          <td className="tabular-nums px-3 py-1.5 text-muted-foreground">{r1(r.avg)}</td>
+                          <td className="tabular-nums px-3 py-1.5 text-muted-foreground">{r.fit == null ? "—" : r1(r.fit)}</td>
+                          {bfFrac != null && <td className="tabular-nums px-3 py-1.5 text-muted-foreground">{r1(r.lean)}</td>}
                         </tr>
                       ))}
                     </tbody>
@@ -557,17 +557,31 @@ export default function TrendTab({ profile, summary, openTraining }) {
               </div>
             </>
           )}
-        </Card>
+        </SectionCard>
 
         <div className="xl:col-span-4 flex flex-col gap-4">
-          <Card section="STATUS" title="Numbers">
+          <SectionCard section="STATUS" title="Numbers">
+            {/* SIGNAL BLACK stat tiles — value expressions byte-identical to
+                the old Stat call sites. */}
             <div className="grid grid-cols-2 gap-x-4">
-              <Stat label={`Average, last ${AVG_DAYS} days`} value={avg7 != null ? r1(avg7) : "—"} unit={wUnit} />
-              <Stat label="Lost (from start)" value={lost != null ? r1(lost) : "—"} unit={wUnit} />
-              <Stat label={fit ? "Rate (fitted)" : "Rate"} value={shownRate != null ? r1(shownRate) : "—"} unit={rateUnit(pref)} />
-              <Stat label="Lean mass (est.)" value={leanNow != null ? r1(leanNow) : "—"} unit={wUnit} />
+              <div className="py-1.5">
+                <div className="text-[10px] font-semibold uppercase tracking-[0.08em] text-muted-foreground">{`Average, last ${AVG_DAYS} days`}</div>
+                <div className="font-heading text-2xl font-bold tabular-nums text-foreground">{avg7 != null ? r1(avg7) : "—"}<span className="ml-1 text-xs font-semibold text-muted-foreground">{wUnit}</span></div>
+              </div>
+              <div className="py-1.5">
+                <div className="text-[10px] font-semibold uppercase tracking-[0.08em] text-muted-foreground">Lost (from start)</div>
+                <div className="font-heading text-2xl font-bold tabular-nums text-foreground">{lost != null ? r1(lost) : "—"}<span className="ml-1 text-xs font-semibold text-muted-foreground">{wUnit}</span></div>
+              </div>
+              <div className="py-1.5">
+                <div className="text-[10px] font-semibold uppercase tracking-[0.08em] text-muted-foreground">{fit ? "Rate (fitted)" : "Rate"}</div>
+                <div className="font-heading text-2xl font-bold tabular-nums text-foreground">{shownRate != null ? r1(shownRate) : "—"}<span className="ml-1 text-xs font-semibold text-muted-foreground">{rateUnit(pref)}</span></div>
+              </div>
+              <div className="py-1.5">
+                <div className="text-[10px] font-semibold uppercase tracking-[0.08em] text-muted-foreground">Lean mass (est.)</div>
+                <div className="font-heading text-2xl font-bold tabular-nums text-foreground">{leanNow != null ? r1(leanNow) : "—"}<span className="ml-1 text-xs font-semibold text-muted-foreground">{wUnit}</span></div>
+              </div>
             </div>
-            <div className="text-xs font-semibold mt-2" style={{ color: C.faint }}>
+            <div className="text-xs font-semibold mt-2 text-muted-foreground">
               {lastRow && lastRow.avgCount < 3 && (
                 <div className="mb-1">
                   That average covers {lastRow.avgCount} weigh-in{lastRow.avgCount === 1 ? "" : "s"} in the last {AVG_DAYS} days — it is a
@@ -575,7 +589,7 @@ export default function TrendTab({ profile, summary, openTraining }) {
                 </div>
               )}
               {lastRow?.avgSkipped > 0 && (
-                <div className="mb-1" style={{ color: C.warn }}>
+                <div className="mb-1 text-warn">
                   {lastRow.avgSkipped} reading{lastRow.avgSkipped === 1 ? "" : "s"} in that window looked mis-keyed and
                   {lastRow.avgSkipped === 1 ? " was" : " were"} left out of the average — see the note under the chart. Still in your data, nothing deleted.
                 </div>
@@ -589,42 +603,42 @@ export default function TrendTab({ profile, summary, openTraining }) {
                 ? <>Est. body fat {estBf != null ? r1(estBf) : "—"}% assumes lean mass held at {Math.round(lbmAtStart)} {wUnit} since your start weight — photos + tape are the real audit.</>
                 : "Add a body fat % on the Profile tab to estimate lean mass and BF here."}
             </div>
-          </Card>
+          </SectionCard>
 
-          <Card section="PROJECTION" title="Projection">
+          <SectionCard section="PROJECTION" title="Projection">
             {!proj ? (
-              <div className="text-sm font-semibold" style={{ color: C.faint }}>Projections unlock with weigh-in data.</div>
+              <div className="text-sm font-semibold text-muted-foreground">Projections unlock with weigh-in data.</div>
             ) : proj.atGoal ? (
-              <div className="text-sm font-semibold" style={{ color: C.ink }}>
+              <div className="text-sm font-semibold text-foreground">
                 You&apos;re at your goal weight of {r1(goalW)} {wUnit}.
               </div>
             ) : proj.movingAway ? (
               <div className="space-y-1.5">
-                <div className="text-sm font-semibold" style={{ color: C.ink }}>
+                <div className="text-sm font-semibold text-foreground">
                   No date yet — the trend is currently moving away from your goal.
                 </div>
-                <div className="text-xs font-semibold" style={{ color: C.faint }}>
+                <div className="text-xs font-semibold text-muted-foreground">
                   {r1(Math.abs(proj.toGo))} {wUnit} to go, {proj.direction === "down" ? "downward" : "upward"}, and the measured
                   pace is {r1(proj.rate)} {rateUnit(pref)} the other way. One fortnight is not a verdict; Profile is where the plan changes.
                 </div>
               </div>
             ) : proj.kind === "measured" ? (
               <div className="space-y-1.5">
-                <div className="flex justify-between items-baseline py-1.5 gap-3" style={{ borderBottom: `1px solid ${C.rule}` }}>
-                  <span className="text-sm font-semibold" style={{ color: C.ink }}>Most likely</span>
-                  <span className="text-sm font-extrabold text-right" style={{ color: C.ink }}>{proj.mid ? fmtDY(proj.mid) : "further out than 10 years"}</span>
+                <div className="flex justify-between items-baseline py-1.5 gap-3 border-b border-border">
+                  <span className="text-sm font-semibold text-foreground">Most likely</span>
+                  <span className="text-sm font-extrabold text-right tabular-nums text-foreground">{proj.mid ? fmtDY(proj.mid) : "further out than 10 years"}</span>
                 </div>
-                <div className="flex justify-between items-baseline py-1.5 gap-3" style={{ borderBottom: `1px solid ${C.rule}` }}>
-                  <span className="text-sm font-semibold" style={{ color: C.faint }}>If your pace holds at the fast edge</span>
-                  <span className="text-sm font-bold text-right" style={{ color: C.faint }}>{proj.fast ? fmtDY(proj.fast) : "further out than 10 years"}</span>
+                <div className="flex justify-between items-baseline py-1.5 gap-3 border-b border-border">
+                  <span className="text-sm font-semibold text-muted-foreground">If your pace holds at the fast edge</span>
+                  <span className="text-sm font-bold text-right tabular-nums text-muted-foreground">{proj.fast ? fmtDY(proj.fast) : "further out than 10 years"}</span>
                 </div>
-                <div className="flex justify-between items-baseline py-1.5 gap-3" style={{ borderBottom: `1px solid ${C.rule}` }}>
-                  <span className="text-sm font-semibold" style={{ color: C.faint }}>…and at the slow edge</span>
-                  <span className="text-sm font-bold text-right" style={{ color: C.faint }}>
+                <div className="flex justify-between items-baseline py-1.5 gap-3 border-b border-border">
+                  <span className="text-sm font-semibold text-muted-foreground">…and at the slow edge</span>
+                  <span className="text-sm font-bold text-right tabular-nums text-muted-foreground">
                     {proj.slowStalls ? "doesn't get there" : proj.slow ? fmtDY(proj.slow) : "further out than 10 years"}
                   </span>
                 </div>
-                <div className="text-xs font-semibold pt-1.5" style={{ color: C.faint }}>
+                <div className="text-xs font-semibold pt-1.5 text-muted-foreground">
                   Goal {r1(goalW)} {wUnit} — {r1(Math.abs(proj.toGo))} {wUnit} {proj.direction === "down" ? "to lose" : "to gain"} at a
                   measured {r1(proj.rate)} {rateUnit(pref)}. The two edges are that pace ± one standard error on it, the same
                   uncertainty the Engine publishes — not a rounding of the middle number.
@@ -633,19 +647,19 @@ export default function TrendTab({ profile, summary, openTraining }) {
               </div>
             ) : (
               <div className="space-y-1.5">
-                <div className="flex justify-between items-baseline py-1.5 gap-3" style={{ borderBottom: `1px solid ${C.rule}` }}>
-                  <span className="text-sm font-semibold" style={{ color: C.ink }}>
+                <div className="flex justify-between items-baseline py-1.5 gap-3 border-b border-border">
+                  <span className="text-sm font-semibold text-foreground">
                     At your planned pace ({r1(proj.rate)} {rateUnit(pref)})
                   </span>
-                  <span className="text-sm font-extrabold text-right" style={{ color: C.ink }}>{proj.mid ? fmtDY(proj.mid) : "further out than 10 years"}</span>
+                  <span className="text-sm font-extrabold text-right tabular-nums text-foreground">{proj.mid ? fmtDY(proj.mid) : "further out than 10 years"}</span>
                 </div>
-                <div className="text-xs font-semibold pt-1" style={{ color: C.faint }}>
+                <div className="text-xs font-semibold pt-1 text-muted-foreground">
                   Goal {r1(goalW)} {wUnit}. This is your CHOSEN rate, not a measured one — there is no fitted trend yet, so
                   there is no honest range to put around it. It gets a range once the fit has data.
                 </div>
               </div>
             )}
-          </Card>
+          </SectionCard>
 
           <TrainingNudge openTraining={openTraining} />
         </div>
