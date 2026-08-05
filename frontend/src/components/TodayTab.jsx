@@ -8,6 +8,8 @@ import { C, getStampStyle } from "../lib/theme.js";
 import { todayStr, dayNum, addDays, fmtD } from "../lib/dates.js";
 import { displayWeight, parseWeight, weightUnit, rateUnit, displayRate, weightInputBounds } from "../lib/units.js";
 import { Card, Stat, Btn, Chip, Stamp, Ring, EmptyNote, ErrorNote } from "./ui/Parts.jsx";
+import { SectionCard } from "./ui/section-card.jsx";
+import { Button } from "@/components/ui/button";
 import { Skeleton, SkeletonRows } from "./ui/Skeleton.jsx";
 import { api, ApiError, ERR, isAbortError, describeError } from "../lib/api.js";
 import { useAbortSignal } from "../lib/useAbortable.js";
@@ -102,25 +104,25 @@ function MacroRail({ label, letter, actual, lo, hi, kind, color }) {
   return (
     <div className="flex flex-col gap-1.5" role="group" aria-label={a11y}>
       <div className="flex justify-between items-baseline text-xs">
-        <span className="font-bold flex items-center gap-1.5" style={{ color: C.ink }}>
+        <span className="font-bold flex items-center gap-1.5 text-foreground">
           <span aria-hidden="true" className="w-4 h-4 rounded-full flex items-center justify-center text-[9px] font-extrabold shrink-0" style={{ background: color, color: C.paper }}>{letter}</span>
           {label}
         </span>
-        <span className="font-semibold" style={{ color: C.faint }}>
-          <b className="mono" style={{ color: over ? C.warn : C.ink }}>{gm(eaten)}</b> / {targetText}
+        <span className="font-semibold text-muted-foreground">
+          <b className={`tabular-nums ${over ? "text-warn" : "text-foreground"}`}>{gm(eaten)}</b> / {targetText}
         </span>
       </div>
-      <div aria-hidden="true" className="h-2.5 rounded-full relative overflow-hidden" style={{ background: C.card2 }}>
+      <div aria-hidden="true" className="h-2.5 rounded-full relative overflow-hidden bg-secondary">
         {/* the acceptable zone, drawn behind the fill: from the floor to the
             top of the range, or from the floor to the end of the rail when
             the floor is all there is. */}
         <div
-          className="absolute inset-y-0"
-          style={{ left: pct(floor), right: ceil != null ? `calc(100% - ${pct(ceil)})` : 0, background: C.rule }}
+          className="absolute inset-y-0 bg-border"
+          style={{ left: pct(floor), right: ceil != null ? `calc(100% - ${pct(ceil)})` : 0 }}
         />
         <div className="h-full rounded-full transition-all duration-150 relative" style={{ width: pct(eaten), background: color }}></div>
         {/* the floor tick — the number that actually has to be reached */}
-        <div className="absolute inset-y-0 w-px" style={{ left: pct(floor), background: C.faint }} />
+        <div className="absolute inset-y-0 w-px bg-muted-foreground" style={{ left: pct(floor) }} />
       </div>
     </div>
   );
@@ -136,7 +138,7 @@ function MacroRails({ protein, carb, fat, macros }) {
         <MacroRail label="Carbs" letter="C" actual={carb} lo={macros?.carbLo} hi={macros?.carbHi} kind="range" color={C.carb} />
         <MacroRail label="Fat" letter="F" actual={fat} lo={macros?.fatLo} hi={macros?.fatHi} kind="floor" color={C.fat} />
       </div>
-      <div className="text-[10.5px] font-semibold mt-2.5 leading-relaxed" style={{ color: C.faintLight }}>
+      <div className="text-[10.5px] font-semibold mt-2.5 leading-relaxed text-muted-foreground">
         Calories and protein are the walls. Fat has a minimum to clear; carbs take whatever calories are left,
         so they move the most.
       </div>
@@ -649,36 +651,34 @@ function DiaryCard({ date, macros, hasPlan }) {
 function ProvisionalBanner({ pref }) {
   const [open, setOpen] = useState(false);
   return (
-    <div className="mb-4 p-4 rounded-2xl" style={{ background: C.warnBg, border: `1px solid ${C.warn}66` }}>
+    <div className="mb-4 p-4 rounded-2xl border border-warn/40 bg-warn/10">
       <div className="flex items-start gap-2.5">
-        <AlertTriangle size={17} style={{ color: C.warn }} className="mt-0.5 shrink-0" />
+        <AlertTriangle size={17} className="mt-0.5 shrink-0 text-warn" />
         <div className="min-w-0 flex-1">
-          <div className="text-sm font-extrabold" style={{ color: C.ink }}>
+          <div className="text-sm font-extrabold text-foreground">
             Estimates from defaults — these aren&apos;t your numbers yet
           </div>
-          <div className="text-xs font-semibold mt-1 leading-relaxed" style={{ color: C.faint }}>
+          <div className="text-xs font-semibold mt-1 leading-relaxed text-muted-foreground">
             Your target, macros and plan are all derived from an assumed person, because your real
-            height and weight were never entered. Open the <strong style={{ color: C.ink }}>Profile</strong> tab
+            height and weight were never entered. Open the <strong className="text-foreground">Profile</strong> tab
             and fill them in — this notice disappears on its own the moment you do.
           </div>
           <button onClick={() => setOpen((v) => !v)} aria-expanded={open}
-            className="text-[11px] font-bold mt-2 underline decoration-dotted underline-offset-4"
-            style={{ color: C.warn }}>
+            className="text-[11px] font-bold mt-2 underline decoration-dotted underline-offset-4 text-warn">
             {open ? "Hide what was assumed" : "Show what was assumed"}
           </button>
           {open && (
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-x-5 gap-y-1 mt-2.5">
               {describeAssumptions(pref).map(([k, v]) => (
-                <div key={k} className="flex justify-between gap-3 text-[11px] font-semibold py-0.5"
-                  style={{ borderBottom: `1px solid ${C.rule}` }}>
-                  <span style={{ color: C.faint }}>{k}</span>
-                  <span className="mono" style={{ color: C.ink }}>{v}</span>
+                <div key={k} className="flex justify-between gap-3 text-[11px] font-semibold py-0.5 border-b border-border">
+                  <span className="text-muted-foreground">{k}</span>
+                  <span className="tabular-nums text-foreground">{v}</span>
                 </div>
               ))}
             </div>
           )}
         </div>
-        <UserCog size={16} style={{ color: C.faintLight }} className="shrink-0 hidden lg:block" aria-hidden="true" />
+        <UserCog size={16} className="shrink-0 hidden lg:block text-muted-foreground" aria-hidden="true" />
       </div>
     </div>
   );
@@ -704,13 +704,12 @@ function SlotWarnings({ slots }) {
     <div
       role="group"
       aria-label={`${flagged.length} planned slot${flagged.length === 1 ? "" : "s"} today did not fit your targets`}
-      className="mb-4 p-3.5 rounded-2xl"
-      style={{ background: C.warnBg, border: `1px solid ${C.warn}66` }}
+      className="mb-4 p-3.5 rounded-2xl border border-warn/40 bg-warn/10"
     >
       <div className="flex items-start gap-2.5">
-        <AlertTriangle size={16} style={{ color: C.warn }} className="mt-0.5 shrink-0" aria-hidden="true" />
+        <AlertTriangle size={16} className="mt-0.5 shrink-0 text-warn" aria-hidden="true" />
         <div className="min-w-0 flex-1">
-          <div className="text-sm font-extrabold" style={{ color: C.ink }}>
+          <div className="text-sm font-extrabold text-foreground">
             {flagged.length === 1
               ? "1 slot today couldn't be solved to your targets"
               : `${flagged.length} slots today couldn't be solved to your targets`}
@@ -719,10 +718,9 @@ function SlotWarnings({ slots }) {
             {flagged.map((s, i) => (
               <li
                 key={s.id ?? `${s.slotType}:${s.slotIndex}:${i}`}
-                className="text-xs font-semibold leading-relaxed"
-                style={{ color: C.faint }}
+                className="text-xs font-semibold leading-relaxed text-muted-foreground"
               >
-                <span style={{ color: C.ink }}>
+                <span className="text-foreground">
                   {s.recipe?.name || slotWord(s.slotType) || "Open meal"}
                 </span>
                 {" — "}
@@ -730,8 +728,8 @@ function SlotWarnings({ slots }) {
               </li>
             ))}
           </ul>
-          <div className="text-xs font-semibold mt-2 leading-relaxed" style={{ color: C.faint }}>
-            Nothing here needs undoing. Swap those slots on the <strong style={{ color: C.ink }}>Plan</strong> tab
+          <div className="text-xs font-semibold mt-2 leading-relaxed text-muted-foreground">
+            Nothing here needs undoing. Swap those slots on the <strong className="text-foreground">Plan</strong> tab
             (each one offers three other options), or regenerate with looser filters — diet, allergy and prep-time
             caps are what usually leave the solver nothing that fits.
           </div>
@@ -862,7 +860,7 @@ export default function TodayTab({ profile, summary, refresh, openTrend, openWel
           their row. */}
       <div className="grid grid-cols-1 xl:grid-cols-12 gap-4 items-stretch">
         {/* ── planned vs target ── */}
-        <Card section="TODAY" title="Planned vs. target" className="xl:col-span-5">
+        <SectionCard section="TODAY" title="Planned vs. target" className="xl:col-span-5">
           {plan === undefined ? (
             <div className="flex items-center gap-6">
               <Skeleton className="rounded-full shrink-0" style={{ width: 156, height: 156 }} />
@@ -883,31 +881,31 @@ export default function TodayTab({ profile, summary, refresh, openTrend, openWel
             // described and deferred. One button, ms-level solve, real food.
             <div className="flex flex-col items-start gap-3 py-2">
               <div className="flex items-center gap-2">
-                <CalendarDays size={17} style={{ color: C.faintLight }} aria-hidden="true" />
-                <div className="text-sm font-extrabold" style={{ color: C.ink }}>
+                <CalendarDays size={17} className="text-muted-foreground" aria-hidden="true" />
+                <div className="text-sm font-extrabold text-foreground">
                   No meals planned for this week yet
                 </div>
               </div>
-              <div className="text-sm font-semibold" style={{ color: C.faint }}>
+              <div className="text-sm font-semibold text-muted-foreground">
                 Build a full week of meals around your {kc(macros?.kcal ?? target?.target ?? profile.targetKcal)} kcal
                 target and {gm(macros?.proteinLo)} g protein — real recipes, your diet and allergy rules
                 already applied. Takes about a second.
               </div>
-              <Btn onClick={generateWeek} disabled={genBusy}>
+              <Button onClick={generateWeek} disabled={genBusy}>
                 <Sparkles size={13} className="inline mr-1.5" aria-hidden="true" />
                 {genBusy ? "Building your week…" : "Generate this week's plan"}
-              </Btn>
+              </Button>
               {/* The solve finishes in milliseconds and the button label snaps
                   back — a screen-reader user got no announcement at all that
                   anything had happened. */}
-              <div role="status" aria-live="polite" className="text-xs font-semibold" style={{ color: C.faint }}>
+              <div role="status" aria-live="polite" className="text-xs font-semibold text-muted-foreground">
                 {genBusy ? "Building your week…" : genDone || ""}
               </div>
               {genErr && (
                 <ErrorNote msg={genErr}
                   hint="Try again, or open the Plan tab where you can loosen the filters (diet, allergies and prep-time caps can over-constrain the solver)." />
               )}
-              <div className="text-[11px] font-semibold" style={{ color: C.faintLight }}>
+              <div className="text-[11px] font-semibold text-muted-foreground">
                 Swaps, locks and the grocery list live on the Plan tab. This card shows what&apos;s
                 <em> planned</em> — the diary below is what you actually ate.
               </div>
@@ -917,13 +915,13 @@ export default function TodayTab({ profile, summary, refresh, openTrend, openWel
               <div className="flex items-center gap-6 mb-5">
                 <Ring pct={kcalPct} size={156} stroke={13} color={C.accent} num={kc(planned.kcal)} unit="planned kcal" />
                 <div className="flex-1 flex flex-col gap-1.5 text-xs font-semibold">
-                  <div className="flex justify-between"><span style={{ color: C.faint }}>Target</span><span className="mono text-sm" style={{ color: C.ink }}>{kc(macros?.kcal)} kcal</span></div>
-                  <div className="flex justify-between"><span style={{ color: C.faint }}>Planned today</span><span className="mono text-sm" style={{ color: C.ink }}>{kc(planned.kcal)} kcal</span></div>
-                  <div className="flex justify-between"><span style={{ color: C.faint }}>Meals + snacks</span><span className="mono text-sm" style={{ color: C.ink }}>{todaySlots.length}</span></div>
+                  <div className="flex justify-between"><span className="text-muted-foreground">Target</span><span className="tabular-nums text-sm text-foreground">{kc(macros?.kcal)} kcal</span></div>
+                  <div className="flex justify-between"><span className="text-muted-foreground">Planned today</span><span className="tabular-nums text-sm text-foreground">{kc(planned.kcal)} kcal</span></div>
+                  <div className="flex justify-between"><span className="text-muted-foreground">Meals + snacks</span><span className="tabular-nums text-sm text-foreground">{todaySlots.length}</span></div>
                 </div>
               </div>
               {kcalPct > 1 && (
-                <div className="text-xs font-semibold mb-3" style={{ color: C.warn }}>
+                <div className="text-xs font-semibold mb-3 text-warn">
                   Over by {kc(planned.kcal - macros.kcal)} — swap a slot on the Plan tab if you want it closer.
                   Nothing to undo: as your weigh-ins build up, the engine re-reads your real burn and moves the
                   target itself.
@@ -935,7 +933,7 @@ export default function TodayTab({ profile, summary, refresh, openTrend, openWel
               <MacroRails protein={planned.protein} carb={planned.carb} fat={planned.fat} macros={macros} />
             </>
           )}
-        </Card>
+        </SectionCard>
 
         {/* ── verdict ── */}
         <Card section="VERDICT" title="Verdict" className="xl:col-span-4">

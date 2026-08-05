@@ -41,6 +41,7 @@
     --color-card: var(--card);
     --color-foreground: var(--foreground);
     --color-background: var(--background);
+    --color-warn: var(--warn);
     --radius-sm: calc(var(--radius) * 0.6);
     --radius-md: calc(var(--radius) * 0.8);
     --radius-lg: var(--radius);
@@ -87,6 +88,11 @@
   --sidebar-accent-foreground: oklch(0.25 0.01 260);
   --sidebar-border: oklch(0.91 0.006 250);
   --sidebar-ring: oklch(0.52 0.11 162);
+  /* ADDED (not part of the direction block): calm amber for over-target /
+     re-planning states on food and body data — design law (b) forbids red
+     there, and SIGNAL BLACK shipped no legal amber. New-color rule per
+     CLAUDE.md: define in :root + .dark, map in @theme inline. */
+  --warn: oklch(0.55 0.12 75);
 }
 
 /* SIGNAL BLACK — dark theme (DEFAULT). Ship with <html class="dark"> in index.html;
@@ -126,6 +132,9 @@
   --sidebar-accent-foreground: oklch(0.97 0.004 250);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.85 0.18 162);
+  /* ADDED (see :root note): calm amber, law (b) — matches the legacy
+     AURORA --warn hue so amber keeps meaning "re-plan, not failure". */
+  --warn: oklch(0.76 0.13 78);
 }
 
 @layer base {
