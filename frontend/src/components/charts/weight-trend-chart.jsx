@@ -4,8 +4,9 @@ import { ChartContainer } from "@/components/ui/chart";
 // TrendTab's hero weight chart, extracted under Phase 3's same-data-props
 // rule. Every prop is the exact identifier the old inline JSX consumed:
 // `data` = the protected `chart` memo, `xAxis`/`yDomain`/`fit` the protected
-// axis/fit math, `goalW`/`leanNow`/`bfFrac`/`showDots`/`wUnit` the protected
-// derivations, `tooltip` = the untouched <ChartTip/> element built at the
+// axis/fit math, `goalW`/`leanNow`/`bfFrac`/`showDots` the protected
+// derivations, `tooltip` = the untouched <ChartTip/> element (it carries
+// wUnit/avgDays itself) built at the
 // call site (its payload-extraction wiring never moves). Zero upstream
 // reshaping. All conditional predicates and data bindings below are moved
 // verbatim from TrendTab.
