@@ -107,11 +107,15 @@ export const Stamp = ({ v, stampStyle }) => {
   return (
     // role="status": verdict text updates (e.g. after a weigh-in) get
     // announced to screen readers without needing focus to be on this card.
-    <div role="status" className="rounded-xl p-3.5 flex items-start gap-3" style={{ background: s.bg || C.paper, border: `1px solid color-mix(in srgb, ${s.color} 20%, transparent)` }}>
+    // Theme-aware text (light-mode fix): the tone rides the rail + border
+    // tint (s.color); title/sub use semantic tokens so they read on both the
+    // dark and the light card. The stampStyle[v.tone] fallback above is the
+    // protected part and is untouched.
+    <div role="status" className="rounded-xl p-3.5 flex items-start gap-3 bg-secondary/50" style={{ border: `1px solid color-mix(in srgb, ${s.color} 25%, transparent)` }}>
       <div className="w-1 self-stretch rounded-full shrink-0" aria-hidden="true" style={{ background: s.color }}></div>
       <div>
-        <div className="text-sm font-extrabold" style={{ color: s.color }}>{v.tag}</div>
-        <div className="text-xs mt-0.5" style={{ color: C.ink }}>{v.sub}</div>
+        <div className="text-sm font-extrabold text-foreground">{v.tag}</div>
+        <div className="text-xs mt-0.5 text-muted-foreground">{v.sub}</div>
       </div>
     </div>
   );
@@ -262,14 +266,14 @@ export const Ring = ({ pct, size = 108, stroke = 10, color = C.accent, num, unit
             </linearGradient>
           </defs>
         )}
-        <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke={C.card2} strokeWidth={stroke} />
+        <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke="var(--secondary)" strokeWidth={stroke} />
         <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke={grad ? `url(#rg${gid})` : color} strokeWidth={stroke}
           strokeLinecap="round" strokeDasharray={circ} strokeDashoffset={circ * (1 - lap1)} style={{ transition: "stroke-dashoffset .2s ease" }} />
         {over && (
           <>
             {/* surface-colored separator so lap 2's round cap never lands on
                 lap 1's — 100.0% and 100.5% have to look different */}
-            <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke={C.card} strokeWidth={stroke}
+            <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke="var(--card)" strokeWidth={stroke}
               strokeLinecap="butt" strokeDasharray={circ} strokeDashoffset={circ * (1 - Math.min(1, lap2 + gapFrac))} />
             <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke={grad ? C.accentTail : color} strokeWidth={stroke}
               strokeLinecap="round" strokeDasharray={circ} strokeDashoffset={circ * (1 - lap2)} style={{ transition: "stroke-dashoffset .2s ease" }} />
@@ -277,15 +281,14 @@ export const Ring = ({ pct, size = 108, stroke = 10, color = C.accent, num, unit
         )}
       </svg>
       <div className="absolute inset-0 flex flex-col items-center justify-center" aria-hidden="true">
-        <div className={`mono stat-hero ${numClass}`} style={{ color: over ? C.warn : C.ink }}>{num}</div>
-        {unit && <div className="text-[10px] font-bold" style={{ color: C.faint }}>{unit}</div>}
+        <div className={`mono stat-hero ${numClass} ${over ? "text-warn" : "text-foreground"}`}>{num}</div>
+        {unit && <div className="text-[10px] font-bold text-muted-foreground">{unit}</div>}
       </div>
       {/* Lap counter — the only thing that can tell 200% from 1000% apart at a
           glance once both have a full ring plus a partial one. */}
       {lapsDone >= 2 && (
         <div aria-hidden="true"
-          className="absolute bottom-0 right-0 text-[10px] font-extrabold px-1.5 py-0.5 rounded-full"
-          style={{ background: C.warnBg, color: C.warn, border: `1px solid ${C.warn}55` }}>
+          className="absolute bottom-0 right-0 text-[10px] font-extrabold px-1.5 py-0.5 rounded-full border border-warn/40 bg-warn/10 text-warn">
           ×{lapsDone}
         </div>
       )}
@@ -306,11 +309,11 @@ export const ErrorNote = ({ msg, hint }) => (
   // role="alert": announced immediately to screen readers the moment it
   // mounts, without the user needing to have focus anywhere near it — used
   // app-wide for failed saves, failed logs, failed generations, etc.
-  <div role="alert" className="p-3 rounded-xl flex items-start gap-2.5" style={{ background: C.redBg, border: `1px solid ${C.red}55` }}>
-    <AlertTriangle size={15} className="mt-0.5 shrink-0" style={{ color: C.red }} aria-hidden="true" />
+  <div role="alert" className="p-3 rounded-xl flex items-start gap-2.5 border border-destructive/40 bg-destructive/10">
+    <AlertTriangle size={15} className="mt-0.5 shrink-0 text-destructive" aria-hidden="true" />
     <div className="min-w-0">
-      <div className="text-xs font-bold" style={{ color: C.red }}>{msg}</div>
-      <div className="text-xs font-semibold mt-0.5" style={{ color: C.faint }}>
+      <div className="text-xs font-bold text-destructive">{msg}</div>
+      <div className="text-xs font-semibold mt-0.5 text-muted-foreground">
         {hint || "Try the action again — if it keeps failing, restart the app and retry."}
       </div>
     </div>
@@ -321,10 +324,10 @@ export const ErrorNote = ({ msg, hint }) => (
 // "Projections unlock with weigh-in data" voice, everywhere.
 export const EmptyNote = ({ icon: Icon, title, hint, height }) => (
   <div className="flex flex-col items-center justify-center gap-2 text-center" style={height ? { height } : { padding: "18px 0" }}>
-    {Icon && <Icon size={22} style={{ color: C.faintLight }} aria-hidden="true" />}
-    <div className="text-sm font-semibold" style={{ color: C.faint }}>{title}</div>
+    {Icon && <Icon size={22} className="text-muted-foreground" aria-hidden="true" />}
+    <div className="text-sm font-semibold text-foreground">{title}</div>
     {/* a11y contrast fix: this hint is the actual "what to do next" guidance
         (e.g. "Log your first weight above") — must clear AA, not faint-light. */}
-    {hint && <div className="text-xs font-medium max-w-[260px]" style={{ color: C.faint }}>{hint}</div>}
+    {hint && <div className="text-xs font-medium max-w-[260px] text-muted-foreground">{hint}</div>}
   </div>
 );
