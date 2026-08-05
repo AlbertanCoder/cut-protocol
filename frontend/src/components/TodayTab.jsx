@@ -1,8 +1,5 @@
 import { useState, useEffect, useMemo, useCallback, useRef, useId } from "react";
-import {
-  ComposedChart, Line, XAxis, YAxis, CartesianGrid, Tooltip,
-  ReferenceLine, ResponsiveContainer,
-} from "recharts";
+import { TrendSnapshotChart } from "./charts/trend-snapshot-chart.jsx";
 import { Camera, Trash2, CalendarDays, ArrowRight, LineChart, NotebookPen, ClipboardCheck, Plus, Sparkles, AlertTriangle, UserCog, Search, Pencil, CornerDownLeft, Heart } from "lucide-react";
 import { C, getStampStyle } from "../lib/theme.js";
 import { todayStr, dayNum, addDays, fmtD } from "../lib/dates.js";
@@ -1035,24 +1032,7 @@ export default function TodayTab({ profile, summary, refresh, openTrend, openWel
               style={{ width: "100%", height: 200 }}
             >
               <div aria-hidden="true" style={{ width: "100%", height: "100%" }}>
-                <ResponsiveContainer>
-                  <ComposedChart data={snapshot} margin={{ top: 8, right: 8, left: -18, bottom: 0 }}>
-                    <CartesianGrid stroke={C.rule} strokeDasharray="2 4" vertical={false} />
-                    <XAxis dataKey="d" tick={{ fontSize: 10, fill: C.faint, fontWeight: 600 }} tickLine={false}
-                      axisLine={{ stroke: C.rule }} minTickGap={28} />
-                    <YAxis domain={[yMin, yMax]} tick={{ fontSize: 10, fill: C.faint, fontWeight: 600 }}
-                      tickLine={false} axisLine={{ stroke: C.rule }} width={52} />
-                    <Tooltip
-                      contentStyle={{ background: C.card2, border: `1px solid ${C.rule}`, borderRadius: 12, fontSize: 12, fontWeight: 600, color: C.ink }}
-                      formatter={(val, name) => [val + " " + wUnit, name === "w" ? "daily" : "7-day avg"]}
-                    />
-                    <ReferenceLine y={goalDisplay} stroke={C.faint} strokeDasharray="6 4" />
-                    <Line type="monotone" dataKey="w" stroke={C.faintLight} strokeWidth={1.5}
-                      dot={{ r: 2, fill: C.faintLight, strokeWidth: 0 }} isAnimationActive={false} />
-                    <Line type="monotone" dataKey="a" stroke={C.accent} strokeWidth={2.5}
-                      dot={false} isAnimationActive={false} />
-                  </ComposedChart>
-                </ResponsiveContainer>
+                <TrendSnapshotChart data={snapshot} yMin={yMin} yMax={yMax} goal={goalDisplay} unit={wUnit} />
               </div>
             </div>
           )}
