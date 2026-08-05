@@ -7,7 +7,7 @@ import { Camera, Trash2, CalendarDays, ArrowRight, LineChart, NotebookPen, Clipb
 import { C, getStampStyle } from "../lib/theme.js";
 import { todayStr, dayNum, addDays, fmtD } from "../lib/dates.js";
 import { displayWeight, parseWeight, weightUnit, rateUnit, displayRate, weightInputBounds } from "../lib/units.js";
-import { Card, Stat, Btn, Chip, Stamp, Ring, PageHead, EmptyNote, ErrorNote } from "./ui/Parts.jsx";
+import { Card, Stat, Btn, Chip, Stamp, Ring, EmptyNote, ErrorNote } from "./ui/Parts.jsx";
 import { Skeleton, SkeletonRows } from "./ui/Skeleton.jsx";
 import { api, ApiError, ERR, isAbortError, describeError } from "../lib/api.js";
 import { useAbortSignal } from "../lib/useAbortable.js";
@@ -844,7 +844,15 @@ export default function TodayTab({ profile, summary, refresh, openTrend, openWel
 
   return (
     <div>
-      <PageHead title="Today" sub={`${provisional ? "ESTIMATE FROM DEFAULTS · " : ""}Day ${daysIn} of protocol · target ${kc(target?.target ?? profile.targetKcal)} kcal · plan: ${target?.floored ? `~${target.achievableRate} lb/wk (held at your floor)` : `${profile.rateLbPerWeek} lb/wk`}`} />
+      {/* SIGNAL BLACK page head (was Parts.jsx PageHead — swapped at the call
+          site so un-restyled tabs keep the legacy component). The h1 stays:
+          App's tab-switch focus management targets each view's h1. */}
+      <header className="mb-6 flex flex-wrap items-end justify-between gap-4">
+        <div>
+          <h1 className="font-heading text-[26px] font-bold uppercase leading-none tracking-tight text-foreground">Today</h1>
+          <p className="mt-1.5 text-xs font-semibold text-muted-foreground tabular-nums">{`${provisional ? "ESTIMATE FROM DEFAULTS · " : ""}Day ${daysIn} of protocol · target ${kc(target?.target ?? profile.targetKcal)} kcal · plan: ${target?.floored ? `~${target.achievableRate} lb/wk (held at your floor)` : `${profile.rateLbPerWeek} lb/wk`}`}</p>
+        </div>
+      </header>
 
       {provisional && <ProvisionalBanner pref={pref} />}
 
