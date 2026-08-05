@@ -137,55 +137,8 @@ body {
 }
 h1, h2, h3 { font-family: var(--font-display); }
 
-/* ── Ambience: layered aurora, transform-only (GPU-cheap) ─────────────────
-   Two oversized soft blobs orbiting on off-center origins + a static top
-   wash. Subtle by law: ambience, not spectacle. Rendered once in App.jsx as
-   <div class="aurora"/> behind a z-1 shell. */
-.aurora {
-  position: fixed;
-  inset: 0;
-  z-index: 0;
-  overflow: hidden;
-  pointer-events: none;
-  background: radial-gradient(100% 55% at 50% 0%, rgba(47, 213, 118, 0.035), transparent 62%);
-}
-.aurora::before,
-.aurora::after {
-  content: "";
-  position: absolute;
-  width: 120vmax;
-  height: 120vmax;
-  border-radius: 50%;
-  will-change: transform;
-}
-.aurora::before {
-  top: -62vmax;
-  left: -34vmax;
-  background: radial-gradient(closest-side, rgba(47, 213, 118, 0.06), transparent 68%);
-  transform-origin: 62% 66%;
-  animation: aurora-a 160s linear infinite;
-}
-.aurora::after {
-  bottom: -70vmax;
-  right: -38vmax;
-  background: radial-gradient(closest-side, rgba(62, 199, 176, 0.05), transparent 70%);
-  transform-origin: 38% 34%;
-  animation: aurora-b 220s linear infinite;
-}
-@keyframes aurora-a { to { transform: rotate(360deg); } }
-@keyframes aurora-b { from { transform: rotate(360deg); } to { transform: rotate(0deg); } }
-
-/* film grain — static SVG noise tile, sits over everything, near-invisible */
-.grain {
-  position: fixed;
-  inset: 0;
-  z-index: 80;
-  pointer-events: none;
-  opacity: 0.04;
-  mix-blend-mode: overlay;
-  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
-  background-size: 160px 160px;
-}
+/* (Aurora + grain ambience DRAINED — Phase 2 Unit 1: the App chassis no
+   longer renders those layers under SIGNAL BLACK.) */
 
 /* glass card — translucent fill + 1px gradient hairline (double-background
    technique: fill paints padding-box, hairline paints the transparent
@@ -300,8 +253,6 @@ button:focus-visible, summary:focus-visible, a:focus-visible,
 /* reduced motion: ambient layers freeze, shimmer stops, count-ups and
    width/stroke transitions snap */
 @media (prefers-reduced-motion: reduce) {
-  .aurora::before,
-  .aurora::after,
   .skeleton::after,
   .ring-breathe {
     animation: none;

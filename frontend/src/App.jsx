@@ -223,9 +223,8 @@ function App() {
   );
 
   // The bug-report dialog rides on top of every app state (login, wizard,
-  // loading, main) so an uncaught error can always surface a report. The
-  // aurora + grain ambience layers wrap every state the same way; content
-  // sits at z-1 so the fixed aurora stays behind it.
+  // loading, main) so an uncaught error can always surface a report.
+  // (The AURORA ambience layers were retired with the SIGNAL BLACK restyle.)
   const dialog = <BugReportDialog open={bugReport.open} error={bugReport.error} onClose={() => setBugReport({ open: false, error: null })} />;
   const wellbeing = (
     <WellbeingCheck
@@ -237,9 +236,7 @@ function App() {
   const compare = <CompareDialog open={compareOpen} onClose={() => setCompareOpen(false)} />;
   const withDialog = (content) => (
     <>
-      <div className="aurora" aria-hidden="true" />
-      <div className="relative z-[1]">{content}</div>
-      <div className="grain" aria-hidden="true" />
+      {content}
       {dialog}
       {wellbeing}
       {compare}
@@ -322,14 +319,14 @@ function App() {
     WELLBEING === "on" && signals.length > 0 && !wellbeingSeen && !wellbeingScreen;
 
   return withDialog(
-    <div className="min-h-svh flex" style={{ color: C.ink }}>
+    <div className="min-h-svh flex bg-background text-foreground">
       <a href="#main-content" className="skip-link">Skip to main content</a>
       <Sidebar tab={tab} setTab={setTab} onLogout={logout} onReportBug={openBugReport} onCompare={() => setCompareOpen(true)} wellbeingMarked={wellbeingMarked} />
 
       <div className="flex-1 min-w-0">
         <HeaderBar profile={profile} summary={summary} />
         {error && (
-          <div role="alert" className="text-xs font-semibold px-8 py-2" style={{ color: C.red, background: C.redBg }}>
+          <div role="alert" className="text-xs font-semibold px-8 py-2 text-destructive bg-destructive/10">
             {error} — couldn't refresh your data. Repeat your last change to retry; if it keeps failing, restart the app.
           </div>
         )}
