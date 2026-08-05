@@ -91,8 +91,9 @@
   /* ADDED (not part of the direction block): calm amber for over-target /
      re-planning states on food and body data — design law (b) forbids red
      there, and SIGNAL BLACK shipped no legal amber. New-color rule per
-     CLAUDE.md: define in :root + .dark, map in @theme inline. */
-  --warn: oklch(0.55 0.12 75);
+     CLAUDE.md: define in :root + .dark, map in @theme inline.
+     L 0.52 (not 0.55): ~4.75:1 even on the bg-warn/10 tint - AA at 11px semibold. */
+  --warn: oklch(0.52 0.12 75);
 }
 
 /* SIGNAL BLACK — dark theme (DEFAULT). Ship with <html class="dark"> in index.html;
@@ -159,6 +160,25 @@
     font-weight: 700;
     letter-spacing: -0.02em;
   }
+}
+
+/* ── LEGACY TOKEN COLLISION SHIM (Phase 2 — DELETE with legacy.css, Phase 6) ──
+   legacy.css also declares --card and --warn on :root and loads AFTER this
+   file, so at equal specificity its dark AURORA values silently win and, in
+   light mode, bg-card stayed dark under near-black text. These boosted-
+   specificity re-declarations keep the semantic tokens authoritative for
+   Tailwind utilities. Values duplicate the direction/:root blocks verbatim.
+   --accent is deliberately NOT shimmed: lib/theme.js reads it live off the
+   DOM for the hero Ring and trend line (protected, law a) — reclaiming it
+   would turn them gray. Cost: shadcn hover washes flash AURORA green until
+   legacy.css is drained. */
+html:root {
+  --card: oklch(1 0 0);
+  --warn: oklch(0.52 0.12 75);
+}
+html.dark:root {
+  --card: oklch(0.19 0.009 255);
+  --warn: oklch(0.76 0.13 78);
 }
 
 /* ================================================================
