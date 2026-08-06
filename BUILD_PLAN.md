@@ -94,13 +94,61 @@ Stays FREE: auth, profile (targets/TDEE), weighins/trend, training, foods (+UPC)
 - [ ] **OWNER→Stage 4: webhook is created in the LS dashboard only once the Railway URL exists** (signing secret gets generated then)
 - [ ] CHECKPOINT (rest): "Unlock with Premium" opens LS test checkout showing $24.99 / $125 from inside the app
 
-### Stage 4 — Deploy: Railway + Supabase Postgres
-- [ ] Supabase Postgres `DATABASE_URL`; schema provider → postgresql; regenerate init migration (DEPLOY.md procedure); verify `migrate deploy` clean
-- [ ] Seed shared food/recipe library (14,122 foods / 889 recipes) into Postgres (adapt template-DB/seed scripts)
-- [ ] Railway service from Dockerfile; env vars set (HOST=0.0.0.0, all secrets); public HTTPS URL
-- [ ] Google OAuth redirect URIs + Supabase site URL + LS webhook URL updated to prod domain
-- [ ] Desktop app unaffected (still SQLite/local — verify `npm test` in backend)
-- [ ] CHECKPOINT: public URL serves the app; Google sign-in + test-mode checkout work in prod
+### Stage 4 — Deploy: Railway + Supabase Postgres — CODE DONE, deploy is owner clicking
+- [x] Postgres pipeline: `prisma/postgres/schema.prisma` GENERATED from the canonical schema (`scripts/buildPostgresSchema.mjs`), offline-rendered init migration (26 tables, real Postgres DDL), own migration_lock; Docker flips the image-local provider + generates the client; `migrate deploy --schema prisma/postgres/schema.prisma`. Desktop SQLite untouched.
+- [x] Drift guards: `tests/postgresSchemaSync.test.js` (stale copy, wrong dialect, missing models all fail CI)
+- [x] Dockerfile: VITE_SUPABASE_* build args (Vite bakes at build time — without them prod boots in desktop mode), HOST=0.0.0.0, postgres CMD; railway.json matched
+- [x] Library seeding: `scripts/seedCloudLibrary.mjs` (template SQLite → cloud Postgres, original ids, typed, batched, non-empty guard); `Subscription` added to the personal-table classification in buildTemplateDb + librarySync (their own drift test enforced the pair)
+- [x] Legal: `/terms` + `/privacy` (frontend/public, clean URLs in server.js) — plain-language PIPEDA-aware DRAFTS with [BRACKETED] placeholders; medical disclaimer on both pages AND the sign-in card
+- [x] Suite green after all of it: **1632 tests, 0 failures**
+- [ ] OWNER: runbook Part C below (Railway + post-deploy URL updates + seed + legal placeholders)
+- [ ] CHECKPOINT: open the production URL on the phone, sign in with Google, use the free app end to end
+
+### Stage 5 — Full test-mode run on prod — WAITING on Stage 4 owner steps
+Nothing to pre-build: the five scenarios (monthly sub, cancel-at-period-end, failed payment + shrunk grace, refund revoke, annual pass) run against the deployed URL with LS test cards. Claude runs/verifies these WITH the owner in a session; grace-shrink = `flipPremium`-style date surgery or LS dashboard simulate-events.
+
+### Stage 6 — Go-live + penny test — WAITING on Stage 5
+Owner-only dashboards (LS activation/KYC as Canadian sole prop, live keys into Railway, penny variant). No code gaps known.
+
+---
+
+## OWNER RUNBOOK — every dashboard step left, in order (each ~5–15 min)
+
+### Part A — Supabase + Google (Stage 1's checkpoint)
+Full click-by-click: chat 2026-08-06 ("Part 1–5, steps 1–21"). Compressed:
+1. Supabase project `cut-protocol` (org exists; Data API off — decided). Settings→API Keys → Project URL + publishable key → `frontend/.env` (`VITE_SUPABASE_URL`, `VITE_SUPABASE_PUBLISHABLE_KEY`); URL + secret key → `backend/.env` (`SUPABASE_URL`, `SUPABASE_SECRET_KEY`).
+2. Supabase → Authentication → Sign In/Providers → Google: copy Callback URL.
+3. Google Cloud: project `Cut Protocol` → OAuth consent (External, no logo) → ADD YOURSELF AS TEST USER → Credentials → OAuth client (Web): JS origin `http://localhost:5173`, redirect = the Callback URL → paste ID+secret back into Supabase Google provider → Enable.
+4. Supabase → Authentication → URL Configuration → Site URL `http://localhost:5173`.
+5. Verify: `npm run dev` both halves → Google-only card → sign in → curl 401 signed out → `node scripts/flipPremium.mjs --email <you> --state free|premium` flips the overlays.
+
+### Part B — Lemon Squeezy store, TEST MODE (Stage 3's checkpoint)
+Full click-by-click: chat 2026-08-06 (Stage 3 end). Compressed:
+1. Account + store `Cut Protocol` (country Canada, skip payouts). **Test Mode ON** (left sidebar toggle).
+2. CURRENCY: USD default stands unless you decide CAD BEFORE creating the product.
+3. Product `Cut Protocol Premium`, subscription, 2 variants: Monthly $24.99/mo, Annual $125/yr.
+4. Into `backend/.env`: variant IDs → `LEMONSQUEEZY_VARIANT_MONTHLY` / `_ANNUAL`; Settings→API key (test) → `LEMONSQUEEZY_API_KEY`; Settings→Stores id → `LEMONSQUEEZY_STORE_ID`.
+5. Verify: restart backend, free account → Unlock with Premium → LS test checkout shows $24.99/$125. (Webhook waits for Part C.)
+
+### Part C — Railway deploy + wiring the production URL (Stage 4's checkpoint)
+1. railway.com → sign in with GitHub → **New Project → Deploy from GitHub repo**… the repo's public master does NOT contain saas-launch (never pushed). EITHER push `saas-launch` to a PRIVATE repo (recommended: create `cut-protocol-app` private, `git push <new-remote> saas-launch`) and deploy that, OR use Railway's CLI upload. DECIDE WITH CLAUDE IN SESSION — pushing is your hand only (standing rule).
+2. In the Railway service → Variables, set (values from your two .env files):
+   `DATABASE_URL` = Supabase connection string (Supabase → Project Settings → Database → Connection string → URI, **Session pooler**; password = the one you saved) ·
+   `JWT_SECRET` (generate fresh: `node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"`) ·
+   `SUPABASE_URL`, `SUPABASE_SECRET_KEY` ·
+   `VITE_SUPABASE_URL`, `VITE_SUPABASE_PUBLISHABLE_KEY` (build args — same names) ·
+   `LEMONSQUEEZY_API_KEY`, `LEMONSQUEEZY_STORE_ID`, `LEMONSQUEEZY_VARIANT_MONTHLY`, `LEMONSQUEEZY_VARIANT_ANNUAL`, `LEMONSQUEEZY_WEBHOOK_SECRET` (generate: same crypto one-liner, 24 bytes fine) ·
+   `APP_URL` = the Railway public URL once known (step 3) ·
+   `ANTHROPIC_API_KEY` + `USDA_API_KEY` only if AI generation/UPC lookup should work on web.
+   Do NOT set: `CUT_PROTOCOL_*`, `BRAIN`, `SEED_*`, `PORT`/`HOST` (Dockerfile handles those).
+3. Settings → Networking → Generate Domain → that's your public HTTPS URL. Put it in `APP_URL` (redeploys).
+4. Seed the library ONCE from your machine: `cd backend && node scripts/buildTemplateDb.mjs && node scripts/seedCloudLibrary.mjs --url "<the same DATABASE_URL>"`.
+5. Update the three external configs to the prod URL:
+   - Supabase → Auth → URL Configuration: Site URL = prod URL; add it to Redirect URLs (keep localhost too).
+   - Google Cloud → Credentials → the OAuth client: add prod URL to Authorized JavaScript origins (redirect URI unchanged — it points at Supabase).
+   - Lemon Squeezy (test mode) → Settings → Webhooks → + : URL = `<prod URL>/api/webhooks/lemonsqueezy`, Signing secret = the value you put in `LEMONSQUEEZY_WEBHOOK_SECRET`, select all subscription_* events + order_refunded.
+6. Legal placeholders before anything public: [SUPPORT EMAIL], [DATE], [REGION] in `frontend/public/terms.html` + `privacy.html`; link `/terms` + `/privacy` prod URLs in the Google consent screen and LS store settings.
+7. CHECKPOINT: production URL on your phone → Google sign-in → free app works end to end.
 
 ### Stage 5 — Full test-mode run on prod
 - [ ] Fresh Google account: sign up → free tier verified (blur+lock, API rejections)
