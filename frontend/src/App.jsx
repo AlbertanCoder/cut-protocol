@@ -250,8 +250,8 @@ function App() {
   if (authStatus === "unreachable") {
     return withDialog(
       <div className="min-h-svh flex flex-col items-center justify-center gap-3 px-6 text-center">
-        <div className="text-sm font-bold" style={{ color: C.red }}>Can't reach the app's server</div>
-        <div className="text-xs font-semibold max-w-sm" style={{ color: C.faint }}>
+        <div className="text-sm font-bold" style={{ color: "var(--destructive)" }}>Can't reach the app's server</div>
+        <div className="text-xs font-semibold max-w-sm" style={{ color: "var(--muted-foreground)" }}>
           {bootError} You are not signed out — the app just couldn't get an answer. If this persists, close and reopen Cut Protocol.
         </div>
         <button onClick={boot} className="text-sm font-bold px-4 py-2 rounded-xl" style={{ background: C.accent, color: C.accentInk }}>Retry</button>
@@ -265,7 +265,7 @@ function App() {
         {sessionNotice && (
           <div role="status" className="absolute inset-x-0 top-0 z-10 flex justify-center px-4 pt-5">
             <div className="text-xs font-bold px-4 py-2.5 rounded-xl max-w-md text-center"
-              style={{ background: C.card2, border: `1px solid ${C.rule}`, color: C.ink }}>
+              style={{ background: "var(--secondary)", border: "1px solid var(--border)", color: "var(--foreground)" }}>
               {sessionNotice}
             </div>
           </div>
@@ -293,8 +293,8 @@ function App() {
   if (loadError && (!profile || !summary)) {
     return withDialog(
       <div className="min-h-svh flex flex-col items-center justify-center gap-3 px-6 text-center">
-        <div className="text-sm font-bold" style={{ color: C.red }}>Couldn't load your data</div>
-        <div className="text-xs font-semibold max-w-sm" style={{ color: C.faint }}>
+        <div className="text-sm font-bold" style={{ color: "var(--destructive)" }}>Couldn't load your data</div>
+        <div className="text-xs font-semibold max-w-sm" style={{ color: "var(--muted-foreground)" }}>
           {loadError} You are still signed in — this is a load failure, not a sign-out.
         </div>
         <button onClick={boot} className="text-sm font-bold px-4 py-2 rounded-xl" style={{ background: C.accent, color: C.accentInk }}>Retry</button>

@@ -84,7 +84,7 @@ export default function CompareDialog({ open, onClose }) {
     // WellbeingCheck too. It wants a --scrim token in index.css; changing it
     // here alone would fragment the three dialogs, so it stays until the token
     // lands.
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: "rgba(0,0,0,0.55)" }}
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: "var(--scrim)" }}
       role="dialog" aria-modal="true" aria-labelledby={titleId}>
       <div ref={panelRef} tabIndex={-1} className="w-full max-w-2xl max-h-[88vh] overflow-y-auto rounded-2xl p-6"
         style={{ background: C.card, border: `1px solid ${C.rule}` }}>

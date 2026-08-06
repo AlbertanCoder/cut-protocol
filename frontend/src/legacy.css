@@ -120,10 +120,6 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-#root {
-  min-height: 100svh;
-}
-
 /* type helpers — display face is Sora (700/800); every number that can
    change stays tabular */
 .disp { font-family: var(--font-display); font-weight: 800; letter-spacing: -.01em; }
@@ -135,7 +131,8 @@ body {
   font-variant-numeric: tabular-nums;
   font-feature-settings: "tnum" 1;
 }
-h1, h2, h3 { font-family: var(--font-display); }
+/* (h1-h3 Sora rule DRAINED — Phase 6: index.css's @layer base font-heading
+   rule now styles all headings; this was the last Sora holdout.) */
 
 /* (Aurora + grain ambience DRAINED — Phase 2 Unit 1: the App chassis no
    longer renders those layers under SIGNAL BLACK.) */
@@ -191,11 +188,6 @@ h1, h2, h3 { font-family: var(--font-display); }
 ::-webkit-scrollbar-track { background: transparent; }
 
 ::selection { background: var(--accent-bg); color: var(--ink); }
-
-/* desktop-app cursor convention: controls use the arrow cursor (no
-   cursor:pointer-on-everything web tells); only true links point */
-button, label, summary { cursor: default; }
-a { cursor: pointer; }
 
 /* Focus ring — see --focus. Two things make it work on every control kind:
    the ring is the off-white ink base (not the accent, which vanished on the

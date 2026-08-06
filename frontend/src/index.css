@@ -94,6 +94,9 @@
      CLAUDE.md: define in :root + .dark, map in @theme inline.
      L 0.52 (not 0.55): ~4.75:1 even on the bg-warn/10 tint - AA at 11px semibold. */
   --warn: oklch(0.52 0.12 75);
+  /* ADDED: the one modal-scrim value (was hand-typed rgba in four dialogs —
+     the fix DO-NOT-TOUCH prescribes: one token, all dialogs pointed at it). */
+  --scrim: rgba(0, 0, 0, 0.55);
 }
 
 /* SIGNAL BLACK — dark theme (DEFAULT). Ship with <html class="dark"> in index.html;
@@ -136,6 +139,7 @@
   /* ADDED (see :root note): calm amber, law (b) — matches the legacy
      AURORA --warn hue so amber keeps meaning "re-plan, not failure". */
   --warn: oklch(0.76 0.13 78);
+  --scrim: rgba(0, 0, 0, 0.55);
 }
 
 @layer base {

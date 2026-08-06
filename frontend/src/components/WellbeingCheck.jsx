@@ -63,7 +63,7 @@ export default function WellbeingCheck({ open, onClose, onResult }) {
   });
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: "rgba(0,0,0,0.55)" }}
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: "var(--scrim)" }}
       role="dialog" aria-modal="true" aria-labelledby={titleId}>
       <div ref={panelRef} tabIndex={-1} className="w-full max-w-lg max-h-[88vh] overflow-y-auto rounded-2xl p-6" style={card}>
         <div className="flex items-start justify-between mb-2">

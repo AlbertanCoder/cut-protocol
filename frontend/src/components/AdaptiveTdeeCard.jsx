@@ -1,5 +1,4 @@
 import { Scale } from "lucide-react";
-import { C } from "../lib/theme.js";
 import { Card, Stat, Chip, EmptyNote } from "./ui/Parts.jsx";
 import { displayWeight, weightUnit } from "../lib/units.js";
 import { fmtD } from "../lib/dates.js";

@@ -90,7 +90,7 @@ export default function Sidebar({ tab, setTab, onLogout, onReportBug, onCompare,
                 <span
                   className={collapsed ? "absolute top-1.5 right-3 w-1.5 h-1.5 rounded-full" : "ml-auto w-1.5 h-1.5 rounded-full"}
                   aria-hidden="true"
-                  style={{ background: C.warn }}
+                  style={{ background: "var(--warn)" }}
                 />
               )}
               {!collapsed && t.soon && (

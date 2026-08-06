@@ -81,7 +81,7 @@ export default function BugReportDialog({ open, error, onClose }) {
     setPendingCount(0);
   };
 
-  const overlay = { position: "fixed", inset: 0, background: "rgba(0,0,0,.6)", zIndex: 100, display: "flex", alignItems: "center", justifyContent: "center", padding: 16 };
+  const overlay = { position: "fixed", inset: 0, background: "var(--scrim)", zIndex: 100, display: "flex", alignItems: "center", justifyContent: "center", padding: 16 };
   const panel = { background: "var(--secondary)", border: "1px solid var(--border)", borderRadius: 20, width: "100%", maxWidth: 640, maxHeight: "88vh", display: "flex", flexDirection: "column" };
   const inp = { background: "var(--secondary)", border: "1.5px solid var(--border)", color: "var(--foreground)" };
 
@@ -99,7 +99,7 @@ export default function BugReportDialog({ open, error, onClose }) {
 
         <div className="px-5 overflow-y-auto" style={{ flex: 1 }}>
           {error && (
-            <div className="text-xs font-semibold mb-3 p-2.5 rounded-lg" style={{ color: "var(--destructive)", background: "color-mix(in srgb, var(--destructive) 12%, transparent)", border: `1px solid ${"var(--destructive)"}44` }}>
+            <div className="text-xs font-semibold mb-3 p-2.5 rounded-lg" style={{ color: "var(--destructive)", background: "color-mix(in srgb, var(--destructive) 12%, transparent)", border: "1px solid color-mix(in srgb, var(--destructive) 27%, transparent)" }}>
               {String(error.message || error).slice(0, 200)}
             </div>
           )}
