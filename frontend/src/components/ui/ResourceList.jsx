@@ -1,5 +1,4 @@
 import { Phone, Mail, ExternalLink } from "lucide-react";
-import { C } from "../../lib/theme.js";
 import { openExternal } from "../../lib/bugReport.js";
 import { WELLBEING_RESOURCES } from "../../lib/wellbeingResources.js";
 

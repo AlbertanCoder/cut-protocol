@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { X } from "lucide-react";
-import { C } from "../../lib/theme.js";
 import { Card } from "./Parts.jsx";
 
 // ── honest generation progress ────────────────────────────────────────────

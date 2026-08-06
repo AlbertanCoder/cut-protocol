@@ -4,7 +4,7 @@ import { Camera, Trash2, CalendarDays, ArrowRight, LineChart, NotebookPen, Clipb
 import { C, getStampStyle } from "../lib/theme.js";
 import { todayStr, dayNum, addDays, fmtD } from "../lib/dates.js";
 import { displayWeight, parseWeight, weightUnit, rateUnit, displayRate, weightInputBounds } from "../lib/units.js";
-import { Btn, Chip, Stamp, Ring, EmptyNote, ErrorNote } from "./ui/Parts.jsx";
+import { Chip, Stamp, Ring, EmptyNote, ErrorNote } from "./ui/Parts.jsx";
 import { SectionCard } from "./ui/section-card.jsx";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";

@@ -1,6 +1,5 @@
 import { useState, useEffect, useMemo, useCallback, useRef } from "react";
 import { Search, AlertTriangle, ShieldCheck, ChevronRight, Info, Check } from "lucide-react";
-import { C } from "../lib/theme.js";
 import {
   displayWeight, parseWeight, displayHeight, parseHeight, displayRate,
   weightUnit, rateUnit, cm2ftin, ftin2cm,

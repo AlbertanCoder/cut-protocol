@@ -1,6 +1,5 @@
 import { useState, useMemo, useRef, useId } from "react";
 import { Search, X, Plus, AlertTriangle } from "lucide-react";
-import { C } from "../../lib/theme.js";
 import { rankTaxonomy, didYouMean, normTerm } from "./allergyTaxonomy.js";
 
 // ─────────────────────────────────────────────────────────────────────────

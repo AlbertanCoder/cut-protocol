@@ -1,4 +1,3 @@
-import { C } from "../../lib/theme.js";
 import { foodIconFor } from "../../lib/foodIcon.js";
 
 // A small, offline, privacy-safe "image" for a recipe: a recognizable food icon

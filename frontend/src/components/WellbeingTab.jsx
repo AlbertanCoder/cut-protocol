@@ -1,6 +1,5 @@
 import { useRef, useEffect } from "react";
 import { Heart, ShieldCheck, LifeBuoy, Trash2, Info } from "lucide-react";
-import { C } from "../lib/theme.js";
 import { todayStr, fmtDY } from "../lib/dates.js";
 import { displayWeight, weightUnit } from "../lib/units.js";
 import { Card, PageHead } from "./ui/Parts.jsx";

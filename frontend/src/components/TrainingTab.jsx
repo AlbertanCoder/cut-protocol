@@ -1,6 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
 import { Dumbbell, Sparkles, Trash2, ChevronRight } from "lucide-react";
-import { C } from "../lib/theme.js";
 import { Card, Btn, Chip, PageHead, ErrorNote, EmptyNote } from "./ui/Parts.jsx";
 import { SkeletonCard, SkeletonRows } from "./ui/Skeleton.jsx";
 import { api } from "../lib/api.js";

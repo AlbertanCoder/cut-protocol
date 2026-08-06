@@ -1,6 +1,5 @@
 import { useState, useEffect, useCallback, useMemo, useRef, useId } from "react";
 import { Sprout, CalendarDays, ChevronDown, ChevronRight, RotateCw, LifeBuoy } from "lucide-react";
-import { C } from "../lib/theme.js";
 import { Card, EmptyNote, ErrorNote } from "./ui/Parts.jsx";
 import { SkeletonRows } from "./ui/Skeleton.jsx";
 import { api, isAbortError, describeError } from "../lib/api.js";

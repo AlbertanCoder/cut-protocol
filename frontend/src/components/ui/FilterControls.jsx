@@ -1,4 +1,3 @@
-import { C } from "../../lib/theme.js";
 
 // ── Stage 3 — the optional caps ───────────────────────────────────────────
 // maxCostCad / maxComplexity / minTaste. Each is OFF by default and each has an
