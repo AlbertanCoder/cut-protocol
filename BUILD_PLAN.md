@@ -55,15 +55,23 @@ Stays FREE: auth, profile (targets/TDEE), weighins/trend, training, foods (+UPC)
 - [x] BUILD_PLAN.md created
 - [ ] Owner "go" for Stage 1
 
-### Stage 1 — Accounts: Google sign-in (Supabase Auth)
-- [ ] Create `saas-launch` branch off `ui-restyle` (confirm no parallel session live first)
-- [ ] Supabase project + Google provider (Google Cloud OAuth client) — click-by-click doc for owner
-- [ ] Frontend: "Continue with Google" via supabase-js → `POST /api/auth/google` with access token
-- [ ] Backend: verify Supabase JWT server-side → find-or-create User (`supabaseUserId`, email) → issue the EXISTING httpOnly session cookie (all downstream `requireAuth` plumbing untouched)
-- [ ] Prisma migration: `User.passwordHash` nullable + `supabaseUserId` unique + session-epoch handling for password-less users
-- [ ] Mode flag: web = Google-only (no password register/login/reset); local desktop = unchanged
-- [ ] `.env.example` updated (SUPABASE_URL, SUPABASE_ANON_KEY, SUPABASE_JWT_SECRET, APP_MODE)
-- [ ] CHECKPOINT: Google sign-in works locally end-to-end; session survives refresh; logout works; desktop password login still passes tests
+### Stage 1 — Accounts: Google sign-in (Supabase Auth) — CODE DONE, checkpoint pending
+- [x] `saas-launch` branch created off `ui-restyle`
+- [x] Backend: Supabase JWT verified per-request (jose, JWKS or legacy secret) through the existing `requireAuth` seam; `sub` mapped/linked to local User (design refined from the exchange-once idea — Supabase is the session authority, refresh handled by supabase-js)
+- [x] Frontend: Google-only sign-in card (web mode = Supabase env vars present), bearer token on every api.js request, sign-out drops the Supabase session
+- [x] Prisma migration created: `passwordHash` nullable, `supabaseUserId` unique (+ Subscription table, pulled forward from Stage 2)
+- [x] `.env.example` updated both sides (SUPABASE_URL, SUPABASE_SECRET_KEY, optional SUPABASE_JWT_SECRET; VITE_SUPABASE_URL, VITE_SUPABASE_PUBLISHABLE_KEY)
+- [ ] **OWNER: run the taskkill command** (stale dev processes hold dev.db) → then Claude runs: `migrate deploy`, `prisma generate`, `npm test`
+- [ ] **OWNER: Supabase project + Google OAuth dashboards** (walkthrough in chat, 2026-08-05) + fill both .env files
+- [ ] CHECKPOINT: Google sign-in E2E locally; backend resolves user id; signed-out curl gets 401; backend tests green
+
+### Stage 2 — Free vs Premium gating — CODE DONE, checkpoint pending
+- [x] `lib/entitlement.js`: entitlement derived from Subscription (active/on_trial; cancelled→endsAt; past_due→graceUntil); desktop installs never paywalled
+- [x] `requirePremium` on: all `/api/plans/*`, `POST /api/cart/grocery-list`, `GET /api/micronutrients/today`, `POST /api/recipes/generate-drafts` — 403 `{code:"premium_required"}`
+- [x] `scripts/flipPremium.mjs` — 6 states (premium/trial/cancelled/grace/lapsed/free), prints derived entitlement
+- [x] `/api/auth/me` ships premium/premiumStatus; App holds tier state
+- [x] PremiumGate: real component blurred+inert under lock card; full overlay on PlanTab (canonical PricingSection: $24.99/$125, "Save 58% — 5 months free ~$10.42/mo", annual default); compact gate on Today's plan card; quiet note on Wellbeing micros
+- [ ] CHECKPOINT (needs Stage 1 unblock first): `flipPremium --state free` → blur+lock everywhere premium AND `curl` on /api/plans/current shows the 403; `--state premium` → everything normal
 
 ### Stage 2 — Free vs Premium gating
 - [ ] Prisma: `Subscription` model (userId unique, lsCustomerId, lsSubscriptionId, status, plan, renewsAt, endsAt, graceUntil, `usedWinback Boolean @default(false)`)
