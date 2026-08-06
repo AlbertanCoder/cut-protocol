@@ -157,9 +157,8 @@ function MacroRails({ protein, carb, fat, macros }) {
 function CautionNote({ caution, avoid, compact }) {
   if (!caution && !avoid) return null;
   const high = caution?.level === "high";
-  const tone = high || avoid ? C.warn : C.faintLight;
   return (
-    <div className={`flex items-start gap-1.5 ${compact ? "text-[10px]" : "text-[11px]"} font-semibold`} style={{ color: tone }}>
+    <div className={`flex items-start gap-1.5 ${compact ? "text-[10px]" : "text-[11px]"} font-semibold ${high || avoid ? "text-warn" : "text-muted-foreground"}`}>
       {(high || avoid) && <AlertTriangle size={compact ? 10 : 12} className="shrink-0 mt-px" aria-hidden="true" />}
       <span>
         {caution && <>{caution.label} — {caution.reason}.</>}
@@ -211,13 +210,15 @@ function FoodPicker({ onChoose, onManual, autoFocus }) {
     else if (e.key === "Escape" && q) { e.preventDefault(); setQ(""); }
   };
 
-  const inpStyle = { background: C.card2, border: `1.5px solid ${C.rule}`, color: C.ink };
   return (
     <div>
       <div className="flex flex-wrap items-center gap-2">
         <div className="relative flex-1 min-w-[240px]">
-          <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: C.faintLight }} aria-hidden="true" />
-          <input
+          <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" aria-hidden="true" />
+          {/* shadcn Input = styled NATIVE input (Form Safety rule 2): every
+              attr below — ref, combobox role, aria wiring, value/onChange/
+              onKeyDown — carries over byte-identical. */}
+          <Input
             ref={inputRef}
             type="text"
             role="combobox"
@@ -227,16 +228,15 @@ function FoodPicker({ onChoose, onManual, autoFocus }) {
             aria-activedescendant={results[active] ? `${listId}-${active}` : undefined}
             aria-label="Search your food library"
             placeholder="Search 14,000+ foods — chicken breast, oats, milk…"
-            className="w-full text-sm pl-9 pr-3 py-2.5 rounded-xl"
-            style={inpStyle}
+            className="w-full pl-9"
             value={q}
             onChange={(e) => setQ(e.target.value)}
             onKeyDown={onKeyDown}
           />
         </div>
-        <Btn small kind="ghost" onClick={onManual}>
+        <Button size="sm" variant="outline" onClick={onManual}>
           <Pencil size={12} className="inline mr-1" aria-hidden="true" />Not in the library
-        </Btn>
+        </Button>
       </div>
 
       {/* One live sentence for screen readers — result counts, the empty state
@@ -258,17 +258,17 @@ function FoodPicker({ onChoose, onManual, autoFocus }) {
 
       {state === "done" && (
         <div className="mt-3">
-          <div className="text-[10.5px] font-semibold mb-1" style={{ color: C.faint }}>
+          <div className="text-[10.5px] font-semibold mb-1 text-muted-foreground">
             {payload.total === 0
               ? "Nothing in your library matches that."
               : `${payload.truncated ? `${payload.total}+` : payload.total} match${payload.total === 1 ? "" : "es"}${payload.total > results.length ? ` — showing the closest ${results.length}, keep typing to narrow it down` : ""}`}
           </div>
           {payload.total === 0 ? (
-            <div className="text-xs font-semibold" style={{ color: C.faint }}>
+            <div className="text-xs font-semibold text-muted-foreground">
               Add it by hand with the button above — it still counts toward today.
             </div>
           ) : (
-            <ul id={listId} role="listbox" aria-label="Search results" className="max-h-64 overflow-y-auto rounded-xl" style={{ border: `1px solid ${C.rule}` }}>
+            <ul id={listId} role="listbox" aria-label="Search results" className="max-h-64 overflow-y-auto rounded-xl border border-border">
               {results.map((f, i) => (
                 <li
                   key={f.id}
@@ -277,27 +277,21 @@ function FoodPicker({ onChoose, onManual, autoFocus }) {
                   aria-selected={i === active}
                   onMouseEnter={() => setActive(i)}
                   onClick={() => onChoose(f)}
-                  className="pl-2.5 pr-3 py-2 cursor-default"
                   // Selection is a LIGHTNESS step plus a quiet rail, never
-                  // green (design law a). The panel behind this list is already
-                  // `card-2`, so highlighting with `card-2` would be invisible —
-                  // `rule` is a translucent white that lifts whatever it sits
-                  // on, which is exactly what the surface ladder asks for.
-                  style={{
-                    background: i === active ? C.rule : "transparent",
-                    borderBottom: `1px solid ${C.rule}`,
-                    borderLeft: `3px solid ${i === active ? C.faintLight : "transparent"}`,
-                  }}
+                  // green (design law a). NOT bg-accent: legacy.css still owns
+                  // --accent (AURORA green) until it drains, so accent-wash
+                  // utilities are OFF-LIMITS for selection states app-wide.
+                  className={`pl-2.5 pr-3 py-2 cursor-default border-b border-border border-l-[3px] ${i === active ? "bg-muted border-l-muted-foreground" : "border-l-transparent"}`}
                 >
                   <div className="flex items-baseline justify-between gap-3">
-                    <span className="text-sm font-bold truncate" style={{ color: C.ink }}>{f.name}</span>
-                    <span className="text-[10.5px] font-semibold shrink-0 mono" style={{ color: C.faint }}>
-                      {f.per100g.kcal} kcal · {f.per100g.proteinG}P {f.per100g.carbG}C {f.per100g.fatG}F <span style={{ color: C.faintLight }}>/ 100 g</span>
+                    <span className="text-sm font-bold truncate text-foreground">{f.name}</span>
+                    <span className="text-[10.5px] font-semibold shrink-0 tabular-nums text-muted-foreground">
+                      {f.per100g.kcal} kcal · {f.per100g.proteinG}P {f.per100g.carbG}C {f.per100g.fatG}F <span className="opacity-70">/ 100 g</span>
                     </span>
                   </div>
                   <div className="flex items-baseline justify-between gap-3 mt-0.5">
                     <CautionNote caution={f.caution} avoid={f.avoid} compact />
-                    <span className="text-[10px] font-semibold shrink-0 ml-auto" style={{ color: C.faintLight }}>{f.provenance}</span>
+                    <span className="text-[10px] font-semibold shrink-0 ml-auto text-muted-foreground">{f.provenance}</span>
                   </div>
                 </li>
               ))}
@@ -322,24 +316,23 @@ function PortionRow({ food, grams, setGrams, onSave, onBack, busy }) {
     carbG: r1(food.per100g.carbG * f),
     fatG: r1(food.per100g.fatG * f),
   };
-  const inpStyle = { background: C.card2, border: `1.5px solid ${C.rule}`, color: C.ink };
   return (
     <div>
       <div className="flex flex-wrap items-end gap-3">
         <div className="min-w-0 flex-1">
-          <div className="text-[10.5px] font-extrabold uppercase tracking-wide" style={{ color: C.faint }}>Logging</div>
-          <div className="text-sm font-bold truncate" style={{ color: C.ink }}>{food.name}</div>
-          <div className="text-[10.5px] font-semibold" style={{ color: C.faintLight }}>
+          <div className="text-[10.5px] font-extrabold uppercase tracking-wide text-muted-foreground">Logging</div>
+          <div className="text-sm font-bold truncate text-foreground">{food.name}</div>
+          <div className="text-[10.5px] font-semibold text-muted-foreground">
             {food.provenance} · {food.per100g.kcal} kcal per 100 g
           </div>
         </div>
         <label className="block">
-          <span className="text-[10.5px] font-extrabold uppercase tracking-wide" style={{ color: C.faint }}>Grams</span>
-          <input
+          <span className="text-[10.5px] font-extrabold uppercase tracking-wide text-muted-foreground">Grams</span>
+          <Input
             autoFocus
             type="number" inputMode="decimal" min="1" step="1"
             aria-label="Grams eaten"
-            className="text-sm px-3 py-2 rounded-lg w-24 block mt-0.5" style={inpStyle}
+            className="w-24 mt-0.5 tabular-nums"
             value={grams}
             // The 100 g default is a SUGGESTION, so it arrives selected: in the
             // keyboard path the very next thing typed is the real weight, and
@@ -349,23 +342,23 @@ function PortionRow({ food, grams, setGrams, onSave, onBack, busy }) {
             onKeyDown={(e) => { if (e.key === "Enter" && valid && !busy) { e.preventDefault(); onSave(macro); } }}
           />
         </label>
-        <Btn small onClick={() => onSave(macro)} disabled={busy || !valid}>
+        <Button size="sm" onClick={() => onSave(macro)} disabled={busy || !valid}>
           {busy ? "…" : <>Save <CornerDownLeft size={11} className="inline ml-1" aria-hidden="true" /></>}
-        </Btn>
-        <Btn small kind="ghost" onClick={onBack} disabled={busy}>Change food</Btn>
+        </Button>
+        <Button size="sm" variant="outline" onClick={onBack} disabled={busy}>Change food</Button>
       </div>
 
       <div className="flex flex-wrap items-center gap-2 mt-3" aria-live="polite">
-        <span className="mono text-lg font-extrabold" style={{ color: C.ink }}>{valid ? kc(macro.kcal) : "—"}</span>
-        <span className="text-[10.5px] font-semibold" style={{ color: C.faint }}>kcal</span>
+        <span className="tabular-nums text-lg font-extrabold text-foreground">{valid ? kc(macro.kcal) : "—"}</span>
+        <span className="text-[10.5px] font-semibold text-muted-foreground">kcal</span>
         <Chip color={C.proteinText} bg={`${C.protein}1F`}>{valid ? macro.proteinG : "—"}P</Chip>
         <Chip color={C.carbText} bg={`${C.carb}1F`}>{valid ? macro.carbG : "—"}C</Chip>
         <Chip color={C.fatText} bg={`${C.fat}1F`}>{valid ? macro.fatG : "—"}F</Chip>
-        {!valid && <span className="text-[11px] font-semibold" style={{ color: C.warn }}>Enter a weight in grams (1–5,000).</span>}
+        {!valid && <span className="text-[11px] font-semibold text-warn">Enter a weight in grams (1–5,000).</span>}
       </div>
 
       {(food.caution || food.avoid) && (
-        <div className="mt-2 p-2.5 rounded-lg" style={{ background: C.card2, border: `1px solid ${C.rule}` }}>
+        <div className="mt-2 p-2.5 rounded-lg border border-border bg-secondary/50">
           <CautionNote caution={food.caution} avoid={food.avoid} />
         </div>
       )}
@@ -537,22 +530,22 @@ function DiaryCard({ date, macros, hasPlan }) {
 
           {mode === "manual" && (
             <div>
-              <div className="text-[10.5px] font-extrabold uppercase tracking-wide mb-2" style={{ color: C.faint }}>
+              <div className="text-[10.5px] font-extrabold uppercase tracking-wide mb-2 text-muted-foreground">
                 By hand — for anything the library doesn't have
               </div>
               <div className="flex flex-wrap items-end gap-2">
-                <input className="text-sm px-3 py-2 rounded-lg flex-1 min-w-[160px]" style={inpStyle} placeholder="Item name" aria-label="Item name"
+                <Input className="flex-1 min-w-[160px]" placeholder="Item name" aria-label="Item name"
                   value={form.name} onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
                   onKeyDown={(e) => e.key === "Enter" && !busy && submitManual()} />
                 {[["kcal", "kcal", "kcal"], ["proteinG", "P (g)", "Protein grams"], ["carbG", "C (g)", "Carb grams"], ["fatG", "F (g)", "Fat grams"]].map(([k, ph, name]) => (
-                  <input key={k} type="number" inputMode="decimal" className="text-sm px-2 py-2 rounded-lg w-20" style={inpStyle} placeholder={ph} aria-label={name}
+                  <Input key={k} type="number" inputMode="decimal" className="w-20 tabular-nums" placeholder={ph} aria-label={name}
                     value={form[k]} onChange={(e) => setForm((f) => ({ ...f, [k]: e.target.value }))}
                     onKeyDown={(e) => e.key === "Enter" && !busy && submitManual()} />
                 ))}
-                <Btn small onClick={submitManual} disabled={busy}>{busy ? "…" : "Save"}</Btn>
-                <Btn small kind="ghost" onClick={() => setMode("search")} disabled={busy}>
+                <Button size="sm" onClick={submitManual} disabled={busy}>{busy ? "…" : "Save"}</Button>
+                <Button size="sm" variant="outline" onClick={() => setMode("search")} disabled={busy}>
                   <Search size={12} className="inline mr-1" aria-hidden="true" />Search instead
-                </Btn>
+                </Button>
               </div>
             </div>
           )}
