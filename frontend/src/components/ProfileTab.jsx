@@ -909,7 +909,7 @@ export default function ProfileTab({ profile, summary, refresh, openToday }) {
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 items-end">
             <div>
               <div className="text-xs font-semibold" style={{ color: "var(--muted-foreground)" }}>Daily target</div>
-              <div className="tabular-nums font-heading font-extrabold tracking-tight tabular-nums text-3xl" style={{ color: "var(--foreground)" }}>{kc(summary.target?.target ?? profile.targetKcal)}<span className="text-xs ml-1" style={{ color: "var(--muted-foreground)", fontWeight: 600 }}>kcal</span></div>
+              <div className="font-heading font-extrabold tracking-tight tabular-nums text-3xl" style={{ color: "var(--foreground)" }}>{kc(summary.target?.target ?? profile.targetKcal)}<span className="text-xs ml-1" style={{ color: "var(--muted-foreground)", fontWeight: 600 }}>kcal</span></div>
               <div className="text-[10.5px] font-semibold mt-0.5" style={{ color: "var(--muted-foreground)" }}>
                 TDEE {kc(summary.energy?.tdee ?? 0)} − {kc(summary.target?.deficit ?? 0)} deficit
                 {summary.target?.floored && (

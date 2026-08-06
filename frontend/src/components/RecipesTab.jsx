@@ -290,7 +290,7 @@ function RecipeDetail({ recipe, profile, onSave, onDelete, inCart, onToggleCart,
               onChange={(e) => setIng(idx, { role: e.target.value })}>
               {ROLES.map((r) => <option key={r} value={r}>{ROLE_LABEL[r]}</option>)}
             </select>
-            {/* accentColor was "var(--primary)". Green is scarce (law a): on-target,
+            {/* accentColor was the brand green. Green is scarce (law a): on-target,
                 primary action, success, the hero ring, the trend line — a
                 ticked checkbox is none of those, it is a selected state, and
                 selected reads as a lightness step. */}
@@ -881,7 +881,7 @@ export default function RecipesTab({ openFoods, profile }) {
               className="text-sm px-3 py-2 rounded-xl w-full mb-2" style={inpStyle}
               value={form.freeText} onChange={(e) => setForm((f) => ({ ...f, freeText: e.target.value }))} />
             <div className="flex flex-wrap gap-4 items-center mb-2">
-              {/* accentColor was "var(--primary)" on both — see the checkbox above; a
+              {/* accentColor was the brand green on both — see the checkbox above; a
                   chosen radio is a selected state, not a success. */}
               <label className="flex items-center gap-1.5 text-xs font-semibold" style={{ color: "var(--foreground)" }}>
                 <input type="radio" name="batchStyle" checked={form.batchStyle === "single"} onChange={() => setForm((f) => ({ ...f, batchStyle: "single" }))} style={{ accentColor: "var(--foreground)" }} />

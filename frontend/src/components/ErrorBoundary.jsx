@@ -30,7 +30,7 @@ function FallbackScreen({ error, full, label, onRetry, onReload, onReport, repor
     <div
       role="alert"
       className={`flex flex-col items-center justify-center gap-4 px-6 text-center ${full ? "min-h-svh" : "py-16"}`}
-      style={full ? { background: C.paper } : { background: "var(--card)", border: "1px solid var(--border)", borderRadius: 20 }}
+      style={full ? { background: "var(--background)" } : { background: "var(--card)", border: "1px solid var(--border)", borderRadius: 20 }}
     >
       <AlertTriangle size={34} style={{ color: "var(--warn)" }} aria-hidden="true" />
       <div className="text-lg font-black" style={{ color: "var(--foreground)" }}>

@@ -1,4 +1,3 @@
-
 // The Cut Protocol brand mark: athletic-green shield with a fit torso + six-pack
 // inside (outline treatment). Same geometry as assets/icon/cutprotocol-outline.svg
 // minus the charcoal tile — screens place it directly on their own surface.

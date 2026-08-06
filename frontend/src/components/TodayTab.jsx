@@ -278,9 +278,7 @@ function FoodPicker({ onChoose, onManual, autoFocus }) {
                   onMouseEnter={() => setActive(i)}
                   onClick={() => onChoose(f)}
                   // Selection is a LIGHTNESS step plus a quiet rail, never
-                  // green (design law a). NOT bg-accent: legacy.css still owns
-                  // --accent (AURORA green) until it drains, so accent-wash
-                  // utilities are OFF-LIMITS for selection states app-wide.
+                  // green (design law a) — bg-muted, not any green-family wash.
                   className={`pl-2.5 pr-3 py-2 cursor-default border-b border-border border-l-[3px] ${i === active ? "bg-muted border-l-muted-foreground" : "border-l-transparent"}`}
                 >
                   <div className="flex items-baseline justify-between gap-3">

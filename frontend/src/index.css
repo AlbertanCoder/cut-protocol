@@ -237,7 +237,8 @@
 ::-webkit-scrollbar { width: 10px; height: 10px; }
 ::-webkit-scrollbar-thumb { background: var(--secondary); border-radius: 8px; border: 2px solid var(--background); }
 ::-webkit-scrollbar-track { background: transparent; }
-::selection { background: color-mix(in srgb, var(--primary) 30%, transparent); color: var(--foreground); }
+/* selection is a SELECTED STATE — a lightness step, never the mint (law a) */
+::selection { background: color-mix(in srgb, var(--foreground) 18%, transparent); color: var(--foreground); }
 
 /* Focus ring — mint (law a sanctions the focus ring); 2px offset keeps the
    ring off whatever the control is filled with. shadcn ui components carry

@@ -19,7 +19,7 @@ export const PageHead = ({ title, sub, children }) => (
   </div>
 );
 
-// Glass card: translucent fill + gradient hairline (index.css .bg-card border border-border).
+// Card: token surface (bg-card + hairline border-border).
 // Elevation is lightness, never shadows. Spacing between cards comes from
 // the parent grid/flex gap, not the card.
 //
@@ -178,21 +178,21 @@ export const MacroBar = ({ label, letter, actual, target, lo, hi, kind, unit = "
     // AT so the number isn't announced twice (it's already visible text).
     <div className="flex flex-col gap-1.5" role="group" aria-label={a11yLabel}>
       <div className="flex justify-between items-baseline text-xs">
-        <span className="font-bold flex items-center gap-1.5" style={{ color: C.ink }}>
+        <span className="font-bold flex items-center gap-1.5 text-foreground">
           <span aria-hidden="true" className="w-4 h-4 rounded-full flex items-center justify-center text-[9px] font-extrabold shrink-0" style={{ background: color, color: C.paper }}>{badge}</span>
           {label}
         </span>
-        <span className="font-semibold" style={{ color: C.faint }}>
-          <b className="tabular-nums" style={{ color: over ? C.warn : C.ink }}>{g(eaten)}</b> / {targetText}
+        <span className="font-semibold text-muted-foreground">
+          <b className={`tabular-nums ${over ? "text-warn" : "text-foreground"}`}>{g(eaten)}</b> / {targetText}
         </span>
       </div>
-      <div aria-hidden="true" className="h-2.5 rounded-full relative overflow-hidden" style={{ background: C.card2 }}>
+      <div aria-hidden="true" className="h-2.5 rounded-full relative overflow-hidden bg-secondary">
         {/* the acceptable zone, drawn behind the fill: floor→ceiling for a
             range, floor→end of the rail when the floor is all there is */}
-        <div className="absolute inset-y-0" style={{ left: pct(floor), right: ceil != null ? `calc(100% - ${pct(ceil)})` : 0, background: C.rule }} />
+        <div className="absolute inset-y-0 bg-border" style={{ left: pct(floor), right: ceil != null ? `calc(100% - ${pct(ceil)})` : 0 }} />
         <div className="h-full rounded-full transition-all duration-150 relative" style={{ width: pct(eaten), background: color }}></div>
         {/* the floor tick — the number that actually has to be reached */}
-        <div className="absolute inset-y-0 w-px" style={{ left: pct(floor), background: C.faint }} />
+        <div className="absolute inset-y-0 w-px bg-muted-foreground" style={{ left: pct(floor) }} />
       </div>
     </div>
   );
@@ -285,7 +285,7 @@ export const Ring = ({ pct, size = 108, stroke = 10, color = "var(--primary)", n
         )}
       </svg>
       <div className="absolute inset-0 flex flex-col items-center justify-center" aria-hidden="true">
-        <div className={`tabular-nums font-heading font-extrabold tracking-tight tabular-nums ${numClass} ${over ? "text-warn" : "text-foreground"}`}>{num}</div>
+        <div className={`font-heading font-extrabold tracking-tight tabular-nums ${numClass} ${over ? "text-warn" : "text-foreground"}`}>{num}</div>
         {unit && <div className="text-[10px] font-bold text-muted-foreground">{unit}</div>}
       </div>
       {/* Lap counter — the only thing that can tell 200% from 1000% apart at a

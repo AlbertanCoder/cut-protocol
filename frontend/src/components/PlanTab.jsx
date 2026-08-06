@@ -154,7 +154,7 @@ function OneMealCard({ oneMeal }) {
       {best ? (
         <>
           <div className="flex flex-wrap items-baseline gap-x-4 gap-y-2 mb-2">
-            <span className="tabular-nums font-heading font-extrabold tracking-tight tabular-nums text-3xl" style={{ color: onTarget ? "var(--primary)" : "var(--foreground)" }}>{best.matchPct}%</span>
+            <span className="font-heading font-extrabold tracking-tight tabular-nums text-3xl" style={{ color: onTarget ? "var(--primary)" : "var(--foreground)" }}>{best.matchPct}%</span>
             <span className="text-xs font-semibold" style={{ color: "var(--muted-foreground)" }}>
               fit against {kc(oneMeal.target.kcal)} kcal / {oneMeal.target.protein} g protein remaining
             </span>
@@ -544,7 +544,7 @@ function SolverNarration({ meta }) {
         {bestOf != null && <Chip>Best of {bestOf}</Chip>}
         {pct != null && (
           <div className="flex items-baseline gap-1.5">
-            <span className="tabular-nums font-heading font-extrabold tracking-tight tabular-nums text-2xl" style={{ color: "var(--foreground)" }}>{pct}%</span>
+            <span className="font-heading font-extrabold tracking-tight tabular-nums text-2xl" style={{ color: "var(--foreground)" }}>{pct}%</span>
             <span className="text-xs font-semibold" style={{ color: "var(--muted-foreground)" }}>average match to your targets</span>
           </div>
         )}
@@ -652,7 +652,7 @@ function DayCandidates({ data, targetKcal, onAccept, accepting }) {
         return (
         <div key={idx} className="p-4 rounded-2xl flex flex-col" style={{ background: bg, border: `1px solid ${border}` }}>
           <div className="flex items-baseline justify-between gap-2 mb-1">
-            <span className="tabular-nums font-heading font-extrabold tracking-tight tabular-nums text-3xl" style={{ color: onTarget ? "var(--primary)" : "var(--foreground)" }}>{c.score.matchPct}%</span>
+            <span className="font-heading font-extrabold tracking-tight tabular-nums text-3xl" style={{ color: onTarget ? "var(--primary)" : "var(--foreground)" }}>{c.score.matchPct}%</span>
             <span className="text-[10px] font-bold uppercase flex items-center gap-1 text-right" style={{ color: onTarget ? "var(--muted-foreground)" : "var(--warn)" }}>
               {!onTarget && isBest && <AlertTriangle size={10} aria-hidden="true" />}
               {label}
@@ -1361,7 +1361,7 @@ export default function PlanTab({ profile, summary, refresh }) {
                     {slots.length > 0 ? (
                       <>
                         <div className="flex items-baseline gap-1">
-                          <span className="tabular-nums font-heading font-extrabold tracking-tight tabular-nums text-lg leading-none" style={{ color: active ? "var(--foreground)" : "var(--muted-foreground)" }}>{kc(tot.kcal)}</span>
+                          <span className="font-heading font-extrabold tracking-tight tabular-nums text-lg leading-none" style={{ color: active ? "var(--foreground)" : "var(--muted-foreground)" }}>{kc(tot.kcal)}</span>
                           <span className="text-[10px] font-bold" style={{ color: "var(--muted-foreground)" }}>kcal</span>
                         </div>
                         {fill && <div className="text-[10px] font-semibold" style={{ color: "var(--muted-foreground)" }}>{fill}</div>}

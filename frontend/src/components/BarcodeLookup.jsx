@@ -351,7 +351,7 @@ export default function BarcodeLookup({ onImported, onClose }) {
         // Plain success text, same convention as FoodDetail's save notice —
         // not a persistent badge, a one-time action confirmation (law a's
         // "success" carve-out, not a recurring provenance label).
-        <div className="mt-4 text-xs font-semibold flex items-center gap-1.5" style={{ color: C.good }}>
+        <div className="mt-4 text-xs font-semibold flex items-center gap-1.5" style={{ color: "var(--primary)" }}>
           <CheckCircle2 size={14} />
           Added — tagged COMMUNITY (OPEN FOOD FACTS){imported.verdict === "warn" ? ", flagged unverified" : ""}.
         </div>
