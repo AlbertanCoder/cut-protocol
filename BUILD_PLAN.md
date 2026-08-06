@@ -83,14 +83,16 @@ Stays FREE: auth, profile (targets/TDEE), weighins/trend, training, foods (+UPC)
 - [ ] pricing-section.jsx → $24.99/mo, $125/yr, "Save 58%" badge, "5 months free (~$10.42/mo)" line; reword local-first bullet
 - [ ] CHECKPOINT: free account = blur+lock on all premium screens AND raw API calls rejected server-side; entitled account = everything works
 
-### Stage 3 — Lemon Squeezy (TEST MODE)
-- [ ] Look up CURRENT LS docs (event names, signature header, payload shapes) — never from memory
-- [ ] Store + product + monthly/annual variants in test mode (confirm USD vs CAD with owner here — once)
-- [ ] Checkout from lock-card CTA (LS overlay/hosted checkout, prefilled email, custom data = userId)
-- [ ] Webhook route: path-scoped `express.raw()` BEFORE global json (server.js:66 pattern) + HMAC verify against raw body → then process events
-- [ ] Lifecycle mapping → Subscription row: created/updated → entitle; payment_failed → graceUntil = +7d; cancelled → keep until endsAt; refunded/chargeback → revoke now
-- [ ] `.env.example`: LEMONSQUEEZY_API_KEY, LEMONSQUEEZY_WEBHOOK_SECRET, LEMONSQUEEZY_STORE_ID, variant IDs
-- [ ] CHECKPOINT: local test-mode purchase flips a free account to premium live; cancel + refund flows verified via LS test dashboard
+### Stage 3 — Lemon Squeezy (TEST MODE) — CODE DONE + UNIT-PROVEN, dashboard pending
+- [x] Current docs verified 2026-08-06: `X-Signature` = HMAC-SHA256 hex over RAW body; events via `meta.event_name` + `meta.custom_data`; JSON:API checkout with `checkout_data.custom`
+- [x] `POST /api/billing/checkout` → LS hosted checkout URL (user_id in custom data, email prefill, redirect `/?upgraded=1`); lock-card CTA wired end-to-end with busy/error states
+- [x] `POST /api/webhooks/lemonsqueezy`: raw mount before JSON parser, signature-first (timing-safe), state machine for created/updated/payment success+failed+recovered/cancelled/resumed/expired/paused + order_refunded; 7-day grace from FIRST failure (repeats don't restart); refund revokes now; idempotent; every event logged
+- [x] "You're in" return: activating banner polls /me until the webhook lands; honest slow-path note
+- [x] Local reality check (item 5): CHOSE unit tests now + live-fire on the deployed URL in Stage 5 — no tunnel software/account to babysit, and the deterministic parts (HMAC gate, event effects, entitlement) are fully provable offline. LS's dashboard "Simulate events" tool covers spot-checks later.
+- [x] CHECKPOINT (provable half): **1628 tests green** incl. 19 webhook tests driving the real route → real entitlement flips (403↔200)
+- [ ] **OWNER: LS account + store + test mode + product with 2 variants + keys into backend/.env** (walkthrough in chat 2026-08-06). Currency: USD default stands unless owner says CAD BEFORE product creation.
+- [ ] **OWNER→Stage 4: webhook is created in the LS dashboard only once the Railway URL exists** (signing secret gets generated then)
+- [ ] CHECKPOINT (rest): "Unlock with Premium" opens LS test checkout showing $24.99 / $125 from inside the app
 
 ### Stage 4 — Deploy: Railway + Supabase Postgres
 - [ ] Supabase Postgres `DATABASE_URL`; schema provider → postgresql; regenerate init migration (DEPLOY.md procedure); verify `migrate deploy` clean
