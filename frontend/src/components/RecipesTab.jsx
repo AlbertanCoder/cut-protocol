@@ -290,7 +290,7 @@ function RecipeDetail({ recipe, profile, onSave, onDelete, inCart, onToggleCart,
               onChange={(e) => setIng(idx, { role: e.target.value })}>
               {ROLES.map((r) => <option key={r} value={r}>{ROLE_LABEL[r]}</option>)}
             </select>
-            {/* accentColor was C.accent. Green is scarce (law a): on-target,
+            {/* accentColor was "var(--primary)". Green is scarce (law a): on-target,
                 primary action, success, the hero ring, the trend line — a
                 ticked checkbox is none of those, it is a selected state, and
                 selected reads as a lightness step. */}
@@ -393,7 +393,7 @@ function RecipeDetail({ recipe, profile, onSave, onDelete, inCart, onToggleCart,
           <Btn small kind="ghost" onClick={() => setConfirmingDelete(true)}><Trash2 size={12} className="inline mr-1" />Delete</Btn>
         )}
       </div>
-      {notice && <div className="text-xs font-semibold mt-2" style={{ color: C.good }}>{notice}</div>}
+      {notice && <div className="text-xs font-semibold mt-2" style={{ color: "var(--primary)" }}>{notice}</div>}
       {error && <div className="text-xs font-semibold mt-2" style={{ color: "var(--destructive)" }}>{error}</div>}
     </div>
   );
@@ -881,7 +881,7 @@ export default function RecipesTab({ openFoods, profile }) {
               className="text-sm px-3 py-2 rounded-xl w-full mb-2" style={inpStyle}
               value={form.freeText} onChange={(e) => setForm((f) => ({ ...f, freeText: e.target.value }))} />
             <div className="flex flex-wrap gap-4 items-center mb-2">
-              {/* accentColor was C.accent on both — see the checkbox above; a
+              {/* accentColor was "var(--primary)" on both — see the checkbox above; a
                   chosen radio is a selected state, not a success. */}
               <label className="flex items-center gap-1.5 text-xs font-semibold" style={{ color: "var(--foreground)" }}>
                 <input type="radio" name="batchStyle" checked={form.batchStyle === "single"} onChange={() => setForm((f) => ({ ...f, batchStyle: "single" }))} style={{ accentColor: "var(--foreground)" }} />
@@ -989,7 +989,7 @@ export default function RecipesTab({ openFoods, profile }) {
                     <div key={item.id} className="flex items-center justify-between gap-2 py-1" style={{ borderBottom: "1px solid var(--border)" }}>
                       <span className="text-sm font-semibold truncate" style={{ color: "var(--foreground)" }}>{item.recipe?.name}</span>
                       <span className="flex items-center gap-2 shrink-0">
-                        <span className="mono text-xs font-bold" style={{ color: "var(--muted-foreground)" }}>{kc(item.recipe?.kcal || 0)} kcal</span>
+                        <span className="tabular-nums text-xs font-bold" style={{ color: "var(--muted-foreground)" }}>{kc(item.recipe?.kcal || 0)} kcal</span>
                         <button onClick={() => toggleCart(item.recipeId)} disabled={cartBusyId === item.recipeId} style={{ color: "var(--destructive)" }} aria-label={`Remove ${item.recipe?.name || "item"} from cart`}>
                           <Trash2 size={14} aria-hidden="true" />
                         </button>
@@ -1010,7 +1010,7 @@ export default function RecipesTab({ openFoods, profile }) {
                     </Btn>
                   )}
                 </div>
-                {cartNote && <div className="text-xs font-semibold mt-2" style={{ color: C.good }}>{cartNote}</div>}
+                {cartNote && <div className="text-xs font-semibold mt-2" style={{ color: "var(--primary)" }}>{cartNote}</div>}
                 {cartGroceryList && (
                   <div className="mt-3 pt-3" style={{ borderTop: "1px solid var(--border)" }}>
                     <div className="flex gap-2 mb-2">
@@ -1034,7 +1034,7 @@ export default function RecipesTab({ openFoods, profile }) {
                             return (
                               <div key={i.name} className="flex justify-between text-xs py-0.5 font-semibold" style={{ color: "var(--foreground)" }}>
                                 <span>{i.name}</span>
-                                <span className="mono" style={{ color: "var(--muted-foreground)" }}>{grams}g{hh ? ` (≈${hh})` : ""}</span>
+                                <span className="tabular-nums" style={{ color: "var(--muted-foreground)" }}>{grams}g{hh ? ` (≈${hh})` : ""}</span>
                               </div>
                             );
                           })}
@@ -1111,13 +1111,13 @@ export default function RecipesTab({ openFoods, profile }) {
               {groups.map(([groupName, list]) => {
                 const open = searching || !!openGroups[groupName];
                 return (
-                  <div key={groupName} className="rounded-2xl glass-card">
+                  <div key={groupName} className="rounded-2xl bg-card border border-border">
                     {!searching && (
                       <button onClick={() => setOpenGroups((s) => ({ ...s, [groupName]: !open }))}
                         aria-expanded={open} className="w-full flex items-center gap-3 px-4 py-3.5">
                         {open ? <ChevronDown size={16} style={{ color: "var(--muted-foreground)" }} aria-hidden="true" /> : <ChevronRight size={16} style={{ color: "var(--muted-foreground)" }} aria-hidden="true" />}
                         <span className="text-sm font-extrabold flex-1 text-left" style={{ color: "var(--foreground)" }}>{groupName}</span>
-                        <span className="mono text-xs font-bold px-2 py-0.5 rounded-lg" style={{ color: "var(--muted-foreground)", background: "var(--secondary)" }}>{list.length}</span>
+                        <span className="tabular-nums text-xs font-bold px-2 py-0.5 rounded-lg" style={{ color: "var(--muted-foreground)", background: "var(--secondary)" }}>{list.length}</span>
                       </button>
                     )}
                     {open && (
@@ -1167,7 +1167,7 @@ export default function RecipesTab({ openFoods, profile }) {
                                       <AlertTriangle size={13} className="shrink-0" style={{ color: "var(--warn)" }} aria-hidden="true"
                                         title={`Incomplete data — about ${Math.round(rowTrust.share * 100)}% of these calories come from ingredients carrying another food's numbers. Open for detail.`} />
                                     )}
-                                    <span className="mono text-sm font-extrabold" style={{ color: "var(--foreground)" }}>{kc(r.kcal)}</span>
+                                    <span className="tabular-nums text-sm font-extrabold" style={{ color: "var(--foreground)" }}>{kc(r.kcal)}</span>
                                   </div>
                                 </div>
                               </button>

@@ -154,7 +154,7 @@ function OneMealCard({ oneMeal }) {
       {best ? (
         <>
           <div className="flex flex-wrap items-baseline gap-x-4 gap-y-2 mb-2">
-            <span className="mono stat-hero text-3xl" style={{ color: onTarget ? C.accent : "var(--foreground)" }}>{best.matchPct}%</span>
+            <span className="tabular-nums font-heading font-extrabold tracking-tight tabular-nums text-3xl" style={{ color: onTarget ? "var(--primary)" : "var(--foreground)" }}>{best.matchPct}%</span>
             <span className="text-xs font-semibold" style={{ color: "var(--muted-foreground)" }}>
               fit against {kc(oneMeal.target.kcal)} kcal / {oneMeal.target.protein} g protein remaining
             </span>
@@ -176,7 +176,7 @@ function OneMealCard({ oneMeal }) {
               {oneMeal.options.slice(1).map((a) => (
                 <div key={a.recipeId} className="flex items-center justify-between gap-2 py-1 text-xs font-semibold">
                   <span className="truncate" style={{ color: "var(--foreground)" }}>{a.recipeName}</span>
-                  <span className="mono shrink-0" style={{ color: "var(--muted-foreground)" }}>{kc(a.kcal)} kcal · {g1(a.protein)}P · {a.matchPct}%</span>
+                  <span className="tabular-nums shrink-0" style={{ color: "var(--muted-foreground)" }}>{kc(a.kcal)} kcal · {g1(a.protein)}P · {a.matchPct}%</span>
                 </div>
               ))}
             </div>
@@ -214,7 +214,7 @@ function HorizonSummary({ horizon }) {
             <div key={w.startDate} className="flex items-center justify-between gap-2 py-1 text-xs font-semibold"
               style={{ borderBottom: "1px solid var(--border)" }}>
               <span style={{ color: "var(--foreground)" }}>Week of {fmtD(w.startDate)}</span>
-              <span className="mono" style={{ color: clean ? "var(--foreground)" : "var(--warn)" }}>
+              <span className="tabular-nums" style={{ color: clean ? "var(--foreground)" : "var(--warn)" }}>
                 {w.daysInTolerance}/{w.days} days on target · {w.avgMatch}% avg
                 {w.unfilledSlots > 0 ? ` · ${w.unfilledSlots} meal(s) not filled` : ""}
               </span>
@@ -544,7 +544,7 @@ function SolverNarration({ meta }) {
         {bestOf != null && <Chip>Best of {bestOf}</Chip>}
         {pct != null && (
           <div className="flex items-baseline gap-1.5">
-            <span className="mono stat-hero text-2xl" style={{ color: "var(--foreground)" }}>{pct}%</span>
+            <span className="tabular-nums font-heading font-extrabold tracking-tight tabular-nums text-2xl" style={{ color: "var(--foreground)" }}>{pct}%</span>
             <span className="text-xs font-semibold" style={{ color: "var(--muted-foreground)" }}>average match to your targets</span>
           </div>
         )}
@@ -566,7 +566,7 @@ function SolverNarration({ meta }) {
             {funnel.map((f, i) => (
               <span key={f.l} className="flex items-center gap-1.5">
                 {i > 0 && <ArrowRight size={12} style={{ color: "var(--muted-foreground)" }} />}
-                <b className="mono" style={{ color: "var(--foreground)" }}>{kc(f.n)}</b> {f.l}
+                <b className="tabular-nums" style={{ color: "var(--foreground)" }}>{kc(f.n)}</b> {f.l}
               </span>
             ))}
           </div>
@@ -588,7 +588,7 @@ function SolverNarration({ meta }) {
                 style={{ background: "var(--secondary)", border: `1px solid ${d.inTolerance ? "var(--border)" : "var(--warn)"}` }}
               >
                 <span className="text-[10px] font-bold" style={{ color: "var(--muted-foreground)" }}>{(d.dayName || "").slice(0, 3)}</span>
-                <span className="mono text-xs font-bold" style={{ color: d.inTolerance ? "var(--foreground)" : "var(--warn)" }}>{d.matchPct}%</span>
+                <span className="tabular-nums text-xs font-bold" style={{ color: d.inTolerance ? "var(--foreground)" : "var(--warn)" }}>{d.matchPct}%</span>
               </div>
             ))}
           </div>
@@ -644,7 +644,7 @@ function DayCandidates({ data, targetKcal, onAccept, accepting }) {
         // Ranking is still legible — as a LIGHTNESS step (--card-2 + a
         // brighter hairline), which is this design system's own way of
         // saying "selected/primary" without borrowing the accent.
-        const border = onTarget ? C.accent : isBest ? "var(--muted-foreground)" : "var(--border)";
+        const border = onTarget ? "var(--primary)" : isBest ? "var(--muted-foreground)" : "var(--border)";
         const bg = !onTarget && isBest ? "var(--secondary)" : "var(--card)";
         const label = onTarget
           ? (isBest ? "Best match" : `Option ${idx + 1}`)
@@ -652,13 +652,13 @@ function DayCandidates({ data, targetKcal, onAccept, accepting }) {
         return (
         <div key={idx} className="p-4 rounded-2xl flex flex-col" style={{ background: bg, border: `1px solid ${border}` }}>
           <div className="flex items-baseline justify-between gap-2 mb-1">
-            <span className="mono stat-hero text-3xl" style={{ color: onTarget ? C.accent : "var(--foreground)" }}>{c.score.matchPct}%</span>
+            <span className="tabular-nums font-heading font-extrabold tracking-tight tabular-nums text-3xl" style={{ color: onTarget ? "var(--primary)" : "var(--foreground)" }}>{c.score.matchPct}%</span>
             <span className="text-[10px] font-bold uppercase flex items-center gap-1 text-right" style={{ color: onTarget ? "var(--muted-foreground)" : "var(--warn)" }}>
               {!onTarget && isBest && <AlertTriangle size={10} aria-hidden="true" />}
               {label}
             </span>
           </div>
-          <div className="mono text-xs font-bold mb-2" style={{ color: "var(--muted-foreground)" }}>
+          <div className="tabular-nums text-xs font-bold mb-2" style={{ color: "var(--muted-foreground)" }}>
             {kc(c.score.totals.kcal)} / {kc(targetKcal)} kcal · {c.score.totals.protein}P {c.score.totals.fat}F {c.score.totals.carb}C
           </div>
           {/* What it actually missed by — amber + plain numbers (law b: no red
@@ -681,7 +681,7 @@ function DayCandidates({ data, targetKcal, onAccept, accepting }) {
                   {s.slotType === "snack" ? "🥨 " : ""}{s.recipeName || "—"}
                   {s.warning && <AlertTriangle size={10} className="inline ml-1" style={{ color: "var(--warn)" }} />}
                 </span>
-                <span className="mono shrink-0" style={{ color: "var(--muted-foreground)" }}>{kc(s.kcal)}</span>
+                <span className="tabular-nums shrink-0" style={{ color: "var(--muted-foreground)" }}>{kc(s.kcal)}</span>
               </div>
             ))}
           </div>
@@ -826,7 +826,7 @@ const SlotCard = memo(function SlotCard({ planId, slot, expanded, onToggleExpand
                   <div key={a.recipeId} className="flex items-center justify-between gap-2 p-2 rounded-lg" style={{ background: "var(--secondary)" }}>
                     <div className="min-w-0">
                       <div className="text-xs font-bold truncate" style={{ color: "var(--foreground)" }}>{a.recipeName}</div>
-                      <div className="mono text-[10.5px] font-semibold" style={{ color: "var(--muted-foreground)" }}>
+                      <div className="tabular-nums text-[10.5px] font-semibold" style={{ color: "var(--muted-foreground)" }}>
                         {kc(a.kcal)} kcal · {g1(a.protein)}P · {a.matchPct}% fit
                       </div>
                     </div>
@@ -1354,14 +1354,14 @@ export default function PlanTab({ profile, summary, refresh }) {
                     style={{ background: active ? "var(--secondary)" : "var(--card)", border: `1px solid ${active ? "var(--muted-foreground)" : "var(--border)"}` }}>
                     <div className="flex items-baseline justify-between w-full">
                       <span className="text-[10px] font-extrabold uppercase" style={{ color: active ? "var(--foreground)" : "var(--muted-foreground)" }}>{d}</span>
-                      <span className="mono text-[10px] font-bold" style={{ color: "var(--muted-foreground)" }}>
+                      <span className="tabular-nums text-[10px] font-bold" style={{ color: "var(--muted-foreground)" }}>
                         {plan ? fmtD(addDays(plan.startDate, i)).split(" ")[1] : ""}
                       </span>
                     </div>
                     {slots.length > 0 ? (
                       <>
                         <div className="flex items-baseline gap-1">
-                          <span className="mono stat-hero text-lg leading-none" style={{ color: active ? "var(--foreground)" : "var(--muted-foreground)" }}>{kc(tot.kcal)}</span>
+                          <span className="tabular-nums font-heading font-extrabold tracking-tight tabular-nums text-lg leading-none" style={{ color: active ? "var(--foreground)" : "var(--muted-foreground)" }}>{kc(tot.kcal)}</span>
                           <span className="text-[10px] font-bold" style={{ color: "var(--muted-foreground)" }}>kcal</span>
                         </div>
                         {fill && <div className="text-[10px] font-semibold" style={{ color: "var(--muted-foreground)" }}>{fill}</div>}
@@ -1396,7 +1396,7 @@ export default function PlanTab({ profile, summary, refresh }) {
 
             <div className="flex items-center justify-between gap-2 mb-3 flex-wrap">
               <div className="text-xs font-semibold" style={{ color: "var(--muted-foreground)" }}>
-                Day total: <b className="mono" style={{ color: "var(--foreground)" }}>{kc(dayTotals.kcal)}</b> kcal · {g1(dayTotals.protein)}P / {g1(dayTotals.fat)}F / {g1(dayTotals.carb)}C vs {kc(targetKcal)} target
+                Day total: <b className="tabular-nums" style={{ color: "var(--foreground)" }}>{kc(dayTotals.kcal)}</b> kcal · {g1(dayTotals.protein)}P / {g1(dayTotals.fat)}F / {g1(dayTotals.carb)}C vs {kc(targetKcal)} target
               </div>
               <Btn small kind="ghost" onClick={loadDayOptions} disabled={optionsBusy}>
                 <Sparkles size={12} className="inline mr-1" />{optionsBusy ? "Solving…" : `3 options for ${DAY_NAMES[activeDay]}`}
@@ -1519,7 +1519,7 @@ export default function PlanTab({ profile, summary, refresh }) {
                                   <div className="text-sm font-bold" style={{ color: "var(--foreground)", textDecoration: i.checked ? "line-through" : "none" }}>
                                     {practical ? `${practical} — ${i.name}` : i.name}
                                   </div>
-                                  <div className="mono text-[10.5px] font-semibold" style={{ color: "var(--muted-foreground)" }}>
+                                  <div className="tabular-nums text-[10.5px] font-semibold" style={{ color: "var(--muted-foreground)" }}>
                                     {grams} g{hh ? ` · ≈${hh}` : ""}{i.purchaseUnits?.approx ? ` · ${i.purchaseUnits.approx}` : ""}
                                     {/* The ≈ is not decoration: this is a
                                         keyword match against a hand-entered

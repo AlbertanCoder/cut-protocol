@@ -262,7 +262,7 @@ export default function BrainChat() {
             onClick={() => send()}
             disabled={sending || !input.trim()}
             className="text-sm font-bold px-3 py-2 rounded-xl"
-            style={{ background: C.accent, color: C.accentInk, opacity: sending || !input.trim() ? 0.5 : 1 }}
+            style={{ background: "var(--primary)", color: "var(--primary-foreground)", opacity: sending || !input.trim() ? 0.5 : 1 }}
             aria-label="Send"
           >
             ↑

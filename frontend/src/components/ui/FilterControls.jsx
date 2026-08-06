@@ -31,7 +31,7 @@ export function RangeCap({ label, value, onChange, min, max, step, enableAt, for
               --faint-light is 38% ink (3.26:1) and fails WCAG AA at this size.
               --faint (60%, 6.5:1) passes and stays the quiet tier.
               Same fix as Parts.jsx:31-34. */}
-          <span className="mono text-xs font-bold" style={{ color: on ? "var(--foreground)" : "var(--muted-foreground)" }}>
+          <span className="tabular-nums text-xs font-bold" style={{ color: on ? "var(--foreground)" : "var(--muted-foreground)" }}>
             {on ? format(value) : "Off"}
           </span>
           <button

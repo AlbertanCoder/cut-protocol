@@ -198,10 +198,10 @@ export default function TrainingTab() {
                           {s.exercises.map((e) => (
                             <tr key={e.id} style={{ borderTop: "1px solid var(--border)" }}>
                               <td className="font-semibold py-1.5 pr-2">{e.name}{e.notes ? <span style={{ color: "var(--muted-foreground)" }}> — {e.notes}</span> : ""}</td>
-                              <td className="mono font-bold py-1.5 pr-2">{e.sets}</td>
-                              <td className="mono font-bold py-1.5 pr-2">{e.reps}</td>
-                              <td className="mono font-bold py-1.5 pr-2">{e.rpe ?? "—"}</td>
-                              <td className="mono py-1.5" style={{ color: "var(--muted-foreground)" }}>{e.restSec ? `${e.restSec}s` : "—"}</td>
+                              <td className="tabular-nums font-bold py-1.5 pr-2">{e.sets}</td>
+                              <td className="tabular-nums font-bold py-1.5 pr-2">{e.reps}</td>
+                              <td className="tabular-nums font-bold py-1.5 pr-2">{e.rpe ?? "—"}</td>
+                              <td className="tabular-nums py-1.5" style={{ color: "var(--muted-foreground)" }}>{e.restSec ? `${e.restSec}s` : "—"}</td>
                             </tr>
                           ))}
                         </tbody>

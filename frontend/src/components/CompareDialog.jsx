@@ -1,6 +1,5 @@
 import { useRef, useId } from "react";
 import { X, Scale } from "lucide-react";
-import { C } from "../lib/theme.js";
 import { useFocusTrap } from "../lib/useFocusTrap.js";
 
 // "How it compares" — an in-app view of where Cut Protocol sits against the other
@@ -67,14 +66,14 @@ export default function CompareDialog({ open, onClose }) {
   const mark = (cell) => {
     const [v, note] = Array.isArray(cell) ? cell : [cell, null];
     const glyph =
-      v === "y" ? <span style={{ color: C.ink, fontWeight: 800 }}>●</span>
-        : v === "p" ? <span style={{ color: C.warn, fontWeight: 800 }}>◐</span>
-          : v === "$" ? <span style={{ color: C.warn, fontWeight: 800 }}>$</span>
-            : <span style={{ color: C.faintLight, fontWeight: 800 }}>—</span>;
+      v === "y" ? <span style={{ color: "var(--foreground)", fontWeight: 800 }}>●</span>
+        : v === "p" ? <span style={{ color: "var(--warn)", fontWeight: 800 }}>◐</span>
+          : v === "$" ? <span style={{ color: "var(--warn)", fontWeight: 800 }}>$</span>
+            : <span style={{ color: "var(--muted-foreground)", fontWeight: 800 }}>—</span>;
     return (
       <>
         {glyph}
-        {note && <span className="block" style={{ color: C.faintLight, fontSize: 10, fontWeight: 400, marginTop: 2, lineHeight: 1.2 }}>{note}</span>}
+        {note && <span className="block" style={{ color: "var(--muted-foreground)", fontSize: 10, fontWeight: 400, marginTop: 2, lineHeight: 1.2 }}>{note}</span>}
       </>
     );
   };
@@ -87,85 +86,85 @@ export default function CompareDialog({ open, onClose }) {
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: "var(--scrim)" }}
       role="dialog" aria-modal="true" aria-labelledby={titleId}>
       <div ref={panelRef} tabIndex={-1} className="w-full max-w-2xl max-h-[88vh] overflow-y-auto rounded-2xl p-6"
-        style={{ background: C.card, border: `1px solid ${C.rule}` }}>
+        style={{ background: "var(--card)", border: "1px solid var(--border)" }}>
         <div className="flex items-start justify-between mb-1">
           <div className="flex items-center gap-2">
-            <Scale size={18} aria-hidden="true" style={{ color: C.faint }} />
-            <h2 id={titleId} className="text-lg font-extrabold" style={{ color: C.ink }}>How it compares</h2>
+            <Scale size={18} aria-hidden="true" style={{ color: "var(--muted-foreground)" }} />
+            <h2 id={titleId} className="text-lg font-extrabold" style={{ color: "var(--foreground)" }}>How it compares</h2>
           </div>
-          <button onClick={onClose} aria-label="Close" className="rounded-lg p-1 hover:opacity-80" style={{ color: C.faint }}><X size={18} /></button>
+          <button onClick={onClose} aria-label="Close" className="rounded-lg p-1 hover:opacity-80" style={{ color: "var(--muted-foreground)" }}><X size={18} /></button>
         </div>
-        <p className="text-sm mb-4" style={{ color: C.faint }}>
+        <p className="text-sm mb-4" style={{ color: "var(--muted-foreground)" }}>
           A solver in a market of trackers. MyFitnessPal, MacroFactor, Cronometer, Lose It and Carbon
-          are built to <b style={{ color: C.ink }}>log what you ate</b>; Cut Protocol is built to
-          <b style={{ color: C.ink }}> build the plan</b>. MyFitnessPal and Lose It do ship meal
+          are built to <b style={{ color: "var(--foreground)" }}>log what you ate</b>; Cut Protocol is built to
+          <b style={{ color: "var(--foreground)" }}> build the plan</b>. MyFitnessPal and Lose It do ship meal
           planners on their paid tiers — the difference is that they suggest recipes from a fixed
           library, while this solves portions against your exact target.
         </p>
 
-        <div className="overflow-x-auto rounded-xl" style={{ border: `1px solid ${C.rule}` }}>
+        <div className="overflow-x-auto rounded-xl" style={{ border: "1px solid var(--border)" }}>
           <table className="w-full text-xs" style={{ borderCollapse: "collapse", minWidth: 560 }}>
             <thead>
               <tr>
-                <th className="text-left p-2" style={{ color: C.faint, borderBottom: `1px solid ${C.rule}` }}>Feature</th>
+                <th className="text-left p-2" style={{ color: "var(--muted-foreground)", borderBottom: "1px solid var(--border)" }}>Feature</th>
                 {APPS.map((a, i) => (
-                  <th key={a} className="p-2 text-center" style={{ color: i === 0 ? C.ink : C.faint, fontWeight: i === 0 ? 800 : 600, background: i === 0 ? C.card2 : "transparent", borderBottom: `1px solid ${C.rule}` }}>{a}</th>
+                  <th key={a} className="p-2 text-center" style={{ color: i === 0 ? "var(--foreground)" : "var(--muted-foreground)", fontWeight: i === 0 ? 800 : 600, background: i === 0 ? "var(--secondary)" : "transparent", borderBottom: "1px solid var(--border)" }}>{a}</th>
                 ))}
               </tr>
             </thead>
             <tbody>
               {ROWS.map(([feat, why, marks]) => (
                 <tr key={feat}>
-                  <td className="p-2" style={{ color: C.ink, borderBottom: `1px solid ${C.rule}` }}>
-                    {feat}{why && <span className="block" style={{ color: C.faintLight, fontSize: 11 }}>{why}</span>}
+                  <td className="p-2" style={{ color: "var(--foreground)", borderBottom: "1px solid var(--border)" }}>
+                    {feat}{why && <span className="block" style={{ color: "var(--muted-foreground)", fontSize: 11 }}>{why}</span>}
                   </td>
                   {marks.map((m, i) => (
-                    <td key={i} className="p-2 text-center align-top" style={{ borderBottom: `1px solid ${C.rule}`, background: i === 0 ? C.card2 : "transparent" }}>{mark(m)}</td>
+                    <td key={i} className="p-2 text-center align-top" style={{ borderBottom: "1px solid var(--border)", background: i === 0 ? "var(--secondary)" : "transparent" }}>{mark(m)}</td>
                   ))}
                 </tr>
               ))}
             </tbody>
           </table>
         </div>
-        <div className="flex gap-4 flex-wrap mt-2 text-xs" style={{ color: C.faint }}>
-          <span><b style={{ color: C.ink }}>●</b> yes</span>
-          <span><b style={{ color: C.warn }}>◐</b> partial</span>
-          <span><b style={{ color: C.warn }}>$</b> paid</span>
-          <span><b style={{ color: C.faintLight }}>—</b> no equivalent found</span>
+        <div className="flex gap-4 flex-wrap mt-2 text-xs" style={{ color: "var(--muted-foreground)" }}>
+          <span><b style={{ color: "var(--foreground)" }}>●</b> yes</span>
+          <span><b style={{ color: "var(--warn)" }}>◐</b> partial</span>
+          <span><b style={{ color: "var(--warn)" }}>$</b> paid</span>
+          <span><b style={{ color: "var(--muted-foreground)" }}>—</b> no equivalent found</span>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-5">
           {WINS.map(([h, p]) => (
-            <div key={h} className="rounded-xl p-3" style={{ background: C.card2, border: `1px solid ${C.rule}` }}>
-              <div className="text-sm font-bold mb-1" style={{ color: C.ink }}>{h}</div>
-              <p className="text-xs" style={{ color: C.faint }}>{p}</p>
+            <div key={h} className="rounded-xl p-3" style={{ background: "var(--secondary)", border: "1px solid var(--border)" }}>
+              <div className="text-sm font-bold mb-1" style={{ color: "var(--foreground)" }}>{h}</div>
+              <p className="text-xs" style={{ color: "var(--muted-foreground)" }}>{p}</p>
             </div>
           ))}
         </div>
-        <div className="text-xs font-bold uppercase tracking-wide mt-5 mb-2" style={{ color: C.faint }}>Where it’s behind (honestly)</div>
+        <div className="text-xs font-bold uppercase tracking-wide mt-5 mb-2" style={{ color: "var(--muted-foreground)" }}>Where it’s behind (honestly)</div>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           {GAPS.map(([h, p]) => (
-            <div key={h} className="rounded-xl p-3" style={{ background: C.card2, border: `1px solid ${C.rule}` }}>
-              <div className="text-sm font-bold mb-1" style={{ color: C.warn }}>{h}</div>
-              <p className="text-xs" style={{ color: C.faint }}>{p}</p>
+            <div key={h} className="rounded-xl p-3" style={{ background: "var(--secondary)", border: "1px solid var(--border)" }}>
+              <div className="text-sm font-bold mb-1" style={{ color: "var(--warn)" }}>{h}</div>
+              <p className="text-xs" style={{ color: "var(--muted-foreground)" }}>{p}</p>
             </div>
           ))}
         </div>
 
-        <div className="rounded-xl p-3 mt-5 text-xs" style={{ background: C.card2, border: `1px solid ${C.rule}`, color: C.faintLight, lineHeight: 1.6 }}>
-          <b style={{ color: C.warn }}>Allergen caveat.</b>{" "}
-          <span style={{ color: C.faint }}>
-            Cut Protocol’s exclusion filter is thorough, but it is <b style={{ color: C.ink }}>not a
+        <div className="rounded-xl p-3 mt-5 text-xs" style={{ background: "var(--secondary)", border: "1px solid var(--border)", color: "var(--muted-foreground)", lineHeight: 1.6 }}>
+          <b style={{ color: "var(--warn)" }}>Allergen caveat.</b>{" "}
+          <span style={{ color: "var(--muted-foreground)" }}>
+            Cut Protocol’s exclusion filter is thorough, but it is <b style={{ color: "var(--foreground)" }}>not a
             guarantee</b>. It cannot see cross-contamination, “may contain” warnings, or an
             ingredient a recipe never named. Always read labels, and treat the plan as a starting
             point rather than a clearance.
           </span>
           <div className="mt-2">
-            <b style={{ color: C.ink }}>About this comparison.</b> Checked 2026-07-24 against each
+            <b style={{ color: "var(--foreground)" }}>About this comparison.</b> Checked 2026-07-24 against each
             vendor’s own documentation and store listing. Feature sets and pricing change often —
             verify with the app itself before relying on a row. “—” means no equivalent feature was
             found in public documentation on that date, not that one can never exist. Cut Protocol is
-            an independent project, <b style={{ color: C.ink }}>not affiliated with, endorsed by, or
+            an independent project, <b style={{ color: "var(--foreground)" }}>not affiliated with, endorsed by, or
             partnered with</b> any app named here; all product names belong to their owners.
           </div>
         </div>

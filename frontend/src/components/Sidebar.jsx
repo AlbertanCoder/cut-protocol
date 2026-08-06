@@ -3,7 +3,6 @@ import {
   User, Activity, CalendarDays, BookOpen, TrendingUp,
   Calculator, Dumbbell, LogOut, ChevronsLeft, ChevronsRight, Bug, Heart, Scale,
 } from "lucide-react";
-import { C } from "../lib/theme.js";
 import { TRAINING, WELLBEING } from "../lib/flags.js";
 import { sidebarPref } from "../lib/storage.js";
 import CutMark from "./ui/CutMark.jsx";

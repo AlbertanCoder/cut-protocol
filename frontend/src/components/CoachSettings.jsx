@@ -1,6 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
 import { Check, Link2, Trash2 } from "lucide-react";
-import { C } from "../lib/theme.js";
 import { Card, Btn, ErrorNote } from "./ui/Parts.jsx";
 import { api, isAbortError, describeError, BRAIN_STATUS_CHANGED } from "../lib/api.js";
 import { useAbortSignal } from "../lib/useAbortable.js";
@@ -134,16 +133,16 @@ export default function CoachSettings() {
         className="flex items-start gap-2.5 rounded-2xl px-3.5 py-3 mb-3"
         style={{
           background: "var(--secondary)",
-          border: `1px solid ${connected ? C.accent : "var(--border)"}`,
+          border: `1px solid ${connected ? "var(--primary)" : "var(--border)"}`,
         }}
       >
         {connected ? (
-          <Check size={16} strokeWidth={2.5} style={{ color: C.accent, marginTop: 1, flexShrink: 0 }} />
+          <Check size={16} strokeWidth={2.5} style={{ color: "var(--primary)", marginTop: 1, flexShrink: 0 }} />
         ) : (
           <Link2 size={16} strokeWidth={2.5} style={{ color: info.tone === "warn" ? "var(--warn)" : "var(--muted-foreground)", marginTop: 1, flexShrink: 0 }} />
         )}
         <div>
-          <div className="text-xs font-extrabold" style={{ color: connected ? C.accent : "var(--foreground)" }}>
+          <div className="text-xs font-extrabold" style={{ color: connected ? "var(--primary)" : "var(--foreground)" }}>
             {status === null ? "Checking…" : info.title}
           </div>
           {status !== null && (

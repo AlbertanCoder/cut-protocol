@@ -592,7 +592,7 @@ export default function SetupWizard({ onDone }) {
             <div className="flex items-center gap-3 mb-7">
               <CutMark size={44} />
               <div className="leading-none">
-                <div className="disp text-lg uppercase" style={{ color: "var(--foreground)" }}>Cut Protocol</div>
+                <div className="font-heading font-bold tracking-tight text-lg uppercase" style={{ color: "var(--foreground)" }}>Cut Protocol</div>
                 <div className="text-[11px] font-bold uppercase mt-1" style={{ color: "var(--muted-foreground)", letterSpacing: ".08em" }}>First-run setup</div>
               </div>
             </div>
@@ -736,7 +736,7 @@ export default function SetupWizard({ onDone }) {
                         <div key={k} className="flex justify-between gap-3 text-xs font-semibold py-0.5"
                           style={{ borderBottom: "1px solid var(--border)" }}>
                           <span style={{ color: "var(--muted-foreground)" }}>{k}</span>
-                          <span className="mono" style={{ color: "var(--foreground)" }}>{v}</span>
+                          <span className="tabular-nums" style={{ color: "var(--foreground)" }}>{v}</span>
                         </div>
                       ))}
                     </div>
@@ -766,7 +766,7 @@ export default function SetupWizard({ onDone }) {
               </div>
             )}
 
-            <div className="p-6 xl:p-8 rounded-2xl glass-card" ref={panelRef} tabIndex={-1}>
+            <div className="p-6 xl:p-8 rounded-2xl bg-card border border-border" ref={panelRef} tabIndex={-1}>
               {step === 0 && (
                 <>
                   <div className="text-lg font-extrabold mb-1" style={{ color: "var(--foreground)" }}>Units &amp; stats</div>
@@ -1012,7 +1012,7 @@ export default function SetupWizard({ onDone }) {
                         onClick={() => { set({ rate: r }); setAcked(false); setAckReasons(null); }}
                         className="px-5 py-3 rounded-xl text-center"
                         style={{ background: d.rate === r ? "var(--secondary)" : "transparent", border: `1px solid ${d.rate === r ? "var(--muted-foreground)" : "var(--border)"}` }}>
-                        <div className="mono text-sm font-extrabold" style={{ color: d.rate === r ? "var(--foreground)" : "var(--muted-foreground)" }}>{r} lb/wk</div>
+                        <div className="tabular-nums text-sm font-extrabold" style={{ color: d.rate === r ? "var(--foreground)" : "var(--muted-foreground)" }}>{r} lb/wk</div>
                         <div className="text-[10px] font-bold" style={{ color: "var(--muted-foreground)" }}>{Math.round(r * 45.3592) / 100} kg/wk</div>
                       </button>
                     ))}

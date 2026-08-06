@@ -24,7 +24,7 @@ import BugReportDialog from "./BugReportDialog.jsx";
 // A boundary is a blast-radius limiter for render crashes, nothing more.
 
 function FallbackScreen({ error, full, label, onRetry, onReload, onReport, reportOpen, onCloseReport }) {
-  const btn = { background: C.accent, color: C.accentInk };
+  const btn = { background: "var(--primary)", color: "var(--primary-foreground)" };
   const ghost = { background: "transparent", color: "var(--foreground)", border: "1.5px solid var(--border)" };
   return (
     <div

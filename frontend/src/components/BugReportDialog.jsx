@@ -1,6 +1,5 @@
 import { useState, useEffect, useRef, useId } from "react";
 import { Bug, X, Send, Copy, Check, ShieldCheck, WifiOff } from "lucide-react";
-import { C } from "../lib/theme.js";
 import {
   fetchMeta, fetchLogTail, buildReportBody, buildTitle, buildIssueUrl, openExternal,
   savePending, loadPending, clearPending,
@@ -107,7 +106,7 @@ export default function BugReportDialog({ open, error, onClose }) {
           {pendingCount > 0 && status !== "sent" && (
             <div className="text-xs font-semibold mb-3 p-2.5 rounded-lg flex items-center justify-between gap-2" style={{ color: "var(--warn)", background: "color-mix(in srgb, var(--warn) 12%, transparent)" }}>
               <span>{pendingCount} report{pendingCount === 1 ? "" : "s"} saved offline.</span>
-              <button onClick={sendPending} disabled={!online} className="font-bold px-2 py-1 rounded-md" style={{ background: online ? C.accent : "var(--secondary)", color: online ? C.accentInk : "var(--muted-foreground)" }}>
+              <button onClick={sendPending} disabled={!online} className="font-bold px-2 py-1 rounded-md" style={{ background: online ? "var(--primary)" : "var(--secondary)", color: online ? "var(--primary-foreground)" : "var(--muted-foreground)" }}>
                 Open {pendingCount === 1 ? "it" : "them"} now
               </button>
             </div>
@@ -121,8 +120,8 @@ export default function BugReportDialog({ open, error, onClose }) {
           </label>
 
           <div className="flex items-center gap-2 mb-1.5">
-            <ShieldCheck size={13} style={{ color: C.good }} />
-            <span className="text-[11px] font-bold uppercase tracking-wide" style={{ color: C.good }}>Exactly what will be sent — no weights, food logs, names, allergies, or your Windows username</span>
+            <ShieldCheck size={13} style={{ color: "var(--primary)" }} />
+            <span className="text-[11px] font-bold uppercase tracking-wide" style={{ color: "var(--primary)" }}>Exactly what will be sent — no weights, food logs, names, allergies, or your Windows username</span>
           </div>
           <pre className="text-[11px] leading-relaxed p-3 rounded-xl overflow-auto mb-3" style={{ background: "var(--secondary)", border: "1px solid var(--border)", color: "var(--muted-foreground)", maxHeight: 260, whiteSpace: "pre-wrap", wordBreak: "break-word" }}>
 {body}
@@ -130,16 +129,16 @@ export default function BugReportDialog({ open, error, onClose }) {
         </div>
 
         <div className="px-5 py-4 flex items-center gap-2 flex-wrap" style={{ borderTop: "1px solid var(--border)" }}>
-          <button onClick={send} className="text-sm font-bold px-4 py-2.5 rounded-xl flex items-center gap-1.5" style={{ background: C.accent, color: C.accentInk }}>
+          <button onClick={send} className="text-sm font-bold px-4 py-2.5 rounded-xl flex items-center gap-1.5" style={{ background: "var(--primary)", color: "var(--primary-foreground)" }}>
             {online ? <Send size={14} /> : <WifiOff size={14} />}{online ? "Send report" : "Save (offline)"}
           </button>
           <button onClick={copy} className="text-sm font-bold px-3 py-2.5 rounded-xl flex items-center gap-1.5" style={{ background: "transparent", color: "var(--foreground)", border: "1.5px solid var(--border)" }}>
             <Copy size={14} />Copy
           </button>
           <div className="flex-1" />
-          {status === "sent" && <span className="text-xs font-bold flex items-center gap-1" style={{ color: C.good }}><Check size={13} />Opened in your browser — click "Submit new issue" to finish.</span>}
+          {status === "sent" && <span className="text-xs font-bold flex items-center gap-1" style={{ color: "var(--primary)" }}><Check size={13} />Opened in your browser — click "Submit new issue" to finish.</span>}
           {status === "saved" && <span className="text-xs font-bold flex items-center gap-1" style={{ color: "var(--warn)" }}><Check size={13} />Saved — you'll be offered to send it when you're back online.</span>}
-          {status === "copied" && <span className="text-xs font-bold flex items-center gap-1" style={{ color: C.good }}><Check size={13} />Copied to clipboard.</span>}
+          {status === "copied" && <span className="text-xs font-bold flex items-center gap-1" style={{ color: "var(--primary)" }}><Check size={13} />Copied to clipboard.</span>}
         </div>
       </div>
     </div>

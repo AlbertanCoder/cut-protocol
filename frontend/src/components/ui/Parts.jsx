@@ -19,7 +19,7 @@ export const PageHead = ({ title, sub, children }) => (
   </div>
 );
 
-// Glass card: translucent fill + gradient hairline (index.css .glass-card).
+// Glass card: translucent fill + gradient hairline (index.css .bg-card border border-border).
 // Elevation is lightness, never shadows. Spacing between cards comes from
 // the parent grid/flex gap, not the card.
 //
@@ -183,7 +183,7 @@ export const MacroBar = ({ label, letter, actual, target, lo, hi, kind, unit = "
           {label}
         </span>
         <span className="font-semibold" style={{ color: C.faint }}>
-          <b className="mono" style={{ color: over ? C.warn : C.ink }}>{g(eaten)}</b> / {targetText}
+          <b className="tabular-nums" style={{ color: over ? C.warn : C.ink }}>{g(eaten)}</b> / {targetText}
         </span>
       </div>
       <div aria-hidden="true" className="h-2.5 rounded-full relative overflow-hidden" style={{ background: C.card2 }}>
@@ -218,7 +218,7 @@ export const MacroBar = ({ label, letter, actual, target, lo, hi, kind, unit = "
 // exactly on target. A short arc in the surface color is drawn UNDER arc 2 — the
 // same "2px surface ring separates overlapping marks" rule the charts use — so
 // the second lap always begins against a visible gap.
-export const Ring = ({ pct, size = 108, stroke = 10, color = C.accent, num, unit, breathe = true }) => {
+export const Ring = ({ pct, size = 108, stroke = 10, color = "var(--primary)", num, unit, breathe = true }) => {
   const p = Math.max(0, pct || 0);
   const over = p > 1;
   const lap1 = Math.min(1, p);
@@ -243,7 +243,7 @@ export const Ring = ({ pct, size = 108, stroke = 10, color = C.accent, num, unit
   // ~2px of arc, expressed as a fraction of the circumference.
   const gapFrac = Math.min(0.12, 2 / circ + stroke / circ);
   const gid = useId().replace(/[^a-zA-Z0-9_-]/g, "");
-  const grad = color === C.accent;
+  const grad = color === "var(--primary)";
   const numClass = size >= 150 ? "text-4xl" : size >= 120 ? "text-3xl" : "text-2xl";
   // Text equivalent for the graphic (a ring alone is invisible to a screen
   // reader): "82% — 1,850 planned kcal" / "112% — 2,530 planned kcal, over
@@ -265,8 +265,8 @@ export const Ring = ({ pct, size = 108, stroke = 10, color = C.accent, num, unit
         {grad && (
           <defs>
             <linearGradient id={`rg${gid}`} x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor={C.accent} />
-              <stop offset="100%" stopColor={C.accentTail} />
+              <stop offset="0%" stopColor={"var(--primary)"} />
+              <stop offset="100%" stopColor={"color-mix(in srgb, var(--primary) 55%, white)"} />
             </linearGradient>
           </defs>
         )}
@@ -279,13 +279,13 @@ export const Ring = ({ pct, size = 108, stroke = 10, color = C.accent, num, unit
                 lap 1's — 100.0% and 100.5% have to look different */}
             <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke="var(--card)" strokeWidth={stroke}
               strokeLinecap="butt" strokeDasharray={circ} strokeDashoffset={circ * (1 - Math.min(1, lap2 + gapFrac))} />
-            <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke={grad ? C.accentTail : color} strokeWidth={stroke}
+            <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke={grad ? "color-mix(in srgb, var(--primary) 55%, white)" : color} strokeWidth={stroke}
               strokeLinecap="round" strokeDasharray={circ} strokeDashoffset={circ * (1 - lap2)} style={{ transition: "stroke-dashoffset .2s ease" }} />
           </>
         )}
       </svg>
       <div className="absolute inset-0 flex flex-col items-center justify-center" aria-hidden="true">
-        <div className={`mono stat-hero ${numClass} ${over ? "text-warn" : "text-foreground"}`}>{num}</div>
+        <div className={`tabular-nums font-heading font-extrabold tracking-tight tabular-nums ${numClass} ${over ? "text-warn" : "text-foreground"}`}>{num}</div>
         {unit && <div className="text-[10px] font-bold text-muted-foreground">{unit}</div>}
       </div>
       {/* Lap counter — the only thing that can tell 200% from 1000% apart at a

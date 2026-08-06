@@ -141,7 +141,7 @@ function ChartTip({ active, payload, wUnit, avgDays }) {
     val == null ? null : (
       <div key={label} className="flex justify-between gap-4">
         <span style={{ color: C.faint }}>{label}</span>
-        <span className="mono font-bold" style={{ color: C.ink }}>{r1(val)} {wUnit}{extra}</span>
+        <span className="tabular-nums font-bold" style={{ color: C.ink }}>{r1(val)} {wUnit}{extra}</span>
       </div>
     );
   return (

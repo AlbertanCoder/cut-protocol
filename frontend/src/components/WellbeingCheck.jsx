@@ -1,6 +1,5 @@
 import { useState, useRef, useId } from "react";
 import { X, Heart } from "lucide-react";
-import { C } from "../lib/theme.js";
 import { useFocusTrap } from "../lib/useFocusTrap.js";
 import ResourceList from "./ui/ResourceList.jsx";
 import { WELLBEING_RESOURCES_NOTE } from "../lib/wellbeingResources.js";
@@ -118,7 +117,7 @@ export default function WellbeingCheck({ open, onClose, onResult }) {
             disabled={answered < SCOFF.length}
             aria-describedby={answered < SCOFF.length ? undefined : resultId}
             className="text-sm font-bold px-4 py-2 rounded-xl disabled:opacity-40"
-            style={{ background: C.accent, color: C.accentInk }}>
+            style={{ background: "var(--primary)", color: "var(--primary-foreground)" }}>
             See my result
           </button>
           {answered > 0 && (

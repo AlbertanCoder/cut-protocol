@@ -10,7 +10,7 @@ export const Skeleton = ({ className = "", style }) => (
 
 // A card-shaped placeholder: optional title bar + n body lines.
 export const SkeletonCard = ({ lines = 3, title = true, className = "" }) => (
-  <div className={`p-5 rounded-2xl glass-card ${className}`} aria-hidden="true">
+  <div className={`p-5 rounded-2xl bg-card border border-border ${className}`} aria-hidden="true">
     {title && <Skeleton className="h-4 w-1/3 mb-4" />}
     <div className="flex flex-col gap-2.5">
       {Array.from({ length: lines }, (_, i) => (

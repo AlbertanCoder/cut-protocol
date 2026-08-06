@@ -1,7 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { api, isAuthError, isAbortError, isNoAnswer, describeError, onSessionExpired } from "./lib/api.js";
 import { useAbortSignal } from "./lib/useAbortable.js";
-import { C } from "./lib/theme.js";
 
 import LoginScreen from "./components/LoginScreen.jsx";
 import SetupWizard from "./components/SetupWizard.jsx";
@@ -254,7 +253,7 @@ function App() {
         <div className="text-xs font-semibold max-w-sm" style={{ color: "var(--muted-foreground)" }}>
           {bootError} You are not signed out — the app just couldn't get an answer. If this persists, close and reopen Cut Protocol.
         </div>
-        <button onClick={boot} className="text-sm font-bold px-4 py-2 rounded-xl" style={{ background: C.accent, color: C.accentInk }}>Retry</button>
+        <button onClick={boot} className="text-sm font-bold px-4 py-2 rounded-xl" style={{ background: "var(--primary)", color: "var(--primary-foreground)" }}>Retry</button>
       </div>
     );
   }
@@ -297,7 +296,7 @@ function App() {
         <div className="text-xs font-semibold max-w-sm" style={{ color: "var(--muted-foreground)" }}>
           {loadError} You are still signed in — this is a load failure, not a sign-out.
         </div>
-        <button onClick={boot} className="text-sm font-bold px-4 py-2 rounded-xl" style={{ background: C.accent, color: C.accentInk }}>Retry</button>
+        <button onClick={boot} className="text-sm font-bold px-4 py-2 rounded-xl" style={{ background: "var(--primary)", color: "var(--primary-foreground)" }}>Retry</button>
       </div>
     );
   }

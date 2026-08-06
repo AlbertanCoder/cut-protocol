@@ -154,7 +154,7 @@ function NutrientRow({ n }) {
         <span className="text-xs font-semibold text-right shrink-0" style={{ color: "var(--muted-foreground)" }}>
           {known ? (
             <>
-              <b className="mono" style={{ color: "var(--foreground)" }}>{fmtAmount(n.amount, n.unit)}</b>{n.unit}
+              <b className="tabular-nums" style={{ color: "var(--foreground)" }}>{fmtAmount(n.amount, n.unit)}</b>{n.unit}
               {/* Only a real percentage rides inline. A "no established
                   reference" explanation is a sentence, not a stat — inline it
                   squeezed long nutrient names down to one word per line. */}

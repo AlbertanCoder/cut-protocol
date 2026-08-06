@@ -142,7 +142,7 @@ export default function LoginScreen({ onLoggedIn }) {
             <CutMark size={44} />
           </div>
           <div className="leading-none">
-            <div className="text-xl disp uppercase" style={{ color: "var(--foreground)", letterSpacing: ".01em" }}>Cut Protocol</div>
+            <div className="text-xl font-heading font-bold tracking-tight uppercase" style={{ color: "var(--foreground)", letterSpacing: ".01em" }}>Cut Protocol</div>
             <div className="text-[10px] font-bold uppercase mt-1" style={{ color: "var(--muted-foreground)", letterSpacing: ".08em" }}>Recomp Engine</div>
           </div>
         </div>

@@ -16,7 +16,7 @@ const signed = (n) => (Number.isFinite(n) ? `${n > 0 ? "+" : n < 0 ? "−" : ""}
 const Line = ({ label, value, tone, strong }) => (
   <div className="flex justify-between items-baseline gap-4 py-1.5" style={{ borderBottom: "1px solid var(--border)" }}>
     <span className="text-sm font-semibold" style={{ color: tone || "var(--foreground)" }}>{label}</span>
-    <span className={`mono text-sm shrink-0 ${strong ? "font-extrabold" : "font-bold"}`} style={{ color: tone || "var(--foreground)" }}>{value}</span>
+    <span className={`tabular-nums text-sm shrink-0 ${strong ? "font-extrabold" : "font-bold"}`} style={{ color: tone || "var(--foreground)" }}>{value}</span>
   </div>
 );
 
@@ -181,7 +181,7 @@ export default function EngineTab({ profile, summary, refresh, openFoods, openPr
                   {r.label}
                   {savingKey === r.key && <span className="text-[10px] font-bold" style={{ color: "var(--warn)" }}>saving…</span>}
                 </span>
-                <span className="mono text-sm font-bold" style={{ color: "var(--foreground)", textDecoration: off ? "line-through" : "none" }}>{kc(r.v)}</span>
+                <span className="tabular-nums text-sm font-bold" style={{ color: "var(--foreground)", textDecoration: off ? "line-through" : "none" }}>{kc(r.v)}</span>
               </label>
               {cite && (
                 // Provenance (Law 3): journal + year, and the honest independence
@@ -217,15 +217,15 @@ export default function EngineTab({ profile, summary, refresh, openFoods, openPr
         <Card section="Step 2" title="TDEE — component build" className="xl:col-span-4">
           <div className="flex flex-col gap-2 text-sm font-semibold" style={{ color: "var(--foreground)" }}>
             <div className="flex justify-between py-1.5" style={{ borderBottom: "1px solid var(--border)" }}>
-              <span>BMR average</span><span className="mono font-extrabold">{kc(energy.rmr)}</span>
+              <span>BMR average</span><span className="tabular-nums font-extrabold">{kc(energy.rmr)}</span>
             </div>
             <div className="flex justify-between py-1.5" style={{ borderBottom: "1px solid var(--border)" }}>
               <span>× {energy.jobSource === "override" ? "manual multiplier" : energy.jobLabel}</span>
-              <span className="mono font-extrabold">×{energy.jobMultiplier}</span>
+              <span className="tabular-nums font-extrabold">×{energy.jobMultiplier}</span>
             </div>
             <div className="flex justify-between py-1.5" style={{ borderBottom: "1px solid var(--border)" }}>
               <span>+ training ({profile.sessionsPerWeek}×{profile.minutesPerSession} min, {energy.trainingStyle}, MET {energy.trainingMet})</span>
-              <span className="mono font-extrabold">+{kc(energy.trainingKcalPerDay)}</span>
+              <span className="tabular-nums font-extrabold">+{kc(energy.trainingKcalPerDay)}</span>
             </div>
           </div>
           <div className="mt-3">

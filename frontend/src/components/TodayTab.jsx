@@ -903,7 +903,7 @@ export default function TodayTab({ profile, summary, refresh, openTrend, openWel
           ) : (
             <>
               <div className="flex items-center gap-6 mb-5">
-                <Ring pct={kcalPct} size={156} stroke={13} color={C.accent} num={kc(planned.kcal)} unit="planned kcal" />
+                <Ring pct={kcalPct} size={156} stroke={13} color={"var(--primary)"} num={kc(planned.kcal)} unit="planned kcal" />
                 <div className="flex-1 flex flex-col gap-1.5 text-xs font-semibold">
                   <div className="flex justify-between"><span className="text-muted-foreground">Target</span><span className="tabular-nums text-sm text-foreground">{kc(macros?.kcal)} kcal</span></div>
                   <div className="flex justify-between"><span className="text-muted-foreground">Planned today</span><span className="tabular-nums text-sm text-foreground">{kc(planned.kcal)} kcal</span></div>

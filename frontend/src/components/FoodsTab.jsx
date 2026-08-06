@@ -1,6 +1,5 @@
 import { useState, useEffect, useMemo, useCallback, useRef } from "react";
 import { Search, ArrowLeft, ChevronRight, ChevronDown, Save, BookOpen, NotebookPen, Barcode, AlertTriangle, UtensilsCrossed } from "lucide-react";
-import { C } from "../lib/theme.js";
 import { FOOD_CATEGORIES, CATEGORY_DOT, categoryLabel, sourceLabel, foodWarning, quarantineNote } from "../data/foodCategories.js";
 import { Card, Btn, Chip, PageHead, Stat, ErrorNote, EmptyNote } from "./ui/Parts.jsx";
 import { SkeletonRows } from "./ui/Skeleton.jsx";
@@ -120,7 +119,7 @@ function FoodRow({ food, selected, onSelect, dotColor }) {
         </div>
       </div>
       <div className="text-right shrink-0">
-        <span className="mono text-sm font-extrabold" style={{ color: "var(--foreground)" }}>{Math.round(food.kcal)}</span>
+        <span className="tabular-nums text-sm font-extrabold" style={{ color: "var(--foreground)" }}>{Math.round(food.kcal)}</span>
         <span className="text-[10.5px] font-semibold ml-1.5" style={{ color: "var(--muted-foreground)" }}>{g1(food.protein)}P {g1(food.fat)}F {g1(food.carb)}C</span>
       </div>
     </button>
@@ -415,7 +414,7 @@ function FoodDetail({ food, isAdmin, onSaved, refreshFoods }) {
                   className="w-full text-left text-sm font-semibold py-1.5 px-2 rounded-lg hover:opacity-80 flex justify-between"
                   style={{ color: "var(--foreground)", borderBottom: "1px solid var(--border)" }}>
                   <span className="truncate">{r.name}</span>
-                  <span className="mono text-xs shrink-0" style={{ color: "var(--muted-foreground)" }}>{Math.round(r.kcal)} kcal</span>
+                  <span className="tabular-nums text-xs shrink-0" style={{ color: "var(--muted-foreground)" }}>{Math.round(r.kcal)} kcal</span>
                 </button>
               ))
             )}
@@ -428,7 +427,7 @@ function FoodDetail({ food, isAdmin, onSaved, refreshFoods }) {
           <ErrorNote msg={error} hint="Edits must pass the nutrition sanity check (kcal ≈ 4P + 9F + 4C) — fix the macros so they agree with the calories." />
         </div>
       )}
-      {notice && <div className="text-xs font-semibold mt-3" style={{ color: C.good }}>{notice}</div>}
+      {notice && <div className="text-xs font-semibold mt-3" style={{ color: "var(--primary)" }}>{notice}</div>}
     </Card>
   );
 }
@@ -643,7 +642,7 @@ export default function FoodsTab({ onBack, isAdmin, backLabel = "Recipes" }) {
                 const items = byCategory[cat.slug] || [];
                 const open = !!openCats[cat.slug];
                 return (
-                  <div key={cat.slug} className="rounded-2xl glass-card">
+                  <div key={cat.slug} className="rounded-2xl bg-card border border-border">
                     <button
                       onClick={() => setOpenCats((s) => ({ ...s, [cat.slug]: !open }))}
                       aria-expanded={open}
@@ -652,7 +651,7 @@ export default function FoodsTab({ onBack, isAdmin, backLabel = "Recipes" }) {
                       {open ? <ChevronDown size={16} style={{ color: "var(--muted-foreground)" }} aria-hidden="true" /> : <ChevronRight size={16} style={{ color: "var(--muted-foreground)" }} aria-hidden="true" />}
                       <span className="w-2.5 h-2.5 rounded-full" aria-hidden="true" style={{ background: CATEGORY_DOT(cat.slug) }}></span>
                       <span className="text-sm font-extrabold flex-1 text-left" style={{ color: "var(--foreground)" }}>{cat.label}</span>
-                      <span className="mono text-xs font-bold px-2 py-0.5 rounded-lg" style={{ color: "var(--muted-foreground)", background: "var(--secondary)" }}>{num(items.length)}</span>
+                      <span className="tabular-nums text-xs font-bold px-2 py-0.5 rounded-lg" style={{ color: "var(--muted-foreground)", background: "var(--secondary)" }}>{num(items.length)}</span>
                     </button>
                     {open && (
                       <div className="px-3 pb-3">

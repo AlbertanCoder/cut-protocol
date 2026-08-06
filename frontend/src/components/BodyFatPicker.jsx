@@ -1,6 +1,5 @@
 import { useState, useRef, useId } from "react";
 import { api } from "../lib/api.js";
-import { C } from "../lib/theme.js";
 import { useFocusTrap } from "../lib/useFocusTrap.js";
 
 // E2 (v2) — a visual body-fat estimator. Deterministic, never LLM-gated, works
@@ -121,7 +120,7 @@ export default function BodyFatPicker({ current, source, onDone, onClose }) {
             />
             {err && <div role="alert" className="text-xs font-bold" style={{ color: "var(--destructive)" }}>{err}</div>}
             <div className="flex items-center gap-2">
-              <button onClick={saveMeasured} disabled={saving} className="text-sm font-bold px-3 py-2 rounded-xl" style={{ background: C.accent, color: C.accentInk }}>Save</button>
+              <button onClick={saveMeasured} disabled={saving} className="text-sm font-bold px-3 py-2 rounded-xl" style={{ background: "var(--primary)", color: "var(--primary-foreground)" }}>Save</button>
               <button onClick={() => { setMeasuredMode(false); setErr(null); }} className="text-sm font-semibold px-3 py-2 rounded-xl" style={{ color: "var(--muted-foreground)" }}>Back to picker</button>
             </div>
           </div>

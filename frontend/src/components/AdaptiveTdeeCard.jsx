@@ -11,7 +11,7 @@ const r1 = (n) => (n == null ? "—" : Math.round(n * 10) / 10);
 const Row = ({ label, value, strong, tone }) => (
   <div className="flex justify-between items-baseline gap-4 py-1.5" style={{ borderBottom: "1px solid var(--border)" }}>
     <span className="text-sm font-semibold" style={{ color: tone || "var(--foreground)" }}>{label}</span>
-    <span className={`mono text-sm shrink-0 ${strong ? "font-extrabold" : "font-bold"}`} style={{ color: tone || "var(--foreground)" }}>{value}</span>
+    <span className={`tabular-nums text-sm shrink-0 ${strong ? "font-extrabold" : "font-bold"}`} style={{ color: tone || "var(--foreground)" }}>{value}</span>
   </div>
 );
 
@@ -262,7 +262,7 @@ export default function AdaptiveTdeeCard({ profile, summary, target }) {
               <tbody>
                 {ledger.map((row) => (
                   <tr key={row.date} style={{ borderTop: "1px solid var(--border)" }}>
-                    <td className="py-1.5 pr-3 font-semibold mono align-top" style={{ color: "var(--foreground)" }}>{fmtD(row.date)}</td>
+                    <td className="py-1.5 pr-3 font-semibold tabular-nums align-top" style={{ color: "var(--foreground)" }}>{fmtD(row.date)}</td>
                     <td className="py-1.5 pr-3 font-semibold align-top" style={{ color: row.source === "adaptive" ? "var(--foreground)" : "var(--muted-foreground)" }}>
                       {row.source === "adaptive"
                         ? `Used your measured burn (${signed(row.deltaVsFormulaKcal)} vs formula)`
@@ -280,11 +280,11 @@ export default function AdaptiveTdeeCard({ profile, summary, target }) {
                         </div>
                       )}
                     </td>
-                    <td className="py-1.5 pr-3 text-right mono font-bold align-top" style={{ color: "var(--foreground)" }}>
+                    <td className="py-1.5 pr-3 text-right tabular-nums font-bold align-top" style={{ color: "var(--foreground)" }}>
                       {kc(row.expenditureKcal ?? row.formulaTdeeKcal)}
                     </td>
-                    <td className="py-1.5 pr-3 text-right mono font-extrabold align-top" style={{ color: "var(--foreground)" }}>{kc(row.targetKcal)}</td>
-                    <td className="py-1.5 text-right mono font-bold align-top" style={{ color: row.changeKcal ? "var(--warn)" : "var(--muted-foreground)" }}>
+                    <td className="py-1.5 pr-3 text-right tabular-nums font-extrabold align-top" style={{ color: "var(--foreground)" }}>{kc(row.targetKcal)}</td>
+                    <td className="py-1.5 text-right tabular-nums font-bold align-top" style={{ color: row.changeKcal ? "var(--warn)" : "var(--muted-foreground)" }}>
                       {row.changeKcal == null ? "—" : row.changeKcal === 0 ? "no change" : signed(row.changeKcal)}
                     </td>
                   </tr>
