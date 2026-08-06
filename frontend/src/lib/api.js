@@ -1,4 +1,5 @@
 import { logApi, logEvent } from "./bugLog.js";
+import { getAccessToken } from "./supabase.js";
 
 // ─────────────────────────────────────────────────────────────────────────
 // The single HTTP seam. Everything the app knows about talking to its own
@@ -247,6 +248,11 @@ async function request(rawPath, options = {}) {
   };
 
   try {
+    // saas-launch: on the web build this is the Supabase access token; on the
+    // desktop build (no Supabase config) it is null on every call and the
+    // request is byte-identical to before — auth stays the session cookie.
+    const supabaseToken = await getAccessToken();
+
     let res;
     try {
       res = await fetch(apiUrl(path), {
@@ -254,6 +260,7 @@ async function request(rawPath, options = {}) {
         ...fetchOpts,
         headers: {
           ...(fetchOpts.body ? { "Content-Type": "application/json" } : null),
+          ...(supabaseToken ? { Authorization: `Bearer ${supabaseToken}` } : null),
           ...handshakeHeaders(),
           ...extraHeaders,
         },

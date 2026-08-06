@@ -4,6 +4,7 @@ import { Card, Btn } from "./ui/Parts.jsx";
 import CutMark from "./ui/CutMark.jsx";
 import { api, ApiError, ERR, TIMEOUT, describeError } from "../lib/api.js";
 import { logApi } from "../lib/bugLog.js";
+import { supabaseEnabled, signInWithGoogle } from "../lib/supabase.js";
 
 // Minimum must match backend/src/lib/auth.js MIN_PASSWORD_LENGTH. The server is
 // the authority — this only saves a round trip and lets the message sit next to
@@ -115,6 +116,9 @@ export default function LoginScreen({ onLoggedIn }) {
   const [statusError, setStatusError] = useState(null);
 
   useEffect(() => {
+    // Web build (saas-launch): sign-in is Google-only, so "does this machine
+    // have an account yet" is meaningless — skip the status probe entirely.
+    if (supabaseEnabled) return;
     let cancelled = false;
     // READ budget, not WRITE: this is the very first request the app makes, and
     // it decides whether a new user is shown "Create account" or "Sign in". It
@@ -147,13 +151,63 @@ export default function LoginScreen({ onLoggedIn }) {
           </div>
         </div>
         <Card>
-          {mode === "checking" && (
-            <div className="text-xs font-semibold py-2" style={{ color: "var(--muted-foreground)" }}>Checking this install…</div>
+          {supabaseEnabled ? (
+            <GoogleSignIn />
+          ) : (
+            <>
+              {mode === "checking" && (
+                <div className="text-xs font-semibold py-2" style={{ color: "var(--muted-foreground)" }}>Checking this install…</div>
+              )}
+              {mode === "register" && <RegisterForm onLoggedIn={onLoggedIn} />}
+              {mode === "login" && <LoginForm onLoggedIn={onLoggedIn} statusError={statusError} />}
+            </>
           )}
-          {mode === "register" && <RegisterForm onLoggedIn={onLoggedIn} />}
-          {mode === "login" && <LoginForm onLoggedIn={onLoggedIn} statusError={statusError} />}
         </Card>
       </div>
+    </div>
+  );
+}
+
+// Web build (saas-launch): the ONLY way in. No password form exists on the
+// deployed product, so nothing here submits credentials anywhere — the button
+// leaves for Google and the browser comes back with a session, which App's
+// boot() then confirms against the backend. `busy` never resets on success
+// because on success this page is gone.
+function GoogleSignIn() {
+  const [error, setError] = useState(null);
+  const [busy, setBusy] = useState(false);
+
+  const go = async () => {
+    setBusy(true);
+    setError(null);
+    try {
+      await signInWithGoogle();
+    } catch (err) {
+      setBusy(false);
+      setError(describeError(err, "Couldn't reach Google sign-in. Try again."));
+    }
+  };
+
+  return (
+    <div className="flex flex-col gap-3 py-1">
+      <div className="text-sm font-semibold" style={{ color: "var(--foreground)" }}>Sign in to continue</div>
+      <Btn onClick={go} disabled={busy}>
+        <span className="inline-flex items-center justify-center gap-2.5">
+        <svg width="16" height="16" viewBox="0 0 48 48" aria-hidden="true">
+          <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z" />
+          <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z" />
+          <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z" />
+          <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z" />
+        </svg>
+        {busy ? "Opening Google…" : "Continue with Google"}
+        </span>
+      </Btn>
+      {error && (
+        <div className="text-[11px] font-semibold" style={{ color: "var(--destructive)" }}>{error}</div>
+      )}
+      <p className="text-[11px] font-medium" style={{ color: "var(--muted-foreground)" }}>
+        No passwords — your Google account handles sign-in.
+      </p>
     </div>
   );
 }

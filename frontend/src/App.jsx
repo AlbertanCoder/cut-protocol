@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { api, isAuthError, isAbortError, isNoAnswer, describeError, onSessionExpired } from "./lib/api.js";
+import { supabaseSignOut } from "./lib/supabase.js";
 import { useAbortSignal } from "./lib/useAbortable.js";
 
 import LoginScreen from "./components/LoginScreen.jsx";
@@ -181,6 +182,9 @@ function App() {
   const logout = async () => {
     let notice = null;
     try {
+      // Web build: drop the Supabase session FIRST so no request after this
+      // point can still attach a valid bearer token. Desktop: no-op.
+      await supabaseSignOut();
       await api.logout();
     } catch (e) {
       if (!isAbortError(e)) {
