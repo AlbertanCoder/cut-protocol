@@ -208,6 +208,13 @@ function GoogleSignIn() {
       <p className="text-[11px] font-medium" style={{ color: "var(--muted-foreground)" }}>
         No passwords — your Google account handles sign-in.
       </p>
+      {/* Stage 4: the legal + medical line the consent flow expects at signup. */}
+      <p className="text-[11px] font-medium" style={{ color: "var(--muted-foreground)" }}>
+        By continuing you agree to the{" "}
+        <a href="/terms.html" className="underline hover:opacity-80">Terms</a> and{" "}
+        <a href="/privacy.html" className="underline hover:opacity-80">Privacy Policy</a>.
+        Cut Protocol offers nutrition planning, not medical advice.
+      </p>
     </div>
   );
 }

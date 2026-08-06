@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Privacy Policy — Cut Protocol</title>
+<style>
+  :root { color-scheme: dark; }
+  body { margin: 0; background: #0a0a0a; color: #ededed; font: 16px/1.65 system-ui, -apple-system, "Segoe UI", sans-serif; }
+  main { max-width: 720px; margin: 0 auto; padding: 48px 20px 80px; }
+  h1 { font-size: 1.7rem; letter-spacing: -0.02em; }
+  h2 { font-size: 1.1rem; margin-top: 2.2em; }
+  p, li, td, th { color: #c9c9c9; }
+  a { color: #ededed; }
+  table { border-collapse: collapse; width: 100%; font-size: 0.92rem; }
+  th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid #2a2a2a; vertical-align: top; }
+  .draft { background: #3a2c07; color: #f5d47a; border: 1px solid #6b5312; border-radius: 10px; padding: 12px 16px; font-weight: 600; font-size: 0.9rem; }
+  .disclaimer { background: #16211a; border: 1px solid #2c4434; border-radius: 10px; padding: 14px 16px; }
+  footer { margin-top: 3em; font-size: 0.85rem; color: #8a8a8a; }
+</style>
+</head>
+<body>
+<main>
+  <p class="draft">DRAFT — written for the owner's review and not yet reviewed by a lawyer.
+  Placeholders in [BRACKETS] must be filled in before go-live.</p>
+
+  <h1>Privacy Policy</h1>
+  <p>Last updated: [DATE — set at go-live]</p>
+
+  <p>Cut Protocol is operated from Alberta, Canada, and this policy follows
+  Canadian privacy law (PIPEDA and Alberta's PIPA): we collect only what the
+  service needs, we tell you what that is, and you can see, correct, export,
+  or delete it.</p>
+
+  <h2>What we collect, and why</h2>
+  <table>
+    <tr><th>Data</th><th>Where it comes from</th><th>Why we have it</th></tr>
+    <tr><td>Your email address and Google account ID</td><td>Google sign-in (via Supabase Auth)</td><td>Your account identity. We never see or store a password.</td></tr>
+    <tr><td>Profile and body data you enter — height, weight, weigh-ins, goals, dietary rules, allergies</td><td>You</td><td>Computing your targets and plans. Entered voluntarily; the app works with as little as you choose to give it.</td></tr>
+    <tr><td>Food logs, meal plans, recipes, training plans</td><td>You / generated for you</td><td>The product itself.</td></tr>
+    <tr><td>Subscription status (plan, renewal and end dates)</td><td>Lemon Squeezy webhooks</td><td>Knowing whether your account has Premium.</td></tr>
+  </table>
+  <p><strong>What we never have:</strong> your card number or billing address
+  (payments are processed entirely by <a href="https://www.lemonsqueezy.com/privacy">Lemon
+  Squeezy</a>, the merchant of record), your Google password, and any data
+  sold or rented to anyone — we don't do ads and we don't sell data, full stop.</p>
+
+  <h2>Health data, treated as sensitive</h2>
+  <div class="disclaimer">
+    <p>Body weight and eating patterns are sensitive. They are stored only to
+    run your account, are never used for advertising or profiling, and are
+    never shared except as listed below. Reminder: the app offers nutrition
+    planning, <strong>not medical advice</strong>.</p>
+  </div>
+
+  <h2>Who touches the data (our service providers)</h2>
+  <ul>
+    <li><strong>Supabase</strong> — authentication and database hosting ([REGION — fill in the region picked at project creation]).</li>
+    <li><strong>Railway</strong> — application hosting.</li>
+    <li><strong>Lemon Squeezy</strong> — payments and receipts, as merchant of record.</li>
+  </ul>
+  <p>These providers store data on our behalf under their own security terms;
+  data may be processed outside Canada (e.g. the United States), where it is
+  subject to local law.</p>
+
+  <h2>Cookies and tracking</h2>
+  <p>No analytics trackers, no ad pixels. Sign-in state is kept in your
+  browser's local storage by the Supabase auth library — that's it.</p>
+
+  <h2>Your rights</h2>
+  <ul>
+    <li><strong>Export</strong> — one click inside the app (Engine → Export), any time, free tier included.</li>
+    <li><strong>Access / correction</strong> — almost everything is directly editable in the app; anything else, ask.</li>
+    <li><strong>Deletion</strong> — email [SUPPORT EMAIL] and your account and its data will be deleted. [NOTE FOR OWNER: in-app account deletion isn't built yet — until it is, requests are handled manually, and the promise here must be kept.]</li>
+    <li><strong>Complaints</strong> — we'd like to hear first, but you can also contact the Office of the Privacy Commissioner of Canada (priv.gc.ca).</li>
+  </ul>
+
+  <h2>Retention</h2>
+  <p>Your data is kept while your account exists and deleted when your account
+  is. Cancelling Premium deletes nothing — you keep your data on the free tier.</p>
+
+  <h2>Changes</h2>
+  <p>If this policy changes materially, the app will say so before the change
+  takes effect.</p>
+
+  <h2>Contact</h2>
+  <p>[SUPPORT EMAIL — same address as the terms page]</p>
+
+  <footer>
+    <a href="/">Back to the app</a> · <a href="/terms.html">Terms of Service</a>
+  </footer>
+</main>
+</body>
+</html>

@@ -171,6 +171,13 @@ app.use("/api", (req, res) => res.status(404).json({ error: "not found" }));
 // no CORS needed. Falls back to index.html for client-side routing.
 const frontendDist = path.join(__dirname, "..", "frontend", "dist");
 app.use(express.static(frontendDist));
+// saas-launch Stage 4: clean legal URLs (what Google's consent screen and the
+// LS store settings link to). The files ship via frontend/public → dist, so
+// /terms.html works through the static mount above; these routes add the
+// extension-less spellings ahead of the SPA fallback.
+app.get(["/terms", "/privacy"], (req, res) => {
+  res.sendFile(path.join(frontendDist, `${req.path.slice(1)}.html`));
+});
 app.get(/^(?!\/api).*/, (req, res) => {
   res.sendFile(path.join(frontendDist, "index.html"));
 });
