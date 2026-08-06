@@ -1,6 +1,7 @@
 const bcrypt = require("bcryptjs");
 const crypto = require("crypto");
 const jwt = require("jsonwebtoken");
+const { isSupabaseAuthEnabled, resolveSupabaseSession } = require("./supabaseAuth.js");
 
 const COOKIE_NAME = "cutprotocol_session";
 const TOKEN_TTL = "30d";
@@ -156,7 +157,29 @@ function clearSessionCookie(res) {
   res.clearCookie(COOKIE_NAME);
 }
 
+// saas-launch: the web build authenticates with a Supabase access token in the
+// Authorization header; the desktop build keeps the session cookie. A request
+// carries one or the other, never both — the web frontend never receives a
+// session cookie (no password routes are shown) and the desktop renderer never
+// holds a Supabase session. Bearer is checked first only because its presence
+// is explicit; with SUPABASE_URL unset (every desktop install) the branch is
+// dead code and the cookie path below is byte-identical to before.
+function readBearerToken(req) {
+  const header = req.headers?.authorization;
+  if (typeof header !== "string" || !header.startsWith("Bearer ")) return null;
+  const token = header.slice("Bearer ".length).trim();
+  return token || null;
+}
+
 async function requireAuth(req, res, next) {
+  const bearer = readBearerToken(req);
+  if (bearer && isSupabaseAuthEnabled()) {
+    const session = await resolveSupabaseSession(bearer);
+    if (!session) return res.status(401).json({ error: SESSION_EXPIRED_MESSAGE });
+    req.userId = session.userId;
+    return next();
+  }
+
   const token = req.cookies?.[COOKIE_NAME];
   if (!token) return res.status(401).json({ error: SESSION_EXPIRED_MESSAGE });
   const session = await resolveSession(token);
@@ -178,6 +201,12 @@ async function requireAuth(req, res, next) {
 // by the existing owner adding a second local profile, and it must be able to
 // tell those apart without 401-ing the first case.
 async function optionalAuth(req, res, next) {
+  const bearer = readBearerToken(req);
+  if (bearer && isSupabaseAuthEnabled()) {
+    const session = await resolveSupabaseSession(bearer);
+    if (session) req.userId = session.userId;
+    return next();
+  }
   const token = req.cookies?.[COOKIE_NAME];
   if (token) {
     const session = await resolveSession(token);

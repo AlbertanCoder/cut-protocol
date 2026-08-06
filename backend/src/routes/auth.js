@@ -175,6 +175,15 @@ router.post("/login", async (req, res) => {
     return res.status(401).json({ error: BAD_CREDENTIALS_MESSAGE });
   }
 
+  // saas-launch: an account created through Google sign-in has no password
+  // (passwordHash is null) — nothing to compare, so this can only fail. Same
+  // sentence as every other failure: "use Google for this email" would be an
+  // account-existence oracle.
+  if (!user.passwordHash) {
+    loginThrottle.record(throttleKey);
+    return res.status(401).json({ error: BAD_CREDENTIALS_MESSAGE });
+  }
+
   const ok = await verifyPassword(password, user.passwordHash);
   if (!ok) {
     loginThrottle.record(throttleKey);
