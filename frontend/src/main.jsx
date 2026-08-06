@@ -12,9 +12,6 @@ import '@fontsource/sora/latin-800.css'
 import '@fontsource/space-grotesk/latin-600.css'
 import '@fontsource/space-grotesk/latin-700.css'
 import './index.css'
-// Legacy CSS quarantine (Phase 1 Step 2): the pre-restyle stylesheet,
-// imported AFTER index.css. Drained per-screen in Phases 2–5.
-import './legacy.css'
 import App from './App.jsx'
 import ErrorBoundary from './components/ErrorBoundary.jsx'
 import { installGlobalHandlers } from './lib/bugLog.js'

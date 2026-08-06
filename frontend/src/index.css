@@ -166,23 +166,132 @@
   }
 }
 
-/* ── LEGACY TOKEN COLLISION SHIM (Phase 2 — DELETE with legacy.css, Phase 6) ──
-   legacy.css also declares --card and --warn on :root and loads AFTER this
-   file, so at equal specificity its dark AURORA values silently win and, in
-   light mode, bg-card stayed dark under near-black text. These boosted-
-   specificity re-declarations keep the semantic tokens authoritative for
-   Tailwind utilities. Values duplicate the direction/:root blocks verbatim.
-   --accent is deliberately NOT shimmed: lib/theme.js reads it live off the
-   DOM for the hero Ring and trend line (protected, law a) — reclaiming it
-   would turn them gray. Cost: shadcn hover washes flash AURORA green until
-   legacy.css is drained. */
-html:root {
-  --card: oklch(1 0 0);
-  --warn: oklch(0.52 0.12 75);
+/* ── C-OBJECT COMPAT PALETTE (legacy.css retired, Phase 6) ────────────────
+   lib/theme.js (protected) snapshots CSS vars ONCE at boot into its C
+   object; the names still read after the migration live here. They are
+   deliberately theme-INVARIANT: the snapshot never re-reads on theme flips,
+   the macro triad is constitutionally fixed (law c), and --paper is the
+   always-dark ink used ON triad fills. index.css is the sanctioned literal
+   home. --good rides the primary chain so stamp-success matches the mint. */
+:root {
+  --paper: #0B0D0C;
+  --ink: rgba(237, 242, 239, 0.87);
+  --faint: rgba(237, 242, 239, 0.60);
+  --faint-light: rgba(237, 242, 239, 0.38);
+  --rule: rgba(255, 255, 255, 0.06);
+  --card-2: #232A27;
+  --warn-bg: #2E2310;
+  --good: var(--primary);
+  --good-bg: color-mix(in srgb, var(--primary) 14%, transparent);
+  /* macro triad — Okabe-Ito, law (c), identical in every ring/bar/chip */
+  --protein: #56B4E9;
+  --carb: #E69F00;
+  --fat: #CC79A7;
+  --protein-text: #7CC5EE;
+  --carb-text: #F0B23E;
+  --fat-text: #DC96BB;
 }
-html.dark:root {
-  --card: oklch(0.19 0.009 255);
-  --warn: oklch(0.76 0.13 78);
+
+/* ── PORTED FROM legacy.css (Phase 6 retirement) ────────────────────────── */
+
+@layer base {
+  body {
+    /* every number that can change stays tabular, app-wide */
+    font-variant-numeric: tabular-nums;
+    -webkit-font-smoothing: antialiased;
+  }
+}
+
+/* skeleton shimmer — the app's only loading language (no spinners) */
+.skeleton {
+  position: relative;
+  overflow: hidden;
+  background: var(--secondary);
+  border-radius: 10px;
+}
+.skeleton::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--foreground) 6%, transparent), transparent);
+  animation: shimmer 1.4s infinite;
+}
+@keyframes shimmer { 100% { transform: translateX(100%); } }
+
+/* breathing ring — opacity-only (compositable); frozen under reduced motion */
+.ring-breathe { animation: breathe 5.2s ease-in-out infinite; }
+@keyframes breathe {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 1; }
+}
+
+/* hover-revealed row actions — quiet until hover/focus; always on for touch */
+.row-reveal { opacity: 0; transition: opacity 0.12s ease; }
+.row-host:hover .row-reveal,
+.row-host:focus-within .row-reveal { opacity: 1; }
+@media (hover: none) { .row-reveal { opacity: 1; } }
+
+/* chrome */
+* { scrollbar-width: thin; scrollbar-color: var(--secondary) transparent; }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-thumb { background: var(--secondary); border-radius: 8px; border: 2px solid var(--background); }
+::-webkit-scrollbar-track { background: transparent; }
+::selection { background: color-mix(in srgb, var(--primary) 30%, transparent); color: var(--foreground); }
+
+/* Focus ring — mint (law a sanctions the focus ring); 2px offset keeps the
+   ring off whatever the control is filled with. shadcn ui components carry
+   their own ring-ring styles; this covers every hand-rolled control. */
+input:focus-visible, select:focus-visible, textarea:focus-visible,
+button:focus-visible, summary:focus-visible, a:focus-visible,
+[role="button"]:focus-visible, [tabindex]:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
+/* visually-hidden but screen-reader-readable (a11y — must survive) */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* skip-to-content link — pinned above everything when keyboard-focused */
+.skip-link {
+  position: fixed;
+  top: -100px;
+  left: 12px;
+  z-index: 200;
+  background: var(--primary);
+  color: var(--primary-foreground);
+  font-weight: 800;
+  font-size: 13px;
+  padding: 10px 16px;
+  border-radius: 10px;
+  transition: top 0.15s ease;
+}
+.skip-link:focus {
+  top: 12px;
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
+/* reduced motion: shimmer and breathe freeze, transitions snap (a11y — must
+   survive any visual direction) */
+@media (prefers-reduced-motion: reduce) {
+  .skeleton::after,
+  .ring-breathe {
+    animation: none;
+  }
+  *, *::before, *::after {
+    transition-duration: 0.01ms !important;
+  }
 }
 
 /* ================================================================
