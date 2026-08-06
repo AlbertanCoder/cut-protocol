@@ -61,9 +61,9 @@ Stays FREE: auth, profile (targets/TDEE), weighins/trend, training, foods (+UPC)
 - [x] Frontend: Google-only sign-in card (web mode = Supabase env vars present), bearer token on every api.js request, sign-out drops the Supabase session
 - [x] Prisma migration created: `passwordHash` nullable, `supabaseUserId` unique (+ Subscription table, pulled forward from Stage 2)
 - [x] `.env.example` updated both sides (SUPABASE_URL, SUPABASE_SECRET_KEY, optional SUPABASE_JWT_SECRET; VITE_SUPABASE_URL, VITE_SUPABASE_PUBLISHABLE_KEY)
-- [ ] **OWNER: run the taskkill command** (stale dev processes hold dev.db) → then Claude runs: `migrate deploy`, `prisma generate`, `npm test`
+- [x] Stale dev processes stopped (2026-08-06); migration applied to dev.db; Prisma client regenerated; **full suite green: 1609 tests, 0 failures**
 - [ ] **OWNER: Supabase project + Google OAuth dashboards** (walkthrough in chat, 2026-08-05) + fill both .env files
-- [ ] CHECKPOINT: Google sign-in E2E locally; backend resolves user id; signed-out curl gets 401; backend tests green
+- [ ] CHECKPOINT (rest): Google sign-in E2E locally in the browser; signed-out curl gets 401
 
 ### Stage 2 — Free vs Premium gating — CODE DONE, checkpoint pending
 - [x] `lib/entitlement.js`: entitlement derived from Subscription (active/on_trial; cancelled→endsAt; past_due→graceUntil); desktop installs never paywalled
@@ -71,7 +71,9 @@ Stays FREE: auth, profile (targets/TDEE), weighins/trend, training, foods (+UPC)
 - [x] `scripts/flipPremium.mjs` — 6 states (premium/trial/cancelled/grace/lapsed/free), prints derived entitlement
 - [x] `/api/auth/me` ships premium/premiumStatus; App holds tier state
 - [x] PremiumGate: real component blurred+inert under lock card; full overlay on PlanTab (canonical PricingSection: $24.99/$125, "Save 58% — 5 months free ~$10.42/mo", annual default); compact gate on Today's plan card; quiet note on Wellbeing micros
-- [ ] CHECKPOINT (needs Stage 1 unblock first): `flipPremium --state free` → blur+lock everywhere premium AND `curl` on /api/plans/current shows the 403; `--state premium` → everything normal
+- [x] CHECKPOINT server half PROVEN live (2026-08-06, in-process app + real HTTP on account saas-qa@local): no row 403 · active 200 · on_trial 200 · cancelled+5d 200 · lapsed 403 · grace 200 · grace-expired 403 · none 403 — all with `code:"premium_required"`
+- [ ] CHECKPOINT UI half (needs Google sign-in working): `flipPremium --state free` → blur+lock overlays; `--state premium` → normal
+- Note: QA account `saas-qa@local` (password saas-qa-pass-1) left in dev.db with a status-none subscription row, same convention as the other *.test@local accounts.
 
 ### Stage 2 — Free vs Premium gating
 - [ ] Prisma: `Subscription` model (userId unique, lsCustomerId, lsSubscriptionId, status, plan, renewsAt, endsAt, graceUntil, `usedWinback Boolean @default(false)`)
