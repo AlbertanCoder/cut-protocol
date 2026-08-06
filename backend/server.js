@@ -65,6 +65,12 @@ const app = express();
 // limit changes.
 app.use("/api/import", express.json({ limit: "64mb" }));
 
+// saas-launch Stage 3: Lemon Squeezy signs its webhooks over the RAW body
+// (HMAC-SHA256 in X-Signature). Same path-scoped-first trick as /api/import:
+// express.raw marks the body consumed, the global JSON parser skips it, and
+// the route verifies the signature against the exact bytes LS signed.
+app.use("/api/webhooks/lemonsqueezy", express.raw({ type: "*/*", limit: "1mb" }));
+
 app.use(express.json());
 app.use(cookieParser());
 
@@ -125,6 +131,8 @@ app.use("/api/training", trainingRoutes);
 app.use("/api/diary", diaryRoutes);
 app.use("/api/brain", brainRoutes); // Stage D2: guarded chat surface (gated; inert with BRAIN=off)
 app.use("/api/micronutrients", micronutrientRoutes);
+app.use("/api/billing", require("./src/routes/billing.js")); // saas-launch: LS checkout creation
+app.use("/api/webhooks/lemonsqueezy", require("./src/routes/lsWebhook.js")); // signature-authed, no session
 // GET /api/export + POST /api/import. Mounted at /api (the router declares both
 // full paths itself and attaches requireAuth per route), so an unmatched /api
 // path still falls through to the JSON 404 below.
