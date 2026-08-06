@@ -34,19 +34,18 @@ export const Card = ({ section, title, children, tint, className = "" }) => {
   const hid = useId();
   return (
     <section
-      className={`p-5 rounded-2xl ${tint ? "" : "glass-card"} ${className}`}
-      style={tint ? { background: tint, border: `1px solid ${C.rule}` } : undefined}
+      className={`p-5 rounded-2xl border ${tint ? "border-border" : "bg-card border-border text-card-foreground"} ${className}`}
+      style={tint ? { background: tint } : undefined}
       aria-labelledby={title ? hid : undefined}
     >
       {(section || title) && (
         <div className="flex items-baseline justify-between mb-3">
           {title && (
-            <h2 id={hid} className="text-[15px] font-bold m-0" style={{ color: C.ink, letterSpacing: "-.01em" }}>{title}</h2>
+            <h2 id={hid} className="text-[15px] font-heading font-bold m-0 tracking-tight text-foreground">{title}</h2>
           )}
           {/* a11y contrast fix: section eyebrows read on every card app-wide —
-              faint-light (38%, 3.30:1 over card) fails WCAG AA for text; faint
-              (60%, 6.28:1) passes while staying the app's second-quietest tier. */}
-          {section && <div className="text-[10.5px] font-semibold uppercase ml-auto" style={{ color: C.faint, letterSpacing: ".06em" }}>{section}</div>}
+              muted-foreground clears AA on card in both themes. */}
+          {section && <div className="text-[10.5px] font-semibold uppercase ml-auto tracking-[.06em] text-muted-foreground">{section}</div>}
         </div>
       )}
       {children}
@@ -56,20 +55,21 @@ export const Card = ({ section, title, children, tint, className = "" }) => {
 
 export const Stat = ({ label, value, unit, big }) => (
   <div className="py-1.5">
-    <div className="text-xs font-semibold" style={{ color: C.faint }}>{label}</div>
-    <div className={`mono stat-hero ${big ? "text-4xl" : "text-2xl"}`} style={{ color: C.ink }}>
-      {value}{unit && <span className="text-xs ml-1" style={{ color: C.faint, fontWeight: 600, letterSpacing: 0 }}>{unit}</span>}
+    <div className="text-[10px] font-semibold uppercase tracking-[0.08em] text-muted-foreground">{label}</div>
+    <div className={`font-heading font-bold tabular-nums text-foreground ${big ? "text-4xl" : "text-2xl"}`}>
+      {value}{unit && <span className="text-xs ml-1 font-semibold tracking-normal text-muted-foreground">{unit}</span>}
     </div>
   </div>
 );
 
-// Button kinds: primary/ink = the green primary action (law a), red =
-// destructive confirms only (never food/body data), ghost = quiet.
+// Button kinds: primary/ink = the primary action (SIGNAL BLACK mint via the
+// --primary token, law a), red = destructive confirms only (never food/body
+// data), ghost = quiet.
 export const Btn = ({ children, onClick, kind = "ink", small, disabled }) => {
   const KIND_STYLES = {
-    ink: { bg: C.accent, fg: C.accentInk, border: C.accent },
-    primary: { bg: C.accent, fg: C.accentInk, border: C.accent },
-    red: { bg: C.red, fg: C.paper, border: C.red },
+    ink: { bg: "var(--primary)", fg: "var(--primary-foreground)", border: "var(--primary)" },
+    primary: { bg: "var(--primary)", fg: "var(--primary-foreground)", border: "var(--primary)" },
+    red: { bg: "var(--destructive)", fg: "var(--destructive-foreground)", border: "var(--destructive)" },
     // Theme-aware (light-mode fix): ghost buttons also render on the canvas,
     // where the legacy ink was invisible on light.
     ghost: { bg: "transparent", fg: "var(--foreground)", border: "var(--border)" },
@@ -301,7 +301,7 @@ export const Ring = ({ pct, size = 108, stroke = 10, color = C.accent, num, unit
 };
 
 export const Chip = ({ children, color, bg }) => (
-  <span className="text-xs font-bold px-2 py-1 rounded-lg" style={{ color: color || C.faint, background: bg || C.card2, border: bg ? "none" : `1px solid ${C.rule}` }}>
+  <span className="text-xs font-bold px-2 py-1 rounded-lg" style={{ color: color || "var(--muted-foreground)", background: bg || "var(--secondary)", border: bg ? "none" : "1px solid var(--border)" }}>
     {children}
   </span>
 );

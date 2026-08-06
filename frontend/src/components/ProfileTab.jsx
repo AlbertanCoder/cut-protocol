@@ -32,7 +32,7 @@ const humanizeKey = (key) => {
 /** One message, under the input that caused it. Mirrors LoginScreen. */
 function FieldError({ children }) {
   if (!children) return null;
-  return <div className="text-[11px] font-semibold mt-1" style={{ color: C.warn }}>{children}</div>;
+  return <div className="text-[11px] font-semibold mt-1" style={{ color: "var(--warn)" }}>{children}</div>;
 }
 
 // The user-facing home of every personal input. Engine reads these and only
@@ -388,16 +388,16 @@ export default function ProfileTab({ profile, summary, refresh, openToday }) {
     || "not set";
 
   const inp = "text-sm px-3 py-2 rounded-xl w-full mt-1";
-  const inpStyle = { background: C.card2, border: `1.5px solid ${C.rule}`, color: C.ink };
-  const badStyle = { ...inpStyle, border: `1.5px solid ${C.warn}` };
+  const inpStyle = { background: "var(--secondary)", border: "1.5px solid var(--border)", color: "var(--foreground)" };
+  const badStyle = { ...inpStyle, border: `1.5px solid ${"var(--warn)"}` };
   // A field the engine is currently ignoring — same treatment as the derived
   // current-weight box above, so "you can't set this, and here's why" looks
   // the same wherever it happens rather than being invented per-field.
-  const offStyle = { ...inpStyle, color: C.faint, cursor: "not-allowed" };
+  const offStyle = { ...inpStyle, color: "var(--muted-foreground)", cursor: "not-allowed" };
   // No training style claimed → sessions × minutes × MET 0 is zero no matter
   // what the boxes say, so the whole additive term is off.
   const notTraining = profile.trainingStyle === "none";
-  const label = (t) => <span className="text-xs font-bold" style={{ color: C.faint }}>{t}</span>;
+  const label = (t) => <span className="text-xs font-bold" style={{ color: "var(--muted-foreground)" }}>{t}</span>;
 
   // ── COMMIT-ON-BLUR, WITHOUT THE SILENT REWRITE ────────────────────────
   //
@@ -511,15 +511,15 @@ export default function ProfileTab({ profile, summary, refresh, openToday }) {
           crash and not a judgment (colour law b), and there is nothing to
           retry. It explains its reasoning; it does not just block. */}
       {gate && (
-        <div role="alert" className="mb-4 p-5 rounded-2xl" style={{ background: C.card, border: `1px solid ${C.faintLight}` }}>
+        <div role="alert" className="mb-4 p-5 rounded-2xl" style={{ background: "var(--card)", border: `1px solid ${"var(--muted-foreground)"}` }}>
           <div className="flex items-start gap-3">
-            <Info size={20} style={{ color: C.faint }} className="mt-0.5 shrink-0" aria-hidden="true" />
+            <Info size={20} style={{ color: "var(--muted-foreground)" }} className="mt-0.5 shrink-0" aria-hidden="true" />
             <div className="min-w-0 flex-1">
-              <div className="text-sm font-extrabold" style={{ color: C.ink }}>{gate.error}</div>
+              <div className="text-sm font-extrabold" style={{ color: "var(--foreground)" }}>{gate.error}</div>
               {(gate.detail || []).map((p, i) => (
-                <p key={i} className="text-xs font-semibold leading-relaxed mt-2" style={{ color: C.faint }}>{p}</p>
+                <p key={i} className="text-xs font-semibold leading-relaxed mt-2" style={{ color: "var(--muted-foreground)" }}>{p}</p>
               ))}
-              {gate.whatNow && <p className="text-xs font-bold mt-3" style={{ color: C.ink }}>{gate.whatNow}</p>}
+              {gate.whatNow && <p className="text-xs font-bold mt-3" style={{ color: "var(--foreground)" }}>{gate.whatNow}</p>}
               <div className="mt-3">
                 <Btn small kind="ghost" onClick={() => setGate(null)}>Got it</Btn>
               </div>
@@ -532,15 +532,15 @@ export default function ProfileTab({ profile, summary, refresh, openToday }) {
         // role="alert": this is a safety rail — an aggressive rate, or a goal
         // weight under the population range. It must reach a screen reader
         // immediately, not wait for the user to stumble onto it.
-        <div role="alert" className="mb-4 p-4 rounded-2xl" style={{ background: C.warnBg, border: `1px solid ${C.warn}66` }}>
+        <div role="alert" className="mb-4 p-4 rounded-2xl" style={{ background: "color-mix(in srgb, var(--warn) 12%, transparent)", border: "1px solid color-mix(in srgb, var(--warn) 40%, transparent)" }}>
           <div className="flex items-start gap-2.5">
-            <AlertTriangle size={18} style={{ color: C.warn }} className="mt-0.5 shrink-0" aria-hidden="true" />
+            <AlertTriangle size={18} style={{ color: "var(--warn)" }} className="mt-0.5 shrink-0" aria-hidden="true" />
             <div className="flex-1">
-              <div className="text-sm font-extrabold mb-1" style={{ color: C.warn }}>
+              <div className="text-sm font-extrabold mb-1" style={{ color: "var(--warn)" }}>
                 {pendingAck.ack === "goalWeight" ? "That goal weight needs an explicit OK" : "This rate needs an explicit OK"}
               </div>
               {pendingAck.reasons.map((r, i) => (
-                <div key={i} className="text-xs font-semibold mb-1 leading-relaxed" style={{ color: C.ink }}>· {r}</div>
+                <div key={i} className="text-xs font-semibold mb-1 leading-relaxed" style={{ color: "var(--foreground)" }}>· {r}</div>
               ))}
               <div className="flex gap-2 mt-2.5">
                 <Btn small onClick={confirmAck}>I understand — apply anyway</Btn>
@@ -562,8 +562,8 @@ export default function ProfileTab({ profile, summary, refresh, openToday }) {
                 <button key={u} onClick={() => commit({ unitPref: u })} aria-pressed={pref === u}
                   className="flex-1 text-xs font-bold py-2 rounded-xl"
                   style={{
-                    background: pref === u ? C.card2 : "transparent", color: pref === u ? C.ink : C.faint,
-                    border: `1px solid ${pref === u ? C.faintLight : C.rule}`,
+                    background: pref === u ? "var(--secondary)" : "transparent", color: pref === u ? "var(--foreground)" : "var(--muted-foreground)",
+                    border: `1px solid ${pref === u ? "var(--muted-foreground)" : "var(--border)"}`,
                   }}>
                   {u === "imperial" ? "lb / in" : "kg / cm"}
                 </button>
@@ -621,7 +621,7 @@ export default function ProfileTab({ profile, summary, refresh, openToday }) {
                 className={inp} style={fieldErrors.bodyFatPct ? badStyle : inpStyle} />
               <FieldError>{fieldErrors.bodyFatPct}</FieldError>
               <button type="button" onClick={() => setBfPickerOpen(true)}
-                className="text-[11px] font-bold underline mt-1" style={{ color: C.faint }}>
+                className="text-[11px] font-bold underline mt-1" style={{ color: "var(--muted-foreground)" }}>
                 Estimate visually
                 {profile.bodyFatSource === "visual-estimate" ? " · set from silhouette" : profile.bodyFatSource === "measured" ? " · measured" : ""}
               </button>
@@ -629,10 +629,10 @@ export default function ProfileTab({ profile, summary, refresh, openToday }) {
             <label className="block">{label(`Current weight (${weightUnit(pref)})`)}
               <input type="number" value={displayWeight(avg7Kg, pref)} readOnly aria-readonly="true"
                 title="Calculated from your weigh-ins — log one on Today to change it"
-                className={inp} style={{ ...inpStyle, color: C.faint, cursor: "not-allowed" }} />
+                className={inp} style={{ ...inpStyle, color: "var(--muted-foreground)", cursor: "not-allowed" }} />
               {openToday && (
                 <button type="button" onClick={openToday}
-                  className="text-[11px] font-bold underline mt-1 hover:opacity-80" style={{ color: C.faint }}>
+                  className="text-[11px] font-bold underline mt-1 hover:opacity-80" style={{ color: "var(--muted-foreground)" }}>
                   Log a weigh-in on Today →
                 </button>
               )}
@@ -645,7 +645,7 @@ export default function ProfileTab({ profile, summary, refresh, openToday }) {
               <FieldError>{fieldErrors.goalWeightKg}</FieldError>
             </label>
           </div>
-          <div className="text-xs font-semibold mt-3" style={{ color: C.faint }}>
+          <div className="text-xs font-semibold mt-3" style={{ color: "var(--muted-foreground)" }}>
             Current weight is the average of your last 7 weigh-ins — it can't be typed here; log a weigh-in on Today to move it. Body fat % unlocks the two LBM-based BMR formulas.
           </div>
         </Card>
@@ -659,7 +659,7 @@ export default function ProfileTab({ profile, summary, refresh, openToday }) {
               roles describe the search+picker pattern to screen readers. */}
           <label className="block mb-1" htmlFor="occupation-search">{label("Occupation")}</label>
           <div className="relative">
-            <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: C.faintLight }} aria-hidden="true" />
+            <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: "var(--muted-foreground)" }} aria-hidden="true" />
             <input
               id="occupation-search"
               placeholder={currentOcc ? `${currentOcc.label} (×${currentOcc.multiplier})` : "Search occupations…"}
@@ -676,17 +676,17 @@ export default function ProfileTab({ profile, summary, refresh, openToday }) {
             />
           </div>
           {occOpen && meta && (
-            <div id="occupation-options" role="listbox" aria-label="Occupation results" className="mt-1.5 max-h-52 overflow-y-auto rounded-xl" style={{ background: C.card2, border: `1px solid ${C.rule}` }}>
+            <div id="occupation-options" role="listbox" aria-label="Occupation results" className="mt-1.5 max-h-52 overflow-y-auto rounded-xl" style={{ background: "var(--secondary)", border: "1px solid var(--border)" }}>
               {filteredOccupations.map((o) => (
                 <button key={o.key} role="option" aria-selected={o.key === profile.occupationKey}
                   onClick={() => { commit({ occupationKey: o.key }); setOccQuery(""); setOccOpen(false); }}
                   className="w-full text-left px-3 py-2 text-sm font-semibold flex justify-between gap-2 hover:opacity-80"
-                  style={{ color: C.ink, fontWeight: o.key === profile.occupationKey ? 800 : 600, background: o.key === profile.occupationKey ? C.card : "transparent", borderBottom: `1px solid ${C.rule}` }}>
+                  style={{ color: "var(--foreground)", fontWeight: o.key === profile.occupationKey ? 800 : 600, background: o.key === profile.occupationKey ? "var(--card)" : "transparent", borderBottom: "1px solid var(--border)" }}>
                   <span className="truncate">{o.label}</span>
-                  <span className="mono text-xs shrink-0" style={{ color: C.faint }}>×{o.multiplier}</span>
+                  <span className="mono text-xs shrink-0" style={{ color: "var(--muted-foreground)" }}>×{o.multiplier}</span>
                 </button>
               ))}
-              {filteredOccupations.length === 0 && <div className="px-3 py-2 text-sm font-semibold" style={{ color: C.faint }}>No match — use the manual override below.</div>}
+              {filteredOccupations.length === 0 && <div className="px-3 py-2 text-sm font-semibold" style={{ color: "var(--muted-foreground)" }}>No match — use the manual override below.</div>}
             </div>
           )}
           {metaError && (
@@ -695,7 +695,7 @@ export default function ProfileTab({ profile, summary, refresh, openToday }) {
             // a person its own internals. The summary endpoint already carries
             // the real label the engine used (energy.jobLabel), so that is what
             // is shown; humanizeKey is only the last resort.
-            <div className="text-[10.5px] font-bold mt-1.5" style={{ color: C.warn }}>
+            <div className="text-[10.5px] font-bold mt-1.5" style={{ color: "var(--warn)" }}>
               Occupation list unavailable — your saved occupation ({savedOccupationLabel}) is unchanged. Use the multiplier override below if you need to adjust now.
             </div>
           )}
@@ -743,7 +743,7 @@ export default function ProfileTab({ profile, summary, refresh, openToday }) {
               <FieldError>{fieldErrors.minutesPerSession}</FieldError>
             </label>
           </div>
-          <div className="text-xs font-semibold mt-3" style={{ color: C.faint }}>
+          <div className="text-xs font-semibold mt-3" style={{ color: "var(--muted-foreground)" }}>
             {notTraining
               ? "Your occupation multiplier is doing all the work — no training kcal are being added. That is a normal way to run a cut, and the target below is built for it. Pick a training style above if that changes."
               : "Occupation sets the day-to-day multiplier; training adds its own kcal on top. The Engine tab shows the exact math."}
@@ -761,7 +761,7 @@ export default function ProfileTab({ profile, summary, refresh, openToday }) {
                 hint={`${metaError} Your saved settings are unchanged — but don't edit this card until the lists load. Retry below.`} />
               <button type="button" onClick={loadMeta}
                 className="text-xs font-bold mt-2 px-3 py-1.5 rounded-xl"
-                style={{ background: C.card2, border: `1px solid ${C.rule}`, color: C.ink }}>
+                style={{ background: "var(--secondary)", border: "1px solid var(--border)", color: "var(--foreground)" }}>
                 Retry loading options
               </button>
             </div>
@@ -792,14 +792,14 @@ export default function ProfileTab({ profile, summary, refresh, openToday }) {
               // Without this the quick-chip row would just be blank, which
               // reads as "no allergies set" — the exact confusion
               // frontend-arch-4 is about.
-              <div className="text-xs font-bold mt-2" style={{ color: C.warn }}>
+              <div className="text-xs font-bold mt-2" style={{ color: "var(--warn)" }}>
                 The common-allergen shortcuts are unavailable while the option list is down. Everything already
                 excluded is listed above and is still being applied, and search + free text still work.
               </div>
             )}
 
             {savingKeys.length > 0 && (
-              <div className="text-xs font-bold mt-2" style={{ color: C.warn }}>
+              <div className="text-xs font-bold mt-2" style={{ color: "var(--warn)" }}>
                 Saving your exclusions — not confirmed yet.
               </div>
             )}
@@ -809,14 +809,14 @@ export default function ProfileTab({ profile, summary, refresh, openToday }) {
                 it really has. Sits directly under the control it describes, which
                 is why it lives inside this block and not further down the card. */}
             {exclusionFailure && (
-              <div role="alert" className="mt-2 p-3 rounded-xl" style={{ background: C.redBg, border: `1px solid ${C.red}` }}>
+              <div role="alert" className="mt-2 p-3 rounded-xl" style={{ background: "color-mix(in srgb, var(--destructive) 12%, transparent)", border: `1px solid ${"var(--destructive)"}` }}>
                 <div className="flex items-start gap-2.5">
-                  <AlertTriangle size={15} className="mt-0.5 shrink-0" style={{ color: C.red }} aria-hidden="true" />
+                  <AlertTriangle size={15} className="mt-0.5 shrink-0" style={{ color: "var(--destructive)" }} aria-hidden="true" />
                   <div className="min-w-0">
-                    <div className="text-xs font-extrabold" style={{ color: C.red }}>
+                    <div className="text-xs font-extrabold" style={{ color: "var(--destructive)" }}>
                       NOT SAVED — “{exclusionFailure.label}” {exclusionFailure.want ? "is NOT excluded" : "is STILL excluded"}
                     </div>
-                    <div className="text-xs font-semibold mt-1" style={{ color: C.ink }}>
+                    <div className="text-xs font-semibold mt-1" style={{ color: "var(--foreground)" }}>
                       {exclusionFailure.kind === "unknown"
                         ? (exclusionFailure.want
                           ? "The server never answered, so we can't confirm the exclusion was recorded. The chip has been put back to the last state the server confirmed — treat this allergen as NOT excluded, and do not rely on a meal plan to keep it out until this is resolved."
@@ -825,7 +825,7 @@ export default function ProfileTab({ profile, summary, refresh, openToday }) {
                           ? "The server refused the change, so the allergen is NOT excluded. Nothing about your plans has changed — but nothing is protecting you from it either."
                           : "The server refused the change, so the exclusion is still in force.")}
                     </div>
-                    <div className="text-xs font-semibold mt-1" style={{ color: C.faint }}>{exclusionFailure.detail}</div>
+                    <div className="text-xs font-semibold mt-1" style={{ color: "var(--muted-foreground)" }}>{exclusionFailure.detail}</div>
                     <div className="flex gap-2 mt-2">
                       <Btn small onClick={retryExclusion} disabled={savingKeys.length > 0 || rechecking}>Try again</Btn>
                       <Btn small kind="ghost" onClick={recheckExclusions} disabled={rechecking || savingKeys.length > 0}>
@@ -854,7 +854,7 @@ export default function ProfileTab({ profile, summary, refresh, openToday }) {
           {/* AI-recipe fields are optional — collapsed by default so they stop
               crowding the safety-critical diet/allergy controls above. */}
           <button type="button" onClick={() => setAiPrefsOpen((o) => !o)} aria-expanded={aiPrefsOpen}
-            className="flex items-center gap-1.5 mt-4 text-xs font-bold" style={{ color: C.faint }}>
+            className="flex items-center gap-1.5 mt-4 text-xs font-bold" style={{ color: "var(--muted-foreground)" }}>
             <ChevronRight size={13} style={{ transform: aiPrefsOpen ? "rotate(90deg)" : "none", transition: "transform .15s" }} />
             AI recipe preferences (optional)
           </button>
@@ -875,7 +875,7 @@ export default function ProfileTab({ profile, summary, refresh, openToday }) {
             </div>
           )}
 
-          <div className="text-xs font-semibold mt-4" style={{ color: exclusionFailure ? C.warn : C.faint }}>
+          <div className="text-xs font-semibold mt-4" style={{ color: exclusionFailure ? "var(--warn)" : "var(--muted-foreground)" }}>
             {exclusionFailure
               ? "Anything excluded here never appears in a plan or recipe — but the change above is NOT saved, so it is not being applied."
               : "Anything excluded here never appears in a plan or recipe."}
@@ -888,7 +888,7 @@ export default function ProfileTab({ profile, summary, refresh, openToday }) {
               reads as "you have no rate set" (frontend-arch-4). Fall back to
               showing the saved rate, and say why the others are missing. */}
           {metaError && (
-            <div className="text-xs font-bold mb-2" style={{ color: C.warn }}>
+            <div className="text-xs font-bold mb-2" style={{ color: "var(--warn)" }}>
               Rate options couldn't be loaded — only your saved rate is shown. Your prescription is unchanged.
             </div>
           )}
@@ -898,23 +898,23 @@ export default function ProfileTab({ profile, summary, refresh, openToday }) {
               return (
                 <button key={r} onClick={() => commit({ rateLbPerWeek: r })} aria-pressed={active}
                   className="px-4 py-2.5 rounded-xl text-center"
-                  style={{ background: active ? C.card2 : "transparent", border: `1px solid ${active ? C.faintLight : C.rule}` }}>
+                  style={{ background: active ? "var(--secondary)" : "transparent", border: `1px solid ${active ? "var(--muted-foreground)" : "var(--border)"}` }}>
                   {/* Metric users get kg/wk as the bold primary — every other
                       number on this tab converts, so this one should too. */}
-                  <div className="mono text-sm font-extrabold" style={{ color: active ? C.ink : C.faint }}>{pref === "metric" ? `${r1(r * 0.453592)} kg/wk` : `${r} lb/wk`}</div>
-                  <div className="text-[10px] font-bold" style={{ color: C.faintLight }}>{pref === "metric" ? `${r} lb/wk` : `${r1(r * 0.453592)} kg/wk`}</div>
+                  <div className="mono text-sm font-extrabold" style={{ color: active ? "var(--foreground)" : "var(--muted-foreground)" }}>{pref === "metric" ? `${r1(r * 0.453592)} kg/wk` : `${r} lb/wk`}</div>
+                  <div className="text-[10px] font-bold" style={{ color: "var(--muted-foreground)" }}>{pref === "metric" ? `${r} lb/wk` : `${r1(r * 0.453592)} kg/wk`}</div>
                 </button>
               );
             })}
           </div>
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 items-end">
             <div>
-              <div className="text-xs font-semibold" style={{ color: C.faint }}>Daily target</div>
-              <div className="mono stat-hero text-3xl" style={{ color: C.ink }}>{kc(summary.target?.target ?? profile.targetKcal)}<span className="text-xs ml-1" style={{ color: C.faint, fontWeight: 600 }}>kcal</span></div>
-              <div className="text-[10.5px] font-semibold mt-0.5" style={{ color: C.faint }}>
+              <div className="text-xs font-semibold" style={{ color: "var(--muted-foreground)" }}>Daily target</div>
+              <div className="mono stat-hero text-3xl" style={{ color: "var(--foreground)" }}>{kc(summary.target?.target ?? profile.targetKcal)}<span className="text-xs ml-1" style={{ color: "var(--muted-foreground)", fontWeight: 600 }}>kcal</span></div>
+              <div className="text-[10.5px] font-semibold mt-0.5" style={{ color: "var(--muted-foreground)" }}>
                 TDEE {kc(summary.energy?.tdee ?? 0)} − {kc(summary.target?.deficit ?? 0)} deficit
                 {summary.target?.floored && (
-                  <span style={{ color: C.warn }}> → held at floor · ~{summary.target.achievableRate} lb/wk actual</span>
+                  <span style={{ color: "var(--warn)" }}> → held at floor · ~{summary.target.achievableRate} lb/wk actual</span>
                 )}
               </div>
             </div>
@@ -926,9 +926,9 @@ export default function ProfileTab({ profile, summary, refresh, openToday }) {
                   rate that floor actually delivers; the old version divided by
                   the picked rate and produced a date the card itself, eight
                   lines above, had already contradicted. */}
-              <div className="text-xs font-semibold" style={{ color: C.faint }}>Goal date, if the plan holds</div>
-              <div className="text-lg font-extrabold" style={{ color: C.ink }}>{goalProjection.date || "—"}</div>
-              <div className="text-[10.5px] font-semibold mt-0.5" style={{ color: goalProjection.floored ? C.warn : C.faint }}>
+              <div className="text-xs font-semibold" style={{ color: "var(--muted-foreground)" }}>Goal date, if the plan holds</div>
+              <div className="text-lg font-extrabold" style={{ color: "var(--foreground)" }}>{goalProjection.date || "—"}</div>
+              <div className="text-[10.5px] font-semibold mt-0.5" style={{ color: goalProjection.floored ? "var(--warn)" : "var(--muted-foreground)" }}>
                 {goalProjection.reason === "at-or-past-goal"
                   ? "You're at or past your goal weight — nothing to project."
                   : goalProjection.reason === "no-deficit"
@@ -956,21 +956,21 @@ export default function ProfileTab({ profile, summary, refresh, openToday }) {
                   numbers are inside the limits THIS APP ships with. */}
               {summary.rateSafety?.unsafe ? (
                 <div className="flex items-center gap-2">
-                  <AlertTriangle size={16} style={{ color: C.warn }} aria-hidden="true" />
-                  <span className="text-xs font-bold" style={{ color: C.warn }}>Aggressive — acknowledged</span>
+                  <AlertTriangle size={16} style={{ color: "var(--warn)" }} aria-hidden="true" />
+                  <span className="text-xs font-bold" style={{ color: "var(--warn)" }}>Aggressive — acknowledged</span>
                 </div>
               ) : (
                 <div className="flex items-center gap-2">
-                  <ShieldCheck size={16} style={{ color: C.faint }} aria-hidden="true" />
-                  <span className="text-xs font-bold" style={{ color: C.ink }}>Inside this app&apos;s default limits</span>
+                  <ShieldCheck size={16} style={{ color: "var(--muted-foreground)" }} aria-hidden="true" />
+                  <span className="text-xs font-bold" style={{ color: "var(--foreground)" }}>Inside this app&apos;s default limits</span>
                 </div>
               )}
-              <div className="text-[10.5px] font-semibold mt-1" style={{ color: C.faintLight }}>
+              <div className="text-[10.5px] font-semibold mt-1" style={{ color: "var(--muted-foreground)" }}>
                 Conservative defaults — not a statement that this intake is safe for you.
               </div>
             </div>
           </div>
-          <div className="text-xs font-semibold mt-3" style={{ color: C.faint }}>
+          <div className="text-xs font-semibold mt-3" style={{ color: "var(--muted-foreground)" }}>
             Rates above ~1% of body weight per week, or targets that hit your floor, need an explicit "I understand" before they apply. Changing the rate updates the target, macro ranges, projections, and meal-plan targets instantly.
           </div>
         </Card>
@@ -982,11 +982,11 @@ export default function ProfileTab({ profile, summary, refresh, openToday }) {
             Neutral tone: not a warning, not framed around this app, no red/
             amber judgment color. */}
         <Card section="RESOURCES" title="Outside help, if you ever want it" className="xl:col-span-12">
-          <p className="text-xs font-semibold mb-1" style={{ color: C.faint }}>
+          <p className="text-xs font-semibold mb-1" style={{ color: "var(--muted-foreground)" }}>
             If food, eating, or your body ever feels hard, these are free, confidential Alberta &amp; Canada
             services — entirely optional. You can also run the private Wellbeing check any time from the sidebar.
           </p>
-          <p className="text-[11px] mb-3" style={{ color: C.faintLight }}>{WELLBEING_RESOURCES_NOTE}</p>
+          <p className="text-[11px] mb-3" style={{ color: "var(--muted-foreground)" }}>{WELLBEING_RESOURCES_NOTE}</p>
           <ResourceList />
         </Card>
 

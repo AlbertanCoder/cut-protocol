@@ -133,21 +133,21 @@ export default function CoachSettings() {
       <div
         className="flex items-start gap-2.5 rounded-2xl px-3.5 py-3 mb-3"
         style={{
-          background: C.card2,
-          border: `1px solid ${connected ? C.accent : C.rule}`,
+          background: "var(--secondary)",
+          border: `1px solid ${connected ? C.accent : "var(--border)"}`,
         }}
       >
         {connected ? (
           <Check size={16} strokeWidth={2.5} style={{ color: C.accent, marginTop: 1, flexShrink: 0 }} />
         ) : (
-          <Link2 size={16} strokeWidth={2.5} style={{ color: info.tone === "warn" ? C.warn : C.faint, marginTop: 1, flexShrink: 0 }} />
+          <Link2 size={16} strokeWidth={2.5} style={{ color: info.tone === "warn" ? "var(--warn)" : "var(--muted-foreground)", marginTop: 1, flexShrink: 0 }} />
         )}
         <div>
-          <div className="text-xs font-extrabold" style={{ color: connected ? C.accent : C.ink }}>
+          <div className="text-xs font-extrabold" style={{ color: connected ? C.accent : "var(--foreground)" }}>
             {status === null ? "Checking…" : info.title}
           </div>
           {status !== null && (
-            <div className="text-[11px] font-semibold mt-0.5" style={{ color: C.faint }}>{info.body}</div>
+            <div className="text-[11px] font-semibold mt-0.5" style={{ color: "var(--muted-foreground)" }}>{info.body}</div>
           )}
         </div>
       </div>
@@ -165,14 +165,14 @@ export default function CoachSettings() {
           <Btn kind="ghost" small onClick={disconnect} disabled={busy}>
             <span className="inline-flex items-center gap-1.5"><Trash2 size={13} strokeWidth={2.5} /> Turn the coach off</span>
           </Btn>
-          <span className="text-[11px] font-semibold" style={{ color: C.faintLight }}>
+          <span className="text-[11px] font-semibold" style={{ color: "var(--muted-foreground)" }}>
             Turning it off deletes the saved settings from this computer.
           </span>
         </div>
       ) : (
         <>
           <label className="block mb-2.5">
-            <span className="text-[11px] font-extrabold tracking-wide" style={{ color: C.faint }}>RELAY ADDRESS</span>
+            <span className="text-[11px] font-extrabold tracking-wide" style={{ color: "var(--muted-foreground)" }}>RELAY ADDRESS</span>
             <input
               type="text"
               value={url}
@@ -181,12 +181,12 @@ export default function CoachSettings() {
               spellCheck={false}
               autoComplete="off"
               className="w-full mt-1 rounded-xl px-3 py-2 text-xs font-semibold outline-none"
-              style={{ background: C.card2, border: `1px solid ${C.rule}`, color: C.ink }}
+              style={{ background: "var(--secondary)", border: "1px solid var(--border)", color: "var(--foreground)" }}
             />
           </label>
 
           <label className="block mb-3">
-            <span className="text-[11px] font-extrabold tracking-wide" style={{ color: C.faint }}>DEVICE TOKEN</span>
+            <span className="text-[11px] font-extrabold tracking-wide" style={{ color: "var(--muted-foreground)" }}>DEVICE TOKEN</span>
             <input
               // type=password so a credential is not left readable on screen —
               // this card sits on a tab a user might be showing someone.
@@ -197,7 +197,7 @@ export default function CoachSettings() {
               spellCheck={false}
               autoComplete="off"
               className="w-full mt-1 rounded-xl px-3 py-2 text-xs font-semibold outline-none"
-              style={{ background: C.card2, border: `1px solid ${C.rule}`, color: C.ink }}
+              style={{ background: "var(--secondary)", border: "1px solid var(--border)", color: "var(--foreground)" }}
             />
           </label>
 
@@ -207,14 +207,14 @@ export default function CoachSettings() {
             <Btn kind="ink" small onClick={save} disabled={busy || !url.trim() || !token.trim()}>
               {busy ? "Saving…" : "Turn the coach on"}
             </Btn>
-            <span className="text-[11px] font-semibold" style={{ color: C.faintLight }}>
+            <span className="text-[11px] font-semibold" style={{ color: "var(--muted-foreground)" }}>
               Both values are stored on this computer only. They are never part of the app you share.
             </span>
           </div>
         </>
       )}
 
-      <div className="text-[10.5px] font-semibold mt-3" style={{ color: C.faintLight }}>
+      <div className="text-[10.5px] font-semibold mt-3" style={{ color: "var(--muted-foreground)" }}>
         The coach never sets your calorie or macro numbers — those always come from the engine. It reads them and talks about them.
       </div>
     </Card>

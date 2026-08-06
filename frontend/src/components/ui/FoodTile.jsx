@@ -17,11 +17,11 @@ export default function FoodTile({ recipe, size = 36 }) {
       style={{
         width: size,
         height: size,
-        background: `linear-gradient(155deg, ${C.card2}, ${C.card})`,
-        border: `1px solid ${C.rule}`,
+        background: `linear-gradient(155deg, ${"var(--secondary)"}, ${"var(--card)"})`,
+        border: "1px solid var(--border)",
       }}
     >
-      <Icon size={Math.round(size * 0.5)} strokeWidth={2} aria-hidden="true" style={{ color: C.faint }} />
+      <Icon size={Math.round(size * 0.5)} strokeWidth={2} aria-hidden="true" style={{ color: "var(--muted-foreground)" }} />
     </div>
   );
 }

@@ -148,11 +148,11 @@ export default function AllergySearch({
   return (
     <div>
       {/* ── search + predictive dropdown ── */}
-      <label className="block mb-1 text-xs font-bold" style={{ color: C.faint }} htmlFor={inputId}>
+      <label className="block mb-1 text-xs font-bold" style={{ color: "var(--muted-foreground)" }} htmlFor={inputId}>
         Search allergies &amp; exclusions
       </label>
       <div className="relative">
-        <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: C.faintLight }} aria-hidden="true" />
+        <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: "var(--muted-foreground)" }} aria-hidden="true" />
         <input
           id={inputId}
           ref={inputRef}
@@ -175,10 +175,10 @@ export default function AllergySearch({
           onBlur={() => { blurTimer.current = setTimeout(() => setOpen(false), 150); }}
           onKeyDown={onKeyDown}
           className="text-sm pl-9 pr-3 py-2 rounded-xl w-full"
-          style={{ background: C.card2, border: `1.5px solid ${C.rule}`, color: C.ink }}
+          style={{ background: "var(--secondary)", border: "1.5px solid var(--border)", color: "var(--foreground)" }}
         />
       </div>
-      <div id={`${inputId}-help`} className="text-xs font-semibold mt-1" style={{ color: C.faint }}>
+      <div id={`${inputId}-help`} className="text-xs font-semibold mt-1" style={{ color: "var(--muted-foreground)" }}>
         Arrow keys to browse, Enter to add, Escape to close. Not in the list? Type it and press Enter — it is still applied.
       </div>
       {/* Result count for screen readers — a dropdown appearing silently is
@@ -193,7 +193,7 @@ export default function AllergySearch({
           role="listbox"
           aria-label="Allergen suggestions"
           className="mt-1.5 max-h-56 overflow-y-auto rounded-xl"
-          style={{ background: C.card2, border: `1px solid ${C.rule}` }}
+          style={{ background: "var(--secondary)", border: "1px solid var(--border)" }}
         >
           {rows.map((row, i) => {
             const isActive = i === active;
@@ -213,22 +213,22 @@ export default function AllergySearch({
                 className="px-3 py-2 text-sm font-semibold flex items-center gap-2"
                 style={{
                   // Active row = lightness step, never green (law a).
-                  background: isActive ? C.card : "transparent",
-                  borderBottom: `1px solid ${C.rule}`,
-                  borderLeft: `2px solid ${isActive ? C.faintLight : "transparent"}`,
-                  color: C.ink,
+                  background: isActive ? "var(--card)" : "transparent",
+                  borderBottom: "1px solid var(--border)",
+                  borderLeft: `2px solid ${isActive ? "var(--muted-foreground)" : "transparent"}`,
+                  color: "var(--foreground)",
                 }}
               >
                 {row.kind === "free" ? (
                   <>
-                    <Plus size={13} style={{ color: C.faint }} aria-hidden="true" />
+                    <Plus size={13} style={{ color: "var(--muted-foreground)" }} aria-hidden="true" />
                     <span className="truncate">Add “{row.label}” as your own</span>
                   </>
                 ) : (
                   <>
                     <span className="truncate">{row.label}</span>
                     {row.entry.synonyms?.length > 0 && (
-                      <span className="text-xs font-semibold truncate ml-auto" style={{ color: C.faint }}>
+                      <span className="text-xs font-semibold truncate ml-auto" style={{ color: "var(--muted-foreground)" }}>
                         {row.entry.synonyms.slice(0, 3).join(", ")}
                       </span>
                     )}
@@ -243,7 +243,7 @@ export default function AllergySearch({
       {/* Honest about the vocabulary itself: a missing taxonomy narrows what
           search can FIND, it never narrows what is enforced. */}
       {taxonomy.length === 0 && (
-        <div className="text-xs font-semibold mt-1.5" style={{ color: C.warn }}>
+        <div className="text-xs font-semibold mt-1.5" style={{ color: "var(--warn)" }}>
           Search list unavailable{taxonomyReason ? ` (${taxonomyReason})` : ""} — the common allergens below still work,
           and anything you type is still applied.
         </div>
@@ -254,7 +254,7 @@ export default function AllergySearch({
           need the search box at all. */}
       {quickOptions.length > 0 && (
         <>
-          <div className="text-xs font-bold mt-3 mb-1.5" style={{ color: C.faint }}>Common allergens</div>
+          <div className="text-xs font-bold mt-3 mb-1.5" style={{ color: "var(--muted-foreground)" }}>Common allergens</div>
           <div className="flex flex-wrap gap-1.5">
             {quickOptions.map((a) => {
               const on = selectedNorm.includes(normTerm(a.key));
@@ -269,14 +269,14 @@ export default function AllergySearch({
                   onClick={() => (on ? onRemove?.(a.key) : onAdd?.(a.key))}
                   className="px-3 py-1.5 rounded-full text-sm font-semibold transition-colors inline-flex items-center gap-1.5"
                   style={{
-                    background: on ? C.card2 : "transparent",
-                    border: `1px solid ${on ? C.faintLight : C.rule}`,
-                    color: on ? C.ink : C.faint,
+                    background: on ? "var(--secondary)" : "transparent",
+                    border: `1px solid ${on ? "var(--muted-foreground)" : "var(--border)"}`,
+                    color: on ? "var(--foreground)" : "var(--muted-foreground)",
                     opacity: saving ? 0.6 : 1,
                   }}
                 >
                   {a.label}
-                  {saving && <span className="text-xs font-bold uppercase" style={{ color: C.warn }}>saving…</span>}
+                  {saving && <span className="text-xs font-bold uppercase" style={{ color: "var(--warn)" }}>saving…</span>}
                   {saving && <span className="sr-only"> — saving, not confirmed yet</span>}
                 </button>
               );
@@ -286,12 +286,12 @@ export default function AllergySearch({
       )}
 
       {/* ── the chips actually in force ── */}
-      <div className="text-xs font-bold mt-3 mb-1.5" style={{ color: C.faint }}>
+      <div className="text-xs font-bold mt-3 mb-1.5" style={{ color: "var(--muted-foreground)" }}>
         Excluded ({selected.length})
       </div>
       {selected.length === 0 ? (
         // None is a valid state and must READ as a deliberate one.
-        <div className="text-xs font-semibold" style={{ color: C.faint }}>
+        <div className="text-xs font-semibold" style={{ color: "var(--muted-foreground)" }}>
           Nothing excluded. That is a valid setting — add anything above if you need it.
         </div>
       ) : (
@@ -305,16 +305,16 @@ export default function AllergySearch({
                 <span
                   className={chipBase}
                   style={{
-                    background: C.card2,
-                    border: `1px solid ${literal ? `${C.warn}66` : C.faintLight}`,
-                    color: C.ink,
+                    background: "var(--secondary)",
+                    border: `1px solid ${literal ? `${"var(--warn)"}66` : "var(--muted-foreground)"}`,
+                    color: "var(--foreground)",
                     opacity: saving ? 0.6 : 1,
                   }}
                 >
                   {labelFor(term)}
                   {saving && (
                     <>
-                      <span className="text-xs font-bold uppercase" style={{ color: C.warn }}>saving…</span>
+                      <span className="text-xs font-bold uppercase" style={{ color: "var(--warn)" }}>saving…</span>
                       <span className="sr-only"> — saving, not confirmed yet</span>
                     </>
                   )}
@@ -324,7 +324,7 @@ export default function AllergySearch({
                     disabled={disabled || saving}
                     aria-label={`Remove ${labelFor(term)} from your exclusions`}
                     className="w-6 h-6 rounded-full inline-flex items-center justify-center"
-                    style={{ color: C.faint, border: `1px solid ${C.rule}` }}
+                    style={{ color: "var(--muted-foreground)", border: "1px solid var(--border)" }}
                   >
                     <X size={13} aria-hidden="true" />
                   </button>
@@ -341,14 +341,14 @@ export default function AllergySearch({
           partial capability the user is entitled to see — stated in calm
           amber, never red: this is food data, and it is not a failure. */}
       {notes.length > 0 && (
-        <div className="mt-3 p-3 rounded-xl" style={{ background: C.warnBg, border: `1px solid ${C.warn}55` }}>
+        <div className="mt-3 p-3 rounded-xl" style={{ background: "color-mix(in srgb, var(--warn) 12%, transparent)", border: "1px solid color-mix(in srgb, var(--warn) 33%, transparent)" }}>
           <div className="flex items-start gap-2">
-            <AlertTriangle size={14} className="mt-0.5 shrink-0" style={{ color: C.warn }} aria-hidden="true" />
+            <AlertTriangle size={14} className="mt-0.5 shrink-0" style={{ color: "var(--warn)" }} aria-hidden="true" />
             <div className="min-w-0 flex-1">
-              <div className="text-xs font-extrabold mb-1" style={{ color: C.warn }}>How these are matched</div>
+              <div className="text-xs font-extrabold mb-1" style={{ color: "var(--warn)" }}>How these are matched</div>
               <ul className="flex flex-col gap-1.5">
                 {notes.map((n) => (
-                  <li key={n.term} className="text-xs font-semibold" style={{ color: C.ink }}>
+                  <li key={n.term} className="text-xs font-semibold" style={{ color: "var(--foreground)" }}>
                     <b>{n.term}</b>{" — "}
                     {/* T-5: a CONDITIONAL request ("no cow dairy but sheep is
                         fine") filters nothing at all. Saying "exact text match"
@@ -366,7 +366,7 @@ export default function AllergySearch({
                         onClick={() => onReplace(n.term, n.suggestion.key, n.suggestion.label)}
                         disabled={disabled || busyTerms.length > 0}
                         className="ml-2 px-2 py-0.5 rounded-lg text-xs font-bold align-middle"
-                        style={{ background: C.card2, border: `1px solid ${C.faintLight}`, color: C.ink }}
+                        style={{ background: "var(--secondary)", border: `1px solid ${"var(--muted-foreground)"}`, color: "var(--foreground)" }}
                       >
                         Use {n.suggestion.label} instead
                       </button>
@@ -374,7 +374,7 @@ export default function AllergySearch({
                   </li>
                 ))}
               </ul>
-              <div className="text-xs font-semibold mt-1.5" style={{ color: C.faint }}>
+              <div className="text-xs font-semibold mt-1.5" style={{ color: "var(--muted-foreground)" }}>
                 An exact-text term is still applied — it just matches the words it contains, not a whole allergen family.
               </div>
             </div>
@@ -385,13 +385,13 @@ export default function AllergySearch({
       {/* "We couldn't check" and "everything is a clean category match" are
           different facts and are never allowed to look the same. */}
       {!describeAvailable && selected.length > 0 && (
-        <div className="text-xs font-semibold mt-2" style={{ color: C.warn }}>
+        <div className="text-xs font-semibold mt-2" style={{ color: "var(--warn)" }}>
           Couldn&apos;t check how these terms will be matched — they are still applied exactly as saved.
         </div>
       )}
 
       {atCapacity && (
-        <div className="text-xs font-semibold mt-2" style={{ color: C.warn }}>
+        <div className="text-xs font-semibold mt-2" style={{ color: "var(--warn)" }}>
           {MAX_TERMS} exclusions is the limit — remove one before adding another.
         </div>
       )}

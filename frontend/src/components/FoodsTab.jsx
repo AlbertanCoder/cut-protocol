@@ -106,22 +106,22 @@ function FoodRow({ food, selected, onSelect, dotColor }) {
     <button
       onClick={() => onSelect(food)}
       className="w-full flex items-center gap-2.5 px-2 rounded-lg text-left"
-      style={{ height: ROW_H, background: selected ? C.card2 : "transparent", borderBottom: `1px solid ${C.rule}` }}
+      style={{ height: ROW_H, background: selected ? "var(--secondary)" : "transparent", borderBottom: "1px solid var(--border)" }}
     >
       <span className="w-2 h-2 rounded-full shrink-0" style={{ background: dotColor }}></span>
       <div className="flex-1 min-w-0">
-        <div className="text-sm font-bold truncate flex items-center gap-1.5" style={{ color: C.ink }}>
+        <div className="text-sm font-bold truncate flex items-center gap-1.5" style={{ color: "var(--foreground)" }}>
           {/* a11y: the provenance glyph is information, not ambience — it is
               the only thing marking a row as crowd-sourced, so it reads at
               --faint (60%), not --faint-light (38%, 3.26:1). */}
-          {community && <Barcode size={12} className="shrink-0" style={{ color: C.faint }} title="Community (Open Food Facts)" />}
+          {community && <Barcode size={12} className="shrink-0" style={{ color: "var(--muted-foreground)" }} title="Community (Open Food Facts)" />}
           <span className="truncate">{food.name}</span>
-          {warn && <AlertTriangle size={12} className="shrink-0" style={{ color: C.warn }} title={warn.detail} />}
+          {warn && <AlertTriangle size={12} className="shrink-0" style={{ color: "var(--warn)" }} title={warn.detail} />}
         </div>
       </div>
       <div className="text-right shrink-0">
-        <span className="mono text-sm font-extrabold" style={{ color: C.ink }}>{Math.round(food.kcal)}</span>
-        <span className="text-[10.5px] font-semibold ml-1.5" style={{ color: C.faint }}>{g1(food.protein)}P {g1(food.fat)}F {g1(food.carb)}C</span>
+        <span className="mono text-sm font-extrabold" style={{ color: "var(--foreground)" }}>{Math.round(food.kcal)}</span>
+        <span className="text-[10.5px] font-semibold ml-1.5" style={{ color: "var(--muted-foreground)" }}>{g1(food.protein)}P {g1(food.fat)}F {g1(food.carb)}C</span>
       </div>
     </button>
   );
@@ -224,9 +224,9 @@ function FoodDetail({ food, isAdmin, onSaved, refreshFoods }) {
     setRecipeError(null);
   }, [food.id]);
 
-  const inpStyle = { background: C.card2, border: `1.5px solid ${C.rule}`, color: C.ink };
+  const inpStyle = { background: "var(--secondary)", border: "1.5px solid var(--border)", color: "var(--foreground)" };
   const inp = "text-sm px-3 py-2 rounded-xl w-full mt-1";
-  const label = (t) => <span className="text-xs font-bold" style={{ color: C.faint }}>{t}</span>;
+  const label = (t) => <span className="text-xs font-bold" style={{ color: "var(--muted-foreground)" }}>{t}</span>;
 
   const startEdit = () => setDraft({
     kcal: food.kcal, protein: food.protein, fat: food.fat, carb: food.carb,
@@ -299,7 +299,7 @@ function FoodDetail({ food, isAdmin, onSaved, refreshFoods }) {
   return (
     <Card section="DETAIL" title={food.name}>
       <div className="flex flex-wrap gap-1.5 mb-3">
-        <Chip color={C.faint}>
+        <Chip color={"var(--muted-foreground)"}>
           <span className="inline-block w-1.5 h-1.5 rounded-full mr-1.5 align-middle" style={{ background: CATEGORY_DOT(food.category) }}></span>
           {categoryLabel(food.category)}
         </Chip>
@@ -307,21 +307,21 @@ function FoodDetail({ food, isAdmin, onSaved, refreshFoods }) {
             gets the same calm amber as the UNVERIFIED MACROS badge beside it
             — the two are the same class of problem and used to be shouted in
             two different colors. Red on food data is reserved for nothing. */}
-        <Chip color={placeholder ? C.warn : C.faint} bg={placeholder ? C.warnBg : undefined}>
+        <Chip color={placeholder ? "var(--warn)" : "var(--muted-foreground)"} bg={placeholder ? "color-mix(in srgb, var(--warn) 12%, transparent)" : undefined}>
           {sourceLabel(food.source)}{food.fdcId ? ` · USDA record #${food.fdcId}` : ""}{food.brand ? ` · ${food.brand}` : ""}{food.upc ? ` · UPC ${food.upc}` : ""}
         </Chip>
-        {warn && <Chip color={C.warn} bg={C.warnBg}>{warn.label}</Chip>}
+        {warn && <Chip color={"var(--warn)"} bg={"color-mix(in srgb, var(--warn) 12%, transparent)"}>{warn.label}</Chip>}
       </div>
 
       {warn && (
-        <div className="text-xs font-semibold mb-3" style={{ color: C.warn }}>
+        <div className="text-xs font-semibold mb-3" style={{ color: "var(--warn)" }}>
           {warn.detail}
           {quarantineNote(food) && " Don't build a plan on this row until it's corrected."}
         </div>
       )}
 
       {placeholder && (
-        <div className="text-xs font-bold mb-3" style={{ color: C.warn }}>
+        <div className="text-xs font-bold mb-3" style={{ color: "var(--warn)" }}>
           Zero-macro placeholder — recipes using this food undercount until real values are entered.
         </div>
       )}
@@ -329,7 +329,7 @@ function FoodDetail({ food, isAdmin, onSaved, refreshFoods }) {
       {community && (
         // a11y: body copy reads at --faint (60%, 6.5:1+). --faint-light is
         // 3.26:1 and fails WCAG AA at text sizes.
-        <div className="text-[10.5px] font-semibold mb-3" style={{ color: C.faint }}>
+        <div className="text-[10.5px] font-semibold mb-3" style={{ color: "var(--muted-foreground)" }}>
           Crowd-sourced from Open Food Facts, not USDA-audited — treat as a reasonable estimate, not a lab-verified figure.
         </div>
       )}
@@ -347,7 +347,7 @@ function FoodDetail({ food, isAdmin, onSaved, refreshFoods }) {
             {isAdmin ? (
               <Btn small onClick={startEdit}>Edit</Btn>
             ) : (
-              <span className="text-xs font-semibold self-center" style={{ color: C.faint }}>Editing is admin-only.</span>
+              <span className="text-xs font-semibold self-center" style={{ color: "var(--muted-foreground)" }}>Editing is admin-only.</span>
             )}
             <Btn small kind="ghost" onClick={openRecipePicker}>
               <BookOpen size={12} className="inline mr-1" />Add to a recipe
@@ -358,7 +358,7 @@ function FoodDetail({ food, isAdmin, onSaved, refreshFoods }) {
               </Btn>
             </span>
           </div>
-          <div className="text-[10.5px] font-semibold mt-2" style={{ color: C.faint }}>
+          <div className="text-[10.5px] font-semibold mt-2" style={{ color: "var(--muted-foreground)" }}>
             "Log today" unlocks when the food diary ships — no silent fake logging.
           </div>
         </>
@@ -390,15 +390,15 @@ function FoodDetail({ food, isAdmin, onSaved, refreshFoods }) {
             <Btn small onClick={save} disabled={busy}><Save size={12} className="inline mr-1" />{busy ? "Saving…" : "Save"}</Btn>
             <Btn small kind="ghost" onClick={() => setDraft(null)} disabled={busy}>Cancel</Btn>
           </div>
-          <div className="text-[10.5px] font-semibold mt-2" style={{ color: C.faint }}>
+          <div className="text-[10.5px] font-semibold mt-2" style={{ color: "var(--muted-foreground)" }}>
             The validator rejects values where kcal drifts from 4P + 4C + 9F, so numbers that can't exist can't come back.
           </div>
         </div>
       )}
 
       {recipePicker && (
-        <div className="mt-4 pt-3" style={{ borderTop: `1px solid ${C.rule}` }}>
-          <div className="text-xs font-bold mb-2" style={{ color: C.faint }}>Add 100 g of {food.name} to:</div>
+        <div className="mt-4 pt-3" style={{ borderTop: "1px solid var(--border)" }}>
+          <div className="text-xs font-bold mb-2" style={{ color: "var(--muted-foreground)" }}>Add 100 g of {food.name} to:</div>
           <input placeholder="Search recipes…" value={recipeQuery} onChange={(e) => setRecipeQuery(e.target.value)}
             className="text-sm px-3 py-2 rounded-xl w-full mb-2" style={inpStyle} />
           <div className="max-h-56 overflow-y-auto">
@@ -408,14 +408,14 @@ function FoodDetail({ food, isAdmin, onSaved, refreshFoods }) {
             ) : recipes === null ? (
               <SkeletonRows rows={3} />
             ) : recipes.length === 0 ? (
-              <div className="text-sm font-semibold py-2" style={{ color: C.faint }}>You have no recipes yet — create one on the Recipes tab.</div>
+              <div className="text-sm font-semibold py-2" style={{ color: "var(--muted-foreground)" }}>You have no recipes yet — create one on the Recipes tab.</div>
             ) : (
               filteredRecipes.map((r) => (
                 <button key={r.id} onClick={() => addToRecipe(r)} disabled={addBusyId === r.id}
                   className="w-full text-left text-sm font-semibold py-1.5 px-2 rounded-lg hover:opacity-80 flex justify-between"
-                  style={{ color: C.ink, borderBottom: `1px solid ${C.rule}` }}>
+                  style={{ color: "var(--foreground)", borderBottom: "1px solid var(--border)" }}>
                   <span className="truncate">{r.name}</span>
-                  <span className="mono text-xs shrink-0" style={{ color: C.faint }}>{Math.round(r.kcal)} kcal</span>
+                  <span className="mono text-xs shrink-0" style={{ color: "var(--muted-foreground)" }}>{Math.round(r.kcal)} kcal</span>
                 </button>
               ))
             )}
@@ -578,22 +578,22 @@ export default function FoodsTab({ onBack, isAdmin, backLabel = "Recipes" }) {
       <div className="grid grid-cols-1 xl:grid-cols-12 gap-4 items-start">
         <div className="xl:col-span-7 min-w-0">
           <div className="relative mb-3">
-            <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: C.faintLight }} aria-hidden="true" />
+            <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: "var(--muted-foreground)" }} aria-hidden="true" />
             <input
               type="text" placeholder="Search all foods…" aria-label="Search all foods" value={query} onChange={(e) => setQuery(e.target.value)}
               className="w-full text-sm pl-9 pr-3 py-2.5 rounded-xl"
-              style={{ background: C.card, border: `1px solid ${C.rule}`, color: C.ink }}
+              style={{ background: "var(--card)", border: "1px solid var(--border)", color: "var(--foreground)" }}
             />
           </div>
 
           {!loading && !loadError && suspectCount > 0 && (
-            <div className="text-xs font-semibold mb-3 px-1" style={{ color: C.warn }}>
+            <div className="text-xs font-semibold mb-3 px-1" style={{ color: "var(--warn)" }}>
               {num(suspectCount)} of these rows are known to carry another food's numbers. They're marked with an amber triangle and explain themselves when you open them.
             </div>
           )}
 
           {partial && (
-            <div className="text-xs font-semibold mb-3 px-1" style={{ color: C.warn }}>
+            <div className="text-xs font-semibold mb-3 px-1" style={{ color: "var(--warn)" }}>
               The server sent {num(foods.length)} of {num(serverTotal)} foods — this page isn't showing the whole library yet.
             </div>
           )}
@@ -621,11 +621,11 @@ export default function FoodsTab({ onBack, isAdmin, backLabel = "Recipes" }) {
             </Card>
           ) : q ? (
             <Card>
-              <div className="text-xs font-semibold mb-1" style={{ color: C.faint }}>
+              <div className="text-xs font-semibold mb-1" style={{ color: "var(--muted-foreground)" }}>
                 {num(searchResults.length)} match{searchResults.length === 1 ? "" : "es"}{settling ? " · searching…" : ""}
               </div>
               {searchResults.length === 0 ? (
-                <div className="text-sm font-semibold py-2" style={{ color: C.faint }}>No foods match.</div>
+                <div className="text-sm font-semibold py-2" style={{ color: "var(--muted-foreground)" }}>No foods match.</div>
               ) : (
                 <VirtualFoodList
                   items={searchResults}
@@ -649,15 +649,15 @@ export default function FoodsTab({ onBack, isAdmin, backLabel = "Recipes" }) {
                       aria-expanded={open}
                       className="w-full flex items-center gap-3 px-4 py-3.5"
                     >
-                      {open ? <ChevronDown size={16} style={{ color: C.faint }} aria-hidden="true" /> : <ChevronRight size={16} style={{ color: C.faint }} aria-hidden="true" />}
+                      {open ? <ChevronDown size={16} style={{ color: "var(--muted-foreground)" }} aria-hidden="true" /> : <ChevronRight size={16} style={{ color: "var(--muted-foreground)" }} aria-hidden="true" />}
                       <span className="w-2.5 h-2.5 rounded-full" aria-hidden="true" style={{ background: CATEGORY_DOT(cat.slug) }}></span>
-                      <span className="text-sm font-extrabold flex-1 text-left" style={{ color: C.ink }}>{cat.label}</span>
-                      <span className="mono text-xs font-bold px-2 py-0.5 rounded-lg" style={{ color: C.faint, background: C.card2 }}>{num(items.length)}</span>
+                      <span className="text-sm font-extrabold flex-1 text-left" style={{ color: "var(--foreground)" }}>{cat.label}</span>
+                      <span className="mono text-xs font-bold px-2 py-0.5 rounded-lg" style={{ color: "var(--muted-foreground)", background: "var(--secondary)" }}>{num(items.length)}</span>
                     </button>
                     {open && (
                       <div className="px-3 pb-3">
                         {items.length === 0 ? (
-                          <div className="text-sm font-semibold py-2 px-2" style={{ color: C.faint }}>No foods in this category yet.</div>
+                          <div className="text-sm font-semibold py-2 px-2" style={{ color: "var(--muted-foreground)" }}>No foods in this category yet.</div>
                         ) : (
                           <VirtualFoodList
                             items={items}

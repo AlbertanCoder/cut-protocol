@@ -55,11 +55,11 @@ export default function WellbeingCheck({ open, onClose, onResult }) {
     onResult?.({ score, positive });
   };
 
-  const card = { background: C.card, border: `1px solid ${C.rule}` };
+  const card = { background: "var(--card)", border: "1px solid var(--border)" };
   const yesNoBtn = (active) => ({
-    background: active ? C.card2 : "transparent",
-    color: active ? C.ink : C.faint,
-    border: `1px solid ${active ? C.faintLight : C.rule}`,
+    background: active ? "var(--secondary)" : "transparent",
+    color: active ? "var(--foreground)" : "var(--muted-foreground)",
+    border: `1px solid ${active ? "var(--muted-foreground)" : "var(--border)"}`,
   });
 
   return (
@@ -72,15 +72,15 @@ export default function WellbeingCheck({ open, onClose, onResult }) {
                 dialog — not on-target, not success, not a primary action. It
                 used to be --accent, which spent the app's scarcest signal on
                 an ornament. Quiet ink tier instead. */}
-            <Heart size={18} aria-hidden="true" style={{ color: C.faint }} />
-            <h2 id={titleId} className="text-lg font-extrabold" style={{ color: C.ink }}>Wellbeing check</h2>
+            <Heart size={18} aria-hidden="true" style={{ color: "var(--muted-foreground)" }} />
+            <h2 id={titleId} className="text-lg font-extrabold" style={{ color: "var(--foreground)" }}>Wellbeing check</h2>
           </div>
-          <button type="button" onClick={onClose} aria-label="Close" className="rounded-lg p-1 hover:opacity-80" style={{ color: C.faint }}>
+          <button type="button" onClick={onClose} aria-label="Close" className="rounded-lg p-1 hover:opacity-80" style={{ color: "var(--muted-foreground)" }}>
             <X size={18} />
           </button>
         </div>
 
-        <p className="text-xs mb-4" style={{ color: C.faint }}>
+        <p className="text-xs mb-4" style={{ color: "var(--muted-foreground)" }}>
           A short, private self-check. It is <strong>not a diagnosis</strong> and nothing here leaves
           your computer. Cutting can be hard on your relationship with food — if any of this rings
           true, that alone is worth taking seriously.
@@ -89,9 +89,9 @@ export default function WellbeingCheck({ open, onClose, onResult }) {
         {/* SCOFF questions */}
         <div className="space-y-2.5">
           {SCOFF.map((s, i) => (
-            <div key={s.id} className="rounded-xl p-3" style={{ background: C.card2, border: `1px solid ${C.rule}` }}>
-              <div className="text-sm mb-2" style={{ color: C.ink }}>
-                <span style={{ color: C.faint }}>{i + 1}. </span>{s.q}
+            <div key={s.id} className="rounded-xl p-3" style={{ background: "var(--secondary)", border: "1px solid var(--border)" }}>
+              <div className="text-sm mb-2" style={{ color: "var(--foreground)" }}>
+                <span style={{ color: "var(--muted-foreground)" }}>{i + 1}. </span>{s.q}
               </div>
               {/* aria-pressed carries the selected state to AT — the visual
                   cue is a lightness step (law a: selection is never green),
@@ -122,9 +122,9 @@ export default function WellbeingCheck({ open, onClose, onResult }) {
             See my result
           </button>
           {answered > 0 && (
-            <button type="button" onClick={reset} className="text-xs font-semibold px-3 py-2 rounded-xl" style={{ color: C.faint, border: `1px solid ${C.rule}` }}>Reset</button>
+            <button type="button" onClick={reset} className="text-xs font-semibold px-3 py-2 rounded-xl" style={{ color: "var(--muted-foreground)", border: "1px solid var(--border)" }}>Reset</button>
           )}
-          {answered < SCOFF.length && <span className="text-xs" style={{ color: C.faint }}>{answered} of {SCOFF.length} answered</span>}
+          {answered < SCOFF.length && <span className="text-xs" style={{ color: "var(--muted-foreground)" }}>{answered} of {SCOFF.length} answered</span>}
         </div>
 
         {/* Result — calm amber for a positive screen, never red.
@@ -135,11 +135,11 @@ export default function WellbeingCheck({ open, onClose, onResult }) {
             the tone of the announcement should match the tone of the copy. */}
         <div id={resultId} role="status" aria-live="polite">
           {submitted && (
-            <div className="mt-4 rounded-xl p-4" style={{ background: C.card2, border: `1px solid ${positive ? C.warn : C.rule}` }}>
+            <div className="mt-4 rounded-xl p-4" style={{ background: "var(--secondary)", border: `1px solid ${positive ? "var(--warn)" : "var(--border)"}` }}>
               {positive ? (
                 <>
-                  <div className="text-sm font-bold mb-1" style={{ color: C.warn }}>This might be worth checking in on.</div>
-                  <p className="text-xs" style={{ color: C.faint }}>
+                  <div className="text-sm font-bold mb-1" style={{ color: "var(--warn)" }}>This might be worth checking in on.</div>
+                  <p className="text-xs" style={{ color: "var(--muted-foreground)" }}>
                     You answered “yes” to {score} of 5. This is a rough screening prompt — it flags many
                     people who do not have an eating disorder, so it is <strong>not a diagnosis</strong>.
                     But if food, eating, or body image feels hard right now, talking to a professional is
@@ -150,15 +150,15 @@ export default function WellbeingCheck({ open, onClose, onResult }) {
                 </>
               ) : (
                 <>
-                  <div className="text-sm font-bold mb-1" style={{ color: C.ink }}>Nothing flagged today.</div>
-                  <p className="text-xs" style={{ color: C.faint }}>
+                  <div className="text-sm font-bold mb-1" style={{ color: "var(--foreground)" }}>Nothing flagged today.</div>
+                  <p className="text-xs" style={{ color: "var(--muted-foreground)" }}>
                     This quick check didn’t raise anything — but it’s just a prompt, not a clean bill of
                     health. If something feels off with food or your body, trust that over a five-question
                     screen, and the resources below are always here.
                   </p>
                 </>
               )}
-              <p className="text-[11px] mt-2" style={{ color: C.faint }}>
+              <p className="text-[11px] mt-2" style={{ color: "var(--muted-foreground)" }}>
                 Saved on this computer only — never uploaded. The Wellbeing tab can delete it in one click.
               </p>
             </div>
@@ -168,17 +168,17 @@ export default function WellbeingCheck({ open, onClose, onResult }) {
         {/* Resources — always visible, not gated behind a positive result.
             Shared with the Profile "Outside help" card via ResourceList. */}
         <div className="mt-5">
-          <div className="text-xs font-bold uppercase tracking-wide mb-1" style={{ color: C.faint }}>Support (Alberta / Canada)</div>
+          <div className="text-xs font-bold uppercase tracking-wide mb-1" style={{ color: "var(--muted-foreground)" }}>Support (Alberta / Canada)</div>
           {/* --faint-light is 38% (~3.3:1) and fails WCAG AA for body text.
               This line is real, readable content, so it takes --faint (60%). */}
-          <p className="text-[11px] mb-2" style={{ color: C.faint }}>{WELLBEING_RESOURCES_NOTE}</p>
+          <p className="text-[11px] mb-2" style={{ color: "var(--muted-foreground)" }}>{WELLBEING_RESOURCES_NOTE}</p>
           <ResourceList />
         </div>
 
         {/* Health / legal disclaimer — collapsible; the key line is always shown. */}
-        <div className="mt-5 rounded-xl p-3" style={{ background: C.card2, border: `1px solid ${C.rule}` }}>
-          <div className="text-xs" style={{ color: C.faint }}>
-            <strong style={{ color: C.ink }}>Not medical advice.</strong> Cut Protocol is a planning
+        <div className="mt-5 rounded-xl p-3" style={{ background: "var(--secondary)", border: "1px solid var(--border)" }}>
+          <div className="text-xs" style={{ color: "var(--muted-foreground)" }}>
+            <strong style={{ color: "var(--foreground)" }}>Not medical advice.</strong> Cut Protocol is a planning
             tool, not a medical device. Its targets, plans and estimates are general information from
             formulas — not a prescription or personalized clinical guidance, and no substitute for a
             physician or registered dietitian. It cannot guarantee any plan is free of a given
@@ -187,11 +187,11 @@ export default function WellbeingCheck({ open, onClose, onResult }) {
           {/* Law a: a disclaimer disclosure is neither on-target, success, nor
               the primary action — it was --accent, it is now ink. */}
           <button type="button" onClick={() => setShowDisclaimer((v) => !v)} aria-expanded={showDisclaimer}
-            className="text-xs font-semibold mt-2 hover:opacity-80 underline decoration-dotted underline-offset-4" style={{ color: C.ink }}>
+            className="text-xs font-semibold mt-2 hover:opacity-80 underline decoration-dotted underline-offset-4" style={{ color: "var(--foreground)" }}>
             {showDisclaimer ? "Hide full disclaimer" : "Read the full disclaimer"}
           </button>
           {showDisclaimer && (
-            <div className="text-xs mt-2 space-y-2" style={{ color: C.faint }}>
+            <div className="text-xs mt-2 space-y-2" style={{ color: "var(--muted-foreground)" }}>
               <p>Consult a qualified professional before starting any diet, deficit, supplement or
               exercise program — especially if you are pregnant, under 18, have or have had an eating
               disorder, or have any chronic condition or medication whose dosing depends on intake or

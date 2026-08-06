@@ -100,7 +100,7 @@ function screenStatus(screen) {
       title: "Your last check flagged something worth looking at",
       body: `You answered "yes" to ${screen.score} of 5${screen.takenOn ? ` on ${fmtDY(screen.takenOn)}` : ""}. This screen over-flags on purpose — it catches many people who don't have an eating disorder — so it is not a diagnosis. It is a reason to talk to someone, and the contacts above are free.`,
       cta: "Take it again",
-      tone: C.warn,
+      tone: "var(--warn)",
     };
   }
   return {
@@ -131,11 +131,11 @@ export default function WellbeingTab({ profile, summary, screen, onOpenCheck, on
   }, [screen]);
   const clearScreen = () => { focusCtaNext.current = true; onClearScreen?.(); };
 
-  const quietBtn = { background: C.card2, border: `1px solid ${C.rule}`, color: C.ink };
+  const quietBtn = { background: "var(--secondary)", border: "1px solid var(--border)", color: "var(--foreground)" };
 
   const supportCard = (
     <Card section="SUPPORT" title="Free, confidential help (Alberta / Canada)">
-      <p className="text-xs mb-3" style={{ color: C.faint }}>{WELLBEING_RESOURCES_NOTE}</p>
+      <p className="text-xs mb-3" style={{ color: "var(--muted-foreground)" }}>{WELLBEING_RESOURCES_NOTE}</p>
       <ResourceList />
     </Card>
   );
@@ -145,10 +145,10 @@ export default function WellbeingTab({ profile, summary, screen, onOpenCheck, on
       <div className="flex items-start gap-3">
         {/* Law a: green means on-target / primary action / success. A heart on
             a screening card is none of those — quiet ink tier. */}
-        <Heart size={18} className="shrink-0 mt-0.5" style={{ color: status.tone || C.faint }} aria-hidden="true" />
+        <Heart size={18} className="shrink-0 mt-0.5" style={{ color: status.tone || "var(--muted-foreground)" }} aria-hidden="true" />
         <div className="min-w-0 flex-1">
-          <div className="text-sm font-bold" style={{ color: status.tone || C.ink }}>{status.title}</div>
-          <p className="text-xs mt-1 leading-relaxed max-w-[70ch]" style={{ color: C.faint }}>{status.body}</p>
+          <div className="text-sm font-bold" style={{ color: status.tone || "var(--foreground)" }}>{status.title}</div>
+          <p className="text-xs mt-1 leading-relaxed max-w-[70ch]" style={{ color: "var(--muted-foreground)" }}>{status.body}</p>
 
           <div className="flex flex-wrap items-center gap-2 mt-3">
             <button type="button" ref={ctaRef} onClick={onOpenCheck}
@@ -158,14 +158,14 @@ export default function WellbeingTab({ profile, summary, screen, onOpenCheck, on
             {screen && (
               <button type="button" onClick={clearScreen}
                 className="text-xs font-semibold px-3 py-2 rounded-xl inline-flex items-center gap-1.5"
-                style={{ color: C.faint, border: `1px solid ${C.rule}` }}>
+                style={{ color: "var(--muted-foreground)", border: "1px solid var(--border)" }}>
                 <Trash2 size={12} aria-hidden="true" /> Delete my result
               </button>
             )}
           </div>
 
           {/* Where the result lives, stated plainly, every time. */}
-          <div className="flex items-start gap-2 mt-3 text-[11px] font-semibold" style={{ color: C.faint }}>
+          <div className="flex items-start gap-2 mt-3 text-[11px] font-semibold" style={{ color: "var(--muted-foreground)" }}>
             <ShieldCheck size={13} className="shrink-0 mt-px" aria-hidden="true" />
             <span>
               Stored on this computer only — never uploaded, never sent to the app's server, never
@@ -189,26 +189,26 @@ export default function WellbeingTab({ profile, summary, screen, onOpenCheck, on
           disappears on its own when it doesn't, and asks exactly once. No
           badge, no counter, no repeat prompt, no dismissal to remember. */}
       {signals.length > 0 && (
-        <div className="mb-4 p-4 rounded-2xl" style={{ background: C.warnBg, border: `1px solid ${C.warn}55` }}>
+        <div className="mb-4 p-4 rounded-2xl" style={{ background: "color-mix(in srgb, var(--warn) 12%, transparent)", border: "1px solid color-mix(in srgb, var(--warn) 33%, transparent)" }}>
           <div className="flex items-start gap-2.5">
-            <Info size={17} className="shrink-0 mt-0.5" style={{ color: C.warn }} aria-hidden="true" />
+            <Info size={17} className="shrink-0 mt-0.5" style={{ color: "var(--warn)" }} aria-hidden="true" />
             <div className="min-w-0">
               {/* Count-aware: with one signal this read "A couple of things"
                   over a single bullet, which makes the app look like it is
                   reciting a script rather than reading this user's numbers. */}
-              <div className="text-sm font-extrabold" style={{ color: C.ink }}>
+              <div className="text-sm font-extrabold" style={{ color: "var(--foreground)" }}>
                 {signals.length === 1
                   ? "One thing worth knowing about your current setup"
                   : "A couple of things worth knowing about your current setup"}
               </div>
               <ul className="mt-2 space-y-1.5 list-none">
                 {signals.map((s) => (
-                  <li key={s} className="text-xs font-semibold leading-relaxed max-w-[80ch]" style={{ color: C.faint }}>
+                  <li key={s} className="text-xs font-semibold leading-relaxed max-w-[80ch]" style={{ color: "var(--muted-foreground)" }}>
                     — {s}
                   </li>
                 ))}
               </ul>
-              <p className="text-xs font-semibold mt-2.5 max-w-[80ch]" style={{ color: C.faint }}>
+              <p className="text-xs font-semibold mt-2.5 max-w-[80ch]" style={{ color: "var(--muted-foreground)" }}>
                 None of this means anything is wrong. Easing the pace on the Profile tab is one option;
                 the self-check below is another. Both are yours to ignore.
               </p>
@@ -242,12 +242,12 @@ export default function WellbeingTab({ profile, summary, screen, onOpenCheck, on
             so the tab never implies clinical authority it doesn't have. */}
         <Card section="DISCLAIMER" title="Not medical advice">
           <div className="flex items-start gap-2.5">
-            <LifeBuoy size={15} className="shrink-0 mt-0.5" style={{ color: C.faint }} aria-hidden="true" />
-            <p className="text-xs leading-relaxed max-w-[80ch]" style={{ color: C.faint }}>
+            <LifeBuoy size={15} className="shrink-0 mt-0.5" style={{ color: "var(--muted-foreground)" }} aria-hidden="true" />
+            <p className="text-xs leading-relaxed max-w-[80ch]" style={{ color: "var(--muted-foreground)" }}>
               Cut Protocol is a planning tool, not a medical device. Its targets, plans and estimates
               are general information from formulas — not a prescription, not personalized clinical
               guidance, and no substitute for a physician or registered dietitian. The calorie floor
-              and rate warnings are <strong style={{ color: C.ink }}>conservative defaults, not a
+              and rate warnings are <strong style={{ color: "var(--foreground)" }}>conservative defaults, not a
               statement that any intake is safe for you</strong>. Very low intakes can be dangerous
               and need professional supervision. The full disclaimer is in the self-check dialog.
             </p>

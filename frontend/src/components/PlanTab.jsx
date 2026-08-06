@@ -89,7 +89,7 @@ const stripSourcePaths = (s) => (s || "")
 // is legible without decoding which chip looks lit.
 
 function HorizonBar({ horizonKey, setHorizonKey, customDays, setCustomDays, busy, allowBatchRepeats }) {
-  const inpStyle = { background: C.card2, border: `1.5px solid ${C.rule}`, color: C.ink };
+  const inpStyle = { background: "var(--secondary)", border: "1.5px solid var(--border)", color: "var(--foreground)" };
   const isCustom = horizonKey === "custom";
   const days = isCustom ? clampDays(customDays) : (HORIZON_OPTIONS.find((h) => h.key === horizonKey)?.days ?? 7);
   const weeks = Math.ceil(days / 7);
@@ -106,18 +106,18 @@ function HorizonBar({ horizonKey, setHorizonKey, customDays, setCustomDays, busy
           return (
             <button key={h.key} onClick={() => setHorizonKey(h.key)} disabled={busy} aria-pressed={on}
               className="text-xs font-bold px-3 py-1.5 rounded-full"
-              style={{ background: on ? C.card2 : "transparent", color: on ? C.ink : C.faint, border: `1px solid ${on ? C.faintLight : C.rule}` }}>
+              style={{ background: on ? "var(--secondary)" : "transparent", color: on ? "var(--foreground)" : "var(--muted-foreground)", border: `1px solid ${on ? "var(--muted-foreground)" : "var(--border)"}` }}>
               {h.label}
             </button>
           );
         })}
         <button onClick={() => setHorizonKey("custom")} disabled={busy} aria-pressed={isCustom}
           className="text-xs font-bold px-3 py-1.5 rounded-full"
-          style={{ background: isCustom ? C.card2 : "transparent", color: isCustom ? C.ink : C.faint, border: `1px solid ${isCustom ? C.faintLight : C.rule}` }}>
+          style={{ background: isCustom ? "var(--secondary)" : "transparent", color: isCustom ? "var(--foreground)" : "var(--muted-foreground)", border: `1px solid ${isCustom ? "var(--muted-foreground)" : "var(--border)"}` }}>
           Custom
         </button>
         {isCustom && (
-          <label className="flex items-center gap-1.5 text-xs font-bold" style={{ color: C.ink }}>
+          <label className="flex items-center gap-1.5 text-xs font-bold" style={{ color: "var(--foreground)" }}>
             <input type="number" min={1} max={CUSTOM_MAX_DAYS} value={customDays}
               onChange={(e) => setCustomDays(e.target.value)}
               onBlur={(e) => setCustomDays(clampDays(e.target.value))}
@@ -127,7 +127,7 @@ function HorizonBar({ horizonKey, setHorizonKey, customDays, setCustomDays, busy
           </label>
         )}
       </div>
-      <div className="text-[10.5px] font-semibold mt-2" style={{ color: C.faint }}>
+      <div className="text-[10.5px] font-semibold mt-2" style={{ color: "var(--muted-foreground)" }}>
         {summary}
         {horizonKey !== "meal" && (() => {
           // Must match the server's varietyPlanFor(): perWeekCap + (weeks - 1).
@@ -150,12 +150,12 @@ function OneMealCard({ oneMeal }) {
   const onTarget = oneMeal.fits === true;
   return (
     <Card section="1 MEAL" title={best ? best.recipeName : "No dish fits what is left"}>
-      <div className="text-[10.5px] font-semibold mb-2" style={{ color: C.faint }}>{oneMeal.note}</div>
+      <div className="text-[10.5px] font-semibold mb-2" style={{ color: "var(--muted-foreground)" }}>{oneMeal.note}</div>
       {best ? (
         <>
           <div className="flex flex-wrap items-baseline gap-x-4 gap-y-2 mb-2">
-            <span className="mono stat-hero text-3xl" style={{ color: onTarget ? C.accent : C.ink }}>{best.matchPct}%</span>
-            <span className="text-xs font-semibold" style={{ color: C.faint }}>
+            <span className="mono stat-hero text-3xl" style={{ color: onTarget ? C.accent : "var(--foreground)" }}>{best.matchPct}%</span>
+            <span className="text-xs font-semibold" style={{ color: "var(--muted-foreground)" }}>
               fit against {kc(oneMeal.target.kcal)} kcal / {oneMeal.target.protein} g protein remaining
             </span>
           </div>
@@ -166,17 +166,17 @@ function OneMealCard({ oneMeal }) {
             <Chip color={C.carbText} bg={`${C.carb}1F`}>{g1(best.carb)}C</Chip>
           </div>
           {best.ingredients?.length > 0 && (
-            <div className="text-xs font-semibold mb-2" style={{ color: C.ink }}>
+            <div className="text-xs font-semibold mb-2" style={{ color: "var(--foreground)" }}>
               {best.ingredients.map((i) => `${i.grams}g ${i.name}`).join(" · ")}
             </div>
           )}
           {oneMeal.options.length > 1 && (
-            <div className="mt-2 pt-2" style={{ borderTop: `1px solid ${C.rule}` }}>
-              <div className="text-[10px] font-bold tracking-wider mb-1.5" style={{ color: C.faint }}>OTHER DISHES THAT FIT</div>
+            <div className="mt-2 pt-2" style={{ borderTop: "1px solid var(--border)" }}>
+              <div className="text-[10px] font-bold tracking-wider mb-1.5" style={{ color: "var(--muted-foreground)" }}>OTHER DISHES THAT FIT</div>
               {oneMeal.options.slice(1).map((a) => (
                 <div key={a.recipeId} className="flex items-center justify-between gap-2 py-1 text-xs font-semibold">
-                  <span className="truncate" style={{ color: C.ink }}>{a.recipeName}</span>
-                  <span className="mono shrink-0" style={{ color: C.faint }}>{kc(a.kcal)} kcal · {g1(a.protein)}P · {a.matchPct}%</span>
+                  <span className="truncate" style={{ color: "var(--foreground)" }}>{a.recipeName}</span>
+                  <span className="mono shrink-0" style={{ color: "var(--muted-foreground)" }}>{kc(a.kcal)} kcal · {g1(a.protein)}P · {a.matchPct}%</span>
                 </div>
               ))}
             </div>
@@ -184,10 +184,10 @@ function OneMealCard({ oneMeal }) {
         </>
       ) : null}
       {oneMeal.miss && (
-        <div className="text-xs font-semibold mt-1" style={{ color: C.warn }}>{oneMeal.miss}</div>
+        <div className="text-xs font-semibold mt-1" style={{ color: "var(--warn)" }}>{oneMeal.miss}</div>
       )}
       {oneMeal.binding && (
-        <div className="text-xs font-semibold mt-1" style={{ color: C.warn }}>
+        <div className="text-xs font-semibold mt-1" style={{ color: "var(--warn)" }}>
           → Binding constraint: {oneMeal.binding.label} — {oneMeal.binding.detail}
         </div>
       )}
@@ -204,7 +204,7 @@ function HorizonSummary({ horizon }) {
   if (!horizon || !Array.isArray(horizon.weekPlans) || horizon.weekPlans.length < 2) return null;
   return (
     <Card section="WEEKS WRITTEN" title={`${horizon.label} — ${fmtD(horizon.startDate)} to ${fmtD(horizon.endDate)}`}>
-      <div className="text-[10.5px] font-semibold mb-2" style={{ color: C.faint }}>
+      <div className="text-[10.5px] font-semibold mb-2" style={{ color: "var(--muted-foreground)" }}>
         {horizon.weeksWritten} weekly plans written in {horizon.solveMs} ms. The meal plan below shows this week; the later weeks are stored on their own plan rows.
       </div>
       <div className="flex flex-col gap-1">
@@ -212,9 +212,9 @@ function HorizonSummary({ horizon }) {
           const clean = w.daysInTolerance === w.days && w.unfilledSlots === 0;
           return (
             <div key={w.startDate} className="flex items-center justify-between gap-2 py-1 text-xs font-semibold"
-              style={{ borderBottom: `1px solid ${C.rule}` }}>
-              <span style={{ color: C.ink }}>Week of {fmtD(w.startDate)}</span>
-              <span className="mono" style={{ color: clean ? C.ink : C.warn }}>
+              style={{ borderBottom: "1px solid var(--border)" }}>
+              <span style={{ color: "var(--foreground)" }}>Week of {fmtD(w.startDate)}</span>
+              <span className="mono" style={{ color: clean ? "var(--foreground)" : "var(--warn)" }}>
                 {w.daysInTolerance}/{w.days} days on target · {w.avgMatch}% avg
                 {w.unfilledSlots > 0 ? ` · ${w.unfilledSlots} meal(s) not filled` : ""}
               </span>
@@ -229,7 +229,7 @@ function HorizonSummary({ horizon }) {
 // ── filters bar ──────────────────────────────────────────────────────────
 
 function FiltersBar({ filters, setFilters, proteinFloorSource }) {
-  const inpStyle = { background: C.card2, border: `1.5px solid ${C.rule}`, color: C.ink };
+  const inpStyle = { background: "var(--secondary)", border: "1.5px solid var(--border)", color: "var(--foreground)" };
   const toggleCuisine = (key) =>
     setFilters((f) => ({ ...f, cuisines: f.cuisines.includes(key) ? f.cuisines.filter((c) => c !== key) : [...f.cuisines, key] }));
   const setProteinPriority = (on) => {
@@ -244,7 +244,7 @@ function FiltersBar({ filters, setFilters, proteinFloorSource }) {
           return (
             <button key={c.key} onClick={() => toggleCuisine(c.key)} aria-pressed={on}
               className="text-xs font-bold px-3 py-1.5 rounded-full"
-              style={{ background: on ? C.card2 : "transparent", color: on ? C.ink : C.faint, border: `1px solid ${on ? C.faintLight : C.rule}` }}>
+              style={{ background: on ? "var(--secondary)" : "transparent", color: on ? "var(--foreground)" : "var(--muted-foreground)", border: `1px solid ${on ? "var(--muted-foreground)" : "var(--border)"}` }}>
               {c.label}
             </button>
           );
@@ -268,21 +268,21 @@ function FiltersBar({ filters, setFilters, proteinFloorSource }) {
         </select>
         {/* Law (a): a checkbox is control chrome, not an on-target claim — the
             browser's accent-color takes neutral --ink, never --accent. */}
-        <label className="flex items-center gap-1.5 text-xs font-semibold px-1" style={{ color: C.ink }}>
+        <label className="flex items-center gap-1.5 text-xs font-semibold px-1" style={{ color: "var(--foreground)" }}>
           <input type="checkbox" checked={filters.allowBatchRepeats}
             onChange={(e) => setFilters((f) => ({ ...f, allowBatchRepeats: e.target.checked }))}
-            style={{ accentColor: C.ink }} />
+            style={{ accentColor: "var(--foreground)" }} />
           Batch-cooking repeats OK
         </label>
       </div>
-      <div className="text-[10.5px] font-semibold mt-2" style={{ color: C.faint }}>
+      <div className="text-[10.5px] font-semibold mt-2" style={{ color: "var(--muted-foreground)" }}>
         Cuisine, protein and budget are preferences — the planner bends toward them. Your diet and allergies from Profile are absolute: nothing that breaks them can appear. Max prep time is absolute too.
       </div>
 
       {/* Stage 3 — the optional caps. Each off by default with an explicit OFF
           state (off ≠ 0). Cost is not a macro, so it uses --ink/--faint only. */}
-      <div className="mt-3 pt-3" style={{ borderTop: `1px solid ${C.rule}` }}>
-        <div className="text-[10.5px] font-extrabold uppercase tracking-wide mb-2.5" style={{ color: C.faint, letterSpacing: ".06em" }}>
+      <div className="mt-3 pt-3" style={{ borderTop: "1px solid var(--border)" }}>
+        <div className="text-[10.5px] font-extrabold uppercase tracking-wide mb-2.5" style={{ color: "var(--muted-foreground)", letterSpacing: ".06em" }}>
           Optional caps — each off unless you set it
         </div>
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-x-5 gap-y-4">
@@ -294,7 +294,7 @@ function FiltersBar({ filters, setFilters, proteinFloorSource }) {
               format={(v) => `$${v.toFixed(2)}`}
               help="Median across your recipes ≈ $4 / serving." />
             {/* Required cost disclosure — one line per surface. */}
-            <div className="text-[10px] font-semibold mt-1" style={{ color: C.faint }}>
+            <div className="text-[10px] font-semibold mt-1" style={{ color: "var(--muted-foreground)" }}>
               Estimated from a local price table, not live grocery pricing.
             </div>
           </div>
@@ -307,24 +307,24 @@ function FiltersBar({ filters, setFilters, proteinFloorSource }) {
             format={(v) => `≥ ${v.toFixed(2)}`}
             help="0–1; median across your recipes ≈ 0.58. Sharpens once you rate dishes." />
         </div>
-        <div className="text-[10px] font-semibold mt-2.5" style={{ color: C.faint }}>
+        <div className="text-[10px] font-semibold mt-2.5" style={{ color: "var(--muted-foreground)" }}>
           Caps are hard filters — a dish that breaks one is removed, and if that leaves the meal planner nothing to choose from it names which cap is binding rather than failing silently.
         </div>
       </div>
 
-      <div className="mt-3 pt-3" style={{ borderTop: `1px solid ${C.rule}` }}>
-        <label className="flex items-start gap-2.5 text-sm font-bold cursor-pointer" style={{ color: C.ink }}>
+      <div className="mt-3 pt-3" style={{ borderTop: "1px solid var(--border)" }}>
+        <label className="flex items-start gap-2.5 text-sm font-bold cursor-pointer" style={{ color: "var(--foreground)" }}>
           {/* Law (c): --protein is the macro blue and may never be borrowed for
               control chrome. Neutral --ink, like every other control here. */}
           <input type="checkbox" checked={filters.proteinPriority}
             onChange={(e) => setProteinPriority(e.target.checked)}
-            className="mt-0.5" style={{ accentColor: C.ink }} />
+            className="mt-0.5" style={{ accentColor: "var(--foreground)" }} />
           <span className="flex items-center gap-1.5">
             <Beef size={14} style={{ color: C.proteinText }} />
             Protein-priority mode
           </span>
         </label>
-        <div className="text-[10.5px] font-semibold mt-1 ml-6" style={{ color: C.faint }}>
+        <div className="text-[10.5px] font-semibold mt-1 ml-6" style={{ color: "var(--muted-foreground)" }}>
           Makes the meal planner defend your protein floor instead of trading it off against calories — an option that misses it is ranked lower and the miss is always reported, never absorbed into an otherwise-good match score.
           {proteinFloorSource && (
             <> Floor basis: {proteinFloorSource.label} — {proteinFloorSource.detail}</>
@@ -474,8 +474,8 @@ function StaleVerdict({ reason }) {
   return (
     <Card section="MEAL PLANNER" title="This verdict is out of date">
       <div className="flex items-start gap-2">
-        <AlertTriangle size={14} className="shrink-0 mt-0.5" style={{ color: C.warn }} />
-        <div className="text-xs font-semibold" style={{ color: C.faint }}>
+        <AlertTriangle size={14} className="shrink-0 mt-0.5" style={{ color: "var(--warn)" }} />
+        <div className="text-xs font-semibold" style={{ color: "var(--muted-foreground)" }}>
           {reason === "mutated" ? (
             <>The meals changed after the meal planner last scored this week, so its match
               percentages and miss lines described a different plan — they are hidden rather
@@ -544,29 +544,29 @@ function SolverNarration({ meta }) {
         {bestOf != null && <Chip>Best of {bestOf}</Chip>}
         {pct != null && (
           <div className="flex items-baseline gap-1.5">
-            <span className="mono stat-hero text-2xl" style={{ color: C.ink }}>{pct}%</span>
-            <span className="text-xs font-semibold" style={{ color: C.faint }}>average match to your targets</span>
+            <span className="mono stat-hero text-2xl" style={{ color: "var(--foreground)" }}>{pct}%</span>
+            <span className="text-xs font-semibold" style={{ color: "var(--muted-foreground)" }}>average match to your targets</span>
           </div>
         )}
         {daysInTol != null && dayTotal != null && (
-          <span className="text-xs font-bold" style={{ color: weekOnTarget ? C.ink : C.warn }}>
+          <span className="text-xs font-bold" style={{ color: weekOnTarget ? "var(--foreground)" : "var(--warn)" }}>
             {daysInTol} of {dayTotal} days close enough to your targets
           </span>
         )}
         {floorMet != null && (
           <div className="flex items-center gap-1.5">
             <Beef size={13} style={{ color: C.proteinText }} />
-            <span className="text-xs font-bold" style={{ color: floorMet === floorTotal ? C.ink : C.warn }}>
+            <span className="text-xs font-bold" style={{ color: floorMet === floorTotal ? "var(--foreground)" : "var(--warn)" }}>
               Protein floor defended {floorMet}/{floorTotal} days
             </span>
           </div>
         )}
         {funnel.length > 0 && (
-          <div className="flex items-center gap-1.5 text-xs font-semibold flex-wrap" style={{ color: C.faint }}>
+          <div className="flex items-center gap-1.5 text-xs font-semibold flex-wrap" style={{ color: "var(--muted-foreground)" }}>
             {funnel.map((f, i) => (
               <span key={f.l} className="flex items-center gap-1.5">
-                {i > 0 && <ArrowRight size={12} style={{ color: C.faint }} />}
-                <b className="mono" style={{ color: C.ink }}>{kc(f.n)}</b> {f.l}
+                {i > 0 && <ArrowRight size={12} style={{ color: "var(--muted-foreground)" }} />}
+                <b className="mono" style={{ color: "var(--foreground)" }}>{kc(f.n)}</b> {f.l}
               </span>
             ))}
           </div>
@@ -574,7 +574,7 @@ function SolverNarration({ meta }) {
       </div>
       {days.length > 0 && (
         <div className="mt-3">
-          <div className="text-[10px] font-bold tracking-wider mb-1.5" style={{ color: C.faint }}>
+          <div className="text-[10px] font-bold tracking-wider mb-1.5" style={{ color: "var(--muted-foreground)" }}>
             EVERY DAY, ITS OWN MATCH
           </div>
           <div className="flex flex-wrap gap-1.5">
@@ -585,17 +585,17 @@ function SolverNarration({ meta }) {
                 key={d.key ?? d.dayOfWeek}
                 title={`${d.windowIndex != null ? `Week ${d.windowIndex + 1} · ` : ""}${d.miss || `${d.dayName}: on target`}`}
                 className="px-2 py-1 rounded-lg flex items-baseline gap-1.5"
-                style={{ background: C.card2, border: `1px solid ${d.inTolerance ? C.rule : C.warn}` }}
+                style={{ background: "var(--secondary)", border: `1px solid ${d.inTolerance ? "var(--border)" : "var(--warn)"}` }}
               >
-                <span className="text-[10px] font-bold" style={{ color: C.faint }}>{(d.dayName || "").slice(0, 3)}</span>
-                <span className="mono text-xs font-bold" style={{ color: d.inTolerance ? C.ink : C.warn }}>{d.matchPct}%</span>
+                <span className="text-[10px] font-bold" style={{ color: "var(--muted-foreground)" }}>{(d.dayName || "").slice(0, 3)}</span>
+                <span className="mono text-xs font-bold" style={{ color: d.inTolerance ? "var(--foreground)" : "var(--warn)" }}>{d.matchPct}%</span>
               </div>
             ))}
           </div>
           {missedDays.length > 0 && (
             <div className="mt-2 space-y-0.5">
               {missedDays.map((d) => (
-                <div key={d.key ?? d.dayOfWeek} className="text-xs font-semibold" style={{ color: C.warn }}>
+                <div key={d.key ?? d.dayOfWeek} className="text-xs font-semibold" style={{ color: "var(--warn)" }}>
                   {d.windowIndex != null && days.length > 7 ? `Week ${d.windowIndex + 1} ` : ""}{d.dayName}: {d.miss}
                 </div>
               ))}
@@ -606,17 +606,17 @@ function SolverNarration({ meta }) {
       {/* The ONE thing that is binding, named — ahead of the sentences, because
           "what do I change?" is the question the reasons only imply. */}
       {diag?.binding?.key && (
-        <div className="text-xs font-extrabold mt-2" style={{ color: C.warn }}>
+        <div className="text-xs font-extrabold mt-2" style={{ color: "var(--warn)" }}>
           Binding constraint: {diag.binding.label} — {diag.binding.detail}
         </div>
       )}
       {diagText && (
-        <div className="text-xs font-semibold mt-2" style={{ color: infeasible ? C.warn : C.faint }}>
+        <div className="text-xs font-semibold mt-2" style={{ color: infeasible ? "var(--warn)" : "var(--muted-foreground)" }}>
           {infeasible ? "→ " : ""}{diagText}
         </div>
       )}
       {varietyNotes.map((n, i) => (
-        <div key={i} className="text-xs font-semibold mt-1" style={{ color: C.faint }}>{n}</div>
+        <div key={i} className="text-xs font-semibold mt-1" style={{ color: "var(--muted-foreground)" }}>{n}</div>
       ))}
     </Card>
   );
@@ -644,31 +644,31 @@ function DayCandidates({ data, targetKcal, onAccept, accepting }) {
         // Ranking is still legible — as a LIGHTNESS step (--card-2 + a
         // brighter hairline), which is this design system's own way of
         // saying "selected/primary" without borrowing the accent.
-        const border = onTarget ? C.accent : isBest ? C.faintLight : C.rule;
-        const bg = !onTarget && isBest ? C.card2 : C.card;
+        const border = onTarget ? C.accent : isBest ? "var(--muted-foreground)" : "var(--border)";
+        const bg = !onTarget && isBest ? "var(--secondary)" : "var(--card)";
         const label = onTarget
           ? (isBest ? "Best match" : `Option ${idx + 1}`)
           : (isBest ? "Closest we found" : `Option ${idx + 1}`);
         return (
         <div key={idx} className="p-4 rounded-2xl flex flex-col" style={{ background: bg, border: `1px solid ${border}` }}>
           <div className="flex items-baseline justify-between gap-2 mb-1">
-            <span className="mono stat-hero text-3xl" style={{ color: onTarget ? C.accent : C.ink }}>{c.score.matchPct}%</span>
-            <span className="text-[10px] font-bold uppercase flex items-center gap-1 text-right" style={{ color: onTarget ? C.faint : C.warn }}>
+            <span className="mono stat-hero text-3xl" style={{ color: onTarget ? C.accent : "var(--foreground)" }}>{c.score.matchPct}%</span>
+            <span className="text-[10px] font-bold uppercase flex items-center gap-1 text-right" style={{ color: onTarget ? "var(--muted-foreground)" : "var(--warn)" }}>
               {!onTarget && isBest && <AlertTriangle size={10} aria-hidden="true" />}
               {label}
             </span>
           </div>
-          <div className="mono text-xs font-bold mb-2" style={{ color: C.faint }}>
+          <div className="mono text-xs font-bold mb-2" style={{ color: "var(--muted-foreground)" }}>
             {kc(c.score.totals.kcal)} / {kc(targetKcal)} kcal · {c.score.totals.protein}P {c.score.totals.fat}F {c.score.totals.carb}C
           </div>
           {/* What it actually missed by — amber + plain numbers (law b: no red
               on food data, no scolding). Silent when the day is on target. */}
           {!onTarget && c.miss && (
-            <div className="text-[10.5px] font-semibold mb-2" style={{ color: C.warn }}>{c.miss}</div>
+            <div className="text-[10.5px] font-semibold mb-2" style={{ color: "var(--warn)" }}>{c.miss}</div>
           )}
           {c.score.proteinFloor && (
-            <div className="flex items-center gap-1.5 mb-2 text-[10.5px] font-bold" style={{ color: c.score.proteinFloor.met ? C.faint : C.warn }}>
-              <Beef size={11} style={{ color: c.score.proteinFloor.met ? C.proteinText : C.warn }} />
+            <div className="flex items-center gap-1.5 mb-2 text-[10.5px] font-bold" style={{ color: c.score.proteinFloor.met ? "var(--muted-foreground)" : "var(--warn)" }}>
+              <Beef size={11} style={{ color: c.score.proteinFloor.met ? C.proteinText : "var(--warn)" }} />
               {c.score.proteinFloor.met
                 ? `Protein floor met (${c.score.proteinFloor.achievedG}g / ${c.score.proteinFloor.floorG}g)`
                 : `Protein floor short by ${c.score.proteinFloor.shortG}g`}
@@ -676,12 +676,12 @@ function DayCandidates({ data, targetKcal, onAccept, accepting }) {
           )}
           <div className="flex flex-col gap-1.5 flex-1 mb-3">
             {c.slots.map((s, i) => (
-              <div key={i} className="flex justify-between gap-2 text-xs font-semibold py-1" style={{ borderBottom: `1px solid ${C.rule}` }}>
-                <span className="truncate" style={{ color: C.ink }}>
+              <div key={i} className="flex justify-between gap-2 text-xs font-semibold py-1" style={{ borderBottom: "1px solid var(--border)" }}>
+                <span className="truncate" style={{ color: "var(--foreground)" }}>
                   {s.slotType === "snack" ? "🥨 " : ""}{s.recipeName || "—"}
-                  {s.warning && <AlertTriangle size={10} className="inline ml-1" style={{ color: C.warn }} />}
+                  {s.warning && <AlertTriangle size={10} className="inline ml-1" style={{ color: "var(--warn)" }} />}
                 </span>
-                <span className="mono shrink-0" style={{ color: C.faint }}>{kc(s.kcal)}</span>
+                <span className="mono shrink-0" style={{ color: "var(--muted-foreground)" }}>{kc(s.kcal)}</span>
               </div>
             ))}
           </div>
@@ -746,7 +746,7 @@ const SlotCard = memo(function SlotCard({ planId, slot, expanded, onToggleExpand
   };
 
   return (
-    <div className="p-3.5 rounded-2xl row-host" style={{ background: C.card, border: `1px solid ${C.rule}` }}>
+    <div className="p-3.5 rounded-2xl row-host" style={{ background: "var(--card)", border: "1px solid var(--border)" }}>
       <div className="flex gap-3">
         <FoodTile recipe={{ ingredients: slot.ingredients, slotType: slot.slotType, mealCategory: recipe?.mealCategory }} size={44} />
         <div className="min-w-0 flex-1">
@@ -754,8 +754,8 @@ const SlotCard = memo(function SlotCard({ planId, slot, expanded, onToggleExpand
             <button type="button" onClick={() => onToggleExpand(slot.id)} aria-expanded={expanded}
               className="text-left min-w-0 flex-1"
               aria-label={`${slot.slotType}: ${recipe ? recipe.name : "no meal yet"}, ${kc(slot.kcal)} kcal — ${expanded ? "hide" : "show"} details`}>
-              <div className="text-[10px] font-extrabold uppercase tracking-wide" style={{ color: C.faint }}>{slot.slotType}</div>
-              <div className="text-sm font-extrabold" style={{ color: C.ink }}>{recipe ? recipe.name : "—"}</div>
+              <div className="text-[10px] font-extrabold uppercase tracking-wide" style={{ color: "var(--muted-foreground)" }}>{slot.slotType}</div>
+              <div className="text-sm font-extrabold" style={{ color: "var(--foreground)" }}>{recipe ? recipe.name : "—"}</div>
               <div className="flex flex-wrap gap-1.5 mt-2">
                 <Chip>{kc(slot.kcal)} kcal</Chip>
                 <Chip color={C.proteinText} bg={`${C.protein}1F`}>{g1(slot.protein)}P</Chip>
@@ -773,7 +773,7 @@ const SlotCard = memo(function SlotCard({ planId, slot, expanded, onToggleExpand
                 // the same language the day picker and chips already speak.
                 <button onClick={() => onCart(recipe.id)}
                   className={`w-7 h-7 rounded-lg flex items-center justify-center ${inCart ? "" : "row-reveal"}`}
-                  style={{ color: inCart ? C.ink : C.faint, background: C.card2, border: `1px solid ${inCart ? C.faintLight : C.rule}` }}
+                  style={{ color: inCart ? "var(--foreground)" : "var(--muted-foreground)", background: "var(--secondary)", border: `1px solid ${inCart ? "var(--muted-foreground)" : "var(--border)"}` }}
                   aria-label={inCart ? "Remove from cart" : "Add to cart"} aria-pressed={inCart}
                   title={inCart ? "Remove from cart" : "Add to cart"}>
                   {inCart ? <Check size={14} aria-hidden="true" /> : <ShoppingCart size={14} aria-hidden="true" />}
@@ -781,7 +781,7 @@ const SlotCard = memo(function SlotCard({ planId, slot, expanded, onToggleExpand
               )}
               <button onClick={() => onLockToggle(slot)} disabled={busy}
                 className={`w-7 h-7 rounded-lg flex items-center justify-center ${slot.locked ? "" : "row-reveal"}`}
-                style={{ color: slot.locked ? C.ink : C.faint, background: C.card2, border: `1px solid ${slot.locked ? C.faintLight : C.rule}` }}
+                style={{ color: slot.locked ? "var(--foreground)" : "var(--muted-foreground)", background: "var(--secondary)", border: `1px solid ${slot.locked ? "var(--muted-foreground)" : "var(--border)"}` }}
                 aria-label={slot.locked ? "Unlock this meal" : "Lock this meal"} aria-pressed={slot.locked}
                 title={slot.locked ? "Locked — survives a regenerate" : "Unlocked — a regenerate can replace it"}>
                 {slot.locked ? <Lock size={14} aria-hidden="true" /> : <LockOpen size={14} aria-hidden="true" />}
@@ -789,7 +789,7 @@ const SlotCard = memo(function SlotCard({ planId, slot, expanded, onToggleExpand
               {!slot.locked && (
                 <button onClick={loadAlternates} disabled={altBusy}
                   className="w-7 h-7 rounded-lg flex items-center justify-center row-reveal"
-                  style={{ color: C.faint, background: C.card2, border: `1px solid ${C.rule}` }}
+                  style={{ color: "var(--muted-foreground)", background: "var(--secondary)", border: "1px solid var(--border)" }}
                   aria-label="Swap — show other options" title="Swap — show 3 other options">
                   <RefreshCw size={14} aria-hidden="true" />
                 </button>
@@ -798,8 +798,8 @@ const SlotCard = memo(function SlotCard({ planId, slot, expanded, onToggleExpand
           </div>
           {slot.warning && (
             <div className="mt-1.5">
-              <div className="text-xs font-semibold" style={{ color: C.warn }}>{slot.warning}</div>
-              <div className="text-[10.5px] font-semibold mt-0.5" style={{ color: C.faint }}>
+              <div className="text-xs font-semibold" style={{ color: "var(--warn)" }}>{slot.warning}</div>
+              <div className="text-[10.5px] font-semibold mt-0.5" style={{ color: "var(--muted-foreground)" }}>
                 → Fix it with the swap button (3 other options), or regenerate with looser filters.
               </div>
             </div>
@@ -813,20 +813,20 @@ const SlotCard = memo(function SlotCard({ planId, slot, expanded, onToggleExpand
           {altBusy && !alts && <SkeletonRows rows={3} className="mt-2.5" />}
 
           {alts && (
-            <div className="mt-2.5 pt-2.5" style={{ borderTop: `1px solid ${C.rule}` }}>
+            <div className="mt-2.5 pt-2.5" style={{ borderTop: "1px solid var(--border)" }}>
               <div className="flex items-center justify-between mb-1.5">
-                <span className="text-[10.5px] font-extrabold uppercase tracking-wide" style={{ color: C.faint }}>Other options for this meal</span>
-                <button onClick={() => setAlts(null)} style={{ color: C.faint }} aria-label="Close other options">
+                <span className="text-[10.5px] font-extrabold uppercase tracking-wide" style={{ color: "var(--muted-foreground)" }}>Other options for this meal</span>
+                <button onClick={() => setAlts(null)} style={{ color: "var(--muted-foreground)" }} aria-label="Close other options">
                   <X size={13} aria-hidden="true" />
                 </button>
               </div>
-              {alts.length === 0 && <div className="text-xs font-semibold" style={{ color: C.faint }}>Nothing else fits this meal under your current rules.</div>}
+              {alts.length === 0 && <div className="text-xs font-semibold" style={{ color: "var(--muted-foreground)" }}>Nothing else fits this meal under your current rules.</div>}
               <div className="flex flex-col gap-1.5">
                 {alts.map((a) => (
-                  <div key={a.recipeId} className="flex items-center justify-between gap-2 p-2 rounded-lg" style={{ background: C.card2 }}>
+                  <div key={a.recipeId} className="flex items-center justify-between gap-2 p-2 rounded-lg" style={{ background: "var(--secondary)" }}>
                     <div className="min-w-0">
-                      <div className="text-xs font-bold truncate" style={{ color: C.ink }}>{a.recipeName}</div>
-                      <div className="mono text-[10.5px] font-semibold" style={{ color: C.faint }}>
+                      <div className="text-xs font-bold truncate" style={{ color: "var(--foreground)" }}>{a.recipeName}</div>
+                      <div className="mono text-[10.5px] font-semibold" style={{ color: "var(--muted-foreground)" }}>
                         {kc(a.kcal)} kcal · {g1(a.protein)}P · {a.matchPct}% fit
                       </div>
                     </div>
@@ -840,12 +840,12 @@ const SlotCard = memo(function SlotCard({ planId, slot, expanded, onToggleExpand
           )}
 
           {expanded && recipe && (
-            <div className="mt-2.5 pt-2.5" style={{ borderTop: `1px solid ${C.rule}` }}>
-              <div className="text-xs font-semibold mb-1.5" style={{ color: C.ink }}>
+            <div className="mt-2.5 pt-2.5" style={{ borderTop: "1px solid var(--border)" }}>
+              <div className="text-xs font-semibold mb-1.5" style={{ color: "var(--foreground)" }}>
                 {slot.ingredients.map((ing) => `${ing.grams}g ${ing.name}`).join(" · ")}
               </div>
-              {recipe.description && <div className="text-xs italic mb-1.5" style={{ color: C.faint }}>{recipe.description}</div>}
-              <ol className="text-xs space-y-1 list-decimal list-inside" style={{ color: C.ink }}>
+              {recipe.description && <div className="text-xs italic mb-1.5" style={{ color: "var(--muted-foreground)" }}>{recipe.description}</div>}
+              <ol className="text-xs space-y-1 list-decimal list-inside" style={{ color: "var(--foreground)" }}>
                 {recipe.steps.map((step, i) => <li key={i}>{step}</li>)}
               </ol>
             </div>
@@ -859,7 +859,7 @@ const SlotCard = memo(function SlotCard({ planId, slot, expanded, onToggleExpand
 // ── main tab ─────────────────────────────────────────────────────────────
 
 export default function PlanTab({ profile, summary, refresh }) {
-  const inpStyle = { background: C.card2, border: `1.5px solid ${C.rule}`, color: C.ink };
+  const inpStyle = { background: "var(--secondary)", border: "1.5px solid var(--border)", color: "var(--foreground)" };
   const [plan, setPlan] = useState(undefined);
   const [expandedId, setExpandedId] = useState(null);
   const [busySlotId, setBusySlotId] = useState(null);
@@ -1351,29 +1351,29 @@ export default function PlanTab({ profile, summary, refresh }) {
                       ? slots.map((s) => s.recipe ? s.recipe.name : "open meal").join(" · ")
                       : undefined}
                     className="rounded-xl px-2.5 py-2 text-left flex flex-col gap-1.5 min-h-[92px]"
-                    style={{ background: active ? C.card2 : C.card, border: `1px solid ${active ? C.faintLight : C.rule}` }}>
+                    style={{ background: active ? "var(--secondary)" : "var(--card)", border: `1px solid ${active ? "var(--muted-foreground)" : "var(--border)"}` }}>
                     <div className="flex items-baseline justify-between w-full">
-                      <span className="text-[10px] font-extrabold uppercase" style={{ color: active ? C.ink : C.faint }}>{d}</span>
-                      <span className="mono text-[10px] font-bold" style={{ color: C.faint }}>
+                      <span className="text-[10px] font-extrabold uppercase" style={{ color: active ? "var(--foreground)" : "var(--muted-foreground)" }}>{d}</span>
+                      <span className="mono text-[10px] font-bold" style={{ color: "var(--muted-foreground)" }}>
                         {plan ? fmtD(addDays(plan.startDate, i)).split(" ")[1] : ""}
                       </span>
                     </div>
                     {slots.length > 0 ? (
                       <>
                         <div className="flex items-baseline gap-1">
-                          <span className="mono stat-hero text-lg leading-none" style={{ color: active ? C.ink : C.faint }}>{kc(tot.kcal)}</span>
-                          <span className="text-[10px] font-bold" style={{ color: C.faint }}>kcal</span>
+                          <span className="mono stat-hero text-lg leading-none" style={{ color: active ? "var(--foreground)" : "var(--muted-foreground)" }}>{kc(tot.kcal)}</span>
+                          <span className="text-[10px] font-bold" style={{ color: "var(--muted-foreground)" }}>kcal</span>
                         </div>
-                        {fill && <div className="text-[10px] font-semibold" style={{ color: C.faint }}>{fill}</div>}
+                        {fill && <div className="text-[10px] font-semibold" style={{ color: "var(--muted-foreground)" }}>{fill}</div>}
                         {exceptions && (
-                          <div className="text-[10px] font-semibold flex items-center gap-1 mt-auto" style={{ color: C.warn }}>
+                          <div className="text-[10px] font-semibold flex items-center gap-1 mt-auto" style={{ color: "var(--warn)" }}>
                             <AlertTriangle size={9} className="shrink-0" aria-hidden="true" />
                             <span className="min-w-0">{exceptions}</span>
                           </div>
                         )}
                       </>
                     ) : (
-                      <div className="text-[10px] font-semibold" style={{ color: C.faint }}>{plan ? "no meals" : "—"}</div>
+                      <div className="text-[10px] font-semibold" style={{ color: "var(--muted-foreground)" }}>{plan ? "no meals" : "—"}</div>
                     )}
                   </button>
                 );
@@ -1385,9 +1385,9 @@ export default function PlanTab({ profile, summary, refresh }) {
               {DAY_NAMES.map((d, i) => (
                 <button key={d} onClick={() => selectDay(i)} aria-current={activeDay === i ? "true" : undefined}
                   className="py-2 rounded-xl text-center"
-                  style={{ background: activeDay === i ? C.card2 : C.card, border: `1px solid ${activeDay === i ? C.faintLight : C.rule}` }}>
-                  <div className="text-[10px] font-bold" style={{ color: C.faint }}>{d}</div>
-                  <div className="text-sm font-extrabold" style={{ color: activeDay === i ? C.ink : C.faint }}>
+                  style={{ background: activeDay === i ? "var(--secondary)" : "var(--card)", border: `1px solid ${activeDay === i ? "var(--muted-foreground)" : "var(--border)"}` }}>
+                  <div className="text-[10px] font-bold" style={{ color: "var(--muted-foreground)" }}>{d}</div>
+                  <div className="text-sm font-extrabold" style={{ color: activeDay === i ? "var(--foreground)" : "var(--muted-foreground)" }}>
                     {plan ? fmtD(addDays(plan.startDate, i)).split(" ")[1] : ""}
                   </div>
                 </button>
@@ -1395,8 +1395,8 @@ export default function PlanTab({ profile, summary, refresh }) {
             </div>
 
             <div className="flex items-center justify-between gap-2 mb-3 flex-wrap">
-              <div className="text-xs font-semibold" style={{ color: C.faint }}>
-                Day total: <b className="mono" style={{ color: C.ink }}>{kc(dayTotals.kcal)}</b> kcal · {g1(dayTotals.protein)}P / {g1(dayTotals.fat)}F / {g1(dayTotals.carb)}C vs {kc(targetKcal)} target
+              <div className="text-xs font-semibold" style={{ color: "var(--muted-foreground)" }}>
+                Day total: <b className="mono" style={{ color: "var(--foreground)" }}>{kc(dayTotals.kcal)}</b> kcal · {g1(dayTotals.protein)}P / {g1(dayTotals.fat)}F / {g1(dayTotals.carb)}C vs {kc(targetKcal)} target
               </div>
               <Btn small kind="ghost" onClick={loadDayOptions} disabled={optionsBusy}>
                 <Sparkles size={12} className="inline mr-1" />{optionsBusy ? "Solving…" : `3 options for ${DAY_NAMES[activeDay]}`}
@@ -1409,21 +1409,21 @@ export default function PlanTab({ profile, summary, refresh }) {
             {dayOptions && dayOptions.solvedFor === activeDay && (
               <div className="mb-4">
                 {dayOptions.diagnosis && !dayOptions.diagnosis.feasible && (
-                  <div className="p-3.5 rounded-xl mb-3" style={{ background: C.warnBg, border: `1px solid ${C.warn}66` }}>
+                  <div className="p-3.5 rounded-xl mb-3" style={{ background: "color-mix(in srgb, var(--warn) 12%, transparent)", border: "1px solid color-mix(in srgb, var(--warn) 40%, transparent)" }}>
                     {/* This panel now also fires when the best day we found is
                         merely outside the target range (not only when the
                         targets are unreachable), so the heading states that
                         severity rather than overstating it. Copy encodes
                         truth, same as colour. */}
-                    <div className="text-xs font-extrabold uppercase tracking-wide mb-1" style={{ color: C.warn }}>Closest fit we could find — here's what's binding</div>
-                    {dayOptions.diagnosis.reasons.map((r, i) => <div key={i} className="text-xs font-semibold" style={{ color: C.ink }}>· {r}</div>)}
-                    {dayOptions.diagnosis.suggestions.map((s, i) => <div key={i} className="text-xs font-semibold mt-0.5" style={{ color: C.warn }}>→ {s}</div>)}
+                    <div className="text-xs font-extrabold uppercase tracking-wide mb-1" style={{ color: "var(--warn)" }}>Closest fit we could find — here's what's binding</div>
+                    {dayOptions.diagnosis.reasons.map((r, i) => <div key={i} className="text-xs font-semibold" style={{ color: "var(--foreground)" }}>· {r}</div>)}
+                    {dayOptions.diagnosis.suggestions.map((s, i) => <div key={i} className="text-xs font-semibold mt-0.5" style={{ color: "var(--warn)" }}>→ {s}</div>)}
                   </div>
                 )}
                 {dayOptions.candidates.length > 0 && (
                   <>
                     <DayCandidates data={dayOptions} targetKcal={targetKcal} onAccept={acceptCandidate} accepting={accepting} />
-                    <div className="text-[10.5px] font-semibold mt-2" style={{ color: C.faint }}>
+                    <div className="text-[10.5px] font-semibold mt-2" style={{ color: "var(--muted-foreground)" }}>
                       The % is how close a day lands to your targets — 100% is rare and not the point. Green means it hit calories, protein, fat and carbs all within range; anything else is the closest we found, with the miss written on the card. "Accept" saves that day to your meal plan.
                     </div>
                   </>
@@ -1434,8 +1434,8 @@ export default function PlanTab({ profile, summary, refresh }) {
             {!plan ? (
               <Card>
                 <div className="flex items-start gap-2">
-                  <ChefHat size={18} style={{ color: C.faint }} className="mt-0.5 shrink-0" />
-                  <div className="text-sm font-semibold" style={{ color: C.ink }}>
+                  <ChefHat size={18} style={{ color: "var(--muted-foreground)" }} className="mt-0.5 shrink-0" />
+                  <div className="text-sm font-semibold" style={{ color: "var(--foreground)" }}>
                     No plan yet — pick how far ahead above (1 meal through 1 month) and hit "{horizonKey === "meal" ? "Fit one meal" : `Generate ${horizonLabel}`}", or solve a single day with "3 options".
                   </div>
                 </div>
@@ -1458,21 +1458,21 @@ export default function PlanTab({ profile, summary, refresh }) {
             <Card section="PLAN" title="Meal structure">
               <div className="grid grid-cols-2 gap-2">
                 <label className="block">
-                  <span className="text-xs font-bold" style={{ color: C.faint }}>Meals / day</span>
+                  <span className="text-xs font-bold" style={{ color: "var(--muted-foreground)" }}>Meals / day</span>
                   <input type="number" min={1} max={6} value={mealsDraft.meals} disabled={mealsSaving}
                     onChange={(e) => setMealsDraft((d) => ({ ...d, meals: Math.max(1, +e.target.value || 1) }))}
                     onBlur={commitMealConfig}
                     className="text-sm px-3 py-2 rounded-xl w-full mt-1" style={inpStyle} />
                 </label>
                 <label className="block">
-                  <span className="text-xs font-bold" style={{ color: C.faint }}>Snacks / day</span>
+                  <span className="text-xs font-bold" style={{ color: "var(--muted-foreground)" }}>Snacks / day</span>
                   <input type="number" min={0} max={4} value={mealsDraft.snacks} disabled={mealsSaving}
                     onChange={(e) => setMealsDraft((d) => ({ ...d, snacks: Math.max(0, +e.target.value || 0) }))}
                     onBlur={commitMealConfig}
                     className="text-sm px-3 py-2 rounded-xl w-full mt-1" style={inpStyle} />
                 </label>
               </div>
-              <div className="text-xs font-semibold mt-2" style={{ color: C.faint }}>
+              <div className="text-xs font-semibold mt-2" style={{ color: "var(--muted-foreground)" }}>
                 {mealsSaving ? "Saving…" : "Applies on the next generate/regenerate."}
               </div>
             </Card>
@@ -1493,10 +1493,10 @@ export default function PlanTab({ profile, summary, refresh }) {
                 {plan.groceryList ? (
                   <>
                     <div className="flex gap-2 mb-3">
-                      <a href={grocerySmsHref} className="text-xs font-bold px-2.5 py-1.5 rounded-lg flex items-center gap-1" style={{ background: C.card2, border: `1px solid ${C.rule}`, color: C.ink }}>
+                      <a href={grocerySmsHref} className="text-xs font-bold px-2.5 py-1.5 rounded-lg flex items-center gap-1" style={{ background: "var(--secondary)", border: "1px solid var(--border)", color: "var(--foreground)" }}>
                         <MessageCircle size={12} />Text
                       </a>
-                      <a href={groceryMailtoHref} className="text-xs font-bold px-2.5 py-1.5 rounded-lg flex items-center gap-1" style={{ background: C.card2, border: `1px solid ${C.rule}`, color: C.ink }}>
+                      <a href={groceryMailtoHref} className="text-xs font-bold px-2.5 py-1.5 rounded-lg flex items-center gap-1" style={{ background: "var(--secondary)", border: "1px solid var(--border)", color: "var(--foreground)" }}>
                         <Mail size={12} />Email
                       </a>
                     </div>
@@ -1504,22 +1504,22 @@ export default function PlanTab({ profile, summary, refresh }) {
                       .filter(([, items]) => items.length > 0)
                       .map(([section, items]) => (
                         <div key={section} className="mb-2.5">
-                          <div className="text-[10.5px] font-extrabold uppercase tracking-wide mb-1" style={{ color: C.faint }}>{SECTION_LABELS[section] || section}</div>
+                          <div className="text-[10.5px] font-extrabold uppercase tracking-wide mb-1" style={{ color: "var(--muted-foreground)" }}>{SECTION_LABELS[section] || section}</div>
                           {items.map((i) => {
                             const grams = itemGrams(i);
                             const hh = toHouseholdUnit(i.name, grams);
                             const practical = i.purchaseUnits?.display;
                             return (
-                              <label key={i.name} className="flex items-start gap-2.5 py-1.5" style={{ borderBottom: `1px solid ${C.rule}`, opacity: i.checked ? 0.45 : 1 }}>
+                              <label key={i.name} className="flex items-start gap-2.5 py-1.5" style={{ borderBottom: "1px solid var(--border)", opacity: i.checked ? 0.45 : 1 }}>
                                 {/* Law (a): a ticked box is a state, not a
                                     success — neutral --ink, never --good. */}
                                 <input type="checkbox" checked={!!i.checked} onChange={(e) => onCheckItem(i.name, e.target.checked)}
-                                  className="mt-0.5 w-4 h-4 shrink-0" style={{ accentColor: C.ink }} />
+                                  className="mt-0.5 w-4 h-4 shrink-0" style={{ accentColor: "var(--foreground)" }} />
                                 <div className="flex-1 min-w-0">
-                                  <div className="text-sm font-bold" style={{ color: C.ink, textDecoration: i.checked ? "line-through" : "none" }}>
+                                  <div className="text-sm font-bold" style={{ color: "var(--foreground)", textDecoration: i.checked ? "line-through" : "none" }}>
                                     {practical ? `${practical} — ${i.name}` : i.name}
                                   </div>
-                                  <div className="mono text-[10.5px] font-semibold" style={{ color: C.faint }}>
+                                  <div className="mono text-[10.5px] font-semibold" style={{ color: "var(--muted-foreground)" }}>
                                     {grams} g{hh ? ` · ≈${hh}` : ""}{i.purchaseUnits?.approx ? ` · ${i.purchaseUnits.approx}` : ""}
                                     {/* The ≈ is not decoration: this is a
                                         keyword match against a hand-entered
@@ -1543,7 +1543,7 @@ export default function PlanTab({ profile, summary, refresh }) {
                         be a confidently wrong number, which is worse than
                         none. Restore it once the backend prices whole packages
                         and accounts for the unpriced items. */}
-                    <div className="text-xs font-semibold mt-1 pt-2" style={{ color: C.faint, borderTop: `1px solid ${C.rule}` }}>
+                    <div className="text-xs font-semibold mt-1 pt-2" style={{ color: "var(--muted-foreground)", borderTop: "1px solid var(--border)" }}>
                       Per-item estimates only — no weekly total yet. Each price is charged on the grams your plan uses, while the line above it lists a whole package, so adding them up would understate the real shop.
                       {plan.groceryList.costCoverageNote
                         ? ` ${stripSourcePaths(plan.groceryList.costCoverageNote)}`
@@ -1551,7 +1551,7 @@ export default function PlanTab({ profile, summary, refresh }) {
                     </div>
                   </>
                 ) : (
-                  <div className="text-sm font-semibold" style={{ color: C.faint }}>Generate a list from this week's plan.</div>
+                  <div className="text-sm font-semibold" style={{ color: "var(--muted-foreground)" }}>Generate a list from this week's plan.</div>
                 )}
               </Card>
             )}

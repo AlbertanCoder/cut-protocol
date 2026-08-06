@@ -64,8 +64,8 @@ export default function GenerationProgress({ kind = "plan", days = 7, onCancel }
             // 6.5:1) — --faint-light is 38% ink (3.26:1) and fails WCAG AA at
             // body size (Parts.jsx:31-34 documents the same fix). The three-tier
             // hierarchy still reads, carried by the dot rather than the label.
-            const textColor = active ? C.ink : C.faint;
-            const dotColor = active ? C.ink : past ? C.faint : C.faintLight;
+            const textColor = active ? "var(--foreground)" : "var(--muted-foreground)";
+            const dotColor = active ? "var(--foreground)" : past ? "var(--muted-foreground)" : "var(--muted-foreground)";
             return (
               <li key={p} className="flex items-center gap-2 text-xs font-semibold" style={{ color: textColor }}>
                 <span
@@ -80,7 +80,7 @@ export default function GenerationProgress({ kind = "plan", days = 7, onCancel }
       </div>
 
       <div className="flex items-center justify-between gap-3 mt-3.5">
-        <span className="text-[10px] font-semibold" style={{ color: C.faint }}>
+        <span className="text-[10px] font-semibold" style={{ color: "var(--muted-foreground)" }}>
           No percentage — the solve runs server-side in one step, so there's nothing real to count.
         </span>
         {onCancel && (
@@ -88,7 +88,7 @@ export default function GenerationProgress({ kind = "plan", days = 7, onCancel }
             type="button"
             onClick={onCancel}
             className="text-xs font-bold px-3 py-1.5 rounded-full flex items-center gap-1 shrink-0"
-            style={{ background: "transparent", color: C.ink, border: `1px solid ${C.rule}` }}
+            style={{ background: "transparent", color: "var(--foreground)", border: "1px solid var(--border)" }}
           >
             <X size={12} aria-hidden="true" /> Cancel
           </button>

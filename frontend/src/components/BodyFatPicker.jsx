@@ -70,12 +70,12 @@ export default function BodyFatPicker({ current, source, onDone, onClose }) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: "rgba(0,0,0,0.55)" }} onClick={onClose}>
       <div ref={panelRef} role="dialog" aria-modal="true" aria-labelledby={titleId} tabIndex={-1}
-        className="w-[560px] max-w-[94vw] max-h-[88vh] overflow-y-auto rounded-2xl p-5" style={{ background: C.card, border: `1px solid ${C.rule}` }} onClick={(e) => e.stopPropagation()}>
+        className="w-[560px] max-w-[94vw] max-h-[88vh] overflow-y-auto rounded-2xl p-5" style={{ background: "var(--card)", border: "1px solid var(--border)" }} onClick={(e) => e.stopPropagation()}>
         <div className="flex items-center justify-between mb-1">
-          <div id={titleId} className="text-lg font-extrabold" style={{ color: C.ink }}>Body fat %</div>
-          <button onClick={onClose} className="text-sm font-bold px-2 py-1 rounded-lg" style={{ color: C.faint }} aria-label="Close">✕</button>
+          <div id={titleId} className="text-lg font-extrabold" style={{ color: "var(--foreground)" }}>Body fat %</div>
+          <button onClick={onClose} className="text-sm font-bold px-2 py-1 rounded-lg" style={{ color: "var(--muted-foreground)" }} aria-label="Close">✕</button>
         </div>
-        <div className="text-xs font-semibold mb-4" style={{ color: C.faint }}>
+        <div className="text-xs font-semibold mb-4" style={{ color: "var(--muted-foreground)" }}>
           A minor refinement to your calorie estimate. Pick the closest match — or skip it.
         </div>
 
@@ -90,7 +90,7 @@ export default function BodyFatPicker({ current, source, onDone, onClose }) {
                     onClick={() => pickBucket(pct)}
                     disabled={saving}
                     className="flex flex-col items-center gap-1 rounded-xl py-2 px-1"
-                    style={{ background: selected ? C.card2 : "transparent", border: `1px solid ${selected ? C.faintLight : C.rule}`, color: selected ? C.ink : C.faint }}
+                    style={{ background: selected ? "var(--secondary)" : "transparent", border: `1px solid ${selected ? "var(--muted-foreground)" : "var(--border)"}`, color: selected ? "var(--foreground)" : "var(--muted-foreground)" }}
                     aria-pressed={selected}
                   >
                     <div style={{ width: 46 }}><Silhouette pct={pct} /></div>
@@ -99,30 +99,30 @@ export default function BodyFatPicker({ current, source, onDone, onClose }) {
                 );
               })}
             </div>
-            {err && <div role="alert" className="text-xs font-bold mt-3" style={{ color: C.red }}>{err}</div>}
+            {err && <div role="alert" className="text-xs font-bold mt-3" style={{ color: "var(--destructive)" }}>{err}</div>}
             <div className="flex items-center justify-between mt-4 gap-3">
-              <button onClick={() => { setMeasuredMode(true); setErr(null); }} className="text-xs font-bold underline" style={{ color: C.faint }}>
+              <button onClick={() => { setMeasuredMode(true); setErr(null); }} className="text-xs font-bold underline" style={{ color: "var(--muted-foreground)" }}>
                 I had it measured (DEXA / calipers / scale)
               </button>
-              <button onClick={skip} disabled={saving} className="text-xs font-semibold px-3 py-1.5 rounded-lg" style={{ background: C.card2, color: C.faint, border: `1px solid ${C.rule}` }}>
+              <button onClick={skip} disabled={saving} className="text-xs font-semibold px-3 py-1.5 rounded-lg" style={{ background: "var(--secondary)", color: "var(--muted-foreground)", border: "1px solid var(--border)" }}>
                 Not sure — skip
               </button>
             </div>
           </>
         ) : (
           <div className="flex flex-col gap-3">
-            <label className="text-xs font-bold" htmlFor="measured-bf" style={{ color: C.faint }}>Measured body fat %</label>
+            <label className="text-xs font-bold" htmlFor="measured-bf" style={{ color: "var(--muted-foreground)" }}>Measured body fat %</label>
             <input
               id="measured-bf"
               type="number" value={measured} onChange={(e) => setMeasured(e.target.value)} min={3} max={70} step={0.1}
               placeholder="e.g. 18.5"
               className="text-sm font-semibold px-3 py-2 rounded-xl outline-none"
-              style={{ background: C.card2, color: C.ink, border: `1px solid ${C.rule}` }}
+              style={{ background: "var(--secondary)", color: "var(--foreground)", border: "1px solid var(--border)" }}
             />
-            {err && <div role="alert" className="text-xs font-bold" style={{ color: C.red }}>{err}</div>}
+            {err && <div role="alert" className="text-xs font-bold" style={{ color: "var(--destructive)" }}>{err}</div>}
             <div className="flex items-center gap-2">
               <button onClick={saveMeasured} disabled={saving} className="text-sm font-bold px-3 py-2 rounded-xl" style={{ background: C.accent, color: C.accentInk }}>Save</button>
-              <button onClick={() => { setMeasuredMode(false); setErr(null); }} className="text-sm font-semibold px-3 py-2 rounded-xl" style={{ color: C.faint }}>Back to picker</button>
+              <button onClick={() => { setMeasuredMode(false); setErr(null); }} className="text-sm font-semibold px-3 py-2 rounded-xl" style={{ color: "var(--muted-foreground)" }}>Back to picker</button>
             </div>
           </div>
         )}

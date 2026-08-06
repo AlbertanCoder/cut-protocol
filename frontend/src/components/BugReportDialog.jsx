@@ -82,8 +82,8 @@ export default function BugReportDialog({ open, error, onClose }) {
   };
 
   const overlay = { position: "fixed", inset: 0, background: "rgba(0,0,0,.6)", zIndex: 100, display: "flex", alignItems: "center", justifyContent: "center", padding: 16 };
-  const panel = { background: C.card2, border: `1px solid ${C.rule}`, borderRadius: 20, width: "100%", maxWidth: 640, maxHeight: "88vh", display: "flex", flexDirection: "column" };
-  const inp = { background: C.card2, border: `1.5px solid ${C.rule}`, color: C.ink };
+  const panel = { background: "var(--secondary)", border: "1px solid var(--border)", borderRadius: 20, width: "100%", maxWidth: 640, maxHeight: "88vh", display: "flex", flexDirection: "column" };
+  const inp = { background: "var(--secondary)", border: "1.5px solid var(--border)", color: "var(--foreground)" };
 
   return (
     <div style={overlay} onClick={onClose}>
@@ -91,30 +91,30 @@ export default function BugReportDialog({ open, error, onClose }) {
         style={panel} onClick={(e) => e.stopPropagation()}>
         <div className="flex items-center justify-between px-5 pt-5 pb-3">
           <div className="flex items-center gap-2">
-            <Bug size={18} style={{ color: C.faint }} aria-hidden="true" />
-            <div id={titleId} className="text-[15px] font-extrabold" style={{ color: C.ink }}>{error ? "Something went wrong" : "Report a bug"}</div>
+            <Bug size={18} style={{ color: "var(--muted-foreground)" }} aria-hidden="true" />
+            <div id={titleId} className="text-[15px] font-extrabold" style={{ color: "var(--foreground)" }}>{error ? "Something went wrong" : "Report a bug"}</div>
           </div>
-          <button onClick={onClose} aria-label="Close" style={{ color: C.faintLight }}><X size={18} aria-hidden="true" /></button>
+          <button onClick={onClose} aria-label="Close" style={{ color: "var(--muted-foreground)" }}><X size={18} aria-hidden="true" /></button>
         </div>
 
         <div className="px-5 overflow-y-auto" style={{ flex: 1 }}>
           {error && (
-            <div className="text-xs font-semibold mb-3 p-2.5 rounded-lg" style={{ color: C.red, background: C.redBg, border: `1px solid ${C.red}44` }}>
+            <div className="text-xs font-semibold mb-3 p-2.5 rounded-lg" style={{ color: "var(--destructive)", background: "color-mix(in srgb, var(--destructive) 12%, transparent)", border: `1px solid ${"var(--destructive)"}44` }}>
               {String(error.message || error).slice(0, 200)}
             </div>
           )}
 
           {pendingCount > 0 && status !== "sent" && (
-            <div className="text-xs font-semibold mb-3 p-2.5 rounded-lg flex items-center justify-between gap-2" style={{ color: C.warn, background: C.warnBg }}>
+            <div className="text-xs font-semibold mb-3 p-2.5 rounded-lg flex items-center justify-between gap-2" style={{ color: "var(--warn)", background: "color-mix(in srgb, var(--warn) 12%, transparent)" }}>
               <span>{pendingCount} report{pendingCount === 1 ? "" : "s"} saved offline.</span>
-              <button onClick={sendPending} disabled={!online} className="font-bold px-2 py-1 rounded-md" style={{ background: online ? C.accent : C.card2, color: online ? C.accentInk : C.faintLight }}>
+              <button onClick={sendPending} disabled={!online} className="font-bold px-2 py-1 rounded-md" style={{ background: online ? C.accent : "var(--secondary)", color: online ? C.accentInk : "var(--muted-foreground)" }}>
                 Open {pendingCount === 1 ? "it" : "them"} now
               </button>
             </div>
           )}
 
           <label className="block mb-3">
-            <span className="text-xs font-bold" style={{ color: C.faint }}>What were you doing? (optional)</span>
+            <span className="text-xs font-bold" style={{ color: "var(--muted-foreground)" }}>What were you doing? (optional)</span>
             <textarea value={userText} onChange={(e) => setUserText(e.target.value)} rows={3}
               placeholder="e.g. I clicked Generate on the Plan tab and it froze"
               className="text-sm px-3 py-2 rounded-xl w-full mt-1" style={inp} />
@@ -124,21 +124,21 @@ export default function BugReportDialog({ open, error, onClose }) {
             <ShieldCheck size={13} style={{ color: C.good }} />
             <span className="text-[11px] font-bold uppercase tracking-wide" style={{ color: C.good }}>Exactly what will be sent — no weights, food logs, names, allergies, or your Windows username</span>
           </div>
-          <pre className="text-[11px] leading-relaxed p-3 rounded-xl overflow-auto mb-3" style={{ background: C.card2, border: `1px solid ${C.rule}`, color: C.faint, maxHeight: 260, whiteSpace: "pre-wrap", wordBreak: "break-word" }}>
+          <pre className="text-[11px] leading-relaxed p-3 rounded-xl overflow-auto mb-3" style={{ background: "var(--secondary)", border: "1px solid var(--border)", color: "var(--muted-foreground)", maxHeight: 260, whiteSpace: "pre-wrap", wordBreak: "break-word" }}>
 {body}
           </pre>
         </div>
 
-        <div className="px-5 py-4 flex items-center gap-2 flex-wrap" style={{ borderTop: `1px solid ${C.rule}` }}>
+        <div className="px-5 py-4 flex items-center gap-2 flex-wrap" style={{ borderTop: "1px solid var(--border)" }}>
           <button onClick={send} className="text-sm font-bold px-4 py-2.5 rounded-xl flex items-center gap-1.5" style={{ background: C.accent, color: C.accentInk }}>
             {online ? <Send size={14} /> : <WifiOff size={14} />}{online ? "Send report" : "Save (offline)"}
           </button>
-          <button onClick={copy} className="text-sm font-bold px-3 py-2.5 rounded-xl flex items-center gap-1.5" style={{ background: "transparent", color: C.ink, border: `1.5px solid ${C.rule}` }}>
+          <button onClick={copy} className="text-sm font-bold px-3 py-2.5 rounded-xl flex items-center gap-1.5" style={{ background: "transparent", color: "var(--foreground)", border: "1.5px solid var(--border)" }}>
             <Copy size={14} />Copy
           </button>
           <div className="flex-1" />
           {status === "sent" && <span className="text-xs font-bold flex items-center gap-1" style={{ color: C.good }}><Check size={13} />Opened in your browser — click "Submit new issue" to finish.</span>}
-          {status === "saved" && <span className="text-xs font-bold flex items-center gap-1" style={{ color: C.warn }}><Check size={13} />Saved — you'll be offered to send it when you're back online.</span>}
+          {status === "saved" && <span className="text-xs font-bold flex items-center gap-1" style={{ color: "var(--warn)" }}><Check size={13} />Saved — you'll be offered to send it when you're back online.</span>}
           {status === "copied" && <span className="text-xs font-bold flex items-center gap-1" style={{ color: C.good }}><Check size={13} />Copied to clipboard.</span>}
         </div>
       </div>

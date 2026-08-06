@@ -14,7 +14,7 @@ const BARCODE_FORMATS = ["upc_a", "upc_e", "ean_13", "ean_8"];
 
 // Control borders wear --rule-strong (3.34:1 over card): the border is the
 // only thing that says where this input is. --rule is 1.17:1 and decorative.
-const inpStyle = { background: C.card2, border: `1.5px solid ${C.ruleStrong}`, color: C.ink };
+const inpStyle = { background: "var(--secondary)", border: "1.5px solid var(--input)", color: "var(--foreground)" };
 
 // Validator issue codes are internal identifiers ("atwater", "name-shape",
 // "zero-kcal"). They were rendered raw, as `{iss.code}: {iss.detail}`, which
@@ -53,8 +53,8 @@ function VerdictBanner({ verdict, issues }) {
       // in-house method name presented as a verification badge, on data that
       // has been verified by nobody. It is an arithmetic consistency test, and
       // saying so out loud is the honest version of the same sentence.
-      <div className="text-xs font-semibold flex items-start gap-1.5" style={{ color: C.faint }}>
-        <CheckCircle2 size={13} className="mt-0.5 shrink-0" style={{ color: C.faint }} aria-hidden="true" />
+      <div className="text-xs font-semibold flex items-start gap-1.5" style={{ color: "var(--muted-foreground)" }}>
+        <CheckCircle2 size={13} className="mt-0.5 shrink-0" style={{ color: "var(--muted-foreground)" }} aria-hidden="true" />
         <span>
           The calories add up against the protein, fat, carbs and fibre listed. That is an arithmetic check on what
           whoever entered this product typed — not a check that they typed the right thing.
@@ -64,16 +64,16 @@ function VerdictBanner({ verdict, issues }) {
   }
   const label = verdict === "reject" ? "Not adding this one — the numbers don't work" : "Added, but flagged — treat these numbers as unverified";
   return (
-    <div role="status" className="rounded-xl p-3 flex items-start gap-2.5" style={{ background: C.warnBg, border: `1px solid color-mix(in srgb, ${C.warn} 30%, transparent)` }}>
-      <AlertTriangle size={15} className="mt-0.5 shrink-0" style={{ color: C.warn }} aria-hidden="true" />
+    <div role="status" className="rounded-xl p-3 flex items-start gap-2.5" style={{ background: "color-mix(in srgb, var(--warn) 12%, transparent)", border: `1px solid color-mix(in srgb, ${"var(--warn)"} 30%, transparent)` }}>
+      <AlertTriangle size={15} className="mt-0.5 shrink-0" style={{ color: "var(--warn)" }} aria-hidden="true" />
       <div className="min-w-0">
-        <div className="text-xs font-extrabold" style={{ color: C.warn }}>{label}</div>
+        <div className="text-xs font-extrabold" style={{ color: "var(--warn)" }}>{label}</div>
         {issues?.length > 0 && (
           <ul className="mt-1 space-y-0.5 list-none p-0">
             {issues.map((iss, i) => (
-              <li key={i} className="text-xs font-medium" style={{ color: C.ink }}>
+              <li key={i} className="text-xs font-medium" style={{ color: "var(--foreground)" }}>
                 <b>{ISSUE_LABEL[iss.code] || "Failed a check"}</b>
-                <span style={{ color: C.faint }}> — {iss.detail}</span>
+                <span style={{ color: "var(--muted-foreground)" }}> — {iss.detail}</span>
               </li>
             ))}
           </ul>
@@ -146,7 +146,7 @@ function CameraScanner({ onDetected, onClose }) {
   }, []);
 
   return (
-    <div className="mt-3 rounded-xl overflow-hidden relative" style={{ border: `1px solid ${C.rule}`, background: C.paper }}>
+    <div className="mt-3 rounded-xl overflow-hidden relative" style={{ border: "1px solid var(--border)", background: C.paper }}>
       {error ? (
         <div className="p-4">
           <ErrorNote msg={error} hint="Use manual entry below instead — it's the supported path; the webcam scan is a convenience." />
@@ -156,7 +156,7 @@ function CameraScanner({ onDetected, onClose }) {
           {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
           <video ref={videoRef} className="w-full max-h-64 object-cover" muted playsInline />
           {/* was a hand-typed rgba(0,0,0,.6) gradient — standing rule 8 */}
-          <div className="absolute inset-x-0 bottom-0 p-2 text-center text-[10.5px] font-semibold" style={{ color: C.ink, background: `linear-gradient(transparent, ${C.scrim})` }}>
+          <div className="absolute inset-x-0 bottom-0 p-2 text-center text-[10.5px] font-semibold" style={{ color: "var(--foreground)", background: `linear-gradient(transparent, ${"var(--scrim, rgba(0,0,0,0.55))"})` }}>
             Hold a barcode steady in view
           </div>
         </>
@@ -164,8 +164,8 @@ function CameraScanner({ onDetected, onClose }) {
       {/* was rgba(0,0,0,.5) + color="#fff". The app has ONE off-white at three
           tiers and no pure white; a literal hex survives a token change and
           silently drifts (standing rule 8). */}
-      <button onClick={onClose} className="absolute top-2 right-2 p-1.5 rounded-lg" style={{ background: C.scrim }} aria-label="Close camera">
-        <X size={14} style={{ color: C.ink }} aria-hidden="true" />
+      <button onClick={onClose} className="absolute top-2 right-2 p-1.5 rounded-lg" style={{ background: "var(--scrim, rgba(0,0,0,0.55))" }} aria-label="Close camera">
+        <X size={14} style={{ color: "var(--foreground)" }} aria-hidden="true" />
       </button>
     </div>
   );
@@ -244,15 +244,15 @@ export default function BarcodeLookup({ onImported, onClose }) {
 
   return (
     <Card section="OPEN FOOD FACTS" title="Add a food by barcode">
-      <div className="text-xs font-semibold mb-3" style={{ color: C.faint }}>
+      <div className="text-xs font-semibold mb-3" style={{ color: "var(--muted-foreground)" }}>
         Manual UPC entry looks up real Open Food Facts data. It's crowd-sourced, not audited like the USDA core —
         every result is run through the same fiber-adjusted-Atwater check and stays visibly tagged{" "}
-        <b style={{ color: C.ink }}>COMMUNITY</b>, never mixed in as verified.
+        <b style={{ color: "var(--foreground)" }}>COMMUNITY</b>, never mixed in as verified.
       </div>
 
       <div className="flex gap-2 flex-wrap">
         <div className="relative flex-1 min-w-[180px]">
-          <Barcode size={15} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: C.faintLight }} />
+          <Barcode size={15} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: "var(--muted-foreground)" }} />
           <input
             type="text" inputMode="numeric" placeholder="UPC / barcode, e.g. 3017620422003"
             value={upc} onChange={(e) => setUpc(e.target.value.replace(/[^\d\s-]/g, ""))}
@@ -283,10 +283,10 @@ export default function BarcodeLookup({ onImported, onClose }) {
       )}
 
       {result?.alreadyImported && (
-        <div className="mt-3 p-3 rounded-xl" style={{ background: C.card2 }}>
-          <div className="text-xs font-bold mb-1" style={{ color: C.ink }}>Already in your library</div>
-          <div className="text-sm font-bold" style={{ color: C.ink }}>{result.food.name}</div>
-          <Chip color={C.faint}>{result.food.source === "community" ? "COMMUNITY (OPEN FOOD FACTS)" : result.food.source}</Chip>
+        <div className="mt-3 p-3 rounded-xl" style={{ background: "var(--secondary)" }}>
+          <div className="text-xs font-bold mb-1" style={{ color: "var(--foreground)" }}>Already in your library</div>
+          <div className="text-sm font-bold" style={{ color: "var(--foreground)" }}>{result.food.name}</div>
+          <Chip color={"var(--muted-foreground)"}>{result.food.source === "community" ? "COMMUNITY (OPEN FOOD FACTS)" : result.food.source}</Chip>
         </div>
       )}
 
@@ -294,10 +294,10 @@ export default function BarcodeLookup({ onImported, onClose }) {
         <div className="mt-4">
           <div className="flex items-start justify-between gap-3 mb-2">
             <div>
-              <div className="text-base font-extrabold" style={{ color: C.ink }}>{result.product.name}</div>
-              {result.product.brand && <div className="text-xs font-semibold" style={{ color: C.faint }}>{result.product.brand}</div>}
+              <div className="text-base font-extrabold" style={{ color: "var(--foreground)" }}>{result.product.name}</div>
+              {result.product.brand && <div className="text-xs font-semibold" style={{ color: "var(--muted-foreground)" }}>{result.product.brand}</div>}
             </div>
-            <Chip color={C.faint}>COMMUNITY (OPEN FOOD FACTS)</Chip>
+            <Chip color={"var(--muted-foreground)"}>COMMUNITY (OPEN FOOD FACTS)</Chip>
           </div>
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-x-4">
@@ -310,7 +310,7 @@ export default function BarcodeLookup({ onImported, onClose }) {
           {result.product.notes?.length > 0 && (
             <div className="mt-2 space-y-0.5">
               {result.product.notes.map((n, i) => (
-                <div key={i} className="text-[10.5px] font-medium" style={{ color: C.faint }}>· {n}</div>
+                <div key={i} className="text-[10.5px] font-medium" style={{ color: "var(--muted-foreground)" }}>· {n}</div>
               ))}
             </div>
           )}
@@ -324,7 +324,7 @@ export default function BarcodeLookup({ onImported, onClose }) {
               <Plus size={14} className="inline mr-1" />{importing ? "Adding…" : "Add to food library"}
             </Btn>
             {!result.importable && (
-              <span className="text-xs font-semibold" style={{ color: C.faint }}>
+              <span className="text-xs font-semibold" style={{ color: "var(--muted-foreground)" }}>
                 Can't be saved until Open Food Facts' own listing has usable numbers.
               </span>
             )}
@@ -338,9 +338,9 @@ export default function BarcodeLookup({ onImported, onClose }) {
           input looks like or what happens next. */}
       {!loading && !error && !result && !imported && !cameraOpen && (
         <div className="mt-4 flex flex-col items-center justify-center gap-2 text-center" style={{ padding: "14px 0" }}>
-          <Barcode size={22} style={{ color: C.faintLight }} aria-hidden="true" />
-          <div className="text-sm font-semibold" style={{ color: C.faint }}>Nothing looked up yet</div>
-          <div className="text-xs font-medium max-w-[300px]" style={{ color: C.faint }}>
+          <Barcode size={22} style={{ color: "var(--muted-foreground)" }} aria-hidden="true" />
+          <div className="text-sm font-semibold" style={{ color: "var(--muted-foreground)" }}>Nothing looked up yet</div>
+          <div className="text-xs font-medium max-w-[300px]" style={{ color: "var(--muted-foreground)" }}>
             Type the number printed under the barcode — 8, 12 or 13 digits{cameraSupported ? ", or scan the package with your webcam" : ""}.
             You&apos;ll see the product and its numbers here first; nothing is saved until you say so.
           </div>

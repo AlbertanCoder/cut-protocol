@@ -14,9 +14,9 @@ const signed = (n) => (Number.isFinite(n) ? `${n > 0 ? "+" : n < 0 ? "−" : ""}
 
 // One shown-math row: plain-English label left, tabular number right.
 const Line = ({ label, value, tone, strong }) => (
-  <div className="flex justify-between items-baseline gap-4 py-1.5" style={{ borderBottom: `1px solid ${C.rule}` }}>
-    <span className="text-sm font-semibold" style={{ color: tone || C.ink }}>{label}</span>
-    <span className={`mono text-sm shrink-0 ${strong ? "font-extrabold" : "font-bold"}`} style={{ color: tone || C.ink }}>{value}</span>
+  <div className="flex justify-between items-baseline gap-4 py-1.5" style={{ borderBottom: "1px solid var(--border)" }}>
+    <span className="text-sm font-semibold" style={{ color: tone || "var(--foreground)" }}>{label}</span>
+    <span className={`mono text-sm shrink-0 ${strong ? "font-extrabold" : "font-bold"}`} style={{ color: tone || "var(--foreground)" }}>{value}</span>
   </div>
 );
 
@@ -37,12 +37,12 @@ const FormulaCheck = ({ checked, disabled, onChange, label }) => (
       style={{
         appearance: "none", WebkitAppearance: "none", margin: 0,
         width: 15, height: 15, borderRadius: 4,
-        background: checked ? C.card2 : "transparent",
-        border: `1px solid ${checked ? C.faintLight : C.rule}`,
+        background: checked ? "var(--secondary)" : "transparent",
+        border: `1px solid ${checked ? "var(--muted-foreground)" : "var(--border)"}`,
         cursor: disabled ? "default" : "pointer",
       }}
     />
-    {checked && <Check size={11} strokeWidth={3.25} className="absolute pointer-events-none" style={{ color: C.ink }} aria-hidden="true" />}
+    {checked && <Check size={11} strokeWidth={3.25} className="absolute pointer-events-none" style={{ color: "var(--foreground)" }} aria-hidden="true" />}
   </span>
 );
 
@@ -140,11 +140,11 @@ export default function EngineTab({ profile, summary, refresh, openFoods, openPr
           with nothing telling them what the screen is for or that it needs
           nothing from them. */}
       {noData && (
-        <div className="mb-4 p-3.5 rounded-xl flex items-start gap-2.5" style={{ background: C.card2, border: `1px solid ${C.rule}` }}>
-          <Info size={15} className="mt-0.5 shrink-0" style={{ color: C.faint }} aria-hidden="true" />
+        <div className="mb-4 p-3.5 rounded-xl flex items-start gap-2.5" style={{ background: "var(--secondary)", border: "1px solid var(--border)" }}>
+          <Info size={15} className="mt-0.5 shrink-0" style={{ color: "var(--muted-foreground)" }} aria-hidden="true" />
           <div className="min-w-0">
-            <div className="text-xs font-bold" style={{ color: C.ink }}>There is nothing to do on this screen.</div>
-            <div className="text-xs font-semibold mt-0.5" style={{ color: C.faint }}>
+            <div className="text-xs font-bold" style={{ color: "var(--foreground)" }}>There is nothing to do on this screen.</div>
+            <div className="text-xs font-semibold mt-0.5" style={{ color: "var(--muted-foreground)" }}>
               It shows, step by step, how your daily calorie target was worked out from what you entered on
               Profile — the formulas, your job and training, your rate, and your floor. Change an input on
               Profile and every number here moves with it. Once you have weigh-ins and a food log, this screen
@@ -160,7 +160,7 @@ export default function EngineTab({ profile, summary, refresh, openFoods, openPr
               card title, and again in Step 2, and was never once expanded. Step
               2 glosses TDEE ("total daily burn") in its Stat label; this is the
               same courtesy for the term the whole tab is built on. */}
-          <div className="text-xs font-semibold mb-2" style={{ color: C.faint }}>
+          <div className="text-xs font-semibold mb-2" style={{ color: "var(--muted-foreground)" }}>
             BMR — basal metabolic rate: the energy you&apos;d burn in a day at complete rest, before your job,
             your training or digestion. Averaging {energy.includedCount} of {energy.rows.length} applicable
             formulas — untick any you distrust.
@@ -173,20 +173,20 @@ export default function EngineTab({ profile, summary, refresh, openFoods, openPr
             const off = r.defaultOn ? inList : !inList;
             const cite = r.prov?.citation;
             return (
-            <div key={r.key} style={{ borderBottom: `1px solid ${C.rule}`, opacity: off ? 0.45 : 1 }}>
+            <div key={r.key} style={{ borderBottom: "1px solid var(--border)", opacity: off ? 0.45 : 1 }}>
               <label className="flex items-center justify-between pt-1.5">
-                <span className="flex items-center gap-2.5 text-sm font-semibold" style={{ color: C.ink }}>
+                <span className="flex items-center gap-2.5 text-sm font-semibold" style={{ color: "var(--foreground)" }}>
                   <FormulaCheck checked={!off} disabled={savingKey === r.key} label={`Include ${r.label} in the average`}
                     onChange={() => toggleFormula(r.key)} />
                   {r.label}
-                  {savingKey === r.key && <span className="text-[10px] font-bold" style={{ color: C.warn }}>saving…</span>}
+                  {savingKey === r.key && <span className="text-[10px] font-bold" style={{ color: "var(--warn)" }}>saving…</span>}
                 </span>
-                <span className="mono text-sm font-bold" style={{ color: C.ink, textDecoration: off ? "line-through" : "none" }}>{kc(r.v)}</span>
+                <span className="mono text-sm font-bold" style={{ color: "var(--foreground)", textDecoration: off ? "line-through" : "none" }}>{kc(r.v)}</span>
               </label>
               {cite && (
                 // Provenance (Law 3): journal + year, and the honest independence
                 // note where one exists — the "show the math" trust signal.
-                <div className="text-[10px] font-medium pb-1.5 pl-[26px]" style={{ color: C.faint }}>
+                <div className="text-[10px] font-medium pb-1.5 pl-[26px]" style={{ color: "var(--muted-foreground)" }}>
                   {[cite.journal, cite.year].filter(Boolean).join(" · ")}{cite.note ? ` — ${cite.note}` : ""}
                 </div>
               )}
@@ -194,7 +194,7 @@ export default function EngineTab({ profile, summary, refresh, openFoods, openPr
             );
           })}
           {energy.allExcludedFallback && (
-            <div className="text-xs font-bold mt-2" style={{ color: C.warn }}>
+            <div className="text-xs font-bold mt-2" style={{ color: "var(--warn)" }}>
               Everything was excluded — falling back to all applicable formulas (an average needs members).
             </div>
           )}
@@ -203,27 +203,27 @@ export default function EngineTab({ profile, summary, refresh, openFoods, openPr
             <Stat label="Spread" value={`${kc(energy.spreadLo)}–${kc(energy.spreadHi)}`} unit="kcal" />
           </div>
           {energy.spreadPct > 0 && (
-            <div className="text-[11px] font-semibold mt-1" style={{ color: C.faint }}>
+            <div className="text-[11px] font-semibold mt-1" style={{ color: "var(--muted-foreground)" }}>
               ±{energy.sd} kcal across formulas ({energy.spreadPct}% range). Dispersion, not a confidence interval — some estimators share a dataset or body-composition form.
             </div>
           )}
           {bfAssumed && (
-            <div className="text-xs font-semibold mt-1" style={{ color: C.faint }}>
+            <div className="text-xs font-semibold mt-1" style={{ color: "var(--muted-foreground)" }}>
               Add body fat % on the Profile tab to unlock Katch–McArdle and Cunningham (the best two when BF is known).
             </div>
           )}
         </Card>
 
         <Card section="Step 2" title="TDEE — component build" className="xl:col-span-4">
-          <div className="flex flex-col gap-2 text-sm font-semibold" style={{ color: C.ink }}>
-            <div className="flex justify-between py-1.5" style={{ borderBottom: `1px solid ${C.rule}` }}>
+          <div className="flex flex-col gap-2 text-sm font-semibold" style={{ color: "var(--foreground)" }}>
+            <div className="flex justify-between py-1.5" style={{ borderBottom: "1px solid var(--border)" }}>
               <span>BMR average</span><span className="mono font-extrabold">{kc(energy.rmr)}</span>
             </div>
-            <div className="flex justify-between py-1.5" style={{ borderBottom: `1px solid ${C.rule}` }}>
+            <div className="flex justify-between py-1.5" style={{ borderBottom: "1px solid var(--border)" }}>
               <span>× {energy.jobSource === "override" ? "manual multiplier" : energy.jobLabel}</span>
               <span className="mono font-extrabold">×{energy.jobMultiplier}</span>
             </div>
-            <div className="flex justify-between py-1.5" style={{ borderBottom: `1px solid ${C.rule}` }}>
+            <div className="flex justify-between py-1.5" style={{ borderBottom: "1px solid var(--border)" }}>
               <span>+ training ({profile.sessionsPerWeek}×{profile.minutesPerSession} min, {energy.trainingStyle}, MET {energy.trainingMet})</span>
               <span className="mono font-extrabold">+{kc(energy.trainingKcalPerDay)}</span>
             </div>
@@ -234,13 +234,13 @@ export default function EngineTab({ profile, summary, refresh, openFoods, openPr
           {/* The formula printed "MET" as a bare symbol and the row above it
               printed "MET 6" as a bare number. It is the one term on this card a
               reader cannot look up from context. */}
-          <div className="text-xs font-semibold mt-2" style={{ color: C.faint }}>
+          <div className="text-xs font-semibold mt-2" style={{ color: "var(--muted-foreground)" }}>
             Training kcal/day = sessions × minutes × MET × 3.5 × kg ÷ 200 ÷ 7. A MET (metabolic equivalent of
             task) is how many times harder than sitting still an activity is — MET 6 burns six times resting
             rate, so heavier training styles score higher.
           </div>
           {adaptiveOn && (
-            <div className="text-xs font-semibold mt-1" style={{ color: C.warn }}>
+            <div className="text-xs font-semibold mt-1" style={{ color: "var(--warn)" }}>
               This is the population estimate. Your own intake and scale put it nearer {kc(effectiveTdee)} — that is
               what your target uses. The reconciliation is in Step 2 detail, below.
             </div>
@@ -248,7 +248,7 @@ export default function EngineTab({ profile, summary, refresh, openFoods, openPr
         </Card>
 
         <Card section="Step 3" title="Target — derived from your rate" className="xl:col-span-4">
-          <div className="flex flex-col gap-2" style={{ color: C.ink }}>
+          <div className="flex flex-col gap-2" style={{ color: "var(--foreground)" }}>
             <Line
               label={adaptiveOn ? "Best estimate of your burn (Step 2 detail)" : "TDEE (formula)"}
               value={kc(effectiveTdee)}
@@ -261,7 +261,7 @@ export default function EngineTab({ profile, summary, refresh, openFoods, openPr
               <>
                 <Line label="= what your data asks for this week" value={kc(indicated)} strong />
                 <Line label="last week's target" value={kc(cap.previousKcal)} />
-                <Line label={`most it may move in one week (±${kc(cap.capKcal)})`} value={signed(cap.appliedChangeKcal)} tone={C.warn} />
+                <Line label={`most it may move in one week (±${kc(cap.capKcal)})`} value={signed(cap.appliedChangeKcal)} tone={"var(--warn)"} />
               </>
             )}
           </div>
@@ -272,7 +272,7 @@ export default function EngineTab({ profile, summary, refresh, openFoods, openPr
             // The explanation the server has always computed and the screen
             // never showed. Constitution: every automatic adjustment is logged,
             // visible and reversible.
-            <div className="text-xs font-bold mt-1" style={{ color: C.warn }}>
+            <div className="text-xs font-bold mt-1" style={{ color: "var(--warn)" }}>
               {cap.reason
                 ? cap.reason[0].toUpperCase() + cap.reason.slice(1)
                 : `Held to ±${kc(cap.capKcal)} kcal a week.`}
@@ -282,19 +282,19 @@ export default function EngineTab({ profile, summary, refresh, openFoods, openPr
             </div>
           )}
           {target.floored && (
-            <div className="text-xs font-bold mt-1" style={{ color: C.warn }}>
+            <div className="text-xs font-bold mt-1" style={{ color: "var(--warn)" }}>
               The raw math wanted {kc(target.raw)} — clamped to your floor. At {kc(target.target)} you'll lose
               about {target.achievableRate} lb/wk through food alone, not the {target.rate} you picked. To go
               faster, add movement — not less food.
             </div>
           )}
           {adaptiveOn && Number.isFinite(summary.adaptive.formulaTarget?.target) && (
-            <div className="text-xs font-semibold mt-1" style={{ color: C.faint }}>
+            <div className="text-xs font-semibold mt-1" style={{ color: "var(--muted-foreground)" }}>
               From the formula alone this would be {kc(summary.adaptive.formulaTarget.target)} — every
               adjustment is listed in Step 2 detail and reverses if you correct the entries behind it.
             </div>
           )}
-          <button onClick={openProfile} className="text-xs font-bold flex items-center gap-1 mt-3 hover:opacity-80" style={{ color: C.ink }}>
+          <button onClick={openProfile} className="text-xs font-bold flex items-center gap-1 mt-3 hover:opacity-80" style={{ color: "var(--foreground)" }}>
             Change rate on Profile <ArrowRight size={12} />
           </button>
         </Card>
@@ -311,13 +311,13 @@ export default function EngineTab({ profile, summary, refresh, openFoods, openPr
             <div style={{ width: w("p"), background: C.protein }}></div>
             <div style={{ width: w("c"), background: C.carb }}></div>
             <div style={{ width: w("f"), background: C.fat }}></div>
-            <div style={{ width: `${restPct}%`, background: C.card2 }}></div>
+            <div style={{ width: `${restPct}%`, background: "var(--secondary)" }}></div>
           </div>
           <div className="flex items-center gap-4 mb-3 text-[10px] font-extrabold uppercase">
             <span style={{ color: C.proteinText }}>P · protein</span>
             <span style={{ color: C.carbText }}>C · carbs</span>
             <span style={{ color: C.fatText }}>F · fat</span>
-            <span style={{ color: C.faint }}>rest · flex</span>
+            <span style={{ color: "var(--muted-foreground)" }}>rest · flex</span>
           </div>
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-x-4">
             <Stat label="Protein range" value={`${macros.proteinLo}–${macros.proteinHi}`} unit="g" />
@@ -325,7 +325,7 @@ export default function EngineTab({ profile, summary, refresh, openFoods, openPr
             <Stat label="Carb range" value={`~${macros.carbLo}–${macros.carbHi}`} unit="g" />
             <Stat label="Fiber" value="25+" unit="g" />
           </div>
-          <div className="text-xs font-semibold mt-2" style={{ color: C.faint }}>
+          <div className="text-xs font-semibold mt-2" style={{ color: "var(--muted-foreground)" }}>
             For target {kc(macros.kcal)} · protein and calories are load-bearing walls · fat is a floor · carbs flex.
             {/* The old line said "ranges assume LBM = body weight until you add a
                 body fat %", which is not what the engine does: it assumes a
@@ -335,19 +335,19 @@ export default function EngineTab({ profile, summary, refresh, openFoods, openPr
             {bfAssumed && ` ${macros.lbmSourceNote || `Estimated: body fat % isn't set, so lean mass assumes a typical ${macros.assumedBodyFatPct ?? ""}% for your sex. Enter a real measurement to sharpen the protein target.`}`}
           </div>
           {macros.macroKcalGap > 0 && (
-            <div className="text-xs font-semibold mt-1" style={{ color: C.faint }}>
+            <div className="text-xs font-semibold mt-1" style={{ color: "var(--muted-foreground)" }}>
               Ranges sum ~{kc(macros.kcal - macros.macroKcalGap)} kcal at midpoint ({macros.macroKcalGap} under target) — {macros.carbBufferG}g deliberately trimmed off the carb midpoint as a conservatism margin.
             </div>
           )}
           {macros.macroKcalGap < 0 && (
             // The overshoot case (lean + heavy + floor-clamped): say it out loud
             // rather than let the bar quietly renormalise it away.
-            <div className="text-xs font-semibold mt-1" style={{ color: C.warn }}>
+            <div className="text-xs font-semibold mt-1" style={{ color: "var(--warn)" }}>
               Ranges sum ~{kc(macros.kcal - macros.macroKcalGap)} kcal at midpoint — {kc(Math.abs(macros.macroKcalGap))} OVER the target. At this body composition the protein and essential-fat floors do not fit inside {kc(macros.kcal)} kcal; carbs are already as low as they go.
             </div>
           )}
           {meta?.proteinFloorSource && (
-            <div className="text-[11px] font-semibold mt-2 pt-2" style={{ color: C.faint, borderTop: `1px solid ${C.rule}` }}>
+            <div className="text-[11px] font-semibold mt-2 pt-2" style={{ color: "var(--muted-foreground)", borderTop: "1px solid var(--border)" }}>
               Protein range basis: {meta.proteinFloorSource.label} — {meta.proteinFloorSource.detail} This app's {macros.proteinLo}–{macros.proteinHi}g range sits inside that band. Recomposition (not just weight loss) is the reason it's this heavily weighted — see Protein-priority mode on the Plan tab to have the solver defend the low end of it directly.
             </div>
           )}
@@ -360,11 +360,11 @@ export default function EngineTab({ profile, summary, refresh, openFoods, openPr
           calls it. Do NOT delete this block before then: the constitution says
           data is never trapped, and today this is the only way out. */}
       <details className="px-1 mt-4">
-        <summary className="text-xs font-semibold" style={{ color: C.faint }}>
+        <summary className="text-xs font-semibold" style={{ color: "var(--muted-foreground)" }}>
           Copy your data as JSON (raw backup)
         </summary>
         <pre className="text-xs mt-2 p-3 rounded-xl overflow-x-auto"
-          style={{ background: C.card, border: `1px solid ${C.rule}`, color: C.ink }}>
+          style={{ background: "var(--card)", border: "1px solid var(--border)", color: "var(--foreground)" }}>
           {JSON.stringify({ profile, summary }, null, 1)}
         </pre>
       </details>

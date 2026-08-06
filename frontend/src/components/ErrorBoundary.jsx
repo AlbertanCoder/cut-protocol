@@ -25,18 +25,18 @@ import BugReportDialog from "./BugReportDialog.jsx";
 
 function FallbackScreen({ error, full, label, onRetry, onReload, onReport, reportOpen, onCloseReport }) {
   const btn = { background: C.accent, color: C.accentInk };
-  const ghost = { background: "transparent", color: C.ink, border: `1.5px solid ${C.rule}` };
+  const ghost = { background: "transparent", color: "var(--foreground)", border: "1.5px solid var(--border)" };
   return (
     <div
       role="alert"
       className={`flex flex-col items-center justify-center gap-4 px-6 text-center ${full ? "min-h-svh" : "py-16"}`}
-      style={full ? { background: C.paper } : { background: C.card, border: `1px solid ${C.rule}`, borderRadius: 20 }}
+      style={full ? { background: C.paper } : { background: "var(--card)", border: "1px solid var(--border)", borderRadius: 20 }}
     >
-      <AlertTriangle size={34} style={{ color: C.warn }} aria-hidden="true" />
-      <div className="text-lg font-black" style={{ color: C.ink }}>
+      <AlertTriangle size={34} style={{ color: "var(--warn)" }} aria-hidden="true" />
+      <div className="text-lg font-black" style={{ color: "var(--foreground)" }}>
         {label ? `${label} couldn't be drawn` : "Something went wrong"}
       </div>
-      <div className="text-sm font-semibold max-w-md" style={{ color: C.faint }}>
+      <div className="text-sm font-semibold max-w-md" style={{ color: "var(--muted-foreground)" }}>
         {label
           ? "This one screen hit an unexpected error. The rest of the app is still working — switch to another screen, or try drawing this one again. Your data is safe."
           : "The app hit an unexpected error and stopped this screen from rendering. Your data is safe. Try again first — a reload is a bigger hammer and isn't usually needed."}

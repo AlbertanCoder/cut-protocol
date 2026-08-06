@@ -12,7 +12,7 @@ import { api } from "../lib/api.js";
 const styleLabel = { strength: "Strength", hypertrophy: "Hypertrophy", general: "General fitness", conditioning: "Conditioning" };
 
 export default function TrainingTab() {
-  const inpStyle = { background: C.card2, border: `1.5px solid ${C.rule}`, color: C.ink };
+  const inpStyle = { background: "var(--secondary)", border: "1.5px solid var(--border)", color: "var(--foreground)" };
   const [meta, setMeta] = useState(null);
   const [plan, setPlan] = useState(undefined); // undefined = loading, null = none
   const [planNotes, setPlanNotes] = useState([]);
@@ -67,7 +67,7 @@ export default function TrainingTab() {
   return (
     <div>
       <PageHead title="Training" sub="v1 scaffold — matches your inputs to a sensible template. Programming depth comes later; this gets you lifting.">
-        <Chip color={C.warn} bg={C.warnBg}>V1 TEMPLATES</Chip>
+        <Chip color={"var(--warn)"} bg={"color-mix(in srgb, var(--warn) 12%, transparent)"}>V1 TEMPLATES</Chip>
       </PageHead>
 
       {error && (
@@ -86,42 +86,42 @@ export default function TrainingTab() {
               <>
                 <div className="grid grid-cols-2 gap-2 mb-3">
                   <label className="block">
-                    <span className="text-xs font-bold" style={{ color: C.faint }}>Days / week</span>
+                    <span className="text-xs font-bold" style={{ color: "var(--muted-foreground)" }}>Days / week</span>
                     <select value={form.daysPerWeek} onChange={(e) => setForm((f) => ({ ...f, daysPerWeek: +e.target.value }))}
                       className="text-sm px-3 py-2 rounded-xl w-full mt-1" style={inpStyle}>
                       {meta.daysPerWeek.map((d) => <option key={d} value={d}>{d}</option>)}
                     </select>
                   </label>
                   <label className="block">
-                    <span className="text-xs font-bold" style={{ color: C.faint }}>Session length</span>
+                    <span className="text-xs font-bold" style={{ color: "var(--muted-foreground)" }}>Session length</span>
                     <select value={form.sessionLengthMin} onChange={(e) => setForm((f) => ({ ...f, sessionLengthMin: +e.target.value }))}
                       className="text-sm px-3 py-2 rounded-xl w-full mt-1" style={inpStyle}>
                       {meta.sessionLengthMin.map((m) => <option key={m} value={m}>{m} min</option>)}
                     </select>
                   </label>
                   <label className="block">
-                    <span className="text-xs font-bold" style={{ color: C.faint }}>Style</span>
+                    <span className="text-xs font-bold" style={{ color: "var(--muted-foreground)" }}>Style</span>
                     <select value={form.style} onChange={(e) => setForm((f) => ({ ...f, style: e.target.value }))}
                       className="text-sm px-3 py-2 rounded-xl w-full mt-1" style={inpStyle}>
                       {meta.styles.map((s) => <option key={s.key} value={s.key}>{s.label}</option>)}
                     </select>
                   </label>
                   <label className="block">
-                    <span className="text-xs font-bold" style={{ color: C.faint }}>Experience</span>
+                    <span className="text-xs font-bold" style={{ color: "var(--muted-foreground)" }}>Experience</span>
                     <select value={form.experience} onChange={(e) => setForm((f) => ({ ...f, experience: e.target.value }))}
                       className="text-sm px-3 py-2 rounded-xl w-full mt-1" style={inpStyle}>
                       {meta.experience.map((x) => <option key={x.key} value={x.key}>{x.label}</option>)}
                     </select>
                   </label>
                 </div>
-                <div className="text-xs font-bold mb-1.5" style={{ color: C.faint }}>Equipment</div>
+                <div className="text-xs font-bold mb-1.5" style={{ color: "var(--muted-foreground)" }}>Equipment</div>
                 <div className="flex flex-wrap gap-1.5 mb-4">
                   {meta.equipment.map((eq) => {
                     const on = form.equipment.includes(eq.key);
                     return (
                       <button key={eq.key} onClick={() => toggleEquipment(eq.key)} aria-pressed={on}
                         className="text-xs font-bold px-3 py-1.5 rounded-full"
-                        style={{ background: on ? C.card2 : "transparent", color: on ? C.ink : C.faint, border: `1px solid ${on ? C.faintLight : C.rule}` }}>
+                        style={{ background: on ? "var(--secondary)" : "transparent", color: on ? "var(--foreground)" : "var(--muted-foreground)", border: `1px solid ${on ? "var(--muted-foreground)" : "var(--border)"}` }}>
                         {eq.label}
                       </button>
                     );
@@ -130,7 +130,7 @@ export default function TrainingTab() {
                 <Btn onClick={generate} disabled={busy}>
                   <Sparkles size={13} className="inline mr-1" aria-hidden="true" />{busy ? "Building…" : plan ? "Regenerate plan" : "Generate plan"}
                 </Btn>
-                <div className="text-[10.5px] font-semibold mt-2" style={{ color: C.faint }}>
+                <div className="text-[10.5px] font-semibold mt-2" style={{ color: "var(--muted-foreground)" }}>
                   v1 picks one of four templates (2/3-day full body, 4-day upper/lower, conditioning circuits) and adapts exercises to your equipment. Regenerating replaces the current plan.
                 </div>
               </>
@@ -156,38 +156,38 @@ export default function TrainingTab() {
                 <Chip>{plan.experience}</Chip>
               </div>
               {planNotes.map((n, i) => (
-                <div key={i} className="text-xs font-semibold mb-2 p-2 rounded-lg" style={{ color: C.warn, background: C.warnBg }}>{n}</div>
+                <div key={i} className="text-xs font-semibold mb-2 p-2 rounded-lg" style={{ color: "var(--warn)", background: "color-mix(in srgb, var(--warn) 12%, transparent)" }}>{n}</div>
               ))}
 
               <div className="flex items-center gap-1.5 mb-3 flex-wrap">
-                <span className="text-[10.5px] font-extrabold uppercase tracking-wide mr-1" style={{ color: C.faint }}>Week</span>
+                <span className="text-[10.5px] font-extrabold uppercase tracking-wide mr-1" style={{ color: "var(--muted-foreground)" }}>Week</span>
                 {plan.weeks.map((w) => (
                   <button key={w.weekNumber} onClick={() => setActiveWeek(w.weekNumber)} aria-current={activeWeek === w.weekNumber ? "true" : undefined}
                     className="text-xs font-bold px-3 py-1.5 rounded-lg"
-                    style={{ background: activeWeek === w.weekNumber ? C.card2 : "transparent", color: activeWeek === w.weekNumber ? C.ink : C.faint, border: `1px solid ${activeWeek === w.weekNumber ? C.faintLight : C.rule}` }}>
+                    style={{ background: activeWeek === w.weekNumber ? "var(--secondary)" : "transparent", color: activeWeek === w.weekNumber ? "var(--foreground)" : "var(--muted-foreground)", border: `1px solid ${activeWeek === w.weekNumber ? "var(--muted-foreground)" : "var(--border)"}` }}>
                     {w.weekNumber}
                   </button>
                 ))}
               </div>
               {week?.note && (
-                <div className="text-xs font-semibold mb-3 p-2.5 rounded-lg" style={{ color: C.ink, background: C.card2, border: `1px solid ${C.rule}` }}>
+                <div className="text-xs font-semibold mb-3 p-2.5 rounded-lg" style={{ color: "var(--foreground)", background: "var(--secondary)", border: "1px solid var(--border)" }}>
                   {week.note}
                 </div>
               )}
 
               <div className="flex flex-col gap-3">
                 {week?.sessions.map((s) => (
-                  <div key={s.id} className="p-3.5 rounded-xl" style={{ background: C.card2, border: `1px solid ${C.rule}` }}>
+                  <div key={s.id} className="p-3.5 rounded-xl" style={{ background: "var(--secondary)", border: "1px solid var(--border)" }}>
                     <div className="flex items-baseline justify-between gap-2 mb-2">
-                      <div className="text-sm font-extrabold" style={{ color: C.ink }}>
-                        <ChevronRight size={13} className="inline mr-0.5" style={{ color: C.faintLight }} aria-hidden="true" />{s.name}
+                      <div className="text-sm font-extrabold" style={{ color: "var(--foreground)" }}>
+                        <ChevronRight size={13} className="inline mr-0.5" style={{ color: "var(--muted-foreground)" }} aria-hidden="true" />{s.name}
                       </div>
-                      {s.focus && <div className="text-[10.5px] font-semibold" style={{ color: C.faint }}>{s.focus}</div>}
+                      {s.focus && <div className="text-[10.5px] font-semibold" style={{ color: "var(--muted-foreground)" }}>{s.focus}</div>}
                     </div>
                     <div className="overflow-x-auto">
-                      <table className="w-full text-xs" style={{ color: C.ink }}>
+                      <table className="w-full text-xs" style={{ color: "var(--foreground)" }}>
                         <thead>
-                          <tr className="text-left" style={{ color: C.faint }}>
+                          <tr className="text-left" style={{ color: "var(--muted-foreground)" }}>
                             <th className="font-bold py-1 pr-2">Exercise</th>
                             <th className="font-bold py-1 pr-2">Sets</th>
                             <th className="font-bold py-1 pr-2">Reps</th>
@@ -197,12 +197,12 @@ export default function TrainingTab() {
                         </thead>
                         <tbody>
                           {s.exercises.map((e) => (
-                            <tr key={e.id} style={{ borderTop: `1px solid ${C.rule}` }}>
-                              <td className="font-semibold py-1.5 pr-2">{e.name}{e.notes ? <span style={{ color: C.faint }}> — {e.notes}</span> : ""}</td>
+                            <tr key={e.id} style={{ borderTop: "1px solid var(--border)" }}>
+                              <td className="font-semibold py-1.5 pr-2">{e.name}{e.notes ? <span style={{ color: "var(--muted-foreground)" }}> — {e.notes}</span> : ""}</td>
                               <td className="mono font-bold py-1.5 pr-2">{e.sets}</td>
                               <td className="mono font-bold py-1.5 pr-2">{e.reps}</td>
                               <td className="mono font-bold py-1.5 pr-2">{e.rpe ?? "—"}</td>
-                              <td className="mono py-1.5" style={{ color: C.faint }}>{e.restSec ? `${e.restSec}s` : "—"}</td>
+                              <td className="mono py-1.5" style={{ color: "var(--muted-foreground)" }}>{e.restSec ? `${e.restSec}s` : "—"}</td>
                             </tr>
                           ))}
                         </tbody>

@@ -12,9 +12,9 @@ import { C } from "../../lib/theme.js";
 //    never green — same language the horizon/cuisine chips already use.
 
 const capPill = (on) => ({
-  background: on ? C.card2 : "transparent",
-  color: on ? C.ink : C.faint,
-  border: `1px solid ${on ? C.faintLight : C.rule}`,
+  background: on ? "var(--secondary)" : "transparent",
+  color: on ? "var(--foreground)" : "var(--muted-foreground)",
+  border: `1px solid ${on ? "var(--muted-foreground)" : "var(--border)"}`,
 });
 
 // A single optional numeric cap on a slider with a real OFF state. Turning it on
@@ -26,13 +26,13 @@ export function RangeCap({ label, value, onChange, min, max, step, enableAt, for
   return (
     <div className="min-w-0">
       <div className="flex items-center justify-between gap-2 mb-1.5">
-        <span className="text-xs font-bold" style={{ color: C.ink }}>{label}</span>
+        <span className="text-xs font-bold" style={{ color: "var(--foreground)" }}>{label}</span>
         <div className="flex items-center gap-2 shrink-0">
           {/* a11y contrast: "Off" is the control's STATE, not decoration —
               --faint-light is 38% ink (3.26:1) and fails WCAG AA at this size.
               --faint (60%, 6.5:1) passes and stays the quiet tier.
               Same fix as Parts.jsx:31-34. */}
-          <span className="mono text-xs font-bold" style={{ color: on ? C.ink : C.faint }}>
+          <span className="mono text-xs font-bold" style={{ color: on ? "var(--foreground)" : "var(--muted-foreground)" }}>
             {on ? format(value) : "Off"}
           </span>
           <button
@@ -56,9 +56,9 @@ export function RangeCap({ label, value, onChange, min, max, step, enableAt, for
         onChange={(e) => onChange(Number(e.target.value))}
         aria-label={`${label}${on ? "" : " (off)"}`}
         className="w-full"
-        style={{ accentColor: C.ink, opacity: on ? 1 : 0.35 }}
+        style={{ accentColor: "var(--foreground)", opacity: on ? 1 : 0.35 }}
       />
-      {help && <div className="text-[10px] font-semibold mt-1" style={{ color: C.faint }}>{help}</div>}
+      {help && <div className="text-[10px] font-semibold mt-1" style={{ color: "var(--muted-foreground)" }}>{help}</div>}
     </div>
   );
 }
@@ -74,7 +74,7 @@ export function ComplexityCap({ value, onChange }) {
   ];
   return (
     <div className="min-w-0">
-      <div className="text-xs font-bold mb-1.5" style={{ color: C.ink }}>Max complexity</div>
+      <div className="text-xs font-bold mb-1.5" style={{ color: "var(--foreground)" }}>Max complexity</div>
       <div className="flex flex-wrap gap-1.5" role="group" aria-label="Max complexity">
         {OPTS.map((o) => {
           const on = value === o.v;

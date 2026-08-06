@@ -93,8 +93,8 @@ const TRACK = "h-1.5 rounded-full mt-1";
 function TargetMeter({ pct }) {
   const width = Math.max(0, Math.min(100, pct || 0));
   return (
-    <div className={`${TRACK} overflow-hidden`} style={{ background: C.card2 }} aria-hidden="true">
-      <div className="h-full rounded-full" style={{ width: `${width}%`, background: C.faintLight }} />
+    <div className={`${TRACK} overflow-hidden`} style={{ background: "var(--secondary)" }} aria-hidden="true">
+      <div className="h-full rounded-full" style={{ width: `${width}%`, background: "var(--muted-foreground)" }} />
     </div>
   );
 }
@@ -106,16 +106,16 @@ function TargetMeter({ pct }) {
 function LimitMeter({ pct }) {
   const width = Math.max(0, Math.min(100, pct || 0));
   return (
-    <div className={`${TRACK} relative overflow-hidden`} style={{ background: C.card2 }} aria-hidden="true">
+    <div className={`${TRACK} relative overflow-hidden`} style={{ background: "var(--secondary)" }} aria-hidden="true">
       <div
         className="h-full"
         style={{
           width: `${width}%`,
-          backgroundImage: `repeating-linear-gradient(115deg, ${C.faintLight} 0 2px, transparent 2px 5px)`,
+          backgroundImage: `repeating-linear-gradient(115deg, ${"var(--muted-foreground)"} 0 2px, transparent 2px 5px)`,
         }}
       />
       {/* the ceiling itself, always drawn, always at the far end */}
-      <div className="absolute top-0 right-0 h-full" style={{ width: 2, background: C.faint }} />
+      <div className="absolute top-0 right-0 h-full" style={{ width: 2, background: "var(--muted-foreground)" }} />
     </div>
   );
 }
@@ -127,7 +127,7 @@ function NoReferenceMeter() {
   return (
     <div
       className={TRACK}
-      style={{ background: "transparent", border: `1px dashed ${C.rule}` }}
+      style={{ background: "transparent", border: `1px dashed var(--border)` }}
       aria-hidden="true"
     />
   );
@@ -139,23 +139,23 @@ function NutrientRow({ n }) {
   const isLimit = ref?.type === "maximum";
   const note = coverageNote(n);
   return (
-    <div className="py-2" style={{ borderBottom: `1px solid ${C.rule}` }}>
+    <div className="py-2" style={{ borderBottom: "1px solid var(--border)" }}>
       <div className="flex items-baseline justify-between gap-3">
-        <span className="text-xs font-bold flex items-baseline gap-1.5" style={{ color: C.ink }}>
+        <span className="text-xs font-bold flex items-baseline gap-1.5" style={{ color: "var(--foreground)" }}>
           {n.name}
           {/* Plain-English tag, not a jargon code: this nutrient is one to
               stay under, and that must be legible without decoding a bar. */}
           {isLimit && (
             <span className="text-[9px] font-extrabold uppercase px-1 py-px rounded shrink-0"
-              style={{ color: C.faint, border: `1px solid ${C.rule}`, letterSpacing: ".04em" }}>
+              style={{ color: "var(--muted-foreground)", border: "1px solid var(--border)", letterSpacing: ".04em" }}>
               stay under
             </span>
           )}
         </span>
-        <span className="text-xs font-semibold text-right shrink-0" style={{ color: C.faint }}>
+        <span className="text-xs font-semibold text-right shrink-0" style={{ color: "var(--muted-foreground)" }}>
           {known ? (
             <>
-              <b className="mono" style={{ color: C.ink }}>{fmtAmount(n.amount, n.unit)}</b>{n.unit}
+              <b className="mono" style={{ color: "var(--foreground)" }}>{fmtAmount(n.amount, n.unit)}</b>{n.unit}
               {/* Only a real percentage rides inline. A "no established
                   reference" explanation is a sentence, not a stat — inline it
                   squeezed long nutrient names down to one word per line. */}
@@ -169,11 +169,11 @@ function NutrientRow({ n }) {
       {!ref ? <NoReferenceMeter />
         : isLimit ? <LimitMeter pct={known ? n.targetPct : 0} />
           : <TargetMeter pct={known ? n.targetPct : 0} />}
-      {!ref && <div className="text-[10.5px] font-medium mt-1" style={{ color: C.faint }}>{targetText(n)}</div>}
+      {!ref && <div className="text-[10.5px] font-medium mt-1" style={{ color: "var(--muted-foreground)" }}>{targetText(n)}</div>}
       {/* a11y contrast: this is the honesty note about partial coverage —
           real readable content, so --faint (60%), not --faint-light (38%,
           ~3.3:1, fails AA). */}
-      {note && <div className="text-[10.5px] font-medium mt-1" style={{ color: C.faint }}>{note}</div>}
+      {note && <div className="text-[10.5px] font-medium mt-1" style={{ color: "var(--muted-foreground)" }}>{note}</div>}
     </div>
   );
 }
@@ -184,9 +184,9 @@ function Section({ label, rows, defaultOpen }) {
   return (
     <details className="mb-1" open={defaultOpen}>
       <summary className="text-xs font-extrabold uppercase tracking-wide py-2 cursor-pointer select-none flex items-center justify-between"
-        style={{ color: C.faint, letterSpacing: ".04em" }}>
+        style={{ color: "var(--muted-foreground)", letterSpacing: ".04em" }}>
         <span>{label}</span>
-        <span className="font-semibold normal-case tracking-normal" style={{ color: C.faint }}>
+        <span className="font-semibold normal-case tracking-normal" style={{ color: "var(--muted-foreground)" }}>
           {knownCount}/{rows.length} with data
         </span>
       </summary>
@@ -198,7 +198,7 @@ function Section({ label, rows, defaultOpen }) {
 // The one honest sentence that never collapses and is never gated away.
 function CoverageLine({ coverage }) {
   return (
-    <div className="flex items-start gap-2 text-[11px] font-semibold" style={{ color: C.faint }}>
+    <div className="flex items-start gap-2 text-[11px] font-semibold" style={{ color: "var(--muted-foreground)" }}>
       <Sprout size={13} className="shrink-0 mt-px" aria-hidden="true" />
       <span>
         {coverage.fullyKnown} of {coverage.totalNutrients} nutrients fully known today, {coverage.partial} partial,{" "}
@@ -303,9 +303,9 @@ export default function MicronutrientsCard({ date, gated = false, onShowAnyway, 
   };
 
   const quietBtn = {
-    background: C.card2,
-    border: `1px solid ${C.rule}`,
-    color: C.ink,
+    background: "var(--secondary)",
+    border: "1px solid var(--border)",
+    color: "var(--foreground)",
   };
 
   return (
@@ -344,7 +344,7 @@ export default function MicronutrientsCard({ date, gated = false, onShowAnyway, 
         <>
           {/* ── ALWAYS VISIBLE: where the numbers came from, and how complete
               they are. Neither the collapse nor the gate may hide these. ── */}
-          <div className="text-xs font-semibold mb-3" style={{ color: C.faint }}>
+          <div className="text-xs font-semibold mb-3" style={{ color: "var(--muted-foreground)" }}>
             {sourceLine(data)}
           </div>
           <CoverageLine coverage={data.coverage} />
@@ -354,21 +354,21 @@ export default function MicronutrientsCard({ date, gated = false, onShowAnyway, 
                Calm amber at most (law b: never red on food or body data), and
                framed as a default the user can overturn, not a restriction
                placed on them. */
-            <div className="mt-4 rounded-xl p-4" style={{ background: C.card2, border: `1px solid ${C.warn}55` }}>
+            <div className="mt-4 rounded-xl p-4" style={{ background: "var(--secondary)", border: "1px solid color-mix(in srgb, var(--warn) 33%, transparent)" }}>
               <div className="flex items-start gap-2.5">
-                <LifeBuoy size={16} className="shrink-0 mt-0.5" style={{ color: C.warn }} aria-hidden="true" />
+                <LifeBuoy size={16} className="shrink-0 mt-0.5" style={{ color: "var(--warn)" }} aria-hidden="true" />
                 <div className="min-w-0">
-                  <div className="text-sm font-bold" style={{ color: C.ink }}>
+                  <div className="text-sm font-bold" style={{ color: "var(--foreground)" }}>
                     Leading with support instead of 47 numbers
                   </div>
-                  <p className="text-xs mt-1 leading-relaxed" style={{ color: C.faint }}>
+                  <p className="text-xs mt-1 leading-relaxed" style={{ color: "var(--muted-foreground)" }}>
                     Your wellbeing check flagged something, and daily fixation on individual nutrient
                     numbers is one of the things that can make a hard relationship with food harder.
                     So this tab is holding the row-by-row detail back <em>by default</em> — the coverage
                     summary above stays exactly as it was, nothing has been deleted, and the support
                     contacts at the top of this tab are free and confidential.
                   </p>
-                  <p className="text-xs mt-2 leading-relaxed" style={{ color: C.faint }}>
+                  <p className="text-xs mt-2 leading-relaxed" style={{ color: "var(--muted-foreground)" }}>
                     This is your data. If you want the numbers, take them.
                   </p>
                   <button type="button" onClick={showAnyway}
@@ -399,7 +399,7 @@ export default function MicronutrientsCard({ date, gated = false, onShowAnyway, 
                 </button>
                 <button type="button" onClick={load}
                   className="text-xs font-semibold px-3 py-2 rounded-xl inline-flex items-center gap-1.5"
-                  style={{ color: C.faint, border: `1px solid ${C.rule}` }}>
+                  style={{ color: "var(--muted-foreground)", border: "1px solid var(--border)" }}>
                   <RotateCw size={12} aria-hidden="true" /> Refresh
                 </button>
               </div>

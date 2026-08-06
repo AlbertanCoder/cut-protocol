@@ -13,27 +13,27 @@ export default function ResourceList({ resources = WELLBEING_RESOURCES }) {
   return (
     <ul className="space-y-2 list-none">
       {resources.map((r) => (
-        <li key={r.name} className="rounded-xl p-3" style={{ background: C.card2, border: `1px solid ${C.rule}` }}>
-          <div className="text-sm font-semibold" style={{ color: C.ink }}>{r.name}</div>
-          <div className="text-xs mt-0.5" style={{ color: C.faint }}>{r.detail}</div>
+        <li key={r.name} className="rounded-xl p-3" style={{ background: "var(--secondary)", border: "1px solid var(--border)" }}>
+          <div className="text-sm font-semibold" style={{ color: "var(--foreground)" }}>{r.name}</div>
+          <div className="text-xs mt-0.5" style={{ color: "var(--muted-foreground)" }}>{r.detail}</div>
           <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 mt-2">
             {r.phone && (
-              <span className="inline-flex items-center gap-1.5 text-xs font-bold select-all" style={{ color: C.ink }}>
-                <Phone size={12} aria-hidden="true" style={{ color: C.faint }} /> {r.phone}
+              <span className="inline-flex items-center gap-1.5 text-xs font-bold select-all" style={{ color: "var(--foreground)" }}>
+                <Phone size={12} aria-hidden="true" style={{ color: "var(--muted-foreground)" }} /> {r.phone}
               </span>
             )}
             {r.email && (
               <button type="button" onClick={() => openExternal(`mailto:${r.email}`)}
                 className="inline-flex items-center gap-1.5 text-xs font-semibold hover:opacity-80"
-                style={{ color: C.ink }}>
-                <Mail size={12} aria-hidden="true" style={{ color: C.faint }} /> {r.email}
+                style={{ color: "var(--foreground)" }}>
+                <Mail size={12} aria-hidden="true" style={{ color: "var(--muted-foreground)" }} /> {r.email}
               </button>
             )}
             {r.url && (
               <button type="button" onClick={() => openExternal(r.url)}
                 className="inline-flex items-center gap-1.5 text-xs font-semibold hover:opacity-80"
-                style={{ color: C.ink }}>
-                <ExternalLink size={12} aria-hidden="true" style={{ color: C.faint }} /> {r.url.replace("https://", "")}
+                style={{ color: "var(--foreground)" }}>
+                <ExternalLink size={12} aria-hidden="true" style={{ color: "var(--muted-foreground)" }} /> {r.url.replace("https://", "")}
                 <span className="sr-only"> (opens in a new browser window)</span>
               </button>
             )}

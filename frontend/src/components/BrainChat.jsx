@@ -28,17 +28,17 @@ const DEPTHS = [
 // lightness (card2 → card), P/C/F letter labels always present.
 function PlanCard({ plan }) {
   return (
-    <div className="mt-1.5 rounded-xl overflow-hidden" style={{ background: C.card2, border: `1px solid ${C.rule}` }}>
+    <div className="mt-1.5 rounded-xl overflow-hidden" style={{ background: "var(--secondary)", border: "1px solid var(--border)" }}>
       {plan.slots.map((s, i) => (
-        <div key={i} className="px-3 py-2 flex flex-col gap-0.5" style={{ borderBottom: i < plan.slots.length - 1 ? `1px solid ${C.rule}` : "none" }}>
+        <div key={i} className="px-3 py-2 flex flex-col gap-0.5" style={{ borderBottom: i < plan.slots.length - 1 ? "1px solid var(--border)" : "none" }}>
           {/* --faint-light is 3.26:1 and fails WCAG AA — it is a decorative /
               disabled tier, never body text. Everything readable here uses
               --faint (60%, ~5.4:1). */}
           <div className="flex items-baseline justify-between gap-2">
-            <span className="text-[10px] font-bold uppercase tracking-wide" style={{ color: C.faint }}>{s.slotType}</span>
-            <span className="text-[12px] font-bold tabular-nums" style={{ color: C.ink }}>{s.kcal} <span className="text-[9px] font-semibold" style={{ color: C.faint }}>kcal</span></span>
+            <span className="text-[10px] font-bold uppercase tracking-wide" style={{ color: "var(--muted-foreground)" }}>{s.slotType}</span>
+            <span className="text-[12px] font-bold tabular-nums" style={{ color: "var(--foreground)" }}>{s.kcal} <span className="text-[9px] font-semibold" style={{ color: "var(--muted-foreground)" }}>kcal</span></span>
           </div>
-          <div className="text-[12px] font-semibold" style={{ color: C.ink }}>{s.label || "— no fit from your recipes"}</div>
+          <div className="text-[12px] font-semibold" style={{ color: "var(--foreground)" }}>{s.label || "— no fit from your recipes"}</div>
           <div className="flex gap-2.5 text-[10px] font-bold tabular-nums">
             <span style={{ color: C.proteinText }}>P {s.protein}</span>
             <span style={{ color: C.carbText }}>C {s.carb}</span>
@@ -46,18 +46,18 @@ function PlanCard({ plan }) {
           </div>
         </div>
       ))}
-      <div className="px-3 py-2 flex items-baseline justify-between gap-2" style={{ background: C.card }}>
-        <span className="text-[10px] font-extrabold uppercase tracking-wide" style={{ color: C.faint }}>Day total</span>
+      <div className="px-3 py-2 flex items-baseline justify-between gap-2" style={{ background: "var(--card)" }}>
+        <span className="text-[10px] font-extrabold uppercase tracking-wide" style={{ color: "var(--muted-foreground)" }}>Day total</span>
         <div className="flex items-baseline gap-2">
-          <span className="text-[14px] font-extrabold tabular-nums" style={{ color: C.ink }}>{plan.total.kcal}</span>
-          <span className="text-[9px] font-semibold" style={{ color: C.faint }}>kcal</span>
+          <span className="text-[14px] font-extrabold tabular-nums" style={{ color: "var(--foreground)" }}>{plan.total.kcal}</span>
+          <span className="text-[9px] font-semibold" style={{ color: "var(--muted-foreground)" }}>kcal</span>
           <span className="text-[10px] font-bold tabular-nums" style={{ color: C.proteinText }}>P {plan.total.protein}</span>
           <span className="text-[10px] font-bold tabular-nums" style={{ color: C.carbText }}>C {plan.total.carb}</span>
           <span className="text-[10px] font-bold tabular-nums" style={{ color: C.fatText }}>F {plan.total.fat}</span>
         </div>
       </div>
       {plan.target && (
-        <div className="px-3 py-1.5 text-[10px] font-semibold" style={{ color: C.faint, borderTop: `1px solid ${C.rule}` }}>
+        <div className="px-3 py-1.5 text-[10px] font-semibold" style={{ color: "var(--muted-foreground)", borderTop: "1px solid var(--border)" }}>
           Target {plan.target.kcal} kcal · numbers computed by the engine
         </div>
       )}
@@ -171,10 +171,10 @@ export default function BrainChat() {
         ref={toggleBtnRef}
         onClick={() => setOpen(true)}
         className="fixed bottom-4 right-4 z-40 flex items-center gap-2 px-4 py-2.5 rounded-full text-sm font-bold"
-        style={{ background: C.card2, color: C.ink, border: `1px solid ${C.rule}` }}
+        style={{ background: "var(--secondary)", color: "var(--foreground)", border: "1px solid var(--border)" }}
         aria-label="Open the meal-planning assistant"
       >
-        <span aria-hidden="true" style={{ color: C.faint }}>✦</span> Coach
+        <span aria-hidden="true" style={{ color: "var(--muted-foreground)" }}>✦</span> Coach
       </button>
     );
   }
@@ -184,16 +184,16 @@ export default function BrainChat() {
       role="dialog" aria-labelledby={titleId}
       onKeyDown={(e) => { if (e.key === "Escape") close(); }}
       className="fixed bottom-4 right-4 z-40 w-[360px] max-w-[92vw] h-[500px] max-h-[76vh] flex flex-col rounded-2xl overflow-hidden"
-      style={{ background: C.cardGlass, border: `1px solid ${C.rule}`, backdropFilter: "blur(8px)" }}
+      style={{ background: "var(--card)", border: "1px solid var(--border)", backdropFilter: "blur(8px)" }}
     >
-      <div className="flex items-center justify-between px-4 py-3" style={{ borderBottom: `1px solid ${C.rule}` }}>
+      <div className="flex items-center justify-between px-4 py-3" style={{ borderBottom: "1px solid var(--border)" }}>
         {/* The ✦ is decoration, not a success/on-target signal — it does not get
             the accent (colour law a). The "beta" chip is body text and moves off
             --faint-light (3.26:1, fails AA) onto --faint. */}
-        <div id={titleId} className="text-sm font-extrabold" style={{ color: C.ink }}>
-          <span aria-hidden="true" style={{ color: C.faint }}>✦</span> Coach <span className="text-[10px] font-bold uppercase tracking-wide ml-1" style={{ color: C.faint }}>beta</span>
+        <div id={titleId} className="text-sm font-extrabold" style={{ color: "var(--foreground)" }}>
+          <span aria-hidden="true" style={{ color: "var(--muted-foreground)" }}>✦</span> Coach <span className="text-[10px] font-bold uppercase tracking-wide ml-1" style={{ color: "var(--muted-foreground)" }}>beta</span>
         </div>
-        <button onClick={close} className="text-xs font-bold px-2 py-1 rounded-lg" style={{ color: C.faint }} aria-label="Close assistant">✕</button>
+        <button onClick={close} className="text-xs font-bold px-2 py-1 rounded-lg" style={{ color: "var(--muted-foreground)" }} aria-label="Close assistant">✕</button>
       </div>
 
       {/* aria-live: new coach replies get announced as they arrive, without
@@ -201,10 +201,10 @@ export default function BrainChat() {
       <div ref={scrollRef} aria-live="polite" className="flex-1 overflow-y-auto px-4 py-3 flex flex-col gap-2">
         {messages.length === 0 ? (
           <div className="flex flex-col gap-2">
-            <div className="text-xs font-semibold" style={{ color: C.faint }}>Ask about meals, macros, or swaps. I only help with food and planning.</div>
+            <div className="text-xs font-semibold" style={{ color: "var(--muted-foreground)" }}>Ask about meals, macros, or swaps. I only help with food and planning.</div>
             <div className="flex flex-wrap gap-1.5 mt-1">
               {CHIPS.map((c) => (
-                <button key={c} onClick={() => send(c)} className="text-[11px] font-semibold px-2.5 py-1.5 rounded-full text-left" style={{ background: C.card2, color: C.faint, border: `1px solid ${C.rule}` }}>
+                <button key={c} onClick={() => send(c)} className="text-[11px] font-semibold px-2.5 py-1.5 rounded-full text-left" style={{ background: "var(--secondary)", color: "var(--muted-foreground)", border: "1px solid var(--border)" }}>
                   {c}
                 </button>
               ))}
@@ -217,8 +217,8 @@ export default function BrainChat() {
                 className="text-[13px] font-semibold px-3 py-2 rounded-2xl whitespace-pre-wrap"
                 style={
                   m.role === "you"
-                    ? { background: C.card2, color: C.ink, borderBottomRightRadius: 6 }
-                    : { background: "transparent", color: m.tone === "muted" ? C.faint : C.ink, border: `1px solid ${C.rule}`, borderBottomLeftRadius: 6 }
+                    ? { background: "var(--secondary)", color: "var(--foreground)", borderBottomRightRadius: 6 }
+                    : { background: "transparent", color: m.tone === "muted" ? "var(--muted-foreground)" : "var(--foreground)", border: "1px solid var(--border)", borderBottomLeftRadius: 6 }
                 }
               >
                 {m.text}
@@ -227,10 +227,10 @@ export default function BrainChat() {
             </div>
           ))
         )}
-        {sending && <div className="self-start text-[12px] font-semibold px-1" style={{ color: C.faint }}>…</div>}
+        {sending && <div className="self-start text-[12px] font-semibold px-1" style={{ color: "var(--muted-foreground)" }}>…</div>}
       </div>
 
-      <div className="px-3 pt-2 pb-3 flex flex-col gap-2" style={{ borderTop: `1px solid ${C.rule}` }}>
+      <div className="px-3 pt-2 pb-3 flex flex-col gap-2" style={{ borderTop: "1px solid var(--border)" }}>
         <div className="flex items-center gap-1">
           {DEPTHS.map((d) => (
             <button
@@ -240,7 +240,7 @@ export default function BrainChat() {
               title={d.hint}
               aria-label={`${d.label} — ${d.hint}`}
               className="text-[10px] font-bold tracking-wide px-2 py-1 rounded-full"
-              style={depth === d.id ? { background: C.card2, color: C.ink, border: `1px solid ${C.faintLight}` } : { background: "transparent", color: C.faint, border: `1px solid ${C.rule}` }}
+              style={depth === d.id ? { background: "var(--secondary)", color: "var(--foreground)", border: `1px solid ${"var(--muted-foreground)"}` } : { background: "transparent", color: "var(--muted-foreground)", border: "1px solid var(--border)" }}
             >
               {d.label}
             </button>
@@ -256,7 +256,7 @@ export default function BrainChat() {
             placeholder="Ask about your meals…"
             aria-label="Message the meal-planning assistant"
             className="flex-1 resize-none text-[13px] font-semibold px-3 py-2 rounded-xl outline-none"
-            style={{ background: C.card, color: C.ink, border: `1px solid ${C.rule}`, maxHeight: 80 }}
+            style={{ background: "var(--card)", color: "var(--foreground)", border: "1px solid var(--border)", maxHeight: 80 }}
           />
           <button
             onClick={() => send()}
