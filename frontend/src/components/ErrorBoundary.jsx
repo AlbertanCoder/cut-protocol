@@ -1,6 +1,5 @@
 import { Component, Fragment } from "react";
 import { AlertTriangle, Bug, RotateCw, Undo2 } from "lucide-react";
-import { C } from "../lib/theme.js";
 import { logEvent } from "../lib/bugLog.js";
 import BugReportDialog from "./BugReportDialog.jsx";
 
