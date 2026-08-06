@@ -388,6 +388,12 @@ export const api = {
   generateGroceryList: (planId, opts) => request(`/plans/${planId}/grocery-list`, { method: "POST", timeoutMs: TIMEOUT.SOLVER, ...opts }),
   checkGroceryItem: (planId, name, checked, opts) => request(`/plans/${planId}/grocery-list/check`, { method: "PUT", body: JSON.stringify({ name, checked }), timeoutMs: TIMEOUT.WRITE, ...opts }),
 
+  // saas-launch Stage 3: create a Lemon Squeezy checkout for the signed-in
+  // user; the response is { url } to redirect to. REMOTE budget — the server
+  // calls out to LS to mint it.
+  createCheckout: (period, opts) =>
+    request("/billing/checkout", { method: "POST", body: JSON.stringify({ period }), timeoutMs: TIMEOUT.REMOTE, ...opts }),
+
   getTrainingMeta: (opts) => request("/training/meta", opts),
   getTrainingPlan: (opts) => request("/training", opts),
   generateTrainingPlan: (inputs, opts) => request("/training/generate", { method: "POST", body: JSON.stringify(inputs), timeoutMs: TIMEOUT.SOLVER, ...opts }),

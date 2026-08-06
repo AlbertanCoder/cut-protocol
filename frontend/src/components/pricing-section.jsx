@@ -4,6 +4,7 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/componen
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { describeError } from "../lib/api.js";
 
 // ── Pricing section (saas-launch) ───────────────────────────────────────────
 // THE one pricing card, used by the PremiumGate lock overlay and any future
@@ -28,13 +29,25 @@ const FEATURES = [
 export function PricingSection({ headline = "One plan. Everything in it.", onSelect }) {
   const [period, setPeriod] = useState("annual"); // visual state only
   const [note, setNote] = useState(null);
+  const [busy, setBusy] = useState(false);
   const p = PRICING[period];
 
-  const choose = () => {
-    if (onSelect) return onSelect(period);
-    // Stage 3 replaces this via onSelect. Saying "nothing happened" out loud
-    // beats a button that silently does nothing.
-    setNote("Checkout isn't wired up yet — payments arrive in the next build stage.");
+  // With onSelect wired (Stage 3: App passes the checkout starter), success
+  // navigates away to Lemon Squeezy — busy never needs resetting on that
+  // path. Failure resets and says why. Without onSelect, honesty fallback.
+  const choose = async () => {
+    if (!onSelect) {
+      setNote("Checkout isn't wired up yet — payments arrive in the next build stage.");
+      return;
+    }
+    setBusy(true);
+    setNote(null);
+    try {
+      await onSelect(period);
+    } catch (err) {
+      setBusy(false);
+      setNote(describeError(err, "Couldn't open checkout. Try again."));
+    }
   };
 
   return (
@@ -69,8 +82,8 @@ export function PricingSection({ headline = "One plan. Everything in it.", onSel
         </CardContent>
         <CardFooter className="flex-col gap-2">
           {/* glow-primary: the ONE sanctioned glow, on the primary CTA only. */}
-          <Button size="lg" className="w-full glow-primary" onClick={choose}>
-            Unlock with Premium
+          <Button size="lg" className="w-full glow-primary" onClick={choose} disabled={busy}>
+            {busy ? "Opening secure checkout…" : "Unlock with Premium"}
           </Button>
           {note && <p className="text-[11px] font-semibold text-muted-foreground">{note}</p>}
           <p className="text-[11px] font-medium text-muted-foreground">Cancel anytime.</p>

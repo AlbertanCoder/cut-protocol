@@ -57,6 +57,49 @@ function App() {
   // renders before boot resolves anyway, and free users get gated the moment
   // me() answers. Desktop installs always report premium (status "local").
   const [premium, setPremium] = useState(true);
+
+  // saas-launch Stage 3: landing back from Lemon Squeezy (/?upgraded=1).
+  // "checking" = payment done, waiting for the webhook to flip the row;
+  // "done" = Premium confirmed; "slow" = webhook hasn't landed after ~20s.
+  // The query param is consumed one-shot so a reload doesn't re-trigger it.
+  const [upgradeFlow, setUpgradeFlow] = useState(() => {
+    if (typeof window === "undefined") return null;
+    if (!new URLSearchParams(window.location.search).has("upgraded")) return null;
+    window.history.replaceState(null, "", window.location.pathname);
+    return "checking";
+  });
+
+  // Poll /me until the webhook lands. Webhooks usually beat the buyer back to
+  // the app, but "usually" isn't a UI contract — poll briefly, then hand over
+  // to an honest "taking a minute" note instead of spinning forever.
+  useEffect(() => {
+    if (upgradeFlow !== "checking" || authStatus !== "in") return;
+    if (premium) { setUpgradeFlow("done"); return; }
+    let cancelled = false;
+    let tries = 0;
+    let timer;
+    const tick = async () => {
+      if (cancelled) return;
+      tries += 1;
+      try {
+        const me = await api.me();
+        if (cancelled) return;
+        if (me?.premium) { setPremium(true); setUpgradeFlow("done"); return; }
+      } catch { /* transient — keep polling */ }
+      if (tries >= 8) { setUpgradeFlow("slow"); return; }
+      timer = setTimeout(tick, 2500);
+    };
+    timer = setTimeout(tick, 1500);
+    return () => { cancelled = true; clearTimeout(timer); };
+  }, [upgradeFlow, authStatus, premium]);
+
+  // The checkout seam: PricingSection calls this with "monthly" | "annual".
+  // Success navigates the page away to LS; a throw lands back in the pricing
+  // card's own error note.
+  const startCheckout = async (period) => {
+    const { url } = await api.createCheckout(period);
+    window.location.assign(url);
+  };
   const [bugReport, setBugReport] = useState({ open: false, error: null });
   const [wellbeingOpen, setWellbeingOpen] = useState(false);
   // The SCOFF result. LOCAL-ONLY by design — see storage.js#wellbeingScreenPref
@@ -340,6 +383,23 @@ function App() {
             {error} — couldn't refresh your data. Repeat your last change to retry; if it keeps failing, restart the app.
           </div>
         )}
+        {upgradeFlow === "checking" && (
+          <div role="status" className="text-xs font-semibold px-8 py-2 text-foreground bg-primary/10">
+            Payment received — activating Premium on your account…
+          </div>
+        )}
+        {upgradeFlow === "done" && (
+          <div role="status" className="text-xs font-semibold px-8 py-2 flex items-center gap-3 text-foreground bg-primary/10">
+            <span>You&apos;re in — Premium is active on this account.</span>
+            <button onClick={() => setUpgradeFlow(null)} className="font-bold underline hover:opacity-80">Dismiss</button>
+          </div>
+        )}
+        {upgradeFlow === "slow" && (
+          <div role="status" className="text-xs font-semibold px-8 py-2 flex items-center gap-3 text-foreground bg-secondary">
+            <span>Premium is taking a minute to activate — it will appear on its own, or reload shortly.</span>
+            <button onClick={() => setUpgradeFlow(null)} className="font-bold underline hover:opacity-80">Dismiss</button>
+          </div>
+        )}
 
         <main id="main-content" ref={mainRef} tabIndex={-1} className="px-5 py-6 lg:px-9 lg:py-8 max-w-[1600px]">
           {tab === "profile" && <ProfileTab profile={profile} summary={summary} refresh={refresh} openToday={() => setTab("today")} />}
@@ -347,7 +407,7 @@ function App() {
           {tab === "trend" && <TrendTab profile={profile} summary={summary} openTraining={() => setTab("training")} />}
           {tab === "engine" && <EngineTab profile={profile} summary={summary} refresh={refresh} openFoods={openFoods} openProfile={() => setTab("profile")} />}
           {tab === "plan" && (
-            <PremiumGate premium={premium}>
+            <PremiumGate premium={premium} onSelectPlan={startCheckout}>
               <PlanTab profile={profile} summary={summary} refresh={refresh} />
             </PremiumGate>
           )}
