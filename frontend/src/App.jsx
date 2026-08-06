@@ -20,6 +20,7 @@ import WellbeingCheck from "./components/WellbeingCheck.jsx";
 import WellbeingTab, { wellbeingSignals } from "./components/WellbeingTab.jsx";
 import CompareDialog from "./components/CompareDialog.jsx";
 import HeaderBar from "./components/ui/HeaderBar.jsx";
+import PremiumGate from "./components/ui/PremiumGate.jsx";
 import { SkeletonCard } from "./components/ui/Skeleton.jsx";
 import { onUncaughtError } from "./lib/bugLog.js";
 import { TRAINING, WELLBEING } from "./lib/flags.js";
@@ -51,6 +52,11 @@ function App() {
   const [bootError, setBootError] = useState(null); // couldn't reach/boot the server at all
   const [sessionNotice, setSessionNotice] = useState(null); // shown on the sign-in screen
   const [isAdmin, setIsAdmin] = useState(false);
+  // saas-launch Stage 2: the tier arrives on /api/auth/me. Defaults true so a
+  // premium user never sees a flash of lock overlay during boot; nothing
+  // renders before boot resolves anyway, and free users get gated the moment
+  // me() answers. Desktop installs always report premium (status "local").
+  const [premium, setPremium] = useState(true);
   const [bugReport, setBugReport] = useState({ open: false, error: null });
   const [wellbeingOpen, setWellbeingOpen] = useState(false);
   // The SCOFF result. LOCAL-ONLY by design — see storage.js#wellbeingScreenPref
@@ -153,6 +159,7 @@ function App() {
       return;
     }
     setIsAdmin(me.role === "admin");
+    setPremium(me.premium !== false);
     setAuthStatus("in");
     try {
       setLoadError(null);
@@ -336,10 +343,14 @@ function App() {
 
         <main id="main-content" ref={mainRef} tabIndex={-1} className="px-5 py-6 lg:px-9 lg:py-8 max-w-[1600px]">
           {tab === "profile" && <ProfileTab profile={profile} summary={summary} refresh={refresh} openToday={() => setTab("today")} />}
-          {tab === "today" && <TodayTab profile={profile} summary={summary} refresh={refresh} openTrend={() => setTab("trend")} openWellbeing={() => setTab("wellbeing")} />}
+          {tab === "today" && <TodayTab profile={profile} summary={summary} refresh={refresh} openTrend={() => setTab("trend")} openWellbeing={() => setTab("wellbeing")} premium={premium} openPlan={() => setTab("plan")} />}
           {tab === "trend" && <TrendTab profile={profile} summary={summary} openTraining={() => setTab("training")} />}
           {tab === "engine" && <EngineTab profile={profile} summary={summary} refresh={refresh} openFoods={openFoods} openProfile={() => setTab("profile")} />}
-          {tab === "plan" && <PlanTab profile={profile} summary={summary} refresh={refresh} />}
+          {tab === "plan" && (
+            <PremiumGate premium={premium}>
+              <PlanTab profile={profile} summary={summary} refresh={refresh} />
+            </PremiumGate>
+          )}
           {tab === "foods" && <FoodsTab onBack={() => setTab("recipes")} isAdmin={isAdmin} />}
           {tab === "recipes" && <RecipesTab openFoods={openFoods} profile={profile} />}
           {tab === "training" && TRAINING === "on" && <TrainingTab />}

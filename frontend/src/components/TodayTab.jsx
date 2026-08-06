@@ -6,6 +6,7 @@ import { todayStr, dayNum, addDays, fmtD } from "../lib/dates.js";
 import { displayWeight, parseWeight, weightUnit, rateUnit, displayRate, weightInputBounds } from "../lib/units.js";
 import { Chip, Stamp, Ring, EmptyNote, ErrorNote } from "./ui/Parts.jsx";
 import { SectionCard } from "./ui/section-card.jsx";
+import PremiumGate from "./ui/PremiumGate.jsx";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Skeleton, SkeletonRows } from "./ui/Skeleton.jsx";
@@ -728,7 +729,7 @@ function SlotWarnings({ slots }) {
   );
 }
 
-export default function TodayTab({ profile, summary, refresh, openTrend, openWellbeing }) {
+export default function TodayTab({ profile, summary, refresh, openTrend, openWellbeing, premium = true, openPlan }) {
   const pref = profile.unitPref;
   const wUnit = weightUnit(pref);
   // ONE reading of the local calendar per render, shared by every card below.
@@ -848,6 +849,11 @@ export default function TodayTab({ profile, summary, refresh, openTrend, openWel
           their row. */}
       <div className="grid grid-cols-1 xl:grid-cols-12 gap-4 items-stretch">
         {/* ── planned vs target ── */}
+        {/* saas-launch Stage 2: this card renders the solved plan — premium.
+            The wrapper carries the grid placement while locked; when premium
+            the SectionCard's own col-span does the job (no wrapper at all). */}
+        <PremiumGate premium={premium} compact className="xl:col-span-5" onUpgrade={openPlan}
+          headline="Exact portions are Premium" sub="Your whole day, solved to your targets — see the plans.">
         <SectionCard section="TODAY" title="Planned vs. target" className="xl:col-span-5">
           {plan === undefined ? (
             <div className="flex items-center gap-6">
@@ -922,6 +928,7 @@ export default function TodayTab({ profile, summary, refresh, openTrend, openWel
             </>
           )}
         </SectionCard>
+        </PremiumGate>
 
         {/* ── verdict ── */}
         <SectionCard section="VERDICT" title="Verdict" className="xl:col-span-4">

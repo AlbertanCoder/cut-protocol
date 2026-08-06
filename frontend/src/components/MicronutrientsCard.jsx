@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback, useMemo, useRef, useId } from "react"
 import { Sprout, CalendarDays, ChevronDown, ChevronRight, RotateCw, LifeBuoy } from "lucide-react";
 import { Card, EmptyNote, ErrorNote } from "./ui/Parts.jsx";
 import { SkeletonRows } from "./ui/Skeleton.jsx";
-import { api, isAbortError, describeError } from "../lib/api.js";
+import { api, isAbortError, describeError, isPremiumRequired } from "../lib/api.js";
 import { useAbortSignal } from "../lib/useAbortable.js";
 import { microsExpandedPref } from "../lib/storage.js";
 
@@ -244,6 +244,13 @@ export default function MicronutrientsCard({ date, gated = false, onShowAnyway, 
     } catch (e) {
       if (seq !== reqSeq.current) return;
       if (isAbortError(e)) return; // component gone / superseded — say nothing
+      // saas-launch Stage 2: free tier — a quiet note, NOT the error state
+      // (nothing failed) and NOT an upsell card (this sits inside Wellbeing,
+      // which stays a calm zone by law).
+      if (isPremiumRequired(e)) {
+        setData("premium");
+        return;
+      }
       setErrorText(describeError(e, "Couldn't load today's micronutrient breakdown."));
       setData("error");
     }
@@ -311,6 +318,8 @@ export default function MicronutrientsCard({ date, gated = false, onShowAnyway, 
     <Card section="MICRONUTRIENTS" title="Micronutrients — today's plan" className={className}>
       {data === undefined ? (
         <SkeletonRows rows={4} />
+      ) : data === "premium" ? (
+        <EmptyNote msg="Micronutrient breakdowns come with Premium — they're computed from the exact per-food grams of your solved plan." />
       ) : data === "error" ? (
         // Explicitly a LOAD FAILURE, never the "no plan yet" empty state below
         // — a blank micronutrient card would read as "you ate nothing".

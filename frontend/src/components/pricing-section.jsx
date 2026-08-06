@@ -5,37 +5,43 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 
-// ── Pricing section (Phase 5 Part B) ────────────────────────────────────────
-// UNMOUNTED by design: this app ships no paywall (Screen Map note), so this is
-// a finished presentational artifact awaiting an owner-chosen mount point —
-// one line to place it. Which-period-shows is purely visual local state
-// (Master Context carve-out). Nothing here touches the network, storage, or
-// any store, and nothing may: payments wiring is a later pack.
+// ── Pricing section (saas-launch) ───────────────────────────────────────────
+// THE one pricing card, used by the PremiumGate lock overlay and any future
+// upgrade screen. Prices are the locked business decision — $24.99/mo,
+// $125/yr framed as "Save 58% — 5 months free" (~$10.42/mo) — change them
+// nowhere else. `onSelect(period)` is the checkout seam: Stage 3 wires it to
+// Lemon Squeezy; until then the built-in fallback says so honestly.
+// Which-period-shows is purely visual local state.
 
-// PRICING_PLACEHOLDER — display-only values. Real prices/IDs arrive with the
-// Stripe pack. Do not wire, compute, or persist anything from these.
 const PRICING = {
-  monthly: { price: "$14.99", period: "/month" },
-  annual: { price: "$119.99", period: "/year", badge: "Save 33%" },
+  monthly: { price: "$24.99", period: "/month" },
+  annual: { price: "$125", period: "/year", badge: "Save 58%", note: "5 months free — about $10.42/mo" },
 };
 
-// PLACEHOLDER_COPY — owner-editable feature bullets; no product claims made.
 const FEATURES = [
-  "Solves whole days to your target — real recipes, scaled portions",
-  "Adaptive TDEE that re-reads your actual burn from weigh-ins",
+  "Whole days solved to your targets — real recipes, exact portions",
+  "Cook amounts and grocery quantities computed for you",
+  "Adaptive targets that re-read your actual burn from weigh-ins",
   "Allergy and diet rules enforced across every plan",
-  "Grocery lists, training scaffold, and honest verdicts",
-  "Local-first: your data stays on your machine",
 ];
 
-export function PricingSection() {
+export function PricingSection({ headline = "One plan. Everything in it.", onSelect }) {
   const [period, setPeriod] = useState("annual"); // visual state only
+  const [note, setNote] = useState(null);
   const p = PRICING[period];
+
+  const choose = () => {
+    if (onSelect) return onSelect(period);
+    // Stage 3 replaces this via onSelect. Saying "nothing happened" out loud
+    // beats a button that silently does nothing.
+    setNote("Checkout isn't wired up yet — payments arrive in the next build stage.");
+  };
+
   return (
     <section aria-label="Pricing" className="mx-auto w-full max-w-md">
       <Card className="border-border">
         <CardHeader className="items-center text-center">
-          <CardTitle className="font-heading text-xl font-bold tracking-tight">One plan. Everything in it.</CardTitle>
+          <CardTitle className="font-heading text-xl font-bold tracking-tight">{headline}</CardTitle>
           <Tabs value={period} onValueChange={setPeriod} className="mt-3">
             <TabsList>
               <TabsTrigger value="monthly">Monthly</TabsTrigger>
@@ -44,10 +50,13 @@ export function PricingSection() {
           </Tabs>
         </CardHeader>
         <CardContent className="flex flex-col items-center gap-5">
-          <div className="flex items-baseline gap-1.5">
-            <span className="font-heading text-5xl font-bold tabular-nums tracking-tight text-foreground">{p.price}</span>
-            <span className="text-sm font-semibold text-muted-foreground">{p.period}</span>
-            {p.badge && <Badge className="ml-1.5">{p.badge}</Badge>}
+          <div className="flex flex-col items-center gap-1">
+            <div className="flex items-baseline gap-1.5">
+              <span className="font-heading text-5xl font-bold tabular-nums tracking-tight text-foreground">{p.price}</span>
+              <span className="text-sm font-semibold text-muted-foreground">{p.period}</span>
+              {p.badge && <Badge className="ml-1.5">{p.badge}</Badge>}
+            </div>
+            {p.note && <p className="text-xs font-semibold text-muted-foreground">{p.note}</p>}
           </div>
           <ul className="w-full space-y-2.5">
             {FEATURES.map((f) => (
@@ -59,16 +68,12 @@ export function PricingSection() {
           </ul>
         </CardContent>
         <CardFooter className="flex-col gap-2">
-          {/* TODO(stripe-pack): replace this no-op with Stripe Checkout. Out of
-              scope for the restyle pack — polish → Stripe → ship. */}
           {/* glow-primary: the ONE sanctioned glow, on the primary CTA only. */}
-          <Button size="lg" className="w-full glow-primary"
-            onClick={() => { /* intentionally no-op until the Stripe pack */ }}>
-            {/* PLACEHOLDER_COPY — pack default was "Unlock Recomp"; branded to
-                match the in-app product name pending the owner's title call. */}
-            Unlock Cut Protocol
+          <Button size="lg" className="w-full glow-primary" onClick={choose}>
+            Unlock with Premium
           </Button>
-          <p className="text-[11px] font-medium text-muted-foreground">Cancel anytime. Placeholder pricing — not wired to billing.</p>
+          {note && <p className="text-[11px] font-semibold text-muted-foreground">{note}</p>}
+          <p className="text-[11px] font-medium text-muted-foreground">Cancel anytime.</p>
         </CardFooter>
       </Card>
     </section>

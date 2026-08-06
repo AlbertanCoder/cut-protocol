@@ -64,6 +64,11 @@ export const BRAIN_STATUS_CHANGED = "cutprotocol:brain-status-changed";
 
 export const isApiError = (e) => e instanceof ApiError;
 export const isAuthError = (e) => isApiError(e) && e.kind === ERR.HTTP && e.status === 401;
+// saas-launch Stage 2: the server refused because the account is on the free
+// tier. Keyed on the machine-readable code, never the sentence — and 403, not
+// 401, so it can never read as "signed out".
+export const isPremiumRequired = (e) =>
+  isApiError(e) && e.kind === ERR.HTTP && e.status === 403 && e.body?.code === "premium_required";
 export const isTimeoutError = (e) => isApiError(e) && e.kind === ERR.TIMEOUT;
 export const isOfflineError = (e) => isApiError(e) && e.kind === ERR.OFFLINE;
 export const isAbortError = (e) =>
