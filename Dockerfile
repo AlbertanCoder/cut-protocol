@@ -3,6 +3,15 @@ WORKDIR /app/frontend
 COPY frontend/package.json frontend/package-lock.json ./
 RUN npm ci
 COPY frontend/ ./
+# Vite bakes import.meta.env values into the bundle AT BUILD TIME — without
+# these the deployed frontend boots in desktop mode (password login, no
+# Google). Railway passes service variables to Docker builds as build args
+# when they are declared here. Publishable values only; secrets never enter
+# the frontend build.
+ARG VITE_SUPABASE_URL
+ARG VITE_SUPABASE_PUBLISHABLE_KEY
+ENV VITE_SUPABASE_URL=$VITE_SUPABASE_URL \
+    VITE_SUPABASE_PUBLISHABLE_KEY=$VITE_SUPABASE_PUBLISHABLE_KEY
 RUN npm run build
 
 FROM node:20-slim
@@ -10,8 +19,15 @@ WORKDIR /app/backend
 COPY backend/package.json backend/package-lock.json ./
 RUN npm ci --omit=dev
 COPY backend/ ./
-RUN npx prisma generate
+# The cloud runs Postgres. Flip the image-local schema provider, then generate
+# the client at the default location the app requires from. The committed
+# migrations for this provider live in prisma/postgres/migrations (the SQLite
+# history under prisma/migrations carries PRAGMA statements Postgres rejects).
+RUN node scripts/buildPostgresSchema.mjs --patch-main && npx prisma generate
 COPY --from=frontend-build /app/frontend/dist /app/frontend/dist
 
+# server.js binds loopback unless told otherwise (the desktop-safety default);
+# a container must listen on all interfaces to be reachable.
+ENV HOST=0.0.0.0
 EXPOSE 3001
-CMD ["sh", "-c", "npx prisma migrate deploy && node server.js"]
+CMD ["sh", "-c", "npx prisma migrate deploy --schema prisma/postgres/schema.prisma && node server.js"]

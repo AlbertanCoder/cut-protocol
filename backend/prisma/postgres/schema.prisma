@@ -1,0 +1,890 @@
+// GENERATED FILE — do not edit by hand.
+// Derived from ../schema.prisma by scripts/buildPostgresSchema.mjs.
+// Regenerate (plus the init migration — see that script's header) whenever
+// the datamodel changes; tests/postgresSchemaSync.test.js enforces sync.
+
+// PORTABILITY — what is and isn't true (corrected 2026-07-24; the old claim
+// that this is "a one-line provider swap" was measured and is false).
+//
+// TRUE: the MODEL LAYER is portable. No native enums, no scalar lists/arrays,
+// no `@db.*` native type attributes — every "enum" is a String with the legal
+// values in a comment, and every list is a Json column. Point `provider` at
+// "postgresql" and `prisma db push` produces a working Postgres schema from
+// this file. That property is deliberate and worth keeping.
+//
+// FALSE: that the swap costs one line. The MIGRATION HISTORY is SQLite-only
+// and cannot be replayed on Postgres (measured 2026-07-24 over all 25
+// migrations):
+//   - 21 of 25 contain SQLite-flavoured SQL: 8 use `PRAGMA foreign_keys` /
+//     `defer_foreign_keys`, 14 declare `JSONB` columns (SQLite's alias for
+//     BLOB affinity — NOT Postgres jsonb semantics), 17 use `DATETIME`, 12 use
+//     `REAL`. Postgres has none of those spellings.
+//   - Prisma's whole table-rebuild idiom (`CREATE TABLE new_X` → copy → `DROP
+//     TABLE X` → `RENAME`) exists only because SQLite cannot `ALTER COLUMN`.
+//     On Postgres those are one-line `ALTER TABLE`s, so the SQL is not merely
+//     differently spelled, it is differently shaped.
+//   - `prisma/migrations/migration_lock.toml` pins `provider = "sqlite"` and
+//     Prisma hard-fails on a provider mismatch rather than reinterpreting.
+//
+// So the real cost is: squash the 25 migrations into one Postgres baseline
+// (`prisma migrate diff --from-empty --to-schema-datamodel`), rewrite
+// migration_lock.toml, and port the data separately. Half a day, not one line.
+// Also unportable at the app layer, for whoever does it: `Food.fdcId`/`upc` are
+// nullable `@unique`, and SQLite lets a nullable unique column hold unlimited
+// NULLs while Postgres does too — that one is fine — but SQLite's `LIKE` is
+// case-insensitive for ASCII by default and Postgres's is not, which silently
+// changes every `contains` filter (see routes/foods.js's search).
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "./seed-client"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String    @id @default(cuid())
+  email        String    @unique
+  // Nullable since saas-launch: a user created through Google sign-in
+  // (Supabase Auth) has no password here — and never will; the web product
+  // stores no passwords. Password login guards on null (routes/auth.js) and
+  // answers with the same bad-credentials sentence, never "this is a Google
+  // account" (account-existence oracle).
+  passwordHash String?
+  // Supabase Auth user id (JWT `sub`) for the web deployment. Set on first
+  // sight of a verified Supabase token: matched by email to link an existing
+  // local account, otherwise a fresh row is created. Desktop installs never
+  // populate this.
+  supabaseUserId String? @unique
+  // "user" | "admin". Added for the recipe-ownership fix (roadmap/05-data-isolation-audit.md,
+  // roadmap/04-multi-tenancy-auth.md - both independently found the same gap):
+  // Recipe is a shared library with no owner column, and PUT/DELETE
+  // /api/recipes/:id had zero ownership check - harmless while there's one
+  // seeded account, armed the moment self-registration ships (any user could
+  // edit/delete any other user's or the curated library's recipes, cascading
+  // to silently wipe other users' carts/plan slots per the schema's own
+  // onDelete rules below). "admin" can mutate any recipe (the existing
+  // curated/AI-generated library, which predates per-user ownership and has
+  // no createdByUserId); a plain "user" can only mutate recipes they created.
+  role         String    @default("user")
+  createdAt    DateTime  @default(now())
+  // ── DELETING A USER IS CURRENTLY IMPOSSIBLE (audited 2026-07-24) ────────
+  // Six relations below default to Prisma's `onDelete: Restrict` because they
+  // declare no onDelete at all: profile, weighins, plans, cartItems, recipes,
+  // trainingPlan. Any one of them having a row makes `prisma.user.delete()`
+  // throw P2003. Three more are Cascade (mealLogs, llmUsage, brainPreference),
+  // and six tables carry a bare `userId` with NO foreign key at all
+  // (RecipeRating, BrainConversation, GeneratedRecipe, GeneratedPlan,
+  // BrainSolveRun, UserLibraryEntry — deliberate, see their own comments), so
+  // even a successful delete would strand them permanently.
+  //
+  // No delete path exists in the app today (no DELETE /users route, no
+  // account-closure UI), so nothing is broken right now. But "erase my
+  // account" is not an optional feature forever, and the constitution's "data
+  // is never trapped" cuts both ways: a user must be able to leave.
+  //
+  // INTENDED BEHAVIOUR, decided here so the next person doesn't have to
+  // re-derive it — deliberately NOT yet implemented, see why below:
+  //   Cascade  — Profile, Weighin, Plan (→PlanSlot, GroceryList), CartItem,
+  //              TrainingPlan (→week/session/exercise): purely personal, has
+  //              no meaning without its owner.
+  //   SetNull  — Recipe.createdByUserId: recipes are SHARED LIBRARY content
+  //              that other users' plans and carts point at. Cascading here
+  //              would delete another user's dinner. Null already means
+  //              "shared library content, admin-only to mutate", which is
+  //              exactly the right resting state for an orphaned recipe.
+  //   SetNull  — LlmUsage.userId, which is Cascade today and SHOULD NOT BE:
+  //              it is the spend ledger the pre-call cost caps read
+  //              (src/lib/brain/ledger.js). Deleting a user currently erases
+  //              their spend and RESETS THE GLOBAL BUDGET SUM, which turns
+  //              account deletion into a budget-cap bypass. userId is already
+  //              nullable, so SetNull is representable with no data change.
+  //   Delete   — the six FK-less userId tables must be cleaned up explicitly
+  //              by whatever implements the delete, in the same transaction.
+  //
+  // WHY NOT NOW: changing an FK action in SQLite is not an ALTER — it is a
+  // full table rebuild (CREATE new → copy → DROP old → RENAME) per table, i.e.
+  // seven `DROP TABLE`s. The migration runner in src/lib/desktopBootstrap.js
+  // runs with foreign-key enforcement OFF precisely because that idiom is
+  // otherwise unsurvivable, and the last time this schema shipped a rebuild
+  // touching User/Recipe it took a P0 fix to stop it eating cascade children
+  // on upgrade. Seven rebuilds against installed user databases, to enable a
+  // feature that does not exist yet, is the wrong trade. Do it in the same
+  // change that adds the delete path, with the runner's FK audit as the gate.
+  profile      Profile?
+  weighins     Weighin[]
+  plans        Plan[]
+  cartItems    CartItem[]
+  recipes      Recipe[]
+  trainingPlan TrainingPlan?
+  mealLogs     MealLog[]
+  llmUsage     LlmUsage[]
+  brainPreference BrainPreference?
+  subscription Subscription?
+}
+
+// One row per user, written ONLY by the backend from Lemon Squeezy webhook
+// events (Stage 3) — the frontend never reads this table directly, and no
+// route lets a user write their own entitlement. Access rules live in
+// requirePremium (Stage 2), which derives entitlement from status + the
+// three timestamps; this table just records what the payment processor said.
+model Subscription {
+  id               String    @id @default(cuid())
+  userId           String    @unique
+  user             User      @relation(fields: [userId], references: [id])
+  lsCustomerId     String?
+  lsSubscriptionId String?   @unique
+  plan             String?   // "monthly" | "annual"
+  // none | active | on_trial | past_due | cancelled | expired — Lemon Squeezy
+  // vocabulary, recorded as received. Entitlement is NOT this field alone:
+  // past_due keeps premium until graceUntil (7-day retry window), cancelled
+  // keeps premium until endsAt (the period already paid for).
+  status           String    @default("none")
+  renewsAt         DateTime?
+  endsAt           DateTime?
+  graceUntil       DateTime?
+  // Phase 2 (win-back offer) — schema room only, one offer per user EVER.
+  // Nothing reads or writes this yet.
+  usedWinback      Boolean   @default(false)
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+}
+
+// All physical quantities stored in SI (kg, cm) regardless of the user's
+// display unit preference — conversion happens at the UI boundary only.
+model Profile {
+  id              String   @id @default(cuid())
+  userId          String   @unique
+  user            User     @relation(fields: [userId], references: [id])
+  sex             String // "M" | "F"
+  age             Int
+  heightCm        Float
+  bodyFatPct      Float // 0 = unknown (Katch-McArdle/Cunningham auto-hide)
+  // E2 (v2): how bodyFatPct was set. "visual-estimate" (silhouette bucket) |
+  // "measured" (DEXA/calipers/scale) | null (unset). Additive, nullable — a pure
+  // ADD COLUMN, no table rebuild. bodyFatPct stays 0 = unknown (engine dual-
+  // accepts 0 or null), so no existing touchpoint changes.
+  bodyFatSource   String?
+  // Phase 3 activity model: occupation picked from activityData.js's table
+  // (many real occupations -> multiplier), with an optional manual override.
+  occupationKey    String  @default("desk-office")
+  activityOverride Float? // manual job-multiplier override; null = use occupation
+  sessionsPerWeek Int
+  trainingStyle     String @default("mixed") // "weights" | "cardio" | "mixed" | "sport"
+  minutesPerSession Int    @default(45)
+  startWeightKg   Float
+  goalWeightKg    Float
+  startDate       String // ISO date (yyyy-mm-dd)
+  unitPref        String   @default("imperial") // "imperial" | "metric"
+  // Phase 3 prescription model: targetKcal is DERIVED (TDEE - rate*500,
+  // clamped to the floor) and re-materialized server-side whenever profile
+  // or weight changes — never set directly by the client anymore.
+  rateLbPerWeek    Float   @default(1.0) // 0.25|0.5|0.75|1.0|1.25|1.5|2.0
+  rateAcknowledged Boolean @default(false) // explicit "I understand" for unsafe rates
+  floorKcal        Int? // optional user-stricter floor; effective floor = max(sex floor, this)
+  // JSON string array of BMR formula keys the user excluded from the average
+  // (same no-@default Json convention as excludedFoods below).
+  excludedFormulas Json
+  targetKcal      Int
+  mealsPerDay     Int      @default(3)
+  snacksPerDay    Int      @default(1)
+  // JSON string array, not a native list — this schema deliberately avoids
+  // Postgres-only array types (see file header), and SQLite has no list type
+  // for Prisma to fall back to. No @default() here on purpose — matches
+  // every other Json field in this schema (Recipe.steps, PlanSlot.ingredients,
+  // GroceryList.items), none of which have one either. @default("[]") was
+  // tried and found broken: Prisma/SQLite generated `DEFAULT []` (unquoted,
+  // invalid JSON) in the migration SQL, silently corrupting existing rows
+  // with an empty string instead of "[]" — application code (profile.js's
+  // defaultProfile()) always supplies this explicitly on create instead.
+  excludedFoods   Json // e.g. ["shellfish","gluten"]
+  dietaryStyle    String? // e.g. "omnivore" | "pescatarian" | "vegetarian" | "vegan" | "keto" | "paleo" — null = no restriction
+  // AI recipe-generation preferences (recipeGeneration.js's
+  // generateAndSaveSlotRecipe()). Json array, no @default() - same reason as
+  // excludedFoods above (Prisma/SQLite generated broken unquoted JSON for
+  // @default("[]") once already; app code (defaultProfile()) supplies it).
+  cuisinePreferences Json // e.g. ["mexican","thai","mediterranean"]
+  mealPreferencesNote String? // freeform, e.g. "high protein, minimal dairy, I have an air fryer"
+  // Brain v3 Stage G — SOFT meal-planning preferences (null = no constraint).
+  // Read by the brain's compileConstraints() as relaxable soft limits; they can
+  // never override a HARD constraint (diet/allergy exclusions, energy, protein
+  // floor). Additive + nullable: existing rows and the deterministic solver are
+  // unaffected, and with the brain OFF nothing reads them.
+  maxPrepMin      Int? // max acceptable recipe prep time in minutes
+  budgetTier      String? // "cheap" | "moderate" | "premium"
+  allowBatch      Boolean? // allow batch-cooking repeats past the variety cap
+  maxComplexity   Int? // recipe complexity ceiling (1 = simplest)
+  // Adaptive-TDEE opt-out. Default ON because the estimator beats the static
+  // formula on measured error (155 vs 359 kcal median at 28 days), but every
+  // automatic adjustment must be reversible per the constitution, and "turn it
+  // off entirely" is the strongest form of that. Read by adaptiveTarget
+  // .adaptiveEnabled(); `false` means off. An install-wide ADAPTIVE_TDEE=off env
+  // switch already exists — this makes it per-account and visible in the UI.
+  adaptiveTdee    Boolean  @default(true)
+  // Protein-priority (recomposition) solving. Default OFF: it changes what the
+  // solver optimises, so it is opt-in rather than something that silently
+  // reweights plans. Was localStorage-only, which meant the choice did not
+  // survive a reinstall or a second device.
+  proteinPriorityMode Boolean @default(false)
+  updatedAt       DateTime @updatedAt
+}
+
+model Weighin {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  date      String // ISO date (yyyy-mm-dd)
+  weightKg  Float
+  // Optional per-weigh-in body fat %, so lean mass can become a MEASURED trend
+  // instead of an estimate projected from one current reading. The recomp mode
+  // charts lean mass, and two people losing identical scale weight can have
+  // opposite outcomes — that distinction is the whole point of the product, so
+  // it should be able to rest on real data when the user has it. Null is the
+  // normal case and stays honestly absent; the chart falls back to the bounded
+  // estimate and says so.
+  bodyFatPct Float?
+  createdAt DateTime @default(now())
+
+  @@unique([userId, date])
+}
+
+// Foods/recipes are a shared library, not per-user — this is a single-user
+// app for now, and a shared curated library is the simpler model regardless.
+// Bulk-import scale change: `name` was @unique when this table held ~864 curated
+// rows. A USDA FoodData Central import (Foundation + SR Legacy + FNDDS) collides on
+// that constraint immediately — FDC ships duplicate descriptions across its datasets,
+// and Open Food Facts branded rows collide harder still. Uniqueness therefore moves
+// off the display name and onto the two real external identifiers. Nullable @unique
+// permits many NULLs under SQLite, so hand-entered foods are unaffected.
+model Food {
+  id       String   @id @default(cuid())
+  // NOT unique — see the model comment above. Consequence, measured
+  // 2026-07-24: 169 case-insensitive duplicate name groups (342 rows) in
+  // dev.db, e.g. "radicchio, raw" ×3, with nothing to tell them apart in a
+  // picker. This is the accepted cost of the FDC import, but it is a cost:
+  // the disambiguators that DO exist per row are `brand`, `fdcCategory` and
+  // `fdcId`, and any UI that lets a user choose between two same-named foods
+  // must show at least one of them or the choice is a coin flip. There is no
+  // structural fix available here — a unique constraint on (name, brand,
+  // fdcId) would still permit "radicchio, raw" ×3 with all three NULL.
+  name     String
+  // The 7 grocery-store slugs in src/lib/foodCategories.js (CATEGORY_SLUGS):
+  // "protein" | "grains" | "fruit-veg" | "fats-nuts-oils" | "dairy-eggs" |
+  // "pantry" | "drinks". Corrected 2026-07-24 — this comment used to document
+  // a 6-value taxonomy ("carb"|"veg"|"fat"|"dairy"|"other") that Phase 2
+  // replaced. That old taxonomy is still live in INSTALLED databases packaged
+  // before the recategorisation (the owner's own AppData copy holds
+  // other/carb/veg/protein/dairy/fat/fruit), so any consumer that switches on
+  // this value must tolerate both vocabularies or migrate the rows first.
+  category String
+  // @unique — THE structural fix for the provenance corruption. One FDC record's
+  // macros were copied onto six different curry/tahini/garlic pastes (fdcId 170160,
+  // "Nuts, almond paste"); the final count was 472 of 738 id-claiming rows wrong,
+  // touching 874 of 889 recipes. With this constraint that class of bug is
+  // UNREPRESENTABLE: one FDC id can only ever belong to one row, so a fuzzy matcher
+  // cannot spread one record across many foods no matter how confident it is.
+  //
+  // Deferred at first because 140 duplicate groups made it un-appliable. Cleared in
+  // three passes: the provenance repair (472 rows verified/rematched/downgraded),
+  // then scripts/mergeSynonymFoods.mjs (22 genuine synonym pairs merged with 93
+  // ingredient references re-pointed), then one documented mislabel — the row named
+  // "Rye" carried FDC "Bread, rye" macros and was downgraded off the verified tier
+  // rather than merged, because merging would have hidden a wrong number behind a
+  // trusted label. SQLite exempts NULLs, so hand-entered foods are unaffected.
+  // See docs/audit/food-provenance-integrity.md.
+  fdcId    Int?     @unique // USDA FoodData Central id — null for hand-entered items
+  upc      String?  @unique // barcode / GTIN for Open Food Facts lookups — null for unbranded
+  brand    String? // branded-food manufacturer; null for generic/whole foods
+  // per 100g
+  kcal     Float
+  protein  Float
+  fat      Float
+  carb     Float
+  fiber    Float    @default(0)
+  // Provenance tier — never silently mixed, always visibly distinct in the UI.
+  // "usda-verified" (FDC Foundation/SR Legacy/FNDDS, Atwater-validated)
+  // "label"         (manufacturer-declared panel)
+  // "community"     (Open Food Facts — crowd-sourced, lower trust, tagged as such)
+  // "ai-estimated"  (model-derived, always carries "verify me")
+  // "manual" | "manual-placeholder" (hand-entered, pre-import legacy rows)
+  //
+  // OPEN VOCABULARY — do not treat this list as exhaustive. Measured
+  // 2026-07-24: dev.db holds usda-verified / manual / manual-placeholder,
+  // but the owner's INSTALLED database holds "usda" (939 rows) — a value no
+  // comment ever documented. A "quarantined" tier is being added separately.
+  // Any consumer must have a default branch; an unknown source is a row to
+  // show cautiously, never a row to crash on or silently trust.
+  source   String   @default("manual")
+  // Fiber-adjusted-Atwater validator verdict recorded at import time, as PROSE:
+  // "pass — <evidence>" | "warn:<codes>" | "exception:<documented-reason>".
+  // Null = not yet run. Surfaced by the startup [data-audit] report and read by
+  // the UI (frontend/src/data/foodCategories.js dataQualityFlag/quarantineNote),
+  // so it is part of the GET /api/foods contract and cannot be dropped from the
+  // list payload.
+  //
+  // The prose is the POINT of this column — "carried fdcId 169225 (\"Cucumber,
+  // peeled, raw\"), whose description does not denote this food" is an audit
+  // trail, and collapsing it to a code would destroy the evidence the
+  // provenance repair depends on. But it makes the column unusable as data:
+  // measured 2026-07-24, 13,872 distinct values across 14,122 rows (essentially
+  // a unique string per row), 1.19 MB, up to 367 chars each. It cannot be
+  // indexed, grouped, or filtered — "show me every warn" is a full scan plus a
+  // string prefix test in JS.
+  dataQuality String?
+  // The structured half of the pair, added 2026-07-24. Exactly one of
+  // "pass" | "warn" | "exception", parsed from dataQuality's prefix (null when
+  // dataQuality is null). Purely DERIVED — dataQuality stays authoritative and
+  // keeps the evidence; this is the filterable/indexable projection of it, so
+  // an audit screen can ask "every food whose macros didn't reconcile" without
+  // reading 1.19 MB of prose. Backfilled for existing rows by migration
+  // 20260724203000. Whatever writes dataQuality must write this alongside it;
+  // a null flag on a non-null dataQuality means "not yet classified", not
+  // "clean". Deliberately NOT a foreign key to a lookup table — the vocabulary
+  // is three values and has been stable since Phase 2.
+  dataQualityFlag String?
+  // Micronutrients per 100g as { nutrientKey: amount } in the canonical units
+  // declared by the nutrient registry (see backend/src/lib/nutrients.js). Stored as
+  // one JSON column rather than 40+ scalar columns: adding a nutrient must not cost
+  // a migration, and a normalized FoodNutrient table would put ~2M rows in SQLite for
+  // 50k foods. Null = no micronutrient data for this food (honest absence, not zero).
+  micros   Json?
+  // ── Allergen metadata (2026-07-23, findings dietary-safety-2 / -4 / -5) ──
+  // ONE root cause behind three findings: every import path already COMPUTED
+  // authoritative allergen signals and then threw them away, because the Food
+  // table had nowhere to put them. Name-keyword matching was left as the only
+  // evidence, and prepared-dish names defeat it ("Cheeseburger" contains no
+  // word-bounded "cheese", "Eggnog" no word-bounded "egg").
+  //
+  // All three columns are NULLABLE on purpose: every pre-existing row keeps
+  // working and simply contributes no metadata evidence. They are ADDITIVE
+  // evidence only — dietaryFilter.js unions them with the name/keyword verdict
+  // and can never use them to CLEAR an exclusion another source raised (the
+  // add-only invariant, asserted in tests/allergenMetadata.test.js).
+  //
+  // USDA FoodData Central's own food-category string, verbatim ("Dairy and Egg
+  // Products", "Finfish and Shellfish Products", "Sausages and Luncheon
+  // Meats"…). scripts/lib/fdcDataset.js has always parsed this off the raw
+  // record (normalizeFdcRecord → fdcCategory) and the bulk importer reads it
+  // for the alcohol-energy exception — it was simply never persisted, so the
+  // authoritative-category signal could not survive the import. Null = the row
+  // did not come from FDC, or predates this column.
+  fdcCategory String?
+  // Declared allergens, normalised to lowercase Open Food Facts tag slugs with
+  // the language prefix stripped ("milk", "gluten", "crustaceans"…), stored as
+  // a JSON string array — same one-JSON-column convention as `micros` and
+  // Profile.excludedFoods, for the same reason: a new allergen vocabulary term
+  // must not cost a migration. Written by the barcode import from OFF's
+  // `allergens_tags`. Null = no allergen declaration available (honest
+  // absence); [] = the source explicitly declared none.
+  allergenTags Json?
+  // Trace / "may contain" statements, same normalised shape, from OFF's
+  // `traces_tags`. Kept SEPARATE from allergenTags because they are a weaker
+  // claim ("made on shared equipment") and the caller must be able to tell the
+  // two apart when explaining an exclusion. Default policy is still to EXCLUDE
+  // on a trace for a declared allergy — see TRACE_POLICY_DEFAULT in
+  // src/lib/dietaryFilter.js.
+  mayContain Json?
+  createdAt DateTime @default(now())
+
+  ingredientOf RecipeIngredient[]
+
+  @@index([name])
+  @@index([source])
+  // Serves the Foods list query (routes/foods.js GET /) two ways at once, which
+  // is why it earns its ~0.4 MB: it supplies `ORDER BY category, name` in index
+  // order (killing "USE TEMP B-TREE FOR ORDER BY" — the sort of all 14,122 rows
+  // that made every page request pay for the whole table), AND it is a prefix
+  // match for `WHERE category = ? ORDER BY name`. Measured on dev.db:
+  // first page LIMIT 100 7.84 ms -> 0.14 ms, page at OFFSET 13000 34.35 ms ->
+  // 0.44 ms, search+count 10.18 ms -> 1.74 ms.
+  // Column order matters and is not arbitrary: (category, name) serves both the
+  // combined sort and the category filter; (name, category) would serve
+  // neither. NOT redundant with @@index([name]) above, which still carries
+  // name-only lookups.
+  @@index([category, name])
+}
+
+model Recipe {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  description String?
+  steps       Json // ordered string array
+  slotType    String   @default("meal") // "meal" | "snack" | "either"
+  cuisine     String?
+  prepTimeMin Int?
+  // Corrected 2026-07-24 — documented as 2 values, DB holds 4. Measured in
+  // dev.db: "themealdb-import" 602, "ai-generated" 262, "curated" 24,
+  // "imported" 1. The bulk TheMealDB load and the URL importer
+  // (src/lib/recipeImporter.js) each invented their own tag and neither is a
+  // typo for the other: "imported" is the one-off URL import, "themealdb-import"
+  // is the bulk load. Both are library content with no per-user owner. Anything
+  // switching on this value needs a default branch — the importer seam
+  // (`PROVIDERS` in recipeImporter.js) is explicitly built to grow more.
+  source      String   @default("curated") // "curated" | "ai-generated" | "imported" | "themealdb-import"
+  // NEW (roadmap/03-recipe-curation.md §2): null = ordinary meal-eligible
+  // (the default for ~88% of the pool). Only set for recipes reviewed and
+  // found not to belong in a full lunch/dinner slot on their own merits.
+  // Additive - does not change what slotType means for any existing row or
+  // call site (slotType is read in 7+ places including a user-facing
+  // dropdown and the AI-generation JSON schema; overloading it to encode
+  // "this is a dessert" was considered and rejected - see the roadmap doc).
+  mealCategory String? // "dessert" | "beverage" | "bread_or_pastry_side" | "condiment_or_sauce" | "breakfast_only" | null
+  // cached macros per serving (base ingredient grams, scale=1), recomputed on save
+  kcal        Float
+  protein     Float
+  fat         Float
+  carb        Float
+  // T (v2): taste-quality tier + cached user-rating aggregate. Nullable/additive;
+  // null tasteTier ranks as "decent" and is never filtered out by default. SOFT
+  // signal — only the brain scorer reads these; the deterministic solver ignores
+  // them, so BRAIN=off stays byte-identical (Law 2 unaffected).
+  tasteTier       String? // "decent" | "really_good" | "exceptional"
+  tasteTierSource String? // "curated" | "user_derived" | "llm"  (precedence: curated > user_derived > llm)
+  userRatingAvg   Float? // cached mean of RecipeRating scores, normalised 0..1
+  userRatingCount Int? // cached count of ratings
+  // Stage 3 five-filter cache. All three are DERIVED by
+  // scripts/backfillRecipeFilters.mjs, never hand-authored. filterProvenance is
+  // a JSON map recording which is an ESTIMATE and which is MEASURED, so an
+  // estimate can never be read as a measurement (constitution: provenance on
+  // every entry). Nullable/additive; the scorers compute from the row if absent.
+  costPerServing   Float? // CAD, from data/ingredientCosts.json
+  difficulty       Int? // 1..10, from recipeComplexity.computeComplexity()
+  filterProvenance String? // JSON: {"costPerServing":"estimated","prepTimeMin":"measured|estimated","difficulty":"estimated"}
+  // Stage 4 — the constraint fingerprint (brain/slotCache.slotFingerprint) that
+  // produced this row. AI rows only; null for curated/imported. Makes the
+  // library->brain cache index durable instead of rebuilt in-process. An AI row
+  // with a null aiVerifiedAt has NOT passed the verification screens and must
+  // never be served.
+  aiFingerprint String?
+  aiVerifiedAt  DateTime?
+  aiVerifiedBy  Json?
+  createdAt   DateTime @default(now())
+  // Nullable on purpose: the existing 629-row curated/AI-generated/imported
+  // library predates per-user ownership (single-user app originally) and has
+  // no real "creator" - null means "shared library content, admin-only to
+  // mutate" (see routes/recipes.js's ownership check). A non-null value
+  // means a specific user created this recipe and only that user (or an
+  // admin) may edit/delete it.
+  createdByUserId String?
+  createdBy       User?   @relation(fields: [createdByUserId], references: [id])
+
+  ingredients RecipeIngredient[]
+  planSlots   PlanSlot[]
+  cartItems   CartItem[]
+
+  @@index([aiFingerprint])
+}
+
+model RecipeIngredient {
+  id        String  @id @default(cuid())
+  recipeId  String
+  recipe    Recipe  @relation(fields: [recipeId], references: [id])
+  foodId    String
+  food      Food    @relation(fields: [foodId], references: [id])
+  baseGrams Float
+  scalable  Boolean @default(true) // false = fixed (spices, a single egg, etc.) — not scaled with the recipe multiplier
+  // Corrected 2026-07-24 — documented as 4 values, DB holds 7 plus null.
+  // Measured in dev.db: null 2788, carb 1711, veg 1528, protein 925, fat 271,
+  // other 17, dairy 4, fruit 1. The three undocumented values come from the
+  // ingredient classifier tagging by grocery category rather than macro role.
+  // Still informational only and still not used for selection — the ONE
+  // consumer that matters is the solver's protein/sides split, which tests
+  // `role === "protein"` and is unaffected by the extra vocabulary. Left as
+  // data rather than normalised: with 4 of the 7 values on 22 rows total,
+  // a lookup table would cost a join to describe noise.
+  role      String? // "protein" | "carb" | "veg" | "fat" | "dairy" | "fruit" | "other" | null
+
+  // ── ONE LINE PER FOOD PER RECIPE (added 2026-07-24) ─────────────────────
+  // This table shipped with NO constraint and NO index. Both were load-bearing
+  // omissions, measured on dev.db before the fix:
+  //
+  //   (a) Duplicates were representable, so they happened: 208 duplicate
+  //       (recipeId, foodId) pairs spanning 429 rows across 125 recipes — 14%
+  //       of the library. "Jamaican Beef Patties" listed Water four separate
+  //       times (59.25 g + 118.5 g + 3.7 g + 14.825 g). The cached per-serving
+  //       macros were NOT wrong (each row carried real distinct grams and
+  //       computeRecipeMacros sums them all, so cached == recomputed), but a
+  //       shopping list and an ingredient panel that say "Water" four times are
+  //       wrong to a human, and no amount of application care could prevent the
+  //       next one while the DB permitted it. Migration 20260724203000 merges
+  //       each group into one row (grams summed) FIRST, then adds this — the
+  //       constraint cannot be created before the data satisfies it.
+  //
+  //   (b) With no index on either FK column, every ingredient lookup was a full
+  //       scan of all 7,245 rows. Fetching ingredients for the 889-recipe
+  //       library took 167.8 ms; routes/foods.js's "which recipes use this
+  //       food?" ripple took 121.1 ms for 500 foods. After: 33.1 ms and
+  //       33.6 ms — and 7.8 ms / 19.5 ms once the DB is in WAL. Prisma never
+  //       generates FK indexes for a plain relation on SQLite; they must be
+  //       declared.
+  //
+  // NOTE — there is deliberately NO separate @@index([recipeId]). The unique
+  // constraint's index is (recipeId, foodId), and SQLite uses a leading-column
+  // prefix of it for `WHERE recipeId = ?` without any help. Measured over 5
+  // interleaved runs of the 889-recipe fetch: 34.12 ms with the unique index
+  // alone vs 33.95 ms with a standalone recipeId index added — inside the
+  // run-to-run spread, for 0.23 MB. Adding it would be cargo cult.
+  // THE DEPENDENCY IS REAL THOUGH: if the @@unique is ever removed, this table
+  // loses its recipeId index too and every ingredient fetch silently returns to
+  // a 7,245-row scan. Remove one, add the other back.
+  @@unique([recipeId, foodId])
+  @@index([foodId])
+}
+
+model Plan {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  startDate String // ISO date, Monday of the week
+  createdAt DateTime @default(now())
+
+  // ── THE VERDICT ON THIS PLAN ────────────────────────────────────────────
+  // The solver has always produced a full narration — per-day match %, the
+  // deltas, the plain-English miss line for every day that landed outside
+  // tolerance, and the "unsolvable + why" diagnosis — and has always thrown
+  // it away. It rode back on POST /plans/generate as a `meta` sidecar into
+  // one React useState in PlanTab.jsx and nowhere else, so the plan survived
+  // a tab switch or a reload and the VERDICT ON IT did not. The user kept
+  // the meals and lost the reason they were the wrong meals.
+  //
+  // That is a silent target miss by expiry, which the constitution forbids
+  // ("Solver declares 'unsolvable + why' — silent target misses are
+  // forbidden"). PlanSlot.warning already persists the PER-SLOT miss; these
+  // columns give the per-DAY and per-WEEK verdict the same durability.
+  //
+  //   verdict   — the solver's narration meta, whole and verbatim as it was
+  //               returned: matchPct, attempts, score{avgMatch,
+  //               daysInTolerance, days[]}, poolCounts, variety, horizon.
+  //               The per-DAY verdicts are the score.days[] array.
+  //   diagnosis — { feasible, reasons, suggestions, binding } | null. This
+  //               is a PROMOTED COPY of verdict.diagnosis, written in the
+  //               same statement, so the "why" is a first-class column that
+  //               a query or an audit can reach without a JSON walk and that
+  //               a future change to the verdict shape cannot silently drop.
+  //               DUPLICATION IS DELIBERATE AND MUST STAY IN SYNC; if the
+  //               two ever disagree, verdict.diagnosis is authoritative.
+  //   verdictAt — when the verdict was produced (not when the plan was).
+  //
+  // A horizon longer than a week writes several Plan rows but produces ONE
+  // narration covering all of them; it is stored on the first week's row,
+  // which is also the only row POST /plans/generate returns.
+  verdict   Json?
+  diagnosis Json?
+  verdictAt DateTime?
+
+  // ── WHAT THE VERDICT WAS ABOUT ──────────────────────────────────────────
+  // A verdict is only true of the exact set of meals it judged. Swap a slot,
+  // apply an alternate, accept a re-solved day or place a recipe and the
+  // narration above describes a week that no longer exists — a stale verdict
+  // is worse than none, because it reads as current.
+  //
+  // Nothing clears it on mutation today (the mutation routes do not know the
+  // verdict exists), so staleness is DETECTED rather than signalled: the
+  // signature of the slots the verdict judged is stored beside it, and any
+  // reader recomputes the signature of the slots it currently holds. Equal
+  // means the verdict still applies; different means it must not be shown as
+  // current. This survives a reload, which a cleared-on-mutation flag held in
+  // component state does not.
+  //
+  // THE RECIPE, which every writer and reader must implement identically:
+  //
+  //   slots
+  //     .map(s => [s.dayOfWeek, s.slotType, s.slotIndex, s.recipeId ?? "",
+  //                round(s.proteinScale, 3), round(s.sidesScale, 3)].join(":"))
+  //     .sort()
+  //     .join("|")
+  //
+  // Keyed on (dayOfWeek, slotType, slotIndex) — the @@unique natural key —
+  // and NOT on PlanSlot.id, because a regenerate deletes and recreates rows,
+  // so ids churn even when the meals are materially identical. `locked` is
+  // deliberately EXCLUDED: a lock toggle moves no macro and must not stale a
+  // verdict that is still true.
+  verdictSlotSig String?
+
+  slots       PlanSlot[]
+  groceryList GroceryList?
+
+  @@unique([userId, startDate])
+}
+
+model PlanSlot {
+  id          String  @id @default(cuid())
+  planId      String
+  plan        Plan    @relation(fields: [planId], references: [id])
+  dayOfWeek   Int // 0-6, 0 = Monday (matches plan.startDate)
+  slotType    String // "meal" | "snack"
+  slotIndex   Int // which meal/snack number within the day, 0-based
+  recipeId    String?
+  recipe      Recipe? @relation(fields: [recipeId], references: [id], onDelete: SetNull)
+  // Two independent scale factors — the protein-role ingredient(s) scale
+  // separately from the rest of the recipe, so the slot can hit both a
+  // calorie AND a protein target (one multiplier over the whole recipe
+  // can only hit one or the other unless the recipe's fixed ratio happens
+  // to already match).
+  proteinScale Float  @default(1)
+  sidesScale   Float  @default(1)
+  // Ground truth for display + grocery list: actual grams to cook per
+  // ingredient, resolved from the scale factors at generation time.
+  ingredients Json // [{ foodId, name, grams, role }]
+  kcal        Float   @default(0)
+  protein     Float   @default(0)
+  fat         Float   @default(0)
+  carb        Float   @default(0)
+  warning     String?
+  locked      Boolean @default(false)
+
+  @@unique([planId, dayOfWeek, slotType, slotIndex])
+}
+
+model GroceryList {
+  id        String   @id @default(cuid())
+  planId    String   @unique
+  plan      Plan     @relation(fields: [planId], references: [id])
+  items     Json // [{ foodId, name, category, grams }]
+  createdAt DateTime @default(now())
+}
+
+// User-curated recipe collection, independent of the auto-generated week
+// plan (PlanSlot). onDelete: Cascade here (not SetNull like PlanSlot) —
+// a cart entry pointing at a deleted recipe has no historical value once
+// the recipe itself is gone, unlike a past week's plan slot.
+model CartItem {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  recipeId  String
+  recipe    Recipe   @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+  addedAt   DateTime @default(now())
+
+  @@unique([userId, recipeId])
+}
+
+// T (v2) — recipe taste ratings. A SOFT palatability signal only: it re-ranks
+// which recipes the solver PREFERS, never what it may serve (hard diet/allergy
+// filters always win) and never a displayed number. Plain columns, no FK: an
+// orphan rating for a deleted recipe simply never matches the pool (harmless).
+model RecipeRating {
+  id        String   @id @default(cuid())
+  userId    String
+  recipeId  String
+  rating    Int // 1 = like, -1 = dislike (no row = neutral)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, recipeId])
+  @@index([userId])
+}
+
+// Food diary. A logged entry is a SELF-CONTAINED macro snapshot — name +
+// kcal/macros are copied in at log time, so a later recipe edit or delete
+// never rewrites history. `source` is "planned" (copied from that date's
+// PlanSlot rows) or "manual" (hand-entered). `recipeId` is a provenance tag
+// only (no FK relation) — it survives recipe deletion because the entry
+// carries its own numbers. Spec named Int columns, but this schema uses cuid
+// String ids throughout (see User.id), so id/userId are String to keep the
+// userId -> User FK valid; kcal stays Int and the three macros Float per spec.
+model MealLog {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  date      String // ISO date (yyyy-mm-dd)
+  source    String // "planned" | "manual"
+  recipeId  String? // provenance tag only — intentionally not a FK relation
+  name      String
+  kcal      Int
+  proteinG  Float
+  carbG     Float
+  fatG      Float
+  slotType  String? // "meal" | "snack" | null — informational label
+  createdAt DateTime @default(now())
+
+  @@index([userId, date])
+}
+
+// ==== BRAIN (v3) ==== additive; unused with BRAIN=off. The LLM usage/cost
+// ledger so the pre-call cost caps (src/lib/brain/ledger.js) survive restarts.
+// userId is nullable (guard/classify spend can precede auth) with a cascade
+// relation, matching the standing brain-persistence convention.
+model LlmUsage {
+  id              String   @id @default(cuid())
+  // WRONG ACTION, KNOWN, NOT YET CHANGED (audited 2026-07-24). Cascade here
+  // means deleting a user ERASES their spend history, which is not a privacy
+  // win — it is a budget-cap bypass, because ledger.js's caps read the SUM of
+  // this table. `SetNull` is the correct action and is already representable
+  // (userId is nullable); the anonymised row keeps the money accounted for
+  // while dropping the person. Not changed in this pass because it is a SQLite
+  // table rebuild — see the delete-behaviour block on User for the full
+  // reasoning and the rest of the intended FK map.
+  userId          String?
+  user            User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  model           String
+  phase           String? // "classify" | "guard" | "plan" | ...
+  intent          String?
+  inputTokens     Int      @default(0)
+  outputTokens    Int      @default(0)
+  cacheReadTokens Int      @default(0)
+  costUsd         Float    @default(0)
+  createdAt       DateTime @default(now())
+
+  @@index([createdAt])
+  @@index([userId, createdAt])
+}
+
+// ── Brain v3 (Stage I) ──────────────────────────────────────────────────
+// SOFT preferences ONLY. Exclusions (diet/allergy) are NEVER stored here —
+// they always recompute from Profile, so a stale stored copy can't leak a food
+// (LAW 2). Every write goes through prefsStore.sanitizeSoft first. Additive,
+// cascade-deleted with the user; inert until the brain is wired.
+model BrainPreference {
+  id        String   @id @default(cuid())
+  userId    String   @unique
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  data      Json // soft signals: { likedRecipeIds, dislikedRecipeIds, cuisineNudge, notes }
+  updatedAt DateTime @updatedAt
+}
+
+// ==== BRAIN (v2 Stage I persistence) ==== additive; dormant with BRAIN=off.
+// Plain userId (no FK to User) — same pattern as RecipeRating; orphans are
+// harmless and it keeps the migration pure CREATE TABLEs. Internal parent→child
+// relations cascade. SOFT/history data only — NEVER a source of exclusions (Law 2).
+model BrainConversation {
+  id        String         @id @default(cuid())
+  userId    String
+  title     String?
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
+  messages  BrainMessage[]
+
+  @@index([userId])
+}
+
+model BrainMessage {
+  id             String            @id @default(cuid())
+  conversationId String
+  conversation   BrainConversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  role           String // "user" | "assistant"
+  content        String
+  createdAt      DateTime          @default(now())
+
+  @@index([conversationId])
+}
+
+model GeneratedRecipe {
+  id        String   @id @default(cuid())
+  userId    String
+  recipeId  String? // set once accepted into the pool
+  name      String
+  data      Json // verified structure + prov
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+}
+
+model GeneratedPlan {
+  id        String              @id @default(cuid())
+  userId    String
+  label     String?
+  data      Json // plan snapshot
+  createdAt DateTime            @default(now())
+  items     GeneratedPlanItem[]
+
+  @@index([userId])
+}
+
+model GeneratedPlanItem {
+  id       String        @id @default(cuid())
+  planId   String
+  plan     GeneratedPlan @relation(fields: [planId], references: [id], onDelete: Cascade)
+  slotType String // "meal" | "snack"
+  recipeId String?
+  data     Json
+
+  @@index([planId])
+}
+
+model BrainSolveRun {
+  id        String   @id @default(cuid())
+  userId    String
+  intent    String?
+  status    String // "converged" | "partial" | "failed"
+  data      Json // targets, iterations, result summary (audit)
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+}
+
+model UserLibraryEntry {
+  id        String   @id @default(cuid())
+  userId    String
+  recipeId  String
+  createdAt DateTime @default(now())
+
+  @@unique([userId, recipeId])
+  @@index([userId])
+}
+
+// ── Training scaffold (Phase 8) ─────────────────────────────────────────
+// Deliberately separate from the meal engine: nothing here references
+// Recipe/Food/Plan, and the meal code never reads these tables. The tree
+// is plan → weeks → sessions → exercises, mirroring how a program is
+// actually periodized, so later versions (deloads, per-week progression,
+// exercise swaps, logging actual lifts) fit without a schema rewrite.
+
+model TrainingPlan {
+  id               String   @id @default(cuid())
+  userId           String   @unique // v1: one active plan; regenerating replaces it
+  user             User     @relation(fields: [userId], references: [id])
+  name             String
+  // The inputs the generator matched on — kept so regenerate can pre-fill
+  // the form and the plan can explain why it looks the way it does.
+  style            String // "strength" | "hypertrophy" | "general" | "conditioning"
+  experience       String // "beginner" | "intermediate" | "advanced"
+  daysPerWeek      Int
+  sessionLengthMin Int
+  equipment        Json // string[] of equipment keys
+  templateKey      String // which v1 template was chosen
+  generator        String   @default("v1-templates") // provenance label
+  createdAt        DateTime @default(now())
+  weeks            TrainingWeek[]
+}
+
+model TrainingWeek {
+  id         String            @id @default(cuid())
+  planId     String
+  plan       TrainingPlan      @relation(fields: [planId], references: [id], onDelete: Cascade)
+  weekNumber Int // 1-based
+  note       String? // week-level coaching note (progression guidance in v1)
+  sessions   TrainingSession[]
+
+  @@unique([planId, weekNumber])
+}
+
+model TrainingSession {
+  id        String             @id @default(cuid())
+  weekId    String
+  week      TrainingWeek       @relation(fields: [weekId], references: [id], onDelete: Cascade)
+  dayIndex  Int // 0-based order within the week — not tied to calendar days
+  name      String // "Full Body A", "Upper 1", …
+  focus     String?
+  exercises TrainingExercise[]
+
+  @@unique([weekId, dayIndex])
+}
+
+model TrainingExercise {
+  id        String          @id @default(cuid())
+  sessionId String
+  session   TrainingSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  order     Int
+  name      String
+  sets      Int
+  reps      String // "5", "8-12", "40s" — ranges and time-based work are real prescriptions
+  rpe       Float? // null where RPE isn't the dial (conditioning circuits)
+  restSec   Int?
+  notes     String?
+
+  @@unique([sessionId, order])
+}
