@@ -17,6 +17,10 @@ const { planContext, filterRecipePool, parseFilters } = require("../lib/planCont
 
 const router = express.Router();
 router.use(requireAuth);
+// saas-launch Stage 2: EVERYTHING in this file is portion-solved output —
+// the premium product. One mount gates all of it. Desktop installs
+// (no SUPABASE_URL) pass straight through; see lib/entitlement.js.
+router.use(require("../lib/entitlement.js").requirePremium);
 
 const PLAN_INCLUDE = { slots: { include: { recipe: true }, orderBy: [{ dayOfWeek: "asc" }, { slotType: "asc" }, { slotIndex: "asc" }] }, groceryList: true };
 

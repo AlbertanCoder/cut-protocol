@@ -91,7 +91,9 @@ function auditAllergenOverride({ userId, recipeName, violation, stage, dietarySt
 // generateRecipeDrafts()'s governed wrapper — this handler adds no LLM policy
 // of its own, it only renders the outcome. NOTHING is written before the model
 // call returns: a refusal at any control leaves zero rows behind.
-router.post("/generate-drafts", async (req, res) => {
+// saas-launch Stage 2: premium — every generation burns server-side Anthropic
+// tokens, so it cannot sit on the free tier of the hosted product.
+router.post("/generate-drafts", require("../lib/entitlement.js").requirePremium, async (req, res) => {
   const { slotType, protein, cuisine, prepTimeMin, freeText, batchStyle, allowAllergens } = req.body || {};
   if (!["meal", "snack"].includes(slotType)) return res.status(400).json({ error: "slotType must be 'meal' or 'snack'" });
 

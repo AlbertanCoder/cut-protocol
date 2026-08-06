@@ -337,7 +337,11 @@ router.get("/me", requireAuth, async (req, res) => {
     clearSessionCookie(res);
     return res.status(401).json({ error: SESSION_EXPIRED_MESSAGE });
   }
-  res.json(user);
+  // saas-launch Stage 2: the tier rides along so the frontend can mount the
+  // lock overlays without a second request. Desktop installs report premium
+  // (status "local") — see lib/entitlement.js.
+  const entitlement = await require("../lib/entitlement.js").getEntitlement(user.id);
+  res.json({ ...user, premium: entitlement.premium, premiumStatus: entitlement.status, premiumEndsAt: entitlement.endsAt });
 });
 
 module.exports = router;

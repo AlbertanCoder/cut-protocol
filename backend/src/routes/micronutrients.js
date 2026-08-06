@@ -16,6 +16,9 @@ const { aggregatePortions, portionsFromPlanSlotIngredients, summarizeCoverage } 
 
 const router = express.Router();
 router.use(requireAuth);
+// saas-launch Stage 2: the rollup reads the solved plan's per-food grams —
+// premium-derived data, so it sits behind the same gate as /api/plans.
+router.use(require("../lib/entitlement.js").requirePremium);
 
 const isDateStr = (d) => typeof d === "string" && /^\d{4}-\d{2}-\d{2}$/.test(d) && !Number.isNaN(Date.parse(d + "T12:00:00"));
 

@@ -60,7 +60,9 @@ function cartToGroceryListInput(cartItems) {
   };
 }
 
-router.post("/grocery-list", async (req, res) => {
+// saas-launch Stage 2: adding/removing cart items stays free (it's browsing);
+// computing SHOPPING QUANTITIES from the cart is portion-solved output.
+router.post("/grocery-list", require("../lib/entitlement.js").requirePremium, async (req, res) => {
   const cartItems = await prisma.cartItem.findMany({
     where: { userId: req.userId },
     include: { recipe: { include: RECIPE_INCLUDE } },
