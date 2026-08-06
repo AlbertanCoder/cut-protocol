@@ -42,7 +42,17 @@ datasource db {
 model User {
   id           String    @id @default(cuid())
   email        String    @unique
-  passwordHash String
+  // Nullable since saas-launch: a user created through Google sign-in
+  // (Supabase Auth) has no password here — and never will; the web product
+  // stores no passwords. Password login guards on null (routes/auth.js) and
+  // answers with the same bad-credentials sentence, never "this is a Google
+  // account" (account-existence oracle).
+  passwordHash String?
+  // Supabase Auth user id (JWT `sub`) for the web deployment. Set on first
+  // sight of a verified Supabase token: matched by email to link an existing
+  // local account, otherwise a fresh row is created. Desktop installs never
+  // populate this.
+  supabaseUserId String? @unique
   // "user" | "admin". Added for the recipe-ownership fix (roadmap/05-data-isolation-audit.md,
   // roadmap/04-multi-tenancy-auth.md - both independently found the same gap):
   // Recipe is a shared library with no owner column, and PUT/DELETE
@@ -107,6 +117,34 @@ model User {
   mealLogs     MealLog[]
   llmUsage     LlmUsage[]
   brainPreference BrainPreference?
+  subscription Subscription?
+}
+
+// One row per user, written ONLY by the backend from Lemon Squeezy webhook
+// events (Stage 3) — the frontend never reads this table directly, and no
+// route lets a user write their own entitlement. Access rules live in
+// requirePremium (Stage 2), which derives entitlement from status + the
+// three timestamps; this table just records what the payment processor said.
+model Subscription {
+  id               String    @id @default(cuid())
+  userId           String    @unique
+  user             User      @relation(fields: [userId], references: [id])
+  lsCustomerId     String?
+  lsSubscriptionId String?   @unique
+  plan             String?   // "monthly" | "annual"
+  // none | active | on_trial | past_due | cancelled | expired — Lemon Squeezy
+  // vocabulary, recorded as received. Entitlement is NOT this field alone:
+  // past_due keeps premium until graceUntil (7-day retry window), cancelled
+  // keeps premium until endsAt (the period already paid for).
+  status           String    @default("none")
+  renewsAt         DateTime?
+  endsAt           DateTime?
+  graceUntil       DateTime?
+  // Phase 2 (win-back offer) — schema room only, one offer per user EVER.
+  // Nothing reads or writes this yet.
+  usedWinback      Boolean   @default(false)
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
 }
 
 // All physical quantities stored in SI (kg, cm) regardless of the user's
