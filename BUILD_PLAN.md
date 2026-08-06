@@ -104,11 +104,15 @@ Stays FREE: auth, profile (targets/TDEE), weighins/trend, training, foods (+UPC)
 - [ ] OWNER: runbook Part C below (Railway + post-deploy URL updates + seed + legal placeholders)
 - [ ] CHECKPOINT: open the production URL on the phone, sign in with Google, use the free app end to end
 
-### Stage 5 — Full test-mode run on prod — WAITING on Stage 4 owner steps
-Nothing to pre-build: the five scenarios (monthly sub, cancel-at-period-end, failed payment + shrunk grace, refund revoke, annual pass) run against the deployed URL with LS test cards. Claude runs/verifies these WITH the owner in a session; grace-shrink = `flipPremium`-style date surgery or LS dashboard simulate-events.
+### Stage 5 — Full test-mode run on prod — TOOLING BUILT, run is owner+browser
+- [x] `scripts/flipPremiumCloud.mjs`: prod-DB inspector (`--list`), six states, and `--expire-grace` / `--expire-period` time surgery so "time ran out" downgrades are testable same-night against the real entitlement logic
+- [ ] The five scenarios (runbook Part D below): monthly subscribe · cancel-at-period-end · failed payment + shrunk grace · refund revoke · annual pass — LS test cards on the PROD URL
+- [ ] CHECKPOINT: all five green as a checklist
 
-### Stage 6 — Go-live + penny test — WAITING on Stage 5
-Owner-only dashboards (LS activation/KYC as Canadian sole prop, live keys into Railway, penny variant). No code gaps known.
+### Stage 6 — Go-live + penny test — CODE READY, rest is owner identity/money
+- [x] Penny-test path: `/?penny=1` signed-in → hidden `LEMONSQUEEZY_VARIANT_PENNY` variant through the REAL checkout endpoint (user_id custom data included — a bare LS link would prove nothing); period invalid once the env var is removed
+- [ ] LS store activation (KYC: Canadian individual/sole prop, personal bank), live product/variants, live keys into Railway, live webhook (runbook Part E)
+- [ ] Penny test + cleanup + CHECKPOINT: live prices correct, we are live
 
 ---
 
@@ -149,6 +153,24 @@ Full click-by-click: chat 2026-08-06 (Stage 3 end). Compressed:
    - Lemon Squeezy (test mode) → Settings → Webhooks → + : URL = `<prod URL>/api/webhooks/lemonsqueezy`, Signing secret = the value you put in `LEMONSQUEEZY_WEBHOOK_SECRET`, select all subscription_* events + order_refunded.
 6. Legal placeholders before anything public: [SUPPORT EMAIL], [DATE], [REGION] in `frontend/public/terms.html` + `privacy.html`; link `/terms` + `/privacy` prod URLs in the Google consent screen and LS store settings.
 7. CHECKPOINT: production URL on your phone → Google sign-in → free app works end to end.
+
+### Part D — Stage 5: the five test-card scenarios (prod URL, LS test mode ON)
+Test card: `4242 4242 4242 4242`, any future expiry, any CVC. Useful throughout:
+`node scripts/flipPremiumCloud.mjs --url "<DATABASE_URL>" --list` shows every row + derived tier.
+1. **Monthly.** Set yourself free (`--state free`), sign in on prod, Plan tab → Unlock → Monthly → test card. Land back on `/?upgraded=1` → "You're in" → Plan tab unlocked with NO manual flip. `--list` shows `active/monthly`. PASS =
+2. **Cancel.** LS dashboard → Subscriptions → your test sub → Cancel. App STAYS premium; `--list` shows `cancelled` + future endsAt. Then `--expire-period --email <you>` → reload → free tier. PASS =
+3. **Failed payment.** LS Settings → Webhooks → Simulate: send `subscription_payment_failed`. If the simulated payload doesn't reference your real subscription id (simulator payloads are canned), fall back to `--state grace` — the handler itself is unit-proven. Either way: app premium in grace, then `--expire-grace` → reload → free. PASS =
+4. **Refund.** Re-subscribe (test card), then LS → Orders → that order → Refund → app drops premium immediately (webhook `order_refunded`). PASS =
+5. **Annual.** Once more from free with the Annual toggle → premium unlocks, `--list` shows `plan=annual`. PASS =
+Report the five PASS/FAILs back; anything red gets fixed and re-run before Stage 6.
+
+### Part E — Stage 6: go-live + penny test
+1. **Google consent screen → publish.** Google Cloud → OAuth consent/Audience → "Publish app" (move out of Testing) — otherwise ONLY your test users can ever sign in. Basic scopes (email/profile) publish instantly, no verification.
+2. **LS activation.** Test Mode OFF → "Activate store". As a Canadian individual/sole prop expect: legal name, address, DOB, government ID, tax residency questions, and payout details (personal bank account is fine). Approval can take hours–days.
+3. **Live product.** Test-mode products don't carry over: recreate `Cut Protocol Premium` + the $24.99/$125 variants in LIVE mode. New LIVE values → Railway variables: `LEMONSQUEEZY_API_KEY`, `LEMONSQUEEZY_STORE_ID` (if changed), variant ids, and a live webhook (same URL, fresh signing secret → `LEMONSQUEEZY_WEBHOOK_SECRET`). Redeploy.
+4. **Penny test.** Live mode: add a HIDDEN variant "Penny Test" at $0.01 — if LS refuses, use the minimum it allows and note it. Its id → Railway `LEMONSQUEEZY_VARIANT_PENNY` → redeploy. Visit `https://<prod>/?penny=1` signed in → pay with YOUR REAL CARD → verify: charge appears in LS, webhook fires, account flips premium (`--list`). Fees make it net-negative — that's the point of a test.
+5. **Cleanup.** Cancel the penny subscription in LS, refund it (watch premium revoke — the last live-fire check), archive/delete the penny variant, REMOVE `LEMONSQUEEZY_VARIANT_PENNY` from Railway (the /?penny=1 path then 400s — verify once), confirm the public product page shows exactly $24.99/mo and $125/yr.
+6. CHECKPOINT: penny test passed and cleaned up, live prices correct. **Live.**
 
 ### Stage 5 — Full test-mode run on prod
 - [ ] Fresh Google account: sign up → free tier verified (blur+lock, API rejections)
