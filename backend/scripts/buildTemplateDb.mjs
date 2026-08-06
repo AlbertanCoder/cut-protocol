@@ -25,6 +25,7 @@ const PERSONAL = [
   "RecipeRating", "LlmUsage", "MealLog", "CartItem", "GroceryList",
   "PlanSlot", "Plan", "Weighin", "Profile",
   "TrainingExercise", "TrainingSession", "TrainingWeek", "TrainingPlan",
+  "Subscription", // saas-launch: billing state is personal — never ships
   "User",
 ];
 const KEEP = new Set(["Food", "Recipe", "RecipeIngredient"]);

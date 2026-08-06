@@ -131,6 +131,7 @@ const EMBEDDED_CLASSIFICATION = Object.freeze({
     "RecipeRating", "LlmUsage", "MealLog", "CartItem", "GroceryList",
     "PlanSlot", "Plan", "Weighin", "Profile",
     "TrainingExercise", "TrainingSession", "TrainingWeek", "TrainingPlan",
+    "Subscription", // saas-launch: billing state is personal — never ships
     "User",
   ]),
 });
