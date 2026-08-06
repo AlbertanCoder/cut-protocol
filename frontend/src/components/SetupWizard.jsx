@@ -547,12 +547,12 @@ export default function SetupWizard({ onDone }) {
 
 
   const inp = "text-sm px-3 py-2.5 rounded-xl w-full mt-1";
-  const inpStyle = { background: C.card2, border: `1.5px solid ${C.rule}`, color: C.ink };
+  const inpStyle = { background: "var(--secondary)", border: "1.5px solid var(--border)", color: "var(--foreground)" };
   // Matches ProfileTab's treatment of a field the engine is ignoring.
-  const offStyle = { ...inpStyle, color: C.faint, cursor: "not-allowed" };
+  const offStyle = { ...inpStyle, color: "var(--muted-foreground)", cursor: "not-allowed" };
   const notTraining = d.trainingStyle === "none";
-  const badStyle = { ...inpStyle, border: `1.5px solid ${C.warn}` };
-  const label = (t) => <span className="text-xs font-bold" style={{ color: C.faint }}>{t}</span>;
+  const badStyle = { ...inpStyle, border: `1.5px solid ${"var(--warn)"}` };
+  const label = (t) => <span className="text-xs font-bold" style={{ color: "var(--muted-foreground)" }}>{t}</span>;
 
   // A field's message, if it has one AND the user is ready to hear it. Nagging
   // an empty box the user hasn't reached yet is noise; staying silent after
@@ -563,7 +563,7 @@ export default function SetupWizard({ onDone }) {
     return triedNext || hasValue ? msg : null;
   };
   const FieldNote = ({ children }) => (children
-    ? <div className="text-[11px] font-semibold mt-1" style={{ color: C.warn }}>{children}</div>
+    ? <div className="text-[11px] font-semibold mt-1" style={{ color: "var(--warn)" }}>{children}</div>
     : null);
 
   const ageNote = noteFor("age", "age", d.age !== "");
@@ -592,8 +592,8 @@ export default function SetupWizard({ onDone }) {
             <div className="flex items-center gap-3 mb-7">
               <CutMark size={44} />
               <div className="leading-none">
-                <div className="disp text-lg uppercase" style={{ color: C.ink }}>Cut Protocol</div>
-                <div className="text-[11px] font-bold uppercase mt-1" style={{ color: C.faint, letterSpacing: ".08em" }}>First-run setup</div>
+                <div className="disp text-lg uppercase" style={{ color: "var(--foreground)" }}>Cut Protocol</div>
+                <div className="text-[11px] font-bold uppercase mt-1" style={{ color: "var(--muted-foreground)", letterSpacing: ".08em" }}>First-run setup</div>
               </div>
             </div>
 
@@ -613,8 +613,8 @@ export default function SetupWizard({ onDone }) {
                       disabled={!done}
                       className="w-full text-left flex items-start gap-3 px-3 py-2.5 rounded-xl"
                       style={{
-                        background: current ? C.card2 : "transparent",
-                        border: `1px solid ${current ? C.faintLight : "transparent"}`,
+                        background: current ? "var(--secondary)" : "transparent",
+                        border: `1px solid ${current ? "var(--muted-foreground)" : "transparent"}`,
                         cursor: done ? "pointer" : "default",
                       }}
                     >
@@ -623,18 +623,18 @@ export default function SetupWizard({ onDone }) {
                         aria-hidden="true"
                         style={{
                           width: 20, height: 20,
-                          background: done ? C.faintLight : current ? C.ink : "transparent",
-                          color: done || current ? C.paper : C.faintLight,
-                          border: `1px solid ${done || current ? "transparent" : C.rule}`,
+                          background: done ? "var(--muted-foreground)" : current ? "var(--foreground)" : "transparent",
+                          color: done || current ? C.paper : "var(--muted-foreground)",
+                          border: `1px solid ${done || current ? "transparent" : "var(--border)"}`,
                         }}
                       >
                         {done ? <Check size={12} strokeWidth={3} /> : i + 1}
                       </span>
                       <span className="min-w-0">
-                        <span className="block text-[13px] font-bold" style={{ color: current ? C.ink : done ? C.faint : C.faintLight }}>
+                        <span className="block text-[13px] font-bold" style={{ color: current ? "var(--foreground)" : done ? "var(--muted-foreground)" : "var(--muted-foreground)" }}>
                           {s.label}
                         </span>
-                        <span className="block text-[11px] font-semibold mt-0.5" style={{ color: C.faintLight }}>{s.hint}</span>
+                        <span className="block text-[11px] font-semibold mt-0.5" style={{ color: "var(--muted-foreground)" }}>{s.hint}</span>
                       </span>
                     </button>
                   </li>
@@ -646,9 +646,9 @@ export default function SetupWizard({ onDone }) {
                 onboarding decision in the app and it is not going anywhere. It
                 is MORE reachable here than as a dotted link beside "Next": one
                 fixed place, visible from every step, never scrolled past. */}
-            <div className="rounded-2xl p-4" style={{ background: C.card, border: `1px solid ${C.rule}` }}>
-              <div className="text-xs font-bold mb-1" style={{ color: C.ink }}>Don&apos;t know your numbers yet?</div>
-              <div className="text-[11px] font-semibold leading-relaxed mb-2.5" style={{ color: C.faint }}>
+            <div className="rounded-2xl p-4" style={{ background: "var(--card)", border: "1px solid var(--border)" }}>
+              <div className="text-xs font-bold mb-1" style={{ color: "var(--foreground)" }}>Don&apos;t know your numbers yet?</div>
+              <div className="text-[11px] font-semibold leading-relaxed mb-2.5" style={{ color: "var(--muted-foreground)" }}>
                 You can look around the app on assumed numbers first. Everything derived from them stays
                 labelled as an estimate until you enter your own.
               </div>
@@ -658,7 +658,7 @@ export default function SetupWizard({ onDone }) {
                 disabled={busy}
                 aria-expanded={showEstimatePanel}
                 className="text-xs font-bold underline decoration-dotted underline-offset-4 hover:opacity-80"
-                style={{ color: C.ink }}
+                style={{ color: "var(--foreground)" }}
               >
                 {showEstimatePanel ? "Hide what that assumes" : "Show me what that assumes"}
               </button>
@@ -674,16 +674,16 @@ export default function SetupWizard({ onDone }) {
                 "adult-only") — this is the early, kinder copy of the same
                 answer, not the enforcement. */}
             {adultRefusal && (
-              <div role="alert" className="mb-4 p-5 rounded-2xl" style={{ background: C.card, border: `1px solid ${C.faintLight}` }}>
+              <div role="alert" className="mb-4 p-5 rounded-2xl" style={{ background: "var(--card)", border: `1px solid ${"var(--muted-foreground)"}` }}>
                 <div className="flex items-start gap-3">
-                  <Info size={20} style={{ color: C.faint }} className="mt-0.5 shrink-0" aria-hidden="true" />
+                  <Info size={20} style={{ color: "var(--muted-foreground)" }} className="mt-0.5 shrink-0" aria-hidden="true" />
                   <div className="min-w-0">
-                    <div className="text-base font-extrabold" style={{ color: C.ink }}>{adultRefusal.error}</div>
+                    <div className="text-base font-extrabold" style={{ color: "var(--foreground)" }}>{adultRefusal.error}</div>
                     {(adultRefusal.detail || []).map((p, i) => (
-                      <p key={i} className="text-xs font-semibold leading-relaxed mt-2" style={{ color: C.faint }}>{p}</p>
+                      <p key={i} className="text-xs font-semibold leading-relaxed mt-2" style={{ color: "var(--muted-foreground)" }}>{p}</p>
                     ))}
                     {adultRefusal.whatNow && (
-                      <p className="text-xs font-bold mt-3" style={{ color: C.ink }}>{adultRefusal.whatNow}</p>
+                      <p className="text-xs font-bold mt-3" style={{ color: "var(--foreground)" }}>{adultRefusal.whatNow}</p>
                     )}
                   </div>
                 </div>
@@ -696,16 +696,16 @@ export default function SetupWizard({ onDone }) {
                 when client-side validation refused before the request was
                 sent — the field note promises this panel either way. */}
             {goalRefusalShown && (
-              <div role="alert" className="mb-4 p-5 rounded-2xl" style={{ background: C.card, border: `1px solid ${C.faintLight}` }}>
+              <div role="alert" className="mb-4 p-5 rounded-2xl" style={{ background: "var(--card)", border: `1px solid ${"var(--muted-foreground)"}` }}>
                 <div className="flex items-start gap-3">
-                  <Info size={20} style={{ color: C.faint }} className="mt-0.5 shrink-0" aria-hidden="true" />
+                  <Info size={20} style={{ color: "var(--muted-foreground)" }} className="mt-0.5 shrink-0" aria-hidden="true" />
                   <div className="min-w-0">
-                    <div className="text-base font-extrabold" style={{ color: C.ink }}>{goalRefusalShown.error}</div>
+                    <div className="text-base font-extrabold" style={{ color: "var(--foreground)" }}>{goalRefusalShown.error}</div>
                     {(goalRefusalShown.detail || []).map((p, i) => (
-                      <p key={i} className="text-xs font-semibold leading-relaxed mt-2" style={{ color: C.faint }}>{p}</p>
+                      <p key={i} className="text-xs font-semibold leading-relaxed mt-2" style={{ color: "var(--muted-foreground)" }}>{p}</p>
                     ))}
                     {goalRefusalShown.whatNow && (
-                      <p className="text-xs font-bold mt-3" style={{ color: C.ink }}>{goalRefusalShown.whatNow}</p>
+                      <p className="text-xs font-bold mt-3" style={{ color: "var(--foreground)" }}>{goalRefusalShown.whatNow}</p>
                     )}
                   </div>
                 </div>
@@ -718,14 +718,14 @@ export default function SetupWizard({ onDone }) {
                 cannot be applied without an explicit tick. Nothing here is
                 presented as the user's own data at any point. */}
             {showEstimatePanel && (
-              <div className="mb-4 p-5 rounded-2xl" style={{ background: C.warnBg, border: `1px solid ${C.warn}66` }}>
+              <div className="mb-4 p-5 rounded-2xl" style={{ background: "color-mix(in srgb, var(--warn) 12%, transparent)", border: "1px solid color-mix(in srgb, var(--warn) 40%, transparent)" }}>
                 <div className="flex items-start gap-2.5">
-                  <AlertTriangle size={18} style={{ color: C.warn }} className="mt-0.5 shrink-0" aria-hidden="true" />
+                  <AlertTriangle size={18} style={{ color: "var(--warn)" }} className="mt-0.5 shrink-0" aria-hidden="true" />
                   <div className="min-w-0 flex-1">
-                    <div className="text-sm font-extrabold" style={{ color: C.ink }}>
+                    <div className="text-sm font-extrabold" style={{ color: "var(--foreground)" }}>
                       This starts you on ESTIMATES FROM DEFAULTS — not your numbers
                     </div>
-                    <div className="text-xs font-semibold mt-1.5 leading-relaxed" style={{ color: C.faint }}>
+                    <div className="text-xs font-semibold mt-1.5 leading-relaxed" style={{ color: "var(--muted-foreground)" }}>
                       Nothing about you is known yet, so the app has to assume a person. Your calorie
                       target, macros and meal plan would all be derived from the assumptions below —
                       they are a demo of the engine, not a prescription for you.
@@ -734,22 +734,22 @@ export default function SetupWizard({ onDone }) {
                     <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-x-6 gap-y-1 mt-3.5 mb-3">
                       {describeAssumptions(pref).map(([k, v]) => (
                         <div key={k} className="flex justify-between gap-3 text-xs font-semibold py-0.5"
-                          style={{ borderBottom: `1px solid ${C.rule}` }}>
-                          <span style={{ color: C.faint }}>{k}</span>
-                          <span className="mono" style={{ color: C.ink }}>{v}</span>
+                          style={{ borderBottom: "1px solid var(--border)" }}>
+                          <span style={{ color: "var(--muted-foreground)" }}>{k}</span>
+                          <span className="mono" style={{ color: "var(--foreground)" }}>{v}</span>
                         </div>
                       ))}
                     </div>
 
-                    <div className="text-xs font-semibold leading-relaxed" style={{ color: C.faint }}>
+                    <div className="text-xs font-semibold leading-relaxed" style={{ color: "var(--muted-foreground)" }}>
                       Every screen will keep these numbers flagged as estimates, and keep asking you to
                       finish your profile, until you enter your real height and weight. Take two
                       minutes and fill the four steps instead — it is the whole point of the app.
                     </div>
 
-                    <label className="flex items-start gap-2 text-xs font-bold mt-3" style={{ color: C.warn }}>
+                    <label className="flex items-start gap-2 text-xs font-bold mt-3" style={{ color: "var(--warn)" }}>
                       <input type="checkbox" checked={estimateAcked} onChange={(e) => setEstimateAcked(e.target.checked)}
-                        className="mt-0.5" style={{ accentColor: C.warn }} />
+                        className="mt-0.5" style={{ accentColor: "var(--warn)" }} />
                       I understand these are assumed numbers, not mine, and any target shown is an estimate.
                     </label>
 
@@ -769,8 +769,8 @@ export default function SetupWizard({ onDone }) {
             <div className="p-6 xl:p-8 rounded-2xl glass-card" ref={panelRef} tabIndex={-1}>
               {step === 0 && (
                 <>
-                  <div className="text-lg font-extrabold mb-1" style={{ color: C.ink }}>Units &amp; stats</div>
-                  <div className="text-xs font-semibold mb-5" style={{ color: C.faint }}>
+                  <div className="text-lg font-extrabold mb-1" style={{ color: "var(--foreground)" }}>Units &amp; stats</div>
+                  <div className="text-xs font-semibold mb-5" style={{ color: "var(--muted-foreground)" }}>
                     Your calorie target and meal plans are built from these four numbers. You can change any of
                     them later on the Profile tab.
                   </div>
@@ -781,7 +781,7 @@ export default function SetupWizard({ onDone }) {
                     {["imperial", "metric"].map((u) => (
                       <button key={u} type="button" onClick={() => changeUnits(u)} aria-pressed={pref === u}
                         className="text-xs font-bold px-5 py-2 rounded-xl"
-                        style={{ background: pref === u ? C.card2 : "transparent", color: pref === u ? C.ink : C.faint, border: `1px solid ${pref === u ? C.faintLight : C.rule}` }}>
+                        style={{ background: pref === u ? "var(--secondary)" : "transparent", color: pref === u ? "var(--foreground)" : "var(--muted-foreground)", border: `1px solid ${pref === u ? "var(--muted-foreground)" : "var(--border)"}` }}>
                         {u === "imperial" ? "lb / in" : "kg / cm"}
                       </button>
                     ))}
@@ -852,26 +852,26 @@ export default function SetupWizard({ onDone }) {
                       lean, muscular or small-framed person can legitimately
                       live here and the app has no standing to overrule them. */}
                   {goalNeedsAck && (
-                    <div className="mt-5 p-4 rounded-xl" style={{ background: C.warnBg, border: `1px solid ${C.warn}66` }}>
+                    <div className="mt-5 p-4 rounded-xl" style={{ background: "color-mix(in srgb, var(--warn) 12%, transparent)", border: "1px solid color-mix(in srgb, var(--warn) 40%, transparent)" }}>
                       <div className="flex items-start gap-2.5">
-                        <AlertTriangle size={16} style={{ color: C.warn }} className="mt-0.5 shrink-0" aria-hidden="true" />
+                        <AlertTriangle size={16} style={{ color: "var(--warn)" }} className="mt-0.5 shrink-0" aria-hidden="true" />
                         <div className="min-w-0">
-                          <div className="text-xs font-extrabold" style={{ color: C.ink }}>
+                          <div className="text-xs font-extrabold" style={{ color: "var(--foreground)" }}>
                             That goal is a BMI of {r1(goalBmi)} — under the {limits.goalBmi.needsAckBelow} the population range usually starts at.
                           </div>
-                          <p className="text-xs font-semibold leading-relaxed mt-1.5" style={{ color: C.faint }}>
+                          <p className="text-xs font-semibold leading-relaxed mt-1.5" style={{ color: "var(--muted-foreground)" }}>
                             BMI knows nothing about your frame or how much muscle you carry, and it penalises short
                             people by design. Plenty of lean, strong people sit under it and are fine. It is a prompt
                             to think, not a verdict.
                           </p>
-                          <p className="text-xs font-semibold leading-relaxed mt-1.5" style={{ color: C.faint }}>
+                          <p className="text-xs font-semibold leading-relaxed mt-1.5" style={{ color: "var(--muted-foreground)" }}>
                             What is worth watching is the stuff a scale can&apos;t show: strength going backwards, sleep
                             breaking up, feeling cold, mood flattening, periods changing. If any of that starts, the
                             goal is too low whatever the number says.
                           </p>
-                          <label className="flex items-start gap-2 text-xs font-bold mt-2.5" style={{ color: C.warn }}>
+                          <label className="flex items-start gap-2 text-xs font-bold mt-2.5" style={{ color: "var(--warn)" }}>
                             <input type="checkbox" checked={goalAck} onChange={(e) => setGoalAck(e.target.checked)}
-                              className="mt-0.5" style={{ accentColor: C.warn }} />
+                              className="mt-0.5" style={{ accentColor: "var(--warn)" }} />
                             I&apos;ve read this and that goal weight is what I want.
                           </label>
                         </div>
@@ -883,15 +883,15 @@ export default function SetupWizard({ onDone }) {
 
               {step === 1 && (
                 <>
-                  <div className="text-lg font-extrabold mb-1" style={{ color: C.ink }}>Activity</div>
-                  <div className="text-xs font-semibold mb-5" style={{ color: C.faint }}>
+                  <div className="text-lg font-extrabold mb-1" style={{ color: "var(--foreground)" }}>Activity</div>
+                  <div className="text-xs font-semibold mb-5" style={{ color: "var(--muted-foreground)" }}>
                     Your job sets your everyday activity level; workouts add on top of it.
                   </div>
                   <div className="grid grid-cols-1 xl:grid-cols-12 gap-6">
                     <div className="xl:col-span-7 min-w-0">
                       <label className="block mb-1.5" htmlFor="wizard-occupation">{label("Occupation")}</label>
                       <div className="relative mb-2">
-                        <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: C.faintLight }} aria-hidden="true" />
+                        <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: "var(--muted-foreground)" }} aria-hidden="true" />
                         <input id="wizard-occupation" placeholder="Search occupations…" value={occQuery} onChange={(e) => setOccQuery(e.target.value)}
                           className="text-sm pl-9 pr-3 py-2.5 rounded-xl w-full" style={inpStyle} />
                       </div>
@@ -899,31 +899,31 @@ export default function SetupWizard({ onDone }) {
                           from the selected row. It used to be `card2` with the
                           selected row also `card2` — identical, which is why
                           picking a job appeared to do nothing at all. */}
-                      <div className="max-h-72 overflow-y-auto rounded-xl" style={{ background: C.card, border: `1px solid ${C.rule}` }} role="listbox" aria-label="Occupations">
+                      <div className="max-h-72 overflow-y-auto rounded-xl" style={{ background: "var(--card)", border: "1px solid var(--border)" }} role="listbox" aria-label="Occupations">
                         {filteredOcc.map((o) => {
                           const sel = d.occupationKey === o.key;
                           return (
                             <button key={o.key} type="button" role="option" aria-selected={sel} onClick={() => set({ occupationKey: o.key })}
                               className="w-full text-left px-3 py-2.5 text-sm flex items-center justify-between gap-3"
-                              style={{ background: sel ? C.card2 : "transparent", borderBottom: `1px solid ${C.rule}` }}>
+                              style={{ background: sel ? "var(--secondary)" : "transparent", borderBottom: "1px solid var(--border)" }}>
                               <span className="flex items-center gap-2 min-w-0">
-                                <Check size={14} strokeWidth={3} aria-hidden="true" style={{ color: C.ink, opacity: sel ? 1 : 0, flexShrink: 0 }} />
-                                <span className="truncate" style={{ color: sel ? C.ink : C.faint, fontWeight: sel ? 800 : 600 }}>{o.label}</span>
+                                <Check size={14} strokeWidth={3} aria-hidden="true" style={{ color: "var(--foreground)", opacity: sel ? 1 : 0, flexShrink: 0 }} />
+                                <span className="truncate" style={{ color: sel ? "var(--foreground)" : "var(--muted-foreground)", fontWeight: sel ? 800 : 600 }}>{o.label}</span>
                               </span>
-                              <span className="text-[11px] font-semibold shrink-0" style={{ color: C.faintLight }}>{activityPhrase(o)}</span>
+                              <span className="text-[11px] font-semibold shrink-0" style={{ color: "var(--muted-foreground)" }}>{activityPhrase(o)}</span>
                             </button>
                           );
                         })}
                         {meta && filteredOcc.length === 0 && (
-                          <div className="px-3 py-2.5 text-sm font-semibold" style={{ color: C.faint }}>
+                          <div className="px-3 py-2.5 text-sm font-semibold" style={{ color: "var(--muted-foreground)" }}>
                             Nothing matches that. Pick the closest one — you can fine-tune the multiplier on the Profile tab later.
                           </div>
                         )}
                       </div>
-                      <div aria-live="polite" className="text-xs font-bold mt-2" style={{ color: C.ink }}>
+                      <div aria-live="polite" className="text-xs font-bold mt-2" style={{ color: "var(--foreground)" }}>
                         {currentOcc
-                          ? <>Selected: {currentOcc.label} <span style={{ color: C.faint, fontWeight: 600 }}>· {activityPhrase(currentOcc)}</span></>
-                          : <span style={{ color: C.faint, fontWeight: 600 }}>Nothing selected yet.</span>}
+                          ? <>Selected: {currentOcc.label} <span style={{ color: "var(--muted-foreground)", fontWeight: 600 }}>· {activityPhrase(currentOcc)}</span></>
+                          : <span style={{ color: "var(--muted-foreground)", fontWeight: 600 }}>Nothing selected yet.</span>}
                       </div>
                     </div>
 
@@ -948,7 +948,7 @@ export default function SetupWizard({ onDone }) {
                           The style list now carries the honest answer, so the
                           hint points at it instead of at a state the form
                           wasn't actually in. */}
-                      <div className="text-[11px] font-semibold leading-relaxed self-end" style={{ color: C.faintLight }}>
+                      <div className="text-[11px] font-semibold leading-relaxed self-end" style={{ color: "var(--muted-foreground)" }}>
                         {notTraining
                           ? <>Nothing is being added for training — your job multiplier carries the whole estimate. That is a normal starting point, and you can change it any time in Profile.</>
                           : <>Not training yet? Pick &ldquo;I don&apos;t train right now&rdquo; above — the plan works either way, and the Engine tab shows exactly what each part contributes.</>}
@@ -960,8 +960,8 @@ export default function SetupWizard({ onDone }) {
 
               {step === 2 && (
                 <>
-                  <div className="text-lg font-extrabold mb-1" style={{ color: C.ink }}>Diet &amp; allergies</div>
-                  <div className="text-xs font-semibold mb-5" style={{ color: C.faint }}>
+                  <div className="text-lg font-extrabold mb-1" style={{ color: "var(--foreground)" }}>Diet &amp; allergies</div>
+                  <div className="text-xs font-semibold mb-5" style={{ color: "var(--muted-foreground)" }}>
                     These hard-filter every meal plan, the recipe library, and AI generation.
                   </div>
                   {/* Allergies first, and searchable — the same control the
@@ -1001,8 +1001,8 @@ export default function SetupWizard({ onDone }) {
 
               {step === 3 && (
                 <>
-                  <div className="text-lg font-extrabold mb-1" style={{ color: C.ink }}>Rate of loss</div>
-                  <div className="text-xs font-semibold mb-5" style={{ color: C.faint }}>
+                  <div className="text-lg font-extrabold mb-1" style={{ color: "var(--foreground)" }}>Rate of loss</div>
+                  <div className="text-xs font-semibold mb-5" style={{ color: "var(--muted-foreground)" }}>
                     This sets your daily calories: what your body burns in a day, minus the shortfall this rate
                     needs — and never below the safety floor.
                   </div>
@@ -1011,9 +1011,9 @@ export default function SetupWizard({ onDone }) {
                       <button key={r} type="button" aria-pressed={d.rate === r}
                         onClick={() => { set({ rate: r }); setAcked(false); setAckReasons(null); }}
                         className="px-5 py-3 rounded-xl text-center"
-                        style={{ background: d.rate === r ? C.card2 : "transparent", border: `1px solid ${d.rate === r ? C.faintLight : C.rule}` }}>
-                        <div className="mono text-sm font-extrabold" style={{ color: d.rate === r ? C.ink : C.faint }}>{r} lb/wk</div>
-                        <div className="text-[10px] font-bold" style={{ color: C.faintLight }}>{Math.round(r * 45.3592) / 100} kg/wk</div>
+                        style={{ background: d.rate === r ? "var(--secondary)" : "transparent", border: `1px solid ${d.rate === r ? "var(--muted-foreground)" : "var(--border)"}` }}>
+                        <div className="mono text-sm font-extrabold" style={{ color: d.rate === r ? "var(--foreground)" : "var(--muted-foreground)" }}>{r} lb/wk</div>
+                        <div className="text-[10px] font-bold" style={{ color: "var(--muted-foreground)" }}>{Math.round(r * 45.3592) / 100} kg/wk</div>
                       </button>
                     ))}
                   </div>
@@ -1024,21 +1024,21 @@ export default function SetupWizard({ onDone }) {
                       be saved from here without an explicit tick, whether this
                       screen worked it out or the server did (422). */}
                   {rateNeedsAck && (
-                    <div role="alert" className="p-4 rounded-xl mb-2" style={{ background: C.warnBg, border: `1px solid ${C.warn}66` }}>
+                    <div role="alert" className="p-4 rounded-xl mb-2" style={{ background: "color-mix(in srgb, var(--warn) 12%, transparent)", border: "1px solid color-mix(in srgb, var(--warn) 40%, transparent)" }}>
                       <div className="flex items-start gap-2.5">
-                        <AlertTriangle size={16} style={{ color: C.warn }} className="mt-0.5 shrink-0" aria-hidden="true" />
+                        <AlertTriangle size={16} style={{ color: "var(--warn)" }} className="mt-0.5 shrink-0" aria-hidden="true" />
                         <div className="min-w-0">
-                          <div className="text-xs font-extrabold mb-1" style={{ color: C.warn }}>This rate needs an explicit OK</div>
+                          <div className="text-xs font-extrabold mb-1" style={{ color: "var(--warn)" }}>This rate needs an explicit OK</div>
                           {ackReasons
-                            ? ackReasons.map((r, i) => <div key={i} className="text-xs font-semibold mb-0.5" style={{ color: C.ink }}>· {r}</div>)
+                            ? ackReasons.map((r, i) => <div key={i} className="text-xs font-semibold mb-0.5" style={{ color: "var(--foreground)" }}>· {r}</div>)
                             : (
-                              <div className="text-xs font-semibold" style={{ color: C.ink }}>
+                              <div className="text-xs font-semibold" style={{ color: "var(--foreground)" }}>
                                 · {d.rate} lb/wk is {ratePctOfBw.toFixed(2)}% of your body weight a week — at or above the ~1% guideline.
                                 Faster than that mostly costs muscle, and it is the rate people quit at.
                               </div>
                             )}
-                          <label className="flex items-center gap-2 text-xs font-bold mt-2.5" style={{ color: C.warn }}>
-                            <input type="checkbox" checked={acked} onChange={(e) => setAcked(e.target.checked)} style={{ accentColor: C.warn }} />
+                          <label className="flex items-center gap-2 text-xs font-bold mt-2.5" style={{ color: "var(--warn)" }}>
+                            <input type="checkbox" checked={acked} onChange={(e) => setAcked(e.target.checked)} style={{ accentColor: "var(--warn)" }} />
                             I understand — apply anyway
                           </label>
                         </div>
@@ -1048,9 +1048,9 @@ export default function SetupWizard({ onDone }) {
                 </>
               )}
 
-              {error && <div role="alert" className="text-xs font-semibold mt-4" style={{ color: C.red }}>{error}</div>}
+              {error && <div role="alert" className="text-xs font-semibold mt-4" style={{ color: "var(--destructive)" }}>{error}</div>}
 
-              <div className="flex items-center justify-between gap-4 mt-7 pt-5" style={{ borderTop: `1px solid ${C.rule}` }}>
+              <div className="flex items-center justify-between gap-4 mt-7 pt-5" style={{ borderTop: "1px solid var(--border)" }}>
                 <div>
                   {step > 0 && (
                     <Btn kind="ghost" onClick={() => setStep(step - 1)} disabled={busy}>
@@ -1060,7 +1060,7 @@ export default function SetupWizard({ onDone }) {
                 </div>
                 <div className="flex items-center gap-3">
                   {step === 0 && !statsValid && triedNext && !adultRefusal && (
-                    <span role="alert" className="text-[11px] font-semibold" style={{ color: C.warn }}>
+                    <span role="alert" className="text-[11px] font-semibold" style={{ color: "var(--warn)" }}>
                       {goalNeedsAck && !goalAck
                         ? "Tick the goal-weight box above to continue."
                         : "Check the notes under the fields above."}

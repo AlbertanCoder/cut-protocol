@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { Eye, EyeOff } from "lucide-react";
-import { C } from "../lib/theme.js";
 import { Card, Btn } from "./ui/Parts.jsx";
 import CutMark from "./ui/CutMark.jsx";
 import { api, ApiError, ERR, TIMEOUT, describeError } from "../lib/api.js";
@@ -143,13 +142,13 @@ export default function LoginScreen({ onLoggedIn }) {
             <CutMark size={44} />
           </div>
           <div className="leading-none">
-            <div className="text-xl disp uppercase" style={{ color: C.ink, letterSpacing: ".01em" }}>Cut Protocol</div>
-            <div className="text-[10px] font-bold uppercase mt-1" style={{ color: C.faint, letterSpacing: ".08em" }}>Recomp Engine</div>
+            <div className="text-xl disp uppercase" style={{ color: "var(--foreground)", letterSpacing: ".01em" }}>Cut Protocol</div>
+            <div className="text-[10px] font-bold uppercase mt-1" style={{ color: "var(--muted-foreground)", letterSpacing: ".08em" }}>Recomp Engine</div>
           </div>
         </div>
         <Card>
           {mode === "checking" && (
-            <div className="text-xs font-semibold py-2" style={{ color: C.faint }}>Checking this install…</div>
+            <div className="text-xs font-semibold py-2" style={{ color: "var(--muted-foreground)" }}>Checking this install…</div>
           )}
           {mode === "register" && <RegisterForm onLoggedIn={onLoggedIn} />}
           {mode === "login" && <LoginForm onLoggedIn={onLoggedIn} statusError={statusError} />}
@@ -159,11 +158,11 @@ export default function LoginScreen({ onLoggedIn }) {
   );
 }
 
-const inpStyle = { background: C.card2, border: `1.5px solid ${C.rule}`, color: C.ink };
+const inpStyle = { background: "var(--secondary)", border: "1.5px solid var(--border)", color: "var(--foreground)" };
 
 function FieldError({ children }) {
   if (!children) return null;
-  return <div className="text-[11px] font-semibold mt-1" style={{ color: C.red }}>{children}</div>;
+  return <div className="text-[11px] font-semibold mt-1" style={{ color: "var(--destructive)" }}>{children}</div>;
 }
 
 // A password field with a show/hide eye. There is no way to reveal a STORED
@@ -192,7 +191,7 @@ function PasswordInput({ value, onChange, autoComplete, autoFocus, required, ari
         aria-pressed={show}
         title={show ? "Hide password" : "Show password"}
         className="absolute right-2 top-1/2 -translate-y-1/2 p-1 rounded-md hover:opacity-80"
-        style={{ color: C.faint }}
+        style={{ color: "var(--muted-foreground)" }}
       >
         {show ? <EyeOff size={16} aria-hidden="true" /> : <Eye size={16} aria-hidden="true" />}
       </button>
@@ -233,24 +232,24 @@ function LoginForm({ onLoggedIn, statusError }) {
   return (
     <form onSubmit={submit} className="space-y-3">
       {statusError && (
-        <div role="alert" className="text-[11px] font-semibold" style={{ color: C.warn }}>
+        <div role="alert" className="text-[11px] font-semibold" style={{ color: "var(--warn)" }}>
           Couldn't reach the app's backend ({statusError}). If this is a brand-new install, start the app again — account setup needs the backend running.
         </div>
       )}
       <label className="block">
-        <span className="text-xs font-bold" style={{ color: C.faint }}>Email</span>
+        <span className="text-xs font-bold" style={{ color: "var(--muted-foreground)" }}>Email</span>
         <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)}
           className="text-sm px-3 py-2.5 rounded-xl w-full mt-1" style={inpStyle} autoFocus />
       </label>
       <label className="block">
-        <span className="text-xs font-bold" style={{ color: C.faint }}>Password</span>
+        <span className="text-xs font-bold" style={{ color: "var(--muted-foreground)" }}>Password</span>
         <PasswordInput required value={password} onChange={(e) => setPassword(e.target.value)} autoComplete="current-password" />
       </label>
-      {error && <div role="alert" className="text-xs font-semibold" style={{ color: C.red }}>{error}</div>}
+      {error && <div role="alert" className="text-xs font-semibold" style={{ color: "var(--destructive)" }}>{error}</div>}
       <Btn disabled={busy}>{busy ? "Logging in…" : "Log in"}</Btn>
       <button type="button" onClick={() => setResetting(true)}
         className="text-[11px] font-semibold w-full text-center pt-1 hover:opacity-80"
-        style={{ color: C.faint }}>
+        style={{ color: "var(--muted-foreground)" }}>
         Forgot your password?
       </button>
     </form>
@@ -317,8 +316,8 @@ function ResetPanel({ initialEmail, onLoggedIn, onCancel }) {
   return (
     <div className="space-y-3">
       <div>
-        <div className="text-[15px] font-bold" style={{ color: C.ink, letterSpacing: "-.01em" }}>Reset your password</div>
-        <div className="text-xs mt-1" style={{ color: C.faint }}>
+        <div className="text-[15px] font-bold" style={{ color: "var(--foreground)", letterSpacing: "-.01em" }}>Reset your password</div>
+        <div className="text-xs mt-1" style={{ color: "var(--muted-foreground)" }}>
           No email needed — the code is saved to a file on this computer.
         </div>
       </div>
@@ -326,16 +325,16 @@ function ResetPanel({ initialEmail, onLoggedIn, onCancel }) {
       {step === "request" && (
         <form onSubmit={request} className="space-y-3" noValidate>
           <label className="block">
-            <span className="text-xs font-bold" style={{ color: C.faint }}>Email</span>
+            <span className="text-xs font-bold" style={{ color: "var(--muted-foreground)" }}>Email</span>
             <input type="email" value={email} onChange={(e) => { setEmail(e.target.value); setFields({}); }}
               aria-invalid={!!fields.email}
               className="text-sm px-3 py-2.5 rounded-xl w-full mt-1" style={inpStyle} autoFocus />
             <FieldError>{fields.email}</FieldError>
           </label>
-          {error && <div role="alert" className="text-xs font-semibold" style={{ color: C.red }}>{error}</div>}
+          {error && <div role="alert" className="text-xs font-semibold" style={{ color: "var(--destructive)" }}>{error}</div>}
           <Btn disabled={busy}>{busy ? "Preparing…" : "Get a reset code"}</Btn>
           <button type="button" onClick={onCancel}
-            className="text-[11px] font-semibold w-full text-center pt-1 hover:opacity-80" style={{ color: C.faint }}>
+            className="text-[11px] font-semibold w-full text-center pt-1 hover:opacity-80" style={{ color: "var(--muted-foreground)" }}>
             Back to sign in
           </button>
         </form>
@@ -343,38 +342,38 @@ function ResetPanel({ initialEmail, onLoggedIn, onCancel }) {
 
       {step === "verify" && (
         <form onSubmit={complete} className="space-y-3" noValidate>
-          <div className="text-[11px] rounded-xl p-3" style={{ background: C.card2, border: `1px solid ${C.rule}`, color: C.faint }}>
+          <div className="text-[11px] rounded-xl p-3" style={{ background: "var(--secondary)", border: "1px solid var(--border)", color: "var(--muted-foreground)" }}>
             Open this file on your computer and copy the code inside
             {" "}(<span className="font-mono">~</span> is your user folder):
-            <div className="font-mono mt-1 break-all" style={{ color: C.ink }}>{filePath || "the app's data folder"}</div>
-            {/* C.faint (60%), not C.faintLight (38% = 3.26:1) — this is body
+            <div className="font-mono mt-1 break-all" style={{ color: "var(--foreground)" }}>{filePath || "the app's data folder"}</div>
+            {/* "var(--muted-foreground)" (60%), not "var(--muted-foreground)" (38% = 3.26:1) — this is body
                 text a user has to READ to finish a reset, and the 38% tier
                 fails WCAG AA. The 38% tier is for decoration, never prose. */}
-            <div className="mt-1" style={{ color: C.faint }}>The code expires 15 minutes after you requested it.</div>
+            <div className="mt-1" style={{ color: "var(--muted-foreground)" }}>The code expires 15 minutes after you requested it.</div>
           </div>
           <label className="block">
-            <span className="text-xs font-bold" style={{ color: C.faint }}>Code from the file</span>
+            <span className="text-xs font-bold" style={{ color: "var(--muted-foreground)" }}>Code from the file</span>
             <input type="text" value={code} onChange={(e) => { setCode(e.target.value); if (fields.code) setFields((f) => ({ ...f, code: undefined })); }}
               autoComplete="one-time-code" aria-invalid={!!fields.code}
               className="text-sm px-3 py-2.5 rounded-xl w-full mt-1 font-mono tracking-wide" style={inpStyle} autoFocus />
             <FieldError>{fields.code}</FieldError>
           </label>
           <label className="block">
-            <span className="text-xs font-bold" style={{ color: C.faint }}>New password</span>
+            <span className="text-xs font-bold" style={{ color: "var(--muted-foreground)" }}>New password</span>
             <PasswordInput value={password} onChange={(e) => { setPassword(e.target.value); if (fields.password) setFields((f) => ({ ...f, password: undefined })); }}
               autoComplete="new-password" ariaInvalid={!!fields.password} />
             <FieldError>{fields.password}</FieldError>
           </label>
           <label className="block">
-            <span className="text-xs font-bold" style={{ color: C.faint }}>Confirm new password</span>
+            <span className="text-xs font-bold" style={{ color: "var(--muted-foreground)" }}>Confirm new password</span>
             <PasswordInput value={confirm} onChange={(e) => { setConfirm(e.target.value); if (fields.confirm) setFields((f) => ({ ...f, confirm: undefined })); }}
               autoComplete="new-password" ariaInvalid={!!fields.confirm} />
             <FieldError>{fields.confirm}</FieldError>
           </label>
-          {error && <div role="alert" className="text-xs font-semibold" style={{ color: C.red }}>{error}</div>}
+          {error && <div role="alert" className="text-xs font-semibold" style={{ color: "var(--destructive)" }}>{error}</div>}
           <Btn disabled={busy}>{busy ? "Setting password…" : "Set new password"}</Btn>
           <button type="button" onClick={onCancel}
-            className="text-[11px] font-semibold w-full text-center pt-1 hover:opacity-80" style={{ color: C.faint }}>
+            className="text-[11px] font-semibold w-full text-center pt-1 hover:opacity-80" style={{ color: "var(--muted-foreground)" }}>
             Back to sign in
           </button>
         </form>
@@ -434,35 +433,35 @@ function RegisterForm({ onLoggedIn }) {
   return (
     <form onSubmit={submit} className="space-y-3" noValidate>
       <div>
-        <div className="text-[15px] font-bold" style={{ color: C.ink, letterSpacing: "-.01em" }}>Create your account</div>
-        <div className="text-xs mt-1" style={{ color: C.faint }}>
+        <div className="text-[15px] font-bold" style={{ color: "var(--foreground)", letterSpacing: "-.01em" }}>Create your account</div>
+        <div className="text-xs mt-1" style={{ color: "var(--muted-foreground)" }}>
           This machine has no account yet. Everything you log stays in this app, on this computer.
         </div>
       </div>
       <label className="block">
-        <span className="text-xs font-bold" style={{ color: C.faint }}>Email</span>
+        <span className="text-xs font-bold" style={{ color: "var(--muted-foreground)" }}>Email</span>
         <input type="email" value={email} onChange={set(setEmail, "email")} autoComplete="username"
           aria-invalid={!!fields.email}
           className="text-sm px-3 py-2.5 rounded-xl w-full mt-1" style={inpStyle} autoFocus />
         <FieldError>{fields.email}</FieldError>
       </label>
       <label className="block">
-        <span className="text-xs font-bold" style={{ color: C.faint }}>Password</span>
+        <span className="text-xs font-bold" style={{ color: "var(--muted-foreground)" }}>Password</span>
         <PasswordInput value={password} onChange={set(setPassword, "password")} autoComplete="new-password" ariaInvalid={!!fields.password} />
         <FieldError>{fields.password}</FieldError>
-        {/* C.faint (60%), not C.faintLight (38% = 3.26:1, fails WCAG AA):
+        {/* "var(--muted-foreground)" (60%), not "var(--muted-foreground)" (38% = 3.26:1, fails WCAG AA):
             this is the password rule itself, on the first screen a new user
             ever sees. It has to be readable. */}
         {!fields.password && (
-          <div className="text-[11px] mt-1" style={{ color: C.faint }}>At least {MIN_PASSWORD_LENGTH} characters — use the eye to check it. Forgot it later? You can reset it from the sign-in screen using a code saved on this computer.</div>
+          <div className="text-[11px] mt-1" style={{ color: "var(--muted-foreground)" }}>At least {MIN_PASSWORD_LENGTH} characters — use the eye to check it. Forgot it later? You can reset it from the sign-in screen using a code saved on this computer.</div>
         )}
       </label>
       <label className="block">
-        <span className="text-xs font-bold" style={{ color: C.faint }}>Confirm password</span>
+        <span className="text-xs font-bold" style={{ color: "var(--muted-foreground)" }}>Confirm password</span>
         <PasswordInput value={confirmPassword} onChange={set(setConfirmPassword, "confirmPassword")} autoComplete="new-password" ariaInvalid={!!fields.confirmPassword} />
         <FieldError>{fields.confirmPassword}</FieldError>
       </label>
-      {error && <div role="alert" className="text-xs font-semibold" style={{ color: C.red }}>{error}</div>}
+      {error && <div role="alert" className="text-xs font-semibold" style={{ color: "var(--destructive)" }}>{error}</div>}
       <Btn disabled={busy}>{busy ? "Creating account…" : "Create account"}</Btn>
     </form>
   );
