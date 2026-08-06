@@ -27,6 +27,11 @@ function cfg() {
     webhookSecret: process.env.LEMONSQUEEZY_WEBHOOK_SECRET || "",
     variantMonthly: process.env.LEMONSQUEEZY_VARIANT_MONTHLY || "",
     variantAnnual: process.env.LEMONSQUEEZY_VARIANT_ANNUAL || "",
+    // Stage 6 only: the hidden penny-test variant. Buying it MUST go through
+    // our checkout endpoint (period "penny") so user_id custom data rides
+    // along and the webhook can flip the right account — a bare LS checkout
+    // link carries no custom data and proves nothing about the pipeline.
+    variantPenny: process.env.LEMONSQUEEZY_VARIANT_PENNY || "",
   };
 }
 
@@ -55,7 +60,8 @@ function verifyWebhookSignature(rawBody, signatureHeader, secret) {
  */
 async function createCheckout({ userId, email, period, origin }) {
   const c = cfg();
-  const variantId = period === "annual" ? c.variantAnnual : c.variantMonthly;
+  const variantId =
+    period === "annual" ? c.variantAnnual : period === "penny" ? c.variantPenny : c.variantMonthly;
   const redirectBase = process.env.APP_URL || origin || "http://localhost:5173";
 
   const res = await fetch(`${LS_API}/checkouts`, {

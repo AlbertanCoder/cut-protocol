@@ -100,6 +100,18 @@ function App() {
     const { url } = await api.createCheckout(period);
     window.location.assign(url);
   };
+
+  // Stage 6 penny test: /?penny=1 while signed in goes straight to the hidden
+  // penny-variant checkout — the only route that carries user_id custom data,
+  // which is what the penny test exists to prove. Server-gated: without
+  // LEMONSQUEEZY_VARIANT_PENNY configured this 400s and the banner says so.
+  useEffect(() => {
+    if (authStatus !== "in") return;
+    if (!new URLSearchParams(window.location.search).has("penny")) return;
+    window.history.replaceState(null, "", window.location.pathname);
+    startCheckout("penny").catch((e) => setError(describeError(e, "Penny-test checkout failed.")));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [authStatus]);
   const [bugReport, setBugReport] = useState({ open: false, error: null });
   const [wellbeingOpen, setWellbeingOpen] = useState(false);
   // The SCOFF result. LOCAL-ONLY by design — see storage.js#wellbeingScreenPref

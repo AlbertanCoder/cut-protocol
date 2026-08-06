@@ -285,6 +285,26 @@ test("event for an unknown user is acknowledged, logged, and writes nothing", as
 
 // ── checkout endpoint, unconfigured ──────────────────────────────────────────
 
+test("penny period is refused unless its hidden variant is configured", async () => {
+  const call = () =>
+    fetch(`${base}/api/billing/checkout`, {
+      method: "POST",
+      headers: { "content-type": "application/json", cookie },
+      body: JSON.stringify({ period: "penny" }),
+    });
+  const rejected = await call();
+  assert.equal(rejected.status, 400); // no LEMONSQUEEZY_VARIANT_PENNY -> invalid period
+  process.env.LEMONSQUEEZY_VARIANT_PENNY = "333";
+  try {
+    const allowed = await call();
+    // Past validation now; 503 because the API key/store are (deliberately)
+    // unset in this suite — proves penny reaches the real checkout path.
+    assert.equal(allowed.status, 503);
+  } finally {
+    delete process.env.LEMONSQUEEZY_VARIANT_PENNY;
+  }
+});
+
 test("checkout without LS config -> honest 503; signed-out -> 401", async () => {
   const r = await fetch(`${base}/api/billing/checkout`, {
     method: "POST",
