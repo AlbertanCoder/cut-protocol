@@ -1,7 +1,7 @@
 const express = require("express");
 const { prisma } = require("../lib/prisma.js");
 const { requireAuth } = require("../lib/auth.js");
-const { kg2lb, computeMacros, trendRate, verdict } = require("../lib/bmrEngine.js");
+const { kg2lb, computeMacros, trendRate, trailingAverage, verdict } = require("../lib/bmrEngine.js");
 const { recomputeTarget, reconcileTarget } = require("../lib/profileTarget.js");
 const { adaptiveContext } = require("../lib/adaptiveTarget.js");
 // One definition of "what day is it", shared with every other consumer. This
@@ -47,14 +47,30 @@ router.get("/summary", async (req, res) => {
 
   const weighins = await prisma.weighin.findMany({ where: { userId: req.userId }, orderBy: { date: "asc" } });
   const entries = weighins.map((w) => ({ date: w.date, weightLb: kg2lb(w.weightKg) }));
-  const last7 = entries.slice(-7);
-  const avg7Lb = last7.length ? last7.reduce((s, x) => s + x.weightLb, 0) / last7.length : null;
-  const avg7Kg = avg7Lb != null ? avg7Lb / 2.20462 : null;
-  const rate = trendRate(entries);
   // One clock read for the whole request: resolving the context on one date and
   // reconciling the cache against another would reintroduce the very drift this
-  // route is closing (a request can straddle midnight).
+  // route is closing (a request can straddle midnight). The trailing average is
+  // anchored on this SAME read, so the window it reports is the window it used.
   const asOf = todayStr();
+
+  // "7-day average" has to mean SEVEN DAYS.
+  //
+  // This was `entries.slice(-7)` — the last seven ROWS — so someone weighing
+  // 3×/week got an average spanning ~16 calendar days under a label promising 7.
+  // It was not a display bug: resolveEnergy() feeds this weight into
+  // computeEnergy(), so the error propagated into every BMR formula, the TDEE,
+  // the derived target and all four macro ranges. TrendTab computed the calendar
+  // window correctly and the two disagreed on screen — 208.0 lb here against
+  // 206.5 lb there, same statistic, same label, same moment, and two different
+  // goal dates fell out of it.
+  //
+  // bmrEngine.trailingAverage() has been the correct primitive, with tests,
+  // since it was written (see the header above it). It simply had no callers.
+  const avg7 = trailingAverage(entries, (e) => e.weightLb, { asOf });
+  // `/ 2.20462` is kg2lb's exact inverse (bmrEngine.js:18) — unchanged from the
+  // previous line so the ONLY thing that moves here is which rows are averaged.
+  const avg7Kg = avg7 ? avg7.avg / 2.20462 : null;
+  const rate = trendRate(entries);
   const daysIn = dayNum(asOf) - dayNum(profile.startDate) + 1;
 
   // ONE resolver decides which expenditure the app runs on (adaptive
@@ -87,6 +103,23 @@ router.get("/summary", async (req, res) => {
   res.json({
     weighins: weighins.map((w) => ({ date: w.date, weightKg: w.weightKg })),
     avg7Kg, rate, daysIn, verdict: v,
+    // Provenance for the number above: how many weigh-ins actually landed in the
+    // window, and whether it fell back to the newest reading because the window
+    // was empty (`stale`). A sparse weigher can then be shown that the average
+    // is thin instead of being handed a confident number — the constitution's
+    // "displayed numbers can reveal their formula and inputs".
+    // ADDITIVE: `avg7Kg` keeps its bare-number-or-null contract, so ProfileTab,
+    // TodayTab and TrendTab need no change to keep working.
+    avg7Meta: avg7
+      ? {
+        count: avg7.count,
+        windowDays: avg7.windowDays,
+        fromDate: avg7.fromDate,
+        toDate: avg7.toDate,
+        stale: avg7.stale,
+        staleDays: avg7.staleDays,
+      }
+      : null,
     energy, // rows(+excluded flags), rmr, spreadLo/Hi, jobMultiplier/source/label, trainingKcalPerDay, tdee
     target, // rate, deficit, raw, target, floor, floored, indicatedTargetKcal, stepCapped
     rateSafety: safety,

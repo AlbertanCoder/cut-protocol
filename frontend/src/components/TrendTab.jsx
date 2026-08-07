@@ -223,8 +223,11 @@ export default function TrendTab({ profile, summary, openTraining }) {
   }), [series, outliers]);
 
   const lastRow = rows.length ? rows[rows.length - 1] : null;
-  // The headline average is the DAY-windowed one, not summary.avg7Kg — the
-  // server's field is still the last seven rows.
+  // The headline average is this chart's own day-windowed row, which also skips
+  // flagged outliers. `summary.avg7Kg` now uses the same calendar window
+  // (bmrEngine.trailingAverage, wired into /weighins/summary 2026-08-06) — it
+  // was the last seven ROWS until then, and the two disagreed on screen. They
+  // agree now; this one stays local only because of the outlier skipping.
   const avg7 = lastRow ? lastRow.avg : null;
   const leanNow = bfFrac != null && avg7 != null ? avg7 * (1 - bfFrac) : null;
   const staleDays = lastRow ? dayNum(todayStr()) - lastRow.x : null;
