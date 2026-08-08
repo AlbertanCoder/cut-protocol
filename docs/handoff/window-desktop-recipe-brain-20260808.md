@@ -1,4 +1,4 @@
-# HANDOFF — Claude Code session rooted at `&lt;local&gt;\Desktop`
+# HANDOFF — Claude Code session rooted at `(local)\Desktop`
 
 Written 2026-08-08 in response to ORCHESTRATION.md PROMPT A.
 
@@ -11,7 +11,7 @@ the manifest allows it.
 
 ## IDENTITY
 
-1. `git rev-parse --show-toplevel` → `&lt;local&gt;/Desktop/cut-protocol`
+1. `git rev-parse --show-toplevel` → `(local)/Desktop/cut-protocol`
    (reached by absolute path; **this session's cwd is `Desktop`, not the repo**)
    branch `recipe-brain`, HEAD `794e914`.
 2. `git status --porcelain`, verbatim:
@@ -61,7 +61,7 @@ happen to start in the right place.
      kind of data change I made.
 6. **Half-finished:** the herb-weight data fix. 126 of 189 flagged rows applied, then
    28 reverted (see below). **63 rows deliberately left undone** — they need an owner
-   decision, listed in `&lt;local&gt;\Desktop\herb-fix-review.csv`.
+   decision, listed in `(local)\Desktop\herb-fix-review.csv`.
 7. Next action would have been: measure what fraction of days pass the fat guardrail
    at 35 % vs 40 % vs 45 %E using only the 27 dishes the owner approved.
 
