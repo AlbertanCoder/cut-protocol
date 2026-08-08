@@ -14,6 +14,16 @@
 
   "_enforcement_note": "guard-edit.js reads run_id, mode, locked and allow. guard-bash.js reads mode ONLY. sealed_at_lock below is DESCRIPTIVE — it is not read by any hook; the lock seal list is hardcoded at guard-edit.js:148-153. Do not add a path there expecting it to be enforced. backend/tests/golden/ is hard-denied above every allow list and every mode (guard-edit.js:138).",
 
+  "_widenings": [
+    {
+      "path": "docs/qc/",
+      "granted": "2026-08-08",
+      "authority": "owner, asked for directly",
+      "why": "Installing the harness on claude/apps-editing (5c2645f) governed a worktree that had never been guarded, and stranded one in-flight file: docs/qc/handoff/nav-4door-simplification.md, the handoff for the nav-simplification work. Its source files were fine — frontend/src/ is granted — but the handoff recording WHY was not writable. ORCHESTRATION.md puts widening on the ESCALATE, NEVER DECIDE list, so it was reported rather than fixed; this entry is that escalation resolving. Scope checked before granting: 54 tracked files, 0.7 MB, QC reports and dated audit directories. No source, no secrets, no build output.",
+      "note": "This block exists so the NEXT widening has a format to follow. A manifest that grows without a record of who authorised each entry is a manifest nobody can audit, and the reason ux/simplify-2026-08 carries its own amendment_note is the same reason."
+    }
+  ],
+
   "_matching_note": "An entry ending in '/' is a prefix match; every other entry is an EXACT path match. 'package.json' therefore grants the root file only, never frontend/package.json. Comparison is lower-cased for Windows.",
 
   "_selftest_status": "74 passed, 0 failed, exit 0 — verified live 2026-08-08 AFTER re-pointing the fixtures. Read the history below before assuming that was easy. MISSION 0's gate ('confirm it still passes (74/74). If it does not, stop.') was UNSATISFIABLE as written: guard-selftest.js hardcoded CLAUDE.md, package.json and backend/src/lib/bmrEngine.js as OFF-manifest negative controls, and those are three of the exact paths MISSION 0 requires this manifest to grant. Any conforming manifest necessarily failed them — measured 61/74 before the fix. Resolved by re-pointing the fixtures to this window, which is what the selftest's own preflight advises and what M0.1 already did once for campaign-p2-m0. Coupling verified NON-VACUOUS: the re-pointed suite scores 64/74 against the old campaign-p2-m0 manifest, so it is genuinely measuring this allow list rather than passing by construction.",
@@ -46,6 +56,7 @@
 
     "docs/orchestration/",
     "docs/handoff/",
+    "docs/qc/",
 
     "docs/surgery/CAMPAIGN/",
     "docs/surgery/orchestration-2026-08-08/",
