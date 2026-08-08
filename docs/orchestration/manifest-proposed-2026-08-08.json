@@ -1,0 +1,75 @@
+{
+  "run_id": "orchestration-2026-08-08",
+  "mode": "surgeon",
+  "locked": true,
+  "issued": "2026-08-08",
+  "parent": "campaign-p2-m0",
+  "head_at_issue": "092eabb",
+
+  "_the_carve_out": "docs/surgery/CURRENT/ is deliberately NOT on this allow list, and locked:true seals it besides. No session running under this manifest can rewrite docs/surgery/CURRENT/manifest.json or plant a competing run identity, so manifest installation stays an owner-hand action (MISSION 0: 'Do NOT edit the manifest yourself') and CURRENT stays free for PROMPT S's M-HARNESS to claim later without racing MISSION 0. Whichever of the two ran second used to silently steal the other's cage; now neither can. Only two docs/surgery/ paths ARE granted, both necessary: CAMPAIGN/ because the architect role may write nowhere else (omit it and the architect door opens onto nothing, which fails guard-selftest), and this run's own directory because the standing law requires artifacts on disk before they are reported.",
+
+  "_why_backend_prisma_is_absent": "ORCHESTRATION.md lists 'any persistence version bump or migration' under WHAT TO ESCALATE, NEVER DECIDE. Leaving backend/prisma/ off the list makes that rule mechanical instead of advisory. V2-DELTA BLOCK 1 is a migration and will be refused here by design — that refusal IS the escalation.",
+
+  "_why_claude_dir_is_absent": "MISSION 1 item 3 says to REPORT the settings.json Edit(backend/src/lib/**) denial and ask which scope wins, explicitly not to widen it. An orchestrator that can rewrite .claude/settings.json can grant itself the thing it was told to ask about.",
+
+  "_enforcement_note": "guard-edit.js reads run_id, mode, locked and allow. guard-bash.js reads mode ONLY. sealed_at_lock below is DESCRIPTIVE — it is not read by any hook; the lock seal list is hardcoded at guard-edit.js:148-153. Do not add a path there expecting it to be enforced. backend/tests/golden/ is hard-denied above every allow list and every mode (guard-edit.js:138).",
+
+  "_matching_note": "An entry ending in '/' is a prefix match; every other entry is an EXACT path match. 'package.json' therefore grants the root file only, never frontend/package.json. Comparison is lower-cased for Windows.",
+
+  "_selftest_warning": "MISSION 0 says 'run guard-selftest.js and confirm it still passes (74/74). If it does not, stop.' That gate is UNSATISFIABLE as written, and stopping would be the wrong call. guard-selftest.js hardcodes CLAUDE.md, package.json and backend/src/lib/bmrEngine.js as OFF-manifest negative controls — and those are three of the exact paths MISSION 0 requires the new manifest to grant. Any manifest that satisfies MISSION 0 necessarily fails those assertions. Measured with this manifest: 61 passed, 13 failed. The selftest's own preflight says so: 'The guard is probably fine and the expectations are stale — re-point the on-manifest cases to the live allow list.' Re-point the fixtures, then re-baseline.",
+
+  "_expected_selftest_failures": {
+    "stale_fixtures_7": [
+      "preflight — asserts live run_id is campaign-p2-m0",
+      "EDIT on-manifest 'run docs subtree' — points at docs/surgery/campaign-p2-m0/, the OLD run dir",
+      "G2 builder reaches its own run dir — same old run dir",
+      "EDIT OFF-manifest bmrEngine.js — backend/src/ is now granted, MISSION 3 needs it",
+      "EDIT OFF-manifest CLAUDE.md — now granted, MISSION 1 item 2 needs it",
+      "EDIT OFF-manifest package.json — now granted, the packaging allowlist inversion needs it",
+      "ROLE builder WRITE backend/src/lib/x.js — same as bmrEngine.js"
+    ],
+    "deliberate_tightening_6": [
+      "EDIT on-manifest hooks/ subtree",
+      "EDIT on-manifest settings.json",
+      "EDIT on-manifest guard-selftest.js",
+      "ROLE builder WRITE on-manifest hook (INTERSECTION)",
+      "role '  BUILDER  ' normalizes — fixture path is .claude/hooks/, normalization itself is fine",
+      "G2 builder still reaches the manifest (.claude/hooks/)"
+    ],
+    "_tightening_rationale": "All six are the same decision: this manifest does not grant .claude/ or scripts/surgery/. ORCHESTRATION.md puts 'widening a permission or editing the manifest' on the ESCALATE, NEVER DECIDE list, and MISSION 1 item 3 says to REPORT the settings.json denial rather than widen it — an orchestrator that can rewrite .claude/settings.json can grant itself the very thing it was told to ask about. This does contradict the older G2 invariant ('builder still reaches the harness'). It is an OWNER CALL, not a session's. To restore G2 instead, add '.claude/hooks/', '.claude/settings.json' and 'scripts/surgery/guard-selftest.js' to allow and set locked:false — that trades 6 failures for a builder that can edit its own cage."
+  },
+
+  "allow": [
+    "CLAUDE.md",
+    "BATTLE-PLAN.md",
+    "BUILD_PLAN.md",
+    "V2-DELTA.md",
+    "ORCHESTRATION.md",
+    "package.json",
+
+    "docs/orchestration/",
+    "docs/handoff/",
+
+    "docs/surgery/CAMPAIGN/",
+    "docs/surgery/orchestration-2026-08-08/",
+
+    "MIGRATION/",
+    "fleet/",
+    "scripts/",
+
+    "frontend/src/",
+    "frontend/public/",
+
+    "backend/src/",
+    "backend/tests/",
+    "backend/scripts/"
+  ],
+
+  "sealed_at_lock": [
+    "*/manifest.json",
+    "docs/surgery/CURRENT/",
+    ".claude/",
+    "scripts/surgery/",
+    "backend/tests/golden/"
+  ]
+}
