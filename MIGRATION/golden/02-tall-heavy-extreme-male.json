@@ -1,0 +1,126 @@
+{
+  "slug": "02-tall-heavy-extreme-male",
+  "why": "Top of the range. Heaviest occupation multiplier (mining, 1.7) plus six cardio sessions — the largest TDEE the app can produce.",
+  "inputs": {
+    "weightKg": 140,
+    "goalWeightKg": 110,
+    "sex": "M",
+    "age": 30,
+    "heightCm": 200,
+    "bodyFatPct": 30,
+    "occupationKey": "mining",
+    "activityOverride": null,
+    "trainingStyle": "cardio",
+    "sessionsPerWeek": 6,
+    "minutesPerSession": 90,
+    "rateLbPerWeek": 2,
+    "floorKcal": null,
+    "dietaryStyle": null,
+    "excludedFormulas": []
+  },
+  "energy": {
+    "rmr": 2577,
+    "spreadLo": 2479,
+    "spreadHi": 2753,
+    "sd": 100,
+    "spreadPct": 10.6,
+    "includedCount": 6,
+    "allExcludedFallback": false,
+    "jobMultiplier": 1.7,
+    "jobSource": "occupation",
+    "jobLabel": "Mining / underground",
+    "trainingStyle": "cardio",
+    "trainingMet": 7,
+    "trainingKcalPerDay": 1323,
+    "tdee": 5704,
+    "formulas": [
+      {
+        "key": "mifflin",
+        "kcal": 2505,
+        "excluded": false
+      },
+      {
+        "key": "oxford",
+        "kcal": 2581,
+        "excluded": false
+      },
+      {
+        "key": "harris",
+        "kcal": 2753,
+        "excluded": false
+      },
+      {
+        "key": "schofield",
+        "kcal": 2479,
+        "excluded": false
+      },
+      {
+        "key": "katch",
+        "kcal": 2487,
+        "excluded": false
+      },
+      {
+        "key": "cunningham",
+        "kcal": 2656,
+        "excluded": false
+      },
+      {
+        "key": "whofao",
+        "kcal": 2503,
+        "excluded": true
+      },
+      {
+        "key": "owen",
+        "kcal": 2307,
+        "excluded": true
+      },
+      {
+        "key": "livingston",
+        "kcal": 2312,
+        "excluded": true
+      },
+      {
+        "key": "nelson",
+        "kcal": 2698,
+        "excluded": true
+      }
+    ]
+  },
+  "floor": 2448,
+  "target": {
+    "rate": 2,
+    "deficit": 1000,
+    "raw": 4704,
+    "floor": 2448,
+    "target": 4704,
+    "floored": false,
+    "actualDeficit": 1000,
+    "achievableRate": 2
+  },
+  "macros": {
+    "lbmLb": 216.05275999999998,
+    "kcal": 4704,
+    "proteinLo": 246,
+    "proteinHi": 270,
+    "proteinFloorG": 246,
+    "fatLo": 120,
+    "fatHi": 142,
+    "fatFloorG": 65,
+    "fatFloored": false,
+    "fatPctEnergy": 0.2506,
+    "carbLo": 586,
+    "carbMid": 598,
+    "carbHi": 610,
+    "carbBufferG": 25,
+    "carbFloored": false,
+    "floorKcal": null,
+    "macroKcalGap": 101,
+    "bfAssumed": false,
+    "assumedBodyFatPct": null
+  },
+  "rateSafety": {
+    "unsafe": false,
+    "pctOfBw": 0.65,
+    "reasons": []
+  }
+}

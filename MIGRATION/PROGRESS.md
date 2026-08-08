@@ -301,3 +301,24 @@ writing DONE here without the comment fails the phase gate.
 ---
 
 Total: 287 capabilities · 287 TODO · 0 IN_PROGRESS · 0 DONE · 0 BLOCKED
+
+## Phase log
+
+| Phase | Date | Commit | Result |
+|---|---|---|---|
+| 0 · Recon | 2026-08-07 | `41f45f4` | Inventory 287, contract, checkers, phase gates. No source touched. |
+| 1 · Golden fixtures | 2026-08-08 | *this commit* | 12 profiles locked across the full derived chain. Backend suite 1638 → **1653**. No source touched. |
+
+**Phase 1 moved no F-ID rows, and that is correct** — `MIGRATION/PHASES.md` assigns
+zero capabilities to Phase 1. It is test-only by definition: it changes nothing a
+user can reach, it only makes the math falsifiable. The first rows to move will be
+Phase 4's.
+
+### Debt opened by Phase 1
+
+`backend/scripts/runTests.mjs` carries a committed file/test floor whose header says
+"raise these when you add tests". Phase 1 added 1 file and 15 tests, so the real
+counts (129 / 1653) now sit above the recorded floor. Nothing fails — the floor only
+trips when counts *drop* — but the recorded numbers are stale by that much.
+Not fixed here: `backend/scripts/` is outside Phase 1's allowed files, and quietly
+widening a phase's scope to tidy something is what constraint 6 exists to stop.

@@ -1,0 +1,113 @@
+{
+  "slug": "01-short-light-sedentary-female",
+  "why": "Bottom of the range. Small body + no training — the case where the safety floor is most likely to bind.",
+  "inputs": {
+    "weightKg": 42,
+    "goalWeightKg": 40,
+    "sex": "F",
+    "age": 30,
+    "heightCm": 152,
+    "bodyFatPct": null,
+    "occupationKey": "desk-office",
+    "activityOverride": null,
+    "trainingStyle": "none",
+    "sessionsPerWeek": 0,
+    "minutesPerSession": 0,
+    "rateLbPerWeek": 0.5,
+    "floorKcal": null,
+    "dietaryStyle": null,
+    "excludedFormulas": []
+  },
+  "energy": {
+    "rmr": 1131,
+    "spreadLo": 1059,
+    "spreadHi": 1187,
+    "sd": 53,
+    "spreadPct": 11.3,
+    "includedCount": 4,
+    "allExcludedFallback": false,
+    "jobMultiplier": 1.2,
+    "jobSource": "occupation",
+    "jobLabel": "Desk / office work",
+    "trainingStyle": "none",
+    "trainingMet": 0,
+    "trainingKcalPerDay": 0,
+    "tdee": 1358,
+    "formulas": [
+      {
+        "key": "mifflin",
+        "kcal": 1059,
+        "excluded": false
+      },
+      {
+        "key": "oxford",
+        "kcal": 1103,
+        "excluded": false
+      },
+      {
+        "key": "harris",
+        "kcal": 1177,
+        "excluded": false
+      },
+      {
+        "key": "schofield",
+        "kcal": 1187,
+        "excluded": false
+      },
+      {
+        "key": "whofao",
+        "kcal": 1194,
+        "excluded": true
+      },
+      {
+        "key": "owen",
+        "kcal": 1097,
+        "excluded": true
+      },
+      {
+        "key": "livingston",
+        "kcal": 1111,
+        "excluded": true
+      }
+    ]
+  },
+  "floor": 1200,
+  "target": {
+    "rate": 0.5,
+    "deficit": 250,
+    "raw": 1108,
+    "floor": 1200,
+    "target": 1200,
+    "floored": true,
+    "actualDeficit": 158,
+    "achievableRate": 0.32
+  },
+  "macros": {
+    "lbmLb": 66.66770879999999,
+    "kcal": 1200,
+    "proteinLo": 76,
+    "proteinHi": 83,
+    "proteinFloorG": 67,
+    "fatLo": 30,
+    "fatHi": 36,
+    "fatFloorG": 20,
+    "fatFloored": false,
+    "fatPctEnergy": 0.2475,
+    "carbLo": 109,
+    "carbMid": 121,
+    "carbHi": 133,
+    "carbBufferG": 25,
+    "carbFloored": false,
+    "floorKcal": null,
+    "macroKcalGap": 101,
+    "bfAssumed": true,
+    "assumedBodyFatPct": 28
+  },
+  "rateSafety": {
+    "unsafe": true,
+    "pctOfBw": 0.54,
+    "reasons": [
+      "the math wants 1,108 kcal, below your 1,200 floor — so we hold you at 1,200, which loses about 0.32 lb/wk through diet alone (not the 0.5 you picked). To go faster, add movement, not less food"
+    ]
+  }
+}

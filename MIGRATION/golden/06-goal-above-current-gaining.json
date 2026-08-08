@@ -1,0 +1,126 @@
+{
+  "slug": "06-goal-above-current-gaining",
+  "why": "Goal above current weight. Same reasoning as 05 — the engine still prescribes a deficit; the gaining case lives in the frontend projection.",
+  "inputs": {
+    "weightKg": 70,
+    "goalWeightKg": 78,
+    "sex": "M",
+    "age": 25,
+    "heightCm": 178,
+    "bodyFatPct": 12,
+    "occupationKey": "desk-office",
+    "activityOverride": null,
+    "trainingStyle": "weights",
+    "sessionsPerWeek": 4,
+    "minutesPerSession": 60,
+    "rateLbPerWeek": 0.25,
+    "floorKcal": null,
+    "dietaryStyle": null,
+    "excludedFormulas": []
+  },
+  "energy": {
+    "rmr": 1733,
+    "spreadLo": 1665,
+    "spreadHi": 1855,
+    "sd": 61,
+    "spreadPct": 11,
+    "includedCount": 6,
+    "allExcludedFallback": false,
+    "jobMultiplier": 1.2,
+    "jobSource": "occupation",
+    "jobLabel": "Desk / office work",
+    "trainingStyle": "weights",
+    "trainingMet": 3.5,
+    "trainingKcalPerDay": 147,
+    "tdee": 2227,
+    "formulas": [
+      {
+        "key": "mifflin",
+        "kcal": 1693,
+        "excluded": false
+      },
+      {
+        "key": "oxford",
+        "kcal": 1665,
+        "excluded": false
+      },
+      {
+        "key": "harris",
+        "kcal": 1738,
+        "excluded": false
+      },
+      {
+        "key": "schofield",
+        "kcal": 1746,
+        "excluded": false
+      },
+      {
+        "key": "katch",
+        "kcal": 1701,
+        "excluded": false
+      },
+      {
+        "key": "cunningham",
+        "kcal": 1855,
+        "excluded": false
+      },
+      {
+        "key": "whofao",
+        "kcal": 1750,
+        "excluded": true
+      },
+      {
+        "key": "owen",
+        "kcal": 1593,
+        "excluded": true
+      },
+      {
+        "key": "livingston",
+        "kcal": 1696,
+        "excluded": true
+      },
+      {
+        "key": "nelson",
+        "kcal": 1623,
+        "excluded": true
+      }
+    ]
+  },
+  "floor": 1646,
+  "target": {
+    "rate": 0.25,
+    "deficit": 125,
+    "raw": 2102,
+    "floor": 1646,
+    "target": 2102,
+    "floored": false,
+    "actualDeficit": 125,
+    "achievableRate": 0.25
+  },
+  "macros": {
+    "lbmLb": 135.80459199999999,
+    "kcal": 2102,
+    "proteinLo": 155,
+    "proteinHi": 170,
+    "proteinFloorG": 155,
+    "fatLo": 53,
+    "fatHi": 63,
+    "fatFloorG": 41,
+    "fatFloored": false,
+    "fatPctEnergy": 0.2483,
+    "carbLo": 196,
+    "carbMid": 208,
+    "carbHi": 220,
+    "carbBufferG": 25,
+    "carbFloored": false,
+    "floorKcal": null,
+    "macroKcalGap": 98,
+    "bfAssumed": false,
+    "assumedBodyFatPct": null
+  },
+  "rateSafety": {
+    "unsafe": false,
+    "pctOfBw": 0.16,
+    "reasons": []
+  }
+}

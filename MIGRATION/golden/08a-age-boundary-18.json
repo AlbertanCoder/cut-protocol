@@ -1,0 +1,111 @@
+{
+  "slug": "08a-age-boundary-18",
+  "why": "The youngest age a saved profile can hold (ADULT_MIN_AGE, routes/profile.js:178).",
+  "inputs": {
+    "weightKg": 80,
+    "goalWeightKg": 74,
+    "sex": "M",
+    "age": 18,
+    "heightCm": 178,
+    "bodyFatPct": null,
+    "occupationKey": "student",
+    "activityOverride": null,
+    "trainingStyle": "weights",
+    "sessionsPerWeek": 3,
+    "minutesPerSession": 60,
+    "rateLbPerWeek": 1,
+    "floorKcal": null,
+    "dietaryStyle": null,
+    "excludedFormulas": []
+  },
+  "energy": {
+    "rmr": 1865,
+    "spreadLo": 1825,
+    "spreadHi": 1912,
+    "sd": 39,
+    "spreadPct": 4.7,
+    "includedCount": 4,
+    "allExcludedFallback": false,
+    "jobMultiplier": 1.25,
+    "jobSource": "occupation",
+    "jobLabel": "Student",
+    "trainingStyle": "weights",
+    "trainingMet": 3.5,
+    "trainingKcalPerDay": 126,
+    "tdee": 2458,
+    "formulas": [
+      {
+        "key": "mifflin",
+        "kcal": 1828,
+        "excluded": false
+      },
+      {
+        "key": "oxford",
+        "kcal": 1825,
+        "excluded": false
+      },
+      {
+        "key": "harris",
+        "kcal": 1912,
+        "excluded": false
+      },
+      {
+        "key": "schofield",
+        "kcal": 1897,
+        "excluded": false
+      },
+      {
+        "key": "whofao",
+        "kcal": 1903,
+        "excluded": true
+      },
+      {
+        "key": "owen",
+        "kcal": 1695,
+        "excluded": true
+      },
+      {
+        "key": "livingston",
+        "kcal": 1847,
+        "excluded": true
+      }
+    ]
+  },
+  "floor": 1772,
+  "target": {
+    "rate": 1,
+    "deficit": 500,
+    "raw": 1958,
+    "floor": 1772,
+    "target": 1958,
+    "floored": false,
+    "actualDeficit": 500,
+    "achievableRate": 1
+  },
+  "macros": {
+    "lbmLb": 139.331984,
+    "kcal": 1958,
+    "proteinLo": 159,
+    "proteinHi": 174,
+    "proteinFloorG": 128,
+    "fatLo": 50,
+    "fatHi": 58,
+    "fatFloorG": 42,
+    "fatFloored": false,
+    "fatPctEnergy": 0.2482,
+    "carbLo": 165,
+    "carbMid": 177,
+    "carbHi": 189,
+    "carbBufferG": 25,
+    "carbFloored": false,
+    "floorKcal": null,
+    "macroKcalGap": 98,
+    "bfAssumed": true,
+    "assumedBodyFatPct": 21
+  },
+  "rateSafety": {
+    "unsafe": false,
+    "pctOfBw": 0.57,
+    "reasons": []
+  }
+}

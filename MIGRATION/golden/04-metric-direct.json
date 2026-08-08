@@ -1,0 +1,111 @@
+{
+  "slug": "04-metric-direct",
+  "why": "The same person typing metric directly: 178 cm / 81.6 kg. Near-twin of 03; any divergence beyond the rounding is a bug.",
+  "inputs": {
+    "weightKg": 81.6,
+    "goalWeightKg": 77,
+    "sex": "M",
+    "age": 35,
+    "heightCm": 178,
+    "bodyFatPct": null,
+    "occupationKey": "desk-office",
+    "activityOverride": null,
+    "trainingStyle": "weights",
+    "sessionsPerWeek": 3,
+    "minutesPerSession": 60,
+    "rateLbPerWeek": 1,
+    "floorKcal": null,
+    "dietaryStyle": null,
+    "excludedFormulas": []
+  },
+  "energy": {
+    "rmr": 1789,
+    "spreadLo": 1752,
+    "spreadHi": 1837,
+    "sd": 35,
+    "spreadPct": 4.8,
+    "includedCount": 4,
+    "allExcludedFallback": false,
+    "jobMultiplier": 1.2,
+    "jobSource": "occupation",
+    "jobLabel": "Desk / office work",
+    "trainingStyle": "weights",
+    "trainingMet": 3.5,
+    "trainingKcalPerDay": 129,
+    "tdee": 2276,
+    "formulas": [
+      {
+        "key": "mifflin",
+        "kcal": 1759,
+        "excluded": false
+      },
+      {
+        "key": "oxford",
+        "kcal": 1752,
+        "excluded": false
+      },
+      {
+        "key": "harris",
+        "kcal": 1837,
+        "excluded": false
+      },
+      {
+        "key": "schofield",
+        "kcal": 1809,
+        "excluded": false
+      },
+      {
+        "key": "whofao",
+        "kcal": 1826,
+        "excluded": true
+      },
+      {
+        "key": "owen",
+        "kcal": 1711,
+        "excluded": true
+      },
+      {
+        "key": "livingston",
+        "kcal": 1764,
+        "excluded": true
+      }
+    ]
+  },
+  "floor": 1700,
+  "target": {
+    "rate": 1,
+    "deficit": 500,
+    "raw": 1776,
+    "floor": 1700,
+    "target": 1776,
+    "floored": false,
+    "actualDeficit": 500,
+    "achievableRate": 1
+  },
+  "macros": {
+    "lbmLb": 142.11862367999998,
+    "kcal": 1776,
+    "proteinLo": 162,
+    "proteinHi": 178,
+    "proteinFloorG": 131,
+    "fatLo": 45,
+    "fatHi": 53,
+    "fatFloorG": 43,
+    "fatFloored": false,
+    "fatPctEnergy": 0.2483,
+    "carbLo": 127,
+    "carbMid": 139,
+    "carbHi": 151,
+    "carbBufferG": 25,
+    "carbFloored": false,
+    "floorKcal": null,
+    "macroKcalGap": 99,
+    "bfAssumed": true,
+    "assumedBodyFatPct": 21
+  },
+  "rateSafety": {
+    "unsafe": false,
+    "pctOfBw": 0.56,
+    "reasons": []
+  }
+}

@@ -1,0 +1,111 @@
+{
+  "slug": "10-ordinary",
+  "why": "The middle of the road, body fat unknown. The single most common shape a real profile takes.",
+  "inputs": {
+    "weightKg": 85,
+    "goalWeightKg": 78,
+    "sex": "M",
+    "age": 35,
+    "heightCm": 178,
+    "bodyFatPct": null,
+    "occupationKey": "desk-office",
+    "activityOverride": null,
+    "trainingStyle": "weights",
+    "sessionsPerWeek": 3,
+    "minutesPerSession": 60,
+    "rateLbPerWeek": 1,
+    "floorKcal": null,
+    "dietaryStyle": null,
+    "excludedFormulas": []
+  },
+  "energy": {
+    "rmr": 1831,
+    "spreadLo": 1793,
+    "spreadHi": 1883,
+    "sd": 37,
+    "spreadPct": 4.9,
+    "includedCount": 4,
+    "allExcludedFallback": false,
+    "jobMultiplier": 1.2,
+    "jobSource": "occupation",
+    "jobLabel": "Desk / office work",
+    "trainingStyle": "weights",
+    "trainingMet": 3.5,
+    "trainingKcalPerDay": 134,
+    "tdee": 2331,
+    "formulas": [
+      {
+        "key": "mifflin",
+        "kcal": 1793,
+        "excluded": false
+      },
+      {
+        "key": "oxford",
+        "kcal": 1800,
+        "excluded": false
+      },
+      {
+        "key": "harris",
+        "kcal": 1883,
+        "excluded": false
+      },
+      {
+        "key": "schofield",
+        "kcal": 1848,
+        "excluded": false
+      },
+      {
+        "key": "whofao",
+        "kcal": 1865,
+        "excluded": true
+      },
+      {
+        "key": "owen",
+        "kcal": 1746,
+        "excluded": true
+      },
+      {
+        "key": "livingston",
+        "kcal": 1799,
+        "excluded": true
+      }
+    ]
+  },
+  "floor": 1739,
+  "target": {
+    "rate": 1,
+    "deficit": 500,
+    "raw": 1831,
+    "floor": 1739,
+    "target": 1831,
+    "floored": false,
+    "actualDeficit": 500,
+    "achievableRate": 1
+  },
+  "macros": {
+    "lbmLb": 148.040233,
+    "kcal": 1831,
+    "proteinLo": 169,
+    "proteinHi": 185,
+    "proteinFloorG": 136,
+    "fatLo": 47,
+    "fatHi": 55,
+    "fatFloorG": 44,
+    "fatFloored": false,
+    "fatPctEnergy": 0.2507,
+    "carbLo": 129,
+    "carbMid": 141,
+    "carbHi": 153,
+    "carbBufferG": 25,
+    "carbFloored": false,
+    "floorKcal": null,
+    "macroKcalGap": 100,
+    "bfAssumed": true,
+    "assumedBodyFatPct": 21
+  },
+  "rateSafety": {
+    "unsafe": false,
+    "pctOfBw": 0.53,
+    "reasons": []
+  }
+}

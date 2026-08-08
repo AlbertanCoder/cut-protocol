@@ -1,0 +1,125 @@
+{
+  "slug": "11-keto-macro-branch",
+  "why": "ADDED beyond the runbook's ten. computeMacros' ketogenic branch inverts the model — carbs capped, fat absorbs the remainder. Unlocked, half the macro engine is unguarded.",
+  "inputs": {
+    "weightKg": 95,
+    "goalWeightKg": 86,
+    "sex": "M",
+    "age": 42,
+    "heightCm": 182,
+    "bodyFatPct": 24,
+    "occupationKey": "desk-office",
+    "activityOverride": null,
+    "trainingStyle": "weights",
+    "sessionsPerWeek": 3,
+    "minutesPerSession": 60,
+    "rateLbPerWeek": 1,
+    "floorKcal": null,
+    "dietaryStyle": "keto",
+    "excludedFormulas": []
+  },
+  "energy": {
+    "rmr": 1967,
+    "spreadLo": 1883,
+    "spreadHi": 2088,
+    "sd": 64,
+    "spreadPct": 10.5,
+    "includedCount": 6,
+    "allExcludedFallback": false,
+    "jobMultiplier": 1.2,
+    "jobSource": "occupation",
+    "jobLabel": "Desk / office work",
+    "trainingStyle": "weights",
+    "trainingMet": 3.5,
+    "trainingKcalPerDay": 150,
+    "tdee": 2510,
+    "formulas": [
+      {
+        "key": "mifflin",
+        "kcal": 1883,
+        "excluded": false
+      },
+      {
+        "key": "oxford",
+        "kcal": 1942,
+        "excluded": false
+      },
+      {
+        "key": "harris",
+        "kcal": 1996,
+        "excluded": false
+      },
+      {
+        "key": "schofield",
+        "kcal": 1963,
+        "excluded": false
+      },
+      {
+        "key": "katch",
+        "kcal": 1930,
+        "excluded": false
+      },
+      {
+        "key": "cunningham",
+        "kcal": 2088,
+        "excluded": false
+      },
+      {
+        "key": "whofao",
+        "kcal": 1981,
+        "excluded": true
+      },
+      {
+        "key": "owen",
+        "kcal": 1848,
+        "excluded": true
+      },
+      {
+        "key": "livingston",
+        "kcal": 1856,
+        "excluded": true
+      },
+      {
+        "key": "nelson",
+        "kcal": 1955,
+        "excluded": true
+      }
+    ]
+  },
+  "floor": 1869,
+  "target": {
+    "rate": 1,
+    "deficit": 500,
+    "raw": 2010,
+    "floor": 1869,
+    "target": 2010,
+    "floored": false,
+    "actualDeficit": 500,
+    "achievableRate": 1
+  },
+  "macros": {
+    "lbmLb": 159.173564,
+    "kcal": 2010,
+    "proteinLo": 181,
+    "proteinHi": 199,
+    "proteinFloorG": 181,
+    "fatLo": 118,
+    "fatHi": 138,
+    "fatFloorG": 48,
+    "fatFloored": false,
+    "fatPctEnergy": 0.5731,
+    "carbLo": 10,
+    "carbMid": 25,
+    "carbHi": 30,
+    "carbBufferG": 0,
+    "floorKcal": null,
+    "macroKcalGap": -2,
+    "bfAssumed": false,
+    "assumedBodyFatPct": null
+  },
+  "rateSafety": {
+    "unsafe": false,
+    "pctOfBw": 0.48,
+    "reasons": []
+  }
+}

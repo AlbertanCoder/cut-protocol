@@ -1,0 +1,108 @@
+{
+  "slug": "08b-age-boundary-100",
+  "why": "The oldest (BOUNDS.age[1], routes/profile.js:52). Schofield's band changes above 60 — this pins the far end.",
+  "inputs": {
+    "weightKg": 60,
+    "goalWeightKg": 57,
+    "sex": "F",
+    "age": 100,
+    "heightCm": 160,
+    "bodyFatPct": null,
+    "occupationKey": "unemployed-home",
+    "activityOverride": null,
+    "trainingStyle": "none",
+    "sessionsPerWeek": 0,
+    "minutesPerSession": 0,
+    "rateLbPerWeek": 0.5,
+    "floorKcal": null,
+    "dietaryStyle": null,
+    "excludedFormulas": []
+  },
+  "energy": {
+    "rmr": 1060,
+    "spreadLo": 939,
+    "spreadHi": 1177,
+    "sd": 97,
+    "spreadPct": 22.4,
+    "includedCount": 3,
+    "allExcludedFallback": false,
+    "jobMultiplier": 1.2,
+    "jobSource": "occupation",
+    "jobLabel": "At home / between jobs",
+    "trainingStyle": "none",
+    "trainingMet": 0,
+    "trainingKcalPerDay": 0,
+    "tdee": 1272,
+    "formulas": [
+      {
+        "key": "mifflin",
+        "kcal": 939,
+        "excluded": false
+      },
+      {
+        "key": "oxford",
+        "kcal": 1177,
+        "excluded": false
+      },
+      {
+        "key": "harris",
+        "kcal": 1065,
+        "excluded": false
+      },
+      {
+        "key": "whofao",
+        "kcal": 1226,
+        "excluded": true
+      },
+      {
+        "key": "owen",
+        "kcal": 1226,
+        "excluded": true
+      },
+      {
+        "key": "livingston",
+        "kcal": 967,
+        "excluded": true
+      }
+    ]
+  },
+  "floor": 1200,
+  "target": {
+    "rate": 0.5,
+    "deficit": 250,
+    "raw": 1022,
+    "floor": 1200,
+    "target": 1200,
+    "floored": true,
+    "actualDeficit": 72,
+    "achievableRate": 0.14
+  },
+  "macros": {
+    "lbmLb": 95.239584,
+    "kcal": 1200,
+    "proteinLo": 109,
+    "proteinHi": 119,
+    "proteinFloorG": 96,
+    "fatLo": 30,
+    "fatHi": 36,
+    "fatFloorG": 29,
+    "fatFloored": false,
+    "fatPctEnergy": 0.2475,
+    "carbLo": 75,
+    "carbMid": 87,
+    "carbHi": 99,
+    "carbBufferG": 25,
+    "carbFloored": false,
+    "floorKcal": null,
+    "macroKcalGap": 99,
+    "bfAssumed": true,
+    "assumedBodyFatPct": 28
+  },
+  "rateSafety": {
+    "unsafe": true,
+    "pctOfBw": 0.38,
+    "reasons": [
+      "the math wants 1,022 kcal, below your 1,200 floor — so we hold you at 1,200, which loses about 0.14 lb/wk through diet alone (not the 0.5 you picked). To go faster, add movement, not less food"
+    ]
+  }
+}

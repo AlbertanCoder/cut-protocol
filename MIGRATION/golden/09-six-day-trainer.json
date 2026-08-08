@@ -1,0 +1,126 @@
+{
+  "slug": "09-six-day-trainer",
+  "why": "Six sessions a week — the additive training term at its realistic maximum for a desk worker.",
+  "inputs": {
+    "weightKg": 88,
+    "goalWeightKg": 82,
+    "sex": "M",
+    "age": 28,
+    "heightCm": 183,
+    "bodyFatPct": 18,
+    "occupationKey": "desk-office",
+    "activityOverride": null,
+    "trainingStyle": "mixed",
+    "sessionsPerWeek": 6,
+    "minutesPerSession": 75,
+    "rateLbPerWeek": 1,
+    "floorKcal": null,
+    "dietaryStyle": null,
+    "excludedFormulas": []
+  },
+  "energy": {
+    "rmr": 1977,
+    "spreadLo": 1889,
+    "spreadHi": 2088,
+    "sd": 64,
+    "spreadPct": 10.1,
+    "includedCount": 6,
+    "allExcludedFallback": false,
+    "jobMultiplier": 1.2,
+    "jobSource": "occupation",
+    "jobLabel": "Desk / office work",
+    "trainingStyle": "mixed",
+    "trainingMet": 5,
+    "trainingKcalPerDay": 495,
+    "tdee": 2867,
+    "formulas": [
+      {
+        "key": "mifflin",
+        "kcal": 1889,
+        "excluded": false
+      },
+      {
+        "key": "oxford",
+        "kcal": 1953,
+        "excluded": false
+      },
+      {
+        "key": "harris",
+        "kcal": 1987,
+        "excluded": false
+      },
+      {
+        "key": "schofield",
+        "kcal": 2017,
+        "excluded": false
+      },
+      {
+        "key": "katch",
+        "kcal": 1929,
+        "excluded": false
+      },
+      {
+        "key": "cunningham",
+        "kcal": 2088,
+        "excluded": false
+      },
+      {
+        "key": "whofao",
+        "kcal": 2025,
+        "excluded": true
+      },
+      {
+        "key": "owen",
+        "kcal": 1777,
+        "excluded": true
+      },
+      {
+        "key": "livingston",
+        "kcal": 1870,
+        "excluded": true
+      },
+      {
+        "key": "nelson",
+        "kcal": 1926,
+        "excluded": true
+      }
+    ]
+  },
+  "floor": 1878,
+  "target": {
+    "rate": 1,
+    "deficit": 500,
+    "raw": 2367,
+    "floor": 1878,
+    "target": 2367,
+    "floored": false,
+    "actualDeficit": 500,
+    "achievableRate": 1
+  },
+  "macros": {
+    "lbmLb": 159.0853792,
+    "kcal": 2367,
+    "proteinLo": 181,
+    "proteinHi": 199,
+    "proteinFloorG": 181,
+    "fatLo": 61,
+    "fatHi": 71,
+    "fatFloorG": 48,
+    "fatFloored": false,
+    "fatPctEnergy": 0.251,
+    "carbLo": 216,
+    "carbMid": 228,
+    "carbHi": 240,
+    "carbBufferG": 25,
+    "carbFloored": false,
+    "floorKcal": null,
+    "macroKcalGap": 101,
+    "bfAssumed": false,
+    "assumedBodyFatPct": null
+  },
+  "rateSafety": {
+    "unsafe": false,
+    "pctOfBw": 0.52,
+    "reasons": []
+  }
+}

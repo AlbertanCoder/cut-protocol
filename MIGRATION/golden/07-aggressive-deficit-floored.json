@@ -1,0 +1,114 @@
+{
+  "slug": "07-aggressive-deficit-floored",
+  "why": "2 lb/wk on a 55 kg woman. The raw math goes under the floor, so this locks the clamp, achievableRate, and both rateSafety reasons.",
+  "inputs": {
+    "weightKg": 55,
+    "goalWeightKg": 50,
+    "sex": "F",
+    "age": 30,
+    "heightCm": 160,
+    "bodyFatPct": null,
+    "occupationKey": "desk-office",
+    "activityOverride": null,
+    "trainingStyle": "none",
+    "sessionsPerWeek": 0,
+    "minutesPerSession": 0,
+    "rateLbPerWeek": 2,
+    "floorKcal": null,
+    "dietaryStyle": null,
+    "excludedFormulas": []
+  },
+  "energy": {
+    "rmr": 1271,
+    "spreadLo": 1230,
+    "spreadHi": 1322,
+    "sd": 38,
+    "spreadPct": 7.3,
+    "includedCount": 4,
+    "allExcludedFallback": false,
+    "jobMultiplier": 1.2,
+    "jobSource": "occupation",
+    "jobLabel": "Desk / office work",
+    "trainingStyle": "none",
+    "trainingMet": 0,
+    "trainingKcalPerDay": 0,
+    "tdee": 1525,
+    "formulas": [
+      {
+        "key": "mifflin",
+        "kcal": 1239,
+        "excluded": false
+      },
+      {
+        "key": "oxford",
+        "kcal": 1230,
+        "excluded": false
+      },
+      {
+        "key": "harris",
+        "kcal": 1322,
+        "excluded": false
+      },
+      {
+        "key": "schofield",
+        "kcal": 1293,
+        "excluded": false
+      },
+      {
+        "key": "whofao",
+        "kcal": 1308,
+        "excluded": true
+      },
+      {
+        "key": "owen",
+        "kcal": 1190,
+        "excluded": true
+      },
+      {
+        "key": "livingston",
+        "kcal": 1268,
+        "excluded": true
+      }
+    ]
+  },
+  "floor": 1207,
+  "target": {
+    "rate": 2,
+    "deficit": 1000,
+    "raw": 525,
+    "floor": 1207,
+    "target": 1207,
+    "floored": true,
+    "actualDeficit": 318,
+    "achievableRate": 0.64
+  },
+  "macros": {
+    "lbmLb": 87.30295199999999,
+    "kcal": 1207,
+    "proteinLo": 100,
+    "proteinHi": 109,
+    "proteinFloorG": 88,
+    "fatLo": 31,
+    "fatHi": 37,
+    "fatFloorG": 26,
+    "fatFloored": false,
+    "fatPctEnergy": 0.2535,
+    "carbLo": 84,
+    "carbMid": 96,
+    "carbHi": 108,
+    "carbBufferG": 25,
+    "carbFloored": false,
+    "floorKcal": null,
+    "macroKcalGap": 99,
+    "bfAssumed": true,
+    "assumedBodyFatPct": 28
+  },
+  "rateSafety": {
+    "unsafe": true,
+    "pctOfBw": 1.65,
+    "reasons": [
+      "2 lb/wk is 1.65% of your body weight per week — above the ~1% guideline",
+      "the math wants 525 kcal, below your 1,207 floor — so we hold you at 1,207, which loses about 0.64 lb/wk through diet alone (not the 2 you picked). To go faster, add movement, not less food"
+    ]
+  }
+}
