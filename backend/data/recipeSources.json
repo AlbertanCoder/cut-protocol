@@ -1,0 +1,39 @@
+{
+  "_meta": {
+    "what": "Curated registry for the Recipe Brain's web-import channel. Each entry is a recipe site with schema.org/Recipe markup that the existing importer can already parse.",
+    "law": "EVERY site ships disabled. Enabling one is the OWNER'S decision, made after reading that site's terms and robots.txt — the channel additionally checks robots.txt at request time and fails closed (unreachable robots = site skipped). The app never sweeps a site the owner did not explicitly turn on.",
+    "conduct": "Identified user-agent, one search-page fetch per site per request, at most maxImportsPerSite recipe pages, honest 'imported' provenance on every saved row. This is the same legal posture as the manual URL importer — the user choosing sources — made explicit and rate-limited.",
+    "shape": "searchUrl uses {query} as the placeholder. linkPattern is a substring the site's recipe URLs contain (candidate filter, same-host only)."
+  },
+  "version": 1,
+  "maxImportsPerSite": 2,
+  "sources": [
+    {
+      "key": "budgetbytes",
+      "name": "Budget Bytes",
+      "homepage": "https://www.budgetbytes.com",
+      "searchUrl": "https://www.budgetbytes.com/?s={query}",
+      "linkPattern": "budgetbytes.com/",
+      "enabled": false,
+      "note": "Cost-focused home cooking; JSON-LD verified working with the Phase 5 importer (the live BudgetBytes import in the Phase 5 QA walk)."
+    },
+    {
+      "key": "skinnytaste",
+      "name": "Skinnytaste",
+      "homepage": "https://www.skinnytaste.com",
+      "searchUrl": "https://www.skinnytaste.com/?s={query}",
+      "linkPattern": "skinnytaste.com/",
+      "enabled": false,
+      "note": "Macro-conscious recipes with standard WP Recipe Maker JSON-LD."
+    },
+    {
+      "key": "bbcgoodfood",
+      "name": "BBC Good Food",
+      "homepage": "https://www.bbcgoodfood.com",
+      "searchUrl": "https://www.bbcgoodfood.com/search?q={query}",
+      "linkPattern": "/recipes/",
+      "enabled": false,
+      "note": "Broad cuisine coverage, structured recipe markup."
+    }
+  ]
+}

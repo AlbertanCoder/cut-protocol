@@ -57,11 +57,22 @@ const TESTS_DIR = path.join(BACKEND, "tests");
 //   2026-07-29  111 files / 1490 tests  (dietary style lattice; the floors below had
 //               been left at the 2026-07-24 figures for 27 files and 458 tests, so a
 //               mass skip of a QUARTER of the suite would have passed this tripwire)
-const MIN_TEST_FILES = 108;
+//   2026-08-08  135 files / 1712 tests  (the RECIPE BRAIN — tests/recipeBrain/:
+//               spec derivation + fingerprint, the adherence matrix facade, the
+//               guarded refit engine, the web channel's conduct rules, the
+//               four-channel orchestrator + the solver gap-fill loop, and the
+//               additive-only spec-hint seam into the governed drafter.
+//               MEASURED on this machine: the brain is +6 files / +59 tests of
+//               that total. The rest is the gap the 2026-07-29 note warned about
+//               happening AGAIN — the floors sat at 108/1450 while the suite grew
+//               to 129 files / 1653 tests through saas-launch and light-migration,
+//               so 21 files and 203 tests could have vanished silently. Raise
+//               these in the commit that adds the tests, not a fortnight later.)
+const MIN_TEST_FILES = 131;
 // ~2.5% headroom under the measured total so ordinary churn (merging or deleting
 // a redundant case) doesn't wedge CI, while still catching a mass skip — the
 // bash glob dropped 27 of 62 files, which is hundreds of tests, not single digits.
-const MIN_TESTS = 1450;
+const MIN_TESTS = 1665;
 
 const argv = process.argv.slice(2);
 const listOnly = argv.includes("--list");

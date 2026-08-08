@@ -178,7 +178,14 @@ function placeholderRefusalReason(resolvedDraft) {
 // columns stay null, which taste.js already treats as the neutral "decent"
 // prior: the default path is unchanged.
 const RECIPE_SOURCES = new Set(["curated", "ai-generated", "imported"]);
-async function persistRecipe(resolvedDraft, { source = "ai-generated", tasteTier = null, tasteTierSource = null } = {}) {
+async function persistRecipe(resolvedDraft, { source = "ai-generated", tasteTier = null, tasteTierSource = null,
+  // Stage 4's designed-but-unwired durable cache columns (docs/qc/
+  // stage4-handoff.md item 2), landed by the Recipe Brain (2026-08-06): the
+  // constraint fingerprint that produced an AI row + which screens it passed
+  // and when. Optional and additive — every existing caller persists exactly
+  // as before; only a caller that PROVES verification may stamp these, and an
+  // AI row with a null aiVerifiedAt is never served from the durable cache.
+  aiFingerprint = null, aiVerifiedAt = null, aiVerifiedBy = null } = {}) {
   const provenance = RECIPE_SOURCES.has(source) ? source : "ai-generated";
   return prisma.recipe.create({
     data: {
@@ -186,6 +193,9 @@ async function persistRecipe(resolvedDraft, { source = "ai-generated", tasteTier
       slotType: resolvedDraft.slotType || "meal", prepTimeMin: resolvedDraft.prepTimeMin || null,
       steps: resolvedDraft.steps || [], source: provenance,
       ...(tasteTier ? { tasteTier, tasteTierSource: tasteTierSource || "llm" } : {}),
+      ...(aiFingerprint ? { aiFingerprint } : {}),
+      ...(aiVerifiedAt ? { aiVerifiedAt } : {}),
+      ...(aiVerifiedBy ? { aiVerifiedBy } : {}),
       kcal: resolvedDraft.kcal, protein: resolvedDraft.protein, fat: resolvedDraft.fat, carb: resolvedDraft.carb,
       ingredients: {
         create: resolvedDraft.ingredients.map((i) => ({

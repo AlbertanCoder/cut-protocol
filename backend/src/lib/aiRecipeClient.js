@@ -138,7 +138,13 @@ const DRAFT_SYSTEM = [
   "4. Reply with recipe JSON only, in the requested schema. No prose, no commentary.",
 ].join("\n");
 
-function buildPrompt({ slotType, protein, cuisine, prepTimeMin, freeText, batchStyle, allowAllergens, targetKcal, targetProtein, existingRecipeNames, excludedFoods = [], dietaryStyle = null }) {
+function buildPrompt({ slotType, protein, cuisine, prepTimeMin, freeText, batchStyle, allowAllergens, targetKcal, targetProtein, existingRecipeNames, excludedFoods = [], dietaryStyle = null,
+  // Recipe Brain spec hints (2026-08-06) — OPTIONAL, app-authored, derived
+  // numbers only (recipeBrain/sources/aiSource.specHints). They steer the
+  // draft toward the structural gaps the verifier keeps rejecting drafts for
+  // (fat-heavy, protein-thin, over budget) so fewer drafts are discarded.
+  // Absent = prompt is byte-identical to before this change.
+  targetFatG = null, targetCarbG = null, maxCostCad = null, keepSimple = false, proteinDensityHint = null, leanBias = false }) {
   // Every interpolated value is neutralised for the <user_data> delimiters
   // first, so a crafted note cannot close the block and become trusted text.
   const u = (v) => sanitizeUserData(String(v));
@@ -163,6 +169,16 @@ function buildPrompt({ slotType, protein, cuisine, prepTimeMin, freeText, batchS
       lines.push(`Hard exclusions — the user is allergic to / must avoid: ${excludedFoods.map(u).join(", ")}. Do not use any of these or dishes containing them. These are real restrictions.`);
     }
   }
+  // ── spec hints (app-authored, numeric, optional) ──────────────────────────
+  const band = (b) => b && Number.isFinite(Number(b.lo)) && Number.isFinite(Number(b.hi)) ? `${Math.round(Number(b.lo))}–${Math.round(Number(b.hi))}` : null;
+  const fatBand = band(targetFatG);
+  if (fatBand) lines.push(`Aim for roughly ${fatBand} g fat per serving.`);
+  const carbBand = band(targetCarbG);
+  if (carbBand) lines.push(`Aim for roughly ${carbBand} g carbs per serving.`);
+  if (proteinDensityHint != null && Number.isFinite(Number(proteinDensityHint)) && Number(proteinDensityHint) > 0) lines.push(`Aim protein-dense: about ${Math.round(Number(proteinDensityHint) * 10) / 10} g protein per 100 kcal — favour lean protein as the centrepiece.`);
+  if (leanBias) lines.push(`Keep it lean: minimal added oils/butter, lean cuts, low-fat cooking methods (grill, poach, air-fry).`);
+  if (maxCostCad != null && Number.isFinite(Number(maxCostCad)) && Number(maxCostCad) > 0) lines.push(`Keep ingredient cost low — target under $${Number(maxCostCad).toFixed(2)} CAD per serving using inexpensive, widely available ingredients.`);
+  if (keepSimple) lines.push(`Keep it simple: few ingredients, basic techniques, minimal equipment.`);
   if (existingRecipeNames?.length) {
     lines.push(`Avoid near-duplicates of recipes already in the library: ${existingRecipeNames.map(u).join(", ")}.`);
   }

@@ -273,6 +273,19 @@ const ALLOWED_DIRECT_USERS = new Set([
   // that IS a regression and the scan will no longer catch it. If you touch the
   // exclusion path in that file, re-check by hand.
   "src/lib/weeklyPlanner.js",
+  // Same shape as the weeklyPlanner entry above, and admitted for the same
+  // reason — read that comment first. tweak.js:223 calls
+  // recipeExceedsKetoCeiling({ carb: rep.carb, kcal: rep.kcal }, dietStyle) on
+  // the recomputed totals of a REPORTIONED existing library recipe. It is
+  // arithmetic on a portion, not an exclusion verdict: the repartition only
+  // rescales role bundles, never adds, swaps or renames an ingredient, so it
+  // introduces no allergen surface the gate has not already judged upstream.
+  // There is no ingredient evidence at that call site to route through the gate.
+  //
+  // Same rider: if a future change makes this file call recipeExcludedByStyle /
+  // matchesExclusionTerm / additionalIngredientNames, that IS a regression and
+  // the scan will no longer catch it. Re-check by hand if you touch it.
+  "src/lib/recipeBrain/tweak.js",
 ]);
 
 function walkJs(dir, out = []) {
@@ -304,7 +317,9 @@ test("no NEW surface may reach around the gate for the recipe-level primitives",
 
 test("the known-offenders list may not grow, and every entry must still exist", () => {
   // A frozen list only works if adding to it is a deliberate, reviewed act.
-  assert.equal(ALLOWED_DIRECT_USERS.size, 5, "ALLOWED_DIRECT_USERS grew — a new file is checking recipes weakly");
+  // 5 -> 6 on 2026-08-08, owner-approved: src/lib/recipeBrain/tweak.js, for the
+  // post-scale portion-arithmetic reason documented on its entry above.
+  assert.equal(ALLOWED_DIRECT_USERS.size, 6, "ALLOWED_DIRECT_USERS grew — a new file is checking recipes weakly");
   for (const rel of ALLOWED_DIRECT_USERS) {
     assert.ok(fs.existsSync(path.join(__dirname, "..", rel)), `${rel} is listed but no longer exists — prune it`);
   }
