@@ -17,7 +17,7 @@ const { UsageLedger } = require("../src/usage.js");
 const { costUsd, estimateCostUsd } = require("../src/pricing.js");
 const { loadConfig } = require("../src/config.js");
 
-const REAL_KEY = "sk-ant-api03-THIS-IS-THE-UPSTREAM-KEY-AND-MUST-NEVER-LEAK";
+const REAL_KEY = "sk-ant-api03-THIS-IS-THE-UPSTREAM-KEY-AND-MUST-NEVER-LEAK"; // scan:allow
 const DEVICE_TOKEN = "device-token-0123456789abcdef0123456789abcdef";
 
 function anthropicReply(over = {}) {
