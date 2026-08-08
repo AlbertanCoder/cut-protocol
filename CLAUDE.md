@@ -1,3 +1,34 @@
+# LIGHT-MIGRATION — read this first
+
+Active on branch `light-migration` only. Full text + stack + phase gates:
+**`MIGRATION/CONTRACT.md`**. Inventory: `MIGRATION/INVENTORY.md` (287 IDs).
+
+1. NEVER delete a file, function, component, branch of logic, or test — not
+   "unused", not "superseded", not commented-out. Append it to
+   `MIGRATION/DELETE-CANDIDATES.md` instead.
+2. NEVER change a calorie, macro, protein, TDEE, BMR, target or portion
+   calculation. Any phase. Ever.
+3. NEVER rename or reshape a persisted key, table, column, migration, storage
+   key, or API payload.
+4. NEVER bump a persistence version without the migrate function in the same commit.
+5. NEVER reference a file you have not read this session. `ls` the parent before
+   writing a new path, and paste the output.
+6. NEVER improve, reformat, reorganise, lint-sweep, upgrade or modernise anything
+   not explicitly asked for. No dependency bumps. No renames. No "while I was in here".
+
+Commands — build `npm run build` (frontend/) · lint `npm run lint` (frontend/) ·
+test `npm test` (backend/) · run `npm start` (root). **There is no typecheck** —
+no TypeScript in this repo; `lint` is its stand-in at every gate.
+
+Gate: build 0 · lint 0 · `node scripts/parity-check.js` 0 ·
+`node scripts/no-hardcoded-colours.js` 0 · diff only in the phase's allowed files ·
+`git diff --diff-filter=D --name-only` empty · PROGRESS.md updated. Then commit,
+print `PHASE N COMPLETE — AWAITING REVIEW`, stop.
+
+This app is **Electron desktop**, not mobile. The runbook's iOS/Android clauses are void.
+
+---
+
 # Recomp — Claude Code Rules
 
 Standing guardrails for every session in this repo. Read fully before changing anything.

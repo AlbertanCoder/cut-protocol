@@ -45,7 +45,21 @@
       "PowerShell(git rebase:*)",
       "PowerShell(git push --force:*)",
       "PowerShell(git push -f:*)",
-      "PowerShell(git push origin --force:*)"
+      "PowerShell(git push origin --force:*)",
+      "Bash(rm:*)",
+      "Bash(git clean:*)",
+      "PowerShell(Remove-Item:*)",
+      "PowerShell(git clean:*)",
+      "Edit(backend/src/lib/**)",
+      "Edit(backend/prisma/migrations/**)",
+      "Edit(backend/prisma/schema.prisma)",
+      "Edit(backend/tests/golden/**)",
+      "Edit(MIGRATION/baseline/**)",
+      "Write(backend/src/lib/**)",
+      "Write(backend/prisma/migrations/**)",
+      "Write(backend/prisma/schema.prisma)",
+      "Write(backend/tests/golden/**)",
+      "Write(MIGRATION/baseline/**)"
     ]
   },
   "hooks": {
@@ -65,6 +79,21 @@
           {
             "type": "command",
             "command": "node .claude/hooks/guard-bash.js"
+          },
+          {
+            "type": "command",
+            "command": "node .claude/hooks/guard-migration.js"
+          }
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "matcher": "compact",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cat MIGRATION/CONTRACT.md"
           }
         ]
       }
