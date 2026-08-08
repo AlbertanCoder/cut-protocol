@@ -449,7 +449,7 @@ function App() {
 // storage write (Master Context THEMING carve-out).
 export default function AppWithTheme() {
   return (
-    <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+    <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
       <App />
     </ThemeProvider>
   );

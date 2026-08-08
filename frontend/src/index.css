@@ -51,52 +51,81 @@
     --radius-4xl: calc(var(--radius) * 2.6);
 }
 
-/* SIGNAL BLACK — light theme ("performance paper"). :root per shadcn convention;
-   app boots with class="dark" on <html>, so this shows only when the class is removed.
-   Accent deepens to emerald: white-on-primary 4.99:1, muted-fg 5.97:1 on white. */
+/* WARM PAPER — light theme, and the SHIPPED default as of the light-migration
+   (Phase 4, 2026-08-08). :root per shadcn convention; <html> no longer carries
+   class="dark", so this is what boots. The .dark block below still works and the
+   Light/Dark/System toggle still reaches it — dark is a shipped capability
+   (inventory F-023), not legacy.
+
+   Candidate C of three (see MIGRATION/RESTYLE-AUDIT.md): the warm cream ground
+   from the migration runbook, with THIS app's emerald accent kept rather than the
+   runbook's burnt orange.
+
+   Why the accent did not become orange. Design law (b) bans red on food and body
+   data, so amber carries the entire "needs attention" signal — and the macro triad
+   fixes carbs at amber #E69F00, constitutionally. A burnt-orange primary would put
+   three warm hues (press this / watch this / this is carbohydrate) on one screen
+   with no way to resolve the collision, because the triad cannot move. Green stays
+   scarce and keeps meaning on-target · primary action · success.
+
+   Written as hex, deliberately: these are the exact contrast-checked values that
+   were chosen from rendered specimens. The chart ramp below stays oklch — it is
+   shared with .dark and was validated as a pair. */
 :root {
-  --background: oklch(0.985 0.002 250);
-  --foreground: oklch(0.17 0.01 260);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.17 0.01 260);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.17 0.01 260);
-  --primary: oklch(0.52 0.11 162);                /* deep emerald — same hue as dark mint */
-  --primary-foreground: oklch(0.985 0.005 165);
-  --secondary: oklch(0.96 0.006 250);
-  --secondary-foreground: oklch(0.25 0.01 260);
-  --muted: oklch(0.955 0.006 250);
-  --muted-foreground: oklch(0.50 0.015 255);
-  --accent: oklch(0.945 0.014 168);               /* faint mint hover wash */
-  --accent-foreground: oklch(0.28 0.04 165);
-  --destructive: oklch(0.577 0.245 27.3);
-  --destructive-foreground: oklch(0.985 0 0);
-  --border: oklch(0.91 0.006 250);
-  --input: oklch(0.91 0.006 250);
-  --ring: oklch(0.52 0.11 162);
+  --background: #FBF7F1;                          /* warm cream, not white */
+  --foreground: #23201D;                          /* 14.9:1 on the cream */
+  --card: #FFFFFF;
+  --card-foreground: #23201D;
+  --popover: #FFFFFF;
+  --popover-foreground: #23201D;
+  --primary: #2F6B4F;                             /* emerald — kept from SIGNAL BLACK */
+  --primary-foreground: #FBFDFB;                  /* 6.4:1 on the emerald */
+  --secondary: #F2ECE1;                           /* warm surface step, not a cool grey */
+  --secondary-foreground: #3A342E;
+  --muted: #F2ECE1;
+  --muted-foreground: #6B6256;                    /* 5.3:1 on cream, 5.6:1 on white */
+  --accent: #F3EDE3;                              /* hover wash — a lightness step, never the brand */
+  --accent-foreground: #23201D;
+  --destructive: #A8332F;                         /* system errors + destructive confirms ONLY */
+  --destructive-foreground: #FFFFFF;
+  --border: #E2D8C8;                              /* warm hairline */
+  --input: #D4C7B2;                               /* control edges need 3:1 (WCAG 1.4.11), hairlines don't */
+  --ring: #2F6B4F;
   --chart-1: oklch(0.64 0.14 162);                /* identical palette both themes — validated */
   --chart-2: oklch(0.62 0.14 245);
   --chart-3: oklch(0.66 0.13 80);
   --chart-4: oklch(0.60 0.16 300);
   --chart-5: oklch(0.63 0.16 18);
   --radius: 0.75rem;
-  --sidebar: oklch(0.975 0.004 250);
-  --sidebar-foreground: oklch(0.17 0.01 260);
-  --sidebar-primary: oklch(0.52 0.11 162);
-  --sidebar-primary-foreground: oklch(0.985 0.005 165);
-  --sidebar-accent: oklch(0.95 0.007 250);
-  --sidebar-accent-foreground: oklch(0.25 0.01 260);
-  --sidebar-border: oklch(0.91 0.006 250);
-  --sidebar-ring: oklch(0.52 0.11 162);
+  --sidebar: #F6F1E8;                             /* one step off the canvas, same warm family */
+  --sidebar-foreground: #23201D;
+  --sidebar-primary: #2F6B4F;
+  --sidebar-primary-foreground: #FBFDFB;
+  --sidebar-accent: #EFE8DC;                      /* active nav = lightness step (law a), never green */
+  --sidebar-accent-foreground: #23201D;
+  --sidebar-border: #E2D8C8;
+  --sidebar-ring: #2F6B4F;
   /* ADDED (not part of the direction block): calm amber for over-target /
      re-planning states on food and body data — design law (b) forbids red
      there, and SIGNAL BLACK shipped no legal amber. New-color rule per
      CLAUDE.md: define in :root + .dark, map in @theme inline.
-     L 0.52 (not 0.55): ~4.75:1 even on the bg-warn/10 tint - AA at 11px semibold. */
-  --warn: oklch(0.52 0.12 75);
+     Warm-paper value: #8A6516 is 5.0:1 on the cream and stays AA on the
+     bg-warn/10 tint, which is where the over-target copy actually sits. */
+  --warn: #8A6516;
   /* ADDED: the one modal-scrim value (was hand-typed rgba in four dialogs —
      the fix DO-NOT-TOUCH prescribes: one token, all dialogs pointed at it). */
   --scrim: rgba(0, 0, 0, 0.55);
+  /* C-object compat tier, LIGHT. Moved here in Phase 4 — see the compat block
+     near the bottom of this file for why. Same three-tier ink model as dark,
+     inverted: one warm near-black at descending opacity over the cream.
+     --faint holds ~5.3:1 on the canvas (AA); --faint-light is the decorative
+     tier and is not for body text, exactly as in dark. */
+  --ink: rgba(35, 32, 29, 0.92);
+  --faint: rgba(35, 32, 29, 0.70);
+  --faint-light: rgba(35, 32, 29, 0.45);
+  --rule: rgba(35, 32, 29, 0.10);
+  --card-2: #F2ECE1;
+  --warn-bg: #F6EEDC;
 }
 
 /* SIGNAL BLACK — dark theme (DEFAULT). Ship with <html class="dark"> in index.html;
@@ -140,6 +169,15 @@
      AURORA --warn hue so amber keeps meaning "re-plan, not failure". */
   --warn: oklch(0.76 0.13 78);
   --scrim: rgba(0, 0, 0, 0.55);
+  /* C-object compat tier, DARK. Moved here in Phase 4 from the shared block at
+     the bottom of this file — values are byte-identical to what they were, so
+     dark is unchanged. See that block for the full reasoning. */
+  --ink: rgba(237, 242, 239, 0.87);
+  --faint: rgba(237, 242, 239, 0.60);
+  --faint-light: rgba(237, 242, 239, 0.38);
+  --rule: rgba(255, 255, 255, 0.06);
+  --card-2: #232A27;
+  --warn-bg: #2E2310;
 }
 
 @layer base {
@@ -167,20 +205,38 @@
 }
 
 /* ── C-OBJECT COMPAT PALETTE (legacy.css retired, Phase 6) ────────────────
-   lib/theme.js (protected) snapshots CSS vars ONCE at boot into its C
-   object; the names still read after the migration live here. They are
-   deliberately theme-INVARIANT: the snapshot never re-reads on theme flips,
-   the macro triad is constitutionally fixed (law c), and --paper is the
-   always-dark ink used ON triad fills. index.css is the sanctioned literal
-   home. --good rides the primary chain so stamp-success matches the mint. */
+   lib/theme.js (protected) snapshots CSS vars ONCE at boot into its C object;
+   the names still read after the migration live here.
+
+   WHAT CHANGED IN PHASE 4 (2026-08-08), and why it had to.
+
+   Six of these were dark LITERALS declared once for both themes — --ink,
+   --faint, --faint-light, --rule, --card-2 and --warn-bg. --ink is a near-WHITE
+   at 87% and --card-2 a near-BLACK, so on a light ground every consumer of them
+   rendered wrong: TrendTab's chart tooltip (TrendTab.jsx:143-150) drew a dark
+   island floating on cream, and Parts.jsx:110's verdict stamp fell back to
+   near-white text on cream — invisible — for the "wait" tone a new user sees
+   for their first ten days. The old light theme shipped with both bugs.
+
+   They are now declared PER THEME, in the :root and .dark blocks above, so the
+   boot theme resolves correctly. Nothing was removed: every token name still
+   exists and still resolves, and the dark values are byte-identical to what
+   they were. What moved is where they are defined, not what they are.
+
+   STILL DELIBERATELY INVARIANT, and must stay that way:
+     · --paper is the always-dark ink drawn ON macro-triad fills (the P/C/F
+       letter badges, TodayTab.jsx:107 and Parts.jsx:182). Make it light and the
+       letters vanish into the blue/amber/pink.
+     · the macro triad is constitutionally fixed (law c) and colourblind-
+       validated — identical in every ring, bar, chip and chart, both themes.
+
+   KNOWN LIMITATION, pre-existing and unchanged: lib/theme.js snapshots ONCE at
+   boot, so C.* still does not follow a runtime theme toggle. Boot is now correct
+   in both themes, which it was not before; a mid-session toggle still leaves the
+   C.* consumers on the boot theme's values until reload. Fixing that means
+   touching lib/theme.js, which DO-NOT-TOUCH.md protects. */
 :root {
   --paper: #0B0D0C;
-  --ink: rgba(237, 242, 239, 0.87);
-  --faint: rgba(237, 242, 239, 0.60);
-  --faint-light: rgba(237, 242, 239, 0.38);
-  --rule: rgba(255, 255, 255, 0.06);
-  --card-2: #232A27;
-  --warn-bg: #2E2310;
   --good: var(--primary);
   --good-bg: color-mix(in srgb, var(--primary) 14%, transparent);
   /* macro triad — Okabe-Ito, law (c), identical in every ring/bar/chip */

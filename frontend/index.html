@@ -1,11 +1,14 @@
 <!doctype html>
-<html lang="en" class="dark">
+<html lang="en" class="light">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <!-- literal mirrors the dark --background token (oklch(0.15 0.008 255)) -->
-    <meta name="theme-color" content="#16181d" />
+    <!-- literal mirrors the light --background token (#FBF7F1). ThemeProvider
+         swaps this class on boot from the stored preference; this is only the
+         first paint, and it must match the shipped default or a returning
+         light user gets a dark flash before the class settles. -->
+    <meta name="theme-color" content="#FBF7F1" />
     <title>Cut Protocol</title>
   </head>
   <body>

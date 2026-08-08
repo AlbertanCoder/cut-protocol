@@ -56,13 +56,41 @@ boundary was never stated.
 | 1 | test directories only — `backend/tests/**`, `MIGRATION/golden/**`. No source changes at all. |
 | 2 | a new `frontend/src/theme/` directory only |
 | 3 | one screen file + its own components, named explicitly in the session prompt |
-| 4 | `frontend/src/theme/**` and a new `frontend/src/components/primitives/` directory |
+| 4 | `frontend/src/index.css` (the `:root` light block), `frontend/src/App.jsx` (the ThemeProvider default), `frontend/index.html` (the boot class + `theme-color`) — **adapted, see below** |
 | 5 | a new `frontend/src/onboarding/` directory and a new onboarding store file |
 | 6 | a new `frontend/src/swipe/` directory, `frontend/public/assets/food/`, `scripts/photo-pipeline/` |
 | 7 | one new adapter file, plus the existing profile store **only** to add new optional fields |
 | 8 | a new `frontend/src/home/` directory only; every existing screen stays read-only |
 | 9 | `frontend/src/App.jsx` (the tab state machine) and `frontend/src/components/Sidebar.jsx` (the `NAV` array) |
 | 10 | only files listed in `MIGRATION/DELETE-CANDIDATES.md`, one screen per commit |
+
+## Phase 4 is adapted, and here is exactly how
+
+The runbook's Phase 4 says: build a new `theme` directory, then build eight
+primitives (`Screen`, `Card`, `Button`, `Input`, `OptionRow`, `Chip`, `Slider`,
+`StatTile`). Neither applies here, and doing them anyway would break constraint 6.
+
+**No new `theme` directory.** The token layer already exists and every screen
+already consumes it — `frontend/src/index.css` carries `:root` (light) and `.dark`
+(dark) with the full shadcn semantic role set, and `no-hardcoded-colours.js` comes
+back clean across all 79 source files. Creating a second token home would leave two
+live systems, which is the exact condition that produces drift.
+
+**No new primitives directory.** `frontend/src/components/ui/` already holds
+`button.jsx`, `card.jsx`, `input.jsx`, `badge.jsx`, `select.jsx`, `slider`-adjacent
+controls and the rest, all built against those tokens. Building a parallel set
+would duplicate working components — constraint 1 forbids removing the originals,
+so the app would carry both.
+
+**So Phase 4 here is the part that actually remains:** swap the `:root` light values
+to the chosen palette, flip the shipped default from dark to light, and walk every
+screen looking for what a light ground exposes. The runbook is right that light
+backgrounds surface spacing and hairline bugs dark was hiding — that part transfers
+intact.
+
+**Dark is not deleted.** The `.dark` block stays and the Light/Dark/System toggle
+(F-023) keeps working. It is a shipped capability; removing it would be a
+constraint-1 deletion, not a migration.
 
 ## Phase 9 is not "the router"
 

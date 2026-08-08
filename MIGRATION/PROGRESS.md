@@ -307,7 +307,8 @@ Total: 287 capabilities · 287 TODO · 0 IN_PROGRESS · 0 DONE · 0 BLOCKED
 | Phase | Date | Commit | Result |
 |---|---|---|---|
 | 0 · Recon | 2026-08-07 | `41f45f4` | Inventory 287, contract, checkers, phase gates. No source touched. |
-| 1 · Golden fixtures | 2026-08-08 | *this commit* | 12 profiles locked across the full derived chain. Backend suite 1638 → **1653**. No source touched. |
+| 1 · Golden fixtures | 2026-08-08 | `b90b5b7` | 12 profiles locked across the full derived chain. Backend suite 1638 → **1653**. No source touched. |
+| 4 · Flip to light | 2026-08-08 | *this commit* | Warm-paper palette (candidate C) shipped as the default. Two pre-existing light-mode bugs fixed at the token layer. Goldens still 1653/0. |
 
 **Phase 1 moved no F-ID rows, and that is correct** — `MIGRATION/PHASES.md` assigns
 zero capabilities to Phase 1. It is test-only by definition: it changes nothing a
