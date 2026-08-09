@@ -455,8 +455,20 @@ Standing items I am carrying forward without relitigating, per the prompt:
    + $119 + 14-day trial. Nobody may create Lemon Squeezy variants until ruled.
 2. **Supabase project + Google OAuth client + Railway deploy.** Owed since 2026-08-06.
    Nothing downstream moves.
-3. **`recipe-brain` vs the 2026-08-03 decision to park the AI/brain layer.** Asked twice,
-   never answered. The branch is the trunk of everything in §4.
+3. **`recipe-brain` vs the 2026-08-03 decision to park the AI/brain layer.** ~~Asked twice,
+   never answered.~~ **ANSWERED 2026-08-09 by the owner: UNPARKED — the brain layer is
+   meant to ship.** This reverses the verbal park of 2026-08-03 recorded at
+   `docs/handoff/window-1-recipe-brain-20260808.md:200`; do not re-raise the park question.
+   The branch is the trunk of everything in §4.
+
+   Measured the same day, before the ruling: `backend/src/lib/recipeBrain/` (landed
+   2026-08-08 in `794e914`) is called by **nothing** outside its own directory — the only
+   mention elsewhere in `backend/src/` is a comment at `aiRecipeClient.js:143`. So
+   "wired to nothing" in that commit subject is accurate, and wiring it up is real work
+   inside PLAN.md step 5, not a checkbox. Two things to settle before it is switched on
+   for real users: the per-user budget and the relay's bill-bounding (`961ee48`, `8ec23cd`)
+   need to be verified working rather than assumed from their commit subjects, because
+   the AI channel is the one that costs money per call.
 4. **The two `slice(-7)` sites.** Now editable, and — per §2(c) — **not** gated on the
    `MIGRATION/golden/` re-base, which they cannot break. Still a calculation change, so
    still owner-approved before it runs. The `engine-baseline.golden.json` question is

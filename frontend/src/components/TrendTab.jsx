@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo, useId } from "react";
 import { WeightTrendChart } from "./charts/weight-trend-chart.jsx";
+import { LeanMassChart } from "./charts/lean-mass-chart.jsx";
 import { LineChart, Dumbbell, ArrowRight, Table2, ChevronUp } from "lucide-react";
 import { C } from "../lib/theme.js";
 import { todayStr, addDays, fmtDY, fmtD, dayNum } from "../lib/dates.js";
@@ -299,17 +300,30 @@ export default function TrendTab({ profile, summary, openTraining }) {
     };
   }), [rows, fit, bfFrac]);
 
-  // ── y domain ─────────────────────────────────────────────────────────────
+  // ── y domain (weight panel) ──────────────────────────────────────────────
   // Built from the robust core plus every line actually drawn. The old version
   // put goalW in yMin but NOT in yMax, so a goal above the highest logged
   // weight (a bulk, a reverse diet, a maintenance goal set after a rebound)
   // silently clipped its own reference line off the top of the chart.
+  //
+  // SPLIT 2026-08-09 — owner-approved override of DO-NOT-TOUCH.md's yDomain
+  // entry ("you may change the yDomain useMemo ... to stop sizing the weight
+  // axis around lean mass ... No formula changes").
+  //
+  // Lean mass no longer sizes THIS axis. It sits 20–30 % below scale weight for
+  // every user, permanently, so folding it in forced a ~60-unit axis onto a
+  // series that moves ~1 a week: the curve was pinned flat against the top and
+  // roughly two thirds of the plot was the empty gap between the two lines.
+  // That is the exact failure the goal-allowance rule below already guards
+  // against ("at a scale that fit both, a month of real movement would be a few
+  // pixels tall") — it was simply never applied to the one line that is ALWAYS
+  // far away. Nothing was dropped: the lean series and its reference line moved
+  // to leanDomain and the second panel, where they get their own resolution.
   const yDomain = useMemo(() => {
     const vals = [];
     for (const r of rows) {
       if (outliers.has(r.date)) continue;
       vals.push(r.w);
-      if (bfFrac != null) vals.push(r.avg * (1 - bfFrac));
     }
     if (fit) vals.push(fit.at(fit.startX), fit.at(fit.drawEndX));
     if (!vals.length) vals.push(goalW ?? 0);
@@ -329,10 +343,36 @@ export default function TrendTab({ profile, summary, openTraining }) {
     const allow = Math.max(1.5 * span, 0.10 * anchor);
     const goalInView = Number.isFinite(goalW) && goalW >= lo - allow && goalW <= hi + allow;
     if (goalInView) { lo = Math.min(lo, goalW); hi = Math.max(hi, goalW); }
-    if (leanNow != null && leanNow >= lo - allow && leanNow <= hi + allow) lo = Math.min(lo, leanNow);
     const pad = Math.max(1, (hi - lo) * 0.08);
     return { lo: Math.floor(lo - pad), hi: Math.ceil(hi + pad), goalInView };
-  }, [rows, outliers, fit, bfFrac, goalW, leanNow, avg7]);
+  }, [rows, outliers, fit, goalW, avg7]);
+
+  // ── y domain (lean-mass panel) ───────────────────────────────────────────
+  // The other half of the split above. Same shape, same padding rule, same
+  // outlier exclusion — sized to the lean series alone so a real change in it
+  // is visible at the same resolution the weight panel now gets.
+  //
+  // It reads `c.lean` straight off the chart memo rather than recomputing
+  // anything: that value is still `r.avg * (1 - bfFrac)`, produced in exactly
+  // one place (the chart memo), exactly as before. No formula is duplicated and
+  // none is changed. Returns null when there is no body-fat reading, which is
+  // the same condition that already gates the lean line existing at all.
+  const leanDomain = useMemo(() => {
+    if (bfFrac == null) return null;
+    const vals = [];
+    for (const c of chart) {
+      if (outliers.has(c.date)) continue;
+      if (c.lean != null) vals.push(c.lean);
+    }
+    if (leanNow != null) vals.push(leanNow);
+    if (!vals.length) return null;
+    let lo = Math.min(...vals), hi = Math.max(...vals);
+    // Same zero-height guard as the weight panel: a perfectly flat lean series
+    // is common early on, and a zero-height plot is not a chart.
+    if (!(hi - lo > 0.5)) { const mid = (hi + lo) / 2; lo = mid - 2; hi = mid + 2; }
+    const pad = Math.max(1, (hi - lo) * 0.08);
+    return { lo: Math.floor(lo - pad), hi: Math.ceil(hi + pad) };
+  }, [chart, outliers, bfFrac, leanNow]);
 
   // ── x domain + ticks ─────────────────────────────────────────────────────
   // The axis is `type="number"` over epoch-day numbers. It used to be
@@ -461,6 +501,33 @@ export default function TrendTab({ profile, summary, openTraining }) {
                   />
                 </div>
               </div>
+
+              {/* ── lean-mass panel ───────────────────────────────────────────
+                  The second half of the split (2026-08-09). Same xAxis object
+                  as the panel above, same column width, stacked directly under
+                  it — so reading straight down a date still compares the two
+                  rates, which is the recomp story this screen is named for.
+                  Shorter than the weight panel on purpose: scale weight is the
+                  number someone opens this tab for.
+
+                  aria-hidden, deliberately. The a11ySummary on the weight panel
+                  already states the estimated lean mass in words, and the table
+                  below carries a Lean mass column for every date. This panel
+                  adds resolution, not information — and the table stays the
+                  accessible source of truth, exactly as the note above says. */}
+              {leanDomain && (
+                <div className="mt-4 pt-4 border-t border-border">
+                  <div className="text-[11px] font-bold uppercase tracking-wide text-muted-foreground mb-1">
+                    Lean mass, estimated ({wUnit})
+                  </div>
+                  <div aria-hidden="true" style={{ width: "100%", height: 200 }}>
+                    <LeanMassChart
+                      data={chart} xAxis={xAxis} yDomain={leanDomain} leanNow={leanNow}
+                      tooltip={<ChartTip wUnit={wUnit} avgDays={AVG_DAYS} />}
+                    />
+                  </div>
+                </div>
+              )}
 
               <LegendKey items={legend} />
 

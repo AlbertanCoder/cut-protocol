@@ -28,7 +28,11 @@ const chartConfig = {
   band: { label: "±1 SE band" },
 };
 
-export function WeightTrendChart({ data, xAxis, yDomain, fit, goalW, leanNow, bfFrac, showDots, tooltip }) {
+// `leanNow`/`bfFrac` are received and deliberately unused (underscore-renamed
+// so the linter agrees it is intentional). The call site still passes them and
+// its prop wiring is protected (DO-NOT-TOUCH.md, TrendTab.jsx 457-514), so the
+// parameters stay in the signature rather than being removed from both ends.
+export function WeightTrendChart({ data, xAxis, yDomain, fit, goalW, leanNow: _leanNow, bfFrac: _bfFrac, showDots, tooltip }) {
   return (
     <ChartContainer config={chartConfig} className="h-full w-full">
       <ComposedChart accessibilityLayer data={data} margin={{ top: 10, right: 16, left: 0, bottom: 0 }}>
@@ -59,22 +63,19 @@ export function WeightTrendChart({ data, xAxis, yDomain, fit, goalW, leanNow, bf
           <ReferenceLine y={goalW} stroke="var(--muted-foreground)" strokeDasharray="6 4"
             label={{ value: `GOAL ${r1(goalW)}`, fill: "var(--muted-foreground)", fontSize: 10, fontWeight: 700, position: "insideBottomRight" }} />
         )}
-        {leanNow != null && (
-          // Solid, not dashed: the goal above is the only threshold on this
-          // chart, so the dash means one thing.
-          <ReferenceLine y={leanNow} stroke="var(--muted-foreground)" strokeOpacity={0.55}
-            label={{ value: `LEAN MASS IF IT NEVER MOVED ${r1(leanNow)}`, fill: "var(--muted-foreground)", fontSize: 9, fontWeight: 700, position: "insideTopRight" }} />
-        )}
+        {/* MOVED 2026-08-09 → charts/lean-mass-chart.jsx (not deleted).
+            The lean-mass Line and its "if it never moved" ReferenceLine used to
+            sit here, on this axis. Both now render in the second panel with an
+            axis sized to them. They are gone from THIS file only because the
+            weight axis no longer spans down to them — leaving them here would
+            draw them off the bottom of the plot. `leanNow` and `bfFrac` stay in
+            the signature: the call site's prop wiring is protected
+            (DO-NOT-TOUCH.md, TrendTab.jsx 457-514) and was not touched. */}
 
         <Line type="monotone" dataKey="w" stroke="var(--muted-foreground)" strokeOpacity={0.6} strokeWidth={1.5}
           dot={showDots ? { r: 2.5, fill: "var(--muted-foreground)", strokeWidth: 0 } : false}
           activeDot={{ r: 4, fill: "var(--muted-foreground)", stroke: "var(--card)", strokeWidth: 2 }}
           isAnimationActive={false} connectNulls />
-        {bfFrac != null && (
-          <Line type="monotone" dataKey="lean" stroke="var(--chart-2)" strokeWidth={2}
-            dot={false} activeDot={{ r: 4, fill: "var(--chart-2)", stroke: "var(--card)", strokeWidth: 2 }}
-            isAnimationActive={false} connectNulls />
-        )}
         {/* The heavy line is the server's fit when there is one, and the
             day-windowed average when there is not — the caption below the
             chart says which, every time. */}
