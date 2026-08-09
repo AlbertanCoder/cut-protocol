@@ -3,6 +3,23 @@
 Active on branch `light-migration` only. Full text + stack + phase gates:
 **`MIGRATION/CONTRACT.md`**. Inventory: `MIGRATION/INVENTORY.md` (287 IDs).
 
+> **SCOPE CORRECTION 2026-08-08 (ORCHESTRATION.md MISSION 1 item 2).** Reading the line
+> above as "I am not on `light-migration`, so the six rules below do not bind me" is wrong
+> on any branch that descends from it — which currently includes the one you are most
+> likely reading this on.
+>
+> Measured today: `git merge-base --is-ancestor light-migration recipe-brain` succeeds. The
+> migration's commits are ON this branch — `41f45f4` (phase-0 recon), `b90b5b7` (phase-1
+> golden fixtures), `5ae57f4` (phase-4). `MIGRATION/` and its `CONTRACT.md` are in this
+> working tree, and `MIGRATION/golden/`'s fixtures lock *this* branch's derived-number
+> chain. Rule 2 in particular — never change a calorie, macro, TDEE, BMR, target or
+> portion calculation — is enforced here by fixtures that no role can relock
+> (`guard-edit.js:138`).
+>
+> The original line is about which branch the migration is being *driven from*, not about
+> where its constraints stop. Flagged rather than reworded: the owner decides the wording
+> of a rules file.
+
 1. NEVER delete a file, function, component, branch of logic, or test — not
    "unused", not "superseded", not commented-out. Append it to
    `MIGRATION/DELETE-CANDIDATES.md` instead.
@@ -359,6 +376,21 @@ written; these corrections override it.
 | Phase 9 / packaging notes: installer ships real `.env` + `dev.db` | False — see the Packaging section above. The real, current problem is that the payload is a **denylist**, and `backend/.env.qc` plus `dev.db.snapshot-agentcontam-*` slip past it. |
 | `docs/design/` "research report + final direction HTML" | Never existed. See the design constitution above. |
 | `backend/prisma/schema.prisma:2` — "one-line provider swap (`sqlite` → `postgresql`)" | Overstated, and echoed unqualified in `DEPLOY.md` and `roadmap/10-backend-readiness-and-testing.md`. The *schema* does avoid Postgres-only features, but **8 of the 25 migrations carry SQLite `PRAGMA foreign_keys` / `defer_foreign_keys` statements** for table-rebuild steps. Postgres rejects those, so the migration history would have to be squashed and regenerated against Postgres first. Budget that work; it is not one line. |
+
+### Added 2026-08-08 — the theme default flipped, and two places still say otherwise
+
+The table above is dated 2026-07-24. This correction is newer and overrides both
+statements it names.
+
+| Claim, still present above | Reality as of 2026-08-08 |
+|---|---|
+| Part I → Styling Conventions: "**Dark is the default theme**; light is available via the toggle … ThemeProvider `defaultTheme="dark"`" | **False since `5ae57f4`** ("migration(phase-4): ship warm paper as the default"), landed 2026-08-08. `frontend/src/App.jsx:452` reads `<ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">` — verified by reading the line, not inferred from the commit subject. |
+| Part II → reconciliation record #3: "dark is the shipped default, light must keep working via the theme toggle" | Same. The *requirement* survives with its polarity swapped: **light** is now the shipped default and **dark** must keep working via the toggle. `storageKey` is unchanged, so a user who already chose a theme keeps it — only first-run changes. |
+
+Both statements need the same one-word swap. Flagged, not rewritten: MISSION 1 item 2
+says reconcile and flag, and silently editing a rules file is how a rules file stops
+being trusted. Everything else in Part I's Styling Conventions still stands — both themes
+must look right, which is unchanged by which one loads first.
 
 ## Overhaul phase tracker (append-only; newest last)
 

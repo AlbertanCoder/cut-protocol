@@ -257,7 +257,41 @@ Required before anyone else installs this. Not urgent for you alone.
 
 ## Repo hygiene (30 min, zero risk)
 
-- [ ] **Delete 12 branches and 10 worktrees.** All are strict ancestors of master, verified three ways —
+> ### ⚠ CORRECTION 2026-08-08 — do not action the next item as written
+>
+> Its central claim is now false, and the "zero risk" in the heading above no longer
+> applies to it. Measured today, not estimated:
+>
+> | claim in the item | measured 2026-08-08 |
+> |---|---|
+> | 12 branches | **28** local branches |
+> | 10 worktrees | **4** |
+> | "zero unmerged work exists" | **14 branches carry unmerged work**, 1 to 195 commits ahead of `master` |
+>
+> Ahead of `master`: `recipe-brain` 195 · `light-migration` 180 · `saas-launch` 176 ·
+> `ui-restyle` 155 · `fix/profile-non-trainer-option` 122 · `fleet/measure-2026-08` 122 ·
+> `ux/plan-week-board-declutter` 122 · `backup/pre-scrub-2026-08-04` 120 ·
+> `ux/simplify-2026-08` 106 · `campaign-2026-07` 69 · `fix/audit-remediation` 68 ·
+> `claude/apps-editing-claude-02aba7` 6 · `gh-pages` 1 · `wip/agent-run-raw` 1.
+> **Do not sum those** — they overlap heavily; `recipe-brain` contains `saas-launch`, and so on.
+>
+> **Stated so this correction is not overstated:** the item specifies `git branch -d`, not
+> `-D`, and `-d` REFUSES a branch with unmerged commits. Followed literally it would fail
+> safely on all 14. `git worktree remove` likewise refuses a dirty worktree, and removing a
+> clean one does not delete its branch. The real hazard is a session that hits fourteen
+> refusals and reaches for `-D` to make the checkbox complete.
+>
+> **What IS still safe.** 13 branches genuinely are strict ancestors of `master` and carry
+> nothing: `allergy-tier1`, `backup/pre-overhaul`, `competitive-gap-integration`,
+> `food-schema-base`, `qc/overnight-2026-07-23`, `track/a11y-ed-safety`,
+> `track/adaptive-tdee`, `track/barcode-off`, `track/food-integrity-usda`,
+> `track/glp1-protein-floor`, `track/micronutrients`, `track/recipe-import`,
+> `track/solver-benchmark`. Deleting those is the 30-minute zero-risk task this item was
+> originally describing.
+>
+> Nothing has been deleted. Re-measure before acting — these counts move daily.
+
+- [ ] **SUPERSEDED, see correction above — ~~Delete 12 branches and 10 worktrees.~~** All are strict ancestors of master, verified three ways —
   **zero unmerged work exists.** Keep `backup/pre-overhaul` and `gh-pages`. Remove worktrees first
   (`git worktree remove`), then `git branch -d` (not `-D` — let it refuse if I'm wrong).
 - [ ] **Delete `.qc-scratch-agent*`** — 379 MB, agent7 alone is 243 MB.
