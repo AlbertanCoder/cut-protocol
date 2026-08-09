@@ -35,3 +35,44 @@ session does not "discover" them and add them without the context.
 - **The `.dark` block in `frontend/src/index.css:105-143`** — will look redundant
   the moment the app is light-first. It is not: the theme toggle (F-023) is a
   shipped capability and dark must keep working. Removing it deletes a feature.
+
+---
+
+## 2026-08-08 — 37 database backups, QUARANTINED not deleted
+
+`backend/prisma/` held 487 MB, of which 448 MB was historical copies of the
+database. Moved out of the repo working tree to
+`Desktop\Backups\prisma-pruned-2026-08-08\`, per the never-delete rule — they
+are off the tree but nothing has been destroyed, and the move is reversible with
+a single `mv` back.
+
+**Deliberately KEPT in `backend/prisma/`, do not sweep these:**
+
+- `dev.db` — the live database.
+- `dev.db.template`, `dev.db.template-shm`, `dev.db.template-wal` — the
+  depersonalised seed DB. `package.json` `build.extraResources` ships
+  `dev.db.template` into every installer. Deleting it breaks packaging.
+
+**Quarantined (37 files):** every `dev.db.backup-*`, the
+`dev.db.pre-verdict-migration-backup` trio, `dev.db.template.backup-prefix1-*`,
+and `dev.db.snapshot-agentcontam-20260721-212858`.
+
+**Checked before moving, not after:**
+
+- Only `dev.db.template` is referenced by packaging config.
+- `scripts/surgery/witness.js:90` writes `dev.db.backup-witness-<stamp>` at
+  runtime — it generates that name, it does not read existing ones.
+- `backend/tests/distSafety.test.js:226` names the agentcontam snapshot, but
+  guards with `fs.existsSync` and its own comment says "if they have since been
+  deleted there is nothing to prove and nothing to leak". Re-ran after the move:
+  **9/9 pass.**
+- Live `dev.db` sha256 identical before and after the move.
+
+**Note on the agentcontam snapshot.** `CLAUDE.md`'s packaging section names it as
+the 3.2 MB real-user database that slipped past the old `!`-pattern denylist.
+Moving it out of the tree removes that hazard from the working directory. The
+lesson it documents stands on its own in `CLAUDE.md`; the file was only ever
+evidence.
+
+To make this permanent once satisfied nothing is missing:
+`rm -rf "C:\Users\SHADHUNTER\Desktop\Backups\prisma-pruned-2026-08-08"`
