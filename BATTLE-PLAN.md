@@ -1,343 +1,287 @@
-# Cut Protocol — Battle Plan
+# Cut Protocol — Battle Plan v2
 
-From the 20-agent audit, 2026-07-24. Supersedes `TODO.md` (which is stale — several
-unticked items are already done, and Tier 1's header contradicts its own boxes).
+**Rewritten 2026-08-06.** Supersedes the 2026-07-24 version (20-agent audit), which is now
+substantially stale — four of its headline items shipped and one of its central claims was
+overstated by 6×. What survives from it is preserved below; what's done is listed so nobody
+re-does it.
 
-**The pattern:** nine findings are the same failure — built correctly, never wired up.
-Most of this plan is wiring, not building. That's why it's cheaper than the list looks.
-
-**Honest total: ~45–60 hours.** Phases 0–2 are ~14 hours and buy most of the value.
-
-Rule for every item: one change, verify it live, commit. Never stack two untested changes.
-
----
-
-## Phase 0 — Containment (today, ~1 hour)
-
-The build sitting in `release/` right now leaks your credentials and health data.
-
-- [ ] **Do not distribute the current `.exe`.** Verified contents: `backend/.env.qc` inside
-      `app.asar` (JWT_SECRET 66 chars, USDA_API_KEY 40 chars, SEED_EMAIL = your real
-      address, SEED_PASSWORD 8 chars cleartext) and `dev.db.snapshot-agentcontam-20260721-212858`
-      as a loose readable file — 10 users, 8 profiles, 62 weigh-ins, 39 meal logs.
-- [ ] **Rotate three credentials.** `JWT_SECRET`, the USDA key, and that seed password.
-      Treat all three as burned. Git history is clean — the leak is only in the artifact.
-- [ ] **Switch `build.files` to an allowlist** for env and DB files. The current denylist
-      names `.env` and `dev.db` exactly; `.env.qc` and `dev.db.snapshot-*` walked straight past it.
-      `package.json:40-45`.
-      ```
-      "!backend/**/*.env*", "!backend/prisma/*.db*",
-      "backend/prisma/schema.prisma", "backend/prisma/migrations/**/*"
-      ```
-- [ ] **Fix `scanSecrets.mjs:39`** — `SKIP_DIR` contains `"release"`, and `walk()` returns
-      immediately when the *target directory itself* is named `release`. It scans zero files.
-      Skip `SKIP_DIR` only for descendant dirs, never the explicit root.
-- [ ] **Fix `checkDistSafe.mjs:30`** — personal-data detection is a filename regex ending in
-      `.db`. Read the asar index and scan by content. Add a hard rule: any shipped SQLite file
-      must have 0 rows in `User`.
-- [ ] **Re-scan and confirm the checker now fails** on the current dirty build before trusting
-      it again. A checker that returns green on a dirty build is worse than no checker.
-
-**Open question only you can answer:** the build shared with your tester on 2026-07-21 predates
-`.env.qc` (created 07-22), but the DB snapshot is stamped 07-21 21:28. If that build was cut
-after 21:28, they already have your data.
+**Sources:** `TEARDOWN-2026-08-06.md` (the adversarial teardown — read §5 and Stage 3 Q2 if you
+only read two sections) and `docs/audit/ux-review-2026-08-02/SYNTHESIS.md`.
+**`BUILD_PLAN.md` remains authoritative for the billing stages** and its Owner Runbook Parts A–E
+are the click-by-click for every dashboard step. This file does not duplicate them; it sequences
+them.
 
 ---
 
-## Phase 1 — Make your own app honest (week 1, ~6 hours)
+## The mission, in one line
 
-You are cutting right now on numbers that are wrong. This phase is for you, not for shipping.
+Get 20 strangers using a deployed Cut Protocol for 14 days, and find out whether 6 of them come
+back on day 14.
 
-- [ ] **Quarantine the 470 known-wrong food rows.** They carry another food's macros verbatim
-      and the DB *says so* in `dataQuality` (`exception:provenance-cleared — …these are NOT
-      this food's numbers`). One UPDATE setting `source = "quarantined"`, plus one guard clause
-      so the solver and filters refuse them. Recipes referencing them show "incomplete data"
-      instead of a confident wrong number. **Honest beats precise.**
-- [ ] **Hand-fix the ~50 that carry 80% of the damage.** By recipe-reference count:
-      Pepper (83), Potatoes (71), Carrots (70), Flour (68), Chicken Breast (59), Plain Flour (56),
-      Lemon (53), Tomato/Tomatoes (52), Red Chilli (45), Rice (30), Mint (28), Tofu (27),
-      Egg Yolks (27), Bacon (23), Icing Sugar (22), Vegetable Stock (21), Cabbage (20), Tuna (19),
-      Greek Yogurt (18), Bread (17), Green Chilli (17), Noodles (17), Dill (15), Cinnamon Stick (12),
-      Melted Butter (11), Mayonnaise (11), flax eggs (10).
-      Assign each a hand-picked `fdcId`, re-derive macros, recompute affected recipe caches with
-      the existing `computeRecipeMacros`. Closes the >15% error band almost entirely.
-      **Do NOT auto-rematch.** `findConfidentMatch()` already refused every one by design, and its
-      header documents what happened the one time that rule was loosened.
-- [ ] **Close the door that still mints wrong rows.** `usdaCandidateAcceptable()` doesn't apply
-      the density-word ban that tier 3 already has. Live-verified: `milk → "Milk, dry, whole"`
-      **accepts** at 496 vs 61 kcal. ~3 lines reusing machinery already in the file.
-      This is the highest value-per-minute fix in the whole audit.
-- [ ] **Ship library updates to existing installs.** `desktopBootstrap.js:103-104` copies the
-      template only when the DB is absent. Your install has **973 foods / 634 recipes**; the
-      template has **14,122 / 889**. Every data fix above will never reach your running app
-      without a content-sync step (upsert Food/Recipe by `fdcId`/name alongside `ensureSchemaCurrent`).
-- [ ] **Hide the weekly grocery total.** Following the app's own shopping list costs **1.72×**
-      what it displays ($181 shown, $311 real). Keep per-item costs and the per-serving filter.
-      A wrong dollar figure poisons trust in the macros, and the macros are the part that's right.
+Everything in Week 1 exists to make that number mean something. Everything in Weeks 2–3 exists
+because we're waiting anyway.
+
+**The gate:** ≥6 of 20 open the app on day 14, AND ≥10 of 20 log 3+ weigh-ins.
+Below either line, retention is fatal in the current shape and no amount of billing plumbing
+changes it. See "At the gate" below for what each outcome triggers.
+
+**Why 14 days and not 7:** `expenditureEstimator` needs ~2 weeks of weigh-ins before
+`adaptive.applied` flips true. The product's only real differentiator does not exist before then.
+Any shorter test measures a product that hasn't started working yet.
 
 ---
 
-## Phase 2 — Bugs that produce wrong behaviour every day (week 2, ~7 hours)
+## Rules of engagement
 
-- [ ] **Unify `todayStr()` on local time.** Found independently by three lanes and verified live
-      mid-audit: backend said `2026-07-25` while local said `2026-07-24`. Backend
-      `dates.js:2` is UTC, frontend `dates.js:3` is local; `weighins.js:12` has a *third* inline
-      copy. In Edmonton they disagree every day from 18:00 to midnight — Sunday evening the UI
-      shows Sunday while the backend serves next week's plan, and the adaptive target can take an
-      extra ±125 kcal step each evening and give it back each morning.
-- [ ] **Make the solver see fat and carbs.** `weeklyPlanner.js:460` accepts a slot on calories +
-      protein only; `mealSolver.js:218` grades all four. **89 of 92 out-of-tolerance days fail on
-      fat alone.** `resolveSlot` already collects passing candidates into `fits[]` and throws all
-      but the first away — keep them, pick the one closest to the day's remaining fat/carb budget.
-      Zero extra recipe evaluations. Measured: male 3200 goes 5.1% → 15.0% of days in tolerance,
-      male 2200 goes 18.5% → 32.0%, with calorie and protein compliance unchanged.
-- [ ] **Fix the day-options race.** `PlanTab.jsx:810` `loadDayOptions` has no cancellation.
-      Arrow-key to another day mid-request and Monday's response renders under Tuesday's heading;
-      `acceptCandidate` then writes **Monday's meals into Tuesday**. Silent and persistent.
-      Add a request token and guard `acceptCandidate` on `activeDay`.
-- [ ] **Stop `matchPct` overstating.** Fat/carb weigh 0.075 each and cap at 1.0, so a day 98 g
-      outside its fat band loses at most 7.5 points — out-of-tolerance days score a **median 93%**.
-      Reweight, or show only the in-tolerance flag.
-- [ ] **Give `classifyBinding` a fat/carb branch** (`mealSolver.js:919-983`). It currently blames
-      "calorie and protein target" for failures that are purely fat. The prose `reasons[]` already
-      tells the truth; only the machine-readable key lies.
-- [ ] **Show the step cap on the Engine tab.** `EngineTab.jsx:150-165` prints
-      "3,400 − 500 · floor 1,800 → Daily target 2,425" — arithmetic that doesn't produce its own
-      answer, because the ±125 step cap moved it. `stepCap.reason` already ships in
-      `/weighins/summary`; grep says **zero renders**. Your constitution requires every automatic
-      adjustment be visible.
-- [ ] **Fix the two claims that are simply false.** `TodayTab.jsx:165` promises "tomorrow's target
-      already adjusts" (it's weekly, capped, and gated). `EngineTab.jsx:211` says "LBM = body weight
-      until you add body fat %" (the engine assumes 21%/28% — wrong by 21%).
-- [ ] **`trendRate` should fit 14 days, not 14 rows** (`bmrEngine.js:348`). Eight monthly weigh-ins
-      over 213 days currently produce a confident "SLOW" verdict and a goal date.
+1. **One change, verify it live, commit.** Never stack two untested changes.
+2. **The Now gate:** does this change move a stranger closer to paying? If no, it waits.
+3. **Cap non-revenue work at 4 of the 20 weekly hours** until the gate is passed.
+4. Never push. Branch `saas-launch`. Owner's hand only.
+5. Parallel Claude sessions run in this repo. **`git log -1` before any branch or commit
+   operation**, and the repo is CRLF — LF patches silently no-match.
 
 ---
 
-## Phase 3 — The safety promise (week 3, ~8 hours)
+## Owner split
 
-Required before anyone else installs this. Not urgent for you alone.
+| Marker | Who | Note |
+|---|---|---|
+| **[S]** | Shad | Dashboard clicks, recruiting, real-card money. Nobody else can do these. |
+| **[C]** | Claude | Code, tests, commits. |
 
-- [ ] **Fix the `breaded` regex.** `"bread"` is in the gluten list, but `hasWordOrPlural`
-      (`dietaryFilter.js:657`) compiles `\bbread(?:es|s)?\b`, which cannot match `breaded`.
-      82 rows — battered fish, breaded chicken, onion rings — pass to a celiac.
-- [ ] **Add the missing keywords:** `meatless` → soy (36 USDA meat analogues), mayo-emulsion
-      dressings → egg (36 rows: thousand island, ranch, coleslaw), `kimchi` → fish + shellfish,
-      `tapenade` / `pho` → fish, `granola bar` → gluten, `nondairy whipped topping` → dairy
-      (sodium caseinate).
-- [ ] **Share one filter across every surface.** `planContext.filterRecipePool` checks ingredient
-      metadata + `additionalIngredientNames(steps)` + title + step prose. Library browse
-      (`recipes.js:34`), cart (`cart.js:20`), AI swap (`weeklyPlanner.js:32`) and brain pool
-      (`exclusions.js:70`) check **ingredient names only** — letting through 210 recipe×allergy
-      pairs the solver already hides. `Sushi` ("half a prawn" in step 3) reaches a shellfish-allergic
-      user; `…With Tahini…` has tahini only in the title.
-- [ ] **Gate the ungated write paths.** Recipe URL import and `save-draft` run no allergen check
-      at all; `GET /foods` returns all 14,122 rows unfiltered.
-- [ ] **Fix over-blocking.** Gluten blocks all **47 explicitly gluten-free products** — the exact
-      foods a celiac should eat. `WORD_GUARDS.dairy` has a `dairy-free` veto; gluten never got one.
-      Tree-nuts blocks **57 peanut-butter rows** (`"nut butter"` matched as a substring inside
-      `peanut butter`) and 15 coconut rows — both traps `allergenTaxonomy.js:178-182` explicitly warns about.
-- [ ] **Render the allergen override.** `aiRecipeClient.js:256-268` builds `allergenOverrides`
-      naming exactly what each draft violates, `recipes.js:103` returns it, the frontend never reads
-      it. Violating drafts currently look identical to safe ones. Log the override server-side too.
-- [ ] **Add an age gate.** `SetupWizard.jsx:196` and `profile.js:74` admit 14-year-olds; a 14-year-old
-      girl at 50 kg on rate 2.0 gets a **1,212 kcal** target from adult-validated formulas.
-      Refuse under 18, or route to a "talk to someone first" screen.
-- [ ] **Add a BMI floor on goal weight.** `grep -i "bmi|underweight"` returns **zero hits app-wide**.
-      Nothing knows what a healthy weight is; a 170 cm adult can set goal 40 kg and get a projected date.
-- [ ] **Trigger the wellbeing check.** It's a correct SCOFF that nothing ever opens except a sidebar
-      button (`App.jsx:48`). Trigger on: aggressive rate + floor clamp, measured loss above plan for
-      2+ weeks, or a goal below a healthy BMI.
-- [ ] **Write the auth test that would have caught account takeover.** Mutation testing planted
-      `jwt.verify → jwt.decode` and **1043/1043 still passed**. The existing forged-cookie test
-      (`auth.registration.test.js:213`) uses subject `"fake"`, so it 403s on the *user-existence*
-      check, not the signature. Sign a token for a **real** user with a **wrong** secret. Export
-      `verifyToken` so it's directly testable.
-- [ ] **Un-skip the allergen corpus on CI.** Seven tests including the 14,122-row sweep are
-      `{ skip: noCorpus }` on `dev.db`, which CI never has — and skipped tests still count toward
-      `MIN_TESTS`, so the tripwire is structurally blind. Point them at CI's seeded DB, or add
-      `MIN_UNSKIPPED`.
-- [ ] **Fix NEDIC's hours** in `wellbeingResources.js` — the phone line is Mon–Thu 9–9 ET,
-      Fri 9–5 ET, closed weekends. Only the chat is 7 days. (The other four resources verified correct.)
+**The critical path runs through [S] items.** Week 1 item 2 has been the top open item in
+`BUILD_PLAN.md` since 2026-08-06 and nothing downstream — not the test, not billing, not one
+user — happens before it. It is dashboard clicking on a Saturday after a ten-hour day and it will
+feel like admin. It is not admin. It is the only step that turns this repo into a product.
 
 ---
 
-## Phase 4 — Weight and speed (week 4, ~4 hours, very high ratio)
+## WEEK 1 — Make it not embarrassing, then deploy (~19 hrs)
 
-- [ ] **Delete 202 MB of garbage.** Ten stale `query_engine-windows.dll.node.tmp*` copies in
-      `backend/node_modules/.prisma/client/` — leftovers from `prisma generate` racing a locked DLL.
-      Add a `predist` guard. **Two minutes.**
-- [ ] **Drop the Prisma CLI + `@prisma/engines` from the bundle** (~114 MB). Runtime never calls it —
-      migrations go through your own `node:sqlite` runner. Move to devDependencies.
-- [ ] **`electronLanguages: ["en-US"]`** (~46 MB). **Exclude `backend/data/fdc-cache`, `fdc-fixtures`,
-      `reports/`** (~30 MB). Total: **809 MB installed → ~380 MB.**
-- [ ] **Cap or virtualize `FoodsTab.jsx:404`.** Expanding "protein" mounts **3,867** rows. The comment
-      at line 265 says "never render 900 rows" — written when the library was 854 foods. A slice is
-      10 minutes; `react-window` is an hour.
-- [ ] **Gate `runDataQualityAudit()` behind `!app.isPackaged`** (`server.js:135`). 973 ms, 155 ms of
-      event-loop block, RSS 65 → 320 MB with ~220 MB never returned — to log one line nobody can see.
-- [ ] **Cache the recipe pool** in `planContext.js:94` behind a library-version key. Costs
-      192–532 ms per call and `plans.js` calls it from eight places. **The solver itself is 30–50 ms —
-      leave it alone.**
-- [ ] **Add `select` to `foods.js:14` + `compression` middleware.** Currently 14,122 rows / 13.1 MB
-      uncompressed / 1,125 ms, re-paid every time the Foods tab opens. `Food.micros` alone is 6.9 MB.
-- [ ] **`@@index([recipeId])` and `@@index([foodId])` on `RecipeIngredient`** (zero indexes today,
-      full-scans 7,245 rows). Plus `PRAGMA journal_mode=WAL` and one `ANALYZE`.
+### 1A. Correctness block [C] — ~11 hrs
 
----
+Every item here would otherwise turn a tester's real reaction into noise. You cannot tell
+"this isn't useful" from "this showed me two different weights."
 
-## Phase 5 — Promises not yet kept (week 5, ~8 hours)
+- [ ] **`weighins.js:50` → call the existing `trailingAverage()`** · 1 hr
+  `bmrEngine.js:606` ships a correct calendar-day implementation, tested at
+  `tests/trendRateWindow.test.js:138`, with **zero production callers**. Today's Verdict says
+  208 lb while Trend says 206.5 lb — same statistic, same moment.
+  *Skipped:* you ship a product whose two headline screens disagree.
+- [ ] **Same fix at `adaptiveTarget.js:144` and `weightNow.js:10`; re-baseline
+  `tests/golden/engine-baseline.golden.json`** · 4 hrs
+  `resolveEnergy()` feeds this weight into `computeEnergy()`, so every BMR formula, the TDEE, the
+  target and all four macro ranges are currently built on the wrong number.
+  *Skipped:* the corruption survives in the engine even after the display is fixed.
+- [ ] **Mount `ScreenBoundary` in `App.jsx`'s `<main>`** · 0.5 hr
+  Written and documented in `ErrorBoundary.jsx`; `grep ScreenBoundary frontend/src/App.jsx`
+  returns nothing.
+  *Skipped:* one bad render blanks the app, nav included, for a paying user.
+- [ ] **Over-target warning tolerance — `TodayTab.jsx:917`** · 0.5 hr
+  Fires at `kcalPct > 1`, i.e. 1 kcal over. Currently scolds over 41 kcal on a plan the solver
+  itself scored good, in direct violation of the color law.
+- [ ] **Six write-only profile fields → `PROFILE_FIELDS` (`routes/profile.js:18`)** · 2 hrs
+  PUT returns 200 and saves nothing. Silent data loss during onboarding.
+- [ ] **Remove the AI-generation allergen override on the web build** · 0.5 hr
+  The one path where a user toggle defeats `exclusionGate.js`. Adjudicated in the teardown: consent
+  does not survive a UI — the person who ticks the box is not the person eating three days later.
+  One boolean. (The feature it protects is on the kill list anyway.)
+- [ ] **Sentry free tier, backend + frontend** · 3 hrs
+  Terminal error middleware at `server.js:192` logs to stdout; on Railway that is a tail nobody
+  reads.
+  *Skipped:* a tester's 500 is invisible and you learn nothing from the test.
 
-- [ ] **Ship `GET /api/export`.** `CLAUDE.md:116` says "Data is never trapped: JSON+CSV export must
-      always work." **No export code exists anywhere** — 8,129 rows across 26 tables, zero exportable.
-      Full user scope, `?format=json|csv`. Quote-escape, `'`-prefix `= + - @`, UTF-8 BOM
-      (43 current food names are non-ASCII, 109 contain commas).
-- [ ] **Then `POST /api/import`** for that JSON. Without it the promise is one-way.
-- [ ] **Fix or delete the auto-updater.** Zero GitHub releases exist; your log shows five
-      `HttpError: 406` failures, and the app reports them as *"check failed (this is normal offline)"*.
-      Either cut a real release with `electron-builder --publish` (a manual upload renames the asset
-      to `Cut.Protocol.Setup.1.0.0.exe` and 404s), or remove the updater and tell testers updates are
-      manual. Also: bump the version — today's build is `1.0.0` over `1.0.0`.
-- [ ] **Prune backups + write `docs/RESTORE.md`.** Never pruned; future ones are 16 MB each. The only
-      restore instruction today is a string inside an error message.
-- [ ] **Set `deleteAppDataOnUninstall: false` explicitly.** It's the default and uninstall is currently
-      safe (verified — the uninstaller carries no `$APPDATA` path). Make it impossible to flip by accident.
-- [ ] **Wire `Profile.adaptiveTdee`** — the column exists, nothing writes it, no UI control. Same for
-      `proteinPriorityMode` (still localStorage-only).
-- [ ] **Add confirm-with-undo on the four hard deletes** — recipe, weigh-in, diary entry, training plan.
+### 1B. Deploy [S] — ~8 hrs, `BUILD_PLAN.md` Runbook Parts A–C
 
----
+- [ ] **Part A — Supabase project + Google OAuth client**, both `.env` files filled
+- [ ] **Part C — Railway deploy**, `DATABASE_URL` (Session pooler), fresh `JWT_SECRET`,
+      `VITE_SUPABASE_*` build args, generate domain, set `APP_URL`
+- [ ] **Seed the cloud library once:** `node scripts/buildTemplateDb.mjs && node
+      scripts/seedCloudLibrary.mjs --url "<DATABASE_URL>"`
+- [ ] **Do NOT set `ANTHROPIC_API_KEY`.** The global LLM cap is $15/month
+      (`brain/config.js:28`) — ~94 Opus-5 generations across your *entire* customer base. Leaving
+      the key unset means AI generation is cleanly absent instead of intermittently broken.
+- [ ] **Legal minimum:** real support email into `terms.html` / `privacy.html` (currently literal
+      `[SUPPORT EMAIL]`, `[DATE]`, `[REGION]`), and ship `docs/DISCLAIMER.md` — it is not in the
+      installer allowlist so it has never shipped anywhere
+- [ ] **Skip Lemon Squeezy entirely for now.** The cohort is free; the code is already written.
 
-## Phase 6 — Language and polish (ongoing, ~6 hours)
+### 1C. Recruit [S] — end of week 1
 
-- [ ] **Remove `see src/lib/groceryPrices.js` from the shipped UI** (`groceryList.js:236`). Also
-      `docs/adaptive-tdee-methodology.md` (`AdaptiveTdeeCard.jsx:197`) and `ADAPTIVE_TDEE=off`
-      (`adaptiveTarget.js:356`). A repo path in a grocery list is the loudest internal-tool tell in the app.
-- [ ] **De-jargon the Plan tab** — that's where the jargon actually lives, not Engine. `solver` →
-      meal planner, `pool` → your recipes, `slot` → meal, `horizon` → how far ahead, `tolerance` →
-      close enough to your targets.
-- [ ] **Rename the `§1/§2/§2b/§3/§4` section codes** to plain steps.
-- [ ] **Guard `kc()`** — `"From the formula alone this would be NaN"` is currently reachable
-      (`EngineTab.jsx:9` + `:175`).
-- [ ] **Stop rendering raw enums** — `<option value="meal">meal</option>`, `bread_or_pastry_side`,
-      `dairy-eggs`, `(desk-office)`, `{iss.code}: {iss.detail}`, and validation errors naming object
-      keys (`heightCm must be a number between 100 and 250`).
-- [ ] **Rewrite the verdict stamps** in sentence case, number first: `SLOW` → "Slower than planned",
-      drop `HOLD 1 WK` and "adherence", and stop leading with "check logging accuracy" (blames before it helps).
-- [ ] **Wrap `PlanTab.jsx:183,194`** in `fmtD` — raw ISO dates reach the screen ("Week of 2026-07-27").
-- [ ] **Pick one macro order.** Chips render P/F/C, bars render P/C/F, Engine renders protein/fat/carb.
-- [ ] **Design-law cleanup:** green on native checkboxes/radios (`accentColor` — six green ticks are the
-      loudest thing on Engine), red on food-data warnings where the sibling badge already uses amber
-      (`FoodsTab.jsx:146-157`), borrowed macro hues on `PlanTab` role tiles, and the splash spinner
-      (green *and* forbidden — `index.css:150` says no spinners).
-- [ ] **Fix `--faint-light` on body text** — 3.26:1, fails WCAG AA, across ~40 sites. Your own comments
-      at `Parts.jsx:31-34` diagnose it and fix it in two places.
-- [ ] **Widen `SetupWizard.jsx:266`** — `max-w-2xl` is the phone-width centered column your constitution
-      forbids, on the first screen a new user sees.
-- [ ] **Add `<h2>` to `Card`** (`Parts.jsx:23-39`) — one heading per screen today, so screen-reader users
-      can't navigate a 7-card dashboard.
+- [ ] **One honest post**, r/fitness30plus or r/leangains. Construction by day, built this at
+      night because you were sick of weighing chicken at 5 a.m. before a ten-hour shift. Here's
+      what it does. 20 free accounts.
+- [ ] **Recruit 20, onboard them, then leave them alone.** No hand-holding, no concierge. You are
+      measuring the product, not your enthusiasm.
+- [ ] **Log the cohort:** signup date, and whether they completed setup. That's the whole
+      instrumentation.
 
 ---
 
-## Delete, don't fix
+## WEEKS 2–3 — Build the paid path while the clock runs (~34 hrs)
 
-- **The comparison table's four wrong claims** (`CompareDialog.jsx`). Cronometer's free tier **does**
-  carry ads. MyFitnessPal Premium+ **does** ship a meal planner. Lose It's "~63M foods" is unsupported
-  (published figures cluster near 7M). And "no account" is contradicted by your own login screen —
-  it's a *local* account. Also `docs/showcase/index.html` says "854 Foods, audited"; it's 14,122, of
-  which 605 are manual. Fix or pull the page — wrong claims about named companies in a shipped product
-  are a different category of problem.
-- **`CompareDialog`'s "Zero-tolerance allergy exclusion: yes"** — `WellbeingCheck.jsx:146` disclaims
-  exactly this on another screen. Given Phase 3, the disclaimer is the true one.
-- **`"{n} foods · validated against kcal ≈ 4P + 4C + 9F"`** (`FoodsTab.jsx:320`) as a warrant of
-  correctness — every one of the 470 corrupt rows passes that check perfectly.
-- **`basicCookingSteps.js`** — 232 lines, zero importers.
-- **`groceryPrices.js`** — after Phase 1, delete it so it can't come back. `ingredientCosts.json`
-  (769 entries, word-boundary matching) already replaced it; `groceryList.js:17` just never switched.
+The 14 days pass whether you work or not. This is the work that must exist before money moves.
 
-## Repo hygiene (30 min, zero risk)
+### Retention organs [C] — ~16 hrs
 
-> ### ⚠ CORRECTION 2026-08-08 — do not action the next item as written
->
-> Its central claim is now false, and the "zero risk" in the heading above no longer
-> applies to it. Measured today, not estimated:
->
-> | claim in the item | measured 2026-08-08 |
-> |---|---|
-> | 12 branches | **28** local branches |
-> | 10 worktrees | **4** |
-> | "zero unmerged work exists" | **14 branches carry unmerged work**, 1 to 195 commits ahead of `master` |
->
-> Ahead of `master`: `recipe-brain` 195 · `light-migration` 180 · `saas-launch` 176 ·
-> `ui-restyle` 155 · `fix/profile-non-trainer-option` 122 · `fleet/measure-2026-08` 122 ·
-> `ux/plan-week-board-declutter` 122 · `backup/pre-scrub-2026-08-04` 120 ·
-> `ux/simplify-2026-08` 106 · `campaign-2026-07` 69 · `fix/audit-remediation` 68 ·
-> `claude/apps-editing-claude-02aba7` 6 · `gh-pages` 1 · `wip/agent-run-raw` 1.
-> **Do not sum those** — they overlap heavily; `recipe-brain` contains `saas-launch`, and so on.
->
-> **Stated so this correction is not overstated:** the item specifies `git branch -d`, not
-> `-D`, and `-d` REFUSES a branch with unmerged commits. Followed literally it would fail
-> safely on all 14. `git worktree remove` likewise refuses a dirty worktree, and removing a
-> clean one does not delete its branch. The real hazard is a session that hits fourteen
-> refusals and reaches for `-D` to make the checkbox complete.
->
-> **What IS still safe.** 13 branches genuinely are strict ancestors of `master` and carry
-> nothing: `allergy-tier1`, `backup/pre-overhaul`, `competitive-gap-integration`,
-> `food-schema-base`, `qc/overnight-2026-07-23`, `track/a11y-ed-safety`,
-> `track/adaptive-tdee`, `track/barcode-off`, `track/food-integrity-usda`,
-> `track/glp1-protein-floor`, `track/micronutrients`, `track/recipe-import`,
-> `track/solver-benchmark`. Deleting those is the 30-minute zero-risk task this item was
-> originally describing.
->
-> Nothing has been deleted. Re-measure before acting — these counts move daily.
+The app currently has no scheduler, no queue, no cron, and no email provider. **Nothing in this
+system can execute at a time the user did not personally initiate.**
 
-- [ ] **SUPERSEDED, see correction above — ~~Delete 12 branches and 10 worktrees.~~** All are strict ancestors of master, verified three ways —
-  **zero unmerged work exists.** Keep `backup/pre-overhaul` and `gh-pages`. Remove worktrees first
-  (`git worktree remove`), then `git branch -d` (not `-D` — let it refuse if I'm wrong).
-- [ ] **Delete `.qc-scratch-agent*`** — 379 MB, agent7 alone is 243 MB.
-- [ ] **Correct `CLAUDE.md:28-37`.** It tells every future session the installer ships your `.env` and
-  real `dev.db`. That specific claim is stale — and the leak reopened under *different filenames*.
-  Rewrite it to describe the allowlist, or the next session will re-fix a fixed bug and miss the real one.
-- [ ] **Fix the `docs/design/` phantom reference** in CLAUDE.md — the research report it cites never existed.
-- [ ] **Move `portedFromRecomp/` out of `backend/src/`.** 76% of `backend/src` bytes are seed data;
-  moving it makes `src` mean "code that runs" (80K → 19K lines).
-- [ ] **Void three QC reports.** `integrity-sweep.md` ("corruption: 0 — clean"), `allergen-sweep.md`
-  ("0 recipes affected"), and `security/scan-report.md` (certifies an installer whose SHA-256 and size
-  no longer match today's file). All three assert clean on things that aren't. Don't cite them again
-  until their test definitions change.
+- [ ] **Resend + `SentMessage` table + 3 templates** (welcome · day-14 adaptive-on · weekly
+      digest) · 10 hrs
+- [ ] **Railway cron service + the day-index send job** · 6 hrs
+      One nightly pass: per active user, evaluate day-index and state, send at most one email,
+      record it. ~200 lines.
+- [ ] **Send the test cohort's day-3 and day-14 emails BY HAND** · 1 hr [S]
+      Forty emails. You get the retention signal *and* you test the copy before automating it.
+      Do not build the automation for copy you have never seen land.
+- [ ] **Never build:** streak shaming, "you haven't logged in 3 days!", notification spam. The
+      constitution forbids engagement bait and it is right — this cohort churns *harder* when
+      nagged. Every message carries information or it doesn't go.
+
+### Before a dollar moves [C] — ~11 hrs
+
+- [ ] **Account deletion** · 8 hrs
+      `schema.prisma:68–75`: six relations default to `onDelete: Restrict`, so `user.delete()`
+      always throws P2003; six more tables carry a bare `userId` with no FK. Needs an explicit
+      cascade order.
+      *Skipped:* you are selling a health-data service people cannot leave. PIPEDA, app stores,
+      and basic decency.
+- [ ] **Repricing → $14.99/mo · $119/yr · 14-day trial** · 3 hrs
+      `pricing-section.jsx` currently reads $14.99/$119.99 placeholder → was to become $24.99/$125.
+      See the teardown Stage 4 for why the monthly comes down and why the trial is 14 days and not
+      7. `entitlement.js:23` already handles `on_trial` → premium; zero new backend code.
+      **[S] decision required before I touch this** — `BUILD_PLAN.md` marks $24.99 as locked.
+
+### Quality-per-hour [C] — ~7 hrs
+
+- [ ] **Strip the eyebrow prop from ~30 call sites** (`ui/Parts.jsx:47`) · 4 hrs
+      Highest perceived-quality gain per hour in the whole backlog; half of them duplicate the
+      title beside them.
+- [ ] **Delete Today's subtitle line and the Micronutrients tombstone card** · 1 hr
+      Every fact in the subtitle is already on screen twice; the tombstone points at a permanently
+      visible nav item and has been dead since 2026-07-24.
+- [ ] **`RecipesTab.jsx:483` default grouping `"cuisine"` → `"protein"`** · 0.5 hr
+      Cuisine dumps 69% of recipes into Western/Comfort + Uncategorized.
+- [ ] **Food-search relevance comparator** (~4 lines) · 1.5 hrs
+      "chicken" returns 824 rows with **"Chicken Breast" at position 230**. Shorter-name-first
+      fixes most of it.
+
+---
+
+## AT THE GATE — day 14
+
+Count the two numbers. Then pick a branch and say which one out loud.
+
+### PASS (≥6 return, ≥10 with 3+ weigh-ins)
+
+- [ ] Lemon Squeezy test mode, five test-card scenarios on prod (`BUILD_PLAN.md` Part D)
+- [ ] LS activation + live product + penny test (Part E)
+- [ ] **Then, and only then, the retention features that make it stick:**
+      learned recipe pool (16 hrs — the "can't live without it" mechanic), day-14 celebration
+      moment with the formula-vs-measured chart (8 hrs), diary portions instead of grams (12 hrs),
+      time-to-first-value under 5 minutes (12 hrs), PWA (8 hrs), stall detection (8 hrs),
+      Training behind the paywall (2 hrs).
+
+### FAIL (<6 return)
+
+Do **not** proceed to billing. The failure mode is diagnostic:
+
+- **They never completed setup** → onboarding problem. Fix time-to-first-value, re-run with 20 new
+  people. Cheap.
+- **They set up, never weighed in** → the engine never fires, so the differentiator never existed
+  for them. The day-3 nudge and a lower-friction weigh-in are the fix.
+- **They weighed in and still left** → the product itself doesn't hold. This is the expensive
+  answer. Reconsider the wedge before writing more code.
+
+**Interview at least 5 of the 20 either way.** The number tells you *whether*; only they tell you
+*why*, and a phone call is cheaper than any feature.
+
+---
+
+## STOP BUILDING — killed, out loud
+
+| Kill | Why |
+|---|---|
+| **Brain / LLM coach** (~35 files, `src/lib/brain/`) | Default-off, $15/mo global cap, touches nothing in the value prop, most complex subsystem in the repo |
+| **AI recipe generation** | The only LLM cost, premium-gated, unreliable at any scale because of that cap, and the last remaining allergen-override path. 889 recipes already exist |
+| **Electron / desktop shell** | The web deploy doesn't use it; doubles the packaging surface and owns the denylist secrets-leak problem |
+| **Micronutrients** | A nice-to-have for users who can't reliably log calories yet |
+| **Compare dialog** | A competitor matrix permanently mounted in a single-user app, containing four claims that are wrong about named companies. Move the content to the README or delete it |
+| **Design v2 passes 2/3 and 3/3** | Two complete design systems exist and one supersedes the other. A third pass is drift (~40 hrs saved) |
+| **Training beyond the paywall move** | v1 templates, four byte-identical weeks (`generator.js:131–151`). Leave it exactly as it is |
+
+---
+
+## Done since 2026-07-24 — do not re-do
+
+Verified live 2026-08-06. The old plan lists all of these as open.
+
+- **Unify `todayStr()`** — both `dates.js:76`, no third inline copy. DONE
+- **`resolveSlot` fat/carb tie-break** — `weeklyPlanner.js:696–703` keeps all `fits` and sorts by
+  prior/comp/worstRatio. DONE
+- **One filter across every surface** — became `exclusionGate.js`, with a CI source-scan that
+  breaks the build if a new surface reaches around it. DONE, and better than the plan asked for
+- **Age gate** — `ADULT_MIN_AGE`, refused in wizard and route. DONE
+- **BMI floor on goal weight** — `GOAL_BMI_ACK` / `GOAL_BMI_REFUSE`, `profile.js:386`. DONE
+- **NEDIC hours** — corrected 2026-07-24. DONE
+- **`GET /api/export` + `POST /api/import`** — `routes/export.js` (53 KB). DONE
+- **`.qc-scratch-agent*`** — 0 MB, already emptied. DONE
+- **The "470 corrupt food rows"** — overstated ~6×. Live count is **80**, the UI computes it
+  correctly, and the repair ran 2026-07-31. Stale in `foodCategories.js:87`, `FoodsTab.jsx:528`,
+  and root `CLAUDE.md`
+
+**Still open from the old plan, deliberately parked** (all fail the Now gate): packaging allowlist
+inversion, the 202 MB / 114 MB bundle trims, `FoodsTab` virtualization, RecipeIngredient indexes,
+auto-updater, backup pruning, the language/polish phase. Every one is a desktop-build concern and
+the web deploy does not use the desktop build. Revisit only if desktop ships again.
+
+**Repo hygiene, 30 min, zero risk, do it while waiting:** 3 stale worktrees
+(`.claude/worktrees/apps-editing-claude-02aba7`, `.claude/worktrees/ux-simplify`,
+`~/worktrees/cp-prefix-baseline`) and ~19 merged branches. `git worktree remove` first, then
+`git branch -d` — never `-D`; let it refuse if the check is wrong.
+
+---
+
+## What's already good — do not "improve" it
+
+Preserved from the 2026-07-24 plan and re-verified where cheap. Written down so no future session
+wrecks it.
+
+- **The nutrition math.** Ten BMR formula coefficient sets verified against the literature. The
+  calorie floor survived a 250,880-combination sweep and a 20,000-case fuzz with **zero** breaches.
+  Re-verified 2026-08-06: `effectiveFloor()` = `max(sexFloor, rmr×0.95, userFloor)` and the ±125
+  adaptive step cap is explicitly subordinated to it. I could not construct a sub-floor input.
+- **The adaptive estimator.** Huber-robust, AR(1)-corrected, real standard error. A 10 lb overnight
+  spike moved expenditure by 3 kcal. The target is derived, never stored, so correcting a weigh-in
+  retroactively undoes its adjustment. **This is the product. Protect it.**
+- **`exclusionGate.js`.** The gate owns the evidence, degraded input fails closed, and a source
+  scan breaks CI if a new surface imports the raw primitives. Better than any commercial app in
+  the category.
+- **The safety refusals.** Minor gate, goal-BMI refusal, 422-with-`ack` on unsafe rates, floors
+  shown rather than hidden, SCOFF screen never gated, verified crisis numbers. This is the
+  positioning, not just compliance.
+- **`lib/api.js` error copy.** Every message names a cause, says whether the change landed, and
+  gives a next step. The best writing in the product.
+- **The over-target coach line, the swap → use → lock flow, Trend's projection cone and its refusal
+  to draw past the last weigh-in, the one-click "Ate as planned" path** (idempotent server-side —
+  and the seam the learned-recipe-pool feature will hang off).
+- **`brain/governance.js`** + `aiGovernanceStructure.test.js`, which fails the build on a new
+  ungoverned LLM call site. Keep this even after the Brain is killed.
+- **Okabe-Ito macro triad, no information conveyed by colour alone, `prefers-reduced-motion`
+  honoured, zero shadows.**
+- **The eating-disorder screening files** — `WellbeingCheck.jsx`, `WellbeingTab.jsx`,
+  `lib/wellbeingResources.js`. **Exempt from any global find-and-replace.** SCOFF wording is
+  verbatim-correct; rewording de-validates the instrument.
 
 ---
 
 ## If you only do five things
 
-1. Rotate the three credentials, fix the packaging allowlist, fix the two scanner blind spots. (1 h)
-2. Quarantine the 470 corrupt food rows and close `usdaCandidateAcceptable()`. (2 h)
-3. Unify `todayStr()` on local time. (1 h)
-4. Give `resolveSlot` a fat/carb tie-break. (1 h)
-5. Ship the library to your own install so any of this reaches the app you actually use. (2 h)
+1. **[C]** `trailingAverage()` in all three call sites. (5 h) — the app stops disagreeing with itself
+2. **[S]** Supabase + Google + Railway. (8 h) — the only step that makes anything else possible
+3. **[S]** Post, recruit 20, leave them alone. (6 h) — the only new information in this document
+4. **[C]** Resend + cron. (16 h) — the missing organ
+5. **[S]** Interview 5 of them on day 14. (2 h) — the number says whether; they say why
 
-Seven hours, and the app stops lying to you.
-
----
-
-## What's already good — don't touch it
-
-Worth writing down so no future session "improves" it:
-
-- **The nutrition math.** All ten BMR formula coefficient sets verified against the literature.
-  The calorie floor survived a 250,880-combination sweep and a 20,000-case fuzz with **zero** breaches.
-- **The adaptive estimator.** Huber-robust, AR(1)-corrected, with a real standard error. A 10 lb
-  overnight spike moved expenditure by 3 kcal. The target is *derived, never stored*, so correcting a
-  weigh-in retroactively undoes its adjustment.
-- **The test runner** (`scripts/runTests.mjs`) and the CI entrypoint guard that refuses to be guarded
-  by the thing it guards. ~99% of 1043 tests are load-bearing; 12 of 14 planted bugs died.
-- **`brain/governance.js`** and `aiGovernanceStructure.test.js`, which fails the build on a new
-  ungoverned LLM call site. AI-drafted recipes never keep model-authored macros.
-- **The FK-off migration hardening** (`desktopBootstrap.js:329-334`). Not defensive theatre — with
-  enforcement live, migration `20260717183855` bricks the app. Verified by counterfactual.
-- **The boot-failure screens.** Every branch lands on a real screen with a cause, a next step, and
-  an "Open log folder" button. Better than most shipped Electron apps.
-- **The deterministic matcher** (`ingredientResolver.js:360-433`). The fuzzy-match bug is genuinely,
-  properly dead. Only the data it left behind is broken.
-- **Okabe-Ito macro triad, colorblind-safe, no information conveyed by colour alone,
-  `prefers-reduced-motion` fully honoured, zero shadows, `theme.js` 24/24 in sync with `index.css`.**
+Thirty-seven hours, spread over three weeks, and you stop guessing.
