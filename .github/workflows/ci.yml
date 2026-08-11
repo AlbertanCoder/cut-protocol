@@ -78,6 +78,7 @@ jobs:
         run: |
           npm run seed
           npm run seed:recipes
+          npm run seed:recipes:recomp
 
       # Guard the guard (fleet finding tests-quality-1). Every tripwire in
       # backend/scripts/runTests.mjs is only reachable while `npm test` still
