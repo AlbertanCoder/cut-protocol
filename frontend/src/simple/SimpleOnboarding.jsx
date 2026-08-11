@@ -1,0 +1,356 @@
+import { useState } from "react";
+import { api } from "../lib/api.js";
+import { describeError } from "../lib/api.js";
+import { parseWeight, parseHeight, ftin2cm, weightUnit } from "../lib/units.js";
+import { Screen, Ask, Big, Quiet, Choice, NumberBox, Dots, Note, Details } from "./parts.jsx";
+
+// Six plain questions, one per screen, then a review.
+//
+// WHAT THIS IS NOT: a replacement for SetupWizard.jsx. That file is untouched
+// and still runs the full 4-step flow on the full surface. This is a second
+// door into the SAME endpoint.
+//
+// THE PAYLOAD IS IDENTICAL. buildPatch() below is a copy of
+// SetupWizard.jsx:465-482, field for field, including the defaults for
+// everything this surface does not ask about. Reshaping the profile payload is
+// forbidden (CLAUDE.md rule 3), and a second writer that sends a different
+// shape is how that rule gets broken by accident.
+//
+// WHY THESE SIX: measured, not guessed. docs/audit/ux-review-2026-08-02/
+// 09-profile-setup-states.md:156-193 tested the 4-step wizard against a copy of
+// the database and found goal weight and all of step 2 move the daily calorie
+// number by zero. Goal weight is still asked here — it is what the weight chart
+// aims at, and people expect to be asked. The rest take the wizard's own
+// defaults, are labelled as assumptions on the review screen, and stay editable
+// in the full app.
+//
+// THE FOOD SCREEN HAS NO SKIP, on purpose. roadmap/09-ux-onboarding.md:81-99
+// records why: an empty exclusions list once meant a real shellfish allergy met
+// real shellfish. "No restrictions" here is a stated answer, not a blank field.
+
+const COMMON = [
+  "Shellfish", "Peanuts", "Tree nuts", "Dairy",
+  "Gluten", "Soy", "Eggs", "Fish",
+];
+
+export default function SimpleOnboarding({ onDone, onShowFull }) {
+  const [i, setI] = useState(0);
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState(null);
+  // The three ways the server can refuse, each answered in its own shape.
+  // Same contract SetupWizard.jsx:516-540 handles.
+  const [rateAck, setRateAck] = useState(false);
+  const [goalAck, setGoalAck] = useState(false);
+  const [refusal, setRefusal] = useState(null);
+
+  const [d, setD] = useState({
+    unitPref: "imperial",
+    sex: "M",
+    age: "",
+    heightFt: "", heightIn: "", heightCm: "",
+    weight: "",
+    goal: "",
+    exclusions: [],
+    custom: "",
+    foodAnswer: null, // "some" | "none" — must be set to advance
+  });
+  const set = (patch) => setD((c) => ({ ...c, ...patch }));
+
+  const metric = d.unitPref === "metric";
+  const wUnit = weightUnit(d.unitPref);
+
+  // Identical to SetupWizard.jsx:465-482. Values this surface does not ask for
+  // are that file's own defaults (SetupWizard.jsx:246-262) — the same profile a
+  // person gets by clicking through the full wizard without touching them.
+  const buildPatch = () => ({
+    unitPref: d.unitPref,
+    sex: d.sex,
+    age: +d.age,
+    heightCm: metric ? parseHeight(+d.heightCm, "metric") : ftin2cm(d.heightFt, d.heightIn),
+    bodyFatPct: 0,
+    startWeightKg: parseWeight(+d.weight, d.unitPref),
+    goalWeightKg: parseWeight(+d.goal, d.unitPref),
+    occupationKey: "desk-office",
+    sessionsPerWeek: 0,
+    trainingStyle: "none",
+    minutesPerSession: 0,
+    dietaryStyle: null,
+    excludedFoods: d.exclusions,
+    mealsPerDay: 3,
+    snacksPerDay: 1,
+    rateLbPerWeek: 1.0,
+  });
+
+  const submit = async () => {
+    setBusy(true);
+    setError(null);
+    setRefusal(null);
+    try {
+      await api.putProfile({
+        ...buildPatch(),
+        ...(rateAck ? { rateAcknowledged: true } : {}),
+        ...(goalAck ? { goalWeightAcknowledged: true } : {}),
+      });
+      await onDone();
+      return;
+    } catch (e) {
+      handleError(e);
+      setBusy(false);
+    }
+  };
+
+  // Every refusal lands the person on the screen that owns the input. An error
+  // about age shown on the food screen is an error nobody can act on.
+  const handleError = (e) => {
+    const b = e.body || {};
+    if (e.status === 403 && b.gate === "adult-only") {
+      setRefusal({ kind: "age", text: b.error || "This app is for adults only." });
+      setI(1);
+      return;
+    }
+    if (e.status === 400 && b.gate === "goal-weight-floor") {
+      setRefusal({ kind: "goal", text: b.error || "That goal weight is below what's safe for your height." });
+      setI(4);
+      return;
+    }
+    if (e.status === 422 && b.requiresAck) {
+      if (b.ack === "goalWeight") {
+        setRefusal({ kind: "goal-ack", text: b.error });
+        setI(4);
+        return;
+      }
+      setRefusal({
+        kind: "rate-ack",
+        text: "Losing a pound a week is fast for your size.",
+        reasons: b.reasons,
+      });
+      setI(6);
+      return;
+    }
+    if (b.fields && Object.keys(b.fields).length) {
+      const [first] = Object.values(b.fields);
+      setError(first);
+      return;
+    }
+    setError(describeError(e));
+  };
+
+  const toggle = (term) =>
+    setD((c) => ({
+      ...c,
+      exclusions: c.exclusions.some((x) => x.toLowerCase() === term.toLowerCase())
+        ? c.exclusions.filter((x) => x.toLowerCase() !== term.toLowerCase())
+        : [...c.exclusions, term],
+      foodAnswer: "some",
+    }));
+
+  const addCustom = () => {
+    const t = d.custom.trim();
+    if (!t) return;
+    setD((c) => ({
+      ...c,
+      exclusions: c.exclusions.some((x) => x.toLowerCase() === t.toLowerCase()) ? c.exclusions : [...c.exclusions, t],
+      custom: "",
+      foodAnswer: "some",
+    }));
+  };
+
+  const heightOk = metric ? +d.heightCm > 0 : (+d.heightFt > 0 || +d.heightIn > 0);
+  const ready = [
+    !!d.sex,
+    +d.age > 0,
+    heightOk,
+    +d.weight > 0,
+    +d.goal > 0,
+    d.foodAnswer === "none" || (d.foodAnswer === "some" && d.exclusions.length > 0),
+    true,
+  ];
+
+  const next = () => { setRefusal(null); setError(null); setI((n) => n + 1); };
+  const back = () => { setRefusal(null); setError(null); setI((n) => Math.max(0, n - 1)); };
+
+  const footer = (
+    <div className="flex items-center justify-between pt-2">
+      {i > 0 ? <Quiet onClick={back}>Back</Quiet> : <span />}
+      <Details onClick={onShowFull} label="Use the full setup instead" />
+    </div>
+  );
+
+  const wrap = (node) => (
+    <Screen>
+      <div className="flex flex-col gap-8">
+        <Dots total={7} index={i} />
+        {refusal && <Note>{refusal.text}</Note>}
+        {error && <Note>{error}</Note>}
+        {node}
+        {footer}
+      </div>
+    </Screen>
+  );
+
+  if (i === 0) return wrap(
+    <Ask title="Are you male or female?" hint="Your body uses energy differently either way. This changes the numbers.">
+      <Choice
+        value={d.sex}
+        onChange={(v) => set({ sex: v })}
+        options={[{ value: "M", label: "Male" }, { value: "F", label: "Female" }]}
+      />
+      <Big onClick={next} disabled={!ready[0]}>Next</Big>
+    </Ask>
+  );
+
+  if (i === 1) return wrap(
+    <Ask title="How old are you?">
+      <NumberBox value={d.age} onChange={(v) => set({ age: v })} unit="years" autoFocus onEnter={() => ready[1] && next()} />
+      <Big onClick={next} disabled={!ready[1]}>Next</Big>
+    </Ask>
+  );
+
+  if (i === 2) return wrap(
+    <Ask title="How tall are you?">
+      <div className="flex flex-col gap-4">
+        {metric ? (
+          <NumberBox value={d.heightCm} onChange={(v) => set({ heightCm: v })} unit="cm" autoFocus onEnter={() => ready[2] && next()} />
+        ) : (
+          <div className="grid grid-cols-2 gap-3">
+            <NumberBox value={d.heightFt} onChange={(v) => set({ heightFt: v })} unit="ft" autoFocus />
+            <NumberBox value={d.heightIn} onChange={(v) => set({ heightIn: v })} unit="in" onEnter={() => ready[2] && next()} />
+          </div>
+        )}
+        {/* Unit choice lives here rather than on a screen of its own — it is a
+            setting, not a question, and it changes the two screens after this
+            one. Nothing typed is converted because nothing is typed yet. */}
+        <Quiet onClick={() => set({ unitPref: metric ? "imperial" : "metric", heightCm: "", heightFt: "", heightIn: "", weight: "", goal: "" })}>
+          {metric ? "Use feet and pounds instead" : "Use centimetres and kilograms instead"}
+        </Quiet>
+      </div>
+      <Big onClick={next} disabled={!ready[2]}>Next</Big>
+    </Ask>
+  );
+
+  if (i === 3) return wrap(
+    <Ask title="What do you weigh right now?" hint="Roughly is fine. You can log it properly every morning later.">
+      <NumberBox value={d.weight} onChange={(v) => set({ weight: v })} unit={wUnit} autoFocus onEnter={() => ready[3] && next()} />
+      <Big onClick={next} disabled={!ready[3]}>Next</Big>
+    </Ask>
+  );
+
+  if (i === 4) return wrap(
+    <Ask title="What would you like to weigh?" hint="A number to aim at. It is not a deadline, and you can change it whenever.">
+      <NumberBox value={d.goal} onChange={(v) => set({ goal: v })} unit={wUnit} autoFocus onEnter={() => ready[4] && next()} />
+      {refusal?.kind === "goal-ack" && (
+        <label className="flex items-start gap-3 text-base leading-relaxed">
+          <input
+            type="checkbox"
+            checked={goalAck}
+            onChange={(e) => setGoalAck(e.target.checked)}
+            className="mt-1 h-5 w-5 shrink-0"
+          />
+          <span>I understand, and I want to aim at this weight anyway.</span>
+        </label>
+      )}
+      <Big onClick={next} disabled={!ready[4]}>Next</Big>
+    </Ask>
+  );
+
+  if (i === 5) return wrap(
+    <Ask
+      title="Anything you can't eat?"
+      hint="This filters every meal the app ever builds for you. There is no skip on this one — an empty list has served someone shellfish before."
+    >
+      <div className="flex flex-col gap-5">
+        <div className="flex flex-wrap gap-2">
+          {COMMON.map((t) => {
+            const on = d.exclusions.some((x) => x.toLowerCase() === t.toLowerCase());
+            return (
+              <button
+                key={t}
+                type="button"
+                onClick={() => toggle(t)}
+                aria-pressed={on}
+                className={`min-h-12 px-4 rounded-2xl text-base font-medium border transition-colors ${
+                  on ? "bg-secondary border-foreground text-foreground" : "bg-card border-border text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                {t}
+              </button>
+            );
+          })}
+        </div>
+
+        <div className="flex gap-2">
+          <input
+            value={d.custom}
+            onChange={(e) => set({ custom: e.target.value })}
+            onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); addCustom(); } }}
+            placeholder="Something else — type it and press enter"
+            className="flex-1 min-w-0 min-h-14 px-4 rounded-2xl border border-border bg-card text-base outline-none
+                       focus:border-foreground transition-colors"
+          />
+          <Quiet onClick={addCustom}>Add</Quiet>
+        </div>
+
+        {d.exclusions.length > 0 && (
+          <div className="flex flex-wrap gap-2">
+            {d.exclusions.map((t) => (
+              <button
+                key={t}
+                type="button"
+                onClick={() => setD((c) => ({ ...c, exclusions: c.exclusions.filter((x) => x !== t) }))}
+                className="min-h-11 px-4 rounded-2xl text-base bg-secondary border border-foreground text-foreground"
+                aria-label={`Remove ${t}`}
+              >
+                {t} ×
+              </button>
+            ))}
+          </div>
+        )}
+
+        <button
+          type="button"
+          onClick={() => set({ foodAnswer: "none", exclusions: [] })}
+          aria-pressed={d.foodAnswer === "none"}
+          className={`min-h-14 px-5 rounded-2xl text-base text-left border transition-colors ${
+            d.foodAnswer === "none"
+              ? "bg-secondary border-foreground text-foreground"
+              : "bg-card border-border text-muted-foreground hover:text-foreground"
+          }`}
+        >
+          I have nothing I need to avoid.
+        </button>
+      </div>
+      <Big onClick={next} disabled={!ready[5]}>Next</Big>
+    </Ask>
+  );
+
+  // Review. Says out loud what was assumed rather than letting a person find
+  // out later that the app decided something for them.
+  return wrap(
+    <Ask title="That's everything." hint="Here's what happens next: the app works out what you should eat each day, and shows you a day of food.">
+      <div className="flex flex-col gap-5">
+        <div className="rounded-2xl border border-border bg-card px-5 py-4 text-base leading-relaxed">
+          <p className="text-muted-foreground">
+            We assumed a desk job, no training sessions, three meals and a snack a day, and losing
+            about a pound a week. All of that is editable — nothing here is locked in.
+          </p>
+        </div>
+
+        {refusal?.kind === "rate-ack" && (
+          <label className="flex items-start gap-3 text-base leading-relaxed">
+            <input
+              type="checkbox"
+              checked={rateAck}
+              onChange={(e) => setRateAck(e.target.checked)}
+              className="mt-1 h-5 w-5 shrink-0"
+            />
+            <span>I understand it's fast for my size, and I want to go ahead.</span>
+          </label>
+        )}
+
+        <Big onClick={submit} disabled={busy || (refusal?.kind === "rate-ack" && !rateAck)}>
+          {busy ? "Setting things up…" : "Show me what to eat"}
+        </Big>
+      </div>
+    </Ask>
+  );
+}

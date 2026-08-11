@@ -30,6 +30,12 @@ import { wellbeingScreenPref } from "./lib/storage.js";
 // this file; nothing inside App changes.
 import { ThemeProvider } from "@/components/theme-provider";
 
+// The simple surface. Imported here, consumed only by AppWithTheme at the
+// bottom of the file. Placed below the protected import block (lines 1-26) so
+// that block stays byte-identical.
+import { uiMode, onUiModeChange } from "./lib/uiMode.js";
+import SimpleApp from "./simple/SimpleApp.jsx";
+
 function App() {
   // checking | out | unreachable | in
   //   out         = the server ANSWERED and said "not authenticated" (401)
@@ -246,8 +252,22 @@ function App() {
     try {
       // Web build: drop the Supabase session FIRST so no request after this
       // point can still attach a valid bearer token. Desktop: no-op.
-      await supabaseSignOut();
-      await api.logout();
+      //
+      // Defect fix 2026-08-11 (owner-approved): the comment below this block
+      // promised "whatever the server does, the local session state is
+      // cleared" — but that was only true of a REJECTION. supabase.auth
+      // .signOut() has no timeout of its own, and a HANG here stranded the
+      // whole function above every state-clearing line: the Log out button
+      // did nothing, observed live 2026-08-10. The remote sign-out is now
+      // raced against a deadline — best-effort remote, unconditional local.
+      const TIMED_OUT = Symbol("logout-timeout");
+      const result = await Promise.race([
+        (async () => { await supabaseSignOut(); await api.logout(); return null; })(),
+        new Promise((resolve) => setTimeout(() => resolve(TIMED_OUT), 4000)),
+      ]);
+      if (result === TIMED_OUT) {
+        notice = "Signed out on this device — the server didn't confirm in time, so sign out again once it's reachable.";
+      }
     } catch (e) {
       if (!isAbortError(e)) {
         notice = isNoAnswer(e)
@@ -445,12 +465,24 @@ function App() {
 
 // Phase 1 Step 7 (pack-sanctioned structural wrapper): the ThemeProvider wraps
 // the ENTIRE existing tree; every auth branch, prop, and handler inside App is
-// untouched. Dark is the shipped default; storageKey is the one sanctioned
-// storage write (Master Context THEMING carve-out).
+// untouched. Light has been the shipped default since 5ae57f4 ("ship warm paper
+// as the default"); storageKey is the one sanctioned storage write (Master
+// Context THEMING carve-out).
+//
+// The simple surface hangs off the same wrapper. This is the ONLY line of
+// App.jsx that knows it exists, deliberately: every protected region in
+// DO-NOT-TOUCH.md sits at line 355 or above, and this wrapper is below all of
+// them. `App` itself is not modified, not re-parented, and not passed a prop.
+//
+// Default is "full" (lib/uiMode.js), so nothing changes for anyone who does not
+// choose otherwise.
 export default function AppWithTheme() {
+  const [mode, setMode] = useState(() => uiMode.get());
+  useEffect(() => onUiModeChange(setMode), []);
+
   return (
     <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
-      <App />
+      {mode === "simple" ? <SimpleApp /> : <App />}
     </ThemeProvider>
   );
 }
