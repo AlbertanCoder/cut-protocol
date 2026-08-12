@@ -9,14 +9,14 @@ import { describeError } from "../lib/api.js";
 // ── Pricing section (saas-launch) ───────────────────────────────────────────
 // THE one pricing card, used by the PremiumGate lock overlay and any future
 // upgrade screen. Prices are the locked business decision — $24.99/mo,
-// $125/yr framed as "Save 58% — 5 months free" (~$10.42/mo) — change them
+// $125/yr framed as "Save 58% — 7 months free" (~$10.42/mo) — change them
 // nowhere else. `onSelect(period)` is the checkout seam: Stage 3 wires it to
 // Lemon Squeezy; until then the built-in fallback says so honestly.
 // Which-period-shows is purely visual local state.
 
 const PRICING = {
   monthly: { price: "$24.99", period: "/month" },
-  annual: { price: "$125", period: "/year", badge: "Save 58%", note: "5 months free — about $10.42/mo" },
+  annual: { price: "$125", period: "/year", badge: "Save 58%", note: "7 months free — about $10.42/mo" },
 };
 
 const FEATURES = [

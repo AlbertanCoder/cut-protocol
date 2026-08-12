@@ -35,6 +35,14 @@ import { ThemeProvider } from "@/components/theme-provider";
 // that block stays byte-identical.
 import { uiMode, onUiModeChange } from "./lib/uiMode.js";
 import SimpleApp from "./simple/SimpleApp.jsx";
+import { ScreenBoundary } from "./components/ErrorBoundary.jsx";
+
+// Names the crashed screen in the boundary's copy and the activity log.
+const SCREEN_LABEL = {
+  profile: "Profile", today: "Today", trend: "Trend", engine: "Engine",
+  plan: "Plan", foods: "Foods", recipes: "Recipes", training: "Training",
+  wellbeing: "Wellbeing",
+};
 
 function App() {
   // checking | out | unreachable | in
@@ -434,6 +442,9 @@ function App() {
         )}
 
         <main id="main-content" ref={mainRef} tabIndex={-1} className="px-5 py-6 lg:px-9 lg:py-8 max-w-[1600px]">
+          {/* key={tab} clears a previous crash when the user switches screens,
+              so one broken view never follows them around the app. */}
+          <ScreenBoundary key={tab} label={SCREEN_LABEL[tab] || "This screen"}>
           {tab === "profile" && <ProfileTab profile={profile} summary={summary} refresh={refresh} openToday={() => setTab("today")} />}
           {tab === "today" && <TodayTab profile={profile} summary={summary} refresh={refresh} openTrend={() => setTab("trend")} openWellbeing={() => setTab("wellbeing")} premium={premium} openPlan={() => setTab("plan")} />}
           {tab === "trend" && <TrendTab profile={profile} summary={summary} openTraining={() => setTab("training")} />}
@@ -456,6 +467,7 @@ function App() {
               onShowMicrosAnyway={showMicrosAnyway}
             />
           )}
+          </ScreenBoundary>
         </main>
       </div>
       <BrainChat />
