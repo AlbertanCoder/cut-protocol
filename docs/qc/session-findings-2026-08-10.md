@@ -434,6 +434,20 @@ synthetic). (3) The pre-push hook fires on ANY remote incl. new ones
 the new repo inherits no protection. (4) ~950 MB of QA dumps ship in the
 deploy clone for zero runtime value.
 
+## Rulings 2026-08-12 (owner) — three open items CLOSED
+
+1. **Pricing: bundle 3.** $24.99/$125 stand · 14-day trial (unbuilt; no trial
+   copy renders until it exists) · toggle defaults to monthly · explicit USD on
+   rendered figures · BUILD_PLAN's locked block amended in place. "5 months
+   free" corrected to 7 everywhere live; terms.html grace 7→14. Open item 1
+   below is RESOLVED.
+2. **Untrusted recipes: excluded from the solver pool** (the material-share
+   flagged set, browse untouched). Audit-finding 2's "owner decision" is made.
+3. **First-stranger-admin: fix now**, ahead of deploy prep. Audit finding 1.
+
+Items 2 (CI, `.github/` sealed), 3 (the push contradiction) and 4 (twenty
+testers) below remain open.
+
 ## Open, needing the owner
 
 1. **Pricing.** Three live numbers ($24.99/$125 locked in `BUILD_PLAN.md`;

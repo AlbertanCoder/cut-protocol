@@ -195,7 +195,7 @@ New product surface. None of this exists in the tree today — confirmed absent:
    "any qualifying row", the app looks completely normal while billing twice. Surfaces
    as a chargeback.
 7. **Trial disclosure, always visible, never in a tooltip.** Directly under every trial
-   CTA: *"7 days free, then $24.99 USD/month. Cancel any time before your trial ends
+   CTA: *"14 days free, then $24.99 USD/month. Cancel any time before your trial ends
    and you will not be charged."* Nothing in LS's docs promises a trial-ending
    reminder, so the in-app countdown is the only notice you control.
 8. **Toggle defaults to MONTHLY.** A surprise $125 charge at the end of a free trial is
@@ -484,7 +484,7 @@ based on whether this account has ever trialled. One free trial per account, eve
 7. The toggle DEFAULTS TO MONTHLY. A surprise $125 charge at the end of a free trial
    is the most expensive thing that can happen to a brand-new store.
 8. Trial disclosure, always visible, never in a tooltip or modal, directly under every
-   trial button: "7 days free, then $24.99 USD/month. Cancel any time before your
+   trial button: "14 days free, then $24.99 USD/month. Cancel any time before your
    trial ends and you will not be charged." Nothing in Lemon Squeezy's docs promises a
    trial-ending reminder email, so the in-app countdown is the only notice we control.
 

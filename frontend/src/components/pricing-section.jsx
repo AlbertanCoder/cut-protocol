@@ -10,13 +10,16 @@ import { describeError } from "../lib/api.js";
 // THE one pricing card, used by the PremiumGate lock overlay and any future
 // upgrade screen. Prices are the locked business decision — $24.99/mo,
 // $125/yr framed as "Save 58% — 7 months free" (~$10.42/mo) — change them
-// nowhere else. `onSelect(period)` is the checkout seam: Stage 3 wires it to
-// Lemon Squeezy; until then the built-in fallback says so honestly.
-// Which-period-shows is purely visual local state.
+// nowhere else. Owner ruling 2026-08-12 (bundle 3): prices stand, 14-day
+// free trial (unbuilt — do NOT render trial copy until the trial exists),
+// toggle DEFAULTS TO MONTHLY (a surprise $125 charge is how trust dies),
+// and rendered figures carry explicit USD. `onSelect(period)` is the
+// checkout seam: Stage 3 wires it to Lemon Squeezy; until then the built-in
+// fallback says so honestly. Which-period-shows is purely visual local state.
 
 const PRICING = {
-  monthly: { price: "$24.99", period: "/month" },
-  annual: { price: "$125", period: "/year", badge: "Save 58%", note: "7 months free — about $10.42/mo" },
+  monthly: { price: "$24.99", period: "USD/month" },
+  annual: { price: "$125", period: "USD/year", badge: "Save 58%", note: "7 months free — about $10.42/mo" },
 };
 
 const FEATURES = [
@@ -27,7 +30,7 @@ const FEATURES = [
 ];
 
 export function PricingSection({ headline = "One plan. Everything in it.", onSelect }) {
-  const [period, setPeriod] = useState("annual"); // visual state only
+  const [period, setPeriod] = useState("monthly"); // visual state only; monthly default per the 2026-08-12 ruling
   const [note, setNote] = useState(null);
   const [busy, setBusy] = useState(false);
   const p = PRICING[period];

@@ -11,7 +11,8 @@ gating, deployment. DO-NOT-TOUCH.md still binds file-by-file.
 
 ## Locked business decisions (do not relitigate)
 
-- $24.99/month · $125/year — annual framed as **"Save 58%" / "5 months free" (~$10.42/mo)**. USD default (confirm CAD once at product creation, Stage 3).
+- $24.99/month · $125/year — annual framed as **"Save 58%" / "7 months free" (~$10.42/mo)**. USD default (confirm CAD once at product creation, Stage 3). ("5 months free" was arithmetically wrong — $125 vs $299.88 is 7; corrected 2026-08-12.)
+- **RULING 2026-08-12 (owner, amended in place):** 14-day free trial (unbuilt — needs trialUsed/trialEndsAt schema work before any trial copy renders) · pricing toggle **defaults to MONTHLY** · rendered figures carry explicit **USD**.
 - FREE: calorie targets, workouts, browsable recipes (not portioned).
 - PREMIUM: portion-solved, macro-exact meal plans — portions, cook amounts, grocery quantities.
 - Premium preview: real component rendered, blurred, lock card overlaid (pricing toggle inside). Blur is presentation; **server-side gating is the real gate**.
@@ -80,7 +81,7 @@ Stays FREE: auth, profile (targets/TDEE), weighins/trend, training, foods (+UPC)
 - [ ] `requirePremium` middleware (entitlement = active | cancelled-until-period-end | past_due-within-grace; desktop/local mode always entitled)
 - [ ] Apply to the gate list above; premium denials return a distinct status/body the frontend maps to the lock UI
 - [ ] Frontend `PremiumGate`: renders the REAL component blurred + lock card ("Unlock with Premium" + benefits + pricing toggle)
-- [ ] pricing-section.jsx → $24.99/mo, $125/yr, "Save 58%" badge, "5 months free (~$10.42/mo)" line; reword local-first bullet
+- [ ] pricing-section.jsx → $24.99/mo, $125/yr, "Save 58%" badge, "7 months free (~$10.42/mo)" line; reword local-first bullet
 - [ ] CHECKPOINT: free account = blur+lock on all premium screens AND raw API calls rejected server-side; entitled account = everything works
 
 ### Stage 3 — Lemon Squeezy (TEST MODE) — CODE DONE + UNIT-PROVEN, dashboard pending
