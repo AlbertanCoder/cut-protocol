@@ -72,7 +72,7 @@ test.before(async () => {
   process.env.DATABASE_URL = `file:${dbFile.replace(/\\/g, "/")}`;
   process.env.JWT_SECRET = "supabase-roles-test-only-jwt"; // scan:allow — fixture
   process.env.SUPABASE_URL = SUPABASE_URL;
-  process.env.SUPABASE_JWT_SECRET = SUPABASE_JWT_SECRET;
+  process.env.SUPABASE_JWT_SECRET = SUPABASE_JWT_SECRET; // scan:allow — fixture; a throwaway HS256 key minted for this test process only
   process.env.BRAIN = "off";
 
   ({ prisma } = require(path.join(BACKEND, "src", "lib", "prisma.js")));
