@@ -63,11 +63,17 @@ function Tick({ item, onToggle, busy }) {
   return (
     <button
       type="button"
-      onClick={() => onToggle(item, !on)}
-      disabled={busy}
+      // aria-disabled + early return, never native disabled: this control is
+      // pressed repeatedly, and disabling the focused element drops keyboard
+      // focus to the top of the page on every tick.
+      onClick={() => {
+        if (busy) return;
+        onToggle(item, !on);
+      }}
+      aria-disabled={busy}
       aria-pressed={on}
       className="w-full text-left min-h-14 px-4 py-2 rounded-2xl flex items-center gap-3
-                 hover:bg-card disabled:opacity-50 transition-colors"
+                 hover:bg-card aria-disabled:opacity-50 transition-colors"
     >
       <span
         aria-hidden="true"

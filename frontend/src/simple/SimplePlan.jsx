@@ -40,15 +40,14 @@ const slotWord = (s, i) =>
 // the responsive rule, no second component.
 function Week({ days, selected, onSelect }) {
   return (
-    <div className="grid grid-cols-7 gap-1.5" role="tablist" aria-label="Days of the week">
+    <div className="grid grid-cols-7 gap-1.5" role="group" aria-label="Days of the week">
       {days.map((d) => {
         const on = d.index === selected;
         return (
           <button
             key={d.index}
             type="button"
-            role="tab"
-            aria-selected={on}
+            aria-pressed={on}
             aria-label={
               d.flagged > 0
                 ? `${LONG[d.index]}, ${kc(d.kcal)} calories — ${d.flagged} meal${d.flagged === 1 ? "" : "s"} didn't fit your target`
