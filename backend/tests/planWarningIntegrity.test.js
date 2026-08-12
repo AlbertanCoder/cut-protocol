@@ -81,6 +81,13 @@ process.env.JWT_SECRET = "plan-warning-integrity-test-only-secret"; // scan:allo
 process.env.QC_NO_LISTEN = "1";
 process.env.BRAIN = "off";
 process.env.CUT_PROTOCOL_AUDIT = "off";
+// This suite exercises the FREE/desktop path with plain JWT accounts. If the
+// developer's local .env has SUPABASE_URL armed (web sign-in testing), the
+// entitlement layer flips to hosted mode and every /plans mutation 403s
+// premium_required — Defect 2's exact mechanism (docs/qc/session-findings-
+// 2026-08-10.md), rediscovered 2026-08-12 as four "mystery" failures. Tests
+// own their env: desktop mode, explicitly.
+process.env.SUPABASE_URL = "";
 
 const PLANS_SRC = path.join(BACKEND, "src", "routes", "plans.js");
 const { rebuildSlotFromClient, deriveSlotWarning } = require(PLANS_SRC);
