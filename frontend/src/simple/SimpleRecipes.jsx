@@ -48,6 +48,7 @@ const PAGE = 25;
 function Detail({ recipe, onClose, onPlaced, onShowFull }) {
   const [scale, setScale] = useState(1);
   const [busy, setBusy] = useState(false);
+  const [confirming, setConfirming] = useState(false);
   const [error, setError] = useState(null);
   const [done, setDone] = useState(null);
 
@@ -127,9 +128,26 @@ function Detail({ recipe, onClose, onPlaced, onShowFull }) {
         </Panel>
       )}
 
-      <Big onClick={place} disabled={busy || !!done}>
-        {busy ? "Adding…" : "Add to tomorrow's dinner"}
-      </Big>
+      {/* The server upserts with no undo, so this warns BEFORE the tap, like
+          the other two destructive buttons. Inline rather than a second Sheet:
+          this sheet already holds the focus trap, and stacking another would
+          leave two live traps. The client can't see tomorrow's slot from here,
+          so the wording stays true whether or not something occupies it. */}
+      {!confirming ? (
+        <Big onClick={() => setConfirming(true)} disabled={busy || !!done}>
+          {busy ? "Adding…" : "Add to tomorrow's dinner"}
+        </Big>
+      ) : (
+        <>
+          <Panel tone="warn">
+            This replaces whatever is already planned for tomorrow's dinner.
+          </Panel>
+          <Big onClick={() => { setConfirming(false); place(); }} disabled={busy}>
+            Yes — make it tomorrow's dinner
+          </Big>
+          <Quiet onClick={() => setConfirming(false)}>Keep what's there</Quiet>
+        </>
+      )}
 
       {/* Moved up from the bottom of the room (Cut List row 6): the moment
           you want a single food or a barcode is when you're inside a recipe,
