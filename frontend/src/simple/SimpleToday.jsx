@@ -1,8 +1,9 @@
 import { useCallback, useEffect, useState } from "react";
 import { RefreshCw, Check } from "lucide-react";
-import { api, describeError, isAbortError } from "../lib/api.js";
+import { api, describeError, isAbortError, isPremiumRequired } from "../lib/api.js";
 import { todayStr } from "../lib/dates.js";
-import { Big, Quiet, Note } from "./parts.jsx";
+import { Big, Quiet, Note, Row, RowAction, Empty, Busy } from "./parts.jsx";
+import SwapSheet from "./SwapSheet.jsx";
 
 // "Here's what to eat today." The home screen of the simple surface.
 //
@@ -28,81 +29,47 @@ function isoWeekday() {
 const kc = (n) => (Number.isFinite(n) ? Math.round(n).toLocaleString() : "—");
 
 // The plan stores "meal" | "snack" plus the named meals. Say the word.
+// The solver only ever emits "meal" and "snack" (weeklyPlanner.js:150,153), so
+// a bare "Meal" label made every row read identically — "meal" falls through
+// to the ordinal instead: Meal 1 / Meal 2 / Meal 3 / Snack. All five keys stay.
 const WORD = { meal: "Meal", snack: "Snack", breakfast: "Breakfast", lunch: "Lunch", dinner: "Dinner" };
-const slotWord = (s, i) => (s && WORD[s]) || (s ? s[0].toUpperCase() + s.slice(1) : `Meal ${i + 1}`);
+const slotWord = (s, i) =>
+  s === "meal" ? `Meal ${i + 1}` : (s && WORD[s]) || (s ? s[0].toUpperCase() + s.slice(1) : `Meal ${i + 1}`);
 
+// A planned meal. Row/RowAction come from the shared vocabulary — this screen
+// deliberately does not carry its own card markup, so that Plan, Recipes and
+// Shopping all render a list item the same way.
 function Meal({ slot, index, onSwap, swapping }) {
-  const name = slot.recipe?.name || "No meal chosen yet";
+  // An unfilled slot is the solver's failure, not the person's — the row says
+  // what happened plainly, and the button offers "Pick one" rather than asking
+  // them to "swap" a nothing.
+  const name = slot.recipe?.name;
   return (
-    <div className="rounded-2xl border border-border bg-card px-5 py-5 flex items-start justify-between gap-4">
-      <div className="min-w-0 flex flex-col gap-1">
-        <div className="text-sm text-muted-foreground">{slotWord(slot.slotType, index)}</div>
-        <div className="text-xl font-semibold leading-snug break-words">{name}</div>
-        <div className="text-base text-muted-foreground tabular-nums">{kc(slot.kcal)} calories</div>
-      </div>
-      <button
-        type="button"
-        onClick={() => onSwap(slot)}
-        disabled={swapping}
-        aria-label={`Swap ${name} for something else`}
-        className="shrink-0 min-h-12 min-w-12 px-4 rounded-2xl border border-border bg-background
-                   text-sm font-medium text-muted-foreground hover:text-foreground
-                   disabled:opacity-40 transition-colors flex items-center gap-2"
-      >
-        <RefreshCw size={16} aria-hidden="true" className={swapping ? "animate-spin" : ""} />
-        Swap
-      </button>
-    </div>
+    <Row
+      label={slotWord(slot.slotType, index)}
+      lead={name || "Nothing picked for this one yet"}
+      meta={`${kc(slot.kcal)} calories`}
+      action={
+        <RowAction
+          onClick={() => onSwap(slot)}
+          disabled={swapping}
+          label={name ? `Swap ${name} for something else` : "Pick a meal for this one"}
+        >
+          <RefreshCw size={16} aria-hidden="true" className={swapping ? "motion-safe:animate-spin" : ""} />
+          {name ? "Swap" : "Pick one"}
+        </RowAction>
+      }
+    />
   );
 }
 
-// The swap sheet. Three or four alternatives, plain names and calories only.
-function SwapSheet({ alts, busy, applyingId, onApply, onClose, error }) {
-  return (
-    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-foreground/20 px-4 py-6">
-      <div className="w-full max-w-xl rounded-3xl border border-border bg-background p-6 flex flex-col gap-5 max-h-[85svh] overflow-y-auto">
-        <div className="flex flex-col gap-1">
-          <h2 className="text-2xl font-bold">Something else instead</h2>
-          <p className="text-base text-muted-foreground">
-            These all fit the same day. Pick one and the rest of the day stays where it is.
-          </p>
-        </div>
-
-        {error && <Note>{error}</Note>}
-
-        {busy && <p className="text-base text-muted-foreground">Finding other options…</p>}
-
-        {!busy && alts && alts.length === 0 && (
-          <p className="text-base text-muted-foreground">
-            Nothing else fits this slot today. The plan you have is the closest one available.
-          </p>
-        )}
-
-        {!busy && alts && alts.map((a) => (
-          <button
-            key={a.recipeId}
-            type="button"
-            onClick={() => onApply(a)}
-            disabled={applyingId != null}
-            className="text-left rounded-2xl border border-border bg-card px-5 py-4 min-h-16
-                       hover:border-foreground disabled:opacity-40 transition-colors"
-          >
-            <div className="text-lg font-semibold leading-snug">{a.name || a.recipeName}</div>
-            <div className="text-base text-muted-foreground tabular-nums">{kc(a.kcal)} calories</div>
-            {applyingId === a.recipeId && <div className="text-sm text-muted-foreground pt-1">Swapping…</div>}
-          </button>
-        ))}
-
-        <Quiet onClick={onClose}>Never mind</Quiet>
-      </div>
-    </div>
-  );
-}
+// The swap sheet moved to ./SwapSheet.jsx the moment Plan needed it too —
+// one implementation, two callers.
 
 export default function SimpleToday({ profile }) {
   const date = todayStr();
 
-  const [plan, setPlan] = useState(null);        // null = loading
+  const [plan, setPlan] = useState("loading");   // "loading" | null (no plan) | "error" | "locked" (free tier) | plan
   const [planError, setPlanError] = useState(null);
   const [generating, setGenerating] = useState(false);
 
@@ -121,6 +88,10 @@ export default function SimpleToday({ profile }) {
       setPlanError(null);
     } catch (e) {
       if (isAbortError(e)) return;
+      // A free account's 403 is a gate, not a failure — the same distinction
+      // the full TodayTab draws (0230f91). It gets the calm locked state
+      // below, never the "something broke" copy.
+      if (isPremiumRequired(e)) { setPlanError(null); setPlan("locked"); return; }
       setPlanError(describeError(e));
       setPlan("error");
     }
@@ -156,7 +127,9 @@ export default function SimpleToday({ profile }) {
       await api.generatePlan({});
       await loadPlan();
     } catch (e) {
-      if (!isAbortError(e)) setPlanError(describeError(e));
+      if (isAbortError(e)) return;
+      if (isPremiumRequired(e)) { setPlan("locked"); return; }
+      setPlanError(describeError(e));
     } finally {
       setGenerating(false);
     }
@@ -171,7 +144,14 @@ export default function SimpleToday({ profile }) {
       const res = await api.getSlotAlternates(plan.id, slot.id, {});
       setAlts(res.alternates || []);
     } catch (e) {
-      if (!isAbortError(e)) setSwapError(describeError(e));
+      if (isPremiumRequired(e)) {
+        // Gated, not broken: close the sheet and let the calm locked state
+        // say so once, rather than erroring inside the sheet.
+        setSwapSlot(null);
+        setPlan("locked");
+      } else if (!isAbortError(e)) {
+        setSwapError(describeError(e));
+      }
       setAlts([]);
     } finally {
       setAltBusy(false);
@@ -198,7 +178,13 @@ export default function SimpleToday({ profile }) {
       setAlts(null);
       await loadPlan();
     } catch (e) {
-      if (!isAbortError(e)) setSwapError(describeError(e));
+      if (isPremiumRequired(e)) {
+        setSwapSlot(null);
+        setAlts(null);
+        setPlan("locked");
+      } else if (!isAbortError(e)) {
+        setSwapError(describeError(e));
+      }
     } finally {
       setApplyingId(null);
     }
@@ -228,14 +214,20 @@ export default function SimpleToday({ profile }) {
     }
   };
 
-  if (plan === null) {
-    return <p className="text-lg text-muted-foreground">Getting today's food…</p>;
-  }
+  if (plan === "loading") return <Busy>Getting today&rsquo;s food…</Busy>;
 
   return (
     <div className="flex flex-col gap-6">
       <div className="flex flex-col gap-2">
-        <h1 className="text-3xl sm:text-4xl font-bold tracking-tight">Here's what to eat today</h1>
+        {/* The headline only promises food when there is food — it used to sit
+            two lines above "no food planned yet" and promise a meal anyway. */}
+        <h1 className="text-3xl sm:text-4xl font-bold tracking-tight">
+          {slots.length > 0
+            ? "Here's what to eat today"
+            : plan === "locked"
+              ? "Today's food"
+              : "Let's build today's food"}
+        </h1>
         {slots.length > 0 && (
           <p className="text-base text-muted-foreground tabular-nums">
             {kc(total)} calories
@@ -246,15 +238,29 @@ export default function SimpleToday({ profile }) {
 
       {planError && <Note>{planError}</Note>}
 
-      {slots.length === 0 ? (
-        <div className="rounded-2xl border border-border bg-card px-5 py-6 flex flex-col gap-4">
-          <p className="text-lg leading-relaxed">
-            No food planned for today yet. Building a day takes a few seconds.
-          </p>
-          <Big onClick={generate} disabled={generating}>
-            {generating ? "Building your day…" : "Build my day"}
-          </Big>
-        </div>
+      {plan === "locked" ? (
+        // The calm locked state. Never the error Note — a gate is not a
+        // failure, and "broken" copy on a working app teaches people not to
+        // trust the real errors. The upgrade flow lives on the full surface;
+        // the "Open the full app" link renders just below on this door.
+        <Empty>
+          Meal planning is part of the paid version, and your account doesn't
+          include it yet. Nothing is broken — you can upgrade in the full app.
+        </Empty>
+      ) : slots.length === 0 ? (
+        <Empty
+          action={
+            <Big onClick={generate} disabled={generating}>
+              {/* The same api.generatePlan({}) call SimplePlan makes — an
+                  absent horizon builds a WEEK (plans.js: "Absent = week"), so
+                  the button says so. Label only; the request body is
+                  untouched. */}
+              {generating ? "Building your week…" : "Build my week"}
+            </Big>
+          }
+        >
+          No food planned yet. Building the week takes a few seconds — today's meals come out of it.
+        </Empty>
       ) : (
         <>
           <div className="flex flex-col gap-3">
@@ -264,7 +270,13 @@ export default function SimpleToday({ profile }) {
           </div>
 
           {alreadyLogged ? (
-            <div className="rounded-2xl border border-border bg-card px-5 py-5 flex items-center justify-between gap-4">
+            // role="status" makes the confirmation a polite live region, so a
+            // screen reader hears "You ate this today." when it appears
+            // instead of silence after the press.
+            <div
+              role="status"
+              className="rounded-2xl border border-border bg-card px-5 py-5 flex items-center justify-between gap-4"
+            >
               <div className="flex items-center gap-3 text-lg">
                 <Check size={20} aria-hidden="true" />
                 <span>You ate this today.</span>

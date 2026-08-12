@@ -2,76 +2,26 @@ import { useCallback, useEffect, useState } from "react";
 import { api, describeError, isAbortError } from "../lib/api.js";
 import { todayStr, fmtD } from "../lib/dates.js";
 import { parseWeight, displayWeight, weightUnit } from "../lib/units.js";
-import { Big, Note, NumberBox } from "./parts.jsx";
+import { Note, NumberBox, RowAction, Details } from "./parts.jsx";
 
-// A box to type today's weight, and a line showing it over time.
+// A box to type today's weight.
 //
 // Deliberately NOT the Trend tab. No seven-day average, no rate, no projected
 // goal date, no standard-error band, no lean-mass overlay, no outlier
 // disclosure, no estimated body fat. All of that still exists, unchanged, on
 // the full surface — TrendTab.jsx is not modified by this work.
 //
-// The line is a plain SVG polyline stroked with `currentColor`, so it inherits
-// the theme's foreground colour and works in light and dark without a single
-// colour literal (scripts/no-hardcoded-colours.js).
+// The weight-over-time line lives on Progress › Weight, where SimpleProgress
+// renders the shared TrendLine (parts.jsx) with "Where you are", the rate and
+// the days count beside it. This screen used to draw an identical second copy
+// from a second network read of the same readings; now it links there instead.
+// TrendLine itself is untouched.
 //
-// NO CALCULATION HAPPENS HERE. The only arithmetic is fitting points into a
-// viewBox — screen geometry, not body data. Weights are converted for display
-// with the app's existing lib/units.js helpers and stored in kg exactly as
+// NO CALCULATION HAPPENS HERE. Weights are converted for display with the
+// app's existing lib/units.js helpers and stored in kg exactly as
 // TodayTab.jsx:794 stores them.
 
-const PAD = 6; // viewBox padding, in the same 100×40 unit space as the polyline
-
-function Line({ points, unit }) {
-  if (points.length < 2) return null;
-
-  const xs = points.map((p) => p.x);
-  const ys = points.map((p) => p.y);
-  const minX = Math.min(...xs);
-  const maxX = Math.max(...xs);
-  const minY = Math.min(...ys);
-  const maxY = Math.max(...ys);
-  const spanX = maxX - minX || 1;
-  const spanY = maxY - minY || 1;
-
-  const coords = points.map((p) => {
-    const cx = PAD + ((p.x - minX) / spanX) * (100 - PAD * 2);
-    // SVG y grows downward; a falling weight should read as a falling line.
-    const cy = PAD + ((maxY - p.y) / spanY) * (40 - PAD * 2);
-    return `${cx.toFixed(2)},${cy.toFixed(2)}`;
-  });
-
-  const first = points[0];
-  const last = points[points.length - 1];
-
-  return (
-    <div className="rounded-2xl border border-border bg-card px-5 py-5 flex flex-col gap-3">
-      <svg
-        viewBox="0 0 100 40"
-        preserveAspectRatio="none"
-        className="w-full h-32 text-foreground"
-        role="img"
-        aria-label={`Your weight from ${fmtD(first.date)} to ${fmtD(last.date)}: ${first.w} to ${last.w} ${unit}.`}
-      >
-        <polyline
-          points={coords.join(" ")}
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="0.8"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          vectorEffect="non-scaling-stroke"
-        />
-      </svg>
-      <div className="flex justify-between text-sm text-muted-foreground tabular-nums">
-        <span>{fmtD(first.date)} — {first.w} {unit}</span>
-        <span>{fmtD(last.date)} — {last.w} {unit}</span>
-      </div>
-    </div>
-  );
-}
-
-export default function SimpleWeight({ profile, onSaved }) {
+export default function SimpleWeight({ profile, onSaved, onOpenProgress }) {
   const pref = profile?.unitPref || "imperial";
   const unit = weightUnit(pref);
 
@@ -116,7 +66,9 @@ export default function SimpleWeight({ profile, onSaved }) {
   const points = (rows || [])
     .filter((r) => r && typeof r.date === "string" && Number.isFinite(r.weightKg))
     .sort((a, b) => a.date.localeCompare(b.date))
-    .map((r, i) => ({ date: r.date, x: i, y: r.weightKg, w: displayWeight(r.weightKg, pref) }));
+    // TrendLine's point shape, kept intact even though Progress draws the line
+    // now — here the count decides between the link and the not-enough copy.
+    .map((r, i) => ({ date: r.date, dateLabel: fmtD(r.date), x: i, y: r.weightKg, w: displayWeight(r.weightKg, pref) }));
 
   return (
     <div className="flex flex-col gap-6">
@@ -132,19 +84,40 @@ export default function SimpleWeight({ profile, onSaved }) {
       {error && <Note>{error}</Note>}
 
       <div className="flex flex-col gap-3">
-        <NumberBox value={w} onChange={(v) => { setW(v); setSaved(false); }} unit={unit} placeholder="0" onEnter={save} />
-        <Big onClick={save} disabled={busy || !w}>{busy ? "Saving…" : "Save today's weight"}</Big>
+        {/* One primary action per screen (parts.jsx:33), and on this page that
+            is "I ate this". Saving a weigh-in is the small button at the right
+            of the weight row — the same shape as Swap. Enter still saves. */}
+        <div className="flex items-center gap-3">
+          <div className="flex-1 min-w-0">
+            <NumberBox value={w} onChange={(v) => { setW(v); setSaved(false); }} unit={unit} placeholder="0" onEnter={save} />
+          </div>
+          <RowAction onClick={save} disabled={busy || !w} label="Save today's weight">
+            {busy ? "Saving…" : "Save"}
+          </RowAction>
+        </div>
         {saved && <p className="text-base text-muted-foreground">Saved.</p>}
       </div>
 
       {rows === null ? null : points.length >= 2 ? (
-        <Line points={points} unit={unit} />
+        // The chart lives on Progress › Weight — the identical line from the
+        // same readings, with the numbers beside it. Here it is one line and
+        // one tap, not a second copy. `onOpenProgress` is the shell's own
+        // door-switch; until the shell passes it, the sentence still names
+        // the door so it is never a dead control.
+        onOpenProgress ? (
+          <Details onClick={onOpenProgress} label="See your weight over time" />
+        ) : (
+          <p className="text-base text-muted-foreground">See your weight over time under Progress.</p>
+        )
       ) : (
         <div className="rounded-2xl border border-border bg-card px-5 py-5">
           <p className="text-base text-muted-foreground leading-relaxed">
+            {/* Both sentences are word-for-word the ones Progress › Weight
+                shows (SimpleProgress.jsx:62 and :72), so the two doors answer
+                the same moment the same way. Duplication is fine for now. */}
             {points.length === 1
-              ? "That's your first one. The line starts with your second."
-              : "Once you've weighed in a couple of times, a line shows up here."}
+              ? "First point logged — the line starts with your second weigh-in."
+              : "Nothing to show yet — log your first weight and the line starts here."}
           </p>
         </div>
       )}
