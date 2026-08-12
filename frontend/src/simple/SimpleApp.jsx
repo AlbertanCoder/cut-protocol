@@ -6,7 +6,16 @@ import SimpleOnboarding from "./SimpleOnboarding.jsx";
 import SimpleToday from "./SimpleToday.jsx";
 import SimpleWeight from "./SimpleWeight.jsx";
 import SimplePlan from "./SimplePlan.jsx";
-import { Screen, Big, Note, Details } from "./parts.jsx";
+import SimpleRecipes from "./SimpleRecipes.jsx";
+import SimpleShopping from "./SimpleShopping.jsx";
+import { Screen, Big, Note, Details, Tabs } from "./parts.jsx";
+
+// The three rooms behind the Food door. Plan first — it is what the week is.
+const FOOD_ROOMS = [
+  { id: "plan", label: "Plan" },
+  { id: "recipes", label: "Recipes" },
+  { id: "shopping", label: "Shopping" },
+];
 
 // The four doors. `built` marks which have a rebuilt room; the rest hand over
 // to the full app rather than opening onto nothing. Mirrors the SECTIONS list
@@ -48,6 +57,9 @@ export default function SimpleApp() {
   const [bootError, setBootError] = useState(null);
   const [notice, setNotice] = useState(null);
   const [door, setDoor] = useState("today");
+  // Which room is open behind the Food door. Visual state only — it reaches
+  // neither the network nor storage.
+  const [room, setRoom] = useState("plan");
 
   // Keeps a late 401 — an in-flight request landing just after a deliberate
   // sign-out — from overwriting the reason with "expired". App.jsx:172-186.
@@ -152,7 +164,7 @@ export default function SimpleApp() {
   // of food and the weight box on one page, no sub-navigation, because two
   // things do not need a navigation system. That decision governs the Today
   // door and is not undone by the app having doors.
-  const room = (
+  const body = (
     <>
       {door === "today" && (
         <div className="flex flex-col gap-12">
@@ -161,7 +173,14 @@ export default function SimpleApp() {
           <SimpleWeight profile={profile} onSaved={loadData} />
         </div>
       )}
-      {door === "food" && <SimplePlan profile={profile} onShowFull={goFull} />}
+      {door === "food" && (
+        <div className="flex flex-col gap-6">
+          <Tabs tabs={FOOD_ROOMS} active={room} onSelect={setRoom} />
+          {room === "plan" && <SimplePlan profile={profile} onShowFull={goFull} />}
+          {room === "recipes" && <SimpleRecipes onShowFull={goFull} />}
+          {room === "shopping" && <SimpleShopping onShowFull={goFull} />}
+        </div>
+      )}
     </>
   );
 
@@ -197,7 +216,7 @@ export default function SimpleApp() {
 
         <main id="simple-main" className="flex-1 min-w-0 px-6 pt-10 pb-16">
           <div className="mx-auto w-full max-w-3xl flex flex-col gap-12">
-            {room}
+            {body}
 
             <div className="flex flex-col items-start gap-3 pt-2">
               <Details onClick={goFull} />
