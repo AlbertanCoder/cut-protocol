@@ -8,6 +8,7 @@ import SimpleWeight from "./SimpleWeight.jsx";
 import SimplePlan from "./SimplePlan.jsx";
 import SimpleRecipes from "./SimpleRecipes.jsx";
 import SimpleShopping from "./SimpleShopping.jsx";
+import SimpleDetails from "./SimpleDetails.jsx";
 import { Screen, Big, Note, Details, Tabs } from "./parts.jsx";
 
 // The three rooms behind the Food door. Plan first — it is what the week is.
@@ -24,7 +25,7 @@ const DOORS = [
   { id: "today", label: "Today", built: true },
   { id: "food", label: "Food", built: true },
   { id: "progress", label: "Progress", built: false },
-  { id: "you", label: "You", built: false },
+  { id: "you", label: "You", built: true },
 ];
 
 // The simple surface's shell: sign in, six questions, then two screens.
@@ -53,6 +54,7 @@ export default function SimpleApp() {
   // checking | out | unreachable | in — same vocabulary as App.jsx:34-38.
   const [authStatus, setAuthStatus] = useState("checking");
   const [profile, setProfile] = useState(null);
+  const [summary, setSummary] = useState(null);
   const [needsSetup, setNeedsSetup] = useState(false);
   const [bootError, setBootError] = useState(null);
   const [notice, setNotice] = useState(null);
@@ -69,9 +71,15 @@ export default function SimpleApp() {
   useEffect(() => onSessionExpired(() => {
     if (authStatusRef.current !== "in") return;
     setProfile(null);
+    setSummary(null);
     setNeedsSetup(false);
     setBootError(null);
-    setTab("today");
+    // setDoor, not setTab. `tab` was this shell's state before the surface
+    // became one screen; the rename left this call behind and it would have
+    // thrown a ReferenceError the first time a session expired — on the one
+    // path nobody exercises until it matters.
+    setDoor("today");
+    setRoom("plan");
     setNotice("Your session expired — sign in again to continue.");
     setAuthStatus("out");
   }), []);
@@ -81,6 +89,15 @@ export default function SimpleApp() {
     if (!p) { setNeedsSetup(true); return; }
     setNeedsSetup(false);
     setProfile(p);
+    // Your details shows the seven-day average as "weight now". The summary is
+    // fetched separately, exactly as App.jsx:198 does it, and a failure here
+    // must not take the whole surface down — the rest of the app is still
+    // correct without it.
+    try {
+      setSummary(await api.getSummary());
+    } catch {
+      setSummary(null);
+    }
   }, []);
 
   // A failed data load must NOT read as logged-out, and neither must a server
@@ -180,6 +197,15 @@ export default function SimpleApp() {
           {room === "recipes" && <SimpleRecipes onShowFull={goFull} />}
           {room === "shopping" && <SimpleShopping onShowFull={goFull} />}
         </div>
+      )}
+      {door === "you" && (
+        <SimpleDetails
+          profile={profile}
+          summary={summary}
+          refresh={loadData}
+          onShowFull={goFull}
+          onOpenToday={() => setDoor("today")}
+        />
       )}
     </>
   );
