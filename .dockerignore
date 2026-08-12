@@ -2,6 +2,13 @@
 **/dist
 backend/prisma/dev.db
 backend/prisma/dev.db-journal
+# Glob on purpose (deploy checklist 2026-08-11: dev.db.template was missed).
+# Every SQLite artifact starts with dev.db — the template, -wal/-shm sidecars,
+# backup-*/snapshot-* copies — and named-file denylists here have already let
+# files slip (see CLAUDE.md's packaging lesson). Nothing in the Docker build
+# needs any of them: the cloud image is Postgres-only and is seeded from the
+# owner's terminal, never from a bundled SQLite file.
+backend/prisma/dev.db*
 **/.env
 **/.env.local
 .git

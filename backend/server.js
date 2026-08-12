@@ -112,6 +112,22 @@ const bootReady = schemaReady.then(async () => {
 });
 bootReady.catch(() => { /* handled above; the /api gate reports the schema half */ });
 
+// ── Liveness probe (Railway healthcheckPath) ────────────────────────────────
+// Public on purpose, same as /api/meta/whoami: it must answer before anyone
+// has logged in, it carries no user data, and it never touches the database.
+// Mounted AHEAD of the bootReady gate so it answers even while migrations are
+// still running — or after they failed. The question this endpoint answers is
+// "is this process up and serving HTTP"; the boot state rides along honestly
+// instead of being gated on, so an operator hitting /api/health can tell a
+// healthy deploy from one whose /api requests are all 500ing on a failed boot.
+// railway.json's deploy.healthcheckPath points here; a crash-looping deploy
+// never answers this and so never reads as live.
+let bootState = "pending"; // "pending" | "ready" | "failed"
+bootReady.then(() => { bootState = "ready"; }, () => { bootState = "failed"; });
+app.get("/api/health", (req, res) => {
+  res.status(200).json({ ok: true, bootReady: bootState === "ready", bootState });
+});
+
 app.use("/api", (req, res, next) => {
   bootReady.then(
     () => next(),

@@ -266,7 +266,15 @@ function copyReachableDb() {
   const url = process.env.DATABASE_URL || "";
   const candidates = [
     process.env.CUT_PROTOCOL_DB_PATH,
-    url.startsWith("file:") ? path.resolve(__dirname, "..", url.slice(5)) : null,
+    // A relative `file:` DATABASE_URL is resolved by Prisma against the
+    // directory of schema.prisma — backend/prisma/ — NOT against backend/.
+    // This line resolved against backend/ from 2026-08-02 until 2026-08-12,
+    // which on CI (DATABASE_URL=file:./ci.db) pointed at a file that does not
+    // exist, fell through to the dev.db candidate below (also absent on CI),
+    // and failed ARM 3 with "no database file was reachable at all" — this
+    // test never once ran green on CI. Locally the bug was invisible because
+    // the dev.db fallback caught it.
+    url.startsWith("file:") ? path.resolve(__dirname, "..", "prisma", url.slice(5)) : null,
     path.resolve(__dirname, "..", "prisma", "dev.db"),
   ].filter(Boolean);
   const src = candidates.find((p) => fs.existsSync(p));

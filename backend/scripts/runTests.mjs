@@ -68,11 +68,15 @@ const TESTS_DIR = path.join(BACKEND, "tests");
 //               to 129 files / 1653 tests through saas-launch and light-migration,
 //               so 21 files and 203 tests could have vanished silently. Raise
 //               these in the commit that adds the tests, not a fortnight later.)
-const MIN_TEST_FILES = 131;
+//   2026-08-12  139 files / 1729 tests (deploy-readiness fleet: healthEndpoint +
+//               prismaDatasourceGuard suites landed alongside the healthcheck,
+//               Postgres-quiet boot, and CI seed fixes; floors raised in the
+//               same commit per the 2026-08-08 note above)
+const MIN_TEST_FILES = 135;
 // ~2.5% headroom under the measured total so ordinary churn (merging or deleting
 // a redundant case) doesn't wedge CI, while still catching a mass skip — the
 // bash glob dropped 27 of 62 files, which is hundreds of tests, not single digits.
-const MIN_TESTS = 1665;
+const MIN_TESTS = 1685;
 
 const argv = process.argv.slice(2);
 const listOnly = argv.includes("--list");

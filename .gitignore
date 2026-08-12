@@ -16,6 +16,12 @@ backend/prisma/dev.db.template
 **/.env*
 !**/.env.example
 
+# Railway deploy variables pack — carries a REAL generated JWT_SECRET.
+# Local-only staging for the Railway raw editor paste; never commit.
+# NOTE: `**/.env*` above does NOT cover it — railway-variables.env does not
+# begin with ".env", so the directory needs its own rule.
+deploy-local/
+
 # Local databases + phase backups.
 # Also matched by class. SQLite writes sidecars next to the DB (`-wal`, `-shm`
 # under WAL mode, `-journal` otherwise) and every one of them holds real rows:

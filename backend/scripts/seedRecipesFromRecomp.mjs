@@ -79,21 +79,42 @@ async function main() {
     });
   }
 
+  // Food.fdcId is @unique (schema.prisma, landed 2026-07-22) but this ported
+  // library predates that constraint and carries 193 duplicate-fdcId groups
+  // covering 611 of its 943 rows — "Beef" and "Ground Beef" both cite 170602.
+  // Writing fdcId blindly dies with P2002 at the 15th food, which is why CI's
+  // Seed step crashed before a single test ran (docs/qc/session-findings-
+  // 2026-08-10.md, the CORRECTED block above Defect 1). Policy here: FIRST
+  // WRITER WINS the fdcId; every later row still lands as a Food — a food is
+  // never dropped — it just lands without an fdcId claim. Ownership is
+  // preloaded from the DATABASE, not just tracked within this run, so a
+  // re-run (idempotence) or a row seeded by another script can never collide
+  // either. On update, a non-claimable fdcId is simply omitted so an existing
+  // row keeps whatever fdcId it already holds.
+  const fdcOwner = new Map(); // fdcId -> Food.id that owns it
+  for (const row of await prisma.food.findMany({ where: { fdcId: { not: null } }, select: { id: true, fdcId: true } })) {
+    fdcOwner.set(row.fdcId, row.id);
+  }
+
   const foodIdByName = {};
-  let foodsCreated = 0, foodsUpdated = 0;
+  let foodsCreated = 0, foodsUpdated = 0, fdcIdUnclaimed = 0;
   for (const f of foodByName.values()) {
     // Manual upsert-by-name: Food.name is no longer @unique (bulk-import scale
     // change), so upsert({ where: { name } }) is no longer valid. Same semantics as
     // before — match the first row with this name, update it, else create.
     const existed = await prisma.food.findFirst({ where: { name: f.name } });
-    const update = { category: f.category, fdcId: f.fdcId, kcal: f.kcal, protein: f.protein, fat: f.fat, carb: f.carb, fiber: f.fiber, source: f.source };
+    const owner = f.fdcId != null ? fdcOwner.get(f.fdcId) : undefined;
+    const claims = f.fdcId != null && (owner === undefined || (existed !== null && owner === existed.id));
+    if (f.fdcId != null && !claims) fdcIdUnclaimed++;
+    const base = { category: f.category, kcal: f.kcal, protein: f.protein, fat: f.fat, carb: f.carb, fiber: f.fiber, source: f.source };
     const row = existed
-      ? await prisma.food.update({ where: { id: existed.id }, data: update })
-      : await prisma.food.create({ data: f });
+      ? await prisma.food.update({ where: { id: existed.id }, data: claims ? { ...base, fdcId: f.fdcId } : base })
+      : await prisma.food.create({ data: { name: f.name, ...base, fdcId: claims ? f.fdcId : null } });
+    if (claims) fdcOwner.set(f.fdcId, row.id);
     foodIdByName[f.name] = row.id;
     existed ? foodsUpdated++ : foodsCreated++;
   }
-  console.log(`Foods: ${foodsCreated} created, ${foodsUpdated} updated (${foodByName.size} total considered).`);
+  console.log(`Foods: ${foodsCreated} created, ${foodsUpdated} updated (${foodByName.size} total considered; ${fdcIdUnclaimed} landed without an fdcId claim — duplicate fdcId, first writer keeps it).`);
 
   // 4. Recipes — 602 TheMealDB-sourced dishes, upserted by name. If a name
   // already exists AND wasn't created by a prior run of this same script
@@ -139,10 +160,20 @@ async function main() {
     });
 
     await prisma.recipeIngredient.deleteMany({ where: { recipeId: recipe.id } });
+    // (recipeId, foodId) is UNIQUE, but 125 of the 602 source recipes list the
+    // same ingredient name on more than one line (e.g. Soy Sauce twice in Beef
+    // and Broccoli Stir-Fry — marinade line + sauce line). Aggregate grams per
+    // resolved food so each (recipe, food) pair lands as exactly ONE row whose
+    // grams are the sum of its lines. The recipe macro totals computed above
+    // already counted every line, so summing the grams preserves them exactly.
+    const gramsByFoodId = new Map();
     for (const ing of r.ingredients) {
-      const perServingGrams = ing.grams / servings;
+      const foodId = foodIdByName[ing.name.trim()];
+      gramsByFoodId.set(foodId, (gramsByFoodId.get(foodId) || 0) + ing.grams / servings);
+    }
+    for (const [foodId, baseGrams] of gramsByFoodId) {
       await prisma.recipeIngredient.create({
-        data: { recipeId: recipe.id, foodId: foodIdByName[ing.name.trim()], baseGrams: perServingGrams, scalable: true, role: null },
+        data: { recipeId: recipe.id, foodId, baseGrams, scalable: true, role: null },
       });
     }
     existing ? recipesUpdated++ : recipesCreated++;

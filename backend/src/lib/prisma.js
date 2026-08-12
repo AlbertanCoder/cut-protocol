@@ -48,12 +48,32 @@ if (process.env.NODE_ENV !== "production") globalForPrisma.__prisma = prisma;
 // replay them over the restored file; and scripts/buildTemplateDb.mjs, which
 // copies dev.db with a plain copyFileSync and would miss a hot WAL if the dev
 // server were running. Both are outside this file.
-const walReady = prisma
-  .$queryRawUnsafe("PRAGMA journal_mode=WAL")
-  .then((rows) => rows?.[0]?.journal_mode ?? null)
-  .catch((e) => {
-    console.warn(`[prisma] could not enable WAL journal mode (continuing in the existing mode): ${e.message}`);
-    return null;
-  });
+// WHY THE GUARD (2026-08-12, Railway deploy checklist): PRAGMA is SQLite-only.
+// This same file now boots against two datasources — desktop/dev SQLite
+// (`file:` URLs) and cloud Postgres (`postgres://`/`postgresql://` on
+// Railway) — and Postgres answers a PRAGMA with a syntax error, so on every
+// cloud boot the fire-and-forget below landed in its catch and logged a
+// scary warning. The engine is derived from DATABASE_URL's protocol, NOT
+// from NODE_ENV: production is true on both the packaged desktop app and
+// the cloud, so NODE_ENV cannot tell the engines apart. Evaluation order
+// matters and is deliberate: `new PrismaClient()` above loads backend/.env
+// into process.env (Prisma's own env loading, which never overwrites an
+// already-set var), so by the time the guard reads DATABASE_URL it is
+// populated even when the requiring script never touched dotenv. With no
+// URL at all Prisma is about to fail loudly on the first real query anyway;
+// a WAL warning on top of that is noise, so unset also skips.
+function isSqliteDatasource(url = process.env.DATABASE_URL) {
+  return typeof url === "string" && /^\s*file:/i.test(url);
+}
 
-module.exports = { prisma, walReady };
+const walReady = isSqliteDatasource()
+  ? prisma
+      .$queryRawUnsafe("PRAGMA journal_mode=WAL")
+      .then((rows) => rows?.[0]?.journal_mode ?? null)
+      .catch((e) => {
+        console.warn(`[prisma] could not enable WAL journal mode (continuing in the existing mode): ${e.message}`);
+        return null;
+      })
+  : Promise.resolve(null); // non-SQLite datasource: nothing to set, log nothing
+
+module.exports = { prisma, walReady, isSqliteDatasource };
