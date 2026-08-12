@@ -318,3 +318,64 @@ export const Empty = ({ children, action }) => (
 export const Busy = ({ children }) => (
   <p className="text-lg text-muted-foreground">{children}</p>
 );
+
+// A weight line. Points come in already converted for display; this only maps
+// them into a viewBox, which is screen geometry, not body data.
+//
+// NOT the Trend chart. TrendTab's ComposedChart carries a fitted regression, a
+// standard-error band, a smoothed lean-mass overlay, outlier flags and a goal
+// projection — all of it computed by protected memos in that file. Re-deriving
+// any of that here would be a second implementation of a calculation, which
+// rule 2 forbids. This draws the readings and nothing else.
+//
+// Stroked with `currentColor`, so it inherits the theme and needs no colour
+// literal in either theme.
+export const TrendLine = ({ points, unit, label }) => {
+  if (!points || points.length < 2) return null;
+
+  const PAD = 6;
+  const xs = points.map((p) => p.x);
+  const ys = points.map((p) => p.y);
+  const minX = Math.min(...xs);
+  const maxX = Math.max(...xs);
+  const minY = Math.min(...ys);
+  const maxY = Math.max(...ys);
+  const spanX = maxX - minX || 1;
+  const spanY = maxY - minY || 1;
+
+  const coords = points.map((p) => {
+    const cx = PAD + ((p.x - minX) / spanX) * (100 - PAD * 2);
+    // SVG y grows downward; a falling weight should read as a falling line.
+    const cy = PAD + ((maxY - p.y) / spanY) * (40 - PAD * 2);
+    return `${cx.toFixed(2)},${cy.toFixed(2)}`;
+  });
+
+  const first = points[0];
+  const last = points[points.length - 1];
+
+  return (
+    <div className="rounded-2xl border border-border bg-card px-5 py-5 flex flex-col gap-3">
+      <svg
+        viewBox="0 0 100 40"
+        preserveAspectRatio="none"
+        className="w-full h-32 text-foreground"
+        role="img"
+        aria-label={label || `Weight from ${first.w} to ${last.w} ${unit}.`}
+      >
+        <polyline
+          points={coords.join(" ")}
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="0.8"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          vectorEffect="non-scaling-stroke"
+        />
+      </svg>
+      <div className="flex justify-between text-sm text-muted-foreground tabular-nums">
+        <span>{first.dateLabel} — {first.w} {unit}</span>
+        <span>{last.dateLabel} — {last.w} {unit}</span>
+      </div>
+    </div>
+  );
+};

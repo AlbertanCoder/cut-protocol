@@ -9,6 +9,7 @@ import SimplePlan from "./SimplePlan.jsx";
 import SimpleRecipes from "./SimpleRecipes.jsx";
 import SimpleShopping from "./SimpleShopping.jsx";
 import SimpleDetails from "./SimpleDetails.jsx";
+import SimpleProgress from "./SimpleProgress.jsx";
 import { Screen, Big, Note, Details, Tabs } from "./parts.jsx";
 
 // The three rooms behind the Food door. Plan first — it is what the week is.
@@ -24,7 +25,7 @@ const FOOD_ROOMS = [
 const DOORS = [
   { id: "today", label: "Today", built: true },
   { id: "food", label: "Food", built: true },
-  { id: "progress", label: "Progress", built: false },
+  { id: "progress", label: "Progress", built: true },
   { id: "you", label: "You", built: true },
 ];
 
@@ -173,9 +174,9 @@ export default function SimpleApp() {
   // FOUR DOORS — Today · Food · Progress · You.
   //
   // Same structure as the committed nav.js SECTIONS (23158d9), reached
-  // independently by an earlier session. Two are built; Progress and You are
-  // honest links into the full app until their rooms land, rather than doors
-  // that open onto nothing.
+  // independently by an earlier session. All four now have rooms. The one
+  // screen still not redrawn is the Engine, and Progress says so on its own
+  // face rather than hiding it — see SimpleProgress.
   //
   // TODAY IS STILL ONE SCREEN. The owner's call earlier this session — the day
   // of food and the weight box on one page, no sub-navigation, because two
@@ -197,6 +198,9 @@ export default function SimpleApp() {
           {room === "recipes" && <SimpleRecipes onShowFull={goFull} />}
           {room === "shopping" && <SimpleShopping onShowFull={goFull} />}
         </div>
+      )}
+      {door === "progress" && (
+        <SimpleProgress profile={profile} summary={summary} onShowFull={goFull} />
       )}
       {door === "you" && (
         <SimpleDetails
