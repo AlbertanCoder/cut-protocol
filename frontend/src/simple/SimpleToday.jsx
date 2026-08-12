@@ -2,7 +2,8 @@ import { useCallback, useEffect, useState } from "react";
 import { RefreshCw, Check } from "lucide-react";
 import { api, describeError, isAbortError } from "../lib/api.js";
 import { todayStr } from "../lib/dates.js";
-import { Big, Quiet, Note, Row, RowAction, Sheet, Empty, Busy, Panel } from "./parts.jsx";
+import { Big, Quiet, Note, Row, RowAction, Empty, Busy } from "./parts.jsx";
+import SwapSheet from "./SwapSheet.jsx";
 
 // "Here's what to eat today." The home screen of the simple surface.
 //
@@ -51,35 +52,8 @@ function Meal({ slot, index, onSwap, swapping }) {
   );
 }
 
-// The swap sheet. Three or four alternatives, plain names and calories only.
-function SwapSheet({ alts, busy, applyingId, onApply, onClose, error }) {
-  return (
-    <Sheet
-      title="Something else instead"
-      sub="These all fit the same day. Pick one and the rest of the day stays where it is."
-      onClose={onClose}
-    >
-      {error && <Note>{error}</Note>}
-
-      {busy && <Busy>Finding other options…</Busy>}
-
-      {!busy && alts && alts.length === 0 && (
-        <Panel>
-          Nothing else fits this slot today. The plan you have is the closest one available.
-        </Panel>
-      )}
-
-      {!busy && alts && alts.map((a) => (
-        <Row
-          key={a.recipeId}
-          lead={a.name || a.recipeName}
-          meta={applyingId === a.recipeId ? "Swapping…" : `${kc(a.kcal)} calories`}
-          onClick={applyingId == null ? () => onApply(a) : undefined}
-        />
-      ))}
-    </Sheet>
-  );
-}
+// The swap sheet moved to ./SwapSheet.jsx the moment Plan needed it too —
+// one implementation, two callers.
 
 export default function SimpleToday({ profile }) {
   const date = todayStr();

@@ -5,7 +5,18 @@ import LoginScreen from "../components/LoginScreen.jsx";
 import SimpleOnboarding from "./SimpleOnboarding.jsx";
 import SimpleToday from "./SimpleToday.jsx";
 import SimpleWeight from "./SimpleWeight.jsx";
+import SimplePlan from "./SimplePlan.jsx";
 import { Screen, Big, Note, Details } from "./parts.jsx";
+
+// The four doors. `built` marks which have a rebuilt room; the rest hand over
+// to the full app rather than opening onto nothing. Mirrors the SECTIONS list
+// in lib/nav.js (23158d9) — today · food · progress · setup.
+const DOORS = [
+  { id: "today", label: "Today", built: true },
+  { id: "food", label: "Food", built: true },
+  { id: "progress", label: "Progress", built: false },
+  { id: "you", label: "You", built: false },
+];
 
 // The simple surface's shell: sign in, six questions, then two screens.
 //
@@ -36,6 +47,7 @@ export default function SimpleApp() {
   const [needsSetup, setNeedsSetup] = useState(false);
   const [bootError, setBootError] = useState(null);
   const [notice, setNotice] = useState(null);
+  const [door, setDoor] = useState("today");
 
   // Keeps a late 401 — an in-flight request landing just after a deliberate
   // sign-out — from overwriting the reason with "expired". App.jsx:172-186.
@@ -129,37 +141,75 @@ export default function SimpleApp() {
     );
   }
 
-  // ONE SCREEN. No tabs, no nav bar, nothing to find.
+  // FOUR DOORS — Today · Food · Progress · You.
   //
-  // Two things exist on this surface — the day of food and the weight box — and
-  // a navigation system for two items is a thing to learn. Food is on top
-  // because it is what gets opened twenty times a week; weight sits below it
-  // because it is a five-second job done once a day.
+  // Same structure as the committed nav.js SECTIONS (23158d9), reached
+  // independently by an earlier session. Two are built; Progress and You are
+  // honest links into the full app until their rooms land, rather than doors
+  // that open onto nothing.
   //
-  // The weight section is deliberately two elements and no more: a box and a
-  // line. No seven-day average, no rate, no projected date. The moment a third
-  // number appears down there it is a dashboard again, which is the thing this
-  // surface exists to not be.
+  // TODAY IS STILL ONE SCREEN. The owner's call earlier this session — the day
+  // of food and the weight box on one page, no sub-navigation, because two
+  // things do not need a navigation system. That decision governs the Today
+  // door and is not undone by the app having doors.
+  const room = (
+    <>
+      {door === "today" && (
+        <div className="flex flex-col gap-12">
+          <SimpleToday profile={profile} />
+          <hr className="border-border" />
+          <SimpleWeight profile={profile} onSaved={loadData} />
+        </div>
+      )}
+      {door === "food" && <SimplePlan profile={profile} onShowFull={goFull} />}
+    </>
+  );
+
   return (
     <div className="min-h-svh bg-background text-foreground">
       <a href="#simple-main" className="skip-link">Skip to main content</a>
 
-      <main id="simple-main" className="mx-auto w-full max-w-xl px-6 pt-10 pb-16 flex flex-col gap-12">
-        <SimpleToday profile={profile} />
+      {/* Sidebar on a desktop window, a row of doors above the content on a
+          phone. One component set, per the responsive decision. */}
+      <div className="sm:flex sm:min-h-svh">
+        <nav
+          aria-label="Sections"
+          className="sm:w-52 sm:shrink-0 sm:border-r border-b sm:border-b-0 border-border
+                     flex sm:flex-col sm:gap-1 sm:p-4 sm:pt-10"
+        >
+          {DOORS.map((d) => {
+            const on = d.id === door;
+            const cls = `flex-1 sm:flex-none min-h-14 px-4 rounded-none sm:rounded-2xl text-base
+                         flex items-center justify-center sm:justify-start transition-colors ${
+              on ? "font-semibold text-foreground sm:bg-secondary" : "text-muted-foreground hover:text-foreground"
+            }`;
+            return d.built ? (
+              <button key={d.id} type="button" onClick={() => setDoor(d.id)} aria-current={on ? "page" : undefined} className={cls}>
+                {d.label}
+              </button>
+            ) : (
+              <button key={d.id} type="button" onClick={goFull} className={cls} title="Opens the full app — this room hasn't been rebuilt yet">
+                {d.label}
+              </button>
+            );
+          })}
+        </nav>
 
-        <hr className="border-border" />
+        <main id="simple-main" className="flex-1 min-w-0 px-6 pt-10 pb-16">
+          <div className="mx-auto w-full max-w-3xl flex flex-col gap-12">
+            {room}
 
-        <SimpleWeight profile={profile} onSaved={loadData} />
-
-        <div className="flex flex-col items-start gap-3 pt-2">
-          <Details onClick={goFull} />
-          {/* The support resources are never hidden and never greyed out — a
-              standing safety rule that survives any visual direction. On this
-              surface they are one labelled click away, on the full app's
-              Wellbeing tab. */}
-          <Details onClick={goFull} label="Support and wellbeing resources" />
-        </div>
-      </main>
+            <div className="flex flex-col items-start gap-3 pt-2">
+              <Details onClick={goFull} />
+              {/* The support resources are never hidden and never greyed out — a
+                  standing safety rule that survives any visual direction. On this
+                  surface they are one labelled click away, on the full app's
+                  Wellbeing tab. */}
+              <Details onClick={goFull} label="Support and wellbeing resources" />
+            </div>
+          </div>
+        </main>
+      </div>
     </div>
   );
 }
