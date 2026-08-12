@@ -45,6 +45,39 @@ export const uiMode = {
   },
 };
 
+// ── URL switch ───────────────────────────────────────────────────────────
+// `?simple=1` opens the simple surface, `?simple=0` the full one, so neither
+// needs a console. Same one-shot pattern the app already uses for `?upgraded=1`
+// and `?penny=1` (App.jsx:65-70, 108-114): read it, act on it, then strip it
+// from the address bar so a reload doesn't re-force a choice the user has since
+// changed with the in-app link.
+//
+// The choice still persists — this writes through `set`, so it lands in
+// localStorage exactly as clicking would. The param is a way in, not a mode.
+//
+// Runs at MODULE LOAD, deliberately, and not in a useState initializer like
+// App.jsx's version: React StrictMode double-invokes those in development, and
+// `history.replaceState` is a side effect that should happen once. Module load
+// also guarantees the value is settled before any component reads it.
+function consumeUrlOverride() {
+  if (typeof window === "undefined") return;
+  try {
+    const params = new URLSearchParams(window.location.search);
+    if (!params.has("simple")) return;
+    const raw = params.get("simple");
+    // Anything but an explicit off means on — `?simple` alone should work.
+    const next = raw === "0" || raw === "false" ? "full" : "simple";
+    params.delete("simple");
+    const qs = params.toString();
+    window.history.replaceState(null, "", window.location.pathname + (qs ? `?${qs}` : "") + window.location.hash);
+    uiMode.set(next);
+  } catch {
+    // A malformed URL must never stop the app booting.
+  }
+}
+
+consumeUrlOverride();
+
 // Subscribe to changes. Returns an unsubscribe function.
 //
 // Listens for `storage` too, so flipping the mode in one tab moves the other
