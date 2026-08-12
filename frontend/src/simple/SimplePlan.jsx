@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { RefreshCw } from "lucide-react";
 import { api, describeError, isAbortError } from "../lib/api.js";
-import { Page, Row, RowAction, Panel, Big, Quiet, Empty, Busy, Note, Details } from "./parts.jsx";
+import { Page, Row, RowAction, Panel, Big, Quiet, Empty, Busy, Note, Details, Sheet } from "./parts.jsx";
 import SwapSheet from "./SwapSheet.jsx";
 
 // Food › Plan — the week.
@@ -29,8 +29,12 @@ const LONG = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"
 
 const kc = (n) => (Number.isFinite(n) ? Math.round(n).toLocaleString() : "—");
 
+// The solver only ever emits "meal" and "snack" (weeklyPlanner.js:150,153), so
+// a bare "Meal" would label three rows identically. "meal" falls through to the
+// ordinal; the other four keys stay and still win if they ever arrive.
 const WORD = { meal: "Meal", snack: "Snack", breakfast: "Breakfast", lunch: "Lunch", dinner: "Dinner" };
-const slotWord = (s, i) => (s && WORD[s]) || (s ? s[0].toUpperCase() + s.slice(1) : `Meal ${i + 1}`);
+const slotWord = (s, i) =>
+  s === "meal" ? `Meal ${i + 1}` : (s && WORD[s]) || (s ? s[0].toUpperCase() + s.slice(1) : `Meal ${i + 1}`);
 
 // The seven days. Scrolls sideways on a phone, sits in one row on a desktop —
 // the responsive rule, no second component.
@@ -45,6 +49,11 @@ function Week({ days, selected, onSelect }) {
             type="button"
             role="tab"
             aria-selected={on}
+            aria-label={
+              d.flagged > 0
+                ? `${LONG[d.index]}, ${kc(d.kcal)} calories — ${d.flagged} meal${d.flagged === 1 ? "" : "s"} didn't fit your target`
+                : undefined
+            }
             onClick={() => onSelect(d.index)}
             className={`rounded-xl border px-1 py-2.5 min-h-16 flex flex-col items-center justify-center gap-0.5
                         transition-colors ${
@@ -54,7 +63,7 @@ function Week({ days, selected, onSelect }) {
             <span className="text-xs text-muted-foreground">{DAYS[d.index]}</span>
             <span className="text-sm font-semibold tabular-nums">{d.slots.length ? kc(d.kcal) : "—"}</span>
             {d.flagged > 0 && (
-              <span className="text-[10px] text-warn">{d.flagged} gap{d.flagged === 1 ? "" : "s"}</span>
+              <span className="text-xs text-warn">{d.flagged} didn&rsquo;t fit</span>
             )}
           </button>
         );
@@ -74,6 +83,7 @@ export default function SimplePlan({ profile, onShowFull }) {
   const [altBusy, setAltBusy] = useState(false);
   const [applyingId, setApplyingId] = useState(null);
   const [swapError, setSwapError] = useState(null);
+  const [confirmRebuild, setConfirmRebuild] = useState(false);
 
   const load = useCallback(async () => {
     try {
@@ -106,6 +116,13 @@ export default function SimplePlan({ profile, onShowFull }) {
   const today = days[day] || { slots: [], kcal: 0, flagged: 0 };
   const target = profile?.targetKcal;
   const flaggedSlots = today.slots.filter((s) => typeof s.warning === "string" && s.warning.trim());
+
+  // Two counts for the subtitle, both read straight off the rollup above: a day
+  // is "ready" when it has meals and none of them carry a solver warning, and
+  // "not planned yet" when it has no meals at all. A blank day is never
+  // silently counted as a miss.
+  const readyDays = days.filter((d) => d.slots.length && d.flagged === 0).length;
+  const unplannedDays = days.filter((d) => !d.slots.length).length;
 
   const generate = async () => {
     setGenerating(true);
@@ -166,9 +183,17 @@ export default function SimplePlan({ profile, onShowFull }) {
   return (
     <Page
       title="Your week"
-      sub={slots.length ? `${days.filter((d) => d.slots.length && d.flagged === 0).length} of 7 days on target` : undefined}
+      sub={slots.length
+        ? `${readyDays} day${readyDays === 1 ? "" : "s"} ready${
+            unplannedDays > 0
+              ? ` · ${unplannedDays} day${unplannedDays === 1 ? "" : "s"} not planned yet`
+              : ""
+          }`
+        : undefined}
       actions={slots.length ? (
-        <Quiet onClick={generate}>{generating ? "Building…" : "Build it again"}</Quiet>
+        <Quiet onClick={() => { if (!generating) setConfirmRebuild(true); }}>
+          {generating ? "Building…" : "Build it again"}
+        </Quiet>
       ) : undefined}
     >
       {error && <Note>{error}</Note>}
@@ -198,12 +223,21 @@ export default function SimplePlan({ profile, onShowFull }) {
 
           {/* The solver's own words, unabridged. It is the only thing that
               knows why a slot did not fit, and paraphrasing it would be
-              inventing a reason. */}
+              inventing a reason. The meal's name in front is ours; everything
+              after the colon is the solver's, verbatim. */}
           {flaggedSlots.length > 0 && (
             <Panel tone="warn">
               <div className="flex flex-col gap-2 text-base leading-relaxed">
-                {flaggedSlots.map((s) => <p key={s.id}>{s.warning}</p>)}
-                <p>Swap that meal below and it usually clears.</p>
+                {flaggedSlots.map((s) => (
+                  <p key={s.id}>
+                    <span className="font-semibold">
+                      {slotWord(s.slotType, today.slots.indexOf(s))}
+                      {s.recipe?.name ? ` — ${s.recipe.name}` : ""}:
+                    </span>{" "}
+                    {s.warning}
+                  </p>
+                ))}
+                <p>Swapping it usually helps.</p>
               </div>
             </Panel>
           )}
@@ -212,21 +246,34 @@ export default function SimplePlan({ profile, onShowFull }) {
             {today.slots.length === 0 ? (
               <Empty>Nothing planned for {LONG[day]}.</Empty>
             ) : today.slots.map((s, i) => {
-              const name = s.recipe?.name || "No meal chosen yet";
+              // An unfilled slot is the solver's failure, not the person's —
+              // "swap" is the wrong verb for nothing, so an empty slot says
+              // "Pick one" instead.
+              const name = s.recipe?.name;
+              const flagged = typeof s.warning === "string" && !!s.warning.trim();
               return (
                 <Row
                   key={s.id}
                   label={slotWord(s.slotType, i)}
-                  lead={name}
-                  meta={`${kc(s.kcal)} calories`}
+                  lead={name || "Nothing picked for this one yet"}
+                  meta={
+                    flagged ? (
+                      <>
+                        {kc(s.kcal)} calories
+                        <span className="block text-sm text-warn">Didn&rsquo;t fit your target</span>
+                      </>
+                    ) : (
+                      `${kc(s.kcal)} calories`
+                    )
+                  }
                   action={
                     <RowAction
                       onClick={() => openSwap(s)}
                       disabled={swapSlot?.id === s.id && altBusy}
-                      label={`Swap ${name} for something else`}
+                      label={name ? `Swap ${name} for something else` : "Pick a meal for this one"}
                     >
                       <RefreshCw size={16} aria-hidden="true" className={swapSlot?.id === s.id && altBusy ? "motion-safe:animate-spin" : ""} />
-                      Swap
+                      {name ? "Swap" : "Pick one"}
                     </RowAction>
                   }
                 />
@@ -235,9 +282,22 @@ export default function SimplePlan({ profile, onShowFull }) {
           </div>
 
           <div className="pt-2">
-            <Details onClick={onShowFull} label="Cuisines, budget, how far ahead — the full planner" />
+            <Details onClick={onShowFull} label="Change the kinds of food, or plan further ahead — in the full app" />
           </div>
         </>
+      )}
+
+      {/* "Build it again" names what is lost before it runs: only locked slots
+          survive a regenerate, this surface has no lock control, and the swap
+          sheet just promised the rest of the day stays put. */}
+      {confirmRebuild && (
+        <Sheet
+          title="Start the whole week over?"
+          sub="This replaces every meal, including the ones you swapped."
+          onClose={() => setConfirmRebuild(false)}
+        >
+          <Big onClick={() => { setConfirmRebuild(false); generate(); }}>Build it again</Big>
+        </Sheet>
       )}
 
       {swapSlot && (

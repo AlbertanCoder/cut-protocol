@@ -10,6 +10,9 @@
 //   - no eyebrow labels, no uppercase micro-caps, no section codes
 //   - no percentages that were not measured, no rings, no macro rails
 
+import { useId, useRef } from "react";
+import { useFocusTrap } from "../lib/useFocusTrap.js";
+
 // A full-bleed screen: one question or one job, vertically centred, capped so
 // the line length stays readable on a wide desktop window.
 export const Screen = ({ children }) => (
@@ -87,13 +90,16 @@ export const Choice = ({ options, value, onChange }) => (
 // would make Next skip screens in the six questions (blurring to click Next
 // would fire the advance twice) and would POST a weigh-in on click-away. Only
 // Your details passes it, because only Your details claims to save as you go.
+// `label` is the accessible name. When a call site doesn't pass one, a
+// fallback is derived from `unit`/`placeholder` so no box ever announces as
+// just "spin button, blank".
 export const NumberBox = ({ value, onChange, unit, placeholder, autoFocus, onEnter, onBlur, label }) => (
   <div className="flex items-center gap-3 rounded-2xl border border-border bg-card px-5 min-h-20">
     <input
       type="number"
       inputMode="decimal"
       value={value}
-      aria-label={label}
+      aria-label={label || (unit ? `Number in ${unit}` : placeholder || "Number")}
       autoFocus={autoFocus}
       placeholder={placeholder}
       onChange={(e) => onChange(e.target.value)}
@@ -178,29 +184,49 @@ export const Page = ({ title, sub, actions, children }) => (
 
 // Sub-navigation inside a room (Plan / Recipes / Shopping). Selection is a
 // weight-and-underline change, never a colour — the accent stays scarce.
-export const Tabs = ({ tabs, active, onSelect }) => (
-  <div className="flex gap-1 border-b border-border overflow-x-auto" role="tablist">
-    {tabs.map((t) => {
-      const on = t.id === active;
-      return (
-        <button
-          key={t.id}
-          type="button"
-          role="tab"
-          aria-selected={on}
-          onClick={() => onSelect(t.id)}
-          className={`min-h-12 px-4 text-base whitespace-nowrap border-b-2 -mb-px transition-colors ${
-            on
-              ? "font-semibold text-foreground border-foreground"
-              : "text-muted-foreground border-transparent hover:text-foreground"
-          }`}
-        >
-          {t.label}
-        </button>
-      );
-    })}
-  </div>
-);
+//
+// Real tab semantics, not just the roles: roving tabindex (only the active
+// tab is in the Tab order) and Left/Right both moves focus and activates,
+// because roles that announce "tab, 2 of 3" and then ignore arrow keys are
+// worse than plain buttons.
+export const Tabs = ({ tabs, active, onSelect }) => {
+  const btnRefs = useRef([]);
+  const activeIdx = Math.max(0, tabs.findIndex((t) => t.id === active));
+  const onArrow = (e) => {
+    if (e.key !== "ArrowLeft" && e.key !== "ArrowRight") return;
+    e.preventDefault();
+    const step = e.key === "ArrowRight" ? 1 : -1;
+    const next = (activeIdx + step + tabs.length) % tabs.length;
+    onSelect(tabs[next].id);
+    btnRefs.current[next]?.focus();
+  };
+  return (
+    <div className="flex gap-1 border-b border-border overflow-x-auto" role="tablist">
+      {tabs.map((t, i) => {
+        const on = t.id === active;
+        return (
+          <button
+            key={t.id}
+            ref={(el) => { btnRefs.current[i] = el; }}
+            type="button"
+            role="tab"
+            aria-selected={on}
+            tabIndex={i === activeIdx ? 0 : -1}
+            onClick={() => onSelect(t.id)}
+            onKeyDown={onArrow}
+            className={`min-h-12 px-4 text-base whitespace-nowrap border-b-2 -mb-px transition-colors ${
+              on
+                ? "font-semibold text-foreground border-foreground"
+                : "text-muted-foreground border-transparent hover:text-foreground"
+            }`}
+          >
+            {t.label}
+          </button>
+        );
+      })}
+    </div>
+  );
+};
 
 // A plain surface. `tone="warn"` is the ONE alert treatment on this surface —
 // calm amber, never red. Red is reserved for system errors and destructive
@@ -239,15 +265,20 @@ export const Row = ({ label, lead, meta, action, onClick }) => {
 
 // The small button that sits at the right of a Row. Deliberately not `Big` —
 // a row action must never outweigh the screen's own primary action.
+//
+// `disabled` is aria-disabled + an early return, NOT the native attribute:
+// natively disabling the control someone just pressed drops keyboard focus
+// to the top of the page. The button stays focusable, announces as dimmed,
+// and simply does nothing while disabled.
 export const RowAction = ({ children, onClick, disabled, label }) => (
   <button
     type="button"
-    onClick={onClick}
-    disabled={disabled}
+    onClick={(e) => { if (disabled) return; onClick?.(e); }}
+    aria-disabled={disabled || undefined}
     aria-label={label}
     className="shrink-0 min-h-12 min-w-12 px-4 rounded-2xl border border-border bg-background
                text-sm font-medium text-muted-foreground hover:text-foreground
-               disabled:opacity-40 transition-colors flex items-center justify-center gap-2"
+               aria-disabled:opacity-40 transition-colors flex items-center justify-center gap-2"
   >
     {children}
   </button>
@@ -293,22 +324,49 @@ export const Stat = ({ label, value }) => (
 
 // Bottom sheet on a phone, centred dialog on a desktop. Same component.
 //
-// NOT a focus trap. When a room needs one it must use lib/useFocusTrap.js —
-// the app's existing accessibility hook — rather than growing a second
-// implementation here.
-export const Sheet = ({ title, sub, onClose, children }) => (
-  <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-foreground/20 px-4 py-6">
-    <div className="w-full max-w-xl rounded-3xl border border-border bg-background p-6
-                    flex flex-col gap-5 max-h-[85svh] overflow-y-auto">
-      <div className="flex flex-col gap-1">
-        <h2 className="text-2xl font-bold">{title}</h2>
-        {sub && <p className="text-base text-muted-foreground">{sub}</p>}
+// Focus containment comes from lib/useFocusTrap.js — the app's existing
+// accessibility hook, already used by the full surface's dialogs — never a
+// second implementation here. It also brings Escape-to-close and focus
+// return to the trigger. `onClose` reaches the hook through a ref because
+// useFocusTrap keys its effect on the handler's identity (see App.jsx's
+// stable-identities note) and the rooms pass inline arrows.
+//
+// The backdrop dismiss is guarded on e.target === e.currentTarget because
+// the panel is a child of the backdrop — unguarded, every click inside the
+// sheet would close it.
+export const Sheet = ({ title, sub, onClose, children }) => {
+  const panelRef = useRef(null);
+  const titleId = useId();
+  const closeRef = useRef(onClose);
+  closeRef.current = onClose;
+  const stableClose = useRef(() => closeRef.current?.()).current;
+  // Sheets only exist in the DOM while open (the rooms conditionally render
+  // them), so `active` is always true here — same as BodyFatPicker.
+  useFocusTrap(panelRef, { active: true, onClose: stableClose });
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-foreground/20 px-4 py-6"
+      onClick={(e) => { if (e.target === e.currentTarget) onClose?.(); }}
+    >
+      <div
+        ref={panelRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby={titleId}
+        tabIndex={-1}
+        className="w-full max-w-xl rounded-3xl border border-border bg-background p-6
+                    flex flex-col gap-5 max-h-[85svh] overflow-y-auto"
+      >
+        <div className="flex flex-col gap-1">
+          <h2 id={titleId} className="text-2xl font-bold">{title}</h2>
+          {sub && <p className="text-base text-muted-foreground">{sub}</p>}
+        </div>
+        {children}
+        <Quiet onClick={onClose}>Never mind</Quiet>
       </div>
-      {children}
-      <Quiet onClick={onClose}>Never mind</Quiet>
     </div>
-  </div>
-);
+  );
+};
 
 // Nothing here yet. Always names the next action — an empty state that only
 // says "nothing here" is a dead end.
@@ -320,9 +378,10 @@ export const Empty = ({ children, action }) => (
 );
 
 // Waiting. Says what it is waiting for, because "Loading…" tells nobody
-// anything and the solver can legitimately take seconds.
+// anything and the solver can legitimately take seconds. role="status" so
+// the wait is announced, not just painted.
 export const Busy = ({ children }) => (
-  <p className="text-lg text-muted-foreground">{children}</p>
+  <p role="status" className="text-lg text-muted-foreground">{children}</p>
 );
 
 // A weight line. Points come in already converted for display; this only maps
@@ -379,8 +438,8 @@ export const TrendLine = ({ points, unit, label }) => {
         />
       </svg>
       <div className="flex justify-between text-sm text-muted-foreground tabular-nums">
-        <span>{first.dateLabel} — {first.w} {unit}</span>
-        <span>{last.dateLabel} — {last.w} {unit}</span>
+        <span>first · {first.dateLabel} — {first.w} {unit}</span>
+        <span>latest · {last.dateLabel} — {last.w} {unit}</span>
       </div>
     </div>
   );

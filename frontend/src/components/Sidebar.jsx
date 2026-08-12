@@ -2,9 +2,11 @@ import { useState } from "react";
 import {
   User, Activity, CalendarDays, BookOpen, TrendingUp,
   Calculator, Dumbbell, LogOut, ChevronsLeft, ChevronsRight, Bug, Heart, Scale,
+  Minimize2,
 } from "lucide-react";
 import { TRAINING, WELLBEING } from "../lib/flags.js";
 import { sidebarPref } from "../lib/storage.js";
+import { uiMode } from "../lib/uiMode.js";
 import CutMark from "./ui/CutMark.jsx";
 
 const NAV = [
@@ -103,6 +105,25 @@ export default function Sidebar({ tab, setTab, onLogout, onReportBug, onCompare,
       <div className="flex-1" />
 
       {/* Day/Target moved to the HeaderBar (inverted-L chassis). */}
+
+      {/* back to the simple view — the way out of the one-way door. The
+          simple surface's "Show me the details" links all call
+          uiMode.set("full"); this is the only control anywhere that calls
+          uiMode.set("simple"), so without it one tap on that link was
+          permanent across restarts (declutter audit 2026-08-11, do-first
+          item 4). AppWithTheme (App.jsx) subscribes via onUiModeChange, so
+          the switch renders immediately — no reload needed. */}
+      <div className="px-3 pb-1">
+        <button
+          onClick={() => uiMode.set("simple")}
+          title="Back to the simple view"
+          aria-label="Back to the simple view"
+          className={`flex items-center gap-2 text-xs font-semibold rounded-lg border border-border text-muted-foreground transition-colors duration-150 ease-out hover:bg-sidebar-accent hover:text-sidebar-foreground ${collapsed ? "w-8 h-8 justify-center mx-auto" : "w-full px-2.5 py-2"}`}
+        >
+          <Minimize2 size={14} aria-hidden="true" />
+          {!collapsed && "Back to the simple view"}
+        </button>
+      </div>
 
       {/* how it compares — an in-app view of Cut Protocol vs the other
           calorie/macro/meal-planning apps, from the forum + review research. */}

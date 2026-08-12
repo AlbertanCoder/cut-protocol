@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
-import { displayWeight, weightUnit } from "../lib/units.js";
+import { displayRate, displayWeight, weightUnit } from "../lib/units.js";
 import { fmtD } from "../lib/dates.js";
-import { Page, Panel, Stat, Tabs, Empty, Busy, Details, TrendLine } from "./parts.jsx";
+import { Big, Page, Panel, Stat, Tabs, Empty, Busy, Details, TrendLine } from "./parts.jsx";
 
 // Progress — Weight · Your numbers · Engine.
 //
@@ -22,10 +22,12 @@ const r1 = (n) => (Number.isFinite(n) ? Math.round(n * 10) / 10 : null);
 const ROOMS = [
   { id: "weight", label: "Weight" },
   { id: "numbers", label: "Your numbers" },
-  { id: "engine", label: "Engine" },
+  // Display label only — "Engine" is developer vocabulary next to "Weight".
+  // The id stays "engine"; nothing persisted or routed changes.
+  { id: "engine", label: "The full maths" },
 ];
 
-function Weight({ profile, summary }) {
+function Weight({ profile, summary, onOpenToday }) {
   const pref = profile?.unitPref || "imperial";
   const unit = weightUnit(pref);
 
@@ -53,16 +55,31 @@ function Weight({ profile, summary }) {
   const verdict = summary.verdict;
 
   if (points.length === 0) {
+    // The weigh-in box lives on the Today door — the button goes there.
+    // Rendered only when the shell passes the navigation, never as a dead door.
     return (
-      <Empty>
-        No weigh-ins yet. Weigh yourself a few mornings and your line starts here.
+      <Empty action={onOpenToday ? <Big onClick={onOpenToday}>Log your first weight</Big> : undefined}>
+        Nothing to show yet — log your first weight and the line starts here.
       </Empty>
     );
   }
 
   return (
     <div className="flex flex-col gap-6">
-      <TrendLine points={points} unit={unit} />
+      {points.length === 1 ? (
+        // At exactly one reading TrendLine returns null (it needs two points to
+        // draw a line), and this screen used to show a hole with no explanation.
+        <Empty>First point logged — the line starts with your second weigh-in.</Empty>
+      ) : (
+        <>
+          <TrendLine points={points} unit={unit} />
+          {/* TrendLine auto-fits its vertical scale, so a 1 lb water swing can
+              draw a cliff. Said plainly, once. The chart itself is untouched. */}
+          <p className="text-base text-muted-foreground leading-relaxed">
+            The line is scaled to fit, so small day-to-day changes look big.
+          </p>
+        </>
+      )}
 
       <Panel>
         <Stat
@@ -73,11 +90,11 @@ function Weight({ profile, summary }) {
           label="Which way it's going"
           value={
             rate == null
-              ? "Not enough yet"
+              ? "Too early to say"
               : `${r1(Math.abs(rate * (pref === "metric" ? 0.453592 : 1)))} ${unit} a week ${rate < 0 ? "down" : "up"}`
           }
         />
-        <Stat label="Days in" value={summary.daysIn ?? "—"} />
+        <Stat label="Days since you started" value={summary.daysIn ?? "—"} />
       </Panel>
 
       {/* Provenance, because the constitution says a displayed number can
@@ -98,6 +115,12 @@ function Weight({ profile, summary }) {
           <div className="flex flex-col gap-1">
             <span className="text-lg font-semibold">{verdict.tag}</span>
             {verdict.sub && <span className="text-base leading-relaxed">{verdict.sub}</span>}
+            {/* The engine's sentence can name "Profile" — a door this surface
+                doesn't have. One plain line under it says where the pace
+                control actually lives here. The sentence above stays verbatim. */}
+            <span className="text-base leading-relaxed text-muted-foreground">
+              You can change your pace under You → How fast do you want to lose?
+            </span>
           </div>
         </Panel>
       )}
@@ -105,12 +128,13 @@ function Weight({ profile, summary }) {
   );
 }
 
-function Numbers({ summary, onShowFull }) {
+function Numbers({ profile, summary, onShowFull }) {
   if (summary === "error") {
     return <Panel tone="warn">Couldn&rsquo;t load your numbers just now. Try again in a moment.</Panel>;
   }
   if (!summary) return <Busy>Working out your numbers…</Busy>;
 
+  const pref = profile?.unitPref || "imperial";
   const e = summary.energy || {};
   const t = summary.target || {};
   const spread =
@@ -121,20 +145,21 @@ function Numbers({ summary, onShowFull }) {
       <Panel>
         <div className="text-lg leading-relaxed">
           You burn about <b>{kc(e.tdee)}</b> calories a day.<br />
-          Eat <b>{kc(t.target)}</b> to lose about {r1(t.rate)} lb a week.
+          Eat <b>{kc(t.target)}</b> to lose about {displayRate(t.rate, pref)} {weightUnit(pref)} a week.
         </div>
       </Panel>
 
       {t.floored && (
         <Panel tone="warn">
-          The maths wanted {kc(t.raw)}, which is under your floor of {kc(t.floor)}. You&rsquo;re held at
-          the floor — losing faster would mean eating less than is safe. Add movement instead.
+          That pace would mean {kc(t.raw)} calories, which is under your floor of {kc(t.floor)} calories.
+          You&rsquo;re held at the floor — losing faster would mean eating less than is safe. Add
+          movement instead.
         </Panel>
       )}
 
       {!t.floored && Number.isFinite(t.floor) && (
         <p className="text-base text-muted-foreground">
-          Your floor is {kc(t.floor)}. The app never plans below it, whatever you type.
+          Your floor is {kc(t.floor)} calories. The app never plans below it, whatever you type.
         </p>
       )}
 
@@ -162,15 +187,15 @@ function Numbers({ summary, onShowFull }) {
   );
 }
 
-export default function SimpleProgress({ profile, summary, onShowFull }) {
+export default function SimpleProgress({ profile, summary, onShowFull, onOpenToday }) {
   const [room, setRoom] = useState("weight");
 
   return (
     <Page title="Progress">
       <Tabs tabs={ROOMS} active={room} onSelect={setRoom} />
 
-      {room === "weight" && <Weight profile={profile} summary={summary} />}
-      {room === "numbers" && <Numbers summary={summary} onShowFull={onShowFull} />}
+      {room === "weight" && <Weight profile={profile} summary={summary} onOpenToday={onOpenToday} />}
+      {room === "numbers" && <Numbers profile={profile} summary={summary} onShowFull={onShowFull} />}
 
       {/* ENGINE IS NOT REBUILT HERE, and this says so rather than pretending.
           EngineTab carries 15 capabilities that are mostly a proof: five
@@ -187,7 +212,7 @@ export default function SimpleProgress({ profile, summary, onShowFull }) {
             and your macro ranges. It hasn&rsquo;t been redrawn in this simpler style yet, so
             it opens in the full app.
           </Empty>
-          <Details onClick={onShowFull} label="Open the Engine" />
+          <Details onClick={onShowFull} label="Open the full maths" />
         </div>
       )}
     </Page>

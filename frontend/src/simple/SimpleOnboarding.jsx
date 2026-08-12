@@ -1,8 +1,8 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { api } from "../lib/api.js";
 import { describeError } from "../lib/api.js";
 import { parseWeight, parseHeight, ftin2cm, weightUnit } from "../lib/units.js";
-import { Screen, Ask, Big, Quiet, Choice, NumberBox, Dots, Note, Details } from "./parts.jsx";
+import { Screen, Ask, Big, Quiet, Choice, NumberBox, Dots, Note, Details, Pill, Sheet } from "./parts.jsx";
 
 // Six plain questions, one per screen, then a review.
 //
@@ -42,6 +42,27 @@ export default function SimpleOnboarding({ onDone, onShowFull }) {
   const [rateAck, setRateAck] = useState(false);
   const [goalAck, setGoalAck] = useState(false);
   const [refusal, setRefusal] = useState(null);
+  // Confirm before leaving for the full setup. All six answers live in this
+  // component's state and unmounting throws them away — "instead" would
+  // promise a swap and deliver a restart, so the restart is named first.
+  // Visual state only; it reaches neither the network nor storage.
+  const [confirmFull, setConfirmFull] = useState(false);
+
+  // The age the server refuses under, read from GET /profile/meta — the same
+  // source the full SetupWizard uses (limits.adultMinAge). Deliberately never
+  // hardcoded here: the server owns the number, and a local copy is exactly
+  // how the full wizard once drifted to a different age than the API it
+  // writes to. If this fetch fails the gate simply arrives later — the
+  // server's own 403 (handleError below) still refuses a minor at submit and
+  // lands them back on the age screen — so the catch is silent on purpose.
+  const [adultMinAge, setAdultMinAge] = useState(null);
+  useEffect(() => {
+    let alive = true;
+    api.getProfileMeta()
+      .then((m) => { if (alive) setAdultMinAge(m?.limits?.adultMinAge ?? null); })
+      .catch(() => { /* server-side gate remains the enforcement */ });
+    return () => { alive = false; };
+  }, []);
 
   const [d, setD] = useState({
     unitPref: "imperial",
@@ -170,7 +191,21 @@ export default function SimpleOnboarding({ onDone, onShowFull }) {
     }));
   };
 
+  // Only the typed-in terms get a row of their own below the box. A chosen
+  // built-in already shows its state (and its ×) on the chip you tapped —
+  // repeating it a few centimetres down was the same answer twice. The
+  // exclusions ARRAY is untouched: this filters what renders, not what is
+  // sent.
+  const typedTerms = d.exclusions.filter(
+    (t) => !COMMON.some((c) => c.toLowerCase() === t.toLowerCase())
+  );
+
   const heightOk = metric ? +d.heightCm > 0 : (+d.heightFt > 0 || +d.heightIn > 0);
+  // A minor is stopped AT the age question, not after answering everything
+  // including a goal weight. Gate only once the server's number has arrived —
+  // guessing a minimum locally would be hardcoding the very thing
+  // /profile/meta exists to serve.
+  const isMinor = adultMinAge != null && +d.age > 0 && +d.age < adultMinAge;
   const ready = [
     !!d.sex,
     +d.age > 0,
@@ -183,11 +218,39 @@ export default function SimpleOnboarding({ onDone, onShowFull }) {
 
   const next = () => { setRefusal(null); setError(null); setI((n) => n + 1); };
   const back = () => { setRefusal(null); setError(null); setI((n) => Math.max(0, n - 1)); };
+  // The age screen's own Next. Refusing on the press rather than mid-typing
+  // means "1" on the way to "19" is never treated as a child, without this
+  // file growing its own touched/blur machinery. Same early-refusal idea as
+  // SetupWizard's isMinor gate; the server stays the authority.
+  const nextFromAge = () => {
+    if (isMinor) {
+      setRefusal({
+        kind: "age",
+        text: `Cut Protocol can't build an eating plan for someone under ${adultMinAge}. If you mistyped your age, correct it and carry on.`,
+      });
+      return;
+    }
+    next();
+  };
 
   const footer = (
-    <div className="flex items-center justify-between pt-2">
-      {i > 0 ? <Quiet onClick={back}>Back</Quiet> : <span />}
-      <Details onClick={onShowFull} label="Use the full setup instead" />
+    <div className="flex flex-col gap-3 pt-2">
+      <div className="flex items-center justify-between">
+        {i > 0 ? <Quiet onClick={back}>Back</Quiet> : <span />}
+        <Details onClick={() => setConfirmFull(true)} label="Ask me everything instead" />
+      </div>
+      {/* The support entry renders on every screen of the surface, never
+          muted and never hidden — setup was the only stretch without it, and
+          setup is where goal weight gets asked and refused. Same visual
+          treatment as the shell's (SimpleApp.jsx). No doors exist before a
+          profile does, so the only route from here is the full app. */}
+      <button
+        type="button"
+        onClick={onShowFull}
+        className="min-h-11 text-base text-foreground underline underline-offset-4 self-start"
+      >
+        Support and wellbeing resources
+      </button>
     </div>
   );
 
@@ -200,11 +263,20 @@ export default function SimpleOnboarding({ onDone, onShowFull }) {
         {node}
         {footer}
       </div>
+      {confirmFull && (
+        <Sheet
+          title="Ask me everything instead?"
+          sub="You'll answer these questions again."
+          onClose={() => setConfirmFull(false)}
+        >
+          <Big onClick={onShowFull}>Ask me everything</Big>
+        </Sheet>
+      )}
     </Screen>
   );
 
   if (i === 0) return wrap(
-    <Ask title="Are you male or female?" hint="Your body uses energy differently either way. This changes the numbers.">
+    <Ask title="Are you male or female?" hint="Your body uses energy differently either way — it changes how much you get to eat.">
       <Choice
         value={d.sex}
         onChange={(v) => set({ sex: v })}
@@ -216,14 +288,24 @@ export default function SimpleOnboarding({ onDone, onShowFull }) {
 
   if (i === 1) return wrap(
     <Ask title="How old are you?">
-      <NumberBox value={d.age} onChange={(v) => set({ age: v })} unit="years" autoFocus onEnter={() => ready[1] && next()} />
-      <Big onClick={next} disabled={!ready[1]}>Next</Big>
+      <NumberBox value={d.age} onChange={(v) => set({ age: v })} unit="years" autoFocus onEnter={() => ready[1] && nextFromAge()} />
+      <Big onClick={nextFromAge} disabled={!ready[1]}>Next</Big>
     </Ask>
   );
 
   if (i === 2) return wrap(
     <Ask title="How tall are you?">
       <div className="flex flex-col gap-4">
+        {/* Unit choice lives here rather than on a screen of its own — it is a
+            setting, not a question, and it changes the two screens after this
+            one. It sits ABOVE the boxes it clears. Switching wipes the height
+            boxes below and the weights typed after them, deliberately:
+            reinterpreting a number typed as pounds as kilograms would be
+            silent body-data corruption. The clearing is load-bearing — only
+            its position and the label naming the consequence are display. */}
+        <Quiet onClick={() => set({ unitPref: metric ? "imperial" : "metric", heightCm: "", heightFt: "", heightIn: "", weight: "", goal: "" })}>
+          {metric ? "Use feet and pounds instead — this clears what you've typed" : "Use centimetres and kilograms instead — this clears what you've typed"}
+        </Quiet>
         {metric ? (
           <NumberBox value={d.heightCm} onChange={(v) => set({ heightCm: v })} unit="cm" autoFocus onEnter={() => ready[2] && next()} />
         ) : (
@@ -232,12 +314,6 @@ export default function SimpleOnboarding({ onDone, onShowFull }) {
             <NumberBox value={d.heightIn} onChange={(v) => set({ heightIn: v })} unit="in" onEnter={() => ready[2] && next()} />
           </div>
         )}
-        {/* Unit choice lives here rather than on a screen of its own — it is a
-            setting, not a question, and it changes the two screens after this
-            one. Nothing typed is converted because nothing is typed yet. */}
-        <Quiet onClick={() => set({ unitPref: metric ? "imperial" : "metric", heightCm: "", heightFt: "", heightIn: "", weight: "", goal: "" })}>
-          {metric ? "Use feet and pounds instead" : "Use centimetres and kilograms instead"}
-        </Quiet>
       </div>
       <Big onClick={next} disabled={!ready[2]}>Next</Big>
     </Ask>
@@ -271,24 +347,23 @@ export default function SimpleOnboarding({ onDone, onShowFull }) {
   if (i === 5) return wrap(
     <Ask
       title="Anything you can't eat?"
-      hint="This filters every meal the app ever builds for you. There is no skip on this one — an empty list has served someone shellfish before."
+      hint="We use this to keep those foods out of every meal we suggest. There's no skip here — answer even if it's a no, because we'd rather not guess."
     >
       <div className="flex flex-col gap-5">
+        {/* The real Pill from parts.jsx — this markup was a hand copy of it,
+            class for class, and copies drift the next time Pill is restyled.
+            A pressed chip shows a visible × so removal isn't invisible now
+            that the duplicate list below only carries typed-in terms. `label`
+            pins the accessible name to the term itself, so the name doesn't
+            change when the × appears — aria-pressed already announces the
+            state. */}
         <div className="flex flex-wrap gap-2">
           {COMMON.map((t) => {
             const on = d.exclusions.some((x) => x.toLowerCase() === t.toLowerCase());
             return (
-              <button
-                key={t}
-                type="button"
-                onClick={() => toggle(t)}
-                aria-pressed={on}
-                className={`min-h-12 px-4 rounded-2xl text-base font-medium border transition-colors ${
-                  on ? "bg-secondary border-foreground text-foreground" : "bg-card border-border text-muted-foreground hover:text-foreground"
-                }`}
-              >
-                {t}
-              </button>
+              <Pill key={t} on={on} onClick={() => toggle(t)} label={t}>
+                {on ? `${t} ×` : t}
+              </Pill>
             );
           })}
         </div>
@@ -305,9 +380,9 @@ export default function SimpleOnboarding({ onDone, onShowFull }) {
           <Quiet onClick={addCustom}>Add</Quiet>
         </div>
 
-        {d.exclusions.length > 0 && (
+        {typedTerms.length > 0 && (
           <div className="flex flex-wrap gap-2">
-            {d.exclusions.map((t) => (
+            {typedTerms.map((t) => (
               <button
                 key={t}
                 type="button"

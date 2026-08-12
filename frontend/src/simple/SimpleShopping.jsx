@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { api, describeError, isAbortError } from "../lib/api.js";
-import { Page, Panel, Big, Quiet, Empty, Busy, Note, Details } from "./parts.jsx";
+import { Page, Panel, Big, Quiet, Empty, Busy, Note, Details, Sheet } from "./parts.jsx";
 
 // Food › Shopping — the list.
 //
@@ -29,12 +29,19 @@ const itemLine = (i) => {
   return practical ? `${practical} — ${i.name} (${grams} g)` : `${grams} g ${i.name}`;
 };
 
+// The classifier emits protein / dairy / spices / produce / pantry / other
+// (groceryList.js:139-145). `meat`, `bakery` and `frozen` can never match
+// today — they stay anyway, per the never-delete rule. `protein` spells out
+// its members because eggs AND tofu land there (PROTEIN_WORDS), so neither
+// "Meat & fish" nor "Dairy & eggs" would be telling the truth.
 const SECTION_LABEL = {
   produce: "Fruit & veg",
   meat: "Meat & fish",
-  dairy: "Dairy & eggs",
+  protein: "Meat, fish, eggs & tofu",
+  dairy: "Dairy",
   bakery: "Bakery",
   pantry: "Cupboard",
+  spices: "Herbs & spices",
   frozen: "Frozen",
   other: "Everything else",
 };
@@ -42,13 +49,24 @@ const sectionWord = (s) => SECTION_LABEL[s] || (s ? s[0].toUpperCase() + s.slice
 
 function Tick({ item, onToggle, busy }) {
   const on = !!item.checked;
+  // Display-only split of itemLine(): the practical purchase unit is the big
+  // line, the grams drop to a quieter second line, and the item's name repeats
+  // after the unit only when the unit doesn't already contain it —
+  // case-insensitive containment is the confidence test. So "3 apples" stands
+  // alone, while "2 bulbs (≈20 cloves)" still gets "— Garlic". itemLine()
+  // itself is untouched: asText() exports the full one-line form.
+  const grams = itemGrams(item);
+  const practical = item.purchaseUnits?.display;
+  const nameRepeats =
+    practical && !practical.toLowerCase().includes(String(item.name ?? "").toLowerCase());
+  const lead = practical ? (nameRepeats ? `${practical} — ${item.name}` : practical) : item.name;
   return (
     <button
       type="button"
       onClick={() => onToggle(item, !on)}
       disabled={busy}
       aria-pressed={on}
-      className="w-full text-left min-h-14 px-4 rounded-2xl flex items-center gap-3
+      className="w-full text-left min-h-14 px-4 py-2 rounded-2xl flex items-center gap-3
                  hover:bg-card disabled:opacity-50 transition-colors"
     >
       <span
@@ -59,19 +77,26 @@ function Tick({ item, onToggle, busy }) {
       >
         {on ? "✓" : ""}
       </span>
-      <span className={`text-base leading-snug ${on ? "line-through text-muted-foreground" : ""}`}>
-        {itemLine(item)}
+      <span className="min-w-0 flex flex-col">
+        <span className={`text-base leading-snug ${on ? "line-through text-muted-foreground" : ""}`}>
+          {lead}
+        </span>
+        <span className={`text-sm text-muted-foreground leading-snug ${on ? "line-through" : ""}`}>
+          {grams} g
+        </span>
       </span>
     </button>
   );
 }
 
-export default function SimpleShopping({ onShowFull }) {
+export default function SimpleShopping({ onShowFull, onOpenPlan }) {
   const [plan, setPlan] = useState("loading");// "loading" | null (no plan) | "error" | plan
   const [error, setError] = useState(null);
   const [building, setBuilding] = useState(false);
   const [busyName, setBusyName] = useState(null);
   const [copied, setCopied] = useState(false);
+  // Purely visual: is the "start the list over" confirm sheet open.
+  const [confirmingRestart, setConfirmingRestart] = useState(false);
 
   const load = useCallback(async () => {
     try {
@@ -114,6 +139,17 @@ export default function SimpleShopping({ onShowFull }) {
     }
   };
 
+  // Regenerating the list resets every checkbox server-side ("a regenerated
+  // list naturally resets its checkboxes" — plans.js:911), while this file's
+  // own header promises that closing the app in aisle three keeps your place.
+  // So: when anything is ticked, confirm before wiping it. Nothing ticked,
+  // nothing to lose — build straight away.
+  const startOver = () => {
+    if (building) return;
+    if (items.some((i) => i.checked)) { setConfirmingRestart(true); return; }
+    build();
+  };
+
   // Optimistic, with a rollback — ticking in a shop over bad signal must feel
   // instant, and must not silently lie if the write fails.
   const toggle = async (item, next) => {
@@ -154,7 +190,10 @@ export default function SimpleShopping({ onShowFull }) {
     return (
       <Page title="Shopping">
         {error && <Note>{error}</Note>}
-        <Empty>
+        {/* First visit lands here — there must be something to press. The
+            button opens the Plan room, where the week gets built. Rendered
+            only when the shell passes the navigation, never as a dead door. */}
+        <Empty action={onOpenPlan ? <Big onClick={onOpenPlan}>Open Plan</Big> : undefined}>
           Your shopping list comes from your week&rsquo;s food. Build a week first and the
           list writes itself.
         </Empty>
@@ -177,7 +216,7 @@ export default function SimpleShopping({ onShowFull }) {
     <Page
       title="Shopping"
       sub={left === 0 ? "All done — nothing left to get." : `${left} thing${left === 1 ? "" : "s"} left to get`}
-      actions={<Quiet onClick={build}>{building ? "Rebuilding…" : "Rebuild"}</Quiet>}
+      actions={<Quiet onClick={startOver}>{building ? "Starting over…" : "Start the list over"}</Quiet>}
     >
       {error && <Note>{error}</Note>}
 
@@ -217,6 +256,20 @@ export default function SimpleShopping({ onShowFull }) {
       </p>
 
       <Details onClick={onShowFull} label="Costs and the full grocery view" />
+
+      {confirmingRestart && (
+        <Sheet
+          title="Start the list over?"
+          sub={`A fresh list starts with every box unticked — including the ${items.length - left} thing${
+            items.length - left === 1 ? "" : "s"
+          } you've already ticked off.`}
+          onClose={() => setConfirmingRestart(false)}
+        >
+          <Big onClick={() => { setConfirmingRestart(false); build(); }}>
+            Start the list over
+          </Big>
+        </Sheet>
+      )}
     </Page>
   );
 }

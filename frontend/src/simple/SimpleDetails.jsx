@@ -1,9 +1,9 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { api, describeError, isAbortError } from "../lib/api.js";
-import { displayWeight, parseWeight, displayHeight, parseHeight, weightUnit, cm2ftin, ftin2cm } from "../lib/units.js";
+import { displayWeight, parseWeight, displayHeight, parseHeight, weightUnit, displayRate, rateUnit, cm2ftin, ftin2cm } from "../lib/units.js";
 import { normTerm, fetchAllergenTaxonomy, fetchExclusionDescriptions } from "../components/ui/allergyTaxonomy.js";
 import ResourceList from "../components/ui/ResourceList.jsx";
-import { Page, Panel, Row, Pill, Search, Stat, Note, Busy, Quiet, Details, NumberBox } from "./parts.jsx";
+import { Page, Panel, Row, Pill, Search, Stat, Note, Busy, Quiet, RowAction, Details, NumberBox } from "./parts.jsx";
 
 // You › Your details — 32 capabilities (Profile 28 + the body-fat picker's 4).
 //
@@ -204,10 +204,10 @@ export default function SimpleDetails({ profile, summary, refresh, onShowFull, o
         {Number.isFinite(profile.floorKcal) && <Stat label="Never below" value={`${kc(profile.floorKcal)} calories`} />}
       </Panel>
       {heldAtFloor && (
-        <p className="text-base text-warn leading-relaxed">
-          You&rsquo;re being held at your floor. Losing faster would mean eating less than is safe,
-          so the app won&rsquo;t plan it — add movement instead.
-        </p>
+        <Panel tone="warn">
+          You&rsquo;re held at the floor — losing faster would mean eating less than is safe. Add
+          movement instead.
+        </Panel>
       )}
 
       {/* ── How fast ───────────────────────────────────────────────── */}
@@ -216,7 +216,7 @@ export default function SimpleDetails({ profile, summary, refresh, onShowFull, o
         <div className="flex gap-2 flex-wrap">
           {rateOptions.map((r) => (
             <Pill key={r} on={r === profile.rateLbPerWeek} onClick={() => commit({ rateLbPerWeek: r })}>
-              {r} lb a week
+              {displayRate(r, pref)} {rateUnit(pref)}
             </Pill>
           ))}
         </div>
@@ -230,8 +230,12 @@ export default function SimpleDetails({ profile, summary, refresh, onShowFull, o
         <Row
           label="Weight now"
           lead={`${displayWeight(summary?.avg7Kg ?? profile.startWeightKg, pref) ?? "—"} ${wUnit}`}
-          meta="This comes from your weigh-ins"
-          action={<Quiet onClick={onOpenToday}>Log one</Quiet>}
+          meta={
+            summary?.avg7Kg == null
+              ? "What you started at — log a weigh-in to update it"
+              : "This comes from your weigh-ins"
+          }
+          action={<RowAction onClick={onOpenToday}>Log one</RowAction>}
         />
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -316,10 +320,14 @@ export default function SimpleDetails({ profile, summary, refresh, onShowFull, o
         </div>
         {meta === "error" && (
           <p className="text-base text-muted-foreground">
-            Couldn&rsquo;t load the full job list. Yours is saved as {profile.occupationKey}.
+            Couldn&rsquo;t load the full job list.{" "}
+            {(() => {
+              const job = COMMON_JOBS.find((j) => j.key === profile.occupationKey);
+              return job ? `Yours is saved as ${job.label}.` : "Your answer is saved.";
+            })()}
           </p>
         )}
-        <Details onClick={onShowFull} label="The full job list, training sessions, and the multiplier" />
+        <Details onClick={onShowFull} label="The full job list and how training is counted" />
       </div>
 
       {/* ── Foods you avoid ────────────────────────────────────────── */}
@@ -359,12 +367,12 @@ export default function SimpleDetails({ profile, summary, refresh, onShowFull, o
                   lead={t}
                   meta={
                     dsc?.kind === "category"
-                      ? `Matched as a group — covers ${dsc.matchCount ?? "several"} foods`
+                      ? "Covers a whole group of foods"
                       : dsc
-                        ? "Matched on the name only"
+                        ? "We're matching the words you typed — worth checking labels too."
                         : undefined
                   }
-                  action={<Quiet onClick={() => toggleExclusion(t)}>{exBusy ? "…" : "Remove"}</Quiet>}
+                  action={<RowAction onClick={() => toggleExclusion(t)}>{exBusy ? "…" : "Remove"}</RowAction>}
                 />
               );
             })}

@@ -10,7 +10,7 @@ import SimpleRecipes from "./SimpleRecipes.jsx";
 import SimpleShopping from "./SimpleShopping.jsx";
 import SimpleDetails from "./SimpleDetails.jsx";
 import SimpleProgress from "./SimpleProgress.jsx";
-import { Screen, Big, Note, Details, Tabs } from "./parts.jsx";
+import { Screen, Big, Note, Details, Tabs, Busy } from "./parts.jsx";
 
 // The three rooms behind the Food door. Plan first — it is what the week is.
 const FOOD_ROOMS = [
@@ -128,7 +128,10 @@ export default function SimpleApp() {
   useEffect(() => { boot(); }, [boot]);
 
   if (authStatus === "checking") {
-    return <Screen><p className="text-lg text-muted-foreground">One moment…</p></Screen>;
+    // Busy, not hand-rolled markup — parts.jsx:324 is this exact element, and
+    // it exists because "Loading…" tells nobody anything. The first screen a
+    // new person sees should obey the same rule as every other wait.
+    return <Screen><Busy>Signing you in…</Busy></Screen>;
   }
 
   if (authStatus === "unreachable") {
@@ -136,7 +139,22 @@ export default function SimpleApp() {
       <Screen>
         <div className="flex flex-col gap-6">
           <h1 className="text-3xl font-bold tracking-tight">Can't reach the app right now</h1>
-          {bootError && <Note>{bootError}</Note>}
+          {bootError && (
+            <>
+              {/* The calm line is for the person. On the offline path the raw
+                  describeError string says "the change was not sent" — on first
+                  load there was no change, so it does not render bare. */}
+              <Note>Nothing was lost. If this keeps happening, close Cut Protocol completely and open it again.</Note>
+              {/* The raw string survives, one small click away, for whoever is
+                  helping them figure it out. */}
+              <details className="text-sm text-muted-foreground">
+                <summary className="w-fit cursor-pointer underline underline-offset-4 hover:text-foreground transition-colors">
+                  What went wrong
+                </summary>
+                <p className="mt-2 leading-relaxed break-words">{bootError}</p>
+              </details>
+            </>
+          )}
           <Big onClick={boot}>Try again</Big>
           <Details onClick={goFull} />
         </div>
@@ -166,7 +184,22 @@ export default function SimpleApp() {
       <Screen>
         <div className="flex flex-col gap-6">
           <h1 className="text-3xl font-bold tracking-tight">That didn't load</h1>
-          {bootError && <Note>{bootError}</Note>}
+          {bootError && (
+            <>
+              {/* The calm line is for the person. On the offline path the raw
+                  describeError string says "the change was not sent" — on first
+                  load there was no change, so it does not render bare. */}
+              <Note>Nothing was lost. If this keeps happening, close Cut Protocol completely and open it again.</Note>
+              {/* The raw string survives, one small click away, for whoever is
+                  helping them figure it out. */}
+              <details className="text-sm text-muted-foreground">
+                <summary className="w-fit cursor-pointer underline underline-offset-4 hover:text-foreground transition-colors">
+                  What went wrong
+                </summary>
+                <p className="mt-2 leading-relaxed break-words">{bootError}</p>
+              </details>
+            </>
+          )}
           <Big onClick={boot}>Try again</Big>
           <Details onClick={goFull} />
         </div>
@@ -191,7 +224,7 @@ export default function SimpleApp() {
         <div className="flex flex-col gap-12">
           <SimpleToday profile={profile} />
           <hr className="border-border" />
-          <SimpleWeight profile={profile} onSaved={loadData} />
+          <SimpleWeight profile={profile} onSaved={loadData} onOpenProgress={() => setDoor("progress")} />
         </div>
       )}
       {door === "food" && (
@@ -199,11 +232,11 @@ export default function SimpleApp() {
           <Tabs tabs={FOOD_ROOMS} active={room} onSelect={setRoom} />
           {room === "plan" && <SimplePlan profile={profile} onShowFull={goFull} />}
           {room === "recipes" && <SimpleRecipes onShowFull={goFull} />}
-          {room === "shopping" && <SimpleShopping onShowFull={goFull} />}
+          {room === "shopping" && <SimpleShopping onShowFull={goFull} onOpenPlan={() => setRoom("plan")} />}
         </div>
       )}
       {door === "progress" && (
-        <SimpleProgress profile={profile} summary={summary} onShowFull={goFull} />
+        <SimpleProgress profile={profile} summary={summary} onShowFull={goFull} onOpenToday={() => setDoor("today")} />
       )}
       {door === "you" && (
         <SimpleDetails
@@ -256,10 +289,13 @@ export default function SimpleApp() {
                 and You read as four different offers that were one offer — all
                 the same component, all the same grey, all landing in the same
                 place. Now the generic one renders ONLY where the room supplies
-                none, which today means Today. Every other room has its own
-                link with better words. */}
+                none — Today, and Food > Recipes since its own bottom link
+                moved (Cut List row 6). Every other room has its own link
+                with better words. */}
             <div className="flex flex-col items-start gap-4 pt-2">
-              {door === "today" && <Details onClick={goFull} label="Open the full app" />}
+              {(door === "today" || (door === "food" && room === "recipes")) && (
+                <Details onClick={goFull} label="Open the full app" />
+              )}
 
               {/* The support resources are never hidden and never greyed out —
                   a standing safety rule that survives any visual direction. It
