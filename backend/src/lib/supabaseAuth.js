@@ -84,8 +84,9 @@ async function verifySupabaseToken(token) {
  *      enabled provider and Google emails arrive verified, so an email match
  *      is the owner of that account signing in a new way — this is what lets
  *      an existing local account claim its data via Google;
- *   3. else create a fresh User. First user on an empty install is "admin",
- *      mirroring /register's first-run rule.
+ *   3. else create a fresh User — ALWAYS role "user", never "admin" (see the
+ *      comment at the create call; /register's first-run-admin rule is a
+ *      desktop-only convention and must not exist on this path).
  *
  * Returns { userId } or null (bad token). Database errors propagate — a DB
  * hiccup must never read as "signed out".
@@ -123,13 +124,21 @@ async function resolveSupabaseSession(token) {
     return null;
   }
 
-  const existingUsers = await prisma.user.count();
   try {
     const created = await prisma.user.create({
       data: {
         email,
         supabaseUserId: sub,
-        role: existingUsers === 0 ? "admin" : "user",
+        // ALWAYS "user" — never the desktop first-run-admin rule (QC audit
+        // 2026-08-11 item 1). /register's "first account is admin" convention
+        // is safe on a desktop install because the first account is, by
+        // construction, the machine's owner. On a hosted deployment with a
+        // freshly-seeded database, the first Supabase sign-in is whichever
+        // STRANGER Googles in first — auto-granting admin here would hand
+        // them the deployment (food-library writes via FoodsTab, recipe
+        // mutation, admin-gated routes). Admin on the hosted path is granted
+        // operationally only: scripts/grantAdmin.mjs.
+        role: "user",
       },
       select: { id: true },
     });
