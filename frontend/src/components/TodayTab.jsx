@@ -10,7 +10,7 @@ import PremiumGate from "./ui/PremiumGate.jsx";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Skeleton, SkeletonRows } from "./ui/Skeleton.jsx";
-import { api, ApiError, ERR, isAbortError, describeError } from "../lib/api.js";
+import { api, ApiError, ERR, isAbortError, describeError, isPremiumRequired } from "../lib/api.js";
 import { useAbortSignal } from "../lib/useAbortable.js";
 import { readProfileProvisional, describeAssumptions } from "./SetupWizard.jsx";
 
@@ -753,8 +753,21 @@ export default function TodayTab({ profile, summary, refresh, openTrend, openWel
   useEffect(() => {
     // Stage-C fix: distinguish a fetch error from "no plan yet" so a 500
     // doesn't render the misleading "no plan generated" empty state.
-    api.getCurrentPlan().then(setPlan).catch(() => setPlan("error"));
-  }, []);
+    //
+    // Defect fix 2026-08-11 (owner-approved): a free user's premium 403 was
+    // collapsed into that same "error" state, so the most-viewed card in the
+    // product told a brand-new user the app was BROKEN when it was merely
+    // gated. The backend ships code:"premium_required" on the 403 for exactly
+    // this branch (entitlement.js:53-63), and lib/api.js:70 exports the
+    // matching helper — already used correctly by MicronutrientsCard.jsx.
+    // A premium-403 now reads as "no plan" (calm empty state behind the
+    // PremiumGate overlay, which is the message); only real failures error.
+    //
+    // `premium` is in the deps so the plan refetches the moment the upgrade
+    // poll flips it true while the user is sitting on this tab — previously
+    // the [] deps left the stale state up until a tab switch remounted us.
+    api.getCurrentPlan().then(setPlan).catch((e) => setPlan(isPremiumRequired(e) ? null : "error"));
+  }, [premium]);
 
   // onboarding-flow-5: day 1 used to open on an empty dashboard whose only
   // hint was a sentence telling the user to go find another tab. The single
