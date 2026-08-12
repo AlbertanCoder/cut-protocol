@@ -144,10 +144,11 @@ function slotTargetFinder(dailyTarget, mealConfig) {
 // Server-side rebuild of an incoming candidate/alternate slot. The client
 // only nominates {recipeId, ingredients:[{foodId, grams}]} — names come
 // from the DB and macros are recomputed here, never trusted. Membership in
-// the user's FILTERED pool is the compliance check (diet + allergies).
+// the user's FILTERED pool is the compliance check (diet + allergies + the
+// ingredient-trust gate — see planContext.filterRecipePool).
 function rebuildSlotFromClient(incoming, recipePool, slotTarget = null) {
   const recipe = recipePool.find((r) => r.id === incoming.recipeId);
-  if (!recipe) throw Object.assign(new Error("recipe not in your allowed pool (diet/allergy rules or unknown id)"), { status: 400 });
+  if (!recipe) throw Object.assign(new Error("recipe not in your allowed pool (diet/allergy rules, untrusted nutrition data, or unknown id)"), { status: 400 });
   const byFoodId = new Map(recipe.ingredients.map((i) => [i.foodId, i]));
   const ingredients = (incoming.ingredients || []).map((ing) => {
     const ri = byFoodId.get(ing.foodId);
@@ -290,7 +291,7 @@ const BRAIN_SLOT_TIMEOUT_MS = Number(process.env.BRAIN_SLOT_TIMEOUT_MS) > 0
 router.post("/generate", async (req, res) => {
   try {
     const horizon = resolveHorizon(req.body?.horizon); // throws 400 on junk/out-of-range
-    const { profile, dailyTarget, mealConfig, recipePool, rawPoolCount, ratings, adjusters } = await planContext(req.userId);
+    const { profile, dailyTarget, mealConfig, recipePool, rawPoolCount, trustExcludedCount, ratings, adjusters } = await planContext(req.userId);
     const filters = parseFilters(req.body);
     filters.ratings = ratings; // T (v2): soft taste re-rank
 
@@ -313,7 +314,12 @@ router.post("/generate", async (req, res) => {
     // can't blame prep for a cut the stack made (a QC finding: a cost cap that
     // emptied the pool was reported as "prep removes all 889"). stackExplain
     // lets both name the real cap.
-    const poolCounts = { raw: rawPoolCount, afterDiet: recipePool.length, afterPrep: prepped.length, afterStack: pool.length, stackExplain };
+    // `trustExcluded` (owner ruling 2026-08-12): recipes the ingredient-trust
+    // gate removed from EVERY plan pool before diet/allergy rules ran —
+    // attribution order is raw -> trust -> diet. Reported so the removal is
+    // never silent (the constitution bans silent shrinkage); the recipes stay
+    // visible in the Recipes tab with their amber marker.
+    const poolCounts = { raw: rawPoolCount, trustExcluded: trustExcludedCount, afterDiet: recipePool.length, afterPrep: prepped.length, afterStack: pool.length, stackExplain };
 
     // ── 1 MEAL ───────────────────────────────────────────────────────────
     // One dish against what is LEFT of today. No writes, no week solve — this
@@ -497,7 +503,7 @@ router.post("/generate", async (req, res) => {
       // { feasible, reasons, suggestions, binding } | null. Null ONLY when every
       // day landed in tolerance, every slot filled, and the variety contract held.
       diagnosis: result.diagnosis,
-      poolCounts, // { raw, afterDiet, afterPrep }
+      poolCounts, // { raw, trustExcluded, afterDiet, afterPrep, afterStack }
       variety: { ...outlook, horizon: v, notes: [...(outlook.notes || []), horizonVarietyNote].filter(Boolean) },
       priorWeeksConsidered: priorPlans.length,
       horizon: {
@@ -726,7 +732,7 @@ router.post("/place-recipe", async (req, res) => {
 
     const { dailyTarget, mealConfig, recipePool } = await planContext(req.userId);
     const recipe = recipePool.find((r) => r.id === recipeId);
-    if (!recipe) return res.status(400).json({ error: "recipe not in your allowed pool (diet/allergy rules or unknown id)" });
+    if (!recipe) return res.status(400).json({ error: "recipe not in your allowed pool (diet/allergy rules, untrusted nutrition data, or unknown id)" });
 
     const monday = mondayOf(todayStr());
     const plan = await prisma.plan.upsert({
@@ -778,7 +784,7 @@ router.post("/fill-today-from-cart", async (req, res) => {
     const poolById = new Map(recipePool.map((r) => [r.id, r]));
     const usable = cart.map((c) => poolById.get(c.recipeId)).filter(Boolean);
     const skippedForDiet = cart.length - usable.length;
-    if (usable.length === 0) return res.status(422).json({ error: "no cart recipe passes your current diet/allergy rules" });
+    if (usable.length === 0) return res.status(422).json({ error: "no cart recipe passes your current diet/allergy rules and nutrition-trust checks" });
 
     const jsDay = new Date().getDay();
     const today = jsDay === 0 ? 6 : jsDay - 1;
@@ -821,7 +827,10 @@ router.post("/fill-today-from-cart", async (req, res) => {
       plan: full,
       placed,
       note: [
-        skippedForDiet ? `${skippedForDiet} cart item(s) skipped — outside your current diet/allergy rules.` : null,
+        // "or trust gate": pool membership now also refuses recipes whose
+        // stated calories are materially untrusted (see filterRecipePool) —
+        // billing that skip to diet rules would name the wrong constraint.
+        skippedForDiet ? `${skippedForDiet} cart item(s) skipped — outside your current diet/allergy rules, or held out of planning because their nutrition data isn't trusted yet.` : null,
         leftover > 0 ? `${leftover} cart item(s) didn't fit today's ${dayTargets.length} slots.` : null,
       ].filter(Boolean).join(" ") || null,
     });

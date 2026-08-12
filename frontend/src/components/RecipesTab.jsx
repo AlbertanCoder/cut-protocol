@@ -283,7 +283,10 @@ function RecipeDetail({ recipe, profile, onSave, onDelete, inCart, onToggleCart,
               <li key={i}>· <b style={{ color: "var(--foreground)" }}>{f.name}</b> — {f.detail}</li>
             ))}
           </ul>
-          <div className="mt-1">Correct these rows in the Food database and this recipe&apos;s totals recompute.</div>
+          <div className="mt-1">
+            The meal planner won&apos;t place this recipe until these rows are fixed.
+            Correct them in the Food database and its totals recompute.
+          </div>
         </div>
       )}
       <div className="text-xs font-semibold mb-1.5" style={{ color: "var(--foreground)" }}>

@@ -219,7 +219,7 @@ async function verifyDraft(draft, { profile, target, rules, resolveIngredientImp
 
   const survivors = filterRecipePool([candidateRow], profile);
   if (survivors.length !== 1) {
-    return { ok: false, reason: `"${resolved.name}" was rejected by the recipe pool filter after ingredient resolution — its resolved foods violate this profile's diet or exclusions` };
+    return { ok: false, reason: `"${resolved.name}" was rejected by the recipe pool filter after ingredient resolution — its resolved foods violate this profile's diet or exclusions, or carry nutrition data the trust gate refuses to build a plan on` };
   }
   const row = survivors[0]; // carries dietGuardStyle for the post-scale ceiling
 

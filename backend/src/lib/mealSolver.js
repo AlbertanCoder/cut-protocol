@@ -523,11 +523,14 @@ function dayMissLine(dailyTarget, totals) {
 // ── infeasibility diagnosis ──────────────────────────────────────────────
 
 /**
- * counts: { raw, afterDiet, afterPrep } — pool sizes as each HARD filter
- * applied. Produces reasons + concrete suggestions. Allergies and dietary
+ * counts: { raw, trustExcluded?, afterDiet, afterPrep } — pool sizes as each
+ * HARD filter applied (attribution order raw -> trust -> diet -> prep).
+ * Produces reasons + concrete suggestions. Allergies and dietary
  * style are named as the binding constraint when they are, but loosening an
  * ALLERGY is never suggested — that list ends at prep time, batch repeats,
- * meal structure, and AI generation.
+ * meal structure, and AI generation. The ingredient-trust gate is likewise
+ * NAMED but never offered as a knob: untrusted nutrition data is fixed in the
+ * food library, not waived for a plan.
  */
 function diagnose({ counts, filters, dailyTarget, mealConfig, pool, days = 7 }) {
   const reasons = [];
@@ -537,9 +540,18 @@ function diagnose({ counts, filters, dailyTarget, mealConfig, pool, days = 7 }) 
   // `days` lets a 3-day window (or a 28-day horizon's window) be judged on the
   // slots it actually has. Default 7 = every pre-horizon caller, unchanged.
   const windowDays = Number.isFinite(days) && days > 0 ? days : 7;
+  // The trust gate's removals are part of every pool-size story this function
+  // tells (silent shrinkage is banned). Phrased once, appended wherever this
+  // diagnosis already fires — it never flips a feasible verdict on its own.
+  const trustLine = counts.trustExcluded > 0
+    ? `${counts.trustExcluded} recipe(s) sit out of planning because they carry ingredient rows whose nutrition data isn't trusted yet — they stay visible in Recipes, flagged in their detail, until the data is fixed.`
+    : null;
 
   if (counts.afterDiet === 0) {
-    reasons.push("Your dietary style + allergy rules exclude every recipe in the library.");
+    if (trustLine) reasons.push(trustLine);
+    if (!(counts.trustExcluded >= counts.raw)) {
+      reasons.push("Your dietary style + allergy rules exclude every recipe in the library.");
+    }
     suggestions.push("Generate new compliant recipes with the AI on the Recipes tab — the filters here can't conjure dishes that don't exist yet.");
     return { feasible: false, reasons, suggestions };
   }
@@ -602,6 +614,10 @@ function diagnose({ counts, filters, dailyTarget, mealConfig, pool, days = 7 }) 
     reasons.push(`Your targets need ~${Math.round(neededRatio * 1000) / 10}g protein per 100 kcal; only ${densePool.length} of ${pool.length} eligible recipes come close (${denseNeeded}+ needed for a full varied week).`);
     suggestions.push("Set the protein-preference filter, or AI-generate a few high-protein recipes to deepen the pool.");
   }
+  // Honesty rider: whenever this diagnosis fires for ANY reason, the trust
+  // gate's removals are disclosed alongside it. Appended only when a reason
+  // already exists, so a healthy solve stays feasible and diagnosis-free.
+  if (reasons.length > 0 && trustLine && !reasons.includes(trustLine)) reasons.push(trustLine);
   return { feasible: reasons.length === 0, reasons, suggestions };
 }
 
@@ -1346,8 +1362,13 @@ function classifyBinding({ counts = null, filters = {}, dailyTarget, mealConfig 
   const snackEligible = eligibleRecipes(pool, "snack", new Map(), perWeekCap).length;
 
   if (c.afterDiet === 0) {
+    // The trust gate's removals must not be billed to diet/allergy rules —
+    // naming the wrong constraint is how a user "fixes" the wrong thing.
+    const trustBit = c.trustExcluded > 0
+      ? ` (${c.trustExcluded} of them by the ingredient-trust gate — untrusted nutrition data, fixed in the library rather than loosened for a plan)`
+      : "";
     return { key: BINDING.DIET, label: "your dietary style + allergy rules",
-      detail: `every one of the ${c.raw} recipes in the library is excluded before the solver runs.` };
+      detail: `every one of the ${c.raw} recipes in the library is excluded before the solver runs${trustBit}.` };
   }
   if (filters.maxPrepMin && c.afterPrep === 0) {
     return { key: BINDING.PREP, label: `your ${filters.maxPrepMin}-minute max-prep cap`,

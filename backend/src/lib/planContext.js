@@ -25,7 +25,7 @@ const { macroTrustIssue } = require("./foodValidation.js");
 // so the library browse, the cart, the brain pool and this pool answer the same
 // question with the same evidence — see that file's header for the 210 recipe/
 // allergy pairs the old five-implementations arrangement was leaking.
-const { filterRecipes, RECIPE_GATE_SELECT } = require("./exclusionGate.js");
+const { filterRecipes, RECIPE_GATE_SELECT, recipeTrustExclusion } = require("./exclusionGate.js");
 
 // The pool carries the diet style it was admitted under (solver-core-3).
 // "Pool membership = compliance" is this codebase's invariant, but membership is
@@ -44,9 +44,21 @@ function stampDietGuard(recipes, dietaryStyle) {
 // title, the full step text) now live in exclusionGate.collectEvidence(), so
 // this function no longer decides anything about allergens — it only decides
 // what the SOLVER additionally needs to know about what it admitted.
+//
+// The ingredient-TRUST gate (owner ruling 2026-08-12) also runs here, and
+// deliberately here rather than inside explainRecipeExclusion: this function is
+// the one chokepoint every plan entry point builds its candidates through
+// (generate, day-options, alternates, apply, place-recipe, fill-today-from-
+// cart, legacy swap, mealRouter.verifyDraft, the recipe-brain pool), while the
+// library browse — which must keep SHOWING flagged recipes with their amber
+// marker — never calls it. A recipe whose stated calories are materially
+// another food's numbers is not a number the solver may build a day on.
+// The removal is never silent: loadRecipePool() counts it, planContext()
+// forwards it, and the poolCounts/diagnosis layer names it.
 function filterRecipePool(recipePool, profile) {
   const dietaryStyle = profile.dietaryStyle || null;
-  return stampDietGuard(filterRecipes(recipePool, profile), dietaryStyle);
+  const trusted = recipePool.filter((r) => !recipeTrustExclusion(r).excluded);
+  return stampDietGuard(filterRecipes(trusted, profile), dietaryStyle);
 }
 
 // ── the recipe library cache (plan-perf-1) ────────────────────────────────
@@ -98,6 +110,11 @@ let _epoch = 0;
 let _library = null; // { version, rows }
 let _pools = new Map(); // rulesKey -> filtered+stamped pool
 let _adjusterFoods = null; // { version, byLower } — see loadAdjusterFoods()
+// Profile-INDEPENDENT count of library recipes the trust gate removes from
+// every plan pool (exclusionGate.recipeTrustExclusion). Cached per library
+// version for the same staleness reasons as _pools: source/dataQuality are in
+// LIBRARY_VERSION_SQL, so a quarantine run in another process moves it.
+let _trustCount = null; // { version, count }
 
 // Called by every route that mutates a Recipe, RecipeIngredient or Food.
 function invalidateRecipeLibrary() {
@@ -112,6 +129,15 @@ function invalidateRecipeLibrary() {
   // so it could not catch it either. A row quarantined for bad macros kept being
   // added to real users' days, with the bad macros, until restart.
   _adjusterFoods = null;
+  _trustCount = null;
+}
+
+// How many library recipes the trust gate removes from every plan pool —
+// the number the diagnosis layer reports so the removal is never silent.
+function countTrustExcluded(rows) {
+  let n = 0;
+  for (const r of rows) if (recipeTrustExclusion(r).excluded) n++;
+  return n;
 }
 
 async function libraryVersion() {
@@ -155,18 +181,28 @@ async function loadRecipeLibrary() {
 // per-run behaviour exactly as it was while the rows themselves stay shared.
 async function loadRecipePool(profile) {
   const rows = await loadRecipeLibrary();
-  if (!_library) return { pool: filterRecipePool(rows, profile), rawPoolCount: rows.length };
+  // trustExcludedCount is profile-independent (the trust gate reads only the
+  // recipe's own ingredient rows), so it is computed once per library version.
+  // Attribution order for the counts: raw -> trust -> diet/allergy — the trust
+  // gate runs first inside filterRecipePool, so `pool.length` is after BOTH.
+  if (!_library) {
+    return { pool: filterRecipePool(rows, profile), rawPoolCount: rows.length, trustExcludedCount: countTrustExcluded(rows) };
+  }
+  if (!_trustCount || _trustCount.version !== _library.version) {
+    _trustCount = { version: _library.version, count: countTrustExcluded(rows) };
+  }
+  const trustExcludedCount = _trustCount.count;
   const excluded = Array.isArray(profile?.excludedFoods) ? profile.excludedFoods : [];
   const rulesKey = JSON.stringify([
     profile?.dietaryStyle || null,
     [...excluded].map((t) => String(t).trim().toLowerCase()).sort(),
   ]);
   const hit = _pools.get(rulesKey);
-  if (hit) return { pool: [...hit], rawPoolCount: rows.length };
+  if (hit) return { pool: [...hit], rawPoolCount: rows.length, trustExcludedCount };
   const pool = filterRecipePool(rows, profile);
   if (_pools.size >= POOL_CACHE_MAX) _pools.delete(_pools.keys().next().value);
   _pools.set(rulesKey, pool);
-  return { pool: [...pool], rawPoolCount: rows.length };
+  return { pool: [...pool], rawPoolCount: rows.length, trustExcludedCount };
 }
 
 // ── macro adjusters ─────────────────────────────────────────────────────────
@@ -248,13 +284,13 @@ async function planContext(userId) {
   // symmetric, and without the floor the band re-opens the clamp downward.
   const dailyTarget = computeMacros(profile, weightNowKg, reconciled.target, reconciled.floor);
   const mealConfig = { meals: profile.mealsPerDay, snacks: profile.snacksPerDay };
-  const { pool: recipePool, rawPoolCount } = await loadRecipePool(profile);
+  const { pool: recipePool, rawPoolCount, trustExcludedCount } = await loadRecipePool(profile);
   // T (v2): the user's SOFT taste ratings, as a Map for the solver's bias. A
   // soft re-rank only — hard diet/allergy filtering already happened above.
   const ratingRows = await prisma.recipeRating.findMany({ where: { userId }, select: { recipeId: true, rating: true } });
   const ratings = new Map(ratingRows.map((r) => [r.recipeId, r.rating]));
   const adjusters = await loadAdjusters(profile);
-  return { profile, dailyTarget, mealConfig, recipePool, rawPoolCount, ratings, adjusters };
+  return { profile, dailyTarget, mealConfig, recipePool, rawPoolCount, trustExcludedCount, ratings, adjusters };
 }
 
 // The generation filters the Phase 4 UI sends. Cuisine/protein/budget are

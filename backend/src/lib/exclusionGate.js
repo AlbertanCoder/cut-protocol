@@ -64,6 +64,11 @@ const {
   additionalIngredientNames,
   applyDietaryFilters,
 } = require("./dietaryFilter.js");
+// Trust is PROVENANCE, not arithmetic — macroTrustIssue() is the backend's one
+// notion of "this row's macros may not be presented as fact" (quarantined rows,
+// unverified provenance, placeholders). See foodValidation.js's own header for
+// why it is a separate question from validateFood().
+const { macroTrustIssue } = require("./foodValidation.js");
 
 // ── the load contract ─────────────────────────────────────────────────────
 // The Prisma selection that makes a recipe gate-ready. Every surface that
@@ -256,6 +261,74 @@ function explainFoodExclusion(food, profile) {
   return { excluded: false, failClosed: false, reason: null };
 }
 
+// ── the ingredient-trust gate (PLAN PATH ONLY) ───────────────────────────
+//
+// QC finding 2026-08-10 item 2, owner ruling 2026-08-12: recipes whose stated
+// calories are MATERIALLY built on untrusted ingredient rows (rows carrying
+// another food's macros, unverified provenance, placeholders) are ineligible
+// as SOLVER candidates. The worst case is a systematically UNDER-counted cut
+// — the wrong-record rows under-count fat/energy (foodValidation.js, "Direction
+// of the error matters"), and the adaptive loop then compounds the error by
+// lowering the target in response to the phantom stall.
+//
+// PLAN PATH ONLY. This predicate is deliberately NOT part of
+// explainRecipeExclusion(): the library browse (GET /recipes) keeps showing
+// flagged recipes with their amber trust marker — hiding them there would make
+// the data problem invisible instead of fixed. It is applied at the plan-pool
+// chokepoint, planContext.filterRecipePool(), which every plan entry point
+// (generate, day-options, alternates, apply, place-recipe, fill-today-from-cart,
+// legacy swap, the meal router's draft verification, the recipe-brain pool)
+// builds its candidates through.
+//
+// THE PREDICATE (owner ruling 2026-08-12, QC 2026-08-10 finding 2): ANY
+// untrusted non-placeholder ingredient row makes a recipe ineligible as a
+// plan candidate — the audit's 131-recipe set, measured exactly on ruling
+// day. This is deliberately STRICTER than the frontend's amber ROW marker
+// (frontend/src/lib/recipeTrust.js `MATERIAL_SHARE` = 0.6, display only):
+// the marker fights alarm fatigue on a browse screen; the solver builds a
+// week of eating on the number, so it takes no share-sized bet on wrong-food
+// macros. Every refused recipe still shows its flagged rows in the Recipes
+// detail panel, and the refusal is counted in poolCounts.trustExcluded —
+// silent shrinkage stays banned. `share` is still computed and returned for
+// diagnostics; it no longer decides anything here.
+
+/**
+ * How much of the recipe's STATED kcal total comes from ingredient rows whose
+ * macros are not trusted — the same share frontend/src/lib/recipeTrust.js
+ * trustReport() computes for the amber marker. It is a caveat about the
+ * record, never a correction of the number: the untrusted rows' kcal are
+ * themselves the wrong food's, so this measures how much of the displayed
+ * figure is in question.
+ *
+ * `placeholder` rows are counted in flaggedCount but NOT in untrustedCount:
+ * a placeholder is zero-macro by construction and is validateRecipe()'s own
+ * separate issue code — the placeholder gate, not this one, owns those.
+ *
+ * -> { excluded, share, flaggedCount, untrustedCount };
+ *    excluded = untrustedCount > 0 (any wrong-record row, however small).
+ */
+function recipeTrustExclusion(recipe) {
+  const rows = Array.isArray(recipe?.ingredients) ? recipe.ingredients : [];
+  let totalKcal = 0;
+  let untrustedKcal = 0;
+  let flaggedCount = 0;
+  let untrustedCount = 0;
+  for (const ing of rows) {
+    const food = ing?.food ?? null;
+    const kcal = ((food?.kcal || 0) * (ing?.baseGrams || 0)) / 100;
+    totalKcal += kcal;
+    const issue = food ? macroTrustIssue(food) : null;
+    if (!issue) continue;
+    flaggedCount++;
+    if (issue.code !== "placeholder") {
+      untrustedCount++;
+      untrustedKcal += kcal;
+    }
+  }
+  const share = totalKcal > 0 ? untrustedKcal / totalKcal : 0;
+  return { excluded: untrustedCount > 0, share, flaggedCount, untrustedCount };
+}
+
 // Dispatching form — recipes and flat foods, one entry point.
 function explainExclusion(item, profile) {
   return isRecipeShape(item) ? explainRecipeExclusion(item, profile) : explainFoodExclusion(item, profile);
@@ -298,6 +371,9 @@ function filterRecipes(recipes, profile) {
 module.exports = {
   RECIPE_GATE_SELECT,
   FOOD_GATE_SELECT,
+  // the plan-path ingredient-trust gate (NOT part of explainRecipeExclusion —
+  // browse keeps showing flagged recipes, named in their trust detail)
+  recipeTrustExclusion,
   explainExclusion,
   explainRecipeExclusion,
   explainFoodExclusion,

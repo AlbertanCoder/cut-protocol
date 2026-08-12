@@ -122,9 +122,11 @@ function Detail({ recipe, onClose, onPlaced, onShowFull }) {
           (most of the stated calories come from rows carrying another food's
           numbers). Firing on ANY flagged ingredient would stamp this on ~88%
           of the library — alarm fatigue, not honesty. Amber, never red. */}
-      {(recipe.trust === "low" || trust?.material) && (
+      {(recipe.trust === "low" || trust) && (
         <Panel tone="warn">
           The calorie count here is a good estimate rather than an exact one.
+          {trust?.planExcluded &&
+            " The app won't place it in a meal plan until its data is fixed — the recipe itself is still here to read and cook."}
         </Panel>
       )}
 

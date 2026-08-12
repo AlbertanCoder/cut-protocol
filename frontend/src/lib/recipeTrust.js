@@ -64,6 +64,14 @@ import { quarantineNote } from "../data/foodCategories.js";
 // this one's". Everything below that is carried by the always-on detail panel
 // and by the library-wide summary line, which states the true scale ONCE
 // instead of stamping it on three rows out of four.
+//
+// SOLVER-SIDE GATE (2026-08-12, owner ruling on QC 2026-08-10 item 2):
+// backend/src/lib/exclusionGate.js `recipeTrustExclusion` makes ANY recipe
+// with an untrusted non-placeholder row ineligible as a PLAN candidate —
+// deliberately STRICTER than this display threshold. MATERIAL_SHARE decides
+// only how LOUD the browse marker is (collapsed-row amber at >= 0.6); a
+// non-null trustReport at any share means the recipe sits out of automatic
+// planning, and both surfaces say so in the detail. Browse stays untouched.
 export const MATERIAL_SHARE = 0.6;
 
 export const ingredientKcal = (i) => ((i.food?.kcal || 0) * (i.baseGrams || 0)) / 100;
@@ -87,5 +95,7 @@ export function trustReport(recipe) {
   // the displayed figure is in question. It is not a correction of it, and is
   // deliberately not presented as one.
   const share = totalKcal > 0 ? untrustedKcal / totalKcal : 0;
-  return { flagged, share, material: share >= MATERIAL_SHARE };
+  // planExcluded mirrors the backend gate's any-flagged verdict: a non-null
+  // report means the solver will not build a plan on this recipe.
+  return { flagged, share, material: share >= MATERIAL_SHARE, planExcluded: true };
 }
