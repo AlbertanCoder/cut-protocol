@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback, useMemo } from "react";
 import {
   Sparkles, Pencil, Trash2, Save, X, Search, ShoppingCart, Check, Mail, ThumbsUp, ThumbsDown,
   MessageSquare, Copy, Database, EyeOff, ChevronRight, ChevronDown,
-  Link2, AlertTriangle, CalendarPlus, Utensils,
+  Link2, AlertTriangle, CalendarPlus, Utensils, Lock,
 } from "lucide-react";
 import { C } from "../lib/theme.js";
 import { quarantineNote } from "../data/foodCategories.js";
@@ -10,7 +10,7 @@ import { toHouseholdUnit } from "../lib/householdUnits.js";
 import { Card, Btn, Chip, PageHead, ErrorNote, EmptyNote } from "./ui/Parts.jsx";
 import { SkeletonRows } from "./ui/Skeleton.jsx";
 import FoodTile from "./ui/FoodTile.jsx";
-import { api, isAbortError, describeError } from "../lib/api.js";
+import { api, isAbortError, describeError, isPremiumRequired } from "../lib/api.js";
 import { useAbortSignal } from "../lib/useAbortable.js";
 
 const kc = (n) => Math.round(n).toLocaleString("en-CA");
@@ -188,6 +188,11 @@ function RecipeDetail({ recipe, profile, onSave, onDelete, inCart, onToggleCart,
   const [placing, setPlacing] = useState(false);
   const [notice, setNotice] = useState(null);
   const [error, setError] = useState(null);
+  // QC finding 4: a free user's premium 403 on place-recipe is a LOCK, not a
+  // fault — it gets this calm note, never the red error state. Keyed on the
+  // machine-readable code via isPremiumRequired (entitlement.js:52-55).
+  // Template: TodayTab's plan fetch + MicronutrientsCard.
+  const [premiumNote, setPremiumNote] = useState(null);
   const [deleting, setDeleting] = useState(false);
   const abort = useAbortSignal();
 
@@ -237,12 +242,19 @@ function RecipeDetail({ recipe, profile, onSave, onDelete, inCart, onToggleCart,
     setPlacing(true);
     setError(null);
     setNotice(null);
+    setPremiumNote(null);
     try {
       await api.placeRecipe({ ...placePick, recipeId: recipe.id, scale }, { signal: abort.signal });
       setNotice(`Placed at ×${scale} into ${DAY_NAMES[placePick.dayOfWeek]} ${placePick.slotType} ${placePick.slotIndex + 1} — see the Plan tab.`);
       setPlacePick(null);
     } catch (e) {
       if (isAbortError(e)) return;
+      // Premium 403: nothing failed — the account is on the free tier and
+      // meal-plan placement is a Premium feature. Calm note, not the error.
+      if (isPremiumRequired(e)) {
+        setPremiumNote("Placing recipes into your meal plan comes with Premium — nothing went wrong, this account is on the free tier.");
+        return;
+      }
       setError(describeError(e));
     } finally {
       setPlacing(false);
@@ -394,6 +406,14 @@ function RecipeDetail({ recipe, profile, onSave, onDelete, inCart, onToggleCart,
         )}
       </div>
       {notice && <div className="text-xs font-semibold mt-2" style={{ color: "var(--primary)" }}>{notice}</div>}
+      {/* Locked, not broken: neutral ink and a lock glyph — never the red
+          error treatment for a paywall (QC finding 4). */}
+      {premiumNote && (
+        <div role="status" className="text-xs font-semibold mt-2 flex items-start gap-1.5" style={{ color: "var(--muted-foreground)" }}>
+          <Lock size={12} className="mt-0.5 shrink-0" aria-hidden="true" />
+          <span>{premiumNote}</span>
+        </div>
+      )}
       {error && <div className="text-xs font-semibold mt-2" style={{ color: "var(--destructive)" }}>{error}</div>}
     </div>
   );
@@ -476,6 +496,15 @@ export default function RecipesTab({ openFoods, profile }) {
   const [hiddenCount, setHiddenCount] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  // QC finding 4: the premium-gated actions on this tab (fill-today-from-cart,
+  // cart grocery list, AI draft generation — all requirePremium server-side)
+  // used to collapse a free user's 403 into `error`, whose ErrorNote copy says
+  // the app is broken and to file a bug. A paywall is a lock, not a fault:
+  // those catches branch on isPremiumRequired (keyed on code
+  // "premium_required", never the sentence — entitlement.js:52-55) and land
+  // here instead, rendered as a calm locked note. Template: TodayTab:753-770
+  // + MicronutrientsCard:250.
+  const [premiumNote, setPremiumNote] = useState(null);
   const [loadError, setLoadError] = useState(null); // library load failed — NOT "no recipes"
   const [cartError, setCartError] = useState(null); // cart load failed — NOT "empty cart"
   const abort = useAbortSignal();
@@ -610,11 +639,16 @@ export default function RecipesTab({ openFoods, profile }) {
     setFillBusy(true);
     setCartNote(null);
     setError(null);
+    setPremiumNote(null);
     try {
       const res = await api.fillTodayFromCart({ signal: abort.signal });
       setCartNote(`Placed ${res.placed} recipe(s) into today's plan${res.note ? ` — ${res.note}` : "."} See the Plan tab.`);
     } catch (e) {
       if (isAbortError(e)) return;
+      if (isPremiumRequired(e)) {
+        setPremiumNote("Filling today's plan from your cart comes with Premium — solved meal plans are a Premium feature.");
+        return;
+      }
       setError(describeError(e));
     } finally {
       setFillBusy(false);
@@ -624,10 +658,15 @@ export default function RecipesTab({ openFoods, profile }) {
   const onGenerateCartGroceryList = async () => {
     setCartGroceryBusy(true);
     setError(null);
+    setPremiumNote(null);
     try {
       setCartGroceryList(await api.generateCartGroceryList({ signal: abort.signal }));
     } catch (e) {
       if (isAbortError(e)) return;
+      if (isPremiumRequired(e)) {
+        setPremiumNote("The cart's grocery list comes with Premium — exact grocery quantities are a Premium feature.");
+        return;
+      }
       setError(describeError(e));
     } finally {
       setCartGroceryBusy(false);
@@ -646,6 +685,7 @@ export default function RecipesTab({ openFoods, profile }) {
   const handleGenerate = async () => {
     setGenerating(true);
     setError(null);
+    setPremiumNote(null);
     setDrafts(null);
     setDraftErrors({});
     setDroppedForAllergies([]); // Stage-C: don't leave a stale drop note under a new run
@@ -666,6 +706,10 @@ export default function RecipesTab({ openFoods, profile }) {
       setForm((f) => ({ ...f, allowAllergens: false }));
     } catch (e) {
       if (isAbortError(e)) return;
+      if (isPremiumRequired(e)) {
+        setPremiumNote("AI recipe generation comes with Premium.");
+        return;
+      }
       setError(describeError(e));
     } finally {
       setGenerating(false);
@@ -813,6 +857,16 @@ export default function RecipesTab({ openFoods, profile }) {
         <div className="mb-3">
           <ErrorNote msg={error}
             hint={error.startsWith("Import failed") ? "Check the URL is a public recipe page — most recipe sites work; plain blog posts without recipe markup don't." : undefined} />
+        </div>
+      )}
+
+      {/* Locked, not broken (QC finding 4): a premium 403 renders as this calm
+          note — neutral ink, lock glyph — never as the ErrorNote above, whose
+          copy tells the user to file a bug for something that isn't a fault. */}
+      {premiumNote && (
+        <div role="status" className="mb-3">
+          <EmptyNote icon={Lock} title={premiumNote}
+            hint="Nothing failed — your account is on the free tier. The recipe library, URL import, editing and the cart all keep working." />
         </div>
       )}
 
