@@ -1,8 +1,8 @@
-================================================================================
+﻿================================================================================
 FIND (OR REBUILD) THE SIMPLIFIED "EAT THIS MUCH"-STYLE UI FOR CUT PROTOCOL
 ================================================================================
-Written 2026-08-10 for Shad. Paste this whole file into a fresh Claude Code
-terminal opened at C:\Users\SHADHUNTER\Desktop\cut-protocol, or into a new
+Written 2026-08-10 for the owner. Paste this whole file into a fresh Claude Code
+terminal opened at %USERPROFILE%\Desktop\cut-protocol, or into a new
 Cowork window with that folder attached.
 
 --------------------------------------------------------------------------------
@@ -55,7 +55,7 @@ TERRITORIES - assign one agent each:
  3. The three extra git worktrees:
       .claude\worktrees\apps-editing-claude-02aba7   (has UNCOMMITTED work)
       .claude\worktrees\ux-simplify                  (branch ux/simplify-2026-08)
-      C:\Users\SHADHUNTER\worktrees\cp-prefix-baseline (detached, untracked files)
+      %USERPROFILE%\worktrees\cp-prefix-baseline (detached, untracked files)
     The branch name "ux/simplify-2026-08" is the single most promising lead in
     this entire document. Start there.
 
@@ -76,7 +76,7 @@ TERRITORIES - assign one agent each:
  7. Desktop\fleet-scratch-backup\ and Desktop\portion-solver\ and
     Desktop\Backups\ - scratch trees that were never committed.
 
- 8. Everything else under C:\Users\SHADHUNTER that looks like this project.
+ 8. Everything else under %USERPROFILE% that looks like this project.
     Skip node_modules, AppData, and "Back testing data" (235 GB of unrelated
     trading data - do not traverse it).
 
@@ -99,7 +99,7 @@ TERRITORIES - assign one agent each:
     Note that parts 02 and 03 of that design series were never captured.
 
 12. Claude Code's own session transcripts on this machine, if any are stored
-    under C:\Users\SHADHUNTER\.claude - read-only, look for design discussion.
+    under %USERPROFILE%\.claude - read-only, look for design discussion.
 
 If fewer than 12 territories need covering, use fewer agents. Twenty is a
 ceiling, not a quota. Do not spawn agents that duplicate each other.
@@ -169,7 +169,7 @@ override the older text. Then:
 --------------------------------------------------------------------------------
 FACTS YOU CAN RELY ON (measured 2026-08-10, do not re-derive)
 --------------------------------------------------------------------------------
-Repo:        C:\Users\SHADHUNTER\Desktop\cut-protocol
+Repo:        %USERPROFILE%\Desktop\cut-protocol
 Branch:      recipe-brain  (this is the trunk; it already contains ui-restyle,
              fleet/measure, saas-launch and light-migration)
 Stack:       React 19 + Vite 8 + Tailwind v4 + shadcn/ui, Express 5 + Prisma 6

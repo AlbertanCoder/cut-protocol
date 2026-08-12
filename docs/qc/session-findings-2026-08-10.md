@@ -53,6 +53,24 @@ Two corrections to `BUILD_PLAN.md` Runbook Part A, both measured:
 
 ---
 
+> **CORRECTED 2026-08-11 by the CI-prediction audit — the claim below and the
+> `4297210` commit message OVERCLAIM.** The missing seed line is real but is
+> ONE of at least three independent reds, and the fix as committed makes CI
+> fail EARLIER, not green: `seedRecipesFromRecomp.mjs` violates the
+> `Food.fdcId @unique` constraint (schema.prisma:292, landed 2026-07-22) at
+> its 15th food — the ported library has 193 duplicate-fdcId groups covering
+> 611 of 943 rows ("Beef" and "Ground Beef" share 170602). P2002 → exit 1 →
+> the Seed step dies before any test runs. Second independent red:
+> `allergenMetadataCoverage.test.js:265-289` resolves the DB path against
+> `backend/` instead of `backend/prisma/` — authored 2026-08-02, mid-streak,
+> has never once run green on CI. Fix requires: dedupe/ignore fdcId on create
+> in the recomp seed + the path fix, then CI reaches the tests (626 recipes
+> ≥ 100 → horizonGeneration passes; floors 135/1712 discover identically).
+> Residual unknown: qc:smoke has never graded a 626-recipe pool.
+> Even fully green, CI verifies the committed 626-recipe corpus — the
+> 14,151-food library and its allergen sweeps remain owner-machine-only
+> permanently by design (ARM 3 prints "NOT RUN" on CI).
+
 ## Defect 1 — CI has failed every run since 2026-07-24. Root cause found.
 
 `backend/scripts/seedRecipes.js` contains **24 recipes**. CI seeds with exactly
@@ -236,8 +254,11 @@ Postgres first. Budget that work; it is not one line."
 That work has since been done. Measured today:
 
 - **28** migration directories (`CLAUDE.md` says 25, `BUILD_PLAN.md` says 28).
-- **10** of them contain `PRAGMA` / `foreign_keys` (`CLAUDE.md` says 8,
-  `BUILD_PLAN.md` says 9). **Neither published figure is correct.**
+- **9** of them contain an executable `PRAGMA` (`CLAUDE.md` says 8).
+  CORRECTED 2026-08-11: this file first said 10 — a substring grep counted a
+  migration whose only "PRAGMA" is a comment saying one must NOT appear there
+  (`20260724203000_.../migration.sql:8,13`). **`BUILD_PLAN.md:28`'s 9-of-28 was
+  right all along.** Measure with a parser, not a substring.
 - None of that matters for the cloud, because the cloud path does not replay
   the SQLite migration history at all.
 
@@ -275,6 +296,143 @@ requires pushing to a private repo while every other live document forbids
 pushing.
 
 ---
+
+## Audit 2026-08-11 — findings that gate the 14-day trial
+
+From the ten-agent read-only audit (full reports in the session transcript;
+key items only here, each verified with file:line by the auditor):
+
+1. **First stranger becomes admin on a fresh cloud DB.** `supabaseAuth.js:132`
+   — `role: existingUsers === 0 ? "admin" : "user"`. Right for a single-user
+   desktop install; on a freshly-seeded cloud Postgres the first Google
+   sign-in owns the deployment (admin reaches food-library writes via
+   FoodsTab). MUST fix before Railway.
+2. **The 131 `untrusted-ingredients` recipes are fully in the solver pool.**
+   The trust flag gates nothing on the plan path: `exclusionGate.js:218` has
+   no trust predicate, `mealRouter.js:188-227` checks allergens/placeholders/
+   macro fit but never `macroTrustIssue`, and `plans.js:25` doesn't even load
+   ingredient rows so PlanTab cannot caveat. Only surface: a client-side amber
+   marker in the Recipes tab at >=60% untrusted-calorie share. Worst case for
+   a stranger: a systematically UNDER-counted cut (the wrong-record rows
+   under-count fat/energy per `foodValidation.js:202-205`), which the adaptive
+   loop then compounds by lowering the target in response to the phantom
+   stall. Owner decision: exclude flagged recipes from the pool, or accept
+   with eyes open for the trial.
+3. **Placeholder gate has a fat-shaped hole.** `recipeGeneration.js:133-134`
+   only treats protein/carb roles as load-bearing, so a zero-macro FAT
+   placeholder (9 kcal/g — the densest thing there is) passes the unattended
+   AI gate.
+4. **Four more paywall-as-error sites, all `RecipesTab.jsx`** (241, 614, 628,
+   654) — no PremiumGate on that tab at all; failures render the generic
+   "use Report a bug" copy. The new simple UI repeats the pattern 4 more
+   times (SimpleToday.jsx:120,156,171,188). The TodayTab fix (this session)
+   is the template.
+5. **`ScreenBoundary` is defined and mounted nowhere; Sentry absent** (0 hits
+   across both package.json + src). During the trial, a stranger's white
+   screen or 500 is invisible to the owner. Cheap, high-value pre-deploy.
+6. **Calorie-bug reframe:** 4 copies not 2 (adds `benchmarkAdaptiveTdee.js:169`
+   and TodayTab.jsx:825's sparkline); NEITHER golden set imports the buggy
+   files, so the feared golden re-base likely does not occur; the test suite
+   is blind to the bug (every test weighs in daily — rows == days). The fix
+   needs sparse-weigh-in tests written alongside it, floors raised same
+   commit.
+7. **The boot data-audit is a log line only** — `server.js:250`; no production
+   code reads its result. It is a report, not a gate.
+
+## Railway deploy — the measured checklist (audit 2026-08-11)
+
+**Headline: nothing deployable is on GitHub.** `origin/master` carries the
+PRE-saas Dockerfile (no VITE_ args, no HOST, `migrate deploy` with no
+--schema — it would replay the SQLite history against Postgres and die on the
+first PRAGMA). `recipe-brain` has no upstream. Step 1 of any deploy is the
+owner pushing the right branch; everything else is inert until then.
+
+The local pipeline is coherent: `toPostgresSchema(main)` reproduces
+`prisma/postgres/schema.prisma` byte-for-byte; 26 models = 26 CREATE TABLE in
+the init migration.
+
+Railway env vars, from code not docs — REQUIRED: `DATABASE_URL` (Supabase
+**Session pooler** URI — transaction pooler cannot run migrations),
+`SUPABASE_URL` (the master switch: unset = no bearer auth AND everyone
+premium), `JWT_SECRET`, `NODE_ENV=production`, and — **as build args before
+the first build, not after** — `VITE_SUPABASE_URL` +
+`VITE_SUPABASE_PUBLISHABLE_KEY` (baked into the bundle; set late = password
+login, no Google button, until a rebuild). LS vars optional (clean 503 until
+set). `SUPABASE_SECRET_KEY` is read by NOTHING — do not bother.
+**Must NOT set:** `BRAIN`, `CUT_PROTOCOL_DB_PATH` (arms the desktop SQLite
+bootstrap; on Node 20 images it 500s every /api request via a bootReady
+rejection), `HOST`, `PORT`, `SEED_*`.
+
+Order: push → Railway new project from the pushed branch (NOT master) → env
+vars → generate domain → APP_URL → owner terminal: `buildTemplateDb.mjs` then
+`seedCloudLibrary.mjs --url <pooler url>` (no API keys needed) → Supabase
+Site URL + Google JS origin get the prod URL → legal placeholders → phone
+test.
+
+Gaps found: no healthcheck path in railway.json (a crash-looping deploy
+reads as live); `prisma.js:51-57` fires `PRAGMA journal_mode=WAL` on every
+boot — harmless on Postgres but logs a scary warning; the post-seed
+data-audit spike (~320 MB RSS) lands on the first cloud boot; terms/privacy
+still carry `[SUPPORT EMAIL]` placeholders and terms.html:67 promises 7-day
+grace vs the decided 14; `.dockerignore` misses dev.db.template (only
+matters for CLI upload, not GitHub builds). DEPLOY.md is stale and actively
+wrong — follow BUILD_PLAN Part C.
+
+## Pricing — the decision memo (audit 2026-08-11)
+
+What is actually rendered today (`pricing-section.jsx:17-30`): **$24.99/$125,
+annual default, no USD suffix, no trial copy, "5 months free"** (which is
+arithmetically wrong — $125 vs $299.88 is 7 months free / 58%). Both
+BUILD_PLAN.md:29 and BATTLE-PLAN.md:151 claim a $14.99 placeholder is
+rendered — stale, the conversion already happened. No trial fields exist in
+the schema (trialUsed/trialEndsAt/firstPaidAt: zero grep hits) — the trial
+is unbuilt regardless of ruling, and needs migrations (owner-only).
+
+The ruling must name SIX things or it will not stick: monthly price · annual
+price · trial length · toggle default (BUILD_PLAN says annual, V2-DELTA says
+monthly, code says annual) · whether BUILD_PLAN's "locked" block is amended
+in place · explicit USD on rendered figures.
+
+Three coherent bundles:
+1. **Honour the lock:** $24.99/$125 · 7-day trial · monthly default. All of
+   V2-DELTA P1 is already written for it. Overrules the teardown.
+2. **Teardown reprice:** $14.99/$119 · 14-day trial ("save 34% — four months
+   free"). Cheapest to justify, most files to sweep (every price string +
+   formally unlocking BUILD_PLAN's locked block).
+3. **Keep price, take 14 days:** $24.99/$125 · 14-day trial · monthly
+   default. Smallest edit surface. Notably: the 14-day trial ends on the
+   same day as the mission's day-14 gate and the day adaptive.applied fires.
+   7 days is asserted in V2-DELTA without a rationale; 14 is argued from
+   the engine's behaviour in two independent documents.
+
+Cost check: the "heaviest user" rule discriminates nothing — worst case is
+the $5/user/month brain cap vs $13.74-$23.24 net, and the launch config has
+no ANTHROPIC key so per-user burn is $0. The binding constraint is the
+GLOBAL $15/month brain cap (config.js:28), a launch-config item, not a
+pricing item.
+
+Two errors live regardless of bundle: "5 months free" and terms.html:67's
+7-day grace.
+
+## Push safety (audit 2026-08-11): SAFE-WITH-CONDITIONS
+
+`recipe-brain` → new private repo: 388 commits, backup/pre-scrub is NOT an
+ancestor (verified, exit 1 — its 106 commits stay behind), the Phase 9
+history scrub covers this lineage, scan:secrets clean, all seven sensitive
+paths confirmed untracked, fleet personas verified synthetic
+(qa-fleet-*@fleet.local), no owner email in tree, 252 MB pack.
+
+Conditions: (1) the Windows account name sits in 4 tracked files —
+FIND-SIMPLE-UI-PROMPT.txt (worst; REDACTED in-tree 2026-08-11, though the
+original text remains in the 4297210 blob), ORCHESTRATION.md:134,
+MIGRATION/DELETE-CANDIDATES.md:78, MIGRATION/CONTRACT.md:127 (rules files —
+owner's call). Private-only risk; becomes real if the repo ever flips
+public. (2) scan:secrets' "2531 scanned" counts enumerated files, not read
+ones — MAX_BYTES silently skips 118 large tracked files (sampled by hand:
+synthetic). (3) The pre-push hook fires on ANY remote incl. new ones
+(PUSH_APPROVED, fail-closed, ignores remote name) — but hooks don't travel;
+the new repo inherits no protection. (4) ~950 MB of QA dumps ship in the
+deploy clone for zero runtime value.
 
 ## Open, needing the owner
 
