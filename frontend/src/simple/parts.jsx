@@ -137,3 +137,184 @@ export const Details = ({ onClick, label = "Show me the details" }) => (
     {label}
   </button>
 );
+
+// ─────────────────────────────────────────────────────────────────────────
+// ROOM VOCABULARY
+//
+// Everything above serves the six questions — one decision per screen. What
+// follows serves the rooms (Plan, Recipes, Shopping, Your details), which are
+// browsing surfaces rather than questions.
+//
+// RESPONSIVE, one component set. Standing rule 1 says desktop first and no
+// phone-width centred columns; the simple surface is also going to be the
+// mobile app. Both are satisfied by components that stack under `sm` and
+// spread above it, rather than by two sets of screens.
+//
+// Still presentation only. No API calls, no calculations, no storage.
+// ─────────────────────────────────────────────────────────────────────────
+
+// A room. Content stays one readable column on a phone and gains room — not
+// extra columns of chrome — on a desktop window.
+export const Page = ({ title, sub, actions, children }) => (
+  <div className="w-full max-w-3xl mx-auto flex flex-col gap-6">
+    {(title || actions) && (
+      <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
+        <div className="flex flex-col gap-2">
+          {title && <h1 className="text-3xl sm:text-4xl font-bold tracking-tight">{title}</h1>}
+          {sub && <p className="text-base text-muted-foreground">{sub}</p>}
+        </div>
+        {actions && <div className="flex gap-2 shrink-0">{actions}</div>}
+      </div>
+    )}
+    {children}
+  </div>
+);
+
+// Sub-navigation inside a room (Plan / Recipes / Shopping). Selection is a
+// weight-and-underline change, never a colour — the accent stays scarce.
+export const Tabs = ({ tabs, active, onSelect }) => (
+  <div className="flex gap-1 border-b border-border overflow-x-auto" role="tablist">
+    {tabs.map((t) => {
+      const on = t.id === active;
+      return (
+        <button
+          key={t.id}
+          type="button"
+          role="tab"
+          aria-selected={on}
+          onClick={() => onSelect(t.id)}
+          className={`min-h-12 px-4 text-base whitespace-nowrap border-b-2 -mb-px transition-colors ${
+            on
+              ? "font-semibold text-foreground border-foreground"
+              : "text-muted-foreground border-transparent hover:text-foreground"
+          }`}
+        >
+          {t.label}
+        </button>
+      );
+    })}
+  </div>
+);
+
+// A plain surface. `tone="warn"` is the ONE alert treatment on this surface —
+// calm amber, never red. Red is reserved for system errors and destructive
+// confirms, and never appears on food or body data.
+export const Panel = ({ tone, children, className = "" }) => (
+  <div
+    className={`rounded-2xl border px-5 py-4 ${
+      tone === "warn" ? "border-warn/40 bg-card text-warn" : "border-border bg-card"
+    } ${className}`}
+  >
+    {children}
+  </div>
+);
+
+// One item in a list — a meal, a recipe, a food. `lead` is the name, `meta` the
+// one supporting fact, `action` the single thing you can do to it from here.
+export const Row = ({ label, lead, meta, action, onClick }) => {
+  const body = (
+    <>
+      <div className="min-w-0 flex flex-col gap-0.5">
+        {label && <div className="text-sm text-muted-foreground">{label}</div>}
+        <div className="text-lg font-semibold leading-snug break-words">{lead}</div>
+        {meta && <div className="text-base text-muted-foreground tabular-nums">{meta}</div>}
+      </div>
+      {action}
+    </>
+  );
+  const cls =
+    "w-full text-left rounded-2xl border border-border bg-card px-5 py-4 flex items-start justify-between gap-4 transition-colors";
+  return onClick ? (
+    <button type="button" onClick={onClick} className={`${cls} hover:border-foreground`}>{body}</button>
+  ) : (
+    <div className={cls}>{body}</div>
+  );
+};
+
+// The small button that sits at the right of a Row. Deliberately not `Big` —
+// a row action must never outweigh the screen's own primary action.
+export const RowAction = ({ children, onClick, disabled, label }) => (
+  <button
+    type="button"
+    onClick={onClick}
+    disabled={disabled}
+    aria-label={label}
+    className="shrink-0 min-h-12 min-w-12 px-4 rounded-2xl border border-border bg-background
+               text-sm font-medium text-muted-foreground hover:text-foreground
+               disabled:opacity-40 transition-colors flex items-center justify-center gap-2"
+  >
+    {children}
+  </button>
+);
+
+// Free-text search. One per screen; the results are the screen.
+export const Search = ({ value, onChange, placeholder, autoFocus }) => (
+  <input
+    type="search"
+    value={value}
+    autoFocus={autoFocus}
+    placeholder={placeholder}
+    onChange={(e) => onChange(e.target.value)}
+    className="w-full min-h-14 px-5 rounded-2xl border border-border bg-card text-base
+               outline-none focus:border-foreground transition-colors"
+  />
+);
+
+// A filter or a tag. Selection is a lightness step plus a border, never green.
+export const Pill = ({ children, on, onClick, label }) => (
+  <button
+    type="button"
+    onClick={onClick}
+    aria-pressed={on}
+    aria-label={label}
+    className={`min-h-12 px-4 rounded-2xl text-base font-medium border transition-colors ${
+      on
+        ? "bg-secondary border-foreground text-foreground"
+        : "bg-card border-border text-muted-foreground hover:text-foreground"
+    }`}
+  >
+    {children}
+  </button>
+);
+
+// A labelled number. Tabular figures, because these sit in columns and change.
+export const Stat = ({ label, value }) => (
+  <div className="flex justify-between gap-4 py-2 border-b border-border last:border-b-0">
+    <span className="text-base text-muted-foreground">{label}</span>
+    <span className="text-base font-semibold tabular-nums">{value}</span>
+  </div>
+);
+
+// Bottom sheet on a phone, centred dialog on a desktop. Same component.
+//
+// NOT a focus trap. When a room needs one it must use lib/useFocusTrap.js —
+// the app's existing accessibility hook — rather than growing a second
+// implementation here.
+export const Sheet = ({ title, sub, onClose, children }) => (
+  <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-foreground/20 px-4 py-6">
+    <div className="w-full max-w-xl rounded-3xl border border-border bg-background p-6
+                    flex flex-col gap-5 max-h-[85svh] overflow-y-auto">
+      <div className="flex flex-col gap-1">
+        <h2 className="text-2xl font-bold">{title}</h2>
+        {sub && <p className="text-base text-muted-foreground">{sub}</p>}
+      </div>
+      {children}
+      <Quiet onClick={onClose}>Never mind</Quiet>
+    </div>
+  </div>
+);
+
+// Nothing here yet. Always names the next action — an empty state that only
+// says "nothing here" is a dead end.
+export const Empty = ({ children, action }) => (
+  <div className="rounded-2xl border border-border bg-card px-5 py-6 flex flex-col gap-4">
+    <p className="text-lg leading-relaxed">{children}</p>
+    {action}
+  </div>
+);
+
+// Waiting. Says what it is waiting for, because "Loading…" tells nobody
+// anything and the solver can legitimately take seconds.
+export const Busy = ({ children }) => (
+  <p className="text-lg text-muted-foreground">{children}</p>
+);

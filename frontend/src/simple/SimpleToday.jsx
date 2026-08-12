@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import { RefreshCw, Check } from "lucide-react";
 import { api, describeError, isAbortError } from "../lib/api.js";
 import { todayStr } from "../lib/dates.js";
-import { Big, Quiet, Note } from "./parts.jsx";
+import { Big, Quiet, Note, Row, RowAction, Sheet, Empty, Busy, Panel } from "./parts.jsx";
 
 // "Here's what to eat today." The home screen of the simple surface.
 //
@@ -31,71 +31,53 @@ const kc = (n) => (Number.isFinite(n) ? Math.round(n).toLocaleString() : "—");
 const WORD = { meal: "Meal", snack: "Snack", breakfast: "Breakfast", lunch: "Lunch", dinner: "Dinner" };
 const slotWord = (s, i) => (s && WORD[s]) || (s ? s[0].toUpperCase() + s.slice(1) : `Meal ${i + 1}`);
 
+// A planned meal. Row/RowAction come from the shared vocabulary — this screen
+// deliberately does not carry its own card markup, so that Plan, Recipes and
+// Shopping all render a list item the same way.
 function Meal({ slot, index, onSwap, swapping }) {
   const name = slot.recipe?.name || "No meal chosen yet";
   return (
-    <div className="rounded-2xl border border-border bg-card px-5 py-5 flex items-start justify-between gap-4">
-      <div className="min-w-0 flex flex-col gap-1">
-        <div className="text-sm text-muted-foreground">{slotWord(slot.slotType, index)}</div>
-        <div className="text-xl font-semibold leading-snug break-words">{name}</div>
-        <div className="text-base text-muted-foreground tabular-nums">{kc(slot.kcal)} calories</div>
-      </div>
-      <button
-        type="button"
-        onClick={() => onSwap(slot)}
-        disabled={swapping}
-        aria-label={`Swap ${name} for something else`}
-        className="shrink-0 min-h-12 min-w-12 px-4 rounded-2xl border border-border bg-background
-                   text-sm font-medium text-muted-foreground hover:text-foreground
-                   disabled:opacity-40 transition-colors flex items-center gap-2"
-      >
-        <RefreshCw size={16} aria-hidden="true" className={swapping ? "animate-spin" : ""} />
-        Swap
-      </button>
-    </div>
+    <Row
+      label={slotWord(slot.slotType, index)}
+      lead={name}
+      meta={`${kc(slot.kcal)} calories`}
+      action={
+        <RowAction onClick={() => onSwap(slot)} disabled={swapping} label={`Swap ${name} for something else`}>
+          <RefreshCw size={16} aria-hidden="true" className={swapping ? "animate-spin" : ""} />
+          Swap
+        </RowAction>
+      }
+    />
   );
 }
 
 // The swap sheet. Three or four alternatives, plain names and calories only.
 function SwapSheet({ alts, busy, applyingId, onApply, onClose, error }) {
   return (
-    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-foreground/20 px-4 py-6">
-      <div className="w-full max-w-xl rounded-3xl border border-border bg-background p-6 flex flex-col gap-5 max-h-[85svh] overflow-y-auto">
-        <div className="flex flex-col gap-1">
-          <h2 className="text-2xl font-bold">Something else instead</h2>
-          <p className="text-base text-muted-foreground">
-            These all fit the same day. Pick one and the rest of the day stays where it is.
-          </p>
-        </div>
+    <Sheet
+      title="Something else instead"
+      sub="These all fit the same day. Pick one and the rest of the day stays where it is."
+      onClose={onClose}
+    >
+      {error && <Note>{error}</Note>}
 
-        {error && <Note>{error}</Note>}
+      {busy && <Busy>Finding other options…</Busy>}
 
-        {busy && <p className="text-base text-muted-foreground">Finding other options…</p>}
+      {!busy && alts && alts.length === 0 && (
+        <Panel>
+          Nothing else fits this slot today. The plan you have is the closest one available.
+        </Panel>
+      )}
 
-        {!busy && alts && alts.length === 0 && (
-          <p className="text-base text-muted-foreground">
-            Nothing else fits this slot today. The plan you have is the closest one available.
-          </p>
-        )}
-
-        {!busy && alts && alts.map((a) => (
-          <button
-            key={a.recipeId}
-            type="button"
-            onClick={() => onApply(a)}
-            disabled={applyingId != null}
-            className="text-left rounded-2xl border border-border bg-card px-5 py-4 min-h-16
-                       hover:border-foreground disabled:opacity-40 transition-colors"
-          >
-            <div className="text-lg font-semibold leading-snug">{a.name || a.recipeName}</div>
-            <div className="text-base text-muted-foreground tabular-nums">{kc(a.kcal)} calories</div>
-            {applyingId === a.recipeId && <div className="text-sm text-muted-foreground pt-1">Swapping…</div>}
-          </button>
-        ))}
-
-        <Quiet onClick={onClose}>Never mind</Quiet>
-      </div>
-    </div>
+      {!busy && alts && alts.map((a) => (
+        <Row
+          key={a.recipeId}
+          lead={a.name || a.recipeName}
+          meta={applyingId === a.recipeId ? "Swapping…" : `${kc(a.kcal)} calories`}
+          onClick={applyingId == null ? () => onApply(a) : undefined}
+        />
+      ))}
+    </Sheet>
   );
 }
 
@@ -228,9 +210,7 @@ export default function SimpleToday({ profile }) {
     }
   };
 
-  if (plan === null) {
-    return <p className="text-lg text-muted-foreground">Getting today's food…</p>;
-  }
+  if (plan === null) return <Busy>Getting today&rsquo;s food…</Busy>;
 
   return (
     <div className="flex flex-col gap-6">
@@ -247,14 +227,15 @@ export default function SimpleToday({ profile }) {
       {planError && <Note>{planError}</Note>}
 
       {slots.length === 0 ? (
-        <div className="rounded-2xl border border-border bg-card px-5 py-6 flex flex-col gap-4">
-          <p className="text-lg leading-relaxed">
-            No food planned for today yet. Building a day takes a few seconds.
-          </p>
-          <Big onClick={generate} disabled={generating}>
-            {generating ? "Building your day…" : "Build my day"}
-          </Big>
-        </div>
+        <Empty
+          action={
+            <Big onClick={generate} disabled={generating}>
+              {generating ? "Building your day…" : "Build my day"}
+            </Big>
+          }
+        >
+          No food planned for today yet. Building a day takes a few seconds.
+        </Empty>
       ) : (
         <>
           <div className="flex flex-col gap-3">
