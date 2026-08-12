@@ -67,7 +67,7 @@ function Tick({ item, onToggle, busy }) {
 }
 
 export default function SimpleShopping({ onShowFull }) {
-  const [plan, setPlan] = useState(null);     // null = loading
+  const [plan, setPlan] = useState("loading");// "loading" | null (no plan) | "error" | plan
   const [error, setError] = useState(null);
   const [building, setBuilding] = useState(false);
   const [busyName, setBusyName] = useState(null);
@@ -148,7 +148,7 @@ export default function SimpleShopping({ onShowFull }) {
     }
   };
 
-  if (plan === null) return <Busy>Getting your list…</Busy>;
+  if (plan === "loading") return <Busy>Getting your list…</Busy>;
 
   if (!hasPlan) {
     return (

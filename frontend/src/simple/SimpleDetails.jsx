@@ -241,7 +241,9 @@ export default function SimpleDetails({ profile, summary, refresh, onShowFull, o
               value={d.age ?? ""}
               onChange={(v) => setD((c) => ({ ...c, age: v }))}
               unit="years"
+              label="Age in years"
               onEnter={() => commitIfChanged("age", d.age, (n) => ({ age: n }))}
+              onBlur={() => commitIfChanged("age", d.age, (n) => ({ age: n }))}
             />
           </label>
 
@@ -251,7 +253,9 @@ export default function SimpleDetails({ profile, summary, refresh, onShowFull, o
               value={d.goal ?? ""}
               onChange={(v) => setD((c) => ({ ...c, goal: v }))}
               unit={wUnit}
+              label={`Goal weight in ${wUnit}`}
               onEnter={() => commitIfChanged("goal", d.goal, (n) => ({ goalWeightKg: parseWeight(n, pref) }))}
+              onBlur={() => commitIfChanged("goal", d.goal, (n) => ({ goalWeightKg: parseWeight(n, pref) }))}
             />
           </label>
         </div>
@@ -264,7 +268,9 @@ export default function SimpleDetails({ profile, summary, refresh, onShowFull, o
               value={d.heightCm ?? ""}
               onChange={(v) => setD((c) => ({ ...c, heightCm: v }))}
               unit="cm"
+              label="Height in centimetres"
               onEnter={() => commitIfChanged("h", d.heightCm, (n) => ({ heightCm: parseHeight(n, "metric") }))}
+              onBlur={() => commitIfChanged("h", d.heightCm, (n) => ({ heightCm: parseHeight(n, "metric") }))}
             />
           ) : (
             <div className="grid grid-cols-2 gap-3">
@@ -272,12 +278,16 @@ export default function SimpleDetails({ profile, summary, refresh, onShowFull, o
                 value={d.heightFt ?? ""}
                 onChange={(v) => setD((c) => ({ ...c, heightFt: v }))}
                 unit="ft"
+                label="Height, feet"
+                onBlur={() => commitIfChanged("h", `${d.heightFt}-${d.heightIn}`, () => ({ heightCm: ftin2cm(d.heightFt, d.heightIn) }))}
                 onEnter={() => commitIfChanged("h", `${d.heightFt}-${d.heightIn}`, () => ({ heightCm: ftin2cm(d.heightFt, d.heightIn) }))}
               />
               <NumberBox
                 value={d.heightIn ?? ""}
                 onChange={(v) => setD((c) => ({ ...c, heightIn: v }))}
                 unit="in"
+                label="Height, inches"
+                onBlur={() => commitIfChanged("h", `${d.heightFt}-${d.heightIn}`, () => ({ heightCm: ftin2cm(d.heightFt, d.heightIn) }))}
                 onEnter={() => commitIfChanged("h", `${d.heightFt}-${d.heightIn}`, () => ({ heightCm: ftin2cm(d.heightFt, d.heightIn) }))}
               />
             </div>

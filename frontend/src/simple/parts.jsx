@@ -83,15 +83,21 @@ export const Choice = ({ options, value, onChange }) => (
 //
 // inputMode/type are deliberate: they pick the right phone keyboard and they
 // match what the full UI already sends for the same fields.
-export const NumberBox = ({ value, onChange, unit, placeholder, autoFocus, onEnter }) => (
+// `onBlur` is a SEPARATE prop from `onEnter`, deliberately. Aliasing the two
+// would make Next skip screens in the six questions (blurring to click Next
+// would fire the advance twice) and would POST a weigh-in on click-away. Only
+// Your details passes it, because only Your details claims to save as you go.
+export const NumberBox = ({ value, onChange, unit, placeholder, autoFocus, onEnter, onBlur, label }) => (
   <div className="flex items-center gap-3 rounded-2xl border border-border bg-card px-5 min-h-20">
     <input
       type="number"
       inputMode="decimal"
       value={value}
+      aria-label={label}
       autoFocus={autoFocus}
       placeholder={placeholder}
       onChange={(e) => onChange(e.target.value)}
+      onBlur={onBlur}
       onKeyDown={(e) => { if (e.key === "Enter" && onEnter) onEnter(); }}
       className="flex-1 min-w-0 bg-transparent text-4xl font-bold tabular-nums outline-none
                  [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none

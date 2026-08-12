@@ -42,6 +42,9 @@ function Weight({ profile, summary }) {
     }));
   }, [summary, pref]);
 
+  if (summary === "error") {
+    return <Panel tone="warn">Couldn&rsquo;t load your weigh-ins just now. Try again in a moment.</Panel>;
+  }
   if (!summary) return <Busy>Getting your weight…</Busy>;
 
   const avg = summary.avg7Kg;
@@ -103,6 +106,9 @@ function Weight({ profile, summary }) {
 }
 
 function Numbers({ summary, onShowFull }) {
+  if (summary === "error") {
+    return <Panel tone="warn">Couldn&rsquo;t load your numbers just now. Try again in a moment.</Panel>;
+  }
   if (!summary) return <Busy>Working out your numbers…</Busy>;
 
   const e = summary.energy || {};

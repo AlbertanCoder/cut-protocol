@@ -44,7 +44,7 @@ function Meal({ slot, index, onSwap, swapping }) {
       meta={`${kc(slot.kcal)} calories`}
       action={
         <RowAction onClick={() => onSwap(slot)} disabled={swapping} label={`Swap ${name} for something else`}>
-          <RefreshCw size={16} aria-hidden="true" className={swapping ? "animate-spin" : ""} />
+          <RefreshCw size={16} aria-hidden="true" className={swapping ? "motion-safe:animate-spin" : ""} />
           Swap
         </RowAction>
       }
@@ -58,7 +58,7 @@ function Meal({ slot, index, onSwap, swapping }) {
 export default function SimpleToday({ profile }) {
   const date = todayStr();
 
-  const [plan, setPlan] = useState(null);        // null = loading
+  const [plan, setPlan] = useState("loading");   // "loading" | null (no plan) | "error" | plan
   const [planError, setPlanError] = useState(null);
   const [generating, setGenerating] = useState(false);
 
@@ -184,7 +184,7 @@ export default function SimpleToday({ profile }) {
     }
   };
 
-  if (plan === null) return <Busy>Getting today&rsquo;s food…</Busy>;
+  if (plan === "loading") return <Busy>Getting today&rsquo;s food…</Busy>;
 
   return (
     <div className="flex flex-col gap-6">

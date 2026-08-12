@@ -91,6 +91,21 @@ export default function SimpleOnboarding({ onDone, onShowFull }) {
         ...(rateAck ? { rateAcknowledged: true } : {}),
         ...(goalAck ? { goalWeightAcknowledged: true } : {}),
       });
+
+      // KEEP THE PROMISE. The button says "Show me what to eat", and without
+      // this the person lands on an empty Today and has to press a second
+      // button to get the thing they were just promised. Same call Today's
+      // empty state makes.
+      //
+      // Deliberately non-fatal: the profile is already saved, so a solver
+      // failure must not strand someone at the end of setup. They fall through
+      // to Today's empty state, which offers the same button.
+      try {
+        await api.generatePlan({});
+      } catch {
+        /* fall through — Today's "Build my day" is the retry */
+      }
+
       await onDone();
       return;
     } catch (e) {

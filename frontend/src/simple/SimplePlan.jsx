@@ -64,7 +64,7 @@ function Week({ days, selected, onSelect }) {
 }
 
 export default function SimplePlan({ profile, onShowFull }) {
-  const [plan, setPlan] = useState(null);          // null = loading
+  const [plan, setPlan] = useState("loading");     // "loading" | null (no plan) | "error" | plan
   const [error, setError] = useState(null);
   const [generating, setGenerating] = useState(false);
   const [day, setDay] = useState(isoWeekday());
@@ -161,7 +161,7 @@ export default function SimplePlan({ profile, onShowFull }) {
     }
   };
 
-  if (plan === null) return <Busy>Getting your week…</Busy>;
+  if (plan === "loading") return <Busy>Getting your week…</Busy>;
 
   return (
     <Page
@@ -225,7 +225,7 @@ export default function SimplePlan({ profile, onShowFull }) {
                       disabled={swapSlot?.id === s.id && altBusy}
                       label={`Swap ${name} for something else`}
                     >
-                      <RefreshCw size={16} aria-hidden="true" className={swapSlot?.id === s.id && altBusy ? "animate-spin" : ""} />
+                      <RefreshCw size={16} aria-hidden="true" className={swapSlot?.id === s.id && altBusy ? "motion-safe:animate-spin" : ""} />
                       Swap
                     </RowAction>
                   }

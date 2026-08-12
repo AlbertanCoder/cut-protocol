@@ -97,7 +97,10 @@ export default function SimpleApp() {
     try {
       setSummary(await api.getSummary());
     } catch {
-      setSummary(null);
+      // "error", not null. Progress used `!summary` as its loading test, so a
+      // failed summary left that whole door spinning forever with no way to
+      // retry. A distinguishable value lets it show a real error instead.
+      setSummary("error");
     }
   }, []);
 
@@ -248,13 +251,30 @@ export default function SimpleApp() {
           <div className="mx-auto w-full max-w-3xl flex flex-col gap-12">
             {body}
 
-            <div className="flex flex-col items-start gap-3 pt-2">
-              <Details onClick={goFull} />
-              {/* The support resources are never hidden and never greyed out — a
-                  standing safety rule that survives any visual direction. On this
-                  surface they are one labelled click away, on the full app's
-                  Wellbeing tab. */}
-              <Details onClick={goFull} label="Support and wellbeing resources" />
+            {/* THE EXIT USED TO BE THE MOST REPEATED THING IN THE APP. Two
+                links here, plus each room's own, meant the bottom of Recipes
+                and You read as four different offers that were one offer — all
+                the same component, all the same grey, all landing in the same
+                place. Now the generic one renders ONLY where the room supplies
+                none, which today means Today. Every other room has its own
+                link with better words. */}
+            <div className="flex flex-col items-start gap-4 pt-2">
+              {door === "today" && <Details onClick={goFull} label="Open the full app" />}
+
+              {/* The support resources are never hidden and never greyed out —
+                  a standing safety rule that survives any visual direction. It
+                  renders on EVERY screen, unconditionally, and now actually
+                  lands on the resources: the You door renders the real
+                  ResourceList. It used to call goFull, which dropped you on
+                  whatever tab the full app happened to be on — the one link
+                  that must not be a guess. */}
+              <button
+                type="button"
+                onClick={() => setDoor("you")}
+                className="min-h-11 text-base text-foreground underline underline-offset-4"
+              >
+                Support and wellbeing resources
+              </button>
             </div>
           </div>
         </main>
