@@ -470,6 +470,12 @@ Second push same day: owner typed "Go push" (the runbook's exact phrase),
 agent wrote the token, pushed 7332b6a..66dca00 (the fleet's deploy fixes +
 legal email + runbook), deleted the token. Gate re-armed again.
 
+Third push onward (2026-08-13, deploy night): owner typed "Go push, keep it
+open tonight" - the token STANDS for the rest of the deploy session so build
+fixes flow without per-push approval, and the agent deletes it as the final
+act of the night. Pushes under this standing approval: 3631b59 (npm-11
+builder alignment) and any subsequent deploy fixes tonight.
+
 ## Open, needing the owner
 
 1. **Pricing.** Three live numbers ($24.99/$125 locked in `BUILD_PLAN.md`;
