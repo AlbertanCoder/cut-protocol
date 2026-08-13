@@ -38,4 +38,8 @@ COPY --from=frontend-build /app/frontend/dist /app/frontend/dist
 # a container must listen on all interfaces to be reachable.
 ENV HOST=0.0.0.0
 EXPOSE 3001
-CMD ["sh", "-c", "npx prisma migrate deploy --schema prisma/postgres/schema.prisma && node server.js"]
+# prisma is a PROD dependency, so its CLI is right there in node_modules —
+# invoked directly because the image's global npm-11 upgrade leaves npx
+# broken at runtime ("Class extends value undefined", measured deploy
+# ea2b53f3, crash-looping every 2s while build-time npx had worked).
+CMD ["sh", "-c", "./node_modules/.bin/prisma migrate deploy --schema prisma/postgres/schema.prisma && node server.js"]
