@@ -1,4 +1,9 @@
 FROM node:22-slim AS frontend-build
+# Both lockfiles are written by npm 11 on the dev machine. The image ships
+# npm 10.9, whose `npm ci` reads bundled optional deps differently and dies
+# with "Missing: @emnapi/runtime from lock file" (measured, deploys ec275bad
+# and 87de8117). Same major npm on both sides ends the argument.
+RUN npm install -g npm@11 --no-audit --no-fund
 WORKDIR /app/frontend
 COPY frontend/package.json frontend/package-lock.json ./
 RUN npm ci
@@ -15,6 +20,9 @@ ENV VITE_SUPABASE_URL=$VITE_SUPABASE_URL \
 RUN npm run build
 
 FROM node:22-slim
+# Same npm-11 alignment as the frontend stage — the backend lock has the
+# same author.
+RUN npm install -g npm@11 --no-audit --no-fund
 WORKDIR /app/backend
 COPY backend/package.json backend/package-lock.json ./
 RUN npm ci --omit=dev
