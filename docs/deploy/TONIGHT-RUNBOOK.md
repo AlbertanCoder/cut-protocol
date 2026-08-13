@@ -113,3 +113,37 @@ for `master` only.
   — do NOT send until its preflight blockers clear (Google
   OAuth is still in Testing mode; strangers can't sign in
   until added as test users or the app is published).
+
+---
+
+## Deploy-night result (2026-08-13, ~06:00 — appended at session close)
+
+**Permanent wins:** Supabase Postgres schema is LIVE (init migration applied
+through the session pooler — 26 tables); the Docker image builds reproducibly;
+four real defects found and fixed for good (Linux lockfile gap `8a50fae`,
+node 20→22 `e01c958`, runtime npx breakage `ea3a8a2`, region ams→us-east).
+
+**The one wall:** every deploy that reaches healthcheck fails it at ~4:53 —
+container boots, migrations apply, then zero server stdout and no probe ever
+answers. `PORT=3001` pinned explicitly: no change. Local hosted-mode boot
+(SUPABASE_URL + NODE_ENV=production, SQLite) listens instantly — app logic
+cleared.
+
+**Next session, in order:**
+1. Install Railway CLI (`npm i -g @railway/cli`) + `railway login` (one
+   device-confirm click) — real `railway logs` beats dashboard screenshots
+   and shows whether "listening on 0.0.0.0:3001" ever prints.
+2. Test the target-port hypothesis: the service is UNEXPOSED — generate the
+   public domain (Settings → Networking, select port 3001) FIRST, then
+   redeploy; Railway's probe may need a target port to exist.
+3. Run Railway's Diagnose on the failed deploy (free second opinion).
+4. If still stuck: `railway ssh` into the container, curl
+   `127.0.0.1:3001/api/health` from inside — settles listening-or-not in
+   one command.
+
+Railway state at close: project passionate-inspiration, service
+cut-protocol-app, US East, 7 variables (incl. PORT=3001), latest commit
+`ea3a8a2`, no successful deploy yet, nothing publicly exposed, ~cents of
+trial credit used. An accidental staged service ("function-bun", from a
+stray console keystroke) was DISCARDED — verify the canvas shows only
+cut-protocol-app. Push gate RE-ARMED at session close.
