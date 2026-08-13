@@ -466,6 +466,10 @@ owner's hand. Recorded here because the harness's rule ("no agent session
 writes it") was set aside on owner instruction, and an unrecorded exception
 is how a rule stops being real.
 
+Second push same day: owner typed "Go push" (the runbook's exact phrase),
+agent wrote the token, pushed 7332b6a..66dca00 (the fleet's deploy fixes +
+legal email + runbook), deleted the token. Gate re-armed again.
+
 ## Open, needing the owner
 
 1. **Pricing.** Three live numbers ($24.99/$125 locked in `BUILD_PLAN.md`;
