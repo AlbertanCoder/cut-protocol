@@ -42,4 +42,13 @@ EXPOSE 3001
 # invoked directly because the image's global npm-11 upgrade leaves npx
 # broken at runtime ("Class extends value undefined", measured deploy
 # ea2b53f3, crash-looping every 2s while build-time npx had worked).
-CMD ["sh", "-c", "./node_modules/.bin/prisma migrate deploy --schema prisma/postgres/schema.prisma && node server.js"]
+#
+# The timeout guard (measured, deploys 08b923b3 + latest): migrate deploy
+# COMPLETES its work in ~1s against the Supabase session pooler and then
+# HANGS ON EXIT — the engine process never terminates over the pooled IPv4
+# connection, so a bare `&&` chain never reaches `node server.js` and the
+# healthcheck stares at a serverless container for its whole 5-minute
+# window. timeout kills the lingering process at 120s (exit 124, treated
+# as success — the migration state already lives in the DB); any REAL
+# migrate failure still aborts the boot with its own exit code.
+CMD ["sh", "-c", "timeout 120 ./node_modules/.bin/prisma migrate deploy --schema prisma/postgres/schema.prisma; ec=$?; if [ $ec -ne 0 ] && [ $ec -ne 124 ]; then exit $ec; fi; exec node server.js"]
