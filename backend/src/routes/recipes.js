@@ -452,6 +452,40 @@ router.delete("/:id", async (req, res) => {
   const recipe = await prisma.recipe.findUnique({ where: { id: req.params.id } });
   if (!recipe) return res.status(404).json({ error: "recipe not found" });
   if (!(await assertCanMutateRecipe(recipe, req.userId, res))) return;
+
+  // ── Do not let one person's delete damage another person's data ──────────
+  // Creator-delete became reachable for the first time when recipes started
+  // carrying createdByUserId. On a SHARED pool that is a new hazard, because
+  // the solver pool is not partitioned by owner: another user's meal plan or
+  // cart can legitimately contain this recipe. The schema then does real harm
+  // on their behalf — CartItem.recipe is onDelete CASCADE (their cart row is
+  // destroyed) and PlanSlot.recipe is onDelete SET NULL (their saved plan slot
+  // silently loses its meal, which is exactly the "silent target miss" the
+  // constitution forbids).
+  //
+  // So a creator may delete only what nobody else is relying on. An ADMIN is
+  // deliberately still allowed through — library curation is the admin role's
+  // job and it is exercised knowingly.
+  //
+  // Checked by USER, not by row: the creator's own plans and cart never block
+  // them, which keeps the normal "I made this by mistake" case working.
+  const actor = await prisma.user.findUnique({ where: { id: req.userId }, select: { role: true } });
+  if (actor?.role !== "admin") {
+    const [othersPlanSlots, othersCartItems] = await Promise.all([
+      prisma.planSlot.count({ where: { recipeId: recipe.id, plan: { userId: { not: req.userId } } } }),
+      prisma.cartItem.count({ where: { recipeId: recipe.id, userId: { not: req.userId } } }),
+    ]);
+    if (othersPlanSlots > 0 || othersCartItems > 0) {
+      return res.status(409).json({
+        error:
+          "Someone else is using this recipe right now — it is in another person's meal plan or cart, " +
+          "and deleting it would empty their slot. You can still edit it.",
+        code: "recipe_in_use",
+        inUse: { otherPlanSlots: othersPlanSlots, otherCartItems: othersCartItems },
+      });
+    }
+  }
+
   // RecipeIngredient -> Recipe is ON DELETE RESTRICT; clear it first.
   // PlanSlot -> Recipe is ON DELETE SET NULL, so old plans survive intact.
   await prisma.recipeIngredient.deleteMany({ where: { recipeId: recipe.id } });

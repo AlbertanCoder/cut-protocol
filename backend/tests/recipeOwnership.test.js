@@ -401,3 +401,65 @@ test("VISIBILITY IS UNCHANGED: an owned recipe is still in every other user's SO
   assert.equal(owned.createdByUserId, userSaver,
     "the pool rows do carry the owner (RECIPE_GATE_SELECT selects it) — nothing reads it as a filter today");
 });
+
+// ── the hazard creator-delete introduced, and its guard ─────────────────────
+// Stamping ownership made DELETE reachable by a creator for the first time.
+// The solver pool is NOT partitioned by owner, so another user's plan or cart
+// can legitimately hold this recipe — and the schema then harms them on the
+// deleter's behalf: CartItem.recipe is onDelete CASCADE (their cart row is
+// destroyed) and PlanSlot.recipe is onDelete SET NULL (their saved plan slot
+// silently loses its meal). A user must not be able to do that to a stranger
+// by tidying up their own list.
+test("a creator CANNOT delete a recipe that is in ANOTHER user's plan (409, and nothing is destroyed)", async () => {
+  const created = await call("POST", "/api/recipes/save-draft", { cookie: cookieSaver, body: draftBody("Shared Plate In Someone Elses Week") });
+  assert.equal(created.status, 201, created.text);
+  const id = created.json.id;
+
+  // userOther builds a plan that uses it — exactly what the shared pool allows.
+  const plan = await prisma.plan.create({ data: { userId: userOther, startDate: "2026-08-17" } });
+  await prisma.planSlot.create({
+    data: { planId: plan.id, dayOfWeek: 0, slotType: "meal", slotIndex: 0, recipeId: id, ingredients: [], kcal: 500, protein: 30, fat: 15, carb: 45 },
+  });
+
+  const del = await call("DELETE", `/api/recipes/${id}`, { cookie: cookieSaver });
+  assert.equal(del.status, 409, `deleting out from under another user's plan must be refused — got ${del.status} ${del.text}`);
+  assert.equal(del.json.code, "recipe_in_use");
+
+  // The whole point: the other user's plan slot still has its meal.
+  assert.ok(await prisma.recipe.findUnique({ where: { id } }), "the recipe must survive a refused delete");
+  const slot = await prisma.planSlot.findFirst({ where: { planId: plan.id } });
+  assert.equal(slot.recipeId, id, "another user's plan slot was emptied by someone else's delete");
+});
+
+test("a creator CANNOT delete a recipe sitting in ANOTHER user's cart", async () => {
+  const created = await call("POST", "/api/recipes/save-draft", { cookie: cookieSaver, body: draftBody("Shared Plate In Someone Elses Cart") });
+  assert.equal(created.status, 201, created.text);
+  const id = created.json.id;
+  await prisma.cartItem.create({ data: { userId: userOther, recipeId: id } });
+
+  const del = await call("DELETE", `/api/recipes/${id}`, { cookie: cookieSaver });
+  assert.equal(del.status, 409, `got ${del.status} ${del.text}`);
+  assert.equal(await prisma.cartItem.count({ where: { recipeId: id, userId: userOther } }), 1,
+    "another user's cart item was destroyed by someone else's delete (onDelete: Cascade)");
+});
+
+test("the creator's OWN plan or cart never blocks their delete", async () => {
+  const created = await call("POST", "/api/recipes/save-draft", { cookie: cookieSaver, body: draftBody("My Own Mistake Plate") });
+  assert.equal(created.status, 201, created.text);
+  const id = created.json.id;
+  await prisma.cartItem.create({ data: { userId: userSaver, recipeId: id } });
+
+  const del = await call("DELETE", `/api/recipes/${id}`, { cookie: cookieSaver });
+  assert.equal(del.status, 204, `own-cart must not block the creator — got ${del.status} ${del.text}`);
+  assert.equal(await prisma.recipe.findUnique({ where: { id } }), null);
+});
+
+test("an ADMIN may still delete a recipe another user is relying on (curation stays possible)", async () => {
+  const created = await call("POST", "/api/recipes/save-draft", { cookie: cookieSaver, body: draftBody("Admin Curated Away Plate") });
+  assert.equal(created.status, 201, created.text);
+  const id = created.json.id;
+  await prisma.cartItem.create({ data: { userId: userOther, recipeId: id } });
+
+  const del = await call("DELETE", `/api/recipes/${id}`, { cookie: cookieAdmin });
+  assert.equal(del.status, 204, `an admin curating the library must not be blocked — got ${del.status} ${del.text}`);
+});
