@@ -57,6 +57,28 @@ const micronutrientRoutes = require("./src/routes/micronutrients.js");
 
 const app = express();
 
+// ── Who is "the client" when a proxy sits in front? (added 2026-08-13) ──────
+// Every throttle in routes/auth.js buckets on req.ip — register, login,
+// password reset. Behind a cloud edge proxy, Express reports the PROXY's
+// address for every request unless it is told to trust the hop, so all
+// callers collapse into ONE bucket: measured on the live deploy, a single
+// actor tripping the 10-attempt register limit locks registration for
+// everybody, and the same shared bucket makes targeted login lockout trivial.
+//
+// This MUST stay opt-in. `trust proxy` tells Express to believe
+// X-Forwarded-For, which any client can forge — on the desktop build, where
+// nothing strips that header, trusting it unconditionally would hand every
+// caller a free throttle bypass. So: off unless TRUST_PROXY is set, and its
+// value is the NUMBER OF HOPS to trust (Railway = 1), never `true`.
+const TRUST_PROXY_HOPS = Number.parseInt(process.env.TRUST_PROXY ?? "", 10);
+if (Number.isFinite(TRUST_PROXY_HOPS) && TRUST_PROXY_HOPS > 0) {
+  app.set("trust proxy", TRUST_PROXY_HOPS);
+}
+
+// Express advertises itself in every response. It tells an attacker which
+// stack to aim at and gives a legitimate client nothing.
+app.disable("x-powered-by");
+
 // A full data export is megabytes of JSON, and POST /api/import takes that same
 // document back. The global express.json() below caps bodies at body-parser's
 // 100 kB default, which would 413 every real restore before the route ever saw
