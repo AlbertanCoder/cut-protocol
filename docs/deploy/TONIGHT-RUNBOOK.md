@@ -126,23 +126,30 @@ The ~06:00 version of this appendix called the healthcheck cause unknown and
 queued a next-session plan (CLI install → target-port test → Diagnose → ssh
 probe). The cause has since been MEASURED and fixed. The true story:
 
-**Five deploys, and what killed each (measured):** builds `d49624b6` and
-`87de8117` died in frontend `npm ci` (EUSAGE — the Windows-authored lockfile
-never recorded tailwind-oxide's Linux optionals) → lock regen + node 20→22
-(`e01c958`). Builds 3–4: same EUSAGE — builder npm 10 and authoring npm 11
-disagree on bundled optionals → npm@11 in both Docker stages (`3631b59`) plus
-the one lockfile entry npm's own writer refuses to emit, added by hand
-(`8a50fae`). Deploy `ea2b53f3`: build green, container crash-looped — the
-global npm-11 upgrade breaks runtime `npx` → call
-`./node_modules/.bin/prisma` directly (`ea3a8a2`). Then the wall: healthcheck
-dead at ~4:53, zero server stdout; `PORT=3001` pinned explicitly, no change.
+**Seven deploys, and what killed each (measured — `railway deployment list`,
+2026-08-13):** builds `d49624b6` and `87de8117` (both at `66dca00`) died in
+frontend `npm ci` (EUSAGE — the Windows-authored lockfile never recorded
+tailwind-oxide's Linux optionals) → lock regen + node 20→22 (`e01c958`).
+Builds 3–4 (`ec275bad` at `e01c958`, `775f1b98` at `3631b59`): same EUSAGE —
+builder npm 10 and authoring npm 11 disagree on bundled optionals → npm@11
+in both Docker stages (`3631b59`) plus the one lockfile entry npm's own
+writer refuses to emit, added by hand (`8a50fae`). Deploy `ea2b53f3` (at
+`8a50fae`): build green, container crash-looped — the global npm-11 upgrade
+breaks runtime `npx` → call `./node_modules/.bin/prisma` directly
+(`ea3a8a2`). Then the wall — deploys `08b923b3` and `60a197d9` (both at
+`ea3a8a2`; the second was the `PORT=3001`-pin redeploy): healthcheck dead at
+~4:53, zero server stdout.
 
 **The wall, SOLVED:** the Railway CLI (now installed, authenticated, and
 linked to the project) pulled the runtime logs the dashboard never showed.
 They end at "No pending migrations to apply." — `prisma migrate deploy`
 completes its work in ~1s against the session pooler, then HANGS ON PROCESS
 EXIT (engine child never terminates over the pooled connection), so the `&&`
-chain never advances and `node server.js` NEVER RAN across all five deploys.
+chain never advances in either wall deploy — and with the four build
+failures and the pre-migrate npx crash-loop before them, `node server.js`
+NEVER RAN in any of the seven. (`4ea196c`'s commit message says "all five
+deploys" — a miscount, immutable in history; the deployment list above is
+the measured record.)
 Fixed in `4ea196c`: `timeout 120` wraps the migrate in both `railway.json`
 startCommand and the Dockerfile CMD (exit 124 → proceed to the server; a
 real migrate failure still aborts with its own code).
