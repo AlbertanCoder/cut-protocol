@@ -16,6 +16,7 @@ const {
   BAD_CREDENTIALS_MESSAGE,
 } = require("../lib/auth.js");
 const { beginReset, verifyResetCode, recoveryDisplayPath } = require("../lib/passwordReset.js");
+const { isSupabaseAuthEnabled } = require("../lib/supabaseAuth.js");
 
 const router = express.Router();
 
@@ -111,7 +112,17 @@ router.post("/register", optionalAuth, async (req, res) => {
       // (see routes/recipes.js canMutateRecipe and FoodsTab's isAdmin gate).
       // Additional profiles the owner creates later are plain users, who can
       // only mutate what they created.
-      data: { email, passwordHash, role: isFirstRun ? "admin" : "user" },
+      //
+      // NOT ON A HOSTED DEPLOY (found live 2026-08-13, minutes after the first
+      // green Railway deploy). The rule above is safe on a desktop install
+      // because the first account IS the machine's owner. On a freshly seeded
+      // cloud database the user table is empty, so `isFirstRun` is true for
+      // whichever STRANGER posts here first — handing them admin and the
+      // food-library writes it unlocks. This is the same hole supabaseAuth.js
+      // closed for the Google path (QC audit 2026-08-11 item 1); that fix
+      // never covered this one. Hosted mode grants admin to nobody; use
+      // scripts/grantAdmin.mjs instead.
+      data: { email, passwordHash, role: isFirstRun && !isSupabaseAuthEnabled() ? "admin" : "user" },
       // select, not a delete-the-field-afterwards: the hash can never fall out
       // of this handler because it is never read out of the database here.
       select: { id: true, email: true, role: true },

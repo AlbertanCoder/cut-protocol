@@ -80,6 +80,17 @@ test.before(async () => {
   process.env.DATABASE_URL = `file:${dbFile.replace(/\\/g, "/")}`;
   process.env.JWT_SECRET = "auth-registration-test-only-secret"; // scan:allow — fixture, never a real secret; it exists precisely so the developer's real JWT_SECRET stays out of this process
   process.env.QC_NO_LISTEN = "1";
+  // This suite asserts DESKTOP behaviour — including that the first account on
+  // a machine is that machine's owner and gets "admin" (line ~154). That rule
+  // is deliberately hosted-mode-OFF only: on a cloud deploy the users table is
+  // empty for whichever stranger arrives first, so /register never mints an
+  // admin there (see tests/registerRoleHosted.test.js, found live 2026-08-13).
+  // If the developer's local .env has SUPABASE_URL armed for web sign-in
+  // testing, the app boots hosted and this file's admin assertion fails —
+  // Defect 2's exact mechanism (docs/qc/session-findings-2026-08-10.md), the
+  // same leak already fixed for planWarningIntegrity in df7ac39. Tests own
+  // their env: desktop mode, explicitly.
+  process.env.SUPABASE_URL = "";
   process.env.BRAIN = "off";
 
   app = require(path.join(BACKEND, "server.js"));
