@@ -403,6 +403,10 @@ async function routeMealSlot(request, deps = {}) {
         source: "ai-generated",
         tasteTier: clampProposedTier(draft.tasteTier),
         tasteTierSource: "llm",
+        // The acting user — the same profile.userId this router already bills
+        // the model budget to. The row stays in everyone's pool (no query here
+        // filters on owner); ownership only decides who may edit or delete it.
+        createdByUserId: profile?.userId ?? null,
       });
       if (saved && saved.id) cache.remember(fingerprint, saved.id);
       stats.generations++;

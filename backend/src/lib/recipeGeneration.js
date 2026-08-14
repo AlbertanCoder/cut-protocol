@@ -177,6 +177,28 @@ function placeholderRefusalReason(resolvedDraft) {
 // that source can claim (it can never mint "exceptional"). Omit both and the
 // columns stay null, which taste.js already treats as the neutral "decent"
 // prior: the default path is unchanged.
+//
+// `createdByUserId` is the ACTING USER — the person whose request caused this
+// row to exist. It defaults to null and, when null, the column is not written
+// at all, so every seed/maintenance path (scripts/genLibrary.mjs,
+// scripts/seedGapRecipes.mjs, buildTemplateDb.mjs's detach) keeps producing
+// owner-less CURATED library rows exactly as before. Curated rows staying
+// owner-less is deliberate: routes/recipes.js's assertCanMutateRecipe treats
+// null as "pre-multi-tenancy shared content, admin-only", and every pool query
+// ignores the column entirely, so an owner-less row remains visible to everyone.
+//
+// It is stamped because on a multi-tenant deploy EVERY user-created recipe was
+// landing owner-less, which made the ownership check unsatisfiable in the one
+// direction it was written for: the creator of a recipe could not edit or delete
+// their own creation (createdByUserId:null never equals a real userId), while an
+// admin could mutate anything. Stamping the creator is what makes
+// assertCanMutateRecipe's "a recipe with a creator may only be mutated by that
+// creator or an admin" branch reachable.
+//
+// It does NOT change who can SEE the row — see the report in this change: the
+// solver pool (planContext.loadRecipeLibrary), the library browse
+// (GET /api/recipes), the brain pool and the durable AI cache all query Recipe
+// with no owner predicate.
 const RECIPE_SOURCES = new Set(["curated", "ai-generated", "imported"]);
 async function persistRecipe(resolvedDraft, { source = "ai-generated", tasteTier = null, tasteTierSource = null,
   // Stage 4's designed-but-unwired durable cache columns (docs/qc/
@@ -185,7 +207,8 @@ async function persistRecipe(resolvedDraft, { source = "ai-generated", tasteTier
   // and when. Optional and additive — every existing caller persists exactly
   // as before; only a caller that PROVES verification may stamp these, and an
   // AI row with a null aiVerifiedAt is never served from the durable cache.
-  aiFingerprint = null, aiVerifiedAt = null, aiVerifiedBy = null } = {}) {
+  aiFingerprint = null, aiVerifiedAt = null, aiVerifiedBy = null,
+  createdByUserId = null } = {}) {
   const provenance = RECIPE_SOURCES.has(source) ? source : "ai-generated";
   return prisma.recipe.create({
     data: {
@@ -196,6 +219,9 @@ async function persistRecipe(resolvedDraft, { source = "ai-generated", tasteTier
       ...(aiFingerprint ? { aiFingerprint } : {}),
       ...(aiVerifiedAt ? { aiVerifiedAt } : {}),
       ...(aiVerifiedBy ? { aiVerifiedBy } : {}),
+      // Omitted when null so the seeded/curated library keeps writing the column
+      // as it always did (absent -> NULL -> "shared library content").
+      ...(createdByUserId ? { createdByUserId } : {}),
       kcal: resolvedDraft.kcal, protein: resolvedDraft.protein, fat: resolvedDraft.fat, carb: resolvedDraft.carb,
       ingredients: {
         create: resolvedDraft.ingredients.map((i) => ({
@@ -299,7 +325,10 @@ async function generateAndSaveSlotRecipe(target, profile, existingRecipeNames, d
   const targetRatio = target.kcalTarget > 0 ? target.proteinTarget / target.kcalTarget : 0;
   const best = resolvedDrafts.reduce((a, b) => (scoreDraftFit(a, targetRatio) <= scoreDraftFit(b, targetRatio) ? a : b));
 
-  return persistRecipeImpl(best, { source: "ai-generated" });
+  // The acting user is the one this slot is being solved FOR — the same
+  // profile.userId already used for ledger attribution above. Null-safe: a
+  // profile without a userId (test fixtures) persists owner-less, as before.
+  return persistRecipeImpl(best, { source: "ai-generated", createdByUserId: profile?.userId ?? null });
 }
 
 module.exports = {

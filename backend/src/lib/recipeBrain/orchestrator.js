@@ -170,7 +170,10 @@ async function solveRecipeForSlot(request = {}, deps = {}) {
     for (const { draft, sourceUrl } of swept.drafts) {
       const verdict = await verifyProposal(draft);
       if (!verdict.ok) { attempts.push({ channel: "web", url: sourceUrl, outcome: "discarded", reason: verdict.reason }); continue; }
-      const saved = await persistRecipeImpl(verdict.resolved, { source: "imported" });
+      // Acting user, so a web-imported row can be edited/deleted by whoever
+      // caused the import. Visibility is unaffected — no pool query filters on
+      // createdByUserId.
+      const saved = await persistRecipeImpl(verdict.resolved, { source: "imported", createdByUserId: profile?.userId ?? null });
       const recipe = saved && saved.id ? { ...verdict.row, id: saved.id, source: "imported" } : verdict.row;
       if (saved && saved.id) cacheSource.remember(fingerprint, saved.id, deps.cacheDeps || {});
       stats.webImports++;
@@ -203,6 +206,7 @@ async function solveRecipeForSlot(request = {}, deps = {}) {
         aiFingerprint: fingerprint,
         aiVerifiedAt: now(),
         aiVerifiedBy: { screens: VERIFY_SCREENS, model, specVersion: spec.version },
+        createdByUserId: profile?.userId ?? null,
       });
       const recipe = saved && saved.id ? { ...verdict.row, id: saved.id, source: "ai-generated" } : verdict.row;
       if (saved && saved.id) cacheSource.remember(fingerprint, saved.id, deps.cacheDeps || {});

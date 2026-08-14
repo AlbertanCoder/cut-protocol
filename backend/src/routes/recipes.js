@@ -290,7 +290,10 @@ router.post("/save-draft", async (req, res) => {
   try {
     const recipe = await persistRecipe(
       { name, description, cuisine: finalCuisine, slotType, prepTimeMin, steps, ingredients, ...macros },
-      { source: source === "imported" ? "imported" : "ai-generated" }
+      // The saver OWNS what they saved. Without this the row lands owner-less
+      // and assertCanMutateRecipe below 403s the person who just created it —
+      // only an admin could then edit or delete it.
+      { source: source === "imported" ? "imported" : "ai-generated", createdByUserId: req.userId }
     );
     // plan-perf-1: a new recipe changes the shared library the plan pool is
     // cached from.
