@@ -58,6 +58,32 @@ RUN sed -i 's/\r$//' /app/docker-entrypoint.sh && chmod +x /app/docker-entrypoin
 # server.js binds loopback unless told otherwise (the desktop-safety default);
 # a container must listen on all interfaces to be reachable.
 ENV HOST=0.0.0.0
+# ── keep the error channel meaning "error" (2026-08-14) ────────────────────
+# The Prisma CLI's version-upgrade banner ("Update available 6.19.3 -> 7.9.1")
+# is printed with console.error — verified in the installed CLI, prisma 6.19.3,
+# node_modules/prisma/build/index.js: the function that renders it ends
+# `console.error(p)`, and its first statement is
+# `let r = process.env.PRISMA_HIDE_UPDATE_MESSAGE; if (... || r || ...) return;`.
+# console.error writes to stderr, and the cloud log collector types every stderr
+# line as level=error. So a routine "a newer version exists" notice arrives in
+# production logs wearing the same badge as a failed migration.
+#
+# That is the actual harm, and it is not cosmetic: the owner reads these logs to
+# diagnose a live incident, and a boot that reliably prints ERROR lines for
+# non-errors teaches everyone to scroll past ERROR. The next real one is then
+# already invisible. A release announcement is not an operational event and must
+# not ride the channel reserved for ones that are.
+#
+# PRISMA_HIDE_UPDATE_MESSAGE is Prisma's own documented switch and it gates
+# EXACTLY that banner — the early return above is the whole of its effect.
+# Deliberately NOT used, and never to be added here: PRISMA_DISABLE_WARNINGS,
+# which silences real `prisma:warn` diagnostics (engine/OpenSSL detection,
+# datasource problems); and any `2>/dev/null` on the migrate call, which would
+# throw away the failure text docker-entrypoint.sh matches on to tell a
+# saturated pool apart from a broken migration. Suppress the banner, nothing
+# else. Set here rather than in code so no runtime path can be reached without
+# it, and placed after `prisma generate` so build-log output is unaffected.
+ENV PRISMA_HIDE_UPDATE_MESSAGE=1
 EXPOSE 3001
 # prisma is a PROD dependency, so its CLI is right there in node_modules —
 # invoked directly because the image's global npm-11 upgrade leaves npx
