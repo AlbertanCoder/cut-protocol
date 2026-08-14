@@ -72,11 +72,19 @@ const TESTS_DIR = path.join(BACKEND, "tests");
 //               prismaDatasourceGuard suites landed alongside the healthcheck,
 //               Postgres-quiet boot, and CI seed fixes; floors raised in the
 //               same commit per the 2026-08-08 note above)
-const MIN_TEST_FILES = 135;
+//   2026-08-14  142 files / 1748 tests (QC-findings fleet: tests/recipeOwnership
+//               (+10) locking that every write path stamps the acting user as
+//               Recipe.createdByUserId, tests/deployLogNoise (+5) keeping the
+//               error channel meaning "error" in the deploy stack, and +2 in
+//               tests/healthEndpoint for the new GET /api/ready — which also
+//               PIN /api/health as database-independent. Raised here rather
+//               than in any one of those three commits because the increment
+//               spans all three; measured by the run that green-lit them.)
+const MIN_TEST_FILES = 138;
 // ~2.5% headroom under the measured total so ordinary churn (merging or deleting
 // a redundant case) doesn't wedge CI, while still catching a mass skip — the
 // bash glob dropped 27 of 62 files, which is hundreds of tests, not single digits.
-const MIN_TESTS = 1685;
+const MIN_TESTS = 1704;
 
 const argv = process.argv.slice(2);
 const listOnly = argv.includes("--list");
