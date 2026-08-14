@@ -46,6 +46,15 @@ COPY backend/ ./
 RUN node scripts/buildPostgresSchema.mjs --patch-main && npx prisma generate
 COPY --from=frontend-build /app/frontend/dist /app/frontend/dist
 
+# Boot logic lives in a real script, not a CMD one-liner — it has to tell three
+# different migrate failures apart. See the file's own header for each.
+# `sed -i` strips CR in case the file ever reaches the build context with
+# Windows line endings, which would make /bin/sh fail with a bare "\r: not
+# found" that reads like the script is missing. .gitattributes pins LF too;
+# this is the belt to that suspenders.
+COPY docker-entrypoint.sh /app/docker-entrypoint.sh
+RUN sed -i 's/\r$//' /app/docker-entrypoint.sh && chmod +x /app/docker-entrypoint.sh
+
 # server.js binds loopback unless told otherwise (the desktop-safety default);
 # a container must listen on all interfaces to be reachable.
 ENV HOST=0.0.0.0
@@ -63,4 +72,4 @@ EXPOSE 3001
 # window. timeout kills the lingering process at 120s (exit 124, treated
 # as success — the migration state already lives in the DB); any REAL
 # migrate failure still aborts the boot with its own exit code.
-CMD ["sh", "-c", "timeout -k 10 120 ./node_modules/.bin/prisma migrate deploy --schema prisma/postgres/schema.prisma; ec=$?; if [ $ec -ne 0 ] && [ $ec -ne 124 ]; then exit $ec; fi; exec node server.js"]
+CMD ["/app/docker-entrypoint.sh"]
