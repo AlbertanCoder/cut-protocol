@@ -153,3 +153,95 @@ test("railway.json's healthcheckPath points at the mounted route", () => {
   assert.ok(serverSrc.includes('app.get("/api/health"'),
     "server.js no longer mounts GET /api/health — railway.json's healthcheckPath now probes a 404");
 });
+
+// ── Readiness, and the liveness contract it exists to protect ───────────────
+// QC fleet finding: /api/health answered 200 while 11 of 25 API requests were
+// 500ing on the database. The fix is NOT to make /api/health database-aware —
+// railway.json probes it with restartPolicyType ON_FAILURE, so a DB blip that
+// fails liveness restarts the container, and a restarted container against a
+// saturated pooler cannot connect either. That is a crash loop made out of a
+// hiccup. The fix is a SECOND endpoint that answers the dependency question.
+//
+// The two tests below are a pair and must stay one: the first proves readiness
+// actually reports the database, the second pins liveness so nobody later
+// "fixes" the finding by wiring /api/health to the DB.
+
+test("GET /api/ready answers 200 with no auth when the database is reachable", async () => {
+  const port = await freePort();
+  const s = await startServer({ PORT: String(port) });
+
+  const res = await get(`http://127.0.0.1:${port}/api/ready`);
+  assert.equal(res.status, 200, "a reachable database must read as ready");
+  const body = JSON.parse(res.raw);
+  assert.equal(body.ready, true);
+  assert.equal(body.code, null, "no failure code when the database answered");
+
+  // Same public-surface rule as /api/health: no user data, ever, and a fixed
+  // key set so a future field has to be added deliberately.
+  assert.deepEqual(Object.keys(body).sort(), ["bootState", "code", "ready"]);
+
+  // Repeated probes must stay cheap — the single-flight + short cache in
+  // server.js is what keeps an unauthenticated endpoint from being an
+  // amplification vector against a 15-client pooler.
+  const burst = await Promise.all(
+    Array.from({ length: 5 }, () => get(`http://127.0.0.1:${port}/api/ready`)),
+  );
+  for (const r of burst) assert.equal(r.status, 200, "a burst of probes must all still answer 200");
+
+  s.child.kill();
+});
+
+test("an unreachable database: /api/ready 503s with a code, /api/health STILL 200s", async () => {
+  // A DATABASE_URL pointing INTO A DIRECTORY THAT DOES NOT EXIST is the
+  // reliable local way to make the datasource unreachable — SQLite answers
+  // "Error code 14: Unable to open the database file" rather than creating it.
+  // No cloud connection is involved: saturating the live session pooler is
+  // itself a documented deploy-deadlock (see docker-entrypoint.sh).
+  const port = await freePort();
+  const deadDb = path.join(path.dirname(scratchDb), "no-such-dir", "nope.db");
+  assert.ok(!fs.existsSync(path.dirname(deadDb)), "the fixture only works while that directory is absent");
+  const s = await startServer({
+    PORT: String(port),
+    DATABASE_URL: `file:${deadDb}`,
+    CUT_PROTOCOL_AUDIT: "off", // the boot audit would query the same dead DB; not what this test is about
+  });
+
+  // THE PIN. Liveness must not care that the database is gone. If this ever
+  // fails because someone made /api/health run a query, that change is the bug:
+  // it converts a transient DB outage into a Railway restart loop.
+  const health = await get(`http://127.0.0.1:${port}/api/health`);
+  assert.equal(health.status, 200,
+    "/api/health MUST stay 200 while the process is alive — it is Railway's liveness probe under ON_FAILURE restart; it must never depend on the database");
+  assert.equal(JSON.parse(health.raw).ok, true);
+
+  // Readiness is where the truth about the database lives.
+  const ready = await get(`http://127.0.0.1:${port}/api/ready`);
+  assert.equal(ready.status, 503, "an unreachable database must read as NOT ready");
+  const body = JSON.parse(ready.raw);
+  assert.equal(body.ready, false);
+  assert.ok(["DB_UNREACHABLE", "DB_TIMEOUT"].includes(body.code),
+    `the failure must carry a machine-readable code, got ${JSON.stringify(body.code)}`);
+
+  // It must not leak the connection string or driver internals to an
+  // unauthenticated caller.
+  assert.deepEqual(Object.keys(body).sort(), ["bootState", "code", "ready"]);
+  assert.ok(!/no-such-dir|nope\.db|file:|prisma|sqlite/i.test(ready.raw),
+    `the 503 body leaked datasource or driver detail: ${ready.raw}`);
+
+  // A probe answer must not be cacheable by an edge proxy, or an operator
+  // reads a stale "ready" long after the database went away.
+  const cc = await new Promise((resolve, reject) => {
+    const req = http.get(`http://127.0.0.1:${port}/api/ready`, (r) => {
+      r.resume();
+      resolve(r.headers["cache-control"]);
+    });
+    req.on("error", reject);
+  });
+  assert.match(String(cc), /no-store/, "/api/ready must send Cache-Control: no-store");
+
+  // And the process is still serving — it did not die on the failed probe.
+  const healthAgain = await get(`http://127.0.0.1:${port}/api/health`);
+  assert.equal(healthAgain.status, 200, "the readiness probe must never take the process down");
+
+  s.child.kill();
+});

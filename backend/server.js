@@ -169,6 +169,96 @@ app.get("/api/health", (req, res) => {
   res.status(200).json({ ok: true, bootReady: bootState === "ready", bootState });
 });
 
+// ── Readiness probe (GET /api/ready) — the DEPENDENCY question ──────────────
+// The QC fleet's finding was that /api/health answered 200 while 11 of 25 API
+// requests were 500ing on the database. That is true, and /api/health is still
+// RIGHT to answer 200: railway.json points `deploy.healthcheckPath` at it with
+// `restartPolicyType: ON_FAILURE`, so teaching liveness to fail on a database
+// blip would let a transient DB problem kill the container — and on a
+// saturated Supabase session pooler (15 clients, see docker-entrypoint.sh's
+// deadlock note) the restarted container cannot get a connection either. That
+// is a crash-loop built out of a hiccup. Liveness answers "is this process up
+// and serving HTTP"; it must never be gated on anything it cannot fix by
+// staying alive.
+//
+// The missing endpoint was the OTHER question — "can this process actually
+// serve a request that touches the database" — so it gets its own route rather
+// than corrupting the liveness contract. 200 when the DB answers, 503 with a
+// machine-readable `code` when it does not. Nothing here is wired into
+// railway.json: this is for operators, uptime checks and the deploy checklist,
+// never for the restart policy.
+//
+// Public and unauthenticated, for the same reason as /api/health and
+// /api/meta/whoami above: a probe has to answer before anyone has logged in,
+// and it carries no user data. That makes "cheap" a security property, not
+// just an efficiency one, so the work is bounded three ways:
+//
+//   1. It reuses THE shared PrismaClient (src/lib/prisma.js is a singleton
+//      already loaded by every route file above) — never `new PrismaClient()`
+//      per call, which would open a fresh pool against a 15-client cap.
+//   2. Single-flight: concurrent probes share one in-flight query, so N
+//      simultaneous requests cost exactly one `SELECT 1`.
+//   3. A short result cache, so a flood costs at most one query per
+//      READY_CACHE_MS rather than one per request. There is no user input in
+//      the query and no parameter a caller can turn up.
+//
+// It must never throw and never leak: the failure branch reports a fixed code,
+// never the driver's message, which on Prisma can carry the connection URL.
+const READY_DB_TIMEOUT_MS = Number(process.env.READY_DB_TIMEOUT_MS) || 2000;
+const READY_CACHE_MS = 1000;
+let readyCache = { at: 0, ok: false, code: "DB_UNKNOWN" };
+let readyInFlight = null;
+
+function probeDatabase() {
+  if (readyInFlight) return readyInFlight;
+  if (Date.now() - readyCache.at < READY_CACHE_MS) return Promise.resolve(readyCache);
+
+  let timer = null;
+  try {
+    // Lazy require, NOT a new client: Node's module cache hands back the exact
+    // instance the routes are using. Lazy only so this file's carefully ordered
+    // top-of-module requires (see the header) stay exactly as they are.
+    const { prisma } = require("./src/lib/prisma.js");
+    // Both handlers attached HERE, not after the race — otherwise a query that
+    // rejects after the timeout already won would be an unhandled rejection,
+    // which on Node 22 terminates the process. A liveness endpoint that kills
+    // its own container when the DB is slow would be the original bug, inverted.
+    const query = prisma.$queryRaw`SELECT 1`.then(
+      () => ({ ok: true, code: null }),
+      () => ({ ok: false, code: "DB_UNREACHABLE" }),
+    );
+    const timeout = new Promise((resolve) => {
+      timer = setTimeout(() => resolve({ ok: false, code: "DB_TIMEOUT" }), READY_DB_TIMEOUT_MS);
+      // unref so a pending probe never holds a short-lived process (a test, a
+      // script that requires this file) open, same as the audit timer below.
+      if (timer && typeof timer.unref === "function") timer.unref();
+    });
+    readyInFlight = Promise.race([query, timeout]).then((r) => {
+      clearTimeout(timer);
+      readyCache = { at: Date.now(), ok: r.ok, code: r.code };
+      readyInFlight = null;
+      return readyCache;
+    });
+    return readyInFlight;
+  } catch {
+    // A synchronous throw (the client failed to construct at all) is still a
+    // "database not reachable" answer, not a 500.
+    clearTimeout(timer);
+    readyInFlight = null;
+    readyCache = { at: Date.now(), ok: false, code: "DB_UNREACHABLE" };
+    return Promise.resolve(readyCache);
+  }
+}
+
+app.get("/api/ready", async (req, res) => {
+  const { ok, code } = await probeDatabase();
+  // A readiness answer is worthless if an edge proxy serves yesterday's copy.
+  res.setHeader("Cache-Control", "no-store");
+  // bootState rides along for the operator exactly as it does on /api/health —
+  // reported, never gated on. The status code answers one question only.
+  res.status(ok ? 200 : 503).json({ ready: ok, code: ok ? null : code, bootState });
+});
+
 app.use("/api", (req, res, next) => {
   bootReady.then(
     () => next(),
