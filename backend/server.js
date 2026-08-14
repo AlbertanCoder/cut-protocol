@@ -280,6 +280,20 @@ if (!process.env.QC_NO_LISTEN) {
     scheduleDataQualityAudit();
   });
 
+  // ── Idle-socket race with a cloud load balancer (added 2026-08-13, the day
+  // a public domain was first attached) ──────────────────────────────────────
+  // Node closes idle keep-alive sockets after 5 s by default. Railway's (and
+  // every similar platform's) edge proxy holds them ~60 s and will happily
+  // reuse one it believes is open. When Node closes a socket the proxy is
+  // mid-reuse on, the request dies as a sporadic 502 that no application log
+  // explains — the classic "works fine, then randomly doesn't" report from a
+  // tester. The server must outlive the proxy, and headersTimeout must exceed
+  // keepAliveTimeout or Node can time the headers out first.
+  // Harmless on the desktop/loopback path: it only holds an idle socket
+  // slightly longer, and nothing on that path reuses connections at all.
+  server.keepAliveTimeout = 65_000;
+  server.headersTimeout = 66_000;
+
   // resilience-errors-2: a bind failure used to be an UNCAUGHT 'error' event
   // on the http server — in the Electron main process that surfaced as a raw
   // stack-trace dialog, and the shell then went on to load whatever foreign

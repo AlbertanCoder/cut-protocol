@@ -20,6 +20,18 @@ ENV VITE_SUPABASE_URL=$VITE_SUPABASE_URL \
 RUN npm run build
 
 FROM node:22-slim
+# Prisma's query engine picks an OpenSSL build at startup. node:22-slim
+# (bookworm) ships without the openssl package, so the engine cannot detect a
+# version and falls back to openssl-1.1.x — visible on every cloud boot as
+# "Prisma failed to detect the libssl/openssl version to use". It is benign
+# TODAY only because this image happens to satisfy the fallback; a base bump
+# or a stage split turns it into a hard engine-load failure. Installing it is
+# Prisma's own documented instruction, and it makes engine detection resolve
+# debian-openssl-3.0.x properly. ca-certificates rides along so outbound TLS
+# (Supabase, USDA, Anthropic) validates rather than trusting an empty store.
+RUN apt-get update -y \
+ && apt-get install -y --no-install-recommends openssl ca-certificates \
+ && rm -rf /var/lib/apt/lists/*
 # Same npm-11 alignment as the frontend stage — the backend lock has the
 # same author.
 RUN npm install -g npm@11 --no-audit --no-fund
@@ -51,4 +63,4 @@ EXPOSE 3001
 # window. timeout kills the lingering process at 120s (exit 124, treated
 # as success — the migration state already lives in the DB); any REAL
 # migrate failure still aborts the boot with its own exit code.
-CMD ["sh", "-c", "timeout 120 ./node_modules/.bin/prisma migrate deploy --schema prisma/postgres/schema.prisma; ec=$?; if [ $ec -ne 0 ] && [ $ec -ne 124 ]; then exit $ec; fi; exec node server.js"]
+CMD ["sh", "-c", "timeout -k 10 120 ./node_modules/.bin/prisma migrate deploy --schema prisma/postgres/schema.prisma; ec=$?; if [ $ec -ne 0 ] && [ $ec -ne 124 ]; then exit $ec; fi; exec node server.js"]
