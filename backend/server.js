@@ -79,6 +79,25 @@ if (Number.isFinite(TRUST_PROXY_HOPS) && TRUST_PROXY_HOPS > 0) {
 // stack to aim at and gives a legitimate client nothing.
 app.disable("x-powered-by");
 
+// ── Baseline security headers (added 2026-08-13, first public deploy) ───────
+// The live QC sweep found none of these on any response type. Deliberately
+// hand-rolled rather than adding a dependency: these four are the ones that
+// matter for this app's actual shape, and each is here for a stated reason.
+// No Content-Security-Policy yet — the app has inline styles and a Supabase
+// origin to allow, and a CSP written blind is the kind that either breaks the
+// UI or lulls with a policy that permits everything. That one needs measuring.
+app.use((req, res, next) => {
+  // Body data and meal plans must never be framed by another origin.
+  res.setHeader("X-Frame-Options", "DENY");
+  // Stop the browser second-guessing declared content types.
+  res.setHeader("X-Content-Type-Options", "nosniff");
+  // A weigh-in URL should not travel to third parties as a referrer.
+  res.setHeader("Referrer-Policy", "same-origin");
+  // Nothing here uses the camera, mic or geolocation; say so explicitly.
+  res.setHeader("Permissions-Policy", "camera=(), microphone=(), geolocation=(), interest-cohort=()");
+  next();
+});
+
 // A full data export is megabytes of JSON, and POST /api/import takes that same
 // document back. The global express.json() below caps bodies at body-parser's
 // 100 kB default, which would 413 every real restore before the route ever saw
@@ -208,7 +227,20 @@ app.use("/api", (req, res) => res.status(404).json({ error: "not found" }));
 // Serve the built frontend as static files, same origin as the API â€”
 // no CORS needed. Falls back to index.html for client-side routing.
 const frontendDist = path.join(__dirname, "..", "frontend", "dist");
-app.use(express.static(frontendDist));
+// Vite fingerprints everything under /assets (index-CRVgObCY.js), so the NAME
+// changes whenever the bytes do — the one case where "cache forever" is exactly
+// right. Measured on the live deploy before this: 1.38 MB of content-hashed
+// bundle re-validated on every single page load, which on a tester's phone is
+// a slow first paint and needless data for bytes that cannot have changed.
+// Everything NOT fingerprinted (index.html, terms.html, favicon) keeps the
+// default no-cache behaviour, so a deploy is picked up immediately.
+app.use(express.static(frontendDist, {
+  setHeaders(res, filePath) {
+    if (/[\\/]assets[\\/]/.test(filePath)) {
+      res.setHeader("Cache-Control", "public, max-age=31536000, immutable");
+    }
+  },
+}));
 // saas-launch Stage 4: clean legal URLs (what Google's consent screen and the
 // LS store settings link to). The files ship via frontend/public → dist, so
 // /terms.html works through the static mount above; these routes add the
