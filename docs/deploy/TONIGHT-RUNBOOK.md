@@ -98,7 +98,9 @@ for `master` only.
   gate, and the fleet's gap-closures (healthcheck path, WAL
   guard, env-strip test fix) are NOT live on GitHub until that
   push happens. The agent will raise this before deploying if
-  the remote is stale.
+  the remote is stale. *[Superseded same night: pushed 2026-08-12
+  19:46 as `7332b6a..66dca00` — the gap-closures went live before
+  the deploy attempts began.]*
 - `railway.json` now carries `healthcheckPath: /api/health`
   (timeout 300, restart ON_FAILURE, 3 retries) — the audit's
   "no healthcheck" gap is closed.
@@ -109,6 +111,8 @@ for `master` only.
 - Dockerfile reviewer recommends `node:20-slim` →
   `node:22-slim` in a future pass (engines wants >=22.13.0;
   Node 20 is EOL). Not a blocker for tonight's cloud path.
+  *[Done that same night: `e01c958` flipped both stages to
+  node:22-slim as part of the build fixes.]*
 - Tester invite draft is ready at `docs/deploy/tester-invite.md`
   — do NOT send until its preflight blockers clear (Google
   OAuth is still in Testing mode; strangers can't sign in
@@ -116,34 +120,48 @@ for `master` only.
 
 ---
 
-## Deploy-night result (2026-08-13, ~06:00 — appended at session close)
+## Deploy-night result (2026-08-13 — rewritten after the cause was measured; supersedes the ~06:00 session-close version)
+
+The ~06:00 version of this appendix called the healthcheck cause unknown and
+queued a next-session plan (CLI install → target-port test → Diagnose → ssh
+probe). The cause has since been MEASURED and fixed. The true story:
+
+**Five deploys, and what killed each (measured):** builds `d49624b6` and
+`87de8117` died in frontend `npm ci` (EUSAGE — the Windows-authored lockfile
+never recorded tailwind-oxide's Linux optionals) → lock regen + node 20→22
+(`e01c958`). Builds 3–4: same EUSAGE — builder npm 10 and authoring npm 11
+disagree on bundled optionals → npm@11 in both Docker stages (`3631b59`) plus
+the one lockfile entry npm's own writer refuses to emit, added by hand
+(`8a50fae`). Deploy `ea2b53f3`: build green, container crash-looped — the
+global npm-11 upgrade breaks runtime `npx` → call
+`./node_modules/.bin/prisma` directly (`ea3a8a2`). Then the wall: healthcheck
+dead at ~4:53, zero server stdout; `PORT=3001` pinned explicitly, no change.
+
+**The wall, SOLVED:** the Railway CLI (now installed, authenticated, and
+linked to the project) pulled the runtime logs the dashboard never showed.
+They end at "No pending migrations to apply." — `prisma migrate deploy`
+completes its work in ~1s against the session pooler, then HANGS ON PROCESS
+EXIT (engine child never terminates over the pooled connection), so the `&&`
+chain never advances and `node server.js` NEVER RAN across all five deploys.
+Fixed in `4ea196c`: `timeout 120` wraps the migrate in both `railway.json`
+startCommand and the Dockerfile CMD (exit 124 → proceed to the server; a
+real migrate failure still aborts with its own code).
+
+**Session-close hypotheses, resolved:** the domain/target-port theory is
+TESTED AND KILLED as a healthcheck cause — the server never started, so no
+networking config could have mattered. Generating the public domain is still
+REQUIRED later for public access + `APP_URL` (step 2.4 above stands) — it
+just isn't a healthcheck fix. The ssh probe and Diagnose steps were never
+needed; CLI runtime logs settled it.
 
 **Permanent wins:** Supabase Postgres schema is LIVE (init migration applied
-through the session pooler — 26 tables); the Docker image builds reproducibly;
-four real defects found and fixed for good (Linux lockfile gap `8a50fae`,
-node 20→22 `e01c958`, runtime npx breakage `ea3a8a2`, region ams→us-east).
+through the session pooler — 26 tables); the Docker image builds
+reproducibly; region ams→us-east; every defect above fixed for good.
 
-**The one wall:** every deploy that reaches healthcheck fails it at ~4:53 —
-container boots, migrations apply, then zero server stdout and no probe ever
-answers. `PORT=3001` pinned explicitly: no change. Local hosted-mode boot
-(SUPABASE_URL + NODE_ENV=production, SQLite) listens instantly — app logic
-cleared.
-
-**Next session, in order:**
-1. Install Railway CLI (`npm i -g @railway/cli`) + `railway login` (one
-   device-confirm click) — real `railway logs` beats dashboard screenshots
-   and shows whether "listening on 0.0.0.0:3001" ever prints.
-2. Test the target-port hypothesis: the service is UNEXPOSED — generate the
-   public domain (Settings → Networking, select port 3001) FIRST, then
-   redeploy; Railway's probe may need a target port to exist.
-3. Run Railway's Diagnose on the failed deploy (free second opinion).
-4. If still stuck: `railway ssh` into the container, curl
-   `127.0.0.1:3001/api/health` from inside — settles listening-or-not in
-   one command.
-
-Railway state at close: project passionate-inspiration, service
-cut-protocol-app, US East, 7 variables (incl. PORT=3001), latest commit
-`ea3a8a2`, no successful deploy yet, nothing publicly exposed, ~cents of
-trial credit used. An accidental staged service ("function-bun", from a
-stray console keystroke) was DISCARDED — verify the canvas shows only
-cut-protocol-app. Push gate RE-ARMED at session close.
+Railway state: project passionate-inspiration, service cut-protocol-app,
+US East, 7 variables (incl. PORT=3001), remote at `ea3a8a2` — the `4ea196c`
+fix is LOCAL ONLY until the next gated push — no successful deploy yet,
+nothing publicly exposed, ~cents of trial credit used. An accidental staged
+service ("function-bun", from a stray console keystroke) was DISCARDED —
+verify the canvas shows only cut-protocol-app. Push gate RE-ARMED at ~06:00
+session close; the standing approval is CLOSED.

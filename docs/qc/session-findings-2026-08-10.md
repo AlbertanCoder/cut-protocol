@@ -376,7 +376,11 @@ data-audit spike (~320 MB RSS) lands on the first cloud boot; terms/privacy
 still carry `[SUPPORT EMAIL]` placeholders and terms.html:67 promises 7-day
 grace vs the decided 14; `.dockerignore` misses dev.db.template (only
 matters for CLI upload, not GitHub builds). DEPLOY.md is stale and actively
-wrong — follow BUILD_PLAN Part C.
+wrong — follow BUILD_PLAN Part C. *[Since closed: `7d336dd` added
+healthcheckPath /api/health, guarded the WAL PRAGMA behind an
+isSqliteDatasource check, and gave `.dockerignore` a dev.db* glob;
+`203e5c5` rendered the support email; terms.html:66 now reads 14-day
+grace (verified 2026-08-13). DEPLOY.md staleness stands.]*
 
 ## Pricing — the decision memo (audit 2026-08-11)
 
@@ -471,10 +475,17 @@ agent wrote the token, pushed 7332b6a..66dca00 (the fleet's deploy fixes +
 legal email + runbook), deleted the token. Gate re-armed again.
 
 Third push onward (2026-08-13, deploy night): owner typed "Go push, keep it
-open tonight" - the token STANDS for the rest of the deploy session so build
-fixes flow without per-push approval, and the agent deletes it as the final
-act of the night. Pushes under this standing approval: 3631b59 (npm-11
-builder alignment) and any subsequent deploy fixes tonight.
+open tonight" - the token STOOD for the deploy session so build fixes flowed
+without per-push approval. Measured record (remote-tracking reflog of
+deploy/recipe-brain): FOUR pushes ran under the standing approval —
+66dca00..e01c958 (05:21, incl. b05b967; the two build blockers),
+e01c958..3631b59 (05:27, npm-11 builder alignment), 3631b59..8a50fae
+(05:30, incl. f66a1cc; the hand-written lockfile entry), and
+8a50fae..ea3a8a2 (05:33, runtime npx fix). Remote tip at close: ea3a8a2 —
+the later healthcheck fix 4ea196c is LOCAL ONLY and awaits its own gated
+push. (An earlier version of this entry named only 3631b59; the reflog is
+the record.)
+The standing approval is CLOSED — token deleted and the push gate RE-ARMED at ~06:00 session close, 2026-08-13, as promised.
 
 ## Open, needing the owner
 
