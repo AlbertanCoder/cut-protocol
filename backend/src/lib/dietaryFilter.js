@@ -91,6 +91,22 @@ const PROCESSED_MEAT_KEYWORDS = [
   "bacon", "sausage", "salami", "pepperoni", "chorizo", "hot dog", "spam",
   "prosciutto", "pancetta", "deli meat", "luncheon meat",
 ];
+// Gelatin, for the halal and kosher rules. It is a SEPARATE list because it is
+// neither pork (the animal is often bovine) nor alcohol, yet both styles refuse
+// it on the same safe-side reasoning: an ingredient name cannot tell us whether
+// the source was certified, so it is excluded either way.
+//
+// WHY THIS IS A LIST AND NOT A BARE WORD. Both rules read `hasWord(n, "gelatin")`
+// — exact, singular, US spelling only. `MEAT_FISH_KEYWORDS` above has carried
+// BOTH "gelatin" and "gelatine" since Phase 4, so vegan and vegetarian caught
+// the British spelling all along and halal/kosher did not; the two vocabularies
+// had silently drifted. MEASURED against the live cloud library on 2026-08-13
+// (14,151 foods / 910 recipes): "Gelatine Leafs" and "Gelatins, dry powder,
+// unsweetened" both reached a HALAL and a KOSHER pool, carrying two recipes with
+// them — "Peanut Butter Cheesecake" (250 g of it) and "Raspberry mousse" (100 g).
+// `matchesAny` gives the s/es tolerance too, which is what "Gelatins," needed.
+// "Gelato" is untouched: the word-boundary form cannot match it.
+const GELATIN_KEYWORDS = ["gelatin", "gelatine"];
 // NOTE: no bare "butter"/"cream" here — those need compound guards (peanut
 // butter, butter beans, coconut cream are all plant foods); see
 // isVeganAnimalProduct() below.
@@ -1149,13 +1165,13 @@ function excludedByStyle(food, dietaryStyle) {
     // which ingredient names can't tell us — excluded on the safe side).
     // Salami/pepperoni/chorizo are excluded although beef versions exist:
     // over-exclusion is the correct failure direction for a religious rule.
-    return matchesAny(n, PORK_KEYWORDS) || matchesAny(n, ALCOHOL_KEYWORDS) || hasWord(n, "gelatin");
+    return matchesAny(n, PORK_KEYWORDS) || matchesAny(n, ALCOHOL_KEYWORDS) || matchesAny(n, GELATIN_KEYWORDS);
   }
   if (dietaryStyle === "kosher") {
     // Ingredient-level: pork family + shellfish + gelatin (same
     // safe-side reasoning as halal) + rabbit. The meat+dairy combination
     // rule lives in recipeExcludedByStyle() — it needs the whole dish.
-    return matchesAny(n, PORK_KEYWORDS) || matchesAny(n, CATEGORY_SYNONYMS.shellfish.filter((w) => !w.includes(" "))) || hasWord(n, "gelatin") || hasWord(n, "rabbit");
+    return matchesAny(n, PORK_KEYWORDS) || matchesAny(n, CATEGORY_SYNONYMS.shellfish.filter((w) => !w.includes(" "))) || matchesAny(n, GELATIN_KEYWORDS) || hasWord(n, "rabbit");
   }
   return false;
 }

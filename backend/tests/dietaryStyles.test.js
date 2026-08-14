@@ -35,6 +35,30 @@ test("kosher: pork + shellfish out; meat+dairy combination out; fish+dairy fine"
   assert.equal(recipeExcludedByStyle(recipe("Chicken Breast", "Rice"), "kosher"), false);
 });
 
+// ── live-cloud regression, 2026-08-13 ──────────────────────────────────────
+// The two tests above assert gelatin with the US singular spelling ONLY, which
+// is exactly the string halal/kosher could already match. Measured against the
+// live cloud library (14,151 foods / 910 recipes) with the repo's own
+// exclusionGate: the corpus spells it "Gelatine Leafs" and "Gelatins, dry
+// powder, unsweetened", and BOTH reached a halal pool and a kosher pool — taking
+// "Peanut Butter Cheesecake" (250 g of gelatine) and "Raspberry mousse" (100 g)
+// with them. vegan/vegetarian caught the same rows all along, because
+// MEAT_FISH_KEYWORDS carries "gelatine" and the halal/kosher branch did not.
+// Every name below is a VERBATIM live row name, not a name written from memory
+// — writing them from memory is how the original gap survived its own test.
+test("halal/kosher: gelatin's British spelling and plural are the live corpus spellings", () => {
+  for (const style of ["halal", "kosher"]) {
+    assert.equal(recipeExcludedByStyle(recipe("Gelatine Leafs", "Caster Sugar"), style), true, `${style}: "Gelatine Leafs"`);
+    assert.equal(recipeExcludedByStyle(recipe("Gelatins, dry powder, unsweetened"), style), true, `${style}: FDC plural`);
+    assert.equal(recipeExcludedByStyle(recipe("Gelatine"), style), true, `${style}: bare British spelling`);
+    // unchanged behaviour, kept so the widening cannot silently drop it
+    assert.equal(recipeExcludedByStyle(recipe("Unflavoured Gelatin", "Sugar"), style), true, `${style}: US spelling still out`);
+    // "Gelato" is ice cream, not gelatin — the word-boundary form must not reach
+    // it, or halal loses a dessert for no reason (live rows: "Gelato, vanilla").
+    assert.equal(recipeExcludedByStyle(recipe("Gelato, vanilla"), "halal"), false, "gelato is not gelatin");
+  }
+});
+
 test("allergy checkboxes: peanuts and tree nuts are separate allergies", () => {
   assert.equal(matchesExclusionTerm("Peanut Butter", "peanuts"), true);
   assert.equal(matchesExclusionTerm("Almonds", "peanuts"), false, "almond is not a peanut");
