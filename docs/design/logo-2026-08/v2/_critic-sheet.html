@@ -1,0 +1,27 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>v2 critic sheet</title>
+<style>
+  body{margin:0;background:#F5F2ED;font:12px/1.3 ui-monospace,monospace;color:#23201D;padding:14px}
+  h2{font-size:13px;margin:16px 0 8px}
+  .row{display:flex;flex-wrap:wrap;gap:16px;background:#fff;border:1px solid #ddd8d0;padding:12px}
+  figure{margin:0;text-align:center;width:120px}
+  figcaption{font-size:10px;padding-top:4px;color:#666}
+  .tile{width:60px;height:60px;border-radius:14px;background:#23201D;display:flex;align-items:center;justify-content:center;margin:0 auto 6px}
+  .tile img{width:44px;height:44px;filter:invert(1)}
+  .tile2{width:60px;height:60px;border-radius:14px;background:#F5F2ED;border:1px solid #ddd;display:flex;align-items:center;justify-content:center;margin:0 auto 6px}
+  .tile2 img{width:44px;height:44px}
+  .sizes{display:flex;gap:8px;align-items:flex-end;justify-content:center;height:56px}
+</style></head><body>
+<h2>B1 — dark app tile @60px (home screen size)   |   B2 — light tile @60px</h2>
+<div class="row" id="g2"></div>
+<h2>C — 48 / 32 / 24 / 16 px on white (favicon + menu-bar reality)</h2>
+<div class="row" id="g3"></div>
+<script>
+const names=["c1a-1","c1a-2","c1a-3","c1b-1","c1b-2","c1b-3","c2a-1","c2a-2","c2a-3","c2b-1","c2b-2","c2b-3","c3a-1","c3a-2","c3a-3","c3b-1","c3b-2","c3b-3","c4a-1","c4a-2","c4a-3","c4b-1","c4b-2","c4b-3"];
+const g2=document.getElementById('g2'),g3=document.getElementById('g3');
+for(const n of names){
+  g2.insertAdjacentHTML('beforeend',`<figure><div class="tile"><img src="${n}.svg"></div><div class="tile2"><img src="${n}.svg"></div><figcaption>${n}</figcaption></figure>`);
+  g3.insertAdjacentHTML('beforeend',`<figure><div class="sizes"><img src="${n}.svg" width="48" height="48"><img src="${n}.svg" width="32" height="32"><img src="${n}.svg" width="24" height="24"><img src="${n}.svg" width="16" height="16"></div><figcaption>${n}</figcaption></figure>`);
+}
+</script>
+</body></html>

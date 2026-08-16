@@ -1,0 +1,243 @@
+<title>The Sixteen Pixel Test</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  :root {
+    --ground:#F3F4F5; --panel:#FFF; --ink:#191C1F; --soft:#5D656C; --rule:#DCE0E3;
+    --flag:#A85546; --cream:#FBF7F1; --carbon:#16181B;
+    --mono: ui-monospace,"SF Mono","Cascadia Mono",Consolas,monospace;
+    --sans: ui-sans-serif,system-ui,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  }
+  @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+    --ground:#0F1114; --panel:#171A1E; --ink:#E8EBED; --soft:#949CA4; --rule:#252A30; --flag:#CF8474;}}
+  :root[data-theme="dark"]{--ground:#0F1114;--panel:#171A1E;--ink:#E8EBED;--soft:#949CA4;--rule:#252A30;--flag:#CF8474;}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--ground);color:var(--ink);font-family:var(--sans);line-height:1.55;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:1080px;margin:0 auto;padding:clamp(24px,5vw,56px) clamp(16px,4vw,40px) 88px}
+  .eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--soft);margin:0 0 12px}
+  h1{font-size:clamp(28px,4.6vw,42px);line-height:1.08;margin:0 0 14px;letter-spacing:-.022em;text-wrap:balance}
+  .lede p{margin:0;max-width:64ch;color:var(--soft);font-size:15px}
+  .lede{border-bottom:1px solid var(--rule);padding-bottom:26px;margin-bottom:34px}
+
+  .finding{background:var(--panel);border:1px solid var(--rule);border-left:3px solid var(--flag);
+    border-radius:8px;padding:18px 20px;margin-bottom:44px}
+  .finding h2{margin:0 0 8px;font-size:15px}
+  .finding p{margin:0 0 10px;color:var(--soft);font-size:14px;max-width:70ch}
+  .finding p:last-child{margin-bottom:0}
+  .swatches{display:flex;gap:8px;margin:12px 0 4px;flex-wrap:wrap}
+  .sw{display:flex;align-items:center;gap:8px;background:var(--cream);border-radius:6px;padding:7px 11px}
+  .sw i{width:15px;height:15px;border-radius:3px;display:block}
+  .sw span{font-family:var(--mono);font-size:11px;color:#23201D;font-variant-numeric:tabular-nums}
+
+  h2.sec{font-size:20px;margin:0 0 6px;letter-spacing:-.012em}
+  .seclede{margin:0 0 20px;color:var(--soft);font-size:14px;max-width:68ch}
+
+  .win{background:var(--panel);border:1px solid var(--rule);border-radius:10px;overflow:hidden;
+    display:grid;grid-template-columns:236px 1fr;margin-bottom:16px}
+  .winmark{display:grid;grid-template-rows:1fr 1fr}
+  .hg{position:relative;display:grid;place-items:center;padding:22px}
+  .hg.cream{background:var(--cream)} .hg.carbon{background:var(--carbon)}
+  .hsvg svg{width:86px;height:86px;display:block}
+  .tag{position:absolute;bottom:6px;left:10px;font-family:var(--mono);font-size:9px;
+    letter-spacing:.07em;text-transform:uppercase;opacity:.5}
+  .hg.cream .tag{color:#23201D} .hg.carbon .tag{color:#FBF7F1}
+  .wintext{padding:18px 20px}
+  .wintext h3{margin:0 0 8px;font-family:var(--mono);font-size:13px;text-transform:uppercase;letter-spacing:.04em}
+  .why{margin:0 0 14px;font-size:14px;color:var(--ink)}
+  .fixlab,.rslab{font-family:var(--mono);font-size:10px;letter-spacing:.11em;text-transform:uppercase;color:var(--soft);margin:0 0 5px}
+  .fix{margin:0 0 16px;font-size:13.5px;color:var(--soft)}
+  .strip{display:flex;align-items:flex-end;gap:14px;padding:9px 12px;border-radius:6px}
+  .strip.cream{background:var(--cream);margin-bottom:6px} .strip.carbon{background:var(--carbon)}
+  .sz{display:grid;justify-items:center;gap:4px}
+  .szbox svg{width:100%;height:100%;display:block}
+  .sz span{font-family:var(--mono);font-size:9px;font-variant-numeric:tabular-nums}
+  .strip.cream .sz span{color:#6B6256} .strip.carbon .sz span{color:#8A9199}
+
+  .outs{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));margin-top:8px}
+  .out{display:grid;grid-template-columns:auto 1fr;gap:14px;align-items:start;
+    background:var(--panel);border:1px solid var(--rule);border-radius:8px;padding:13px 15px}
+  .outmark{width:44px;height:44px;background:var(--cream);border-radius:8px;display:grid;place-items:center;flex:none;opacity:.62}
+  .outmark svg{width:30px;height:30px;display:block}
+  .out h4{margin:0 0 3px;font-family:var(--mono);font-size:11.5px;text-transform:uppercase;letter-spacing:.04em;color:var(--soft)}
+  .out p{margin:0;font-size:13px;color:var(--soft)}
+  .note{margin-top:38px;padding-top:22px;border-top:1px solid var(--rule);color:var(--soft);font-size:14px;max-width:70ch}
+  .note b{color:var(--ink)}
+  @media(max-width:620px){.win{grid-template-columns:1fr}.winmark{grid-template-rows:none;grid-template-columns:1fr 1fr}}
+</style>
+
+<div class="wrap">
+  <div class="lede">
+    <p class="eyebrow">Cut Protocol · brand mark · 15 drawn, 3 standing</p>
+    <h1>Three survived.</h1>
+    <p>Fifteen marks were drawn across five directions, then measured at true sixteen pixels and
+       audited for anything that looked cheap or borrowed. Twelve were cut. The three below are what
+       two independent reviewers both put at the top — shown large, then at the sizes they will
+       actually live at.</p>
+  </div>
+
+  <div class="finding">
+    <h2>The most useful thing we learned: the green was the problem, not the drawings</h2>
+    <p>Rendered at true 16px, your emerald on cream resolves a brightness difference of about
+       <b>151 out of 255</b>. Marks that read as premium sit at <b>230 or above</b>. The same shapes drawn
+       in ink resolve <b>209</b>. So a small emerald mark goes soft and muddy no matter how well it is drawn.</p>
+    <div class="swatches">
+      <span class="sw"><i style="background:#2F6B4F"></i><span>emerald · 151 · too soft small</span></span>
+      <span class="sw"><i style="background:#23201D"></i><span>ink · 209 · what the favicon uses</span></span>
+    </div>
+    <p><b>What this means in practice:</b> emerald stays as your hero colour — the login screen, the
+       website, the app-store tile. The tab icon, the taskbar and the small in-app mark are ink on cream
+       and cream on carbon. That is exactly how the brands you'd want to sit beside handle it.</p>
+  </div>
+
+  <h2 class="sec">The three</h2>
+  <p class="seclede">Each is shown in emerald at hero size, then in ink at the sizes that decide whether
+     a logo works. Both reviewers named a single change each still needs — I have not made those yet,
+     because which one you like should drive the refinement.</p>
+  
+    <article class="win">
+      <div class="winmark">
+        <div class="hg cream"><div class="hsvg"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"> <path fill="#2F6B4F" d="M28 32H228V192H166V144H190V68H66V144H90V224H28Z"/> </svg></div><span class="tag">emerald · hero only</span></div>
+        <div class="hg carbon"><div class="hsvg"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"> <path fill="#8ED2AC" d="M28 32H228V192H166V144H190V68H66V144H90V224H28Z"/> </svg></div><span class="tag">carbon</span></div>
+      </div>
+      <div class="wintext">
+        <h3>instrument 1</h3>
+        <p class="why">It is the only mark in the submission that holds one construction language with no exceptions: 12 vertices, every one an integer, zero curves, zero corner radii, one subpath, no fill-rule dependency, 293 bytes. Nothing else here is that disciplined, and discipline is what reads as machined rather than drawn. Its distinguishing feature also lives in the NEGATIVE space rather than the silhouette — the aperture steps from 124u (7.8px at 16) down to 76u (4.8px at 16) at y=144, so the counter changes width mid-form. That is a decision a generator cannot produce, and I can still see the step in the true-16px render, which is the test that kills Function Health and most of this set. At 31.9% ink it is the densest thing submitted, so it never washes toward grey; the corners are hard 90-degree machined cuts, the precise opposite of the rounded caps measured killing Cronometer. It reads as a tool, not as a fitness object, a food object or a UI glyph.</p>
+        <p class="fixlab">One change it still needs</p>
+        <p class="fix">Break the near-symmetry decisively, because right now it is the mark's one cheap tell. The outer silhouette is perfectly mirrored — beam spanning 28-228, both jaws 38u above the step and 62u below, both stepping at the same y=144 — and the ONLY asymmetry is a 32u difference in jaw depth (left runs to y=224, right stops at y=192). At 16px that is 2px and reads as a trimming error, not as a fixed jaw versus a sliding jaw. Take the right jaw up to roughly y=150 so the difference is ~74u and unmistakably intentional; that also breaks the residual 'squared lowercase n' read. In the same pass make the beam 38u tall instead of 36u so it matches the jaw width exactly — a 36-vs-38 stroke disagreement is invisible at favicon size and looks like sloppiness at 512px, and there is no reason for it.</p>
+        <div class="realsize">
+          <p class="rslab">At real size, in ink</p>
+          <div class="strip cream"><div class="sz"><div class="szbox" style="width:16px;height:16px"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"> <path fill="#23201D" d="M28 32H228V192H166V144H190V68H66V144H90V224H28Z"/> </svg></div><span>16</span></div><div class="sz"><div class="szbox" style="width:24px;height:24px"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"> <path fill="#23201D" d="M28 32H228V192H166V144H190V68H66V144H90V224H28Z"/> </svg></div><span>24</span></div><div class="sz"><div class="szbox" style="width:32px;height:32px"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"> <path fill="#23201D" d="M28 32H228V192H166V144H190V68H66V144H90V224H28Z"/> </svg></div><span>32</span></div><div class="sz"><div class="szbox" style="width:48px;height:48px"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"> <path fill="#23201D" d="M28 32H228V192H166V144H190V68H66V144H90V224H28Z"/> </svg></div><span>48</span></div></div>
+          <div class="strip carbon"><div class="sz"><div class="szbox" style="width:16px;height:16px"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"> <path fill="#FBF7F1" d="M28 32H228V192H166V144H190V68H66V144H90V224H28Z"/> </svg></div><span>16</span></div><div class="sz"><div class="szbox" style="width:24px;height:24px"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"> <path fill="#FBF7F1" d="M28 32H228V192H166V144H190V68H66V144H90V224H28Z"/> </svg></div><span>24</span></div><div class="sz"><div class="szbox" style="width:32px;height:32px"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"> <path fill="#FBF7F1" d="M28 32H228V192H166V144H190V68H66V144H90V224H28Z"/> </svg></div><span>32</span></div><div class="sz"><div class="szbox" style="width:48px;height:48px"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"> <path fill="#FBF7F1" d="M28 32H228V192H166V144H190V68H66V144H90V224H28Z"/> </svg></div><span>48</span></div></div>
+        </div>
+      </div>
+    </article>
+    <article class="win">
+      <div class="winmark">
+        <div class="hg cream"><div class="hsvg"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-label="Cut Protocol C monogram"> <path fill="#2F6B4F" fill-rule="evenodd" d="M222 90A102 98 0 1 0 222 166L199 154A70 70 0 1 1 199 102Z"/> </svg></div><span class="tag">emerald · hero only</span></div>
+        <div class="hg carbon"><div class="hsvg"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-label="Cut Protocol C monogram"> <path fill="#8ED2AC" fill-rule="evenodd" d="M222 90A102 98 0 1 0 222 166L199 154A70 70 0 1 1 199 102Z"/> </svg></div><span class="tag">carbon</span></div>
+      </div>
+      <div class="wintext">
+        <h3>monogram 2</h3>
+        <p class="why">It is the only candidate drawn the way a type designer draws, and the modulation is in the path rather than in the prose. Because the outer is an ellipse and the inner is a true circle of r=70 pushed 6u right of the outer centre, the ring runs 38u thick at 9 o'clock, 28u at 12 and 6, and 25.9u at the terminals — the weight thins continuously from spine to terminal, so the form has a stress axis instead of being a tube. Both terminals are cut exactly one stroke-width long and sheared 5.2 degrees off radial rather than chopped on a vertical, which is the single detail that separates a drawn C from a circle with a slot milled out of it, and it is only visible at hero size while costing nothing at 16px — detail that rewards the big size without being load-bearing at the small one, the exact inverse of Function Health's failure. It is also the only candidate whose 16px render is unambiguous: the aperture throat is 52u (3.25px) against a 140u counter, and aperture-narrower-than-counter is what stops it collapsing into an O. Four path commands, 66 bytes of geometry.</p>
+        <p class="fixlab">One change it still needs</p>
+        <p class="fix">Kill the 102x98 outer ellipse. A 4% squash — 8 units on a 204-wide form — is the worst possible distance from a circle: too small to read as a decision, too large to read as round, so at hero size it just looks like the O got dragged with the wrong handle. Either make the outer a true 102x102 circle and let the 6u inner offset carry all the modulation, or push the ellipse to something declared like 106x94 (1.13:1) so the squash is obviously deliberate. While in there, rotate the whole mark roughly 20 degrees counter-clockwise so the mouth sits at 1-2 o'clock instead of dead 3 o'clock — that is the cheapest way to stop a heavy open ring reading as a progress/activity ring, which is this mark's only real derivative exposure.</p>
+        <div class="realsize">
+          <p class="rslab">At real size, in ink</p>
+          <div class="strip cream"><div class="sz"><div class="szbox" style="width:16px;height:16px"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-label="Cut Protocol C monogram"> <path fill="#23201D" fill-rule="evenodd" d="M222 90A102 98 0 1 0 222 166L199 154A70 70 0 1 1 199 102Z"/> </svg></div><span>16</span></div><div class="sz"><div class="szbox" style="width:24px;height:24px"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-label="Cut Protocol C monogram"> <path fill="#23201D" fill-rule="evenodd" d="M222 90A102 98 0 1 0 222 166L199 154A70 70 0 1 1 199 102Z"/> </svg></div><span>24</span></div><div class="sz"><div class="szbox" style="width:32px;height:32px"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-label="Cut Protocol C monogram"> <path fill="#23201D" fill-rule="evenodd" d="M222 90A102 98 0 1 0 222 166L199 154A70 70 0 1 1 199 102Z"/> </svg></div><span>32</span></div><div class="sz"><div class="szbox" style="width:48px;height:48px"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-label="Cut Protocol C monogram"> <path fill="#23201D" fill-rule="evenodd" d="M222 90A102 98 0 1 0 222 166L199 154A70 70 0 1 1 199 102Z"/> </svg></div><span>48</span></div></div>
+          <div class="strip carbon"><div class="sz"><div class="szbox" style="width:16px;height:16px"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-label="Cut Protocol C monogram"> <path fill="#FBF7F1" fill-rule="evenodd" d="M222 90A102 98 0 1 0 222 166L199 154A70 70 0 1 1 199 102Z"/> </svg></div><span>16</span></div><div class="sz"><div class="szbox" style="width:24px;height:24px"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-label="Cut Protocol C monogram"> <path fill="#FBF7F1" fill-rule="evenodd" d="M222 90A102 98 0 1 0 222 166L199 154A70 70 0 1 1 199 102Z"/> </svg></div><span>24</span></div><div class="sz"><div class="szbox" style="width:32px;height:32px"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-label="Cut Protocol C monogram"> <path fill="#FBF7F1" fill-rule="evenodd" d="M222 90A102 98 0 1 0 222 166L199 154A70 70 0 1 1 199 102Z"/> </svg></div><span>32</span></div><div class="sz"><div class="szbox" style="width:48px;height:48px"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-label="Cut Protocol C monogram"> <path fill="#FBF7F1" fill-rule="evenodd" d="M222 90A102 98 0 1 0 222 166L199 154A70 70 0 1 1 199 102Z"/> </svg></div><span>48</span></div></div>
+        </div>
+      </div>
+    </article>
+    <article class="win">
+      <div class="winmark">
+        <div class="hg cream"><div class="hsvg"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-label="Cut Protocol P monogram"> <path fill="#2F6B4F" fill-rule="evenodd" d="M 34 26 H 166 A 56 56 0 0 1 166 138 H 80 A 10 10 0 0 0 70 148 V 230 H 34 Z M 70 58 H 162 A 24 24 0 0 1 162 106 H 70 Z"/> </svg></div><span class="tag">emerald · hero only</span></div>
+        <div class="hg carbon"><div class="hsvg"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-label="Cut Protocol P monogram"> <path fill="#8ED2AC" fill-rule="evenodd" d="M 34 26 H 166 A 56 56 0 0 1 166 138 H 80 A 10 10 0 0 0 70 148 V 230 H 34 Z M 70 58 H 162 A 24 24 0 0 1 162 106 H 70 Z"/> </svg></div><span class="tag">carbon</span></div>
+      </div>
+      <div class="wintext">
+        <h3>monogram 3</h3>
+        <p class="why">The stroke weights actually agree with each other, and where they disagree it is deliberate and measurable: stem 36u, bowl top and bottom 32u, bowl right 36u, because the counter's cap centre sits 4u left of the bowl's outer centre. That is a real 1.125:1 modulation cut into the coordinates, and it is why the bowl does not read as monoline tubing — the one thing that separates this from a default geometric sans set in bold. The 10u concave fillet where the bowl underside meets the stem is a genuine ink trap, the kind of relief a type designer cuts and a template never does. And the counter is a flat-topped, flat-bottomed capsule inside a true-semicircle bowl — a squared counter in a round form, which is the construction that measured best in the entire reference set, because squared counters hold their shape under downsampling where round ones close up. At 27.1% ink with a 32u minimum (2px at 16px) there is nothing in it that can go sub-pixel, and it carries no cliche object, no baked lighting and no accidental second reading.</p>
+        <p class="fixlab">One change it still needs</p>
+        <p class="fix">Narrow the bowl. It measures 152u wide against 112u tall (1.36:1 landscape) with a 116x48 counter (2.42:1 horizontal slot), so the letter renders as a P that has been horizontally scaled about 140% — a proportion error a type person spots in one second and reads as amateur, which is exactly the impression the owner is paying to avoid. Pull the bowl's outer radius from 56 to about 40 and the counter to roughly 76x48; that brings the bowl to about 110x112 and the whole letter to ~148x204. It also fixes the second problem for free: the empty 152x82 rectangle in the bottom-right — 19% of the tile as one blank block — shrinks to something that reads as counterspace instead of making the mark look like it is sliding off the top-right. One production note before it ships anywhere: this file needs fill-rule='evenodd' to render at all, and its two subpaths wind the same direction, so any pipeline that strips fill-rule (icon-font converters, some SVG-to-ICO/PDF paths, nonzero-default renderers) fills the counter solid and you get a black slab where the P was.</p>
+        <div class="realsize">
+          <p class="rslab">At real size, in ink</p>
+          <div class="strip cream"><div class="sz"><div class="szbox" style="width:16px;height:16px"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-label="Cut Protocol P monogram"> <path fill="#23201D" fill-rule="evenodd" d="M 34 26 H 166 A 56 56 0 0 1 166 138 H 80 A 10 10 0 0 0 70 148 V 230 H 34 Z M 70 58 H 162 A 24 24 0 0 1 162 106 H 70 Z"/> </svg></div><span>16</span></div><div class="sz"><div class="szbox" style="width:24px;height:24px"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-label="Cut Protocol P monogram"> <path fill="#23201D" fill-rule="evenodd" d="M 34 26 H 166 A 56 56 0 0 1 166 138 H 80 A 10 10 0 0 0 70 148 V 230 H 34 Z M 70 58 H 162 A 24 24 0 0 1 162 106 H 70 Z"/> </svg></div><span>24</span></div><div class="sz"><div class="szbox" style="width:32px;height:32px"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-label="Cut Protocol P monogram"> <path fill="#23201D" fill-rule="evenodd" d="M 34 26 H 166 A 56 56 0 0 1 166 138 H 80 A 10 10 0 0 0 70 148 V 230 H 34 Z M 70 58 H 162 A 24 24 0 0 1 162 106 H 70 Z"/> </svg></div><span>32</span></div><div class="sz"><div class="szbox" style="width:48px;height:48px"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-label="Cut Protocol P monogram"> <path fill="#23201D" fill-rule="evenodd" d="M 34 26 H 166 A 56 56 0 0 1 166 138 H 80 A 10 10 0 0 0 70 148 V 230 H 34 Z M 70 58 H 162 A 24 24 0 0 1 162 106 H 70 Z"/> </svg></div><span>48</span></div></div>
+          <div class="strip carbon"><div class="sz"><div class="szbox" style="width:16px;height:16px"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-label="Cut Protocol P monogram"> <path fill="#FBF7F1" fill-rule="evenodd" d="M 34 26 H 166 A 56 56 0 0 1 166 138 H 80 A 10 10 0 0 0 70 148 V 230 H 34 Z M 70 58 H 162 A 24 24 0 0 1 162 106 H 70 Z"/> </svg></div><span>16</span></div><div class="sz"><div class="szbox" style="width:24px;height:24px"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-label="Cut Protocol P monogram"> <path fill="#FBF7F1" fill-rule="evenodd" d="M 34 26 H 166 A 56 56 0 0 1 166 138 H 80 A 10 10 0 0 0 70 148 V 230 H 34 Z M 70 58 H 162 A 24 24 0 0 1 162 106 H 70 Z"/> </svg></div><span>24</span></div><div class="sz"><div class="szbox" style="width:32px;height:32px"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-label="Cut Protocol P monogram"> <path fill="#FBF7F1" fill-rule="evenodd" d="M 34 26 H 166 A 56 56 0 0 1 166 138 H 80 A 10 10 0 0 0 70 148 V 230 H 34 Z M 70 58 H 162 A 24 24 0 0 1 162 106 H 70 Z"/> </svg></div><span>32</span></div><div class="sz"><div class="szbox" style="width:48px;height:48px"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-label="Cut Protocol P monogram"> <path fill="#FBF7F1" fill-rule="evenodd" d="M 34 26 H 166 A 56 56 0 0 1 166 138 H 80 A 10 10 0 0 0 70 148 V 230 H 34 Z M 70 58 H 162 A 24 24 0 0 1 162 106 H 70 Z"/> </svg></div><span>48</span></div></div>
+        </div>
+      </div>
+    </article>
+
+  <h2 class="sec" style="margin-top:44px">The twelve that were cut</h2>
+  <p class="seclede">Not padding — the reasons are the useful part, and most were killed for looking like
+     something else entirely.</p>
+  <div class="outs">
+      <div class="out">
+        <div class="outmark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-label="Cut Protocol mark"> <path d="M40 40 L40 184 A32 32 0 0 0 72 216 L184 216 A32 32 0 0 0 216 184 L216 40 L188 40 L188 134 A12 12 0 0 1 176 146 L80 146 A12 12 0 0 1 68 134 L68 40 Z" fill="#23201D"/> </svg></div>
+        <div>
+          <h4>container 1</h4>
+          <p>CATEGORY CLICHE, THE WORST ONE AVAILABLE</p>
+        </div>
+      </div>
+      <div class="out">
+        <div class="outmark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-label="Cut Protocol mark"> <path d="M143 37.35 A84 84 0 1 0 143 202.65 Z M169 72.69 A84 84 0 0 1 169 219.31 Z" fill="#23201D"/> </svg></div>
+        <div>
+          <h4>container 2</h4>
+          <p>READS AS A SPLIT PILL, AND ITS STATED CONCEPT IS ARITHMETICALLY FALSE</p>
+        </div>
+      </div>
+      <div class="out">
+        <div class="outmark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-label="Cut Protocol mark"> <path fill-rule="evenodd" d="M76 48 L180 48 A28 28 0 0 1 208 76 L208 180 A28 28 0 0 1 180 208 L76 208 A28 28 0 0 1 48 180 L48 76 A28 28 0 0 1 76 48 Z M100 74 L182 74 L182 156 L100 156 Z" fill="#23201D"/> </svg></div>
+        <div>
+          <h4>container 3</h4>
+          <p>GENERIC UI GLYPH, AND THE ONE THING MAKING IT OWNABLE DIES FIRST</p>
+        </div>
+      </div>
+      <div class="out">
+        <div class="outmark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="none" role="img" aria-label="Cut Protocol"><path fill="#23201D" d="M185.4 73.0 L220.1 73.0 L220.1 107.7 L185.4 107.7 Z M22.8 141.9 L57.6 141.9 L57.6 176.7 L22.8 176.7 Z"/><path fill="#23201D" d="M28.2 60.0 L243.0 164.8 L227.8 196.0 L13.0 91.2 Z"/></svg></div>
+        <div>
+          <h4>data 1</h4>
+          <p>ACCIDENTAL GLYPH, AND ITS OWN CONCEPT IS CONTRADICTED BY ITS COORDINATES</p>
+        </div>
+      </div>
+      <div class="out">
+        <div class="outmark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="none" role="img" aria-label="Cut Protocol"><path fill="#23201D" d="M18.0 92.2 L83.2 92.2 L181.0 200.5 L238.0 200.5 L238.0 163.8 L197.3 163.8 L99.5 55.5 L18.0 55.5 Z"/></svg></div>
+        <div>
+          <h4>data 2</h4>
+          <p>IT IS THE STOCK-CHART DECLINE GLYPH</p>
+        </div>
+      </div>
+      <div class="out">
+        <div class="outmark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="none" role="img" aria-label="Cut Protocol"><path fill="#23201D" d="M40.0 46.1 L199.6 46.1 L199.6 136.2 L40.0 87.1 Z"/><path fill="#23201D" d="M56.4 123.9 L216.0 173.0 L216.0 209.9 L56.4 209.9 Z"/></svg></div>
+        <div>
+          <h4>data 3</h4>
+          <p>AT 16px IT IS THE LETTER Z</p>
+        </div>
+      </div>
+      <div class="out">
+        <div class="outmark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"> <path fill="#23201D" d="M44 24H212V60H144V126H158L174 154L128 232L82 154L98 126H112V60H44Z"/> </svg></div>
+        <div>
+          <h4>instrument 2</h4>
+          <p>ANTI-BRIEF + CLICHE</p>
+        </div>
+      </div>
+      <div class="out">
+        <div class="outmark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"> <path fill="#23201D" d="M90 38L102 26H154L166 38V78L214 198L208 230L176 198L128 78L80 198L48 230L42 198L90 78Z"/> </svg></div>
+        <div>
+          <h4>instrument 3</h4>
+          <p>ACCIDENTAL LETTERFORM + THE IDEA IS ONLY IN THE PROSE</p>
+        </div>
+      </div>
+      <div class="out">
+        <div class="outmark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-label="Cut Protocol CP ligature monogram"> <path fill="#23201D" fill-rule="evenodd" d="M 70 32 H 176 A 52 52 0 0 1 176 136 H 168 A 10 10 0 0 0 158 146 V 224 H 132 V 68 A 10 10 0 0 0 122 58 H 70 A 20 20 0 0 0 50 78 V 178 A 20 20 0 0 0 70 198 H 100 V 224 H 70 A 46 46 0 0 1 24 178 V 78 A 46 46 0 0 1 70 32 Z M 158 58 H 176 A 26 26 0 0 1 176 110 H 158 Z"/> </svg></div>
+        <div>
+          <h4>monogram 1</h4>
+          <p>THE TWO LETTERS ARE AT INCOMPATIBLE SCALES AND THE C CLOSES AT SMALL SIZE</p>
+        </div>
+      </div>
+      <div class="out">
+        <div class="outmark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-label="Cut Protocol mark: the kerf"> <path fill="#23201D" d="M87 38H169A18 18 0 0 1 187 56V95H148A8 8 0 0 0 140 103V115A8 8 0 0 0 148 123H187V200A18 18 0 0 1 169 218H87A18 18 0 0 1 69 200V56A18 18 0 0 1 87 38Z"/> </svg></div>
+        <div>
+          <h4>subtraction 1</h4>
+          <p>IT IS AN APP TILE, WHICH IS THE CHEAP TELL IT CLAIMS TO AVOID</p>
+        </div>
+      </div>
+      <div class="out">
+        <div class="outmark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-label="Cut Protocol mark: the offcut"> <path fill="#23201D" d="M187.63 91.25A85 85 0 0 0 35.99 167.07Z"/> <path fill="#23201D" d="M225.05 106.09A85 85 0 0 1 79.07 179.07Z"/> </svg></div>
+        <div>
+          <h4>subtraction 2</h4>
+          <p>THE IDEA IS INVISIBLE; THE RESULT IS A COFFEE BEAN</p>
+        </div>
+      </div>
+      <div class="out">
+        <div class="outmark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-label="Cut Protocol mark: the punch"> <path fill="#23201D" d="M70 52H186A18 18 0 0 1 204 70V128A76 76 0 0 0 128 204H70A18 18 0 0 1 52 186V70A18 18 0 0 1 70 52Z"/> </svg></div>
+        <div>
+          <h4>subtraction 3</h4>
+          <p>ANTI-BRIEF: IT IS A BITE</p>
+        </div>
+      </div></div>
+
+  <p class="note">
+    <b>What I need from you:</b> pick the one you'd be happy seeing on your own phone for a year — or tell me
+    none of them land, which is a real answer and cheap to act on now. Then I'll make the named fix, draw the
+    app-icon tile and the wordmark lockup, generate the full favicon and installer set, and swap it into the
+    app in one commit.
+  </p>
+</div>

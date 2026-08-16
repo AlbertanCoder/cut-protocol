@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Logo candidates — technical validation sheet</title>
+<style>
+  :root{
+    --cream:#FBF7F1; --ink:#23201D; --emerald:#2F6B4F;
+    --carbon:#090B0F;   /* = oklch(0.15 0.008 255), the app's dark --background */
+    --card:#111418;     /* = oklch(0.19 0.009 255), the app's dark --card       */
+    --line:#d9d2c7;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;padding:32px;background:var(--cream);color:var(--ink);
+       font:14px/1.5 ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+  h1{font-size:20px;margin:0 0 4px}
+  h2{font-size:15px;margin:40px 0 10px;padding-top:14px;border-top:1px solid var(--line)}
+  p.note{max-width:78ch;color:#5c554c;margin:4px 0 24px}
+  code{font:12px/1.4 ui-monospace,SFMono-Regular,Consolas,monospace;background:#efe9e0;padding:1px 4px;border-radius:3px}
+
+  table{border-collapse:collapse;width:100%;font:12px/1.4 ui-monospace,SFMono-Regular,Consolas,monospace}
+  th,td{border:1px solid var(--line);padding:5px 7px;text-align:right;white-space:nowrap}
+  th:first-child,td:first-child{text-align:left}
+  thead th{background:#efe9e0;position:sticky;top:0}
+  tr:nth-child(even) td{background:#00000006}
+  .bad{background:#f6d9d4 !important;font-weight:600}
+  .warn{background:#f8ecd2 !important}
+  .ok{color:#2F6B4F}
+
+  .grid{display:grid;grid-template-columns:150px 1fr;gap:0 20px;align-items:center;
+        border-bottom:1px solid var(--line);padding:14px 0}
+  .name{font:12px/1.35 ui-monospace,Consolas,monospace}
+  .strip{display:flex;gap:14px;flex-wrap:wrap;align-items:flex-end}
+  .cellwrap{text-align:center}
+  .cellwrap span{display:block;font:10px/1.6 ui-monospace,Consolas,monospace;color:#8a8177}
+  .sw{display:inline-flex;align-items:center;justify-content:center;border:1px solid var(--line)}
+  .light{background:var(--cream)}
+  .dark{background:var(--carbon);border-color:#2a2f36}
+  .cardbg{background:var(--card);border-color:#2a2f36}
+  img{display:block;image-rendering:auto}
+  .legend{display:flex;gap:22px;flex-wrap:wrap;margin:10px 0 22px;font-size:12px}
+  .legend b{font-weight:600}
+</style>
+</head>
+<body>
+
+<h1>Cut Protocol — logo candidate technical sheet</h1>
+<p class="note">
+Every <code>.svg</code> in this folder, rendered by the browser at 16 / 32 / 64 / 256 px on the app's warm cream
+(<code>#FBF7F1</code>) and on the app's dark background (<code>oklch(0.15 0.008 255)</code> = <code>#090B0F</code>).
+Colour master on top row of each pair, <code>-mono</code> master below it. Nothing here is a design judgement —
+the numbers are geometry measured off the shipped path data at 3072&times;3072 and downsampled to true 16/24/32 px.
+The <b>-mono files use <code>#23201D</code>, which sits at 1.22:1 on carbon and is therefore invisible there by design</b>;
+the mono column on the dark ground is expected to be blank and is shown only to make that explicit.
+</p>
+
+<div class="legend">
+  <span><b>stem</b> = thinnest parallel-sided ink limb (viewBox units; 16 u = 1 px at 16 px render)</span>
+  <span><b>gap</b> = narrowest void bounded by two ink faces</span>
+  <span><b>ctr</b> = largest disc that fits the enclosed counter</span>
+</div>
+
+<h2>Measured geometry</h2>
+<table>
+<thead><tr>
+<th>candidate</th><th>ink %</th><th>parts</th>
+<th>stem u</th><th>px@16</th><th>px@24</th><th>px@32</th>
+<th>gap u</th><th>px@16</th><th>px@24</th><th>px@32</th>
+<th>counter u</th><th>bbox</th><th>min margin</th><th>16px std</th>
+</tr></thead>
+<tbody id="tb"></tbody>
+</table>
+<p class="note">Red = under ~1 px at 16 px (merges). Amber = between 1 and 1.5 px at 16 px (survives, but with no headroom).
+<code>gap</code> for <code>instrument-3</code> is a wedge that closes to zero at the V apex — the tabled figure is its
+5th-percentile width; 14.3&nbsp;% of that mark's void-facing boundary is under 1 px at 16 px.</p>
+
+<h2>Contrast</h2>
+<table>
+<thead><tr><th>fill</th><th>vs cream #FBF7F1</th><th>vs carbon #090B0F</th><th>vs dark card #111418</th><th>verdict</th></tr></thead>
+<tbody>
+<tr><td>#2F6B4F (colour masters)</td><td>5.90:1</td><td class="warn">3.13:1</td><td class="bad">2.93:1</td><td>passes on cream; marginal on carbon; <b>fails 3:1 on the dark card surface</b></td></tr>
+<tr><td>#23201D (mono masters)</td><td>15.18:1</td><td class="bad">1.22:1</td><td class="bad">1.14:1</td><td>light-only ink, as intended</td></tr>
+<tr><td>#4FA37A (instrument-* dark CSS)</td><td class="bad">2.87:1</td><td>6.43:1</td><td>6.03:1</td><td>dark-only lift; must never be the light-mode fill</td></tr>
+<tr><td>#FBF7F1 (suggested dark-mode ink)</td><td>—</td><td>18.45:1</td><td>17.30:1</td><td>the only value that matches light-mode performance on dark</td></tr>
+</tbody>
+</table>
+
+<h2>Rendered at size</h2>
+<div id="sheet"></div>
+
+<script>
+const rows = [
+ // name, ink%, parts, stem, gap, counter, bbox, minMargin, std16, gapNote
+ ["container-1",27.28,1,28.00,120.17,null,"176×176",40.0,0.393,""],
+ ["container-2",27.56,2,22.83,26.08,null,"168×183",36.0,0.413,"inter-piece"],
+ ["container-3",27.77,1,25.17,82.00,82.0,"160×160",48.0,0.424,""],
+ ["data-1",16.33,3,34.67,26.09,null,"230×136",13.0,0.323,"inter-piece"],
+ ["data-2",15.01,1,36.67,null,null,"220×145",18.0,0.318,"solid, no void"],
+ ["data-3",30.93,2,37.50,30.36,null,"176×164",40.0,0.421,"inter-piece"],
+ ["instrument-1",31.91,1,36.00,76.17,null,"200×192",28.0,0.429,""],
+ ["instrument-2",21.17,1,32.00,66.17,null,"168×208",24.0,0.370,""],
+ ["instrument-3",21.58,1,26.83,6.17,null,"172×204",26.0,0.366,"V wedge → 0 at apex"],
+ ["monogram-1",25.70,1,26.00,27.17,44.0,"204×192",24.0,0.381,""],
+ ["monogram-2",21.82,1,25.67,53.00,null,"196×196",26.0,0.367,"aperture throat"],
+ ["monogram-3",27.04,1,32.00,48.17,48.0,"188×204",26.0,0.385,""],
+ ["subtraction-1",30.02,1,52.83,28.17,null,"118×180",38.0,0.421,"kerf"],
+ ["subtraction-2",26.91,2,41.83,30.04,null,"197×157",29.6,0.408,"inter-piece"],
+ ["subtraction-3",28.01,1,72.83,null,null,"152×152",52.0,0.421,"solid, no void"],
+];
+const px = (u,size)=> u==null ? null : u*size/256;
+function cls(v){ if(v==null) return ""; if(v<1.0) return "bad"; if(v<1.5) return "warn"; return ""; }
+const tb=document.getElementById("tb");
+for(const r of rows){
+  const [n,ink,parts,stem,gap,ctr,bbox,marg,std,note]=r;
+  const s16=px(stem,16),s24=px(stem,24),s32=px(stem,32);
+  const g16=px(gap,16),g24=px(gap,24),g32=px(gap,32);
+  const f=v=>v==null?"—":v.toFixed(2);
+  tb.insertAdjacentHTML("beforeend",
+   `<tr><td>${n}${note?` <span style="color:#8a8177">(${note})</span>`:""}</td>
+    <td>${ink.toFixed(1)}</td><td>${parts}</td>
+    <td>${stem.toFixed(1)}</td><td class="${cls(s16)}">${f(s16)}</td><td class="${cls(s24)}">${f(s24)}</td><td class="${cls(s32)}">${f(s32)}</td>
+    <td>${gap==null?"—":gap.toFixed(1)}</td><td class="${cls(g16)}">${f(g16)}</td><td class="${cls(g24)}">${f(g24)}</td><td class="${cls(g32)}">${f(g32)}</td>
+    <td>${ctr==null?"—":ctr.toFixed(0)}</td><td>${bbox}</td><td class="${marg<20?"warn":""}">${marg.toFixed(0)} u (${(marg/256*100).toFixed(1)}%)</td><td>${std.toFixed(3)}</td></tr>`);
+}
+const sizes=[16,32,64,256];
+const sheet=document.getElementById("sheet");
+for(const r of rows){
+  const n=r[0];
+  let h=`<div class="grid"><div class="name"><b>${n}</b><br>${n}.svg<br>${n}-mono.svg</div><div class="strip">`;
+  for(const s of sizes){
+    for(const [k,lab] of [["light","cream"],["dark","carbon"]]){
+      h+=`<div class="cellwrap">
+        <div class="sw ${k}" style="width:${Math.max(s,20)+16}px;height:${Math.max(s,20)+16}px">
+          <img src="${n}.svg" width="${s}" height="${s}" alt="">
+        </div>
+        <div class="sw ${k}" style="width:${Math.max(s,20)+16}px;height:${Math.max(s,20)+16}px;margin-top:4px">
+          <img src="${n}-mono.svg" width="${s}" height="${s}" alt="">
+        </div>
+        <span>${s} ${lab}</span></div>`;
+    }
+  }
+  h+=`</div></div>`;
+  sheet.insertAdjacentHTML("beforeend",h);
+}
+</script>
+</body>
+</html>

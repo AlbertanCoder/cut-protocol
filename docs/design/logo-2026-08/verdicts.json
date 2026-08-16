@@ -1,0 +1,34 @@
+{
+ "rejected": {
+  "candidates": "EVERY SHIPPED COLOUR MASTER FAILS THE STUDY ITS OWN AUTHORS CITE",
+  "instrument-2": "ANTI-BRIEF + CLICHE",
+  "instrument-3": "ACCIDENTAL LETTERFORM + THE IDEA IS ONLY IN THE PROSE",
+  "subtraction-3": "ANTI-BRIEF: IT IS A BITE",
+  "subtraction-2": "THE IDEA IS INVISIBLE; THE RESULT IS A COFFEE BEAN",
+  "container-1": "CATEGORY CLICHE, THE WORST ONE AVAILABLE",
+  "container-2": "READS AS A SPLIT PILL, AND ITS STATED CONCEPT IS ARITHMETICALLY FALSE",
+  "container-3": "GENERIC UI GLYPH, AND THE ONE THING MAKING IT OWNABLE DIES FIRST",
+  "data-1": "ACCIDENTAL GLYPH, AND ITS OWN CONCEPT IS CONTRADICTED BY ITS COORDINATES",
+  "data-2": "IT IS THE STOCK-CHART DECLINE GLYPH",
+  "data-3": "AT 16px IT IS THE LETTER Z",
+  "subtraction-1": "IT IS AN APP TILE, WHICH IS THE CHEAP TELL IT CLAIMS TO AVOID",
+  "monogram-1": "THE TWO LETTERS ARE AT INCOMPATIBLE SCALES AND THE C CLOSES AT SMALL SIZE"
+ },
+ "top": [
+  {
+   "key": "instrument-1",
+   "why": "It is the only mark in the submission that holds one construction language with no exceptions: 12 vertices, every one an integer, zero curves, zero corner radii, one subpath, no fill-rule dependency, 293 bytes. Nothing else here is that disciplined, and discipline is what reads as machined rather than drawn. Its distinguishing feature also lives in the NEGATIVE space rather than the silhouette — the aperture steps from 124u (7.8px at 16) down to 76u (4.8px at 16) at y=144, so the counter changes width mid-form. That is a decision a generator cannot produce, and I can still see the step in the true-16px render, which is the test that kills Function Health and most of this set. At 31.9% ink it is the densest thing submitted, so it never washes toward grey; the corners are hard 90-degree machined cuts, the precise opposite of the rounded caps measured killing Cronometer. It reads as a tool, not as a fitness object, a food object or a UI glyph.",
+   "fix": "Break the near-symmetry decisively, because right now it is the mark's one cheap tell. The outer silhouette is perfectly mirrored — beam spanning 28-228, both jaws 38u above the step and 62u below, both stepping at the same y=144 — and the ONLY asymmetry is a 32u difference in jaw depth (left runs to y=224, right stops at y=192). At 16px that is 2px and reads as a trimming error, not as a fixed jaw versus a sliding jaw. Take the right jaw up to roughly y=150 so the difference is ~74u and unmistakably intentional; that also breaks the residual 'squared lowercase n' read. In the same pass make the beam 38u tall instead of 36u so it matches the jaw width exactly — a 36-vs-38 stroke disagreement is invisible at favicon size and looks like sloppiness at 512px, and there is no reason for it."
+  },
+  {
+   "key": "monogram-2",
+   "why": "It is the only candidate drawn the way a type designer draws, and the modulation is in the path rather than in the prose. Because the outer is an ellipse and the inner is a true circle of r=70 pushed 6u right of the outer centre, the ring runs 38u thick at 9 o'clock, 28u at 12 and 6, and 25.9u at the terminals — the weight thins continuously from spine to terminal, so the form has a stress axis instead of being a tube. Both terminals are cut exactly one stroke-width long and sheared 5.2 degrees off radial rather than chopped on a vertical, which is the single detail that separates a drawn C from a circle with a slot milled out of it, and it is only visible at hero size while costing nothing at 16px — detail that rewards the big size without being load-bearing at the small one, the exact inverse of Function Health's failure. It is also the only candidate whose 16px render is unambiguous: the aperture throat is 52u (3.25px) against a 140u counter, and aperture-narrower-than-counter is what stops it collapsing into an O. Four path commands, 66 bytes of geometry.",
+   "fix": "Kill the 102x98 outer ellipse. A 4% squash — 8 units on a 204-wide form — is the worst possible distance from a circle: too small to read as a decision, too large to read as round, so at hero size it just looks like the O got dragged with the wrong handle. Either make the outer a true 102x102 circle and let the 6u inner offset carry all the modulation, or push the ellipse to something declared like 106x94 (1.13:1) so the squash is obviously deliberate. While in there, rotate the whole mark roughly 20 degrees counter-clockwise so the mouth sits at 1-2 o'clock instead of dead 3 o'clock — that is the cheapest way to stop a heavy open ring reading as a progress/activity ring, which is this mark's only real derivative exposure."
+  },
+  {
+   "key": "monogram-3",
+   "why": "The stroke weights actually agree with each other, and where they disagree it is deliberate and measurable: stem 36u, bowl top and bottom 32u, bowl right 36u, because the counter's cap centre sits 4u left of the bowl's outer centre. That is a real 1.125:1 modulation cut into the coordinates, and it is why the bowl does not read as monoline tubing — the one thing that separates this from a default geometric sans set in bold. The 10u concave fillet where the bowl underside meets the stem is a genuine ink trap, the kind of relief a type designer cuts and a template never does. And the counter is a flat-topped, flat-bottomed capsule inside a true-semicircle bowl — a squared counter in a round form, which is the construction that measured best in the entire reference set, because squared counters hold their shape under downsampling where round ones close up. At 27.1% ink with a 32u minimum (2px at 16px) there is nothing in it that can go sub-pixel, and it carries no cliche object, no baked lighting and no accidental second reading.",
+   "fix": "Narrow the bowl. It measures 152u wide against 112u tall (1.36:1 landscape) with a 116x48 counter (2.42:1 horizontal slot), so the letter renders as a P that has been horizontally scaled about 140% — a proportion error a type person spots in one second and reads as amateur, which is exactly the impression the owner is paying to avoid. Pull the bowl's outer radius from 56 to about 40 and the counter to roughly 76x48; that brings the bowl to about 110x112 and the whole letter to ~148x204. It also fixes the second problem for free: the empty 152x82 rectangle in the bottom-right — 19% of the tile as one blank block — shrinks to something that reads as counterspace instead of making the mark look like it is sliding off the top-right. One production note before it ships anywhere: this file needs fill-rule='evenodd' to render at all, and its two subpaths wind the same direction, so any pipeline that strips fill-rule (icon-font converters, some SVG-to-ICO/PDF paths, nonzero-default renderers) fills the counter solid and you get a black slab where the P was."
+  }
+ ]
+}
