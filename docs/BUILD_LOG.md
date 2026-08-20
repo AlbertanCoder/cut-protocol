@@ -148,3 +148,48 @@ validation pipeline (propose → deterministic gate → cache).
 **Next:** Phase 3 — solver: per-role lever scaling + LP-style refinement,
 FDC-canonical verification ruler (±50 kcal / ±7 g P / ±7 g F / ±10 g net C),
 post-rounding re-verify, feasibility check at target-setting.
+
+---
+
+## Phase 3 — The prescription solver (2026-08-19)
+
+**Done — all NEW code in `backend/src/lib/prescription/`, existing solver
+byte-untouched (B4):**
+- `ruler.js` — the directive verdict: ±50 kcal / ±7 g P / ±7 g F / ±10 g
+  net C; ranges ARE bands; ceilings truncate (keto never licensed over);
+  floor outranks the band's lower edge; §3.3.4 allergen_scan line.
+- `levers.js` — per-ROLE portion levers at directive bounds (protein
+  0.5–2.5×, carb 0.3–2.5×, fat 0.5–2×, other 0.5–2×, scalable:false frozen),
+  solved by band-normalized projected coordinate descent (the permitted
+  hand-rolled refine); food-scale rounding (5 g / 1 g dense / never 0);
+  totals recomputed FROM rounded grams.
+- `daySolver.js` — greedy selection with carry-forward over K seeded-rng
+  candidates per slot → JOINT day-level refinement across every slot's
+  levers → rounding → micro-adjust (±25% wiggle on the day's own dense
+  items, 1 g steps, never a new ingredient) → post-rounding re-verify →
+  belt-and-braces allergen re-scan of the final plate. Meal structure is
+  hard (OMAD = exactly one slot); 3-day variety window; injected rng, no
+  clock, no DB.
+- `feasibility.js` — arithmetic-impossibility screen at target-setting with
+  per-gram FDC energy windows; carbs flex first; keto-ceiling conflicts
+  named.
+
+**Measured:**
+- 26 new tests, all green first full run: P0-shaped day (2,150 kcal,
+  200–220 g P, 60–70 g F, 135–160 g net C, floor 2,000) lands inside every
+  band POST-rounding on a synthetic pool; independent gram-recompute agrees
+  with the verdict; leak-in-pool caught at assembly with a FAIL scan line;
+  P0 fixture numbers pass feasibility; the 1,200 kcal / 200 g P / 80 g F
+  impossibility is caught before any solve.
+- Latency: 50 seeded day solves in 137.7 ms ≈ 2.8 ms/day — the §3.4 budget
+  (P50 < 2 s) has ~700× headroom.
+- Full suite: **151 files · 1,833 tests · 0 failures**.
+
+**Deferred:**
+- Multi-day/batch orchestration (3-day window threading, batch-repeat
+  inversion, grocery consolidation over the horizon) → Phase 4 harness
+  drives it; wiring into routes/UI → Phase 6.
+- Solver stage events for the honest progress UI → Phase 6.
+
+**Next:** Phase 4 — persona harness P0–P6 on the isolated DB: fixtures with
+declared targets, N-day runs, the six §7 gates executed, PERSONA_REPORT.md.
