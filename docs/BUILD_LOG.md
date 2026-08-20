@@ -291,3 +291,35 @@ review in UI.
 **Next:** Phase 9 docs (positioning/deploy/mobile — cheap, high-value),
 Phase 8 recording (image provenance scaffold + kill list), then the Phase
 5/6 surface work as the last, owner-eyeballable block.
+
+---
+
+## Phases 8+9 — Records and docs (2026-08-19)
+
+**Done:**
+- `docs/POSITIONING.md` — §9 competitor matrix with provenance discipline
+  (verified-2026-07-24 rows harvested from CompareDialog's sourced claims;
+  fresh web research for Eat This Much / Mealime / Lifesum pricing and
+  generation weaknesses; PlateJoy reported shut down July 2025). The honest
+  edge stated with its falsifiers.
+- `docs/DEPLOY.md` — canonical deploy runbook consolidating the measured
+  TONIGHT-RUNBOOK lessons; supersedes the obsolete root DEPLOY.md (kept as
+  a record). Names the six owner-blocked go-live items, the consent-screen
+  blocker first.
+- `docs/MOBILE_PATH.md` — §11: PWA scaffold steps (an afternoon, after the
+  hosted deploy is verified), then the Capacitor path with the honest App
+  Review costs (in-app deletion becomes mandatory, Sign in with Apple,
+  IAP vs LemonSqueezy).
+- `docs/IMAGE_PROVENANCE.md` + `backend/tests/imageProvenance.test.js` —
+  §6.4: every shipped image inventoried (all first-party); recipe
+  photography recorded as the owner's TheMealDB licence decision; the test
+  fails the build on any unattributed shipped image and on any recipe-photo
+  directory appearing before that decision.
+- `docs/KILL_LIST.md` — §10 verdicts RECORDED with evidence (FOLD ×4,
+  ARCHIVE ×8, FIX-not-kill ×4, KEEP the spine); the /legacy moves execute
+  with the Phase 5/6 surface work per B10, one commit per move.
+
+**Measured:** suite 154 files · 1,848 tests · 0 failures.
+
+**Next:** the ship-to-Shad bridge (a rendered 14-day P0 plan he can cook
+from, straight out of the harness), then the Phase 5/6 surface increment.
