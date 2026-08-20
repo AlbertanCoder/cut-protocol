@@ -232,28 +232,40 @@ function solvePrescriptionDay({ pool, targets, mealConfig, profile = {}, rng, re
       return t;
     };
 
-    // ── stage 4: micro-adjust — close the kcal band with 1 g-dense items ──
+    // ── stage 4: micro-adjust — hill-climb the dense 1 g items ────────────
+    // The first cut closed only KCAL misses; live-API stress testing
+    // (2026-08-20, engine-derived targets whose fat band is ~8 g wide)
+    // showed sub-1.5 g fatG-over misses this stage ignored while a 1 g oil
+    // nudge (-0.9 g fat, -8.8 kcal) would have closed them. Now: greedy
+    // hill-climb over every dense row, ±1 g, objective = total
+    // band-normalized miss; accept only strictly-improving moves. Every
+    // nudge stays inside ±25% of the rounded amount — the aromatic-wiggle
+    // cap — so a number-chase can never ruin a dish.
     let day = sumDay();
     let verdict = dayVerdict(day, targets);
-    const kcalMiss = () => verdict.misses.find((m) => m.key === "kcal");
-    for (let guard = 0; guard < 24 && kcalMiss(); guard++) {
-      const miss = kcalMiss();
-      const wantMore = miss.kind === "under";
-      let bestRow = null, bestDish = null;
+    for (let guard = 0; guard < 40 && verdict.misses.length > 0; guard++) {
+      const current = missScore(verdict);
+      let best = null; // { row, dish, delta, score }
       for (const d of allDishes) {
         for (const r of d.finalRows) {
-          // Dense items only (1 g granularity); every nudge stays inside
-          // ±25% of the rounded amount — the aromatic-wiggle cap, applied to
-          // all micro-adjustments so a number-chase can never ruin a dish.
-          if (!(r.food.kcal >= 500) || r.grams < 4) continue;
+          if (!(r.food.kcal >= 500) || r.grams < 1) continue;
           if (r._base === undefined) r._base = r.grams;
-          const withinCap = wantMore ? r.grams + 1 <= r._base * 1.25 : r.grams - 1 >= Math.max(1, r._base * 0.75);
-          if (withinCap && (!bestRow || r.food.kcal > bestRow.food.kcal)) { bestRow = r; bestDish = d; }
+          for (const delta of [1, -1]) {
+            const g = r.grams + delta;
+            if (g < 1 || g > r._base * 1.25 || g < Math.max(1, r._base * 0.75)) continue;
+            r.grams = g;
+            const savedTotals = d.totals;
+            d.totals = sumRows(d.finalRows);
+            const score = missScore(dayVerdict(sumDay(), targets));
+            d.totals = savedTotals;
+            r.grams = g - delta;
+            if (score < current - 1e-9 && (!best || score < best.score)) best = { row: r, dish: d, delta, score };
+          }
         }
       }
-      if (!bestRow) break;
-      bestRow.grams += wantMore ? 1 : -1;
-      bestDish.totals = sumRows(bestDish.finalRows);
+      if (!best) break;
+      best.row.grams += best.delta;
+      best.dish.totals = sumRows(best.dish.finalRows);
       day = sumDay();
       verdict = dayVerdict(day, targets);
     }

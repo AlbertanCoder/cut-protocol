@@ -10,7 +10,7 @@ Solver: prescription daySolver (Phase 3), seed 1, best-of-5 attempts/day.
 | Person-days | ≥200 | 210 | PASS |
 | Allergen violations | 0 | 0 | PASS |
 | Days inside all four bands (post-rounding) | ≥95% | 210/210 (100%) | PASS |
-| Latency P50 / P95 per day | <2 s / <8 s | 4.5 ms / 6.2 ms | PASS |
+| Latency P50 / P95 per day | <2 s / <8 s | 4.5 ms / 5.9 ms | PASS |
 | Variety (3-day window, in-day uniqueness) | hold | asserted in personaGates.test.js | PASS |
 | Keto ceiling crossed | never | 0 day(s) | PASS |
 | P7 floor gate | 100/100 | — | runs at Phase 7 (rails) |
@@ -19,13 +19,13 @@ Solver: prescription daySolver (Phase 3), seed 1, best-of-5 attempts/day.
 
 | Persona | Pool | Days in band | Allergen hits | P50 ms | Stresses |
 |---|---:|---:|---:|---:|---|
-| p0 — high-protein founder-shaped profile, four allergen walls | 253 | 30/30 | 0 | 5.5 | high protein under four simultaneous exclusions |
-| p1 — celiac vegan woman, 1,600 kcal | 42 | 30/30 | 0 | 4.7 | protein without meat OR gluten — seitan is pure wheat gluten and must never appear |
-| p2 — soy + wheat allergy, 2,000 kcal, loves Chinese | 271 | 30/30 | 0 | 4.5 | the derived-ingredient trap: soy sauce, hoisin, oyster sauce; coconut aminos must rescue the cuisine |
-| p3 — keto OMAD, 2,400 kcal, ≤25 g net carbs | 36 | 30/30 | 0 | 1.4 | one giant meal inside a hard carb ceiling — the slot holds several dishes |
-| p4 — budget student, $60/week, 3,000 kcal | 598 | 30/30 | 0 | 2.3 | cost tier as a real constraint |
-| p5 — pescatarian Mediterranean, 1,800 kcal | 340 | 30/30 | 0 | 4.3 | fish allowed, shellfish allowed — ontology precision in the other direction |
-| p6 — lactose-intolerant powerlifter, 3,200 kcal, 220 g protein, dislikes cottage cheese | 314 | 30/30 | 0 | 5.3 | hard exclusion + soft dislike handled differently |
+| p0 — high-protein founder-shaped profile, four allergen walls | 253 | 30/30 | 0 | 5.6 | high protein under four simultaneous exclusions |
+| p1 — celiac vegan woman, 1,600 kcal | 42 | 30/30 | 0 | 5.3 | protein without meat OR gluten — seitan is pure wheat gluten and must never appear |
+| p2 — soy + wheat allergy, 2,000 kcal, loves Chinese | 271 | 30/30 | 0 | 4.7 | the derived-ingredient trap: soy sauce, hoisin, oyster sauce; coconut aminos must rescue the cuisine |
+| p3 — keto OMAD, 2,400 kcal, ≤25 g net carbs | 36 | 30/30 | 0 | 1.2 | one giant meal inside a hard carb ceiling — the slot holds several dishes |
+| p4 — budget student, $60/week, 3,000 kcal | 598 | 30/30 | 0 | 2.5 | cost tier as a real constraint |
+| p5 — pescatarian Mediterranean, 1,800 kcal | 340 | 30/30 | 0 | 4.2 | fish allowed, shellfish allowed — ontology precision in the other direction |
+| p6 — lactose-intolerant powerlifter, 3,200 kcal, 220 g protein, dislikes cottage cheese | 314 | 30/30 | 0 | 5.1 | hard exclusion + soft dislike handled differently |
 
 ## Cost (p4) — honest about what is measurable
 
