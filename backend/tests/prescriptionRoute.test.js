@@ -100,6 +100,20 @@ test("an empty library previews as an HONEST failure — never a crash, never in
   }
 });
 
+test("keto gets no fiber subtraction — the net band is the total band under the ceiling", async () => {
+  // Regression: the flat 25 g allowance against keto's 10-30 g TOTAL band
+  // produced a {0,5} net band that failed honest 13 g-net keto days.
+  const k = await call("PUT", "/api/profile", { dietaryStyle: "keto" });
+  assert.equal(k.status, 200, JSON.stringify(k.json));
+  const r = await call("GET", "/api/prescription/feasibility");
+  assert.equal(r.status, 200);
+  assert.equal(r.json.targets.netCarbG.lo, 0);
+  assert.ok(r.json.targets.netCarbG.hi >= 20, `keto net band collapsed again: ${JSON.stringify(r.json.targets.netCarbG)}`);
+  assert.equal(r.json.targets.netCarbMaxG, 30);
+  const back = await call("PUT", "/api/profile", { dietaryStyle: "none" });
+  assert.equal(back.status, 200);
+});
+
 test("the seed is deterministic and echoed — same seed, same preview", async () => {
   const a = await call("POST", "/api/prescription/preview", { days: 1, seed: 42 });
   const b = await call("POST", "/api/prescription/preview", { days: 1, seed: 42 });

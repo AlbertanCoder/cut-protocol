@@ -34,8 +34,16 @@ const KETO_NET_CARB_CEILING_G = 30; // mirrors the engine's 30 g keto ceiling
 function mapToRulerTargets(dailyTarget, profile) {
   const pLo = Math.max(dailyTarget.proteinLo, dailyTarget.proteinFloorG || 0);
   const pHi = Math.max(dailyTarget.proteinHi, pLo);
-  const netLo = Math.max(0, dailyTarget.carbLo - FIBER_ALLOWANCE_G);
-  const netHi = Math.max(netLo, dailyTarget.carbHi - FIBER_ALLOWANCE_G);
+  const keto = profile.dietaryStyle === "keto";
+  // KETO GETS NO FIBER SUBTRACTION. The engine's keto band is already
+  // carb-scarce (10–30 g TOTAL); subtracting the general 25 g allowance
+  // produced a {0,5} net band that failed honest 13 g-net keto days
+  // (measured live, 2026-08-20). Net ≤ total, so treating the total band as
+  // the net band is the conservative direction, and the ceiling truncates.
+  const netLo = keto ? 0 : Math.max(0, dailyTarget.carbLo - FIBER_ALLOWANCE_G);
+  const netHi = keto
+    ? dailyTarget.carbHi
+    : Math.max(netLo, dailyTarget.carbHi - FIBER_ALLOWANCE_G);
   const t = {
     kcal: dailyTarget.kcal,
     proteinG: { lo: pLo, hi: pHi },
@@ -43,7 +51,7 @@ function mapToRulerTargets(dailyTarget, profile) {
     netCarbG: { lo: netLo, hi: netHi },
   };
   if (Number.isFinite(dailyTarget.floorKcal)) t.floorKcal = dailyTarget.floorKcal;
-  if (profile.dietaryStyle === "keto") t.netCarbMaxG = KETO_NET_CARB_CEILING_G;
+  if (keto) t.netCarbMaxG = KETO_NET_CARB_CEILING_G;
   return t;
 }
 
