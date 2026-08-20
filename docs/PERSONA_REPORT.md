@@ -10,7 +10,7 @@ Solver: prescription daySolver (Phase 3), seed 1, best-of-5 attempts/day.
 | Person-days | ≥200 | 210 | PASS |
 | Allergen violations | 0 | 0 | PASS |
 | Days inside all four bands (post-rounding) | ≥95% | 208/210 (99%) | PASS |
-| Latency P50 / P95 per day | <2 s / <8 s | 3.9 ms / 8.5 ms | PASS |
+| Latency P50 / P95 per day | <2 s / <8 s | 4 ms / 8.2 ms | PASS |
 | Variety (3-day window, in-day uniqueness) | hold | asserted in personaGates.test.js | PASS |
 | Keto ceiling crossed | never | 0 day(s) | PASS |
 | P7 floor gate | 100/100 | — | runs at Phase 7 (rails) |
@@ -20,12 +20,12 @@ Solver: prescription daySolver (Phase 3), seed 1, best-of-5 attempts/day.
 | Persona | Pool | Days in band | Allergen hits | P50 ms | Stresses |
 |---|---:|---:|---:|---:|---|
 | p0 — high-protein founder-shaped profile, four allergen walls | 244 | 29/30 | 0 | 4.7 | high protein under four simultaneous exclusions |
-| p1 — celiac vegan woman, 1,600 kcal | 43 | 30/30 | 0 | 4.9 | protein without meat OR gluten — seitan is pure wheat gluten and must never appear |
-| p2 — soy + wheat allergy, 2,000 kcal, loves Chinese | 262 | 30/30 | 0 | 4 | the derived-ingredient trap: soy sauce, hoisin, oyster sauce; coconut aminos must rescue the cuisine |
-| p3 — keto OMAD, 2,400 kcal, ≤25 g net carbs | 36 | 30/30 | 0 | 1.1 | one giant meal inside a hard carb ceiling — the slot holds several dishes |
-| p4 — budget student, $60/week, 3,000 kcal | 589 | 30/30 | 0 | 1.9 | cost tier as a real constraint |
+| p1 — celiac vegan woman, 1,600 kcal | 43 | 30/30 | 0 | 4.8 | protein without meat OR gluten — seitan is pure wheat gluten and must never appear |
+| p2 — soy + wheat allergy, 2,000 kcal, loves Chinese | 262 | 30/30 | 0 | 4.2 | the derived-ingredient trap: soy sauce, hoisin, oyster sauce; coconut aminos must rescue the cuisine |
+| p3 — keto OMAD, 2,400 kcal, ≤25 g net carbs | 36 | 30/30 | 0 | 1.3 | one giant meal inside a hard carb ceiling — the slot holds several dishes |
+| p4 — budget student, $60/week, 3,000 kcal | 589 | 30/30 | 0 | 2 | cost tier as a real constraint |
 | p5 — pescatarian Mediterranean, 1,800 kcal | 336 | 30/30 | 0 | 3.7 | fish allowed, shellfish allowed — ontology precision in the other direction |
-| p6 — lactose-intolerant powerlifter, 3,200 kcal, 220 g protein, dislikes cottage cheese | 305 | 29/30 | 0 | 4.8 | hard exclusion + soft dislike handled differently |
+| p6 — lactose-intolerant powerlifter, 3,200 kcal, 220 g protein, dislikes cottage cheese | 305 | 29/30 | 0 | 4.7 | hard exclusion + soft dislike handled differently |
 
 ## Cost (p4) — honest about what is measurable
 
