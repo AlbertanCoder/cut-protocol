@@ -159,3 +159,43 @@ simple app but had not decided reconnect-vs-rebuild (handoff 2026-08-19).
 full-app components the 8-agent roast identified as unplugged. The full app
 remains untouched and reachable (`?simple=0`) as the power surface —
 nothing is bulldozed. Owner can reverse toward either shell.
+
+---
+
+## B11 · Medication gate wiring is BLOCKED on an owner-approved migration (2026-08-19)
+
+**Conflict:** `medicationGate.js` is built, tested (21 tests) and cited, but
+wiring it needs three nullable Profile columns (`medications Json?`,
+`conditions Json?`, `healthFlagsAt DateTime?` — `routes/profile.js:158-177`
+names them), and `.claude/settings.json` denies every edit to
+`schema.prisma` and `prisma/migrations/**` outright. That deny exists so
+schema changes are deliberate owner decisions — correct here too.
+
+**Default:** not wired. The wiring plan, ready to execute the day the owner
+approves the additive migration: (1) migration adds the three nullable
+columns; (2) onboarding + Settings gain a "medications & conditions"
+question (free text, `classifyAll` echoes unrecognised entries back);
+(3) the plan path calls `assessPlanSafety` before target derivation and
+surfaces refusals/floors as data (SGLT2×keto refuses the keto style with
+the citation, floors raise `floorKcal`); (4) P7-style tests for the ten
+rules end-to-end.
+
+**Reversible by:** owner saying "run the medication-gate migration".
+
+---
+
+## B12 · The floor ignores training expenditure — a locked calc, owner's call (2026-08-19)
+
+**Conflict:** `effectiveFloor` (`bmrEngine.js:224`) never sees
+`trainingKcalPerDay` (:163; sole call site :192 in TDEE). A hard-training
+user's NET intake can sit far below the documented rail while the letter of
+the constitution ("never prescribe below max(RMR×0.95, 1500/1200)") is
+satisfied. Fixing it changes a locked calorie calculation (rule 2 + golden
+fixtures).
+
+**Default:** untouched, per B4. The proposed change, for the owner to
+approve deliberately: `effectiveFloor` gains the training term —
+`max(sexFloor, round(rmr × 0.95) + training.perDay, floorKcal)` — with the
+12 MIGRATION/golden fixtures re-derived BY HAND (not regenerated) and the
+change logged as what it is: a raise, never a lowering, of every affected
+floor.

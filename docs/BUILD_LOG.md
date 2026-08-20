@@ -242,3 +242,52 @@ declared targets, N-day runs, the six §7 gates executed, PERSONA_REPORT.md.
 
 **Next:** Phase 5+6 — onboarding flow audit-to-order (§4) and the five
 surfaces; both build on shipped components per AUDIT §7. Then Phase 7 rails.
+
+---
+
+## Phase 7 — Safety rails, P7 GREEN (2026-08-19; resequenced before 5/6)
+
+Resequenced deliberately: rails are backend-only, safety-critical, and the
+P7 gate is fully testable server-side; the UI phases carry the check-in
+panel with them (standing order 2 default).
+
+**Done:**
+- `backend/src/lib/safetyRails.js` — the §8.2 ABSOLUTE rate cap: above 1.5%
+  of bodyweight/week there is no acknowledgement path (400,
+  `gate:"rate-absolute-cap"`). Additive — the shipped menu + >1% ack rules
+  are untouched. The menu alone could not express this (2.0 lb/wk is 1% on
+  a 200 lb body and 2% on a 100 lb one).
+- `backend/src/lib/safetyEvents.js` — the §8.4 ledger the app never had:
+  local private JSONL (gitignored; `CUT_SAFETY_EVENTS_PATH` override;
+  runTests points the whole suite at a temp file so tests never write into
+  the owner's real ledger). Floor-breach attempts and cap pushes are
+  recorded; disk failures degrade to a warn, never break a route.
+- §8.3 check-in trigger wired into `routes/profile.js`: two floor attempts
+  or two cap pushes inside 30 days → ONE respectful check-in rides the
+  refusal payload (plainly worded, continue-at-capped-values framing),
+  at most once per kind per window.
+- `backend/tests/personas/p7Rails.test.js` — the P7 gates EXECUTED against
+  the real app on a fresh temp DB: 100/100 below-floor refusals, the 2%-BW
+  rate refused absolutely even with the tick pre-checked, the check-in
+  fires on the second attempt and never the third, and the derived target
+  clamps AT the floor with `floored: true`.
+
+**Measured:**
+- The gate test caught a real §8.3 violation in the first trigger design:
+  counters restarting at each mark re-fired every 2 attempts — 60 check-ins
+  in a 120-refusal storm. Fixed to once-per-kind-per-window; storm now
+  yields ≤2.
+- Suite: **153 files · 1,846 tests · 0 failures**.
+
+**Blocked on the owner (recorded, ready to execute):**
+- Medication gate wiring — needs the additive Profile migration the
+  settings deny-list correctly reserves for him (BLOCKERS B11).
+- Training-aware floor — a locked calorie calculation; proposed diff and
+  fixture plan in BLOCKERS B12.
+
+**Deferred:** the check-in PANEL (frontend) → surfaces phase; §8 copy
+review in UI.
+
+**Next:** Phase 9 docs (positioning/deploy/mobile — cheap, high-value),
+Phase 8 recording (image provenance scaffold + kill list), then the Phase
+5/6 surface work as the last, owner-eyeballable block.

@@ -8,6 +8,11 @@ const { OCCUPATION_BY_KEY, TRAINING_BY_KEY } = require("../lib/activityData.js")
 const { DIETARY_STYLES } = require("../lib/dietaryFilter.js");
 const { PROTEIN_FLOOR_SOURCE } = require("../lib/brain/proteinFloor.js");
 const { todayStr } = require("../lib/dates.js");
+// §8 rails (Phase 7): the absolute rate cap and the private safety-event
+// ledger that powers the once-per-pattern check-in. Additive — the shipped
+// menu/ack rules are untouched.
+const { classifyRatePct, absoluteCapRefusal } = require("../lib/safetyRails.js");
+const safetyEvents = require("../lib/safetyEvents.js");
 
 const router = express.Router();
 router.use(requireAuth);
@@ -436,7 +441,11 @@ router.put("/", async (req, res) => {
   const sexFloor = SAFE_FLOOR[candidate.sex] ?? SAFE_FLOOR.M;
   if (candidate.floorKcal != null && candidate.floorKcal < sexFloor) {
     const msg = `Your own floor can be stricter than the app's, never looser — ${sexFloor} kcal is the lowest this app will hold you at.`;
-    return res.status(400).json({ error: msg, fields: { floorKcal: msg } });
+    // §8.3/§8.4: a below-floor attempt is a safety event; two inside the
+    // window earn ONE respectful check-in on the refusal, never a nag loop.
+    safetyEvents.record(req.userId, "floor-breach-attempt", { floorKcal: candidate.floorKcal, sexFloor });
+    const checkIn = safetyEvents.checkInFor(req.userId);
+    return res.status(400).json({ error: msg, fields: { floorKcal: msg }, ...(checkIn ? { checkIn } : {}) });
   }
 
   // GATE 2 — goal weight against height. Refuses outright below BMI 16;
@@ -476,8 +485,22 @@ router.put("/", async (req, res) => {
     const weightKg = await getWeightNowKg(req.userId, candidate);
     const energy = computeEnergy(candidate, weightKg);
     const safety = rateSafety(candidate, weightKg, energy.tdee, energy.rmr);
+    // §8.2 ABSOLUTE cap (Phase 7): above 1.5% of bodyweight/week there is no
+    // acknowledgement path — the menu alone can't express this (2.0 lb/wk is
+    // 1% on a 200 lb body and 2% on a 100 lb one). Runs BEFORE the ack gate:
+    // a refusal is not a question.
+    if (classifyRatePct(safety.pctOfBw) === "refused" && body.rateLbPerWeek !== undefined) {
+      safetyEvents.record(req.userId, "rate-cap-push", { pctOfBw: safety.pctOfBw, rate: candidate.rateLbPerWeek });
+      const checkIn = safetyEvents.checkInFor(req.userId);
+      return res.status(400).json({ ...absoluteCapRefusal(safety.pctOfBw), ...(checkIn ? { checkIn } : {}) });
+    }
     if (safety.unsafe && body.rateAcknowledged !== true) {
-      return res.status(422).json({ requiresAck: true, ack: "rate", reasons: safety.reasons, error: "this rate needs an explicit confirmation" });
+      // A floored target is a below-floor ASK — the same pattern §8.3 counts.
+      if (safety.reasons?.some((r) => /floor/i.test(r))) {
+        safetyEvents.record(req.userId, "floor-breach-attempt", { via: "floored-rate", pctOfBw: safety.pctOfBw });
+      }
+      const checkIn = safetyEvents.checkInFor(req.userId);
+      return res.status(422).json({ requiresAck: true, ack: "rate", reasons: safety.reasons, error: "this rate needs an explicit confirmation", ...(checkIn ? { checkIn } : {}) });
     }
     patch.rateAcknowledged = safety.unsafe ? true : false;
   }

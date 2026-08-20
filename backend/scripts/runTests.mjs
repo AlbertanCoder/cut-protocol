@@ -28,6 +28,7 @@
 //   node scripts/runTests.mjs --list     discovery only: print the files, run none
 //   node scripts/runTests.mjs tests/qc   SCOPED run (tripwires off — see below)
 import fs from "node:fs";
+import os from "node:os";
 import path from "node:path";
 import { spawn } from "node:child_process";
 import { assertSchemaCurrent } from "./lib/schemaDrift.mjs";
@@ -167,6 +168,11 @@ const childEnv = {
   BRAIN: "off",
   ANTHROPIC_API_KEY: "",
   AI_RECIPE_DRAFTS: "",
+  // Route tests exercise the §8 safety gates, and every gate refusal appends
+  // to the safety-event ledger (safetyEvents.js). Pointed at a per-run temp
+  // file so a test run never writes test users into the OWNER's private
+  // ledger on this machine — same tests-own-their-env rule as the vars above.
+  CUT_SAFETY_EVENTS_PATH: path.join(os.tmpdir(), `cutproto-safety-events-${process.pid}.jsonl`),
 };
 
 // Explicit paths — node never sees a glob, so no shell can eat one.
