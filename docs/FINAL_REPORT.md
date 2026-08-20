@@ -1,5 +1,13 @@
 # Final report — CUT_PROTOCOL_DIRECTIVE.md execution, 2026-08-19
 
+> **Addendum 2026-08-20:** the branch was adversarially code-reviewed (11
+> findings, all fixed — BUILD_LOG has the disposition), the visual walk of
+> both new frontend pieces is done, and a lean-protein pool batch closed
+> the last band misses: the fleet now measures **210/210 days inside all
+> four bands, 0 allergen hits** (suite 155 / 1,857 / 0). Fragility items
+> 2 (the two band misses) and 5 (no visual walk) below are RESOLVED;
+> everything else in this report stands as written.
+
 Unsold, per §13.8. Eight commits on `product-rebuild` (51b65cf → 4bb076e),
 all local, nothing pushed. What works is measured; what is fragile is named;
 nothing below is rounded up.

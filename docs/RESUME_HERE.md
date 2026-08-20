@@ -49,12 +49,13 @@ Then `npm test` (backend) should say 155/1,852/0, and
    `DATABASE_URL=file:./rebuild-qa.db PORT=3100 HOST=:: SUPABASE_URL= node
    server.js`, vite with `VITE_SUPABASE_URL=` override (frontend/.env
    carries live Supabase vars), proxy targets 3100.
-3. Prescription persistence design (multi-dish slots don't fit PlanSlot's
-   one-recipeId shape — schema decision, owner-gated like all schema).
-4. Pool depth: vegan+GF / keto / snacks, via
-   `backend/data/rebuildCandidates.mjs` + the seeder's dry-run gate.
-5. Pescatarian dietary style in the lattice (P5 currently expressed as meat
-   exclusions — fixtures.js documents it).
+3. Prescription persistence: design WRITTEN and decision-ready —
+   `docs/design/prescription-persistence.md` (Option C recommended). Waits
+   on the owner's word, then one focused session.
+4. ~~Pool depth~~ DONE 2026-08-20: lean-protein batch closed P0's fat
+   corner — **210/210 days in band, 0 hits** (commit 8104336).
+5. Pescatarian style: scoped as a single-session lattice re-partition —
+   see BLOCKERS B13. P5 runs green via exclusions meanwhile.
 6. Owner-gated: B11 medication-gate migration · B12 training-aware floor ·
    consent screen/dashboards (docs/DEPLOY.md) · TheMealDB licence ·
    kill-list ARCHIVE moves.

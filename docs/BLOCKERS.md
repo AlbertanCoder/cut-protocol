@@ -57,6 +57,29 @@ writing.
 
 ---
 
+## B13 · Pescatarian needs a lattice re-partition, not a bolt-on (2026-08-20)
+
+**Conflict:** the directive's P5 persona and §4.8 list pescatarian; this
+app's 9 styles don't have it, and P5 currently runs as meat-word exclusions
+(30/30 in the harness, but inexpressible in-app). Adding it properly means
+SPLITTING the vegetarian machinery's combined keyword lists
+(`MEAT_FISH_KEYWORDS`, `SLAUGHTER_OR_MARINE_KEYWORDS`) into land-slaughter
+vs marine partitions — every term individually re-homed in the NUL-byte
+safety file, the `dietaryStyleLattice` containment invariants extended
+(`vegan ⊇ vegetarian ⊇ pescatarian-excludes`... precisely:
+pescatarian-excludes = land-slaughter ⊂ vegetarian-excludes), plus
+DIETARY_STYLES, `/meta`, both frontends' selects, and both style test
+suites.
+
+**Default:** not attempted at session end on the most dangerous file in the
+repo (owner's own one-change-at-a-time rule). Scoped as a single-session
+task with the harness's P5 (switched to the real style) as its acceptance
+gate. Ambiguity to settle while splitting: anchovy-carrying compounds
+(worcestershire, caesar) are marine → pescatarian-PERMITTED; gelatin stays
+land-slaughter → excluded.
+
+---
+
 ## B4 · CLAUDE.md rule 2 and golden fixtures vs new targets code (2026-08-19)
 
 **Conflict:** repo rule — never change a calorie/macro/TDEE/BMR/target/portion
