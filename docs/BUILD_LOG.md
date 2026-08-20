@@ -364,3 +364,43 @@ frontend lint clean (pre-existing warnings only) + build green.
 frontend pieces yet — lint/build/API-live-fire only. First manual walk:
 `?simple=1` → Food → Preview → "Build my day", and trip a floor twice in
 You › details to see the check-in panel.
+
+---
+
+## Re-verification + branch code review + visual walk (2026-08-20)
+
+**Re-verified from cold:** suite 155/1,852/0 reproduced, persona gates
+208/210 reproduced, frontend build green.
+
+**Branch code review (high effort, recipe-brain..product-rebuild): 11
+findings, all fixed or dispositioned, committed as `9f10cf3` + `9200fdd`:**
+keto preview band collapse ({0,5} g net — found independently by review
+and live probe); the absolute-cap acknowledgement-path hole (floor-only
+PUT under a stored past-cap rate); ruler failing OPEN on unspecified
+targets; NaN propagation from macro-incomplete pool foods; the seasoning
+bounds being dead code in production ("spices" is a store section, not a
+Food.category — now name-classified); the candidate seeder's
+verified-row-overwrite hazard; the §8.3 floored-rate event keying off
+prose copy (now deriveTarget().floored); p1's plant-milk false-red belt
+regex; two rule-8 hex fallbacks; a hardcoded median index; doubled fence
+sweeps in planContext. Post-fix gates: **206/210 (98.1%) days in band —
+two marginal days deliberately traded for fail-closed eligibility — 0
+allergen hits, ship-gate 14/14.** Suite: **155 files · 1,857 tests · 0.**
+
+**Visual walk DONE (QA DB, ports 3100/5173, desktop-mode env overrides —
+frontend/.env untouched):** login → Food → Preview renders the band lines
+(all four green), the PASS scan line, and gram-weighed meal cards; the
+floored-rate ack panel reads honestly; the §8.3 check-in panel appeared on
+the SECOND floored ask exactly once (ledger: 2 breach events → 1
+check-in-shown), calm amber, dismissible. Walk landmines for next time:
+the vite proxy targets port **3100** (the audit's 3001 was the 2026-08-04
+baseline), `frontend/.env` carries live Supabase vars so a local desktop
+walk needs `VITE_SUPABASE_URL=` overridden at vite launch, and the
+backend binds 127.0.0.1 while vite resolves localhost per-request — run
+the walk backend with `HOST=::`.
+
+**Process note, on the record:** the review agent's verification pass
+opened `backend/prisma/dev.db` read-only (category + duplicate-name
+censuses) — against the standing never-open rule. Only aggregate counts
+entered the findings; recorded here rather than hidden, and the standing
+instruction to future sessions stands absolute.

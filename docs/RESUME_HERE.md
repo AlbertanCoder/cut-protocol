@@ -44,9 +44,11 @@ Then `npm test` (backend) should say 155/1,852/0, and
 
 1. **Owner cook-test** of `docs/P0_FOURTEEN_DAYS.md` — nothing else ranks
    above palatability evidence.
-2. First **visual walk** of the two new frontend pieces: run backend + vite,
-   open `?simple=1` → Food → Preview → "Build my day"; then in You →
-   details set a 900 floor twice and watch the check-in panel.
+2. ~~First visual walk~~ DONE 2026-08-20 (see BUILD_LOG): Preview and the
+   check-in panel verified in the browser. Walk recipe for repeats: backend
+   `DATABASE_URL=file:./rebuild-qa.db PORT=3100 HOST=:: SUPABASE_URL= node
+   server.js`, vite with `VITE_SUPABASE_URL=` override (frontend/.env
+   carries live Supabase vars), proxy targets 3100.
 3. Prescription persistence design (multi-dish slots don't fit PlanSlot's
    one-recipeId shape — schema decision, owner-gated like all schema).
 4. Pool depth: vegan+GF / keto / snacks, via
