@@ -47,6 +47,9 @@ const profileRoutes = require("./src/routes/profile.js");
 const weighinRoutes = require("./src/routes/weighins.js");
 const recipeRoutes = require("./src/routes/recipes.js");
 const planRoutes = require("./src/routes/plans.js");
+// Phase 5/6 increment: the prescription solver's preview surface — solves
+// under the directive ruler, persists nothing, touches no Plan rows.
+const prescriptionRoutes = require("./src/routes/prescription.js");
 const foodRoutes = require("./src/routes/foods.js");
 const cartRoutes = require("./src/routes/cart.js");
 const ratingsRoutes = require("./src/routes/ratings.js");
@@ -271,6 +274,7 @@ app.use("/api/profile", profileRoutes);
 app.use("/api/weighins", weighinRoutes);
 app.use("/api/recipes", recipeRoutes);
 app.use("/api/plans", planRoutes);
+app.use("/api/prescription", prescriptionRoutes);
 app.use("/api/foods", foodRoutes);
 app.use("/api/cart", cartRoutes);
 app.use("/api/ratings", ratingsRoutes);

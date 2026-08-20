@@ -47,6 +47,7 @@ export default function SimpleDetails({ profile, summary, refresh, onShowFull, o
   const [error, setError] = useState(null);
   const [fieldError, setFieldError] = useState({});
   const [ack, setAck] = useState(null);         // { kind, text, patch }
+  const [checkIn, setCheckIn] = useState(null); // §8.3 — { due, kind, note }, server-sent once per pattern
 
   // Drafts mirror the server. They re-seed whenever the profile changes, so a
   // refresh after any commit pulls every box back to truth.
@@ -102,6 +103,7 @@ export default function SimpleDetails({ profile, summary, refresh, onShowFull, o
     setFieldError({});
     try {
       await api.putProfile({ ...patch, ...(opts.acks || {}) });
+      setCheckIn(null);
       await refresh();
       setStatus("saved");
       setAck(null);
@@ -110,6 +112,11 @@ export default function SimpleDetails({ profile, summary, refresh, onShowFull, o
     } catch (e) {
       if (isAbortError(e)) { setStatus(null); return false; }
       const b = e.body || {};
+      // §8.3: hitting a safety limit repeatedly earns ONE respectful check-in,
+      // carried on the refusal payload. Captured whatever refusal shape it
+      // rode in on; rendered once, dismissible, never a nag (the server only
+      // sends it once per pattern per window).
+      if (b.checkIn?.due) setCheckIn(b.checkIn);
       // The server's three refusals, each answered in its own shape — the same
       // contract SetupWizard.jsx:516-540 handles.
       if (e.status === 403 && b.gate === "adult-only") {
@@ -172,6 +179,27 @@ export default function SimpleDetails({ profile, summary, refresh, onShowFull, o
       sub={status === "saving" ? "Saving…" : status === "saved" ? "Saved." : "Changes save as you go."}
     >
       {error && <Note>{error}</Note>}
+
+      {/* §8.3 — the once-per-pattern check-in. Calm, no shame, dismissible;
+          the limits already did their job (the values are capped/refused),
+          so the only button is "carry on". Support contacts live at the
+          bottom of this page, and the copy points there rather than
+          duplicating the list. */}
+      {checkIn && (
+        <Panel tone="warn">
+          <div className="flex flex-col gap-3">
+            <p className="text-base leading-relaxed">{checkIn.note}</p>
+            <p className="text-sm opacity-80">
+              Losing faster mostly means adding movement, not eating less — the floor exists so
+              the plan keeps working. If food rules ever feel like they&apos;re running the show,
+              the support contacts at the bottom of this page are free and confidential.
+            </p>
+            <div className="flex gap-2">
+              <Quiet onClick={() => setCheckIn(null)}>Okay — carry on at the capped values</Quiet>
+            </div>
+          </div>
+        </Panel>
+      )}
 
       {/* An acknowledgement the server asked for. Cancel puts the boxes back
           rather than leaving a value that was never stored. */}

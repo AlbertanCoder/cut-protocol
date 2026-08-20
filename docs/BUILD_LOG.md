@@ -323,3 +323,44 @@ Phase 8 recording (image provenance scaffold + kill list), then the Phase
 
 **Next:** the ship-to-Shad bridge (a rendered 14-day P0 plan he can cook
 from, straight out of the harness), then the Phase 5/6 surface increment.
+
+---
+
+## Ship-gate bridge + Phase 5/6 increment (2026-08-19)
+
+**Ship-gate bridge:**
+- `backend/scripts/prescribeWeek.mjs` → `docs/P0_FOURTEEN_DAYS.md`:
+  **14/14 consecutive P0 days inside every band, 0 allergen hits across 259
+  plated ingredients**, rendered as dishes + gram-weighed ingredients +
+  numbered steps + a consolidated store-sectioned grocery list. The render
+  caught one §5.5 instructions-vs-ingredients mismatch (lettuce/cabbage) —
+  fixed at the proposal layer. The cooking half of the gate is the owner's.
+
+**Phase 5/6 increment — the solver becomes reachable:**
+- `backend/src/routes/prescription.js` (+ `prescription/rng.js`):
+  `GET /api/prescription/feasibility` and `POST /api/prescription/preview` —
+  auth + premium, READ-ONLY (no Plan rows, nothing persisted), targets
+  mapped from the SAME engine output every surface uses (planContext →
+  computeMacros) with ONE disclosed translation (carb band − 25 g fiber
+  allowance = net-carb band), seeded by calendar day so the same day shows
+  the same preview. 4 route tests (401, honest empty-library failure,
+  deterministic seed echo, feasibility shape).
+- Live-fired on the QA pool end-to-end: real profile save → engine targets
+  (1,985 kcal / 189–207 g P) → solved day 1,953 kcal / 200 g P, in band,
+  allergen PASS, real dishes.
+- `frontend/src/simple/SimplePrescription.jsx` — Food › Preview room:
+  band-vs-read lines, per-dish gram lists, the scan line verbatim, honest
+  off-band/empty-pool states, calm premium lock, the §4.10 scale-moment
+  copy. Wired as a fourth FOOD_ROOMS entry; nothing else in the surface
+  touched.
+- §8.3 check-in panel in `SimpleDetails.jsx`: captures `checkIn` off any
+  refusal shape, renders once (calm amber, no shame, one dismiss button,
+  points at the support contacts already on the page).
+
+**Measured:** backend suite **155 files · 1,852 tests · 0 failures**;
+frontend lint clean (pre-existing warnings only) + build green.
+
+**Not done, said plainly:** no in-browser visual walk of the two new
+frontend pieces yet — lint/build/API-live-fire only. First manual walk:
+`?simple=1` → Food → Preview → "Build my day", and trip a floor twice in
+You › details to see the check-in panel.

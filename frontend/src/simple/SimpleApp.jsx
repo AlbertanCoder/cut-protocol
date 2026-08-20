@@ -8,6 +8,7 @@ import SimpleWeight from "./SimpleWeight.jsx";
 import SimplePlan from "./SimplePlan.jsx";
 import SimpleRecipes from "./SimpleRecipes.jsx";
 import SimpleShopping from "./SimpleShopping.jsx";
+import SimplePrescription from "./SimplePrescription.jsx";
 import SimpleDetails from "./SimpleDetails.jsx";
 import SimpleProgress from "./SimpleProgress.jsx";
 import { Screen, Big, Note, Details, Tabs, Busy } from "./parts.jsx";
@@ -17,6 +18,9 @@ const FOOD_ROOMS = [
   { id: "plan", label: "Plan" },
   { id: "recipes", label: "Recipes" },
   { id: "shopping", label: "Shopping" },
+  // The prescription solver's preview room (Phase 5/6 increment): read-only,
+  // solved to the directive ruler, persists nothing.
+  { id: "preview", label: "Preview" },
 ];
 
 // The four doors. `built` marks which have a rebuilt room; the rest hand over
@@ -233,6 +237,7 @@ export default function SimpleApp() {
           {room === "plan" && <SimplePlan profile={profile} onShowFull={goFull} />}
           {room === "recipes" && <SimpleRecipes onShowFull={goFull} />}
           {room === "shopping" && <SimpleShopping onShowFull={goFull} onOpenPlan={() => setRoom("plan")} />}
+          {room === "preview" && <SimplePrescription />}
         </div>
       )}
       {door === "progress" && (

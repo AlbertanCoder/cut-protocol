@@ -379,6 +379,9 @@ export const api = {
   // bounded well inside this budget — see BRAIN_GENERATE_BUDGET_MS in
   // routes/plans.js for the worst-case arithmetic.
   generatePlan: (filters, opts) => request("/plans/generate", { method: "POST", body: JSON.stringify({ filters }), timeoutMs: TIMEOUT.LLM, ...opts }),
+  // Prescription preview (directive ruler) — reads only, persists nothing.
+  prescriptionFeasibility: (opts) => request("/prescription/feasibility", { timeoutMs: TIMEOUT.SOLVER, ...opts }),
+  prescriptionPreview: (days, seed, opts) => request("/prescription/preview", { method: "POST", body: JSON.stringify({ days, ...(seed != null ? { seed } : {}) }), timeoutMs: TIMEOUT.SOLVER, ...opts }),
   getDayOptions: (dayOfWeek, filters, opts) => request("/plans/day-options", { method: "POST", body: JSON.stringify({ dayOfWeek, filters }), timeoutMs: TIMEOUT.SOLVER, ...opts }),
   acceptDay: (dayOfWeek, slots, opts) => request("/plans/accept-day", { method: "POST", body: JSON.stringify({ dayOfWeek, slots }), timeoutMs: TIMEOUT.SOLVER, ...opts }),
   setSlotLock: (planId, slotId, locked, opts) => request(`/plans/${planId}/slots/${slotId}`, { method: "PUT", body: JSON.stringify({ locked }), timeoutMs: TIMEOUT.WRITE, ...opts }),
