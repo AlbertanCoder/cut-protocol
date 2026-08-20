@@ -403,4 +403,65 @@ export const CANDIDATES = [
   M("Cottage Cheese & Pineapple Bowl", "american", 3, ["p0", "p2"], [
     I("Cottage Cheese", 200, "protein"), I("Pineapple, raw", 100, "carb"),
   ], ["Spoon the pineapple over the cottage cheese."], "snack"),
+
+  // ── Lean-protein batch (2026-08-20) ─────────────────────────────────────
+  // Measured need: P0's only remaining band misses are fatG-over by 2-3 g
+  // (4/30 days) — the P0-eligible pool skews slightly fatty, so high
+  // protein levers drag fat just past the 70 g edge. These mains run ≤12 g
+  // fat/serving with a 1 g-steppable oil lever so the day refine can pull
+  // fat DOWN. All are soy/gluten/shellfish/kiwi-clean; most are dairy-free
+  // (P6 headroom too).
+  M("Grilled Chicken Breast Plate with Rice & Green Beans", "american", 20, ["p0", "p2"], [
+    I("Chicken breast, cooked, skinless", 250, "protein"), I("White rice, cooked", 200, "carb"),
+    I("Beans, snap, green, microwaved", 150, "veg"), I("Olive Oil", 5, "fat"),
+    I("Lemon juice, raw", 10, "other", false),
+  ], ["Grill the seasoned breasts hard; rest 3 minutes.",
+      "Plate over rice with the beans; a thread of oil and the lemon over everything."]),
+  M("Egg White & Chicken Scramble Bowl", "mexican", 15, ["p0", "p2"], [
+    I("Eggs, Grade A, Large, egg white", 200, "protein"), I("Chicken breast, cooked, skinless", 120, "protein"),
+    I("White rice, cooked", 150, "carb"), I("Enchilada sauce", 50, "other"),
+    I("Oil, canola", 4, "fat"), I("Spring Onions", 20, "veg"),
+  ], ["Soft-scramble the egg whites in the oil; fold in the diced chicken.",
+      "Bowl over rice, warm sauce over, spring onion on top."]),
+  M("Poached White Fish, Potatoes & Asparagus", "american", 25, ["p0", "p2"], [
+    I("White Fish", 250, "protein"), I("Potato, baked with skin", 280, "carb"),
+    I("Asparagus", 150, "veg"), I("Olive Oil", 6, "fat"), I("Lemon juice, raw", 12, "other", false),
+  ], ["Poach the fish gently in barely-simmering salted water, 6-8 minutes.",
+      "Serve with the potatoes and steamed asparagus; oil and lemon to finish."]),
+  M("Turkey & Rice Skillet with Peppers", "american", 20, ["p0", "p2"], [
+    I("Turkey, ground, 93% lean, 7% fat, raw", 240, "protein"), I("White rice, cooked", 180, "carb"),
+    I("Peppers, bell, red, raw", 120, "veg"), I("Onions, raw", 50, "veg"),
+    I("Smoked Paprika", 4, "other", false), I("Oil, canola", 4, "fat"),
+  ], ["Brown the turkey; add peppers, onion and paprika and cook 5 minutes.",
+      "Stir through the rice until everything is hot."]),
+  M("Smoked Haddock with Rice & Peas, Lean", "american", 18, ["p0", "p2"], [
+    I("Smoked Haddock", 220, "protein"), I("White rice, cooked", 200, "carb"),
+    I("Frozen Peas", 100, "veg"), I("Olive Oil", 5, "fat"), I("Lemon juice, raw", 10, "other", false),
+  ], ["Poach and flake the haddock.",
+      "Fold through the hot rice and peas with the oil and lemon."]),
+  M("Tuna Rice Bowl with Charred Corn", "mexican", 12, ["p0", "p2"], [
+    I("Fish, tuna, light, canned in water, drained solids", 160, "protein"),
+    I("White rice, cooked", 200, "carb"), I("Sweetcorn", 100, "veg"),
+    I("Lime juice, raw", 15, "other", false), I("Cilantro", 8, "other", false), I("Olive Oil", 5, "fat"),
+  ], ["Char the corn in a dry pan.",
+      "Bowl the rice, flaked tuna and corn; dress with oil, lime and cilantro."]),
+  M("Sirloin & Baked Potato, Trimmed", "steakhouse", 25, ["p0", "p2"], [
+    I("Sirloin steak, cooked, lean", 220, "protein"), I("Potato, baked with skin", 280, "carb"),
+    I("Broccoli, raw", 150, "veg"), I("Olive Oil", 5, "fat"),
+  ], ["Sear the trimmed sirloin to your line; rest it.",
+      "Serve with the baked potato and steamed broccoli; the oil goes on the broccoli."]),
+  M("Egg White Veggie Cups", "american", 15, ["p0", "p2"], [
+    I("Eggs, Grade A, Large, egg white", 250, "protein"), I("Peppers, bell, red, raw", 80, "veg"),
+    I("Spring Onions", 20, "veg"),
+  ], ["Whisk the egg whites with the chopped vegetables; pour into greased ramekins.",
+      "Bake at 190°C until just set, ~12 minutes."], "snack"),
+  M("Deli Turkey & Rice Cake Stack", "american", 5, ["p0", "p2"], [
+    I("Turkey breast, low salt, prepackaged or deli, luncheon meat", 100, "protein"),
+    I("White rice, cooked", 100, "carb"), I("Cucumber", 80, "veg"),
+  ], ["Stack turkey and cucumber over warm rice (or rice cakes if you have them)."], "snack"),
+  M("Salt Cod Brandade-Style Potato Bowl", "mediterranean", 25, ["open", "p2"], [
+    I("Salt Cod", 120, "protein"), I("Potato, baked with skin", 300, "carb"),
+    I("Garlic, raw", 6, "other", false), I("Olive Oil", 8, "fat"), I("Parsley, fresh", 10, "other", false),
+  ], ["Soak the salt cod per the pack, then poach and flake it.",
+      "Mash roughly into the hot potatoes with garlic, oil and parsley."]),
 ];
