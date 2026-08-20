@@ -49,7 +49,8 @@ const TARGETS = { kcal: 2150, proteinG: { lo: 200, hi: 220 }, fatG: { lo: 60, hi
 
 test("meal structure is HARD: OMAD yields exactly one slot; 3+1 yields four", () => {
   const omad = solvePrescriptionDay({ pool: POOL, targets: { kcal: 900, proteinG: 60, fatG: 30, netCarbG: 80 }, mealConfig: { meals: 1, snacks: 0 }, rng: makeRng(7) });
-  assert.equal(omad.slots.length, 1);
+  assert.equal(omad.slots.length, 1, "OMAD is ONE slot");
+  assert.ok(omad.slots[0].dishes.length >= 1, "which may hold several dishes");
   const day = solvePrescriptionDay({ pool: POOL, targets: TARGETS, mealConfig: { meals: 3, snacks: 1 }, rng: makeRng(7) });
   assert.equal(day.slots.length, 4);
   assert.equal(day.slots.filter((s) => s.slotType === "meal").length, 3);
@@ -61,10 +62,12 @@ test("a P0-shaped day lands inside every directive band, POST-rounding", () => {
   assert.equal(out.ok, true, `diagnosis: ${out.diagnosis} — read ${JSON.stringify(out.verdict.read)}`);
   // and every shipped gram is food-scale: 5 g steps ≥20 g, 1 g dense items
   for (const s of out.slots) {
-    for (const i of s.ingredients) {
-      assert.ok(i.grams >= 1, `${i.name} shipped at ${i.grams} g`);
-      const dense = [OIL.id].includes(i.foodId);
-      if (!dense && i.grams >= 20) assert.equal(i.grams % 5, 0, `${i.name} ${i.grams} g is not on the 5 g grid`);
+    for (const d of s.dishes) {
+      for (const i of d.ingredients) {
+        assert.ok(i.grams >= 1, `${i.name} shipped at ${i.grams} g`);
+        const dense = [OIL.id].includes(i.foodId);
+        if (!dense && i.grams >= 20) assert.equal(i.grams % 5, 0, `${i.name} ${i.grams} g is not on the 5 g grid`);
+      }
     }
   }
 });
@@ -73,7 +76,7 @@ test("the verdict is computed from the ROUNDED grams — recompute independently
   const out = solvePrescriptionDay({ pool: POOL, targets: TARGETS, mealConfig: { meals: 3, snacks: 1 }, rng: makeRng(42) });
   const foods = new Map([CHICKEN, BEEF, SALMON, TOFU, EGGS, YOGURT, RICE, POTATO, BEANS, OIL, BROCCOLI, BERRIES].map((f) => [f.id, f]));
   let kcal = 0;
-  for (const s of out.slots) for (const i of s.ingredients) kcal += foods.get(i.foodId).kcal * i.grams / 100;
+  for (const s of out.slots) for (const d of s.dishes) for (const i of d.ingredients) kcal += foods.get(i.foodId).kcal * i.grams / 100;
   assert.ok(Math.abs(kcal - out.totals.kcal) < 1e-6, "no hidden arithmetic between grams and verdict");
 });
 
@@ -85,7 +88,7 @@ test("belt and braces: a leak in the pool is caught at assembly, ok=false, scan 
     pool: poisoned, targets: TARGETS, mealConfig: { meals: 3, snacks: 1 },
     profile: { excludedFoods: ["eggs"] }, rng: makeRng(11),
   });
-  if (out.slots.some((s) => /Egg/i.test(s.recipeName || ""))) {
+  if (out.slots.some((s) => s.dishes.some((d) => /Egg/i.test(d.recipeName)))) {
     assert.equal(out.ok, false, "an egg dish reaching an egg allergy must fail the day");
     assert.match(out.scanLine, /^allergen_scan: FAIL/);
   } else {
@@ -110,12 +113,12 @@ test("a clean day ships the machine-written PASS line with the profile named", (
 test("variety: recipes in the 3-day window are not reused", () => {
   const recent = new Set([POOL[0].id, POOL[1].id, POOL[2].id]);
   const out = solvePrescriptionDay({ pool: POOL, targets: TARGETS, mealConfig: { meals: 3, snacks: 1 }, rng: makeRng(5), recentIds: recent });
-  for (const s of out.slots) if (s.recipeId) assert.ok(!recent.has(s.recipeId), `${s.recipeName} repeated inside the 3-day window`);
+  for (const s of out.slots) for (const d of s.dishes) assert.ok(!recent.has(d.recipeId), `${d.recipeName} repeated inside the 3-day window`);
 });
 
 test("no repeat within one day when alternatives exist", () => {
   const out = solvePrescriptionDay({ pool: POOL, targets: TARGETS, mealConfig: { meals: 3, snacks: 1 }, rng: makeRng(9) });
-  const ids = out.slots.filter((s) => s.recipeId).map((s) => s.recipeId);
+  const ids = out.slots.flatMap((s) => s.dishes.map((d) => d.recipeId));
   assert.equal(new Set(ids).size, ids.length);
 });
 

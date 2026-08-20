@@ -193,3 +193,52 @@ byte-untouched (B4):**
 
 **Next:** Phase 4 — persona harness P0–P6 on the isolated DB: fixtures with
 declared targets, N-day runs, the six §7 gates executed, PERSONA_REPORT.md.
+
+---
+
+## Phase 4 — Persona harness, GATE CLEARED (2026-08-19)
+
+**Done:**
+- `backend/tests/personas/fixtures.js` — P0–P6 with declared calorie AND
+  macro targets (assumptions marked in-file; every fixture passed the
+  feasibility screen at authoring). P0 is a synthetic founder-shaped profile,
+  no identity (B5). P5 expressed as meat exclusions because pescatarian is
+  not a style in this app (recorded gap). P7 joins at Phase 7.
+- `backend/tests/personas/harness.js` — pool via node:sqlite READ-ONLY from
+  the rebuild QA DB (hard refusal to open any dev.db path; loud skip with
+  build instructions when absent), the REAL filterRecipePool (trust + sanity
+  + exclusion gate), 30 days/persona with the 3-day variety window, soft
+  bias hook (cuisine likes ×3, dislikes ×0.25, budget), per-day latency.
+- `backend/tests/personas/personaGates.test.js` — the §7 gates EXECUTED:
+  ≥200 person-days, zero allergen violations, zero dietary-pattern
+  violations (+ keto ceiling never crossed), ≥95% days in band
+  post-rounding, variety, latency, hard meal structure, and
+  hard-exclusion-vs-soft-dislike as distinct mechanisms.
+- `backend/scripts/personaReport.mjs` → `docs/PERSONA_REPORT.md` (gate
+  table, per-persona rows, worst day each, one full example day each).
+- Solver hardening driven by the FIRST measured run (P0 21/30 fat-over,
+  P3 keto OMAD 4/30, P6 19/30 protein-under): per-dish sub-targeting in
+  multi-dish slots, composition-aware candidate sampling (fat-share term),
+  best-of-5 day attempts, and the P3 fixture corrected (under a CEILING is
+  never a miss — netCarb lo 0).
+
+**Measured (seed 1, 210 person-days):**
+- **208/210 days inside all four directive bands (99.0%)** — gate ≥95% ✓.
+  The two misses: one P0 fat-over day, one P6 protein-under day.
+- **0 allergen hits**, 0 dietary-pattern violations, keto ceiling never
+  crossed, OMAD exactly one slot every day.
+- Latency p50 3.9 ms / p95 8.5 ms per day (budgets 2,000 / 8,000 ms).
+- One test-side false alarm fixed: "Coconut Milk" is not dairy — the belt
+  regex needed the same plant-qualifier rule the real filter has.
+- Suite: **152 files · 1,841 tests · 0 failures**.
+
+**Deferred / honest gaps:**
+- P4 cost: Recipe.costPerServing coverage is too thin for a cost gate —
+  the budget tier is a preference, not a verified constraint, until a real
+  cost model lands (report says so in those words).
+- CI does not build the QA DB, so persona gates skip there until the seed
+  step is added to ci.yml (owner-visible change, deferred).
+- P7 floor gate → Phase 7.
+
+**Next:** Phase 5+6 — onboarding flow audit-to-order (§4) and the five
+surfaces; both build on shipped components per AUDIT §7. Then Phase 7 rails.
