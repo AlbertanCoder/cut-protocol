@@ -291,7 +291,7 @@ const BRAIN_SLOT_TIMEOUT_MS = Number(process.env.BRAIN_SLOT_TIMEOUT_MS) > 0
 router.post("/generate", async (req, res) => {
   try {
     const horizon = resolveHorizon(req.body?.horizon); // throws 400 on junk/out-of-range
-    const { profile, dailyTarget, mealConfig, recipePool, rawPoolCount, trustExcludedCount, ratings, adjusters } = await planContext(req.userId);
+    const { profile, dailyTarget, mealConfig, recipePool, rawPoolCount, trustExcludedCount, sanityExcludedCount, ratings, adjusters } = await planContext(req.userId);
     const filters = parseFilters(req.body);
     filters.ratings = ratings; // T (v2): soft taste re-rank
 
@@ -319,7 +319,10 @@ router.post("/generate", async (req, res) => {
     // attribution order is raw -> trust -> diet. Reported so the removal is
     // never silent (the constitution bans silent shrinkage); the recipes stay
     // visible in the Recipes tab with their amber marker.
-    const poolCounts = { raw: rawPoolCount, trustExcluded: trustExcludedCount, afterDiet: recipePool.length, afterPrep: prepped.length, afterStack: pool.length, stackExplain };
+    // `sanityExcluded` (Phase-2 plausibility fence): recipes whose per-serving
+    // numbers fail recipeSanityGate, removed after trust and before diet —
+    // reported for the same silent-shrinkage ban.
+    const poolCounts = { raw: rawPoolCount, trustExcluded: trustExcludedCount, sanityExcluded: sanityExcludedCount, afterDiet: recipePool.length, afterPrep: prepped.length, afterStack: pool.length, stackExplain };
 
     // ── 1 MEAL ───────────────────────────────────────────────────────────
     // One dish against what is LEFT of today. No writes, no week solve — this

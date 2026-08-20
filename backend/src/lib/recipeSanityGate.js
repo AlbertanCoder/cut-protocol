@@ -58,7 +58,13 @@ function issue(code, severity, message, extra) {
  *   totals:    { kcal, protein } per serving — pass nutritionCore.macroTotals
  *              output so kcal is FDC-derived, never 4/4/9,
  *   foodsById: optional Map/object of Food rows, used only to read
- *              food.category for the seasoning bounds.
+ *              food.category for the seasoning bounds,
+ *   enforceKcalFloor: default true. The 150-kcal floor is an ADMISSION
+ *              quality rule (a 40-kcal "meal" is a garnish, keep it out of
+ *              the pool at candidate time); the runtime plan fence passes
+ *              false, because a small side dish already in the library harms
+ *              nobody — it is the ceilings and gram bounds that catch
+ *              corrupt data.
  * }
  *
  * ok is false when any issue has severity "fail". Issues are returned in
@@ -103,8 +109,9 @@ function sanityCheckRecipe(recipe, opts = {}) {
     }
   }
 
+  const enforceKcalFloor = opts.enforceKcalFloor !== false;
   if (totals && Number.isFinite(totals.kcal)) {
-    if (totals.kcal < BOUNDS.kcalMinPerServing) {
+    if (enforceKcalFloor && totals.kcal < BOUNDS.kcalMinPerServing) {
       issues.push(
         issue("kcal-below-floor", "fail",
           `${Math.round(totals.kcal)} kcal/serving is below the ${BOUNDS.kcalMinPerServing} kcal recipe floor`)

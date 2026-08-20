@@ -85,3 +85,66 @@ gate with per-recipe sanity bounds incl. implausible grams).
 the existing 889-recipe library as the admission sweep, quantify what
 survives per persona-relevant diet corner, and stand up the LLM-candidate
 validation pipeline (propose → deterministic gate → cache).
+
+---
+
+## Phase 2 — Recipe pool (2026-08-19)
+
+**Done:**
+- Isolated `backend/prisma/rebuild-qa.db` (gitignored) built from migrations
+  + the three seed scripts — the CI-pool construction, never dev.db. This is
+  also the Phase-4 harness substrate.
+- `backend/scripts/poolAdmissionSweep.mjs` — measures every recipe against
+  resolution / sanity / trust / drift and sizes persona pools; report at
+  `docs/qc/pool-admission-2026-08-19.md`.
+- `backend/data/rebuildCandidates.mjs` + `scripts/seedRebuildCandidates.mjs` —
+  the §3.1 propose→gate pipeline with THIS session as the proposing LLM
+  (zero API spend): 62 candidates + 6 label-sourced foods (coconut aminos,
+  clean avocado/cauliflower/oats/almond-flour/edamame), each candidate
+  resolved by name, refused if any referenced food fails an
+  energy-consistency screen, totals computed FDC-canonically, sanity-gated,
+  and asserted ADMITTED by the real exclusion gate for every audience it
+  claims (vegan_gf / keto / carnivore / p0 / p2 / open). Dry-run default.
+- Runtime plausibility fence: `planContext.recipeSanityExclusion` runs after
+  the trust gate in `filterRecipePool` (cached per library version), count
+  threaded to `poolCounts.sanityExcluded`, diagnosis names it (never-silent
+  rule). The 150-kcal floor is admission-only by design — the runtime fence
+  enforces ceilings + gram bounds (`enforceKcalFloor: false`), because a
+  light side dish in the library harms nobody while a 9,282-kcal serving
+  must never be served.
+
+**Measured:**
+- Seeded pool, admission sweep BEFORE: 626 recipes → 497 admitted; 129 fail
+  sanity (TheMealDB whole-pot-as-one-serving rows: 1,500–2,500 kcal
+  "servings"); 0 resolution failures; persona pools P1 celiac-vegan
+  21 (0 snacks!), keto 20, snacks 6 total, carnivore 3.
+- Candidate gate first dry run: 42/62 admitted — the gate caught ME
+  proposing tofu to the soy-allergic persona, "No-Soy" in a title tripping
+  the soy wall, bare "noodles"/"toasts" step prose as gluten evidence,
+  corn tortillas correctly denied for celiacs, keto's 10% carb-energy share
+  refusing lean snacks, and two more corrupt food rows (0-kcal Iceberg
+  Lettuce, 0-kcal Cannellini). All fixed at the proposal layer; 62/62 admitted.
+- AFTER seeding: 688 recipes → 559 admitted; P0 181→230 (snacks 6→21),
+  P1 21→39 (snacks 0→6, now solvable), P2 197→247, keto 20→35,
+  P6 247→285.
+- Suite: 147 files · 1,807 tests · 0 failures after the fence wiring
+  (two fence-design lessons paid for by 9 transient failures: rows with NO
+  gram field are exclusionGate's territory, and partial sums must not be
+  judged against the kcal floor).
+- Found along the way: **"pescatarian" is not a dietary style in this app**
+  (9 styles: none/mediterranean/vegetarian/vegan/paleo/keto/carnivore/
+  halal/kosher) and an unrecognized style string silently applies no filter
+  (route validation prevents it in-app). P5 needs the style added to the
+  lattice — Phase 4 prerequisite.
+
+**Deferred:**
+- Serving-normalization rescue for the 129 whole-pot rows (divide grams by
+  an inferred serving count, provenance-noted) — curation tooling, owner
+  call on his real library.
+- Sanity gate on the AI-draft/import/save write paths (runtime fence already
+  guarantees nothing implausible is SERVED regardless of entry path).
+- P5 pescatarian style in dietaryFilter/lattice.
+
+**Next:** Phase 3 — solver: per-role lever scaling + LP-style refinement,
+FDC-canonical verification ruler (±50 kcal / ±7 g P / ±7 g F / ±10 g net C),
+post-rounding re-verify, feasibility check at target-setting.

@@ -26,6 +26,14 @@ const { macroTrustIssue } = require("./foodValidation.js");
 // question with the same evidence — see that file's header for the 210 recipe/
 // allergy pairs the old five-implementations arrangement was leaking.
 const { filterRecipes, RECIPE_GATE_SELECT, recipeTrustExclusion } = require("./exclusionGate.js");
+// Phase-2 plausibility fence (recipeSanityGate): a recipe whose per-serving
+// numbers are implausible — 10,000 g of one ingredient, 9,000 kcal a serving —
+// is fenced from every PLAN pool the same way trust-excluded rows are. It
+// stays visible in the Recipes browse; it is never served. Totals are
+// recomputed FDC-canonically from the gate-select rows (nutritionCore), never
+// read from the cached Recipe columns.
+const { macroTotals } = require("./nutritionCore.js");
+const { sanityCheckRecipe } = require("./recipeSanityGate.js");
 
 // The pool carries the diet style it was admitted under (solver-core-3).
 // "Pool membership = compliance" is this codebase's invariant, but membership is
@@ -58,7 +66,43 @@ function stampDietGuard(recipes, dietaryStyle) {
 function filterRecipePool(recipePool, profile) {
   const dietaryStyle = profile.dietaryStyle || null;
   const trusted = recipePool.filter((r) => !recipeTrustExclusion(r).excluded);
-  return stampDietGuard(filterRecipes(trusted, profile), dietaryStyle);
+  const sane = trusted.filter((r) => !recipeSanityExclusion(r).excluded);
+  return stampDietGuard(filterRecipes(sane, profile), dietaryStyle);
+}
+
+// The plausibility fence. Profile-independent, like the trust gate: it reads
+// only the recipe's own ingredient rows. Attribution order for the counts is
+// raw -> trust -> sanity -> diet, and a row is billed to the FIRST fence that
+// removes it, so the two counts never double-count one recipe.
+function recipeSanityExclusion(recipe) {
+  // Rows that carry NO gram field at all are not this fence's business —
+  // absence of data is exclusionGate's fail-closed territory; this fence
+  // judges data that EXISTS and is implausible. A stored baseGrams of 0 or a
+  // negative still fails (the field exists and lies).
+  const ings = (recipe.ingredients || [])
+    .filter((i) => i.baseGrams !== undefined && i.baseGrams !== null)
+    .map((i) => ({
+      foodId: i.foodId,
+      grams: i.baseGrams,
+      name: i.food?.name,
+    }));
+  const foodsById = new Map((recipe.ingredients || []).map((i) => [i.foodId, i.food]));
+  const { ok, totals } = macroTotals(ings, foodsById);
+  // The kcal/protein bounds are judged only when EVERY ingredient row carries
+  // grams and resolves — a partial sum reads artificially low and would trip
+  // the 150-kcal floor on recipes whose data is merely incomplete (that class
+  // is exclusionGate's fail-closed job, not this fence's). Gram bounds still
+  // apply to every row that states a gram figure.
+  const complete = ok && ings.length > 0 && ings.length === (recipe.ingredients || []).length;
+  const sanity = sanityCheckRecipe(
+    { name: recipe.name, ingredients: ings },
+    // No kcal floor at the runtime fence: a small side dish in the library
+    // harms nobody. The floor is a candidate-ADMISSION rule (see the gate's
+    // own doc); here it would fence legitimate light recipes and every
+    // minimal test fixture.
+    { totals: complete ? totals : null, foodsById, enforceKcalFloor: false }
+  );
+  return sanity.ok ? { excluded: false } : { excluded: true, reason: "sanity", issues: sanity.issues };
 }
 
 // ── the recipe library cache (plan-perf-1) ────────────────────────────────
@@ -115,6 +159,10 @@ let _adjusterFoods = null; // { version, byLower } — see loadAdjusterFoods()
 // version for the same staleness reasons as _pools: source/dataQuality are in
 // LIBRARY_VERSION_SQL, so a quarantine run in another process moves it.
 let _trustCount = null; // { version, count }
+// Same shape and staleness rules for the plausibility fence — macro and gram
+// sums are in LIBRARY_VERSION_SQL, so any edit that could change a verdict
+// moves the version.
+let _sanityCount = null; // { version, count }
 
 // Called by every route that mutates a Recipe, RecipeIngredient or Food.
 function invalidateRecipeLibrary() {
@@ -130,6 +178,7 @@ function invalidateRecipeLibrary() {
   // added to real users' days, with the bad macros, until restart.
   _adjusterFoods = null;
   _trustCount = null;
+  _sanityCount = null;
 }
 
 // How many library recipes the trust gate removes from every plan pool —
@@ -137,6 +186,17 @@ function invalidateRecipeLibrary() {
 function countTrustExcluded(rows) {
   let n = 0;
   for (const r of rows) if (recipeTrustExclusion(r).excluded) n++;
+  return n;
+}
+
+// Counted among rows the trust gate PASSED, so a recipe removed by both
+// fences is billed once, to trust (attribution order raw -> trust -> sanity).
+function countSanityExcluded(rows) {
+  let n = 0;
+  for (const r of rows) {
+    if (recipeTrustExclusion(r).excluded) continue;
+    if (recipeSanityExclusion(r).excluded) n++;
+  }
   return n;
 }
 
@@ -186,23 +246,30 @@ async function loadRecipePool(profile) {
   // Attribution order for the counts: raw -> trust -> diet/allergy — the trust
   // gate runs first inside filterRecipePool, so `pool.length` is after BOTH.
   if (!_library) {
-    return { pool: filterRecipePool(rows, profile), rawPoolCount: rows.length, trustExcludedCount: countTrustExcluded(rows) };
+    return {
+      pool: filterRecipePool(rows, profile), rawPoolCount: rows.length,
+      trustExcludedCount: countTrustExcluded(rows), sanityExcludedCount: countSanityExcluded(rows),
+    };
   }
   if (!_trustCount || _trustCount.version !== _library.version) {
     _trustCount = { version: _library.version, count: countTrustExcluded(rows) };
   }
+  if (!_sanityCount || _sanityCount.version !== _library.version) {
+    _sanityCount = { version: _library.version, count: countSanityExcluded(rows) };
+  }
   const trustExcludedCount = _trustCount.count;
+  const sanityExcludedCount = _sanityCount.count;
   const excluded = Array.isArray(profile?.excludedFoods) ? profile.excludedFoods : [];
   const rulesKey = JSON.stringify([
     profile?.dietaryStyle || null,
     [...excluded].map((t) => String(t).trim().toLowerCase()).sort(),
   ]);
   const hit = _pools.get(rulesKey);
-  if (hit) return { pool: [...hit], rawPoolCount: rows.length, trustExcludedCount };
+  if (hit) return { pool: [...hit], rawPoolCount: rows.length, trustExcludedCount, sanityExcludedCount };
   const pool = filterRecipePool(rows, profile);
   if (_pools.size >= POOL_CACHE_MAX) _pools.delete(_pools.keys().next().value);
   _pools.set(rulesKey, pool);
-  return { pool: [...pool], rawPoolCount: rows.length, trustExcludedCount };
+  return { pool: [...pool], rawPoolCount: rows.length, trustExcludedCount, sanityExcludedCount };
 }
 
 // ── macro adjusters ─────────────────────────────────────────────────────────
@@ -284,13 +351,13 @@ async function planContext(userId) {
   // symmetric, and without the floor the band re-opens the clamp downward.
   const dailyTarget = computeMacros(profile, weightNowKg, reconciled.target, reconciled.floor);
   const mealConfig = { meals: profile.mealsPerDay, snacks: profile.snacksPerDay };
-  const { pool: recipePool, rawPoolCount, trustExcludedCount } = await loadRecipePool(profile);
+  const { pool: recipePool, rawPoolCount, trustExcludedCount, sanityExcludedCount } = await loadRecipePool(profile);
   // T (v2): the user's SOFT taste ratings, as a Map for the solver's bias. A
   // soft re-rank only — hard diet/allergy filtering already happened above.
   const ratingRows = await prisma.recipeRating.findMany({ where: { userId }, select: { recipeId: true, rating: true } });
   const ratings = new Map(ratingRows.map((r) => [r.recipeId, r.rating]));
   const adjusters = await loadAdjusters(profile);
-  return { profile, dailyTarget, mealConfig, recipePool, rawPoolCount, trustExcludedCount, ratings, adjusters };
+  return { profile, dailyTarget, mealConfig, recipePool, rawPoolCount, trustExcludedCount, sanityExcludedCount, ratings, adjusters };
 }
 
 // The generation filters the Phase 4 UI sends. Cuisine/protein/budget are

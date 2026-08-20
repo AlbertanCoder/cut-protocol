@@ -546,10 +546,17 @@ function diagnose({ counts, filters, dailyTarget, mealConfig, pool, days = 7 }) 
   const trustLine = counts.trustExcluded > 0
     ? `${counts.trustExcluded} recipe(s) sit out of planning because they carry ingredient rows whose nutrition data isn't trusted yet — they stay visible in Recipes, flagged in their detail, until the data is fixed.`
     : null;
+  // The plausibility fence's removals get the same never-silent treatment
+  // (Phase-2, recipeSanityGate): implausible per-serving numbers are fixed in
+  // the library, never served and never blamed on diet rules.
+  const sanityLine = counts.sanityExcluded > 0
+    ? `${counts.sanityExcluded} recipe(s) sit out of planning because their per-serving numbers fail plausibility checks (a serving past 1,400 kcal, an ingredient amount past belief) — they stay visible in Recipes until the data is corrected.`
+    : null;
 
   if (counts.afterDiet === 0) {
     if (trustLine) reasons.push(trustLine);
-    if (!(counts.trustExcluded >= counts.raw)) {
+    if (sanityLine) reasons.push(sanityLine);
+    if (!((counts.trustExcluded || 0) + (counts.sanityExcluded || 0) >= counts.raw)) {
       reasons.push("Your dietary style + allergy rules exclude every recipe in the library.");
     }
     suggestions.push("Generate new compliant recipes with the AI on the Recipes tab — the filters here can't conjure dishes that don't exist yet.");
@@ -618,6 +625,7 @@ function diagnose({ counts, filters, dailyTarget, mealConfig, pool, days = 7 }) 
   // gate's removals are disclosed alongside it. Appended only when a reason
   // already exists, so a healthy solve stays feasible and diagnosis-free.
   if (reasons.length > 0 && trustLine && !reasons.includes(trustLine)) reasons.push(trustLine);
+  if (reasons.length > 0 && sanityLine && !reasons.includes(sanityLine)) reasons.push(sanityLine);
   return { feasible: reasons.length === 0, reasons, suggestions };
 }
 
@@ -1367,8 +1375,11 @@ function classifyBinding({ counts = null, filters = {}, dailyTarget, mealConfig 
     const trustBit = c.trustExcluded > 0
       ? ` (${c.trustExcluded} of them by the ingredient-trust gate — untrusted nutrition data, fixed in the library rather than loosened for a plan)`
       : "";
+    const sanityBit = c.sanityExcluded > 0
+      ? ` (${c.sanityExcluded} of them by the plausibility fence — per-serving numbers past belief, fixed in the library rather than served)`
+      : "";
     return { key: BINDING.DIET, label: "your dietary style + allergy rules",
-      detail: `every one of the ${c.raw} recipes in the library is excluded before the solver runs${trustBit}.` };
+      detail: `every one of the ${c.raw} recipes in the library is excluded before the solver runs${trustBit}${sanityBit}.` };
   }
   if (filters.maxPrepMin && c.afterPrep === 0) {
     return { key: BINDING.PREP, label: `your ${filters.maxPrepMin}-minute max-prep cap`,
