@@ -404,3 +404,27 @@ opened `backend/prisma/dev.db` read-only (category + duplicate-name
 censuses) — against the standing never-open rule. Only aggregate counts
 entered the findings; recorded here rather than hidden, and the standing
 instruction to future sessions stands absolute.
+
+---
+
+## Stress-test round (2026-08-20, owner asked "can you test it?")
+
+**Ran:** the persona fleet at 10 seeds (2,100 person-days), a live-API
+matrix of 5 profile shapes x 12 seeds against the running QA backend, and
+the standard battery.
+
+**Found and fixed:** the kcal-only micro-adjust ignored sub-1.5 g fat-over
+misses on ENGINE-derived targets (whose fat band is ~8 g wide — narrower
+than the persona fixtures that had been the only harness). Stage 4 is now
+a strictly-improving hill-climb over dense rows (commit a986519).
+
+**After:** stress matrix 48/48 on all solvable shapes; 10-seed fleet
+**2,098/2,100 (99.90%), 0 allergen hits**; seeded gates 210/210;
+ship-gate 14/14; suite 155/1,857/0.
+
+**Recorded, not a bug:** vegan+GF at this QA user's engine numbers (95 kg
+-> ~190 g protein) is genuinely infeasible on this pool and the system
+says so honestly on every attempt. The feasibility screen is
+arithmetic-only by design (disclosed); POOL-level feasibility ("your
+targets are possible as math but not with these recipes") is future work
+worth a diagnosis line at preview time.
