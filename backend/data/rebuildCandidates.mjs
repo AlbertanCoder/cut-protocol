@@ -240,7 +240,7 @@ export const CANDIDATES = [
     I("Black beans, canned, drained", 120, "carb"), I("Enchilada sauce", 60, "other"),
     I("Cheese, cheddar", 30, "fat"), I("White Cabbage", 60, "veg"),
   ], ["Layer rice, warmed beans and sliced chicken in a bowl.",
-      "Spoon over the sauce, then cheese and shredded lettuce."]),
+      "Spoon over the sauce, then cheese and shredded cabbage."]),
   M("Grilled Chicken Street-Taco Bowl", "mexican", 20, ["p0"], [
     I("Chicken thigh, cooked, skinless", 220, "protein"), I("White rice, cooked", 180, "carb"),
     I("Onions, raw", 50, "veg"), I("Cilantro", 10, "other", false),
