@@ -75,6 +75,21 @@ test("zero and negative grams are refused outright", () => {
   assert.equal(r.issues.filter((i) => i.code === "zero-or-negative-grams").length, 2);
 });
 
+test("seasoning bounds fire on REAL food names, not only on the synthetic 'spices' category (review finding)", () => {
+  // No production Food row carries category "spices" — the original
+  // category-only check was dead code and 300 g of real basil sailed
+  // through. Detection now also keys off the store-section classifier.
+  const basil = new Map([[9, { kcal: 23, protein: 3.2, fat: 0.6, carb: 2.7, fiber: 1.6, category: "fruit-veg" }]]);
+  const r = sanityCheckRecipe(
+    { name: "real-name fixture", ingredients: [{ name: "Basil, fresh", grams: 300, foodId: 9 }] },
+    { totals: null, foodsById: basil }
+  );
+  assert.equal(r.ok, false);
+  const hit = r.issues.find((i) => i.code === "implausible-ingredient-grams");
+  assert.ok(hit, "300 g of 'Basil, fresh' must fail the seasoning bound by NAME");
+  assert.match(hit.message, /seasoning/);
+});
+
 test("the bounds object is exported and carries the directive's numbers", () => {
   assert.equal(BOUNDS.kcalMinPerServing, 150);
   assert.equal(BOUNDS.kcalMaxPerServing, 1400);

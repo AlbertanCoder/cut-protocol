@@ -133,6 +133,16 @@ test("latency: 50 seeded day-solves fit comfortably inside the P50 budget", () =
   assert.ok(ms < 2000, `50 solves took ${ms.toFixed(1)} ms`);
 });
 
+test("FAIL CLOSED: a recipe carrying a macro-incomplete food is ineligible — NaN never reaches a plate (review finding)", () => {
+  const brokenFood = { id: "fx", name: "Corrupt row", category: "other", kcal: null, protein: 26, fat: 7, carb: 0, fiber: 0, source: "manual", dataQuality: null };
+  const broken = recipe("Corrupt Beef Plate", "meal", [[brokenFood, 200, "protein"], [RICE, 180, "carb"]]);
+  const out = solvePrescriptionDay({ pool: [broken, ...POOL], targets: TARGETS, mealConfig: { meals: 3, snacks: 1 }, rng: makeRng(13) });
+  for (const s of out.slots) for (const d of s.dishes) {
+    assert.notEqual(d.recipeName, "Corrupt Beef Plate", "the null-kcal recipe must never be served");
+  }
+  assert.ok(Number.isFinite(out.totals.kcal), "day totals must stay finite");
+});
+
 test("an empty pool is an honest failure, never a crash", () => {
   const out = solvePrescriptionDay({ pool: [], targets: TARGETS, mealConfig: { meals: 3, snacks: 1 }, rng: makeRng(1) });
   assert.equal(out.ok, false);

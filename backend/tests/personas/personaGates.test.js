@@ -18,6 +18,13 @@ const assert = require("node:assert/strict");
 const { qaDbPath, SKIP_NOTE, loadPoolRows, runPersona, biasFor } = require("./harness.js");
 const { PERSONAS } = require("./fixtures.js");
 
+// Plant-qualified "milks"/"butters"/"creams" are not animal products — the
+// same qualifier rule the real filter applies. Shared by every belt-check
+// below (review finding 2026-08-20: p1's bare /milk|butter/ would have
+// flagged vegan-legal Almond milk / Peanut Butter the day the pool served
+// one — a false red in the zero-violations gate).
+const PLANT_QUALIFIED = /\b(coconut|almond|soya?|oat|rice|peanut|cashew)\s+(milk|cream|butter)\b/i;
+
 const DB = qaDbPath();
 const DAYS = 30;
 const runs = new Map();
@@ -46,8 +53,10 @@ test("GATE: zero dietary-pattern violations (test_dietary_hard_constraints)", { 
           assert.ok(!p.forbiddenIngredientWords.test(dish.recipeName),
             `${p.id} day ${d.day}: dish "${dish.recipeName}" violates the pattern`);
           for (const i of dish.ingredients) {
-            assert.ok(!p.forbiddenIngredientWords.test(i.name || ""),
-              `${p.id} day ${d.day}: ingredient "${i.name}" violates the pattern`);
+            const name = i.name || "";
+            if (PLANT_QUALIFIED.test(name)) continue;
+            assert.ok(!p.forbiddenIngredientWords.test(name),
+              `${p.id} day ${d.day}: ingredient "${name}" violates the pattern`);
           }
         }
       }

@@ -22,7 +22,7 @@ function BandLine({ label, read, band, unit = "g" }) {
       <span className="font-semibold tabular-nums">
         {r0(read)} {unit}
         <span className="opacity-60 font-normal"> of {r0(band.lo)}–{r0(band.hi)}</span>
-        {!inBand && <span style={{ color: "var(--warn, #b45309)" }}> · outside</span>}
+        {!inBand && <span style={{ color: "var(--warn)" }}> · outside</span>}
       </span>
     </div>
   );
@@ -106,7 +106,7 @@ export default function SimplePrescription() {
             </div>
             <p className="text-xs mt-3 opacity-70 break-words">{day.scanLine}</p>
             {!day.ok && day.diagnosis && (
-              <p className="text-sm mt-2" style={{ color: "var(--warn, #b45309)" }}>{day.diagnosis}</p>
+              <p className="text-sm mt-2" style={{ color: "var(--warn)" }}>{day.diagnosis}</p>
             )}
           </Panel>
 

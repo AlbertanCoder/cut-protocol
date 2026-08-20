@@ -46,6 +46,16 @@ test("verdict: in-band day reads clean; misses carry direction and magnitude", (
   assert.ok(v.misses.some((m) => m.key === "proteinG" && m.kind === "under"));
 });
 
+test("FAIL CLOSED: a dimension the caller never specified is a MISS, not a silent pass (review finding)", () => {
+  // NaN comparisons are all false — before this fix an undefined netCarbG
+  // produced a NaN band that "verified" as in-band without ever measuring.
+  const v = dayVerdict({ kcal: 2000, protein: 180, fat: 65, netCarb: 150 }, { kcal: 2000, proteinG: 180, fatG: 65 });
+  assert.equal(v.inBand, false);
+  assert.ok(v.misses.some((m) => m.key === "netCarbG" && m.kind === "unspecified-target"));
+  const half = dayVerdict({ kcal: 2000, protein: 180, fat: 65, netCarb: 150 }, { kcal: 2000, proteinG: 180, fatG: 65, netCarbG: { lo: 120 } });
+  assert.equal(half.inBand, false, "a {lo}-only range is malformed, not a pass");
+});
+
 test("the allergen scan line matches the directive's machine-written shape", () => {
   const line = allergenScanLine({ profile: ["gluten", "soy", "shellfish", "kiwi"], ingredientCount: 41, hits: [] });
   assert.equal(line, "allergen_scan: PASS (profile: gluten, soy, shellfish, kiwi) — 0 hits across 41 ingredients");

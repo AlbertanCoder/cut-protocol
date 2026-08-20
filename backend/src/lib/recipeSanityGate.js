@@ -41,7 +41,22 @@ const BOUNDS = {
   seasoningFailG: 250,
 };
 
+// Seasoning detection: "spices" as a Food.category value exists only in
+// synthetic fixtures — no production food row carries it (the real category
+// vocabulary is protein/pantry/dairy-eggs/fruit-veg/grains/fats-nuts-oils/
+// drinks; review finding 2026-08-20 caught the original category-only check
+// as dead code, letting the gate's own motivating 300 g-basil case pass).
+// The measured instrument for "is this a seasoning" already exists: the
+// grocery store-section classifier, which files basil/cumin/paprika/oregano
+// under "spices" by name. Pure keyword logic, no DB.
+const { classifyStoreSection } = require("./groceryList.js");
 const SEASONING_CATEGORIES = new Set(["spices"]);
+
+function isSeasoning(food, name) {
+  if (food && SEASONING_CATEGORIES.has(food.category)) return true;
+  const label = name || food?.name;
+  return typeof label === "string" && classifyStoreSection(label) === "spices";
+}
 
 function issue(code, severity, message, extra) {
   return { code, severity, message, ...extra };
@@ -90,7 +105,7 @@ function sanityCheckRecipe(recipe, opts = {}) {
       continue;
     }
     const food = ing.foodId != null ? get(ing.foodId) : undefined;
-    const seasoning = food && SEASONING_CATEGORIES.has(food.category);
+    const seasoning = isSeasoning(food, ing.name);
     const failAt = seasoning ? BOUNDS.seasoningFailG : BOUNDS.ingredientFailG;
     const warnAt = seasoning ? BOUNDS.seasoningWarnG : BOUNDS.ingredientWarnG;
     if (grams > failAt) {

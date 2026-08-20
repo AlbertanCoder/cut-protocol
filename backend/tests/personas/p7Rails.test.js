@@ -137,6 +137,24 @@ test("the check-in payload rode along on the refusal that tripped it, plainly wo
   assert.equal(third.json.checkIn, undefined, "and it does not repeat on the third");
 });
 
+test("a stored rate past the cap cannot be laundered through a floor-only PUT — no acknowledgement path exists (review finding)", async () => {
+  // Store a legal-at-the-time rate on a heavier body, drift the weight down
+  // (startWeightKg is unguarded — the drift path the cap comment records),
+  // then try to slip a floor-only PUT through with the tick pre-checked.
+  const r = await call("POST", "/api/auth/register", { email: "p7c@example.test", password: "OverrideMe!99" });
+  const c3 = (r.setCookie || "").split(";")[0];
+  const call3 = (body) => fetch(base + "/api/profile", {
+    method: "PUT", headers: { "content-type": "application/json", cookie: c3 }, body: JSON.stringify(body),
+  }).then(async (res) => ({ status: res.status, json: await res.json() }));
+  await call3({ sex: "M", age: 30, heightCm: 180, startWeightKg: 80, goalWeightKg: 70, rateLbPerWeek: 0.5 });
+  const stored = await call3({ rateLbPerWeek: 2.0, rateAcknowledged: true }); // 1.13% on 80 kg — legal with ack
+  assert.equal(stored.status, 200, JSON.stringify(stored.json));
+  await call3({ startWeightKg: 55 }); // stored 2.0 lb/wk is now 1.65% of bodyweight
+  const laundered = await call3({ floorKcal: 1600, rateAcknowledged: true });
+  assert.equal(laundered.status, 400, `expected the absolute cap, got ${laundered.status}: ${JSON.stringify(laundered.json)}`);
+  assert.equal(laundered.json.gate, "rate-absolute-cap");
+});
+
 test("the floor holds in the DERIVED target — a floored ask lands AT the floor, never below", async () => {
   // 1.5 lb/wk on 55 kg is 1.24% BW/wk — inside the absolute cap, but the
   // ~750 kcal/day deficit it asks for drives the raw target under the floor.

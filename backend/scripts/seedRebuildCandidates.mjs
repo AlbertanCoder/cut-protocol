@@ -47,14 +47,33 @@ function foodEnergyConsistent(f) {
 }
 
 // ── upsert the new label-sourced foods first (dry run: verify only) ───────
+// OVERWRITE POLICY (review finding 2026-08-20): this seeder may only ever
+// update rows IT created (source "label"). Against a fuller library — the
+// owner's carries e.g. "Cauliflower, raw" three times, usda-verified —
+// findFirst+update would have silently replaced a verified row's macros
+// with hand-entered label values, the exact source-mixing the constitution
+// forbids. A pre-existing non-label row that passes the energy screen is
+// USED as the resolution target instead; one that fails the screen makes
+// the NEW_FOODS name an authoring error (pick a distinct name), loudly.
 const foodByName = new Map();
 for (const f of NEW_FOODS) {
   if (!foodEnergyConsistent(f)) throw new Error(`NEW_FOODS ${f.name} fails its own energy consistency check`);
   if (WRITE) {
     const existing = await prisma.food.findFirst({ where: { name: f.name } });
-    const row = existing
-      ? await prisma.food.update({ where: { id: existing.id }, data: f })
-      : await prisma.food.create({ data: f });
+    let row;
+    if (!existing) {
+      row = await prisma.food.create({ data: f });
+    } else if (existing.source === "label") {
+      row = await prisma.food.update({ where: { id: existing.id }, data: f });
+    } else if (foodEnergyConsistent(existing)) {
+      console.log(`NEW_FOODS "${f.name}": a ${existing.source} row already exists — using it, not overwriting it.`);
+      row = existing;
+    } else {
+      throw new Error(
+        `NEW_FOODS "${f.name}": an existing ${existing.source} row fails the energy screen and this seeder ` +
+        `will not overwrite it. Rename the NEW_FOODS entry or fix the library row deliberately.`
+      );
+    }
     foodByName.set(f.name, row);
   } else {
     foodByName.set(f.name, { id: `dry-${f.name}`, ...f });

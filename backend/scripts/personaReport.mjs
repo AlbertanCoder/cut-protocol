@@ -71,7 +71,7 @@ L.push("");
 L.push(`Cost figures exist on ${r1(costCov * 100)}% of served dishes (Recipe.costPerServing). ` +
   (costCov < 0.5
     ? "That coverage is too thin for a cost GATE — the budget bias had almost nothing to act on. Building a real cost model (groceryPrices keyword estimates over ingredient grams) is recorded follow-up work; until then the budget tier is a preference, not a verified constraint."
-    : `Median estimated day cost CA$${r1(p4.days.map((d) => d.estCostCad).sort((a, b) => a - b)[15])} against the CA$${r1(60 / 7)} target.`));
+    : `Median estimated day cost CA$${r1(p4.days.map((d) => d.estCostCad).sort((a, b) => a - b)[Math.floor(p4.days.length / 2)])} against the CA$${r1(60 / 7)} target.`));
 L.push("");
 
 L.push("## Worst day per persona (largest total band miss)");

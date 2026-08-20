@@ -67,6 +67,12 @@ function dayVerdict(totals, targets) {
   for (const key of ["kcal", "proteinG", "fatG", "netCarbG"]) {
     const b = bands[key];
     const v = read[key];
+    // FAIL CLOSED, both ways. A target the caller never specified (undefined
+    // → NaN band) must not verify as PASS — NaN comparisons are all false,
+    // which silently turned "never measured" into "in band" (review finding
+    // 2026-08-20). A dimension without a real band is a broken instrument,
+    // not a green light.
+    if (!Number.isFinite(b.lo) || !Number.isFinite(b.hi)) { misses.push({ key, kind: "unspecified-target" }); continue; }
     if (!Number.isFinite(v)) { misses.push({ key, kind: "unmeasurable" }); continue; }
     if (v < b.lo - 1e-9) misses.push({ key, kind: "under", by: b.lo - v, edge: b.lo });
     else if (v > b.hi + 1e-9) misses.push({ key, kind: "over", by: v - b.hi, edge: b.hi });

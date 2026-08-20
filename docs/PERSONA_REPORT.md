@@ -9,8 +9,8 @@ Solver: prescription daySolver (Phase 3), seed 1, best-of-5 attempts/day.
 |---|---|---|---|
 | Person-days | ≥200 | 210 | PASS |
 | Allergen violations | 0 | 0 | PASS |
-| Days inside all four bands (post-rounding) | ≥95% | 208/210 (99%) | PASS |
-| Latency P50 / P95 per day | <2 s / <8 s | 4 ms / 8.2 ms | PASS |
+| Days inside all four bands (post-rounding) | ≥95% | 206/210 (98.1%) | PASS |
+| Latency P50 / P95 per day | <2 s / <8 s | 4.4 ms / 12.4 ms | PASS |
 | Variety (3-day window, in-day uniqueness) | hold | asserted in personaGates.test.js | PASS |
 | Keto ceiling crossed | never | 0 day(s) | PASS |
 | P7 floor gate | 100/100 | — | runs at Phase 7 (rails) |
@@ -19,13 +19,13 @@ Solver: prescription daySolver (Phase 3), seed 1, best-of-5 attempts/day.
 
 | Persona | Pool | Days in band | Allergen hits | P50 ms | Stresses |
 |---|---:|---:|---:|---:|---|
-| p0 — high-protein founder-shaped profile, four allergen walls | 244 | 29/30 | 0 | 4.7 | high protein under four simultaneous exclusions |
-| p1 — celiac vegan woman, 1,600 kcal | 43 | 30/30 | 0 | 4.8 | protein without meat OR gluten — seitan is pure wheat gluten and must never appear |
-| p2 — soy + wheat allergy, 2,000 kcal, loves Chinese | 262 | 30/30 | 0 | 4.2 | the derived-ingredient trap: soy sauce, hoisin, oyster sauce; coconut aminos must rescue the cuisine |
-| p3 — keto OMAD, 2,400 kcal, ≤25 g net carbs | 36 | 30/30 | 0 | 1.3 | one giant meal inside a hard carb ceiling — the slot holds several dishes |
-| p4 — budget student, $60/week, 3,000 kcal | 589 | 30/30 | 0 | 2 | cost tier as a real constraint |
-| p5 — pescatarian Mediterranean, 1,800 kcal | 336 | 30/30 | 0 | 3.7 | fish allowed, shellfish allowed — ontology precision in the other direction |
-| p6 — lactose-intolerant powerlifter, 3,200 kcal, 220 g protein, dislikes cottage cheese | 305 | 29/30 | 0 | 4.7 | hard exclusion + soft dislike handled differently |
+| p0 — high-protein founder-shaped profile, four allergen walls | 243 | 26/30 | 0 | 5.9 | high protein under four simultaneous exclusions |
+| p1 — celiac vegan woman, 1,600 kcal | 42 | 30/30 | 0 | 4.9 | protein without meat OR gluten — seitan is pure wheat gluten and must never appear |
+| p2 — soy + wheat allergy, 2,000 kcal, loves Chinese | 261 | 30/30 | 0 | 4.3 | the derived-ingredient trap: soy sauce, hoisin, oyster sauce; coconut aminos must rescue the cuisine |
+| p3 — keto OMAD, 2,400 kcal, ≤25 g net carbs | 36 | 30/30 | 0 | 1.4 | one giant meal inside a hard carb ceiling — the slot holds several dishes |
+| p4 — budget student, $60/week, 3,000 kcal | 588 | 30/30 | 0 | 2.5 | cost tier as a real constraint |
+| p5 — pescatarian Mediterranean, 1,800 kcal | 335 | 30/30 | 0 | 4.4 | fish allowed, shellfish allowed — ontology precision in the other direction |
+| p6 — lactose-intolerant powerlifter, 3,200 kcal, 220 g protein, dislikes cottage cheese | 304 | 30/30 | 0 | 5.2 | hard exclusion + soft dislike handled differently |
 
 ## Cost (p4) — honest about what is measurable
 
@@ -33,49 +33,52 @@ Cost figures exist on 0% of served dishes (Recipe.costPerServing). That coverage
 
 ## Worst day per persona (largest total band miss)
 
-- **p0** day 12: kcal 2102.9 · P 215.7 g · F 76 g · netC 157.4 g — fatG over by 6
+- **p0** day 27: kcal 2104.8 · P 213.1 g · F 72.8 g · netC 154.5 g — fatG over by 2.8
 - **p1** day 1: kcal 1635.6 · P 92.1 g · F 47.6 g · netC 176.7 g — none — inside every band
 - **p2** day 1: kcal 2002.1 · P 148.5 g · F 63.2 g · netC 188.3 g — none — inside every band
 - **p3** day 1: kcal 2403 · P 160.8 g · F 185.7 g · netC 16.1 g — none — inside every band
-- **p4** day 1: kcal 3049.8 · P 162.3 g · F 83.9 g · netC 358.7 g — none — inside every band
+- **p4** day 1: kcal 3049.7 · P 162.1 g · F 83.5 g · netC 359.4 g — none — inside every band
 - **p5** day 1: kcal 1817.9 · P 118.9 g · F 62.6 g · netC 167.2 g — none — inside every band
-- **p6** day 18: kcal 3245 · P 211 g · F 104.2 g · netC 333.8 g — proteinG under by 2
+- **p6** day 1: kcal 3238.2 · P 217.4 g · F 95.2 g · netC 336.2 g — none — inside every band
 
 ## Example day per persona, in full — is this plausible food?
 
 ### p0 — high-protein founder-shaped profile, four allergen walls (day 1)
 
-`allergen_scan: PASS (profile: shellfish, gluten, kiwi, soy) — 0 hits across 19 ingredients`
+`allergen_scan: PASS (profile: shellfish, gluten, kiwi, soy) — 0 hits across 22 ingredients`
 
 **meal 1**
-- *Chipotle-Style Chicken Burrito Bowl* — 867 kcal · 99 g P
-  - 255 g Chicken breast, cooked, skinless
+- *Chipotle-Style Chicken Burrito Bowl* — 850 kcal · 99 g P
+  - 260 g Chicken breast, cooked, skinless
   - 130 g White rice, cooked
   - 85 g Black beans, canned, drained
-  - 95 g Enchilada sauce
-  - 30 g Cheese, cheddar
-  - 95 g White Cabbage
+  - 85 g Enchilada sauce
+  - 25 g Cheese, cheddar
+  - 85 g White Cabbage
 **meal 2**
-- *Pollo Verde Bowl* — 522 kcal · 51 g P
-  - 115 g Chicken breast, cooked, skinless
-  - 110 g Green Salsa
-  - 65 g White rice, cooked
-  - 35 g Black beans, canned, drained
-  - 75 g Greek yogurt, 0%
+- *Coconut-Aminos Chicken Stir-Fry* — 538 kcal · 45 g P
+  - 125 g Chicken breast, cooked, skinless
+  - 115 g Broccoli, raw
+  - 75 g Peppers, bell, red, raw
+  - 14 g Coconut aminos
+  - 8 g Ginger
+  - 6 g Garlic, raw
+  - 16 g Oil, canola
+  - 80 g White rice, cooked
 **meal 3**
-- *Smoked Haddock & Pea Rice Bowl* — 588 kcal · 44 g P
-  - 135 g Smoked Haddock
-  - 105 g White rice, cooked
+- *Smoked Haddock & Pea Rice Bowl* — 559 kcal · 48 g P
+  - 155 g Smoked Haddock
+  - 100 g White rice, cooked
   - 195 g Frozen Peas
-  - 21 g Butter
+  - 16 g Butter
   - 10 g Lemon juice, raw
 **snack 1**
-- *Protein Shake, Whey & Almond Milk* — 161 kcal · 17 g P
+- *Protein Shake, Whey & Almond Milk* — 176 kcal · 17 g P
   - 18 g Beverages, Protein powder whey based
-  - 290 g Almond milk, unsweetened, plain, refrigerated
-  - 12 g Banana
+  - 315 g Almond milk, unsweetened, plain, refrigerated
+  - 15 g Banana
 
-Day: **2138 kcal** (band 2100–2200) · **210 g P** (200–220) · **65 g F** (60–70) · **149 g netC** (135–160)
+Day: **2124 kcal** (band 2100–2200) · **210 g P** (200–220) · **65 g F** (60–70) · **148 g netC** (135–160)
 
 ### p1 — celiac vegan woman, 1,600 kcal (day 1)
 
@@ -179,50 +182,46 @@ Day: **2403 kcal** (band 2350–2450) · **161 g P** (150–170) · **186 g F** 
 
 ### p4 — budget student, $60/week, 3,000 kcal (day 1)
 
-`allergen_scan: PASS (profile: none) — 0 hits across 30 ingredients`
+`allergen_scan: PASS (profile: none) — 0 hits across 26 ingredients`
 
 **meal 1**
-- *Vietnamese caramel trout* — 625 kcal · 34 g P
-  - 25 g Golden Caster Sugar
-  - 5 g Fish Sauce
-  - 15 g Red Chilli
-  - 50 g Ginger
-  - 100 g Rainbow Trout
-  - 100 g Bok Choi
-  - 30 g Lemon
-  - 50 g Coriander
-  - 50 g Rice
+- *Edamame Fried Rice* — 1324 kcal · 56 g P
+  - 625 g White rice, cooked
+  - 285 g Edamame, shelled, cooked
+  - 120 g Frozen Peas
+  - 60 g Spring Onions
+  - 30 g Coconut aminos
+  - 6 g Oil, sesame, salad or cooking
+  - 6 g Ginger
 **meal 2**
-- *Tempeh Taco Bowl* — 1491 kcal · 83 g P
-  - 205 g Tempeh, cooked
-  - 295 g Black beans, canned, drained
-  - 390 g White rice, cooked
-  - 200 g Peppers, bell, red, raw
-  - 120 g Onions, raw
-  - 6 g Chili Powder
-  - 3 g Ground Cumin
-  - 7 g Oil, canola
-**meal 3**
-- *Falafel* — 357 kcal · 18 g P
-  - 5 g Sunflower Oil
-  - 20 g Onion
+- *Falafel* — 547 kcal · 28 g P
+  - 8 g Sunflower Oil
+  - 30 g Onion
   - 1 g Garlic
-  - 75 g Chickpeas
+  - 115 g Chickpeas
   - 1 g Ground Cumin
   - 1 g Ground Coriander
-  - 5 g Parsley
-  - 9 g Egg
+  - 9 g Parsley
+  - 14 g Egg
+**meal 3**
+- *Edamame & Quinoa Green Bowl* — 678 kcal · 40 g P
+  - 270 g Quinoa, cooked
+  - 205 g Edamame, shelled, cooked
+  - 200 g Cucumber
+  - 80 g Rocket
+  - 25 g Coconut aminos
+  - 5 g Oil, sesame, salad or cooking
 **snack 1**
-- *Crispy Spiced Chickpeas* — 308 kcal · 12 g P
-  - 50 g Chickpeas
-  - 12 g Olive Oil
+- *Crispy Spiced Chickpeas* — 176 kcal · 6 g P
+  - 25 g Chickpeas
+  - 8 g Olive Oil
   - 3 g Smoked Paprika
 **snack 2**
-- *Cottage Cheese & Pineapple Bowl* — 269 kcal · 15 g P
-  - 125 g Cottage Cheese
-  - 250 g Pineapple, raw
+- *Cottage Cheese & Pineapple Bowl* — 325 kcal · 32 g P
+  - 285 g Cottage Cheese
+  - 90 g Pineapple, raw
 
-Day: **3050 kcal** (band 2950–3050) · **162 g P** (150–180) · **84 g F** (80–100) · **359 g netC** (350–380)
+Day: **3050 kcal** (band 2950–3050) · **162 g P** (150–180) · **83 g F** (80–100) · **359 g netC** (350–380)
 
 ### p5 — pescatarian Mediterranean, 1,800 kcal (day 1)
 
@@ -259,14 +258,14 @@ Day: **1818 kcal** (band 1750–1850) · **119 g P** (110–130) · **63 g F** (
 
 ### p6 — lactose-intolerant powerlifter, 3,200 kcal, 220 g protein, dislikes cottage cheese (day 1)
 
-`allergen_scan: PASS (profile: lactose) — 0 hits across 24 ingredients`
+`allergen_scan: PASS (profile: lactose) — 0 hits across 32 ingredients`
 
 **meal 1**
-- *Trout with Potatoes & Green Beans* — 1224 kcal · 93 g P
-  - 380 g Rainbow Trout
-  - 605 g Potato, baked with skin
+- *Trout with Potatoes & Green Beans* — 1183 kcal · 89 g P
+  - 360 g Rainbow Trout
+  - 620 g Potato, baked with skin
   - 75 g Beans, snap, green, microwaved
-  - 11 g Olive Oil
+  - 8 g Olive Oil
   - 8 g Dill weed, fresh
 **meal 2**
 - *Carbonada Criolla* — 505 kcal · 34 g P
@@ -280,15 +279,23 @@ Day: **1818 kcal** (band 1750–1850) · **119 g P** (110–130) · **63 g F** (
   - 1 g Salt
   - 1 g Pepper
 **meal 3**
-- *Pan-Seared Salmon & Potato* — 753 kcal · 42 g P
-  - 125 g Salmon, cooked
-  - 500 g Potato, baked with skin
-  - 300 g Cucumber
+- *Weeknight Beef & Broccoli* — 782 kcal · 46 g P
+  - 145 g Beef, flank, steak, boneless, choice, raw
+  - 380 g Broccoli, raw
+  - 40 g Coconut aminos
+  - 8 g Ginger
+  - 6 g Cornstarch
+  - 5 g Oil, canola
+  - 245 g White rice, cooked
 **meal 4**
-- *Pan-Seared Salmon, Rice & Peppers* — 507 kcal · 31 g P
-  - 115 g Salmon, cooked
-  - 190 g White rice, cooked
-  - 75 g Bell peppers
+- *Turkey Fajita Rice Skillet* — 515 kcal · 30 g P
+  - 125 g Turkey, ground, 93% lean, 7% fat, raw
+  - 75 g Peppers, bell, red, raw
+  - 40 g Onions, raw
+  - 170 g White rice, cooked
+  - 4 g Smoked Paprika
+  - 3 g Ground Cumin
+  - 5 g Oil, canola
 **snack 1**
 - *Crispy Spiced Chickpeas* — 132 kcal · 6 g P
   - 25 g Chickpeas
@@ -298,4 +305,4 @@ Day: **1818 kcal** (band 1750–1850) · **119 g P** (110–130) · **63 g F** (
 - *Edamame with Flaky Salt* — 121 kcal · 12 g P
   - 100 g Edamame, shelled, cooked
 
-Day: **3242 kcal** (band 3150–3250) · **217 g P** (213–227) · **93 g F** (90–110) · **334 g netC** (325–355)
+Day: **3238 kcal** (band 3150–3250) · **217 g P** (213–227) · **95 g F** (90–110) · **336 g netC** (325–355)

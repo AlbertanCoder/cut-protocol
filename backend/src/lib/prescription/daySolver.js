@@ -31,10 +31,25 @@ const DEFAULT_ATTEMPTS = 5;
 const BAND_W = { kcal: 1 / 50 ** 2, protein: 1 / 7 ** 2, fat: 1 / 7 ** 2, netCarb: 1 / 10 ** 2 };
 const MISS_W = { kcal: 1 / 50, proteinG: 1 / 7, fatG: 1 / 7, netCarbG: 1 / 10 };
 
+function foodMacrosUsable(f) {
+  return f && Number.isFinite(f.kcal) && Number.isFinite(f.protein) && Number.isFinite(f.fat) && Number.isFinite(f.carb);
+}
+
 function rowsOf(recipe) {
   return (recipe.ingredients || [])
     .filter((i) => Number.isFinite(i.baseGrams) && i.food)
     .map((i) => ({ grams: i.baseGrams, scalable: i.scalable !== false, role: i.role, food: i.food, foodId: i.foodId, name: i.food.name }));
+}
+
+// A recipe carrying a macro-incomplete food (null kcal — this library is
+// documented to hold such rows) cannot be solved honestly: NaN survives
+// Math.min/max clamps and poisons every total. Dropping the ROW would
+// silently change the dish, so the whole recipe is ineligible — the same
+// fail-closed posture as exclusionGate and nutritionCore (review finding
+// 2026-08-20).
+function recipeSolvable(recipe) {
+  const rows = rowsOf(recipe);
+  return rows.length > 0 && rows.every((r) => foodMacrosUsable(r.food));
 }
 
 function eligible(pool, slotType, usedToday, recentIds) {
@@ -47,7 +62,7 @@ function eligible(pool, slotType, usedToday, recentIds) {
     } else if (slotType === "snack") {
       if (r.slotType === "meal") return false;
     }
-    return rowsOf(r).length > 0;
+    return recipeSolvable(r);
   });
 }
 

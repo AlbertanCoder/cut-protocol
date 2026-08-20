@@ -2,7 +2,7 @@ const express = require("express");
 const { prisma } = require("../lib/prisma.js");
 const { requireAuth } = require("../lib/auth.js");
 const { getWeightNowKg } = require("../lib/weightNow.js");
-const { computeEnergy, rateSafety, RATE_OPTIONS, SAFE_FLOOR, FORMULA_KEYS } = require("../lib/bmrEngine.js");
+const { computeEnergy, rateSafety, deriveTarget, RATE_OPTIONS, SAFE_FLOOR, FORMULA_KEYS } = require("../lib/bmrEngine.js");
 const { recomputeTarget } = require("../lib/profileTarget.js");
 const { OCCUPATION_BY_KEY, TRAINING_BY_KEY } = require("../lib/activityData.js");
 const { DIETARY_STYLES } = require("../lib/dietaryFilter.js");
@@ -487,16 +487,26 @@ router.put("/", async (req, res) => {
     const safety = rateSafety(candidate, weightKg, energy.tdee, energy.rmr);
     // §8.2 ABSOLUTE cap (Phase 7): above 1.5% of bodyweight/week there is no
     // acknowledgement path — the menu alone can't express this (2.0 lb/wk is
-    // 1% on a 200 lb body and 2% on a 100 lb one). Runs BEFORE the ack gate:
-    // a refusal is not a question.
-    if (classifyRatePct(safety.pctOfBw) === "refused" && body.rateLbPerWeek !== undefined) {
+    // 1% on a 200 lb body and 2% on a 100 lb one). Runs BEFORE the ack gate
+    // (a refusal is not a question) and applies to ANY request this block
+    // evaluates: a floorKcal-only PUT while the stored rate sits past the cap
+    // must not fall through to the 422 — that would be an acknowledgement
+    // path for a rate the cap says has none. (Review finding 2026-08-20; a
+    // stored rate drifting past the cap between weigh-ins with NO
+    // rate-touching PUT still isn't re-gated — same scoping as the ack rule,
+    // recorded rather than hidden.)
+    if (classifyRatePct(safety.pctOfBw) === "refused") {
       safetyEvents.record(req.userId, "rate-cap-push", { pctOfBw: safety.pctOfBw, rate: candidate.rateLbPerWeek });
       const checkIn = safetyEvents.checkInFor(req.userId);
       return res.status(400).json({ ...absoluteCapRefusal(safety.pctOfBw), ...(checkIn ? { checkIn } : {}) });
     }
     if (safety.unsafe && body.rateAcknowledged !== true) {
       // A floored target is a below-floor ASK — the same pattern §8.3 counts.
-      if (safety.reasons?.some((r) => /floor/i.test(r))) {
+      // Detected structurally via deriveTarget (the same pure derivation
+      // rateSafety consults), never by grepping user-facing copy for the
+      // word "floor" — coaching text gets reworded; safety counters must not
+      // care. (Review finding 2026-08-20.)
+      if (deriveTarget(candidate, energy.tdee, energy.rmr).floored) {
         safetyEvents.record(req.userId, "floor-breach-attempt", { via: "floored-rate", pctOfBw: safety.pctOfBw });
       }
       const checkIn = safetyEvents.checkInFor(req.userId);

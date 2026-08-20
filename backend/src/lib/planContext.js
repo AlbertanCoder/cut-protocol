@@ -183,21 +183,17 @@ function invalidateRecipeLibrary() {
 
 // How many library recipes the trust gate removes from every plan pool —
 // the number the diagnosis layer reports so the removal is never silent.
-function countTrustExcluded(rows) {
-  let n = 0;
-  for (const r of rows) if (recipeTrustExclusion(r).excluded) n++;
-  return n;
-}
-
-// Counted among rows the trust gate PASSED, so a recipe removed by both
-// fences is billed once, to trust (attribution order raw -> trust -> sanity).
-function countSanityExcluded(rows) {
-  let n = 0;
+// One pass, both counters (review cleanup 2026-08-20: the two separate
+// counters ran the trust check twice per recipe on every version bump).
+// Sanity is counted among rows the trust gate PASSED, so a recipe removed
+// by both fences is billed once, to trust (raw -> trust -> sanity).
+function countFenceExcluded(rows) {
+  let trust = 0, sanity = 0;
   for (const r of rows) {
-    if (recipeTrustExclusion(r).excluded) continue;
-    if (recipeSanityExclusion(r).excluded) n++;
+    if (recipeTrustExclusion(r).excluded) { trust++; continue; }
+    if (recipeSanityExclusion(r).excluded) sanity++;
   }
-  return n;
+  return { trust, sanity };
 }
 
 async function libraryVersion() {
@@ -246,16 +242,17 @@ async function loadRecipePool(profile) {
   // Attribution order for the counts: raw -> trust -> diet/allergy — the trust
   // gate runs first inside filterRecipePool, so `pool.length` is after BOTH.
   if (!_library) {
+    const counts = countFenceExcluded(rows);
     return {
       pool: filterRecipePool(rows, profile), rawPoolCount: rows.length,
-      trustExcludedCount: countTrustExcluded(rows), sanityExcludedCount: countSanityExcluded(rows),
+      trustExcludedCount: counts.trust, sanityExcludedCount: counts.sanity,
     };
   }
-  if (!_trustCount || _trustCount.version !== _library.version) {
-    _trustCount = { version: _library.version, count: countTrustExcluded(rows) };
-  }
-  if (!_sanityCount || _sanityCount.version !== _library.version) {
-    _sanityCount = { version: _library.version, count: countSanityExcluded(rows) };
+  if (!_trustCount || _trustCount.version !== _library.version ||
+      !_sanityCount || _sanityCount.version !== _library.version) {
+    const counts = countFenceExcluded(rows);
+    _trustCount = { version: _library.version, count: counts.trust };
+    _sanityCount = { version: _library.version, count: counts.sanity };
   }
   const trustExcludedCount = _trustCount.count;
   const sanityExcludedCount = _sanityCount.count;
