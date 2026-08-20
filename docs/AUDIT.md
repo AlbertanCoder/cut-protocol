@@ -400,11 +400,14 @@ NUL bytes — use `rg --text`) + `allergenTaxonomy.js` (38 rows).
 - Cross-reactivity: peanut→lupin (directional). Keto is enforced as a
   scale-invariant carb-energy share with post-scale re-check.
 
-Gaps vs the directive's §3.3: no explicit crustacean/mollusc **subclass**
-split (colloquial "shellfish" correctly denies both, but a mollusc-only
-profile isn't expressible); no **substitution knowledge** (coconut aminos
-etc. — nothing in the tree knows rescues); GF-labelled-tamari ambiguity rule
-not modelled. These are additive ontology work, not rework.
+Gaps vs the directive's §3.3 (corrected 2026-08-19 during Phase 1): the
+crustacean/mollusc **subclass umbrella already exists** (taxonomy rows
+`crustaceans` and `molluscs`, both `parent: "shellfish"` — an earlier draft
+of this audit wrongly listed it as missing). The real gaps, measured live:
+plain tamari/shoyu/ponzu did not trip **gluten** (closed in Phase 1 with the
+regulated GF-claim veto giving the labelled-tamari semantics), and no
+**substitution knowledge** existed anywhere (closed in Phase 1:
+`allergenSubstitutions.js`). Additive ontology work, not rework — confirmed.
 
 ### 5.5 Grocery list
 

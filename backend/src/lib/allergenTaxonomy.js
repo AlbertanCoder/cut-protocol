@@ -263,6 +263,14 @@ const ALLERGEN_TAXONOMY = [
       "soya", "soja", "soybean", "soybeans", "soy free", "soy lecithin", "soy protein",
       // Typed forms the audit measured resolving to nothing.
       "bean curd", "soybean curd", "textured vegetable protein", "tvp",
+      // 2026-08-19: promoted from nameKeywords to SYNONYMS. These are things
+      // people TYPE meaning a soy sauce, so the typed term must resolve to
+      // soy. They also became gluten nameKeywords the same day (wheat-brewed/
+      // trace-wheat), and the keyword-alias pass (dietaryFilter 4b) is
+      // first-wins with gluten processed before soy — without this promotion
+      // the typed terms flipped to resolving as gluten, which two tests
+      // rightly refused. Synonym resolution runs earlier and wins.
+      "tamari", "shoyu", "ponzu",
     ],
     nameKeywords: [
       "teriyaki", "hoisin",     // agent 09 §2: in the GLUTEN list, missing from SOY
@@ -350,6 +358,17 @@ const ALLERGEN_TAXONOMY = [
       // "one vocabulary expansion, one new leak" shape — a food can sit on two
       // walls and being known to one is not being known to the other.
       "oyster sauce", "hoisin", "teriyaki", "kecap manis",
+      // ── Directive derived-allergens pass (2026-08-19) ─────────────────────
+      // Same two-walls-one-food shape as oyster sauce above. All three were
+      // already SOY (that row has carried them since agent 09); none was
+      // GLUTEN, measured live before this edit:
+      //   shoyu — IS wheat-brewed soy sauce; "Shoyu Chicken" reached a celiac.
+      //   ponzu — commercial ponzu is built on wheat-brewed soy sauce.
+      //   tamari — traditionally wheat-free, but trace-wheat tamari is common
+      //     enough that celiac guidance is GF-LABELLED tamari only. Deny as
+      //     ambiguous; CATEGORY_ABSENCE_DECLARED.gluten clears a product whose
+      //     own name carries the regulated claim ("Gluten-Free Tamari").
+      "tamari", "shoyu", "ponzu",
       // Wonton/gyoza wrappers are wheat dough. Also on the EGGS row — see the
       // note there; `Wonton Skin` is a real row that T-2 named and nobody closed.
       "wonton", "won ton", "gyoza", "dumpling wrapper", "egg roll wrapper",
