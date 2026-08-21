@@ -622,3 +622,29 @@ lint + build clean. Full suite still waits on the owner's one dev.db
 Queued next: grocery consolidation over committed days (existing
 groceryList.js shapes), Today-tab surfacing of the committed day, another
 pool-loop iteration (vegan|6m, paleo fat-over corners).
+
+---
+
+## Slice 3 — saving, preferences and the deeper pool, priced (2026-08-21)
+
+Run wf_ff05daef-85f: 100 fresh customers (same persona formula and seeds,
+accounts cust-0401–0500), journey grew a save-and-verify step.
+
+| metric | baseline (250) | slice 2 | **slice 3** |
+|---|---|---|---|
+| avg star | 2.17 | 2.82 | **3.15** |
+| stars 1/2/3/4 | 32/32/24/13% | 4/32/42/22 | **6/17/33/44** |
+| would pay yes/maybe | 0 / 26% | 1 / 45% | **1 / 57%** |
+| solved: yes / no | 9% / 48% | 13% / 18% | **34% / 10%** |
+| plausibility | 2.3 | 2.7 | **3.0** |
+| real hard-filter violations | 0 | 0 | **0** (third consecutive) |
+
+4★ is now the modal rating. "Commit actually persists" was instantly the
+run's most-liked tag (~41 mentions) — customers verified /current matched
+their preview byte-for-byte. The six 1★s are all the owner-gated
+underweight dead zone; "no maintenance option" is now a named top ask.
+Slice 3 caught four real gaps (fixed same-day, see the styles/solver
+commit): seitan + pea protein + ketchup on paleo, and the aromatic cap's
+fdcCategory blind spot (135 g thyme). Remaining themes: spice/big-
+breakfast/grazer notes still only softly honored, mediterranean cuisine
+tagging thin, fat-over residue in paleo corners.
