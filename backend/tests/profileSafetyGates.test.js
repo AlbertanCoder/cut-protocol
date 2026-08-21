@@ -204,15 +204,17 @@ test("gainDirectionGate tells the truth about what 'set a maintenance goal' will
 
   // Current BMI under 16: a maintenance goal would be refused too — the gate
   // must say there is no prescribable goal, not advise a bounce.
+  // Any current BMI under 18.5 (including under 16): the honest path is
+  // maintenance, which EXISTS now — goal = current + the Maintain rate (0).
   const trapped = gain(195, 55, 60);
   assert.ok(trapped, "goal above current fires the gate");
-  assert.match(trapped.whatNow, /no prescribable goal/i);
-  assert.match(trapped.detail[2], /maintenance goal would be refused/i);
+  assert.match(trapped.whatNow, /Maintain \(0\)/);
+  assert.match(trapped.detail[2], /Maintain rate \(0\)/);
 
   // Current BMI 16–18.5: maintenance works via the confirm prompt — say so,
   // and name the field that completes it.
   const grey = gain(170, 50, 55); // current BMI 17.3
-  assert.match(grey.detail[2], /"goalWeightAcknowledged": true/);
+  assert.match(grey.detail[2], /Maintain rate \(0\)/);
   assert.match(grey.detail[2], /maintenance/i);
 
   // Normal-range current weight: the original advice stands.
@@ -440,8 +442,8 @@ test("HTTP: a GAIN ask from a lean body gets the gain answer, not the BMI answer
   const r = await putProfile({ goalWeightKg: 50 });
   assert.equal(r.status, 400, r.text);
   assert.equal(r.json.gate, "gain-not-supported", `got ${r.json.gate}: ${r.json.error}`);
-  // At BMI 15.6 current, the advice is honest about the dead zone.
-  assert.match(r.json.whatNow, /no prescribable goal/i);
+  // At BMI 15.6 current, the advice names the real path: Maintain (0).
+  assert.match(r.json.whatNow, /Maintain \(0\)/);
   await putProfile({ startWeightKg: 70 }); // restore
 });
 
@@ -521,6 +523,43 @@ test("HTTP: a bad field comes back as a message under that field, not a key dump
   assert.ok(r.json.fields.heightCm && r.json.fields.goalWeightKg);
   assert.ok(!r.json.error.includes(";"), `error is still a joined dump: ${r.json.error}`);
   assert.ok(!r.json.error.includes("heightCm"), `error names a column: ${r.json.error}`);
+});
+
+test("MAINTENANCE: holding your actual weight at rate 0 passes every BMI gate — it prescribes no deficit", () => {
+  // The dead zone that produced six 1-star reviews in every fleet run:
+  // 195 cm / 55 kg is BMI 14.5 — every loss goal refused, gains unsupported.
+  // Maintenance (owner-approved 2026-08-21) is the honest exit.
+  const maintain = goalWeightGate(
+    { heightCm: 195, goalWeightKg: 55, startWeightKg: 55, rateLbPerWeek: 0 },
+    { goalWeightKg: 55 }
+  );
+  assert.equal(maintain, null, "goal = current weight at rate 0 needs no gate at any BMI");
+  // The exemption is SCOPED: the same body at a LOSS rate is still refused…
+  assert.ok(goalWeightGate({ heightCm: 195, goalWeightKg: 55, startWeightKg: 55, rateLbPerWeek: 0.5 }, { goalWeightKg: 55 })?.refuse,
+    "rate 0 is the maintenance signal — a loss rate at the same goal stays refused");
+  // …and rate 0 with an ASPIRATIONAL lower goal is judged on that goal.
+  assert.ok(goalWeightGate({ heightCm: 195, goalWeightKg: 48, startWeightKg: 55, rateLbPerWeek: 0 }, { goalWeightKg: 48 })?.refuse,
+    "a lower goal is not maintenance, whatever the rate");
+});
+
+test("HTTP: the dead-zone body gets a real maintenance plan end to end", async () => {
+  // 45 kg at 170 cm (BMI 15.6): loss goals refused, gains unsupported — the
+  // exact trap. Goal = current + Maintain (0) must save and derive a
+  // full-TDEE target.
+  const r = await putProfile({ startWeightKg: 45, goalWeightKg: 45, rateLbPerWeek: 0 });
+  assert.equal(r.status, 200, r.text);
+  assert.equal(r.json.rateLbPerWeek, 0);
+  assert.ok(r.json.targetKcal > 1000, `maintenance target must be a real TDEE, got ${r.json.targetKcal}`);
+  // rate 0 is 0% of bodyweight per week: no ack was demanded, none stored.
+  assert.equal(r.json.rateAcknowledged, false);
+  await putProfile({ startWeightKg: 70, goalWeightKg: 62, rateLbPerWeek: 0.5 }); // restore
+});
+
+test("HTTP: /meta leads the rate menu with Maintain (0)", async () => {
+  const r = await call("GET", "/api/profile/meta");
+  assert.equal(r.status, 200);
+  assert.equal(r.json.rateOptions[0], 0, "Maintain leads the menu");
+  assert.ok(r.json.rateOptions.includes(0.25) && r.json.rateOptions.includes(2.0), "the loss menu is intact behind it");
 });
 
 test("HTTP: /meta serves the gate thresholds, so no client has to hardcode 18", async () => {

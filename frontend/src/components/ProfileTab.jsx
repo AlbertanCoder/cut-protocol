@@ -900,8 +900,8 @@ export default function ProfileTab({ profile, summary, refresh, openToday }) {
                   style={{ background: active ? "var(--secondary)" : "transparent", border: `1px solid ${active ? "var(--muted-foreground)" : "var(--border)"}` }}>
                   {/* Metric users get kg/wk as the bold primary — every other
                       number on this tab converts, so this one should too. */}
-                  <div className="tabular-nums text-sm font-extrabold" style={{ color: active ? "var(--foreground)" : "var(--muted-foreground)" }}>{pref === "metric" ? `${r1(r * 0.453592)} kg/wk` : `${r} lb/wk`}</div>
-                  <div className="text-[10px] font-bold" style={{ color: "var(--muted-foreground)" }}>{pref === "metric" ? `${r} lb/wk` : `${r1(r * 0.453592)} kg/wk`}</div>
+                  <div className="tabular-nums text-sm font-extrabold" style={{ color: active ? "var(--foreground)" : "var(--muted-foreground)" }}>{r === 0 ? "Maintain" : pref === "metric" ? `${r1(r * 0.453592)} kg/wk` : `${r} lb/wk`}</div>
+                  <div className="text-[10px] font-bold" style={{ color: "var(--muted-foreground)" }}>{r === 0 ? "hold steady" : pref === "metric" ? `${r} lb/wk` : `${r1(r * 0.453592)} kg/wk`}</div>
                 </button>
               );
             })}

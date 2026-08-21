@@ -240,11 +240,11 @@ export default function SimpleDetails({ profile, summary, refresh, onShowFull, o
 
       {/* ── How fast ───────────────────────────────────────────────── */}
       <div className="flex flex-col gap-3">
-        <h2 className="text-xl font-semibold">How fast do you want to lose?</h2>
+        <h2 className="text-xl font-semibold">How fast do you want to lose? Maintain holds you where you are.</h2>
         <div className="flex gap-2 flex-wrap">
           {rateOptions.map((r) => (
             <Pill key={r} on={r === profile.rateLbPerWeek} onClick={() => commit({ rateLbPerWeek: r })}>
-              {displayRate(r, pref)} {rateUnit(pref)}
+              {r === 0 ? "Maintain" : `${displayRate(r, pref)} ${rateUnit(pref)}`}
             </Pill>
           ))}
         </div>

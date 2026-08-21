@@ -1012,8 +1012,8 @@ export default function SetupWizard({ onDone }) {
                         onClick={() => { set({ rate: r }); setAcked(false); setAckReasons(null); }}
                         className="px-5 py-3 rounded-xl text-center"
                         style={{ background: d.rate === r ? "var(--secondary)" : "transparent", border: `1px solid ${d.rate === r ? "var(--muted-foreground)" : "var(--border)"}` }}>
-                        <div className="tabular-nums text-sm font-extrabold" style={{ color: d.rate === r ? "var(--foreground)" : "var(--muted-foreground)" }}>{r} lb/wk</div>
-                        <div className="text-[10px] font-bold" style={{ color: "var(--muted-foreground)" }}>{Math.round(r * 45.3592) / 100} kg/wk</div>
+                        <div className="tabular-nums text-sm font-extrabold" style={{ color: d.rate === r ? "var(--foreground)" : "var(--muted-foreground)" }}>{r === 0 ? "Maintain" : `${r} lb/wk`}</div>
+                        <div className="text-[10px] font-bold" style={{ color: "var(--muted-foreground)" }}>{r === 0 ? "hold steady" : `${Math.round(r * 45.3592) / 100} kg/wk`}</div>
                       </button>
                     ))}
                   </div>

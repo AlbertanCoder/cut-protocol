@@ -20,6 +20,18 @@ router.use(requireAuth);
 // targetKcal is deliberately absent: it's derived (rate → deficit → floor
 // clamp) and materialized by recomputeTarget(), never set by the client.
 const BODY_FAT_SOURCES = ["visual-estimate", "measured"]; // E2 (v2)
+
+// MAINTENANCE MODE (owner-approved 2026-08-21). Rate 0 IS maintenance:
+// deriveTarget's locked arithmetic (TDEE − rate×500/7·7, floor-clamped)
+// yields exactly TDEE at rate 0 with no formula change — only the ACCEPTED
+// MENU widens, here, in route code. Every fleet run's six 1★ reviews were
+// the underweight dead zone this closes: lean users had no legal goal
+// because every offered rate was a loss rate, while three different gate
+// messages promised "loss or maintenance". This makes that sentence true.
+// RATE_OPTIONS itself (bmrEngine.js) is deliberately untouched — it is the
+// LOSS menu, and rateSafety/absoluteCap treat 0 as the trivially-safe rate
+// it is (0% of bodyweight per week).
+const MAINTENANCE_RATE = 0;
 const PROFILE_FIELDS = [
   "sex", "age", "heightCm", "bodyFatPct", "bodyFatSource",
   "occupationKey", "activityOverride", "sessionsPerWeek", "trainingStyle", "minutesPerSession",
@@ -90,7 +102,7 @@ function validateProfileFields(body) {
       f.activityOverride = "Enter a multiplier between 1.0 and 2.2, or leave it blank to use your job's.";
     }
   }
-  if (body.rateLbPerWeek !== undefined && !RATE_OPTIONS.includes(body.rateLbPerWeek)) {
+  if (body.rateLbPerWeek !== undefined && body.rateLbPerWeek !== MAINTENANCE_RATE && !RATE_OPTIONS.includes(body.rateLbPerWeek)) {
     f.rateLbPerWeek = "Pick one of the rate buttons — the app only prescribes the rates it offers.";
   }
   if (body.unitPref !== undefined && !["imperial", "metric"].includes(body.unitPref)) {
@@ -261,6 +273,16 @@ function goalWeightGate(candidate, body) {
   const touchesHeight = body.heightCm !== undefined;
   if (!touchesGoal && !touchesHeight) return null;
 
+  // MAINTENANCE stands outside the BMI gates: holding your ACTUAL weight at
+  // rate 0 prescribes TDEE — no deficit, nothing being steered down, which
+  // is the entire §8 reasoning behind the floor. Scoped tight: the rate
+  // must be 0 AND the goal must BE the current weight (±0.5 kg). A rate-0
+  // profile with an aspirational lower goal is still judged on that goal.
+  const maintaining = candidate?.rateLbPerWeek === 0
+    && Number.isFinite(candidate?.goalWeightKg) && Number.isFinite(candidate?.startWeightKg)
+    && Math.abs(candidate.goalWeightKg - candidate.startWeightKg) <= 0.5;
+  if (maintaining) return null;
+
   const heightCm = candidate?.heightCm;
   const goalKg = candidate?.goalWeightKg;
   const bmi = bmiOf(goalKg, heightCm);
@@ -283,6 +305,7 @@ function goalWeightGate(candidate, body) {
           `BMI is a crude population statistic and it gets individuals wrong all the time — but ${GOAL_BMI_REFUSE} is far enough below the range that the risks (heart rhythm, bone density, immune function, fertility) stop being arguable.`,
           `At ${height}, the lowest goal this app will accept is ${floorKg} kg (${lbOf(floorKg)} lb). ${ackKg} kg (${lbOf(ackKg)} lb) is where the usual population range starts.`,
           "This limits what the app will PRESCRIBE. It is not a judgment about you, and it changes nothing about tracking: your real weight is your real weight, and a weigh-in is never refused or hidden.",
+          "To hold your current weight instead, set the goal to it and pick the Maintain rate (0) — maintenance prescribes your full daily burn, no deficit, so it has no BMI floor.",
           "If a goal this low is something you have been set by a coach or a clinician, they should be the one steering it, with eyes on you.",
         ],
       },
@@ -368,12 +391,13 @@ function gainDirectionGate(candidate, body) {
   // low" until they gave up or lied about their weight.
   const bmiNow = bmiOf(start, candidate?.heightCm);
   let advice, whatNow;
-  if (bmiNow != null && bmiNow < GOAL_BMI_REFUSE) {
-    advice = "Honest picture for your numbers: your current weight is already below the goal-weight floor this app holds, so a maintenance goal would be refused too. Between \"no gains yet\" and that floor there is no goal this app can prescribe for you today. That is the app's gap, not yours — weigh-ins, recipes and shopping still work while a surplus path doesn't exist.";
-    whatNow = "There is no prescribable goal for your body in this app yet. Use tracking and recipes as they are, and treat any calorie target as not applicable to you.";
-  } else if (bmiNow != null && bmiNow < GOAL_BMI_ACK) {
-    advice = `One thing you can do now: set your goal weight to your current ${r1(start)} kg for an honest maintenance plan — at your height that comes back as a confirm-the-BMI prompt, and resending with "goalWeightAcknowledged": true completes it. Or keep the goal and ignore the calorie target while you use the app for recipes and shopping only.`;
-    whatNow = `Set the goal to ${r1(start)} kg and confirm the BMI prompt to continue, or leave the goal and treat the calorie number as not applicable to you.`;
+  if (bmiNow != null && bmiNow < GOAL_BMI_ACK) {
+    // Below the population range (including below the hard floor):
+    // maintenance is the honest path, and since 2026-08-21 it actually
+    // exists — goal = current weight + the Maintain rate (0) prescribes
+    // TDEE with no BMI gate, because no deficit is being steered.
+    advice = `One thing you can do now: set your goal weight to your current ${r1(start)} kg and pick the Maintain rate (0) for an honest maintenance plan — full daily burn, no deficit, no BMI prompt. Gaining is still the gap: a surplus path doesn't exist yet, and that is the app's limitation, not yours.`;
+    whatNow = `Set the goal to ${r1(start)} kg and the rate to Maintain (0) to continue, or leave the goal and treat the calorie number as not applicable to you.`;
   } else {
     advice = "Two things you can do now: set your goal weight to your current weight (or below) to get an honest cutting or maintenance plan, or keep the goal and ignore the calorie target while you use the app for recipes and shopping only.";
     whatNow = `Set a goal at or below ${r1(start)} kg to continue, or leave the goal and treat the calorie number as not applicable to you.`;
@@ -405,7 +429,10 @@ router.get("/meta", (req, res) => {
   res.json({
     occupations: OCCUPATIONS,
     trainingStyles: TRAINING_STYLES,
-    rateOptions: RATE_OPTIONS,
+    // Maintain (0) leads the menu — deriveTarget yields exactly TDEE at
+    // rate 0 (see MAINTENANCE_RATE above); the loss menu itself is
+    // bmrEngine's untouched RATE_OPTIONS.
+    rateOptions: [MAINTENANCE_RATE, ...RATE_OPTIONS],
     dietaryStyles: DIETARY_STYLES,
     safeFloor: SAFE_FLOOR,
     // Bounds and safety thresholds, served for the same reason as everything
