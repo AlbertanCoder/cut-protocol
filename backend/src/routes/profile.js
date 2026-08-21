@@ -550,10 +550,48 @@ router.put("/", async (req, res) => {
         safetyEvents.record(req.userId, "floor-breach-attempt", { via: "floored-rate", pctOfBw: safety.pctOfBw });
       }
       const checkIn = safetyEvents.checkInFor(req.userId);
+
+      // DECOUPLE (fleet, 2026-08-20): this is the LAST gate, so everything
+      // else in the request has already passed every gate above. The old
+      // all-or-nothing 422 held allergies and dietary style hostage to the
+      // rate question — customers who never resolved the ack ended the
+      // session with NO profile, no exclusions, nothing. Save the rest now;
+      // only the rate inputs wait for their acknowledgement.
+      const RATE_INPUTS = ["rateLbPerWeek", "floorKcal", "rateAcknowledged"];
+      const partial = {};
+      for (const [k, v] of Object.entries(patch)) if (!RATE_INPUTS.includes(k)) partial[k] = v;
+      let applied = [];
+      let seededRate = null;
+      if (Object.keys(partial).length) {
+        if (existing) {
+          await prisma.profile.update({ where: { userId: req.userId }, data: partial });
+        } else {
+          // First-ever profile: it cannot carry the unacknowledged rate, and
+          // the module default is not this body's answer either — seed the
+          // fastest rate that is SAFE here, so the created row never holds a
+          // rate this same gate would have questioned.
+          const seeded = { ...defaultProfile(), ...partial };
+          seeded.rateLbPerWeek = 0.25;
+          for (const r of [...RATE_OPTIONS].sort((a, b) => b - a)) {
+            const c2 = { ...seeded, rateLbPerWeek: r };
+            const e2 = computeEnergy(c2, weightKg);
+            const s2 = rateSafety(c2, weightKg, e2.tdee, e2.rmr);
+            if (!s2.unsafe && classifyRatePct(s2.pctOfBw) !== "refused") { seeded.rateLbPerWeek = r; break; }
+          }
+          seededRate = seeded.rateLbPerWeek;
+          await prisma.profile.create({ data: { userId: req.userId, ...seeded } });
+        }
+        await recomputeTarget(req.userId);
+        applied = Object.keys(partial);
+        if (seededRate != null) applied.push(`rateLbPerWeek (held at a safe ${seededRate} until you confirm)`);
+      }
       // ackField/howToConfirm: same discoverability contract as the
       // goal-weight gate — the field name is part of the refusal, not a
       // secret the client has to guess (fleet finding, 2026-08-20).
-      return res.status(422).json({ requiresAck: true, ack: "rate", ackField: "rateAcknowledged", howToConfirm: 'Nothing from this request was saved. To confirm, resend the same request with "rateAcknowledged": true.', reasons: safety.reasons, error: "this rate needs an explicit confirmation", ...(checkIn ? { checkIn } : {}) });
+      const howToConfirm = applied.length
+        ? 'Everything else in this request was saved. The rate change was not — to apply it, resend it with "rateAcknowledged": true.'
+        : 'Nothing from this request was saved. To confirm, resend the same request with "rateAcknowledged": true.';
+      return res.status(422).json({ requiresAck: true, ack: "rate", ackField: "rateAcknowledged", howToConfirm, applied, reasons: safety.reasons, error: "this rate needs an explicit confirmation", ...(checkIn ? { checkIn } : {}) });
     }
     patch.rateAcknowledged = safety.unsafe ? true : false;
   }

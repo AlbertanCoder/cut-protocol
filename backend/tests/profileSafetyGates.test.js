@@ -460,6 +460,61 @@ test("HTTP: 2 lb/wk still forces the rate acknowledgement, and says which ack it
   await putProfile({ rateLbPerWeek: 0.5 });
 });
 
+test("HTTP: the rate 422 no longer holds allergies and dietary style hostage", async () => {
+  // The fleet's worst pattern (2026-08-20): one PUT carrying everything, the
+  // rate needs an ack the customer never resolves, and their EXCLUSIONS die
+  // with it. The rate is the last gate — the rest must save.
+  const asked = await putProfile({ rateLbPerWeek: 2.0, dietaryStyle: "vegan", excludedFoods: ["shellfish"] });
+  assert.equal(asked.status, 422, asked.text);
+  assert.ok(asked.json.applied.includes("dietaryStyle"), `applied: ${JSON.stringify(asked.json.applied)}`);
+  assert.match(asked.json.howToConfirm, /Everything else in this request was saved/i);
+
+  const after = await call("GET", "/api/profile");
+  assert.equal(after.json.dietaryStyle, "vegan", "the safety data must have been written");
+  assert.deepEqual(after.json.excludedFoods, ["shellfish"]);
+  assert.equal(after.json.rateLbPerWeek, 0.5, "the unacknowledged rate must NOT have been written");
+  await putProfile({ dietaryStyle: null, excludedFoods: [] }); // restore
+});
+
+test("HTTP: a first PUT with an unsafe rate still creates the profile, at a safe seeded rate", async () => {
+  // A brand-new customer whose single onboarding PUT trips the rate ack used
+  // to end the session with no profile at all. Now the row exists with their
+  // safety data, holding the fastest rate that needs no acknowledgement.
+  const bcrypt = require(path.join(BACKEND, "node_modules", "bcryptjs"));
+  const fresh = await prisma.user.create({
+    data: { email: "first-put@example.test", passwordHash: bcrypt.hashSync(PASSWORD, 4), role: "user" },
+  });
+  const login = await fetch(base + "/api/auth/login", {
+    method: "POST", headers: { "content-type": "application/json" },
+    body: JSON.stringify({ email: "first-put@example.test", password: PASSWORD }),
+  });
+  assert.equal(login.status, 200);
+  const freshCookie = (login.headers.get("set-cookie") || "").split(";")[0];
+
+  const put = await fetch(base + "/api/profile", {
+    method: "PUT", headers: { "content-type": "application/json", cookie: freshCookie },
+    body: JSON.stringify({
+      unitPref: "metric", sex: "F", age: 30, heightCm: 170, startWeightKg: 70, goalWeightKg: 62,
+      occupationKey: "desk-office", sessionsPerWeek: 3, trainingStyle: "mixed", minutesPerSession: 45,
+      rateLbPerWeek: 2.0, dietaryStyle: "vegetarian", excludedFoods: ["eggs"],
+    }),
+  });
+  assert.equal(put.status, 422, await put.text());
+
+  const row = await prisma.profile.findUnique({ where: { userId: fresh.id } });
+  assert.ok(row, "the profile must exist despite the unresolved ack");
+  assert.equal(row.dietaryStyle, "vegetarian");
+  assert.deepEqual(JSON.parse(JSON.stringify(row.excludedFoods)), ["eggs"]);
+  assert.notEqual(row.rateLbPerWeek, 2.0, "the unacknowledged rate must not be stored");
+  // The seeded rate itself passes the gate it was seeded around: resending it
+  // unchanged draws no 422.
+  const resend = await fetch(base + "/api/profile", {
+    method: "PUT", headers: { "content-type": "application/json", cookie: freshCookie },
+    body: JSON.stringify({ rateLbPerWeek: row.rateLbPerWeek }),
+  });
+  assert.equal(resend.status, 200, await resend.text());
+});
+
 test("HTTP: a bad field comes back as a message under that field, not a key dump", async () => {
   const r = await putProfile({ heightCm: 12, goalWeightKg: 4 });
   assert.equal(r.status, 400);
