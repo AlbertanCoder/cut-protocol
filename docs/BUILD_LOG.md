@@ -534,3 +534,28 @@ path exists (owner-scale decision — the gates now say so honestly).
 accounts cust-0301+, per-agent cookie isolation, appetite sent as
 `mealPreferencesNote`) queued as run `wf_1be51302-6d5` — results appended
 below when filed.
+
+**Re-measurement filed (same day, run wf_1be51302-6d5, 100 customers,
+accounts cust-0301–0400, isolated cookies, appetite in
+mealPreferencesNote):**
+
+| metric | baseline (250) | fixed app (100) |
+|---|---|---|
+| avg star | 2.17 | **2.82** |
+| 1★ | 32% | **4%** |
+| 4★ | 12.8% | **22%** |
+| would pay (yes/maybe/no) | 0 / 26% / 74% | 1 / **45%** / 54% |
+| solved (yes/partly/no) | 9% / 43% / **48%** | 13% / 69% / **18%** |
+| plausibility | 2.3 | 2.7 |
+| hard-filter violation claims | ~40 accounts | **1 — and it verified FALSE** (cust-0381 has zero stored exclusions; the agent counted a fish DISLIKE as an allergy, against prawns) |
+
+Zero real gate leaks, again. Remaining style claims are appetite/
+preference reads (picky/meat-and-potatoes/spice), the documented paleo
+butter + white-potato calls, keto-by-macros flour trace, and thin
+mediterranean cuisine tagging (13 tagged recipes — bias can only move
+what the classifier labelled). One real residual lattice gap found and
+fixed same-day: Grits on paleo (corn preparations with no corn word).
+Structural ceiling on the score: the underweight dead-zone personas
+(~14% of the formula) are capped low until a maintenance/gain path
+exists — they now get an honest, well-written refusal instead of a loop,
+and several said exactly that in 3★ reviews.
