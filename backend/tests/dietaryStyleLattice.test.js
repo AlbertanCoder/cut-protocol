@@ -139,10 +139,24 @@ test("carnivore excludes plant-only foods", () => {
 // are defective; neither is fixable without deciding what `carnivore` should key off
 // (flesh + dairy, rather than the negation of the vegan set). That is a product
 // decision, so this test pins current behaviour rather than asserting a preference.
+// 2026-08-20 partial rebase: carnivore now ALSO denies grain/legume/dough
+// words outright (perogies reached carnivore plates — see excludedByStyle's
+// carnivore branch), so the noodles row moved from this admitted list to the
+// must-exclude one below. The rows here have no grain/legume word to key on;
+// they remain the open gap this test records.
 const CARNIVORE_ADMITS_MIXED_DISHES = [
-  "Paella, NFS", "Shellfish and noodles with tomato-based sauce",
+  "Paella, NFS",
   "Olive tapenade", "Candy, gummy", "Candies, nougat, with almonds",
 ];
+
+test("carnivore denies grain/legume/dough compounds even when an animal word rides along", () => {
+  for (const name of [
+    "Shellfish and noodles with tomato-based sauce", // was in the admitted list above
+    "Perogies, boiled", "Grilled chicken and rice", "Beef and bean burrito",
+  ]) {
+    assert.equal(excl(name, "carnivore"), true, `"${name}" must not reach a carnivore pool`);
+  }
+});
 
 test("KNOWN GAP: carnivore admits mixed dishes on their animal component alone", () => {
   for (const name of CARNIVORE_ADMITS_MIXED_DISHES) {

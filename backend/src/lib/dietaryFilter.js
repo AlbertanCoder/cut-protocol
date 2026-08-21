@@ -154,16 +154,25 @@ const GELATIN_KEYWORDS = ["gelatin", "gelatine"];
 // The invariant in tests/dietaryStyleLattice.test.js asserts the containment
 // mechanically, so this cannot silently drift again.
 
+// Cheese VARIETY names — none contain the word "cheese", all are dairy
+// (caught by the 854-name food-table audit, Phase 4). Shared: lacto-ovo
+// spreads them below (unchanged behaviour), and the paleo/kosher dairy
+// predicates consult them directly — "Parmesan" passed a paleo profile and
+// "Beef + Cheddar" passed kosher's meat+dairy rule because both keyed on the
+// word "cheese" alone (fleet, 2026-08-20).
+const CHEESE_VARIETY_KEYWORDS = [
+  "mozzarella", "cheddar", "parmesan", "feta", "ricotta", "brie", "gouda",
+  "halloumi", "mascarpone", "paneer", "stilton", "gorgonzola", "camembert",
+  "gruyere", "gruyère", "edam", "emmental", "manchego", "pecorino",
+  "provolone", "burrata", "queso",
+];
+
 // Dairy and egg. Permitted for lacto-ovo vegetarians, excluded for vegans.
 const LACTO_OVO_KEYWORDS = [
   "egg", "eggs", "whey", "casein", "ghee",
   "honey", "mayonnaise", "skyr", "kefir", "custard", "quark", "milk powder",
-  // Cheese VARIETY names — none contain the word "cheese", all are dairy
-  // (caught by the 854-name food-table audit, Phase 4).
-  "mozzarella", "cheddar", "parmesan", "feta", "ricotta", "brie", "gouda",
-  "halloumi", "mascarpone", "paneer", "stilton", "gorgonzola", "camembert",
-  "gruyere", "gruyère", "edam", "emmental", "manchego", "pecorino",
-  "provolone", "burrata", "queso", "creme fraiche", "crème fraîche", "curd",
+  ...CHEESE_VARIETY_KEYWORDS,
+  "creme fraiche", "crème fraîche", "curd",
   // Milk-based sweets, egg-based sauces/doughs, yogurt/ghee breads — all
   // lacto-ovo. Caught by the 854-name audit.
   "dulce de leche", "meringue", "white chocolate", "milk chocolate", "mars bar",
@@ -223,14 +232,33 @@ const PLANT_MILK_QUALIFIERS = ["almond", "soy", "oat", "coconut", "cashew", "ric
 
 // Paleo exclusions. Deliberately broader than the gluten-only synonym list
 // above (paleo excludes gluten-free grains too - rice, corn, oats).
+// 2026-08-20 widening (250-customer fleet): "Sea Bass with Bulgur" and
+// cornstarch-thickened soups passed paleo profiles — the ancient-wheat and
+// refined-starch names were missing. "malt" is barley (Escovitch fish's malt
+// vinegar reached a paleo plate the same day).
 const GRAIN_KEYWORDS = [
   "rice", "wheat", "corn", "oat", "oats", "barley", "rye", "pasta", "noodle",
   "bread", "cereal", "couscous", "quinoa", "buckwheat", "cornmeal", "tortilla",
   "cracker", "flour",
+  "bulgur", "farro", "spelt", "semolina", "orzo", "millet", "teff",
+  "amaranth", "sorghum", "malt", "cornstarch", "granola", "muesli",
 ];
 const LEGUME_KEYWORDS = [
   "bean", "beans", "lentil", "lentils", "soy", "soya", "tofu", "tempeh",
   "edamame", "chickpea", "chickpeas", "peanut", "peanuts",
+];
+
+// Carnivore's inversion trap (fleet, 2026-08-20): a grain-dominant compound
+// whose egg/dairy content makes isVeganAnimalProduct() true sails into a
+// carnivore pool — "Perogies, boiled" (wheat dough + potato filling, listed
+// under the lacto-ovo keywords for its egg dough) was plated to carnivore
+// customers as the day's biggest carb source, twice a day. These are
+// shaped-dough names whose grain never appears as its own word; plain grains
+// and legumes are handled by the two lists above in the carnivore branch.
+const DOUGH_COMPOUND_KEYWORDS = [
+  "perogi", "pierogi", "dumpling", "gyoza", "wonton", "won ton", "naan",
+  "pancake", "waffle", "pastry", "croissant", "brioche", "bagel", "pretzel",
+  "pita", "gnocchi", "ravioli", "tortellini", "crepe", "crêpe",
 ];
 const NON_BUTTER_DAIRY_KEYWORDS = ["cheese", "yogurt", "yoghurt", "whey", "casein", "kefir", "custard"];
 
@@ -960,9 +988,11 @@ function isDairyMilk(n) {
 
 // Paleo's dairy exclusion, minus butter/ghee (see excludedByStyle's paleo
 // branch). Same plant-qualifier guard as isDairyMilk() so "coconut cream"
-// isn't excluded just because "cream" appears in the name.
+// isn't excluded just because "cream" appears in the name. Cheese VARIETY
+// names count too — "Parmesan" and "Gruyère" carry no "cheese" word and
+// reached paleo plates (fleet, 2026-08-20).
 function isNonButterDairy(n) {
-  return isDairyMilk(n) || (hasWordOrPlural(n, "cream") && !plantQualified(n, "cream")) || matchesAny(n, NON_BUTTER_DAIRY_KEYWORDS);
+  return isDairyMilk(n) || (hasWordOrPlural(n, "cream") && !plantQualified(n, "cream")) || matchesAny(n, NON_BUTTER_DAIRY_KEYWORDS) || matchesAny(n, CHEESE_VARIETY_KEYWORDS);
 }
 
 // A recipe is style-excluded if ANY of its ingredients matches the same
@@ -996,7 +1026,9 @@ function recipeExcludedByStyle(recipe, dietaryStyle) {
 // plus butter — but never "peanut butter", "butter beans", "buttermilk
 // squash"-style compounds or plant qualifiers.
 function isKosherDairy(n) {
-  if (isDairyMilk(n) || matchesAny(n, NON_BUTTER_DAIRY_KEYWORDS)) return true;
+  // Variety names too: "Double Beef Cheddar Patties" is the cheeseburger rule
+  // with no "cheese" word in it (fleet, 2026-08-20).
+  if (isDairyMilk(n) || matchesAny(n, NON_BUTTER_DAIRY_KEYWORDS) || matchesAny(n, CHEESE_VARIETY_KEYWORDS)) return true;
   return hasWord(n, "butter")
     && !hasPhrase(n, "peanut butter") && !hasPhrase(n, "nut butter")
     && !hasWordOrPlural(n, "bean") && !matchesAny(n, PLANT_MILK_QUALIFIERS);
@@ -1007,6 +1039,17 @@ function isKosherDairy(n) {
 function adjusterExcludedByStyle(adjuster, dietaryStyle) {
   if (!dietaryStyle || dietaryStyle === "none") return false;
   return excludedByStyle({ name: adjuster.name, carb: 0 }, dietaryStyle);
+}
+
+// Paleo's refined-sugar exclusion (fleet, 2026-08-20: "Granulated Sugar" in
+// a pickle and cornstarch-plus-sugar soups passed paleo profiles). Honey and
+// fruit stay in — this matches the SWEETENER word, with the two corpus
+// false-friends guarded: "sugar snap" peas are a vegetable and "sugar-free"
+// is a label claim, not a sweetener.
+function isRefinedSugarName(n) {
+  const s = String(n || "");
+  if (/\bsugar[\s-]?snap\b/i.test(s) || /\bsugar[\s-]?free\b/i.test(s)) return false;
+  return hasWordOrPlural(s, "sugar") || matchesAny(s, ["corn syrup", "golden syrup", "high fructose"]);
 }
 
 // Dairy butter/cream with the compound guards: "peanut butter", "butter
@@ -1187,13 +1230,14 @@ function excludedByStyle(food, dietaryStyle) {
     return food.carb > DEFAULT_KETO_CARB_THRESHOLD;
   }
   if (dietaryStyle === "paleo") {
-    // Excludes grains, legumes, and dairy. Butter/ghee are deliberately NOT
-    // excluded (common paleo-friendly exception - mostly fat, milk solids
-    // removed). Disclosed simplification: doesn't try to distinguish white
-    // potato (excluded under some strict paleo interpretations) from sweet
-    // potato - genuinely contested even within paleo itself, so excluding
-    // either by default seemed more likely to be wrong than right.
-    return matchesAny(n, GRAIN_KEYWORDS) || matchesAny(n, LEGUME_KEYWORDS) || isNonButterDairy(n);
+    // Excludes grains, legumes, dairy and refined sugar. Butter/ghee are
+    // deliberately NOT excluded (common paleo-friendly exception - mostly
+    // fat, milk solids removed). Disclosed simplification: doesn't try to
+    // distinguish white potato (excluded under some strict paleo
+    // interpretations) from sweet potato - genuinely contested even within
+    // paleo itself, so excluding either by default seemed more likely to be
+    // wrong than right.
+    return matchesAny(n, GRAIN_KEYWORDS) || matchesAny(n, LEGUME_KEYWORDS) || isNonButterDairy(n) || isRefinedSugarName(n);
   }
   if (dietaryStyle === "carnivore") {
     // Inverted vs. every style above: excludes everything that ISN'T an
@@ -1201,6 +1245,16 @@ function excludedByStyle(food, dietaryStyle) {
     // treated as allowed (common real-world carnivore practice, even though
     // the strictest "lion diet" variant excludes it too - same
     // mainstream-common-case-over-edge-case call paleo's potato question made).
+    //
+    // The inversion has a measured trap (fleet, 2026-08-20): grain-dominant
+    // compounds whose egg/dairy content makes isVeganAnimalProduct() true
+    // were ADMITTED — perogies (wheat dough + potato) were plated to
+    // carnivore customers as the day's main carb, twice a day. Grains,
+    // legumes and shaped doughs are never carnivore food, whatever animal
+    // derivative rides along in the name. Mixed dishes whose plant bulk has
+    // no grain/legume word ("Paella, NFS", "Olive tapenade") remain the
+    // KNOWN GAP pinned in tests/dietaryStyleLattice.test.js.
+    if (matchesAny(n, GRAIN_KEYWORDS) || matchesAny(n, LEGUME_KEYWORDS) || matchesAny(n, DOUGH_COMPOUND_KEYWORDS)) return true;
     return !isVeganAnimalProduct(n);
   }
   if (dietaryStyle === "mediterranean") {

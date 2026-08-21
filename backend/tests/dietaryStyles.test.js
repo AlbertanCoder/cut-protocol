@@ -68,6 +68,39 @@ test("halal/kosher: gelatin's British spelling and plural are the live corpus sp
   }
 });
 
+// ── 250-customer fleet regressions, 2026-08-20 ────────────────────────────
+// Every name below is a verbatim plated ingredient from the fleet run's
+// preview rescans — not written from memory (the gelatin block above says why).
+
+test("carnivore: grain-dominant compounds are out even when egg/dairy rides in the name", () => {
+  assert.equal(recipeExcludedByStyle(recipe("Perogies, boiled"), "carnivore"), true, "wheat dough + potato is not carnivore food");
+  assert.equal(recipeExcludedByStyle(recipe("Chicken breast, cooked, skinless", "Perogies, boiled"), "carnivore"), true);
+  assert.equal(recipeExcludedByStyle(recipe("Naan"), "carnivore"), true);
+  assert.equal(recipeExcludedByStyle(recipe("Cornstarch", "Eggs, whole, cooked"), "carnivore"), true);
+  // …and the actual carnivore plate is untouched.
+  assert.equal(recipeExcludedByStyle(recipe("Sirloin steak, cooked, lean", "Eggs, whole, cooked", "Butter"), "carnivore"), false);
+  assert.equal(recipeExcludedByStyle(recipe("Bacon", "Cheddar"), "carnivore"), false);
+});
+
+test("paleo: bulgur, cornstarch, sugar, malt vinegar and named cheeses are all out", () => {
+  assert.equal(recipeExcludedByStyle(recipe("Bulgur, cooked"), "paleo"), true, "bulgur is wheat");
+  assert.equal(recipeExcludedByStyle(recipe("Cornstarch"), "paleo"), true);
+  assert.equal(recipeExcludedByStyle(recipe("Granulated Sugar"), "paleo"), true);
+  assert.equal(recipeExcludedByStyle(recipe("Malt Vinegar"), "paleo"), true, "malt is barley");
+  assert.equal(recipeExcludedByStyle(recipe("Parmesan"), "paleo"), true, "a cheese with no 'cheese' in the name");
+  assert.equal(recipeExcludedByStyle(recipe("Gruyere"), "paleo"), true);
+  // Butter stays the documented deliberate exception; sugar snap peas are a
+  // vegetable; meat and potatoes stay on the plate.
+  assert.equal(recipeExcludedByStyle(recipe("Butter"), "paleo"), false);
+  assert.equal(recipeExcludedByStyle(recipe("Sugar snap peas, raw"), "paleo"), false);
+  assert.equal(recipeExcludedByStyle(recipe("Sirloin steak, cooked, lean", "Potatoes, baked"), "paleo"), false);
+});
+
+test("kosher: meat + a NAMED cheese variety is the cheeseburger rule too", () => {
+  assert.equal(recipeExcludedByStyle(recipe("Beef Mince", "Cheddar"), "kosher"), true, "no 'cheese' word, still meat + dairy");
+  assert.equal(recipeExcludedByStyle(recipe("Salmon", "Parmesan"), "kosher"), false, "fish + dairy is still permitted");
+});
+
 test("allergy checkboxes: peanuts and tree nuts are separate allergies", () => {
   assert.equal(matchesExclusionTerm("Peanut Butter", "peanuts"), true);
   assert.equal(matchesExclusionTerm("Almonds", "peanuts"), false, "almond is not a peanut");
