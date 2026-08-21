@@ -882,3 +882,45 @@ model TrainingExercise {
 
   @@unique([sessionId, order])
 }
+
+// ── Prescription persistence (Option C — owner-approved 2026-08-21) ───────
+// docs/design/prescription-persistence.md. Purely additive: the shipped
+// Plan/PlanSlot solver, goldens and routes are untouched. A prescription
+// slot holds DISHES (an OMAD day is one slot with several dishes), which
+// PlanSlot cannot express — hence prescription-owned tables. Frozen
+// `ingredients` JSON per dish is the same ground-truth discipline PlanSlot
+// follows; fiber persists here (net carbs derive from it).
+
+model PrescriptionDay {
+  id        String   @id @default(cuid())
+  userId    String
+  date      String // ISO day; one committed day per user-day
+  seed      Int
+  targets   Json // the ruler targets the day was solved under
+  verdict   Json // ruler verdict incl. read + bands
+  scanLine  String // §3.3.4 machine-written allergen line
+  createdAt DateTime @default(now())
+  dishes    PrescriptionDish[]
+
+  @@unique([userId, date])
+}
+
+model PrescriptionDish {
+  id          String          @id @default(cuid())
+  dayId       String
+  day         PrescriptionDay @relation(fields: [dayId], references: [id], onDelete: Cascade)
+  slotType    String // "meal" | "snack"
+  slotIndex   Int
+  dishIndex   Int
+  recipeId    String? // provenance tag, no FK (recipe may be edited/deleted)
+  recipeName  String
+  scales      Json
+  ingredients Json // [{foodId, name, grams, role}] — ground truth, frozen
+  kcal        Float
+  protein     Float
+  fat         Float
+  carb        Float
+  fiber       Float // net carbs derive; fiber persists
+
+  @@unique([dayId, slotType, slotIndex, dishIndex])
+}
