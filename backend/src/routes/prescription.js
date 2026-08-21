@@ -27,6 +27,7 @@ const { dayVerdict, resolveBands, allergenScanLine } = require("../lib/prescript
 const { solveLevers, applyLevers } = require("../lib/prescription/levers.js");
 const { makeRng } = require("../lib/prescription/rng.js");
 const { dayNum, todayStr, addDays } = require("../lib/dates.js");
+const { buildGroceryList } = require("../lib/groceryList.js");
 
 const router = express.Router();
 router.use(requireAuth);
@@ -277,6 +278,31 @@ router.get("/current", async (req, res, next) => {
       include: { dishes: true },
     });
     res.json({ from, days: rows.map((r) => storedDayShape(r, r.dishes)), note: NOTE });
+  } catch (e) { next(e); }
+});
+
+// Grocery over committed days — the EXISTING groceryList engine, fed the
+// stored dishes' frozen ingredients (design doc: "no new grocery code").
+// Each dish is one solved-meal entry; prescription rows carry no prep
+// state, which aggregates under the honest "unknown" key rather than a
+// guessed one.
+router.get("/grocery", async (req, res, next) => {
+  try {
+    const from = ISO_DAY_RE.test(String(req.query?.from || "")) ? req.query.from : todayStr();
+    const span = clampDays(req.query?.days ?? 7);
+    const to = addDays(from, span - 1);
+    const rows = await prisma.prescriptionDay.findMany({
+      where: { userId: req.userId, date: { gte: from, lte: to } },
+      orderBy: { date: "asc" },
+      include: { dishes: true },
+    });
+    const meals = rows.flatMap((r) => r.dishes.map((d) => ({
+      status: "solved",
+      anchor: { ingredients: (Array.isArray(d.ingredients) ? d.ingredients : []).map((i) => ({ name: i.name, grams: i.grams })) },
+      adjusters: [],
+    })));
+    const grocery = buildGroceryList({ meals });
+    res.json({ from, to, daysFound: rows.length, dates: rows.map((r) => r.date), ...grocery, note: NOTE });
   } catch (e) { next(e); }
 });
 

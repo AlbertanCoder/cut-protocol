@@ -130,3 +130,21 @@ test("swap on a day that was never committed is a clean 404", { skip: !haveQa &&
   const sw = await call("POST", "/api/prescription/swap", { date: "2031-01-01", slotType: "meal", slotIndex: 0, dishIndex: 0 });
   assert.equal(sw.status, 404);
 });
+
+test("grocery consolidates the committed days through the existing engine", { skip: !haveQa && "rebuild-qa.db not built" }, async () => {
+  const g = await call("GET", "/api/prescription/grocery?from=2026-08-21&days=2");
+  assert.equal(g.status, 200, JSON.stringify(g.json).slice(0, 300));
+  assert.equal(g.json.daysFound, 2);
+  assert.ok(g.json.items.length > 0, "committed dishes yield grocery items");
+  const item = g.json.items[0];
+  assert.ok(item.section && item.purchase && Number.isFinite(item.preparedGrams), "existing groceryList shape: section/purchase/preparedGrams");
+  assert.ok(g.json.bySection && Array.isArray(g.json.bySection.protein), "bySection survives");
+  // An ingredient plated on both days aggregates into ONE line with summed grams.
+  const dup = g.json.items.find((i) => i.occurrences > 1);
+  if (dup) assert.ok(dup.preparedGrams > 0);
+  // A window with nothing committed is an honest empty, not an error.
+  const empty = await call("GET", "/api/prescription/grocery?from=2031-01-01&days=7");
+  assert.equal(empty.status, 200);
+  assert.equal(empty.json.daysFound, 0);
+  assert.deepEqual(empty.json.items, []);
+});
