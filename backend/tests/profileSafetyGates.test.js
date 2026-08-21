@@ -98,7 +98,11 @@ test("the reported case: 170 cm with a 40 kg goal (BMI 13.8) is refused outright
   assert.equal(g.body.gate, "goal-weight-floor");
   assert.match(g.body.error, /BMI of 13\.8/);
   // The refusal is actionable: it names the lowest goal it WILL take.
-  assert.match(g.body.fields.goalWeightKg, /46\.2 kg/);
+  // 46.3, not 46.2: BMI 16 at 170 cm is 46.24 kg, and the shown minimum
+  // rounds UP so the number the message quotes actually passes the gate —
+  // 46.2 computes BMI 15.99 and was refused when customers typed it back
+  // (fleet, 2026-08-20).
+  assert.match(g.body.fields.goalWeightKg, /46\.3 kg/);
   assert.ok(!g.body.requiresAck, "there is no tick-box past this one");
 });
 
@@ -160,6 +164,60 @@ test("an unmeasurable BMI is never guessed at", () => {
   assert.equal(goalWeightGate({ heightCm: 0, goalWeightKg: 40 }, { goalWeightKg: 40 }), null);
   assert.equal(goalWeightGate({ heightCm: 170, goalWeightKg: null }, { goalWeightKg: null }), null);
   assert.equal(goalWeightGate({}, { goalWeightKg: 40 }), null);
+});
+
+test("the 422 names the literal acknowledgement field — customers must not have to guess it", () => {
+  // 84 of 250 fleet customers (2026-08-20) never saved a profile because the
+  // response asked for "the matching acknowledgement flag" without saying
+  // which field that is. Every plausible guess re-served the same 422.
+  const g = at(170, 50);
+  assert.ok(g?.needsAck);
+  assert.equal(g.body.ackField, "goalWeightAcknowledged");
+  assert.match(g.body.howToConfirm, /"goalWeightAcknowledged": true/);
+  assert.match(g.body.howToConfirm, /Nothing from this request was saved/i);
+});
+
+test("every kg minimum a gate quotes passes the gate that quotes it", () => {
+  // The property behind the 46.3 fix, swept across the fleet's height range:
+  // the refusal's "lowest goal this app will take" must not itself be refused,
+  // and the "where the usual range starts" number must save without a prompt.
+  for (let h = 150; h <= 210; h += 2) {
+    const refuse = at(h, 30);
+    assert.ok(refuse?.refuse, `30 kg at ${h} cm should be refused`);
+    const floorKg = parseFloat(refuse.body.fields.goalWeightKg.match(/(\d+(?:\.\d+)?) kg/)[1]);
+    const retry = at(h, floorKg);
+    assert.ok(!retry?.refuse, `${floorKg} kg at ${h} cm was quoted as the lowest accepted goal and then refused`);
+    if (retry?.needsAck) {
+      const m = retry.body.reasons[0].match(/about (\d+(?:\.\d+)?) kg/);
+      if (m) {
+        const ackKg = parseFloat(m[1]);
+        assert.equal(at(h, ackKg), null, `${ackKg} kg at ${h} cm was quoted as where the range starts and still prompted`);
+      }
+    }
+  }
+});
+
+test("gainDirectionGate tells the truth about what 'set a maintenance goal' will do at this height", () => {
+  const { gainDirectionGate } = require("../src/routes/profile.js");
+  const gain = (heightCm, startWeightKg, goalWeightKg) =>
+    gainDirectionGate({ heightCm, startWeightKg, goalWeightKg, rateLbPerWeek: 0.5 }, { goalWeightKg });
+
+  // Current BMI under 16: a maintenance goal would be refused too — the gate
+  // must say there is no prescribable goal, not advise a bounce.
+  const trapped = gain(195, 55, 60);
+  assert.ok(trapped, "goal above current fires the gate");
+  assert.match(trapped.whatNow, /no prescribable goal/i);
+  assert.match(trapped.detail[2], /maintenance goal would be refused/i);
+
+  // Current BMI 16–18.5: maintenance works via the confirm prompt — say so,
+  // and name the field that completes it.
+  const grey = gain(170, 50, 55); // current BMI 17.3
+  assert.match(grey.detail[2], /"goalWeightAcknowledged": true/);
+  assert.match(grey.detail[2], /maintenance/i);
+
+  // Normal-range current weight: the original advice stands.
+  const normal = gain(170, 70, 80);
+  assert.match(normal.whatNow, /at or below 70 kg/);
 });
 
 test("the floor scales with height — it is a ratio, not a fixed number of kilos", () => {
@@ -342,7 +400,7 @@ test("HTTP: the BMI-13.8 goal (170 cm, 40 kg) is refused with a per-field messag
   assert.equal(r.status, 400, r.text);
   assert.equal(r.json.gate, "goal-weight-floor");
   assert.match(r.json.error, /BMI of 13\.8/);
-  assert.match(r.json.fields.goalWeightKg, /46\.2 kg/);
+  assert.match(r.json.fields.goalWeightKg, /46\.3 kg/); // rounds UP — see the unit test
   const after = await call("GET", "/api/profile");
   assert.equal(after.json.goalWeightKg, 62, "the refused goal must not have been written");
 });
@@ -358,6 +416,7 @@ test("HTTP: a grey-zone goal (BMI 17.3) asks once, then saves on the acknowledge
   assert.equal(asked.status, 422, asked.text);
   assert.equal(asked.json.requiresAck, true);
   assert.equal(asked.json.ack, "goalWeight", "must be distinguishable from the rate ack");
+  assert.equal(asked.json.ackField, "goalWeightAcknowledged", "the literal field, over HTTP too");
 
   const saved = await putProfile({ goalWeightKg: 50, goalWeightAcknowledged: true });
   assert.equal(saved.status, 200, saved.text);
@@ -373,11 +432,26 @@ test("HTTP: a real weight is never refused, however low â€” only the goal i
   await putProfile({ startWeightKg: 70 });
 });
 
+test("HTTP: a GAIN ask from a lean body gets the gain answer, not the BMI answer", async () => {
+  // 45 kg at 170 cm asking for 50 kg: the goal is a gain AND under BMI 18.5.
+  // The old gate order answered with "won't prescribe a deficit down to it"
+  // for a goal ABOVE their weight. The gain gate must speak first.
+  await putProfile({ startWeightKg: 45 });
+  const r = await putProfile({ goalWeightKg: 50 });
+  assert.equal(r.status, 400, r.text);
+  assert.equal(r.json.gate, "gain-not-supported", `got ${r.json.gate}: ${r.json.error}`);
+  // At BMI 15.6 current, the advice is honest about the dead zone.
+  assert.match(r.json.whatNow, /no prescribable goal/i);
+  await putProfile({ startWeightKg: 70 }); // restore
+});
+
 test("HTTP: 2 lb/wk still forces the rate acknowledgement, and says which ack it wants", async () => {
   const asked = await putProfile({ rateLbPerWeek: 2.0 });
   assert.equal(asked.status, 422, asked.text);
   assert.equal(asked.json.requiresAck, true);
   assert.equal(asked.json.ack, "rate");
+  assert.equal(asked.json.ackField, "rateAcknowledged", "the literal field, not a riddle");
+  assert.match(asked.json.howToConfirm, /"rateAcknowledged": true/);
   assert.ok(asked.json.reasons.length > 0);
 
   const saved = await putProfile({ rateLbPerWeek: 2.0, rateAcknowledged: true });

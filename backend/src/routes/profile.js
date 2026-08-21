@@ -208,6 +208,12 @@ const bmiOf = (weightKg, heightCm) => {
 };
 const kgAtBmi = (bmi, heightCm) => bmi * ((heightCm / 100) ** 2);
 const r1 = (n) => Math.round(n * 10) / 10;
+// Suggested MINIMUMS round UP to the 0.1. Math.round can land the shown value
+// 0.05 kg under the threshold it is quoting — at 195 cm the BMI-16 floor is
+// 60.84 kg, "60.8" computes BMI 15.99, and the customer who types the exact
+// number the refusal told them to use is refused again (250-customer fleet,
+// 2026-08-20). A quoted minimum must pass the gate that quotes it.
+const r1up = (n) => Math.ceil(n * 10 - 1e-9) / 10;
 const lbOf = (kg) => Math.round(kg * 2.20462);
 
 /**
@@ -263,8 +269,8 @@ function goalWeightGate(candidate, body) {
   const shown = r1(bmi);
   const goal = `${r1(goalKg)} kg (${lbOf(goalKg)} lb)`;
   const height = `${r1(heightCm)} cm`;
-  const floorKg = r1(kgAtBmi(GOAL_BMI_REFUSE, heightCm));
-  const ackKg = r1(kgAtBmi(GOAL_BMI_ACK, heightCm));
+  const floorKg = r1up(kgAtBmi(GOAL_BMI_REFUSE, heightCm));
+  const ackKg = r1up(kgAtBmi(GOAL_BMI_ACK, heightCm));
 
   if (bmi < GOAL_BMI_REFUSE && touchesGoal) {
     return {
@@ -293,6 +299,13 @@ function goalWeightGate(candidate, body) {
     body: {
       requiresAck: true,
       ack: "goalWeight",
+      // The literal request field, spelled out. 84 of 250 fleet customers
+      // (2026-08-20) never got a profile saved because this response asked
+      // for "the matching acknowledgement flag" without naming it — every
+      // plausible guess (ackGoalWeight, acknowledgements.goalWeight, acks…)
+      // re-served this same 422 until they gave up.
+      ackField: "goalWeightAcknowledged",
+      howToConfirm: 'Nothing from this request was saved. To confirm, resend the same request with "goalWeightAcknowledged": true.',
       gate: "goal-weight-low",
       error: `That goal is ${shown} BMI — below the usual range. Confirm you want it.`,
       reasons: [
@@ -346,6 +359,25 @@ function gainDirectionGate(candidate, body) {
 
   const gainLb = Math.round(gainKg * 2.20462);
   const deficit = Math.round(rate * 500);
+  // "Set your goal to your current weight" is only honest advice if that goal
+  // would actually be accepted. At this height a current weight below BMI 16
+  // is refused outright by the goal gate, and 16–18.5 comes back as the
+  // confirm-BMI prompt — the fleet (2026-08-20) caught the unconditional
+  // advice here contradicting the goal gate one request later, with tall lean
+  // customers bounced between "pick a maintenance goal" and "that goal is too
+  // low" until they gave up or lied about their weight.
+  const bmiNow = bmiOf(start, candidate?.heightCm);
+  let advice, whatNow;
+  if (bmiNow != null && bmiNow < GOAL_BMI_REFUSE) {
+    advice = "Honest picture for your numbers: your current weight is already below the goal-weight floor this app holds, so a maintenance goal would be refused too. Between \"no gains yet\" and that floor there is no goal this app can prescribe for you today. That is the app's gap, not yours — weigh-ins, recipes and shopping still work while a surplus path doesn't exist.";
+    whatNow = "There is no prescribable goal for your body in this app yet. Use tracking and recipes as they are, and treat any calorie target as not applicable to you.";
+  } else if (bmiNow != null && bmiNow < GOAL_BMI_ACK) {
+    advice = `One thing you can do now: set your goal weight to your current ${r1(start)} kg for an honest maintenance plan — at your height that comes back as a confirm-the-BMI prompt, and resending with "goalWeightAcknowledged": true completes it. Or keep the goal and ignore the calorie target while you use the app for recipes and shopping only.`;
+    whatNow = `Set the goal to ${r1(start)} kg and confirm the BMI prompt to continue, or leave the goal and treat the calorie number as not applicable to you.`;
+  } else {
+    advice = "Two things you can do now: set your goal weight to your current weight (or below) to get an honest cutting or maintenance plan, or keep the goal and ignore the calorie target while you use the app for recipes and shopping only.";
+    whatNow = `Set a goal at or below ${r1(start)} kg to continue, or leave the goal and treat the calorie number as not applicable to you.`;
+  }
   return {
     gate: "gain-not-supported",
     error: `Your goal is ${r1(gainKg)} kg (${gainLb} lb) ABOVE your current weight, but every rate this app offers takes weight off.`,
@@ -355,9 +387,9 @@ function gainDirectionGate(candidate, body) {
     detail: [
       `Left as it is, the app would have prescribed you ${deficit} kcal a day BELOW what you burn — the opposite of what you asked for. It would have done that silently, and the plan would have looked correct the whole way down.`,
       "That is a gap in the app, not a mistake you made. Building muscle needs a calorie SURPLUS and a slower rate than any of the loss rates here, and none of that exists yet.",
-      "Two things you can do now: set your goal weight to your current weight (or below) to get an honest cutting or maintenance plan, or keep the goal and ignore the calorie target while you use the app for recipes and shopping only.",
+      advice,
     ],
-    whatNow: `Set a goal at or below ${r1(start)} kg to continue, or leave the goal and treat the calorie number as not applicable to you.`,
+    whatNow,
   };
 }
 
@@ -448,6 +480,15 @@ router.put("/", async (req, res) => {
     return res.status(400).json({ error: msg, fields: { floorKcal: msg }, ...(checkIn ? { checkIn } : {}) });
   }
 
+  // GATE 3 runs BEFORE gate 2 on purpose: a goal ABOVE current weight is a
+  // GAIN ask, and it must get the gain answer. A tall lean customer asking to
+  // gain used to hit the BMI gate first and be told the app "won't prescribe
+  // a deficit down to" a weight above their own — the right refusal with the
+  // wrong story (fleet, 2026-08-20). For any non-gain goal this gate returns
+  // null and the order change is invisible.
+  const gainGateEarly = gainDirectionGate(candidate, body);
+  if (gainGateEarly) return res.status(400).json(gainGateEarly);
+
   // GATE 2 — goal weight against height. Refuses outright below BMI 16;
   // between 16 and 18.5 explains itself and waits for an explicit tick
   // (goalWeightAcknowledged, request-only — deliberately never persisted, see
@@ -471,8 +512,7 @@ router.put("/", async (req, res) => {
   // Until a surplus path exists this REFUSES rather than guesses. Reversing a
   // customer's stated direction is the worst of the available options, and a plan
   // built on it is actively harmful to the underweight case.
-  const gainGate = gainDirectionGate(candidate, body);
-  if (gainGate) return res.status(400).json(gainGate);
+  // (Evaluated above, before gate 2 — see the ordering note there.)
 
   // Unsafe-rate contract: >1% of body weight per week (or floor-clamped
   // target) requires an explicit rateAcknowledged: true IN THIS REQUEST
@@ -510,7 +550,10 @@ router.put("/", async (req, res) => {
         safetyEvents.record(req.userId, "floor-breach-attempt", { via: "floored-rate", pctOfBw: safety.pctOfBw });
       }
       const checkIn = safetyEvents.checkInFor(req.userId);
-      return res.status(422).json({ requiresAck: true, ack: "rate", reasons: safety.reasons, error: "this rate needs an explicit confirmation", ...(checkIn ? { checkIn } : {}) });
+      // ackField/howToConfirm: same discoverability contract as the
+      // goal-weight gate — the field name is part of the refusal, not a
+      // secret the client has to guess (fleet finding, 2026-08-20).
+      return res.status(422).json({ requiresAck: true, ack: "rate", ackField: "rateAcknowledged", howToConfirm: 'Nothing from this request was saved. To confirm, resend the same request with "rateAcknowledged": true.', reasons: safety.reasons, error: "this rate needs an explicit confirmation", ...(checkIn ? { checkIn } : {}) });
     }
     patch.rateAcknowledged = safety.unsafe ? true : false;
   }
