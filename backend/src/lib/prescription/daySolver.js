@@ -412,4 +412,7 @@ function solvePrescriptionDay({ pool, targets, mealConfig, profile = {}, rng, re
   };
 }
 
-module.exports = { solvePrescriptionDay };
+// sampleCandidates/rowsOf are exported for the /swap route (Option C): a
+// stored-day swap auditions replacements with the SAME sampler and the same
+// aromatic-clamped row shape the solver uses — not a parallel copy.
+module.exports = { solvePrescriptionDay, sampleCandidates, rowsOf, NON_MEAL_CATEGORIES };

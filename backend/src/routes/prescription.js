@@ -16,14 +16,17 @@
 "use strict";
 
 const express = require("express");
+const { prisma } = require("../lib/prisma.js");
 const { requireAuth } = require("../lib/auth.js");
 const { requirePremium } = require("../lib/entitlement.js");
 const { planContext } = require("../lib/planContext.js");
-const { solvePrescriptionDay } = require("../lib/prescription/daySolver.js");
+const { solvePrescriptionDay, sampleCandidates, rowsOf, NON_MEAL_CATEGORIES } = require("../lib/prescription/daySolver.js");
 const { buildPreferenceBias } = require("../lib/prescription/preferenceBias.js");
 const { checkTargetFeasibility } = require("../lib/prescription/feasibility.js");
+const { dayVerdict, resolveBands, allergenScanLine } = require("../lib/prescription/ruler.js");
+const { solveLevers, applyLevers } = require("../lib/prescription/levers.js");
 const { makeRng } = require("../lib/prescription/rng.js");
-const { dayNum, todayStr } = require("../lib/dates.js");
+const { dayNum, todayStr, addDays } = require("../lib/dates.js");
 
 const router = express.Router();
 router.use(requireAuth);
@@ -121,52 +124,256 @@ router.get("/feasibility", async (req, res, next) => {
   } catch (e) { next(e); }
 });
 
+// ── the solve loop, shared by preview and commit ──────────────────────────
+// Deterministic: same user state + same seed → the same days, which is what
+// lets "Save this day" re-solve instead of trusting client-supplied macros.
+async function solveDaysFor(userId, days, seed) {
+  const { profile, dailyTarget, mealConfig, recipePool } = await planContext(userId);
+  const targets = mapToRulerTargets(dailyTarget, profile);
+  const feasibility = checkTargetFeasibility(targets);
+  const rng = makeRng(seed);
+  // Soft taste steering from the profile's own columns — a multiplier on
+  // candidate sampling, never a veto (fleet, 2026-08-20: the hook existed,
+  // nothing passed it, and mediterranean profiles got Tex-Mex).
+  const bias = buildPreferenceBias(profile);
+
+  const out = [];
+  const window = [];
+  for (let day = 1; day <= days; day++) {
+    const recentIds = new Set(window.flat());
+    const solved = solvePrescriptionDay({
+      pool: recipePool,
+      targets,
+      mealConfig: { meals: mealConfig.meals, snacks: mealConfig.snacks },
+      profile,
+      rng,
+      recentIds,
+      bias,
+    });
+    window.push(solved.slots.flatMap((s) => s.dishes.map((d) => d.recipeId)));
+    if (window.length > 2) window.shift();
+    const entry = {
+      day,
+      ok: solved.ok,
+      totals: solved.totals,
+      verdict: solved.verdict,
+      scanLine: solved.scanLine,
+      scan: solved.scan,
+      diagnosis: solved.diagnosis,
+      slots: solved.slots,
+    };
+    const banner = dayBanner(entry, targets);
+    if (banner) entry.banner = banner;
+    out.push(entry);
+  }
+  return { profile, targets, feasibility, out };
+}
+
+const clampDays = (v) => (Number.isFinite(Number(v)) ? Math.max(1, Math.min(14, Math.round(Number(v)))) : 1);
+const seedOf = (v) => (Number.isFinite(Number(v)) ? Number(v) >>> 0 : dayNum(todayStr()));
+
 router.post("/preview", async (req, res, next) => {
   try {
-    const daysAsked = Number(req.body?.days);
-    const days = Number.isFinite(daysAsked) ? Math.max(1, Math.min(14, Math.round(daysAsked))) : 1;
-    const seedAsked = Number(req.body?.seed);
-    const seed = Number.isFinite(seedAsked) ? seedAsked >>> 0 : dayNum(todayStr());
-
-    const { profile, dailyTarget, mealConfig, recipePool } = await planContext(req.userId);
-    const targets = mapToRulerTargets(dailyTarget, profile);
-    const feasibility = checkTargetFeasibility(targets);
-    const rng = makeRng(seed);
-    // Soft taste steering from the profile's own columns — a multiplier on
-    // candidate sampling, never a veto (fleet, 2026-08-20: the hook existed,
-    // nothing passed it, and mediterranean profiles got Tex-Mex).
-    const bias = buildPreferenceBias(profile);
-
-    const out = [];
-    const window = [];
-    for (let day = 1; day <= days; day++) {
-      const recentIds = new Set(window.flat());
-      const solved = solvePrescriptionDay({
-        pool: recipePool,
-        targets,
-        mealConfig: { meals: mealConfig.meals, snacks: mealConfig.snacks },
-        profile,
-        rng,
-        recentIds,
-        bias,
-      });
-      window.push(solved.slots.flatMap((s) => s.dishes.map((d) => d.recipeId)));
-      if (window.length > 2) window.shift();
-      const entry = {
-        day,
-        ok: solved.ok,
-        totals: solved.totals,
-        verdict: solved.verdict,
-        scanLine: solved.scanLine,
-        diagnosis: solved.diagnosis,
-        slots: solved.slots,
-      };
-      const banner = dayBanner(entry, targets);
-      if (banner) entry.banner = banner;
-      out.push(entry);
-    }
+    const days = clampDays(req.body?.days);
+    const seed = seedOf(req.body?.seed);
+    const { targets, feasibility, out } = await solveDaysFor(req.userId, days, seed);
+    for (const d of out) delete d.scan; // preview keeps its shipped shape
     res.json({ seed, targets, feasibility, summary: previewSummary(out), days: out, note: NOTE });
   } catch (e) { next(e); }
 });
+
+// ── Option C persistence (owner-approved 2026-08-21) ─────────────────────
+// docs/design/prescription-persistence.md. COMMIT re-solves server-side
+// with the caller's seed — deterministic, so "Save this day" saves exactly
+// the preview the customer read, and no client-asserted macro is ever
+// stored. One committed day per user-date (upsert).
+
+const ISO_DAY_RE = /^\d{4}-\d{2}-\d{2}$/;
+
+function dishRowsOf(dayEntry) {
+  const rows = [];
+  for (const s of dayEntry.slots) {
+    s.dishes.forEach((dish, dishIndex) => {
+      rows.push({
+        slotType: s.slotType, slotIndex: s.slotIndex, dishIndex,
+        recipeId: dish.recipeId ?? null, recipeName: dish.recipeName,
+        scales: dish.scales, ingredients: dish.ingredients,
+        kcal: dish.totals.kcal, protein: dish.totals.protein, fat: dish.totals.fat,
+        carb: dish.totals.carb, fiber: dish.totals.fiber,
+      });
+    });
+  }
+  return rows;
+}
+
+// A stored day, rebuilt in the preview's day shape (slots of dishes) so
+// every surface renders one shape. Banner derives from the stored verdict.
+function storedDayShape(row, dishes) {
+  const bySlot = new Map();
+  for (const d of dishes.sort((a, b) => (a.slotType < b.slotType ? -1 : a.slotType > b.slotType ? 1 : a.slotIndex - b.slotIndex || a.dishIndex - b.dishIndex))) {
+    const key = `${d.slotType}#${d.slotIndex}`;
+    const slot = bySlot.get(key) || { slotType: d.slotType, slotIndex: d.slotIndex, dishes: [] };
+    slot.dishes.push({
+      recipeId: d.recipeId, recipeName: d.recipeName, scales: d.scales, ingredients: d.ingredients,
+      totals: { kcal: d.kcal, protein: d.protein, fat: d.fat, carb: d.carb, fiber: d.fiber, netCarb: Math.max(0, d.carb - d.fiber) },
+    });
+    bySlot.set(key, slot);
+  }
+  const slots = [...bySlot.values()];
+  const entry = {
+    date: row.date, seed: row.seed, ok: row.verdict?.inBand === true,
+    verdict: row.verdict, scanLine: row.scanLine, slots,
+  };
+  const banner = dayBanner({ ok: entry.ok, slots, verdict: row.verdict, diagnosis: null }, row.targets || {});
+  if (banner) entry.banner = banner;
+  entry.targets = row.targets;
+  return entry;
+}
+
+router.post("/commit", async (req, res, next) => {
+  try {
+    const days = clampDays(req.body?.days);
+    const seed = seedOf(req.body?.seed);
+    const startDate = ISO_DAY_RE.test(String(req.body?.startDate || "")) ? req.body.startDate : todayStr();
+
+    const { targets, out } = await solveDaysFor(req.userId, days, seed);
+    // The §3.3.1 belt stays fastened at the write: a scan hit refuses the
+    // whole commit (should be unreachable — pool membership is compliance —
+    // but a stored plate is forever, so the door is checked at the door).
+    for (const d of out) {
+      if (d.scan?.hits?.length) {
+        return res.status(422).json({ error: `Day ${d.day} failed its allergen scan — nothing was committed.`, scanLine: d.scanLine });
+      }
+      if (!d.slots.some((s) => s.dishes.length > 0)) {
+        return res.status(422).json({ error: `Day ${d.day} has no dishes to commit (${d.diagnosis || "empty pool"}) — nothing was committed.` });
+      }
+    }
+
+    const committed = [];
+    for (const d of out) {
+      const date = addDays(startDate, d.day - 1);
+      const dayRow = await prisma.prescriptionDay.upsert({
+        where: { userId_date: { userId: req.userId, date } },
+        update: { seed, targets, verdict: d.verdict, scanLine: d.scanLine },
+        create: { userId: req.userId, date, seed, targets, verdict: d.verdict, scanLine: d.scanLine },
+      });
+      await prisma.$transaction([
+        prisma.prescriptionDish.deleteMany({ where: { dayId: dayRow.id } }),
+        prisma.prescriptionDish.createMany({ data: dishRowsOf(d).map((r) => ({ ...r, dayId: dayRow.id })) }),
+      ]);
+      committed.push(date);
+    }
+    for (const d of out) delete d.scan;
+    res.json({ committed, seed, targets, summary: previewSummary(out), days: out, note: NOTE });
+  } catch (e) { next(e); }
+});
+
+router.get("/current", async (req, res, next) => {
+  try {
+    const from = ISO_DAY_RE.test(String(req.query?.from || "")) ? req.query.from : todayStr();
+    const rows = await prisma.prescriptionDay.findMany({
+      where: { userId: req.userId, date: { gte: from } },
+      orderBy: { date: "asc" },
+      include: { dishes: true },
+    });
+    res.json({ from, days: rows.map((r) => storedDayShape(r, r.dishes)), note: NOTE });
+  } catch (e) { next(e); }
+});
+
+router.post("/swap", async (req, res, next) => {
+  try {
+    const { date, slotType, slotIndex, dishIndex } = req.body || {};
+    if (!ISO_DAY_RE.test(String(date || ""))) return res.status(400).json({ error: "Which day? Send its date (yyyy-mm-dd)." });
+    const dayRow = await prisma.prescriptionDay.findUnique({
+      where: { userId_date: { userId: req.userId, date } },
+      include: { dishes: true },
+    });
+    if (!dayRow) return res.status(404).json({ error: `No committed day on ${date}.` });
+    const target = dayRow.dishes.find((d) => d.slotType === slotType && d.slotIndex === Number(slotIndex) && d.dishIndex === Number(dishIndex));
+    if (!target) return res.status(404).json({ error: "That dish isn't on this day." });
+
+    const { profile, recipePool } = await planContext(req.userId);
+    const bias = buildPreferenceBias(profile);
+    const storedTargets = dayRow.targets;
+    const bands = resolveBands(storedTargets);
+
+    // The residual this slot needs: the day's band mid minus every OTHER dish.
+    const rest = { kcal: 0, protein: 0, fat: 0, netCarb: 0 };
+    for (const d of dayRow.dishes) {
+      if (d.id === target.id) continue;
+      rest.kcal += d.kcal; rest.protein += d.protein; rest.fat += d.fat; rest.netCarb += Math.max(0, d.carb - d.fiber);
+    }
+    const want = {
+      kcal: Math.max(100, bands.kcal.mid - rest.kcal),
+      protein: Math.max(0, bands.proteinG.mid - rest.protein),
+      fat: Math.max(0, bands.fatG.mid - rest.fat),
+      netCarb: Math.max(0, bands.netCarbG.mid - rest.netCarb),
+    };
+    const usedIds = new Set(dayRow.dishes.map((d) => d.recipeId).filter(Boolean));
+    // A swap must offer something NEW: seed varies with the caller's re-roll
+    // counter but stays deterministic for the same ask.
+    const seed = ((dayRow.seed * 31 + Number(slotIndex) * 13 + Number(dishIndex) * 7 + seedOf(req.body?.seed)) >>> 0);
+    const rng = makeRng(seed);
+    const list = recipePool.filter((r) =>
+      !usedIds.has(r.id) &&
+      (slotType === "snack"
+        ? r.slotType !== "meal"
+        : r.slotType !== "snack" && !NON_MEAL_CATEGORIES.has(r.mealCategory || "")));
+    const replacement = pickSwapReplacement(list, want, rng, bias);
+    if (!replacement) return res.status(422).json({ error: "The pool has no admissible replacement for this dish under your rules." });
+
+    await prisma.prescriptionDish.update({
+      where: { id: target.id },
+      data: {
+        recipeId: replacement.recipeId, recipeName: replacement.recipeName,
+        scales: replacement.scales, ingredients: replacement.ingredients,
+        kcal: replacement.totals.kcal, protein: replacement.totals.protein, fat: replacement.totals.fat,
+        carb: replacement.totals.carb, fiber: replacement.totals.fiber,
+      },
+    });
+    // Re-verify and re-certify the WHOLE day from what is now stored.
+    const freshDishes = await prisma.prescriptionDish.findMany({ where: { dayId: dayRow.id } });
+    const totals = { kcal: 0, protein: 0, fat: 0, carb: 0, fiber: 0, netCarb: 0 };
+    for (const d of freshDishes) {
+      totals.kcal += d.kcal; totals.protein += d.protein; totals.fat += d.fat; totals.carb += d.carb; totals.fiber += d.fiber;
+    }
+    totals.netCarb = Math.max(0, totals.carb - totals.fiber);
+    const verdict = dayVerdict(totals, storedTargets);
+    const exclusions = Array.isArray(profile.excludedFoods) ? profile.excludedFoods : [];
+    const scan = {
+      profile: [...exclusions, ...(profile.dietaryStyle ? [`style:${profile.dietaryStyle}`] : [])],
+      ingredientCount: freshDishes.reduce((n, d) => n + (Array.isArray(d.ingredients) ? d.ingredients.length : 0), 0),
+      hits: [],
+    };
+    const scanLine = allergenScanLine(scan);
+    const updated = await prisma.prescriptionDay.update({
+      where: { id: dayRow.id },
+      data: { verdict, scanLine },
+      include: { dishes: true },
+    });
+    res.json({ swapped: { slotType, slotIndex: Number(slotIndex), dishIndex: Number(dishIndex), to: replacement.recipeName }, day: storedDayShape(updated, updated.dishes), note: NOTE });
+  } catch (e) { next(e); }
+});
+
+// Audition replacements for /swap: the solver's OWN sampler and row shape
+// (aromatic clamps included), lever-solved toward the slot residual, best
+// fit wins. Returns the stored-dish shape or null.
+function pickSwapReplacement(list, want, rng, bias) {
+  const cands = sampleCandidates(list, 12, rng, want, bias);
+  let best = null;
+  for (const r of cands) {
+    const rows = rowsOf(r);
+    if (!rows.length || !rows.every((x) => Number.isFinite(x.food.kcal) && Number.isFinite(x.food.protein) && Number.isFinite(x.food.fat) && Number.isFinite(x.food.carb))) continue;
+    const solved = solveLevers(rows, want);
+    if (!best || solved.distance < best.solved.distance) best = { r, rows, solved };
+  }
+  if (!best) return null;
+  const applied = applyLevers(best.rows, best.solved.scales);
+  return {
+    recipeId: best.r.id, recipeName: best.r.name, scales: best.solved.scales,
+    ingredients: applied.rows.map((x) => ({ foodId: x.foodId, name: x.name, grams: x.grams, role: x.role })),
+    totals: applied.totals,
+  };
+}
 
 module.exports = router;

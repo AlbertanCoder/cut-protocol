@@ -4,11 +4,13 @@ import { Page, Panel, Big, Quiet, Busy, Note } from "./parts.jsx";
 
 // Food › Preview — the prescription solver's first visible surface.
 //
-// Everything here is READ-ONLY: nothing is saved, no plan rows change, and
-// the copy says so. The day is verified after rounding against the
-// prescription ruler (±50 kcal / ±7 g protein / ±7 g fat / ±10 g net carbs),
-// which is deliberately tighter than the Plan tab's verdict — the two rulers
-// are different instruments and this screen never pretends otherwise.
+// Previewing is READ-ONLY; "Save this day" (Option C, 2026-08-21) commits
+// it — the server RE-SOLVES with the preview's own seed, so what was read
+// is exactly what is stored (no client-asserted macro ever reaches the
+// database). The day is verified after rounding against the prescription
+// ruler (±50 kcal / ±7 g protein / ±7 g fat / ±10 g net carbs), which is
+// deliberately tighter than the Plan tab's verdict — the two rulers are
+// different instruments and this screen never pretends otherwise.
 // Same-day previews are stable (the server seeds by calendar day); the
 // re-roll button asks for a fresh seed on purpose.
 
@@ -34,6 +36,8 @@ export default function SimplePrescription() {
   const [busy, setBusy] = useState(false);
   const [locked, setLocked] = useState(false);
   const [error, setError] = useState(null);
+  const [saving, setSaving] = useState(false);
+  const [savedDate, setSavedDate] = useState(null);
 
   useEffect(() => {
     let alive = true;
@@ -50,6 +54,7 @@ export default function SimplePrescription() {
   const build = useCallback(async (seed) => {
     setBusy(true);
     setError(null);
+    setSavedDate(null);
     try {
       const out = await api.prescriptionPreview(1, seed);
       setPreview(out);
@@ -61,6 +66,24 @@ export default function SimplePrescription() {
       setBusy(false);
     }
   }, []);
+
+  // "Save this day": the server RE-SOLVES with the same seed the preview
+  // used — deterministic, so what was read is exactly what is stored.
+  const save = useCallback(async () => {
+    if (!preview) return;
+    setSaving(true);
+    setError(null);
+    try {
+      const out = await api.prescriptionCommit(1, preview.seed);
+      setSavedDate(out.committed?.[0] || null);
+    } catch (e) {
+      if (isAbortError(e)) return;
+      if (isPremiumRequired(e)) setLocked(true);
+      else setError(describeError(e));
+    } finally {
+      setSaving(false);
+    }
+  }, [preview]);
 
   if (locked) {
     return (
@@ -74,7 +97,7 @@ export default function SimplePrescription() {
   const v = day?.verdict;
 
   return (
-    <Page title="Preview" sub="A day of food, solved to your numbers and verified after rounding. Nothing here is saved.">
+    <Page title="Preview" sub="A day of food, solved to your numbers and verified after rounding. Save it and it's yours for the day.">
       {error && <Panel tone="warn"><p className="text-sm">{error}</p></Panel>}
 
       {feas && feas.feasibility?.feasible === false && (
@@ -105,8 +128,8 @@ export default function SimplePrescription() {
               <BandLine label="Net carbs" read={v.read.netCarbG} band={v.bands.netCarbG} />
             </div>
             <p className="text-xs mt-3 opacity-70 break-words">{day.scanLine}</p>
-            {!day.ok && day.diagnosis && (
-              <p className="text-sm mt-2" style={{ color: "var(--warn)" }}>{day.diagnosis}</p>
+            {!day.ok && (day.banner || day.diagnosis) && (
+              <p className="text-sm mt-2" style={{ color: "var(--warn)" }}>{day.banner || day.diagnosis}</p>
             )}
           </Panel>
 
@@ -133,10 +156,19 @@ export default function SimplePrescription() {
           ))}
 
           <div className="flex gap-2">
-            <Quiet onClick={() => build(Math.floor(Math.random() * 2 ** 31))} disabled={busy}>
+            <Big onClick={save} disabled={busy || saving || !!savedDate}>
+              {saving ? "Saving…" : savedDate ? "Saved" : "Save this day"}
+            </Big>
+            <Quiet onClick={() => build(Math.floor(Math.random() * 2 ** 31))} disabled={busy || saving}>
               Solve a different day
             </Quiet>
           </div>
+          {savedDate && (
+            <Note>
+              Saved for {savedDate}. It stays exactly as shown — grams, verdict and allergen
+              scan all stored with it. Saving the same day again replaces it.
+            </Note>
+          )}
           <Note>
             The grams are the prescription — weigh them. A $15 kitchen scale is the difference
             between guessing and knowing.

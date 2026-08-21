@@ -382,6 +382,12 @@ export const api = {
   // Prescription preview (directive ruler) — reads only, persists nothing.
   prescriptionFeasibility: (opts) => request("/prescription/feasibility", { timeoutMs: TIMEOUT.SOLVER, ...opts }),
   prescriptionPreview: (days, seed, opts) => request("/prescription/preview", { method: "POST", body: JSON.stringify({ days, ...(seed != null ? { seed } : {}) }), timeoutMs: TIMEOUT.SOLVER, ...opts }),
+  // Option C persistence (2026-08-21): commit re-solves server-side with the
+  // SAME seed the preview showed — deterministic, so what was read is what
+  // is saved; no client-asserted macro ever reaches storage.
+  prescriptionCommit: (days, seed, startDate, opts) => request("/prescription/commit", { method: "POST", body: JSON.stringify({ days, ...(seed != null ? { seed } : {}), ...(startDate ? { startDate } : {}) }), timeoutMs: TIMEOUT.SOLVER, ...opts }),
+  prescriptionCurrent: (opts) => request("/prescription/current", { timeoutMs: TIMEOUT.SOLVER, ...opts }),
+  prescriptionSwap: (body, opts) => request("/prescription/swap", { method: "POST", body: JSON.stringify(body), timeoutMs: TIMEOUT.SOLVER, ...opts }),
   getDayOptions: (dayOfWeek, filters, opts) => request("/plans/day-options", { method: "POST", body: JSON.stringify({ dayOfWeek, filters }), timeoutMs: TIMEOUT.SOLVER, ...opts }),
   acceptDay: (dayOfWeek, slots, opts) => request("/plans/accept-day", { method: "POST", body: JSON.stringify({ dayOfWeek, slots }), timeoutMs: TIMEOUT.SOLVER, ...opts }),
   setSlotLock: (planId, slotId, locked, opts) => request(`/plans/${planId}/slots/${slotId}`, { method: "PUT", body: JSON.stringify({ locked }), timeoutMs: TIMEOUT.WRITE, ...opts }),
