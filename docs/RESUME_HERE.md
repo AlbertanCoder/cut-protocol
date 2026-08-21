@@ -49,11 +49,22 @@ Then `npm test` (backend) should say 155/1,852/0, and
    `DATABASE_URL=file:./rebuild-qa.db PORT=3100 HOST=:: SUPABASE_URL= node
    server.js`, vite with `VITE_SUPABASE_URL=` override (frontend/.env
    carries live Supabase vars), proxy targets 3100.
-3. Prescription persistence: design WRITTEN and decision-ready —
-   `docs/design/prescription-persistence.md` (Option C recommended). Waits
-   on the owner's word, then one focused session.
-4. ~~Pool depth~~ DONE 2026-08-20: lean-protein batch closed P0's fat
-   corner — **210/210 days in band, 0 hits** (commit 8104336).
+3. Prescription persistence: Option C APPROVED and MIGRATED 2026-08-21
+   (tables in `20260821000000_prescription_persistence`, applied to
+   rebuild-qa.db; commit 7a055e2). STILL OWED: (a) the owner applies it to
+   dev.db — `cd backend && npx prisma migrate deploy` — which also unblocks
+   runTests' drift gate and therefore the FULL suite; (b) the three routes
+   (commit/current/swap) + Preview "Save this day" — next focused session.
+4. Pool depth, round 2 (2026-08-21, owner-directed): corner sweep went
+   **29% → 53% days in band** (BUILD_LOG has the step table). Re-measure
+   any time: `DATABASE_URL=file:./rebuild-qa.db node
+   scripts/measurePrescriptionCorners.cjs` from backend/ (sweeps the
+   cust-0301..0400 stored fleet profiles). Author new candidates in
+   `data/rebuildCandidates.mjs`, dry-run then `--write` with
+   `scripts/seedRebuildCandidates.mjs`. Hard corners left: vegan|6-meals,
+   paleo fat-over, pescatarian 6-meal carb-over.
+   (Round 1, 2026-08-20: lean-protein batch closed P0's fat corner —
+   210/210, commit 8104336.)
 5. ~~Pescatarian style~~ DONE 2026-08-20 (B13, owner-approved): land/marine
    lattice re-partition, P5 on the real style 30/30, suite 1,862 green.
 6. Owner-gated: B11 medication-gate migration · B12 training-aware floor ·
