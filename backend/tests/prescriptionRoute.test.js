@@ -114,6 +114,24 @@ test("keto gets no fiber subtraction — the net band is the total band under th
   assert.equal(back.status, 200);
 });
 
+test("carnivore's ruler is arithmetic-honest: no net-carb floor, fat band widened to the envelope", async () => {
+  // Corner sweep 2026-08-21: with net carbs ≈ 0 and protein banded, fat is
+  // DETERMINED — (kcal − 4·protein)/9 — and the mixed-diet fat band was
+  // unsatisfiable by any all-animal plate (fatG:over + netCarbG:under on
+  // 100% of carnivore days). Same disclosed-translation class as keto's
+  // ceiling; engine numbers untouched.
+  const k = await call("PUT", "/api/profile", { dietaryStyle: "carnivore" });
+  assert.equal(k.status, 200, JSON.stringify(k.json));
+  const r = await call("GET", "/api/prescription/feasibility");
+  assert.equal(r.status, 200);
+  assert.equal(r.json.targets.netCarbG.lo, 0, "an all-meat day 'under' on carbs is not a miss");
+  const t = r.json.targets;
+  const hiNeeded = Math.ceil((t.kcal + 50 - 4 * t.proteinG.lo) / 9);
+  assert.ok(t.fatG.hi >= hiNeeded, `fat band must reach the arithmetic envelope: hi ${t.fatG.hi} < needed ${hiNeeded}`);
+  const back = await call("PUT", "/api/profile", { dietaryStyle: "none" });
+  assert.equal(back.status, 200);
+});
+
 test("the seed is deterministic and echoed — same seed, same preview", async () => {
   const a = await call("POST", "/api/prescription/preview", { days: 1, seed: 42 });
   const b = await call("POST", "/api/prescription/preview", { days: 1, seed: 42 });

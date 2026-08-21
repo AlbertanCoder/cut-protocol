@@ -36,12 +36,19 @@ function mapToRulerTargets(dailyTarget, profile) {
   const pLo = Math.max(dailyTarget.proteinLo, dailyTarget.proteinFloorG || 0);
   const pHi = Math.max(dailyTarget.proteinHi, pLo);
   const keto = profile.dietaryStyle === "keto";
+  const carnivore = profile.dietaryStyle === "carnivore";
   // KETO GETS NO FIBER SUBTRACTION. The engine's keto band is already
   // carb-scarce (10–30 g TOTAL); subtracting the general 25 g allowance
   // produced a {0,5} net band that failed honest 13 g-net keto days
   // (measured live, 2026-08-20). Net ≤ total, so treating the total band as
   // the net band is the conservative direction, and the ceiling truncates.
-  const netLo = keto ? 0 : Math.max(0, dailyTarget.carbLo - FIBER_ALLOWANCE_G);
+  // CARNIVORE GETS NO NET-CARB FLOOR. The engine's carb band is the standard
+  // one, and an all-meat pool cannot reach its low edge — every carnivore
+  // day was netCarbG:under by construction (corner sweep, 2026-08-21). Under
+  // a floor the style's own food cannot reach, "under" is not a miss — the
+  // same lesson as keto's ceiling, mirrored. Disclosed translation only;
+  // no engine number changes.
+  const netLo = keto || carnivore ? 0 : Math.max(0, dailyTarget.carbLo - FIBER_ALLOWANCE_G);
   const netHi = keto
     ? dailyTarget.carbHi
     : Math.max(netLo, dailyTarget.carbHi - FIBER_ALLOWANCE_G);
@@ -53,6 +60,18 @@ function mapToRulerTargets(dailyTarget, profile) {
   };
   if (Number.isFinite(dailyTarget.floorKcal)) t.floorKcal = dailyTarget.floorKcal;
   if (keto) t.netCarbMaxG = KETO_NET_CARB_CEILING_G;
+  if (carnivore) {
+    // Fat is DETERMINED on carnivore: with net carbs ≈ 0 and protein inside
+    // its band, arithmetic forces fat ≈ (kcal − 4·protein)/9. The engine's
+    // fat band is written for a mixed diet and contradicts that arithmetic —
+    // no all-animal plate can satisfy both, and the corner sweep
+    // (2026-08-21) measured fatG:over + kcal:under on 100% of carnivore
+    // days. The ruler widens the fat band to the arithmetic envelope; the
+    // engine's numbers are untouched and the translation is disclosed here.
+    const loNeeded = Math.max(0, Math.floor((t.kcal - 50 - 4 * t.proteinG.hi) / 9));
+    const hiNeeded = Math.max(0, Math.ceil((t.kcal + 50 - 4 * t.proteinG.lo) / 9));
+    t.fatG = { lo: Math.min(t.fatG.lo, loNeeded), hi: Math.max(t.fatG.hi, hiNeeded) };
+  }
   return t;
 }
 
