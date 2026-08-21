@@ -20,6 +20,7 @@ const { requireAuth } = require("../lib/auth.js");
 const { requirePremium } = require("../lib/entitlement.js");
 const { planContext } = require("../lib/planContext.js");
 const { solvePrescriptionDay } = require("../lib/prescription/daySolver.js");
+const { buildPreferenceBias } = require("../lib/prescription/preferenceBias.js");
 const { checkTargetFeasibility } = require("../lib/prescription/feasibility.js");
 const { makeRng } = require("../lib/prescription/rng.js");
 const { dayNum, todayStr } = require("../lib/dates.js");
@@ -112,6 +113,10 @@ router.post("/preview", async (req, res, next) => {
     const targets = mapToRulerTargets(dailyTarget, profile);
     const feasibility = checkTargetFeasibility(targets);
     const rng = makeRng(seed);
+    // Soft taste steering from the profile's own columns — a multiplier on
+    // candidate sampling, never a veto (fleet, 2026-08-20: the hook existed,
+    // nothing passed it, and mediterranean profiles got Tex-Mex).
+    const bias = buildPreferenceBias(profile);
 
     const out = [];
     const window = [];
@@ -124,6 +129,7 @@ router.post("/preview", async (req, res, next) => {
         profile,
         rng,
         recentIds,
+        bias,
       });
       window.push(solved.slots.flatMap((s) => s.dishes.map((d) => d.recipeId)));
       if (window.length > 2) window.shift();
