@@ -597,3 +597,28 @@ Committed: d55c42f (carnivore ruler), be4c400 (solver stage 4.5 + 5 g),
 2a663d7 (49 candidates + 4 audience keys), 7a055e2 (Option C tables).
 Battery: 138 tests / 12 affected files / 0 failures; full suite pending
 the owner's dev.db deploy.
+
+---
+
+## Option C routes + Save this day (2026-08-21, post-reboot session)
+
+`78d5b82`. POST /api/prescription/commit re-solves server-side with the
+caller's seed — deterministic, so "Save this day" stores exactly the
+preview the customer read; no client-asserted macro reaches storage. One
+day per user-date (upsert); scan hits or zero-dish days refuse the whole
+commit at the write. GET /current returns stored days in the preview's
+slot shape (frozen ingredients, verdict, scan line, banner). POST /swap
+replaces one stored dish via the solver's own sampler + aromatic-clamped
+rows against the slot residual, never re-uses a dish already on the day,
+and re-verifies/re-certifies the whole day. Preview room grew the Save
+button + saved confirmation and now renders the plain-language banner.
+
+Verified end-to-end against a TEMP COPY of rebuild-qa.db (real pool, real
+fleet account): commit-matches-preview determinism, upsert-not-duplicate,
+current's shape, swap's re-verify, clean 404. Battery 53/7/0; frontend
+lint + build clean. Full suite still waits on the owner's one dev.db
+`npx prisma migrate deploy`.
+
+Queued next: grocery consolidation over committed days (existing
+groceryList.js shapes), Today-tab surfacing of the committed day, another
+pool-loop iteration (vegan|6m, paleo fat-over corners).

@@ -51,10 +51,13 @@ Then `npm test` (backend) should say 155/1,852/0, and
    carries live Supabase vars), proxy targets 3100.
 3. Prescription persistence: Option C APPROVED and MIGRATED 2026-08-21
    (tables in `20260821000000_prescription_persistence`, applied to
-   rebuild-qa.db; commit 7a055e2). STILL OWED: (a) the owner applies it to
-   dev.db — `cd backend && npx prisma migrate deploy` — which also unblocks
-   runTests' drift gate and therefore the FULL suite; (b) the three routes
-   (commit/current/swap) + Preview "Save this day" — next focused session.
+   rebuild-qa.db; commit 7a055e2). Routes DONE 2026-08-21 (78d5b82):
+   POST /commit (deterministic re-solve, upsert per user-date), GET
+   /current, POST /swap (solver's own sampler, day re-verified), and the
+   Preview room's "Save this day". STILL OWED: the owner applies the
+   migration to dev.db — `cd backend && npx prisma migrate deploy` — which
+   also unblocks runTests' drift gate and therefore the FULL suite.
+   Follow-ups queued: grocery list over committed days, Today-tab surfacing.
 4. Pool depth, round 2 (2026-08-21, owner-directed): corner sweep went
    **29% → 53% days in band** (BUILD_LOG has the step table). Re-measure
    any time: `DATABASE_URL=file:./rebuild-qa.db node
