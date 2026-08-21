@@ -57,7 +57,7 @@ writing.
 
 ---
 
-## B13 · Pescatarian needs a lattice re-partition, not a bolt-on (2026-08-20)
+## B13 · ~~Pescatarian needs a lattice re-partition~~ RESOLVED 2026-08-20 (owner-approved session; see BUILD_LOG)
 
 **Conflict:** the directive's P5 persona and §4.8 list pescatarian; this
 app's 9 styles don't have it, and P5 currently runs as meat-word exclusions

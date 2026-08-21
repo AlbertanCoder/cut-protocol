@@ -4,11 +4,20 @@ const { DIETARY_STYLES, recipeExcludedByStyle, matchesExclusionTerm } = require(
 
 const recipe = (...names) => ({ ingredients: names.map((name) => ({ name })) });
 
-test("the Phase 3 style menu is complete", () => {
+test("the style menu is complete (pescatarian added deliberately, B13 2026-08-20)", () => {
   assert.deepEqual(
     [...DIETARY_STYLES].sort(),
-    ["carnivore", "halal", "keto", "kosher", "mediterranean", "none", "paleo", "vegan", "vegetarian"].sort()
+    ["carnivore", "halal", "keto", "kosher", "mediterranean", "none", "paleo", "pescatarian", "vegan", "vegetarian"].sort()
   );
+});
+
+test("pescatarian: land slaughter out; fish, shellfish, dairy and eggs in", () => {
+  assert.equal(recipeExcludedByStyle(recipe("Chicken Breast", "Rice"), "pescatarian"), true);
+  assert.equal(recipeExcludedByStyle(recipe("Ground Beef", "Tortillas"), "pescatarian"), true);
+  assert.equal(recipeExcludedByStyle(recipe("Gelatin", "Sugar"), "pescatarian"), true);
+  assert.equal(recipeExcludedByStyle(recipe("Salmon", "Olive Oil", "Feta"), "pescatarian"), false);
+  assert.equal(recipeExcludedByStyle(recipe("Prawns", "Rice Noodles", "Fish Sauce"), "pescatarian"), false);
+  assert.equal(recipeExcludedByStyle(recipe("Eggs", "Cheddar Cheese", "Spinach"), "pescatarian"), false);
 });
 
 test("mediterranean: processed meat out, fish/olive oil/whole foods in", () => {

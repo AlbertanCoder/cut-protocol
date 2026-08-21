@@ -428,3 +428,30 @@ says so honestly on every attempt. The feasibility screen is
 arithmetic-only by design (disclosed); POOL-level feasibility ("your
 targets are possible as math but not with these recipes") is future work
 worth a diagnosis line at preview time.
+
+---
+
+## B13 — Pescatarian as a first-class dietary style (2026-08-20, owner-approved)
+
+**Done:** the land/marine lattice re-partition. `MEAT_FISH_KEYWORDS` split
+into `LAND_SLAUGHTER_KEYWORDS` + `MARINE_FLESH_KEYWORDS`, and
+`SLAUGHTER_OR_MARINE_KEYWORDS` into land-derived (gelatin/suet confections)
++ marine-derived (curry paste, isinglass) — both old lists rebuilt as EXACT
+unions, so vegan/vegetarian behaviour is preserved by construction.
+Partition rule recorded in-file: every ambiguous case (marine mammals,
+turtle/alligator/frog, land snails, mammal offal) sits on the LAND side —
+over-exclusion is the safe direction. New predicates isLandSlaughter /
+isMarineFood; pescatarian = isLandSlaughter. FDC metadata evidence:
+land-flesh categories exclude, USDA's one marine shelf permits.
+DIETARY_STYLES + /meta + both frontend selects (meta-driven) get the style
+automatically. The NUL bytes (lines 805–808) were never touched.
+
+**Measured:**
+- Lattice invariants extended and green: pescatarian ⊂ vegetarian both
+  ways, marine set permitted, land set excluded, VEGETARIAN_MUST_KEEP kept.
+- Style-menu completeness test updated deliberately (it fired, as designed).
+- P5 switched to the REAL style: pool 317, 30/30 × 3 seeds, 0 hits.
+- Full suite **155 files · 1,862 tests · 0 failures**; 10-seed fleet
+  **2,098/2,100 (99.90%), 0 hits**; seeded gates 210/210.
+- Live end-to-end: /meta serves the style, profile saves it, a pescatarian
+  preview solves in band — sea bass / white fish / haddock day, PASS scan.

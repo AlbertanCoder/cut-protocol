@@ -17,7 +17,18 @@
 // live verification caught prawn stew being offered to a vegan account.
 // Vegan/vegetarian exclusion must cover every meat/fish/seafood species and
 // processed-meat form in the real 600-recipe pool, erring on over-exclusion.
-const MEAT_FISH_KEYWORDS = [
+// ── The land/marine partition (B13, 2026-08-20) ──────────────────────────
+// Pescatarian is vegetarian's rule with the MARINE side restored, so the one
+// combined list had to become two. The partition rule, term by term:
+// marine = fish, shellfish, cephalopods and things derived from them
+// (pescatarian PERMITS these); land = everything slaughtered on land plus
+// every ambiguous case — marine MAMMALS (whale, seal, walrus: mammals, not
+// seafood), reptiles/amphibians (turtle, alligator, frog), land snails
+// (snail, escargot), and mammal offal ("brain") all sit on the LAND side,
+// because over-exclusion is the safe failure direction for a dietary rule.
+// MEAT_FISH_KEYWORDS is rebuilt as the exact union, so vegan/vegetarian
+// behaviour is preserved by construction; the lattice test asserts it.
+const LAND_SLAUGHTER_KEYWORDS = [
   // land meats + cuts
   "chicken", "turkey", "duck", "goose", "quail", "poussin", "beef", "pork",
   "bacon", "ham", "gammon", "steak", "sirloin", "flank", "brisket", "oxtail",
@@ -28,6 +39,26 @@ const MEAT_FISH_KEYWORDS = [
   "sausage", "salami", "pepperoni", "chorizo", "prosciutto", "pancetta",
   "spam", "hot dog", "frankfurter", "bratwurst", "kielbasa", "mortadella",
   "pastrami", "black pudding", "haggis", "luncheon", "deli",
+  // land-animal binders (gelatin is bovine/porcine; lard/suet/tallow rendered)
+  "gelatin", "gelatine", "lard", "suet", "tallow",
+  // Ratites + additional game birds
+  "ostrich", "emu", "rhea", "pheasant", "squab", "pigeon", "grouse", "partridge",
+  "guinea hen", "poultry",
+  // Large game + marine MAMMALS + reptiles/amphibians (see partition rule)
+  "caribou", "moose", "antelope", "buffalo", "beaver", "muskrat", "opossum",
+  "raccoon", "woodchuck", "whale", "muktuk", "blubber", "seal meat", "walrus",
+  "horse meat", "alligator", "turtle", "terrapin", "frog",
+  // Organ + offal forms not already covered
+  "gizzard", "chitterling", "chitlins", "sweetbread", "giblet", "headcheese",
+  "scrapple", "pate", "foie gras", "trotter", "chine", "hock", "cracklings",
+  "mechanically deboned", "mechanically separated", "brain", "brains",
+  // Processed-meat forms in USDA's vocabulary
+  "bologna", "liverwurst", "braunschweiger", "knockwurst", "knackwurst",
+  "andouille", "capicola", "soppressata", "cervelat", "thuringer", "souse",
+  // Land snails — escargot is not seafood
+  "snail", "escargot",
+];
+const MARINE_FLESH_KEYWORDS = [
   // fish
   "salmon", "tuna", "fish", "cod", "tilapia", "halibut", "trout", "mackerel",
   "sardine", "pilchard", "anchovy", "anchovies", "herring", "kipper", "haddock",
@@ -39,37 +70,25 @@ const MEAT_FISH_KEYWORDS = [
   // shellfish + cephalopods
   "shrimp", "scallop", "prawn", "crab", "lobster", "mussel", "clam", "oyster",
   "crayfish", "crawfish", "squid", "calamari", "octopus", "cuttlefish",
-  "seafood", "conch", "whelk", "cockle", "frog",
-  // animal-derived binders
-  "gelatin", "gelatine", "lard", "suet", "tallow", "worcestershire", "fish sauce",
-  "oyster sauce", "shrimp paste", "dashi", "bonito",
-  // ── USDA FoodData Central import hardening (2026-07-22) ──────────────────
-  // The list above was audited exhaustively against an 854-name table. The FDC
-  // bulk import took that table to 14,144 names carrying whole food classes the
-  // old corpus never contained — ratites, Alaska Native game and marine mammals,
-  // organ meats, and USDA's processed-meat vocabulary. Every term below was a
-  // MEASURED leak from scripts/auditDietaryCoverage.mjs (animal food that reached
-  // a vegan/vegetarian pool unexcluded), not a speculative addition.
-  // Ratites + additional game birds
-  "ostrich", "emu", "rhea", "pheasant", "squab", "pigeon", "grouse", "partridge",
-  "guinea hen", "poultry",
-  // Large game + marine mammals (FDC carries an Alaska Native food set)
-  "caribou", "moose", "antelope", "buffalo", "beaver", "muskrat", "opossum",
-  "raccoon", "woodchuck", "whale", "muktuk", "blubber", "seal meat", "walrus",
-  "horse meat", "alligator", "turtle", "terrapin",
-  // Organ + offal forms not already covered
-  "gizzard", "chitterling", "chitlins", "sweetbread", "giblet", "headcheese",
-  "scrapple", "pate", "foie gras", "trotter", "chine", "hock", "cracklings",
-  "mechanically deboned", "mechanically separated",
-  // Processed-meat forms in USDA's vocabulary
-  "bologna", "liverwurst", "braunschweiger", "knockwurst", "knackwurst",
-  "andouille", "capicola", "soppressata", "cervelat", "thuringer", "souse",
-  // Fish + shellfish the old corpus missed
-  "shark", "shark fin", "brain", "brains",
+  "seafood", "conch", "whelk", "cockle",
+  // marine-derived condiments (anchovy/fish/shellfish bases — B13: marine,
+  // so pescatarian-permitted)
+  "worcestershire", "fish sauce", "oyster sauce", "shrimp paste", "dashi", "bonito",
+  // Fish + shellfish the old corpus missed (FDC import hardening 2026-07-22)
+  "shark", "shark fin",
   "smelt", "burbot", "cusk", "roughy", "sturgeon", "shad", "croaker", "cisco",
   "wolffish", "whiting", "sablefish", "lingcod", "sucker", "stingray",
-  "snail", "escargot", "abalone", "periwinkle", "urchin", "mollusk", "mollusc",
+  "abalone", "periwinkle", "urchin", "mollusk", "mollusc",
   "crustacean", "langostino", "krill",
+];
+// ── USDA FoodData Central import hardening (2026-07-22) ──────────────────
+// The pre-split list was audited exhaustively against an 854-name table; the
+// FDC bulk import took that to 14,144 names, and every later term was a
+// MEASURED leak from scripts/auditDietaryCoverage.mjs, not speculative.
+// The union below is byte-for-byte the same VOCABULARY as before the split.
+const MEAT_FISH_KEYWORDS = [
+  ...LAND_SLAUGHTER_KEYWORDS,
+  ...MARINE_FLESH_KEYWORDS,
 ];
 // Meat-only subset (no fish) — used by kosher's meat+dairy rule, where fish
 // + dairy is permitted but meat + dairy is not.
@@ -171,17 +190,28 @@ const LACTO_OVO_KEYWORDS = [
 // Corpus reach over the live 14,148-name food table is recorded per term, because
 // a keyword that matches nothing is a claim without evidence — the same standard
 // mergeAllergenTaxonomy() applies to itself further down this file.
-const SLAUGHTER_OR_MARINE_KEYWORDS = [
-  "curry paste",        // Thai red/green: fish sauce and/or shrimp paste — 3 rows, all in live use
+// Split by derivation for the same B13 partition: gelatin/suet confections
+// are LAND-derived (pescatarian excludes them); curry paste's hidden fish
+// sauce/shrimp paste and isinglass's fish bladder are MARINE (pescatarian
+// permits them, exactly as it permits the fish they come from).
+const LAND_DERIVED_KEYWORDS = [
   "christmas pudding",  // suet — 1 row, live
   "marshmallow",        // gelatin — 24 rows incl. "Miniature Marshmallows", live
   "gummy",              // gelatin — 1 row
   // `nougat` was here and is NOT: it is egg-based. See LACTO_OVO_KEYWORDS above.
-  // The three below currently match ZERO corpus rows. They are kept deliberately
+  // The two below currently match ZERO corpus rows. They are kept deliberately
   // as forward guards for imported/AI-generated names, not because they earn a
   // place on measured reach — stated plainly so nobody later mistakes them for
   // evidence-backed entries.
-  "jell-o", "aspic", "isinglass", // gelatin dessert; meat jelly; fish-bladder fining agent
+  "jell-o", "aspic", // gelatin dessert; meat jelly
+];
+const MARINE_DERIVED_KEYWORDS = [
+  "curry paste",        // Thai red/green: fish sauce and/or shrimp paste — 3 rows, all in live use
+  "isinglass",          // fish-bladder fining agent — zero corpus rows, forward guard
+];
+const SLAUGHTER_OR_MARINE_KEYWORDS = [
+  ...LAND_DERIVED_KEYWORDS,
+  ...MARINE_DERIVED_KEYWORDS,
 ];
 
 // Vegan's set is the union, so vegan behaviour is unchanged by the split itself.
@@ -1096,11 +1126,23 @@ function plantDeclaredDish(name) {
   return PLANT_DECLARED_DISH.test(s) || DISH_VEGETABLE_QUALIFIER.test(s);
 }
 
-function isSlaughterOrMarine(n) {
-  return matchesAny(stripPlantFlesh(n), MEAT_FISH_KEYWORDS)
-    || matchesAny(stripEggPlant(n), SLAUGHTER_OR_MARINE_KEYWORDS)
+// The two halves of the B13 partition, with the SAME plant-name guards the
+// combined predicate always used. isSlaughterOrMarine stays the exact union,
+// so vegetarian/vegan verdicts cannot move.
+function isLandSlaughter(n) {
+  return matchesAny(stripPlantFlesh(n), LAND_SLAUGHTER_KEYWORDS)
+    || matchesAny(stripEggPlant(n), LAND_DERIVED_KEYWORDS);
+}
+
+function isMarineFood(n) {
+  return matchesAny(stripPlantFlesh(n), MARINE_FLESH_KEYWORDS)
+    || matchesAny(stripEggPlant(n), MARINE_DERIVED_KEYWORDS)
     || matchesExclusionTerm(n, "fish")
     || matchesExclusionTerm(n, "shellfish");
+}
+
+function isSlaughterOrMarine(n) {
+  return isLandSlaughter(n) || isMarineFood(n);
 }
 
 function isVeganAnimalProduct(n) {
@@ -1131,6 +1173,15 @@ function excludedByStyle(food, dietaryStyle) {
     // predicate, so vegetarian can no longer be a silently shorter list than
     // vegan — see the comment on isSlaughterOrMarine().
     return isSlaughterOrMarine(n);
+  }
+  if (dietaryStyle === "pescatarian") {
+    // Vegetarian's rule with the marine side restored (B13): land-slaughter
+    // flesh and land-animal derivatives (gelatin, lard, suet confections)
+    // are excluded; fish, shellfish and their derived condiments (fish
+    // sauce, worcestershire, curry paste) are permitted, as are dairy and
+    // egg. The lattice: pescatarian-excludes ⊂ vegetarian-excludes, and
+    // everything pescatarian excludes, vegetarian excludes too.
+    return isLandSlaughter(n);
   }
   if (dietaryStyle === "keto") {
     return food.carb > DEFAULT_KETO_CARB_THRESHOLD;
@@ -1579,7 +1630,7 @@ function namesAGlutenFreeGrainForm(name) {
 }
 
 // The styles the Profile UI offers — single source for route validation.
-const DIETARY_STYLES = ["none", "mediterranean", "vegetarian", "vegan", "paleo", "keto", "carnivore", "halal", "kosher"];
+const DIETARY_STYLES = ["none", "mediterranean", "pescatarian", "vegetarian", "vegan", "paleo", "keto", "carnivore", "halal", "kosher"];
 
 // Does a single exclusion term match this food/ingredient name? Exported
 // pure so callers can apply the exact same rule to recipe.ingredients[].name,
@@ -1866,6 +1917,10 @@ const FDC_FLESH_CATEGORIES = new Set([
   "lamb, veal, and game products", "sausages and luncheon meats",
   "finfish and shellfish products",
 ]);
+// USDA's one marine shelf — the slice of FDC_FLESH_CATEGORIES pescatarian
+// permits (B13). Kept as a named constant so the metadata rule and this set
+// cannot drift apart silently.
+const FDC_MARINE_CATEGORY = "finfish and shellfish products";
 // Animal but not flesh — excluded for vegan only (vegetarians eat these).
 const FDC_ANIMAL_NONFLESH_CATEGORIES = new Set(["dairy and egg products"]);
 
@@ -1984,6 +2039,9 @@ function styleExcludedByMetadata(food, dietaryStyle) {
   const cat = typeof food?.fdcCategory === "string" ? food.fdcCategory.trim().toLowerCase() : null;
   if (cat) {
     if (FDC_FLESH_CATEGORIES.has(cat) && (dietaryStyle === "vegan" || dietaryStyle === "vegetarian")) return true;
+    // Pescatarian: land-flesh categories only — USDA's one marine shelf
+    // ("finfish and shellfish products") is exactly what the style permits.
+    if (FDC_FLESH_CATEGORIES.has(cat) && cat !== FDC_MARINE_CATEGORY && dietaryStyle === "pescatarian") return true;
     if (FDC_ANIMAL_NONFLESH_CATEGORIES.has(cat) && dietaryStyle === "vegan") return true;
   }
   if (dietaryStyle === "vegan") {

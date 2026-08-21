@@ -54,8 +54,8 @@ Then `npm test` (backend) should say 155/1,852/0, and
    on the owner's word, then one focused session.
 4. ~~Pool depth~~ DONE 2026-08-20: lean-protein batch closed P0's fat
    corner — **210/210 days in band, 0 hits** (commit 8104336).
-5. Pescatarian style: scoped as a single-session lattice re-partition —
-   see BLOCKERS B13. P5 runs green via exclusions meanwhile.
+5. ~~Pescatarian style~~ DONE 2026-08-20 (B13, owner-approved): land/marine
+   lattice re-partition, P5 on the real style 30/30, suite 1,862 green.
 6. Owner-gated: B11 medication-gate migration · B12 training-aware floor ·
    consent screen/dashboards (docs/DEPLOY.md) · TheMealDB licence ·
    kill-list ARCHIVE moves.

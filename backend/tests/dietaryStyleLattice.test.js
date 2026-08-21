@@ -211,3 +211,52 @@ test("sesame matches every transliteration present in the corpus", () => {
     );
   }
 });
+
+// ── Pescatarian (B13, 2026-08-20) ───────────────────────────────────────────
+// The style is vegetarian's rule with the marine side restored, so its lattice
+// position is: pescatarian-excludes ⊂ vegetarian-excludes, and the difference
+// is EXACTLY the marine vocabulary. Asserted from both directions, on the same
+// real-corpus names as the rest of this file.
+
+test("everything pescatarian excludes, vegetarian excludes too (pescatarian ⊂ vegetarian)", () => {
+  for (const name of [...MARINE_OR_SLAUGHTER, ...VEGETARIAN_MUST_KEEP]) {
+    if (!excl(name, "pescatarian")) continue;
+    assert.equal(
+      excl(name, "vegetarian"), true,
+      `"${name}" is excluded for pescatarian but admitted for vegetarian — the lattice is inverted.`
+    );
+  }
+});
+
+test("pescatarian PERMITS the marine foods vegetarian excludes — that is the whole point of the style", () => {
+  for (const name of [
+    "Thai Red Curry Paste", "Red Curry Paste", "Thai Green Curry Paste",
+    "Shellfish, NFS", "Soup, bouillabaisse", "Paella, NFS", "Soup, bisque",
+    "Worcestershire sauce", "Bonito flakes", "Kimchi", "Olive tapenade",
+  ]) {
+    assert.equal(
+      excl(name, "pescatarian"), false,
+      `"${name}" is marine-derived and must stay AVAILABLE to a pescatarian — ` +
+        `if this fails, a marine term landed on the LAND side of the B13 partition.`
+    );
+  }
+});
+
+test("pescatarian still excludes land slaughter and land-animal derivatives", () => {
+  for (const name of [
+    "Chicken breast, cooked, skinless", "Ground Beef", "Bacon", "Turkey sausages",
+    "Gelatin", "Lard", "Beef suet", "Miniature Marshmallows", "Christmas pudding",
+    "Whale, muktuk", "Escargot",
+  ]) {
+    assert.equal(excl(name, "pescatarian"), true, `"${name}" reached a pescatarian pool`);
+  }
+});
+
+test("pescatarian keeps everything vegetarian keeps (dairy, eggs, plants)", () => {
+  for (const name of VEGETARIAN_MUST_KEEP) {
+    assert.equal(
+      excl(name, "pescatarian"), false,
+      `"${name}" was excluded for pescatarian — over-exclusion on the lacto-ovo/plant side.`
+    );
+  }
+});

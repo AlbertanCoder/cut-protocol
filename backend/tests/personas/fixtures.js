@@ -63,10 +63,10 @@ const PERSONAS = [
   {
     id: "p5",
     label: "pescatarian Mediterranean, 1,800 kcal",
-    // "pescatarian" is NOT a dietary style in this app (AUDIT §5.4 correction;
-    // 9 styles, none of them pescatarian). Expressed as meat exclusions until
-    // the lattice grows the style — recorded gap, BUILD_LOG Phase 2.
-    profile: { dietaryStyle: null, excludedFoods: ["beef", "pork", "chicken", "lamb", "turkey", "bacon", "ham", "sausage"] },
+    // THE REAL STYLE as of B13 (2026-08-20): the land/marine lattice
+    // re-partition made pescatarian a first-class dietary style. This
+    // fixture previously approximated it with meat-word exclusions.
+    profile: { dietaryStyle: "pescatarian", excludedFoods: [] },
     targets: { kcal: 1800, proteinG: { lo: 110, hi: 130 }, fatG: { lo: 60, hi: 70 }, netCarbG: { lo: 160, hi: 180 } }, // macros assumed
     mealConfig: { meals: 3, snacks: 1 },
     likesCuisines: ["mediterranean"],
