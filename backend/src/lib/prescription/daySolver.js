@@ -252,31 +252,111 @@ function solvePrescriptionDay({ pool, targets, mealConfig, profile = {}, rng, re
     // cap — so a number-chase can never ruin a dish.
     let day = sumDay();
     let verdict = dayVerdict(day, targets);
-    for (let guard = 0; guard < 40 && verdict.misses.length > 0; guard++) {
-      const current = missScore(verdict);
-      let best = null; // { row, dish, delta, score }
-      for (const d of allDishes) {
-        for (const r of d.finalRows) {
-          if (!(r.food.kcal >= 500) || r.grams < 1) continue;
-          if (r._base === undefined) r._base = r.grams;
-          for (const delta of [1, -1]) {
-            const g = r.grams + delta;
-            if (g < 1 || g > r._base * 1.25 || g < Math.max(1, r._base * 0.75)) continue;
-            r.grams = g;
-            const savedTotals = d.totals;
-            d.totals = sumRows(d.finalRows);
-            const score = missScore(dayVerdict(sumDay(), targets));
-            d.totals = savedTotals;
-            r.grams = g - delta;
-            if (score < current - 1e-9 && (!best || score < best.score)) best = { row: r, dish: d, delta, score };
+    function microAdjust() {
+      for (let guard = 0; guard < 40 && verdict.misses.length > 0; guard++) {
+        const current = missScore(verdict);
+        let best = null; // { row, dish, delta, score }
+        for (const d of allDishes) {
+          for (const r of d.finalRows) {
+            // Dense rows (oils, nut butters) move in their 1 g rounding
+            // steps; ordinary rows move in their 5 g steps — same food-scale
+            // honesty as roundGrams, same ±25% cap. The 5 g class is what
+            // closes the last-mile misses (10-15 units, 2026-08-21 sweep)
+            // that no oil nudge can reach: 25 g off a protein row is ~7 g
+            // of fat or ~8 g of protein.
+            const dense = r.food.kcal >= 500;
+            const step = dense ? 1 : 5;
+            if (r.grams < (dense ? 1 : 20)) continue;
+            if (r._base === undefined) r._base = r.grams;
+            for (const delta of [step, -step]) {
+              const g = r.grams + delta;
+              if (g < 1 || g > r._base * 1.25 || g < Math.max(1, r._base * 0.75)) continue;
+              r.grams = g;
+              const savedTotals = d.totals;
+              d.totals = sumRows(d.finalRows);
+              const score = missScore(dayVerdict(sumDay(), targets));
+              d.totals = savedTotals;
+              r.grams = g - delta;
+              if (score < current - 1e-9 && (!best || score < best.score)) best = { row: r, dish: d, delta, score };
+            }
           }
         }
+        if (!best) break;
+        best.row.grams += best.delta;
+        best.dish.totals = sumRows(best.dish.finalRows);
+        day = sumDay();
+        verdict = dayVerdict(day, targets);
       }
-      if (!best) break;
-      best.row.grams += best.delta;
-      best.dish.totals = sumRows(best.dish.finalRows);
-      day = sumDay();
-      verdict = dayVerdict(day, targets);
+    }
+    microAdjust();
+
+    // ── stage 4.5: composition swap ───────────────────────────────────────
+    // Levers scale a dish; they cannot change WHAT it is. When the day still
+    // misses after refine+rounding+micro-adjust, the residue is usually
+    // composition — the 2026-08-21 corner sweep measured fatG:over on 100%
+    // of vegetarian/paleo days and proteinG:over on every carnivore day,
+    // and no gram nudge can undo a fatty (or ultra-lean) dish CHOICE. So:
+    // take the day's signed gap to each band edge, find the dish most
+    // responsible for the worst miss, and audition replacement candidates
+    // solved against "that dish's totals minus the day's gap". A swap is
+    // kept only when the verdict strictly improves (fewer misses, or the
+    // same count with a lower band-normalized score) — this stage can
+    // repair, never regress. Deterministic: candidates come from the same
+    // injected-rng sampler as stage 1.
+    const DIM_OF = { kcal: "kcal", proteinG: "protein", fatG: "fat", netCarbG: "netCarb" };
+    for (let round = 0; round < 3 && verdict.misses.length > 0; round++) {
+      const gap = {}; // signed: positive = day sits above the band's hi edge
+      for (const [key, dim] of Object.entries(DIM_OF)) {
+        const b = bands[key];
+        gap[dim] = day[dim] > b.hi ? day[dim] - b.hi : day[dim] < b.lo ? day[dim] - b.lo : 0;
+      }
+      const worst = [...verdict.misses].sort((a, b) => (b.by / (bands[b.key].hi - bands[b.key].lo + 1)) - (a.by / (bands[a.key].hi - bands[a.key].lo + 1)))[0];
+      const wDim = DIM_OF[worst.key];
+      const ranked = [...allDishes].sort((a, b) =>
+        worst.kind === "over" ? b.totals[wDim] - a.totals[wDim] : a.totals[wDim] - b.totals[wDim]);
+      let swapped = false;
+      for (const dish of ranked.slice(0, 4)) {
+        const slot = slots.find((s) => s.dishes.includes(dish));
+        if (!slot) continue;
+        const others = new Set(allDishes.filter((x) => x !== dish).map((x) => x.recipe.id));
+        others.add(dish.recipe.id); // never swap a dish for itself
+        const list = eligible(pool, slot.slotType, others, recentIds);
+        if (!list.length) continue;
+        const want = {
+          kcal: Math.max(100, dish.totals.kcal - gap.kcal),
+          protein: Math.max(0, dish.totals.protein - gap.protein),
+          fat: Math.max(0, dish.totals.fat - gap.fat),
+          netCarb: Math.max(0, dish.totals.netCarb - gap.netCarb),
+        };
+        // Sample toward the REPLACEMENT's composition, not the day mid — the
+        // stage-1 sampler's protein/fat-share steering is exactly what chose
+        // the dish being evicted, and re-using it here kept hiding the
+        // correction candidates (carnivore's fatty dishes never surfaced).
+        const cands = sampleCandidates(list, CANDIDATES_PER_SLOT, rng, want, bias);
+        let bestSwap = null;
+        for (const r of cands) {
+          const rows = rowsOf(r);
+          const solved = solveLevers(rows, want);
+          if (!bestSwap || solved.distance < bestSwap.solved.distance) bestSwap = { recipe: r, rows, solved };
+        }
+        if (!bestSwap) continue;
+        const applied = applyLevers(bestSwap.rows, bestSwap.solved.scales);
+        const trial = { recipe: bestSwap.recipe, rows: bestSwap.rows, scales: bestSwap.solved.scales, finalRows: applied.rows, totals: applied.totals };
+        const si = slot.dishes.indexOf(dish);
+        const ai = allDishes.indexOf(dish);
+        slot.dishes[si] = trial; allDishes[ai] = trial;
+        const newDay = sumDay();
+        const newVerdict = dayVerdict(newDay, targets);
+        const better = newVerdict.misses.length < verdict.misses.length ||
+          (newVerdict.misses.length === verdict.misses.length && missScore(newVerdict) < missScore(verdict) - 1e-9);
+        if (better) {
+          day = newDay; verdict = newVerdict; swapped = true;
+          microAdjust(); // let the 1 g items close what the swap left open
+          break;
+        }
+        slot.dishes[si] = dish; allDishes[ai] = dish; // revert — repair only
+      }
+      if (!swapped) break;
     }
     return { slots, allDishes, day, verdict };
   }
