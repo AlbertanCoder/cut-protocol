@@ -127,12 +127,35 @@ function solveLevers(rows, target) {
   return { scales, achieved, distance, bundles, fixed };
 }
 
+// Aromatic ceiling (fleet, 2026-08-20). Herb/spice rows are ordinary "other"
+// levers to the math, so a recipe whose data carries a large herb amount
+// scaled up like food: customers were prescribed 50–105 g of bay leaves,
+// 25–155 g of thyme and 150 g of tarragon as if they were vegetables —
+// "nobody is eating a bowl of bay leaves" (verbatim review). Nothing
+// culinary ever needs more: dried herbs/spices cap at 10 g per row, fresh
+// ones (basil for a pistou, root ginger) at 60 g. Classified by the FDC
+// category the gate already loads; the kcal density separates dried
+// (~250–350 kcal/100 g) from fresh (~25–100).
+const AROMATIC_DRIED_CAP_G = 10;
+const AROMATIC_FRESH_CAP_G = 60;
+function aromaticCapG(food) {
+  if (!food) return null;
+  const cat = String(food.fdcCategory || "").toLowerCase();
+  if (cat !== "spices and herbs") return null;
+  const dried = Number.isFinite(food.kcal) && food.kcal >= 150;
+  return dried ? AROMATIC_DRIED_CAP_G : AROMATIC_FRESH_CAP_G;
+}
+
 // Food-scale rounding (directive §3.2): 5 g steps for ordinary amounts,
 // 1 g for calorie-dense items (≥500 kcal/100 g — oils, nut butters), whole
 // grams under 20 g, and never 0 for a real amount (the shipped solver's
 // measured lesson: plain rounding deleted 4.3% of ingredients).
+// Aromatic rows are capped here — this is the one choke point every scaled
+// gram passes through.
 function roundGrams(raw, food) {
   if (!(raw > 0)) return 0;
+  const cap = aromaticCapG(food);
+  if (cap != null && raw > cap) raw = cap;
   const dense = food && Number.isFinite(food.kcal) && food.kcal >= 500;
   if (dense) return Math.max(1, Math.round(raw));
   if (raw < 20) return Math.max(1, Math.round(raw));
@@ -163,4 +186,4 @@ function applyLevers(rows, scales) {
   return { rows: out, totals };
 }
 
-module.exports = { LEVER_BOUNDS, LEVER_OF_ROLE, leverOf, bundleByLever, solveLevers, roundGrams, applyLevers };
+module.exports = { LEVER_BOUNDS, LEVER_OF_ROLE, leverOf, bundleByLever, solveLevers, roundGrams, applyLevers, aromaticCapG };

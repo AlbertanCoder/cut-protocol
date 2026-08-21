@@ -65,3 +65,33 @@ test("net carbs derive from carb minus fiber in the recomputation", () => {
   const { totals } = applyLevers([{ grams: 200, scalable: true, role: "carb", food: RICE }], { carb: 1 });
   assert.ok(Math.abs(totals.netCarb - (56 - 0.8)) < 1e-9);
 });
+
+// ── aromatic ceiling (fleet, 2026-08-20) ──────────────────────────────────
+// Customers were prescribed 50-105 g of bay leaves and 25-155 g of thyme:
+// herb rows are ordinary "other" levers to the math, so recipe-data warts
+// scaled up like food. Dried herbs/spices cap at 10 g, fresh at 60 g, keyed
+// on the FDC category the gate already loads.
+
+const BAY_DRIED = { kcal: 313, protein: 7.6, fat: 8.4, carb: 75, fiber: 26, fdcCategory: "Spices and Herbs" };
+const BASIL_FRESH = { kcal: 23, protein: 3.2, fat: 0.6, carb: 2.7, fiber: 1.6, fdcCategory: "Spices and Herbs" };
+
+test("aromatics: a bowl of bay leaves cannot leave the solver", () => {
+  const { aromaticCapG } = require("../../src/lib/prescription/levers.js");
+  assert.equal(aromaticCapG(BAY_DRIED), 10, "dried herb caps at 10 g");
+  assert.equal(aromaticCapG(BASIL_FRESH), 60, "fresh herb caps at 60 g (a pistou is legitimate)");
+  assert.equal(aromaticCapG(CHICKEN), null, "food is not capped");
+  // Through the rounding choke point: a 50 g bay-leaf row scaled 2x lands at 10 g.
+  assert.equal(roundGrams(100, BAY_DRIED), 10);
+  assert.equal(roundGrams(155, BASIL_FRESH), 60);
+  // Small honest amounts are untouched.
+  assert.equal(roundGrams(2, BAY_DRIED), 2);
+  assert.equal(roundGrams(30, BASIL_FRESH), 30);
+});
+
+test("aromatics: applyLevers caps the plated grams even when the lever asked for more", () => {
+  const { rows: out } = applyLevers(
+    [{ grams: 50, scalable: true, role: "other", food: BAY_DRIED }],
+    { other: 2.0 }
+  );
+  assert.equal(out[0].grams, 10, `50 g bay leaves x2.0 lever must plate 10 g, got ${out[0].grams}`);
+});

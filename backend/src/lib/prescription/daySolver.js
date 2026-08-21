@@ -18,7 +18,7 @@
 
 "use strict";
 
-const { solveLevers, applyLevers, bundleByLever, LEVER_BOUNDS } = require("./levers.js");
+const { solveLevers, applyLevers, bundleByLever, LEVER_BOUNDS, aromaticCapG } = require("./levers.js");
 const { dayVerdict, resolveBands, allergenScanLine } = require("./ruler.js");
 const { isExcluded } = require("../exclusionGate.js");
 
@@ -38,7 +38,16 @@ function foodMacrosUsable(f) {
 function rowsOf(recipe) {
   return (recipe.ingredients || [])
     .filter((i) => Number.isFinite(i.baseGrams) && i.food)
-    .map((i) => ({ grams: i.baseGrams, scalable: i.scalable !== false, role: i.role, food: i.food, foodId: i.foodId, name: i.food.name }));
+    .map((i) => {
+      // Aromatic base clamp: recipe data carrying an absurd herb amount
+      // (50 g of bay leaves) must not enter the solve as if it were food —
+      // the levers would scale it further and the totals would lean on it.
+      // roundGrams() caps the scaled output too; this keeps the ARITHMETIC
+      // honest, that keeps the PLATE honest. (Fleet, 2026-08-20.)
+      const cap = aromaticCapG(i.food);
+      const grams = cap != null ? Math.min(i.baseGrams, cap) : i.baseGrams;
+      return { grams, scalable: i.scalable !== false, role: i.role, food: i.food, foodId: i.foodId, name: i.food.name };
+    });
 }
 
 // A recipe carrying a macro-incomplete food (null kcal — this library is
