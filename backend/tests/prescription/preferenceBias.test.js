@@ -52,3 +52,22 @@ test("it is a multiplier, never a veto — nothing reaches zero", () => {
   const worst = bias(dish({ cuisine: "thai", name: "Spicy Sichuan Hotpot", ingredients: new Array(14).fill({}) }));
   assert.ok(worst > 0, `worst case must stay positive, got ${worst}`);
 });
+
+test("'I dislike fish' in the note steers away from fish dishes through the allergen vocabulary", () => {
+  // ~20 fleet reviews: the only way to keep fish off the plate was to lie
+  // and call it an allergy. The note carries it now — softly, not a veto.
+  const bias = buildPreferenceBias({ mealPreferencesNote: "I dislike fish" });
+  assert.ok(bias, "a dislike alone is a preference signal");
+  const haddock = bias(dish({ name: "Smoked Haddock & Pea Rice Bowl", ingredients: [{ food: { name: "Smoked Haddock" } }, { food: { name: "White rice, cooked" } }] }));
+  assert.ok(haddock < 0.5, `haddock must yield hard for a fish-disliker, got ${haddock}`);
+  const chicken = bias(dish({ name: "Grilled Chicken Plate", ingredients: [{ food: { name: "Chicken breast, cooked, skinless" } }] }));
+  assert.equal(chicken, 1, "non-fish dishes stay neutral");
+  assert.ok(haddock > 0, "a dislike is never a veto");
+});
+
+test("dislike parsing reads verbs, not stray words", () => {
+  assert.equal(buildPreferenceBias({ mealPreferencesNote: "fish is fine actually" }), null, "no dislike verb, no signal");
+  const b = buildPreferenceBias({ mealPreferencesNote: "hates mushrooms, no onions" });
+  const shroom = b(dish({ name: "Creamy Mushroom Skillet", ingredients: [{ food: { name: "Mushrooms, white, raw" } }] }));
+  assert.ok(shroom < 0.5, `mushroom dish must yield, got ${shroom}`);
+});

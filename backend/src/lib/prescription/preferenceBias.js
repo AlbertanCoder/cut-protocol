@@ -16,10 +16,35 @@
 
 "use strict";
 
+const { isExcluded } = require("../exclusionGate.js");
+
 // Words the appetite note can carry. Deliberately small and literal — this
 // is a nudge, not NLP; anything it cannot read leaves the bias neutral.
 const PLAIN_RE = /\b(plain|simple|familiar|picky|basic|no[\s-]?frills)\b/i;
 const SPICY_RE = /\b(spicy|spice|heat|hot[\s-]?sauce|chili|chilli)\b/i;
+
+// "I dislike fish" — the fleet's most-asked-for missing field (~20 reviews:
+// the only way to keep fish off the plate was to lie and call it an
+// allergy). The note can carry it now. Terms are a curated list, matched in
+// the note by a dislike verb, and matched against candidate dishes through
+// the exclusion GATE with a dislikes-only pseudo-profile — so "dislike
+// fish" sees Smoked Haddock exactly the way a fish allergy would (all four
+// probes, full vocabulary), just softly.
+const DISLIKE_VERBS = /(?:dislikes?|hates?|can(?:'|no)?t stand|avoids?|no)\s+([a-z\s]+)/gi;
+const DISLIKABLE_TERMS = [
+  "fish", "seafood", "shellfish", "eggs", "mushroom", "tofu", "cilantro",
+  "coriander", "olives", "onion", "liver", "lamb", "pork",
+];
+const DISLIKE_PENALTY = 0.15;
+
+function dislikesIn(note) {
+  const found = new Set();
+  for (const m of String(note || "").matchAll(DISLIKE_VERBS)) {
+    const tail = m[1].toLowerCase();
+    for (const t of DISLIKABLE_TERMS) if (tail.includes(t)) found.add(t);
+  }
+  return [...found];
+}
 
 // What "reads as spicy" in a recipe name — the same literalness.
 const SPICY_NAME_RE = /\b(chili|chilli|chipotle|jalapeno|jalapeño|harissa|sriracha|cayenne|scotch bonnet|curry|szechuan|sichuan|gochujang|piri[\s-]?piri|spicy|arrabbiata|diablo)\b/i;
@@ -58,8 +83,9 @@ function buildPreferenceBias(profile) {
   const note = String(profile.mealPreferencesNote || "");
   const wantsPlain = PLAIN_RE.test(note);
   const wantsSpicy = SPICY_RE.test(note);
+  const dislikes = dislikesIn(note);
 
-  if (!cuisines.length && !wantsPlain && !wantsSpicy) return null;
+  if (!cuisines.length && !wantsPlain && !wantsSpicy && !dislikes.length) return null;
 
   return (r) => {
     let m = 1;
@@ -75,6 +101,7 @@ function buildPreferenceBias(profile) {
       if (SPICY_NAME_RE.test(r.name || "")) m *= SPICY_AVOID_PENALTY;
     }
     if (wantsSpicy && SPICY_NAME_RE.test(r.name || "")) m *= SPICY_BOOST;
+    if (dislikes.length && isExcluded(r, { excludedFoods: dislikes })) m *= DISLIKE_PENALTY;
     return m;
   };
 }
