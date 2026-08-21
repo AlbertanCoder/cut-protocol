@@ -29,6 +29,12 @@ export const NEW_FOODS = [
     source: "label", dataQuality: "label-entered 2026-08-19; existing 'Almond Flour' row is zero-kcal corrupt" },
   { name: "Edamame, shelled, cooked", category: "protein", kcal: 121, protein: 11.9, fat: 5.2, carb: 8.9, fiber: 5.2,
     source: "label", dataQuality: "hand-entered 2026-08-19 from USDA SR reference values" },
+  // 2026-08-21 corner batch: vegan protein density was the measured gap
+  // (proteinG:under on 100% of vegan days in the corner sweep).
+  { name: "Pea protein powder", category: "protein", kcal: 375, protein: 80, fat: 6.3, carb: 6.3, fiber: 0,
+    source: "label", dataQuality: "label-entered 2026-08-21 from typical retail label; the vegan protein-density rescue" },
+  { name: "Seitan, prepared", category: "protein", kcal: 141, protein: 25, fat: 2, carb: 6, fiber: 0.6,
+    source: "label", dataQuality: "label-entered 2026-08-21 from typical retail vital-wheat-gluten seitan; vegan protein density, NOT gluten-free" },
 ];
 
 // audience keys → profiles asserted in the seeder:
@@ -464,4 +470,222 @@ export const CANDIDATES = [
     I("Garlic, raw", 6, "other", false), I("Olive Oil", 8, "fat"), I("Parsley, fresh", 10, "other", false),
   ], ["Soak the salt cod per the pack, then poach and flake it.",
       "Mash roughly into the hot potatoes with garlic, oil and parsley."]),
+
+  // ── 2026-08-21 corner batch ───────────────────────────────────────────
+  // Targeting from the corner sweep (scratchpad measureCorners, 92 stored
+  // fleet profiles × 3 seeds × 2 days): carnivore pool was 3-5 recipes
+  // (perogies correctly evicted, nothing replaced them — 18-24 empty slots),
+  // vegan/vegetarian/paleo all 0% in-band with fatG:over + proteinG:under,
+  // and every style short of snack-sized items for the 4m2s/6m0s
+  // structures. Everything here is LEAN by construction with a
+  // 1 g-steppable fat lever (butter/ghee/olive oil), the lesson the
+  // lean-protein batch already paid for.
+
+  // Carnivore mains — pure animal rows only (ANY plant ingredient trips the
+  // carnivore gate at ingredient level, including oils and aromatics).
+  M("Sirloin & Eggs with Butter", "american", 15, ["carnivore", "keto", "p0", "p2", "open"], [
+    I("Sirloin steak, cooked, lean", 220, "protein"), I("Eggs, whole, cooked", 110, "protein"),
+    I("Butter", 10, "fat"),
+  ], ["Sear the sirloin in half the butter and rest it.", "Fry the eggs in the rest and serve on top."]),
+  M("Chicken Thighs & Egg Whites in Ghee", "american", 20, ["carnivore", "keto", "p0", "p2", "open"], [
+    I("Chicken thigh, cooked, skinless", 240, "protein"), I("Egg White", 150, "protein"),
+    I("Ghee", 10, "fat"),
+  ], ["Brown the thighs in ghee.", "Scramble the egg whites in the same pan and plate together."]),
+  M("Ground Beef & Cheddar Skillet", "american", 15, ["carnivore", "keto", "p0", "p2", "open"], [
+    I("Extra-lean ground beef, cooked", 220, "protein"), I("Cheddar Cheese", 35, "fat"),
+    I("Butter", 6, "fat"),
+  ], ["Brown the beef in butter.", "Fold the cheddar through off the heat until it melts."]),
+  M("Butter-Baked Salmon Plate", "american", 18, ["carnivore", "keto", "p2", "open"], [
+    I("Salmon, cooked", 210, "protein"), I("Butter", 10, "fat"), I("Egg White", 100, "protein"),
+  ], ["Bake the salmon under the butter.", "Set soft-scrambled egg whites alongside."]),
+  M("Lean Turkey & Egg Skillet", "american", 15, ["carnivore", "keto", "p0", "p2", "open"], [
+    I("Turkey, ground, 93% lean, 7% fat, raw", 230, "protein"), I("Eggs, whole, cooked", 110, "protein"),
+    I("Ghee", 8, "fat"),
+  ], ["Brown the turkey through in ghee.", "Push aside, fry the eggs, and serve stacked."]),
+  M("Pork Shoulder & Fried Eggs", "american", 20, ["carnivore", "keto", "p0", "p2", "open"], [
+    I("Pork Shoulder", 220, "protein"), I("Eggs, whole, cooked", 110, "protein"), I("Butter", 8, "fat"),
+  ], ["Slice and crisp the pork shoulder in butter.", "Fry the eggs in the drippings and serve over."]),
+  M("Smoked Haddock & Poached Eggs", "american", 15, ["carnivore", "keto", "p0", "p2", "open"], [
+    I("Smoked Haddock", 200, "protein"), I("Eggs, whole, cooked", 110, "protein"), I("Butter", 8, "fat"),
+  ], ["Poach the haddock and the eggs.", "Finish both with the butter."]),
+  // Carnivore snacks — the empty-slot fix.
+  M("Boiled Eggs & Cheddar Cubes", "american", 8, ["carnivore", "keto", "p0", "p2", "open"], [
+    I("Eggs, whole, cooked", 110, "protein"), I("Cheddar Cheese", 30, "fat"),
+  ], ["Halve the boiled eggs and plate with the cheese."], "snack"),
+  M("Greek Yogurt & Whey Cup", "american", 5, ["carnivore", "p0", "p2", "open"], [
+    I("Greek yogurt, 0%", 220, "protein"), I("Beverages, Protein powder whey based", 20, "protein"),
+  ], ["Stir the whey into the yogurt until smooth."], "snack"),
+  M("Cottage Cheese & Smoked Ham Cup", "american", 5, ["carnivore", "p0", "open"], [
+    I("Cottage Cheese", 180, "protein"), I("Smoked Ham", 60, "protein"),
+  ], ["Fold the ham through the cottage cheese."], "snack"),
+  M("Tuna & Egg Plate", "american", 10, ["carnivore", "keto", "p0", "p2", "open"], [
+    I("Fish, tuna, light, canned in water, drained solids", 140, "protein"),
+    I("Eggs, whole, cooked", 80, "protein"), I("Butter", 5, "fat"),
+  ], ["Flake the tuna, halve the eggs, finish with the butter."], "snack"),
+
+  // Vegan lean protein — the proteinG:under fix.
+  M("Pea Protein Shake with Almond Milk", "american", 3, ["vegan", "vegan_gf", "p0", "open"], [
+    I("Pea protein powder", 40, "protein"), I("Almond milk, unsweetened, plain, refrigerated", 350, "other"),
+  ], ["Shake or blend until smooth."], "snack"),
+  M("Seitan Stir-Fry with Broccoli & Rice", "chinese", 20, ["vegan", "open"], [
+    I("Seitan, prepared", 220, "protein"), I("Broccoli, raw", 130, "veg"),
+    I("White rice, cooked", 150, "carb"), I("Olive Oil", 8, "fat"),
+  ], ["Sear the seitan strips in the oil.", "Stir-fry with broccoli and serve over rice."]),
+  M("Tofu & Edamame Power Bowl", "chinese", 15, ["vegan", "vegan_gf", "open"], [
+    I("Tofu, firm, raw", 250, "protein"), I("Edamame, shelled, cooked", 110, "protein"),
+    I("White rice, cooked", 140, "carb"), I("Olive Oil", 7, "fat"),
+  ], ["Crisp the tofu cubes in the oil.", "Toss with warm edamame over rice."]),
+  M("Tempeh & Green Bean Skillet", "american", 18, ["vegan", "vegan_gf", "open"], [
+    I("Tempeh, cooked", 190, "protein"), I("Green Beans", 150, "veg"),
+    I("Potato, baked with skin", 170, "carb"), I("Olive Oil", 8, "fat"),
+  ], ["Brown the tempeh in the oil.", "Add beans and cubed potato; crisp everything together."]),
+  M("Edamame Snack Cup", "chinese", 5, ["vegan", "vegan_gf", "open"], [
+    I("Edamame, shelled, cooked", 160, "protein"),
+  ], ["Warm and serve in a cup."], "snack"),
+  M("Black Bean & Rice Cup", "mexican", 8, ["vegan", "vegan_gf", "p0", "open"], [
+    I("Black beans, canned, drained", 130, "protein"), I("White rice, cooked", 90, "carb"),
+  ], ["Warm the beans and rice together."], "snack"),
+
+  // Vegetarian lean — egg-white / dairy protein density (also serves none).
+  M("Egg White & Pepper Scramble with Rice", "american", 12, ["vegetarian", "p0", "p2", "open"], [
+    I("Egg White", 260, "protein"), I("Bell peppers", 110, "veg"),
+    I("White rice, cooked", 140, "carb"), I("Olive Oil", 6, "fat"),
+  ], ["Soften the peppers in the oil.", "Scramble in the egg whites and serve over rice."]),
+  M("Greek Yogurt Bowl with Berries & Oats", "american", 5, ["vegetarian", "p0", "p2", "open"], [
+    I("Greek yogurt, 0%", 300, "protein"), I("Mixed berries", 100, "fruit"),
+    I("Oats, rolled, dry", 35, "carb"),
+  ], ["Layer yogurt, oats and berries; rest five minutes."]),
+  M("Cottage Cheese & Cucumber Plate", "american", 5, ["vegetarian", "p0", "p2", "open"], [
+    I("Cottage Cheese", 250, "protein"), I("Cucumber", 110, "veg"),
+  ], ["Plate the cottage cheese with cucumber on the side."], "snack"),
+  M("Skyr & Whey Power Cup", "american", 5, ["vegetarian", "p0", "p2", "open"], [
+    I("Greek yogurt, plain, nonfat (skyr-style)", 250, "protein"),
+    I("Beverages, Protein powder whey based", 25, "protein"), I("Mixed berries", 80, "fruit"),
+  ], ["Stir the whey into the skyr and top with berries."], "snack"),
+  M("Whey & Berry Shake", "american", 3, ["vegetarian", "p0", "p2", "open"], [
+    I("Beverages, Protein powder whey based", 35, "protein"), I("Mixed berries", 120, "fruit"),
+    I("Almond milk, unsweetened, plain, refrigerated", 300, "other"),
+  ], ["Blend until smooth."], "snack"),
+
+  // Paleo lean — fatG:over + kcal:under fix (no grains, legumes or dairy;
+  // potato per the disclosed paleo call).
+  M("White Fish & Roast Potato Plate", "american", 22, ["paleo", "pescatarian", "p0", "p2", "open"], [
+    I("White Fish", 230, "protein"), I("Potato, baked with skin", 260, "carb"),
+    I("Broccoli, raw", 130, "veg"), I("Olive Oil", 8, "fat"),
+  ], ["Roast the potatoes until crisp.", "Pan-cook the fish in the oil and serve with the greens."]),
+  M("Chicken, Potato & Broccoli Tray", "american", 25, ["paleo", "p0", "p2", "open"], [
+    I("Chicken breast, cooked, skinless", 210, "protein"), I("Potato, baked with skin", 250, "carb"),
+    I("Broccoli, raw", 130, "veg"), I("Olive Oil", 8, "fat"),
+  ], ["Tray-roast potato and broccoli in the oil.", "Add the sliced chicken to warm through."]),
+  M("Turkey & Courgette Hash", "american", 18, ["paleo", "p0", "p2", "open"], [
+    I("Turkey, ground, 93% lean, 7% fat, raw", 220, "protein"), I("Courgettes", 150, "veg"),
+    I("Potato, baked with skin", 200, "carb"), I("Olive Oil", 8, "fat"),
+  ], ["Brown the turkey.", "Add cubed potato and courgette; fry until golden."]),
+  M("Trout with Cauliflower Mash", "american", 20, ["paleo", "pescatarian", "p0", "p2", "open"], [
+    I("Trout", 210, "protein"), I("Cauliflower, raw", 260, "veg"), I("Olive Oil", 10, "fat"),
+  ], ["Steam and mash the cauliflower with half the oil.", "Pan-sear the trout in the rest."]),
+  M("Boiled Eggs & Cucumber Snack", "american", 8, ["paleo", "vegetarian", "keto", "p0", "p2", "open"], [
+    I("Eggs, whole, cooked", 110, "protein"), I("Cucumber", 100, "veg"),
+  ], ["Halve the eggs and serve with cucumber sticks."], "snack"),
+  M("Trout Flakes & Cucumber Cup", "american", 8, ["paleo", "pescatarian", "keto", "p0", "p2", "open"], [
+    I("Trout", 140, "protein"), I("Cucumber", 100, "veg"),
+  ], ["Flake the cooked trout over the cucumber."], "snack"),
+
+  // Pescatarian / general lean fish mains.
+  M("Tuna, Rice & Cucumber Bowl", "american", 10, ["pescatarian", "p0", "p2", "open"], [
+    I("Fish, tuna, light, canned in water, drained solids", 150, "protein"),
+    I("White rice, cooked", 150, "carb"), I("Cucumber", 100, "veg"), I("Olive Oil", 6, "fat"),
+  ], ["Flake the tuna over warm rice.", "Add cucumber and dress with the oil."]),
+  M("Prawns with Rice & Courgette", "mediterranean", 15, ["pescatarian", "p2", "open"], [
+    I("Prawns", 200, "protein"), I("White rice, cooked", 140, "carb"),
+    I("Courgettes", 150, "veg"), I("Olive Oil", 8, "fat"),
+  ], ["Sear the prawns and courgette in the oil.", "Serve over the rice."]),
+  M("Tuna & Cottage Cheese Cup", "american", 5, ["pescatarian", "p0", "p2", "open"], [
+    I("Fish, tuna, light, canned in water, drained solids", 100, "protein"), I("Cottage Cheese", 150, "protein"),
+  ], ["Fold the tuna through the cottage cheese."], "snack"),
+
+  // OMAD hearty singles — one dish that carries a whole meal slot.
+  M("Big Egg White Omelette with Potatoes & Cheddar", "american", 25, ["vegetarian", "p0", "p2", "open"], [
+    I("Egg White", 400, "protein"), I("Potato, baked with skin", 320, "carb"),
+    I("Cheddar Cheese", 50, "fat"), I("Bell peppers", 140, "veg"), I("Olive Oil", 10, "fat"),
+  ], ["Pan-fry the potatoes and peppers in the oil.", "Pour over the egg whites, set, and melt the cheddar on top."]),
+  M("Whole Roast Chicken Dinner Plate", "american", 35, ["paleo", "p0", "p2", "open"], [
+    I("Chicken breast, cooked, skinless", 200, "protein"), I("Chicken thigh, cooked, skinless", 80, "protein"),
+    I("Potato, baked with skin", 400, "carb"), I("Broccoli, raw", 180, "veg"), I("Olive Oil", 14, "fat"),
+  ], ["Roast the potatoes and broccoli in the oil.", "Add the chicken pieces to finish; one plate, whole dinner."]),
+
+  // General lean mains — the fat lever's rescue for none/mediterranean.
+  M("Lean Chicken, Rice & Greens", "american", 15, ["p0", "p2", "open"], [
+    I("Chicken breast, cooked, skinless", 240, "protein"), I("White rice, cooked", 170, "carb"),
+    I("Broccoli, raw", 140, "veg"), I("Olive Oil", 6, "fat"),
+  ], ["Steam the broccoli.", "Slice the chicken over rice and dress with the oil."]),
+  M("Extra-Lean Beef & Potato Bowl", "american", 18, ["p0", "p2", "open"], [
+    I("Extra-lean ground beef, cooked", 210, "protein"), I("Potato, baked with skin", 250, "carb"),
+    I("Green Beans", 120, "veg"), I("Olive Oil", 6, "fat"),
+  ], ["Brown the beef.", "Bowl with cubed potato and beans; dress with the oil."]),
+  M("Sirloin, Rice & Peppers", "american", 18, ["p0", "p2", "open"], [
+    I("Sirloin steak, cooked, lean", 200, "protein"), I("White rice, cooked", 160, "carb"),
+    I("Bell peppers", 120, "veg"), I("Olive Oil", 6, "fat"),
+  ], ["Sear the sirloin and rest it.", "Soften the peppers and serve everything over rice."]),
+
+  // Batch 2 (same day): the first corner batch made carnivore ALL-lean —
+  // every carnivore day then overshot protein while kcal stayed under
+  // (proteinG:over ×24 in the re-sweep). Calories on carnivore have to come
+  // from FAT; these carry it natively. Plus two light MEAL-typed dishes:
+  // 6-meals-0-snacks structures can't draw from the snack shelf, and six
+  // full-size mains forced every lever to its floor.
+  M("Lamb Chops in Butter", "american", 18, ["carnivore", "keto", "p0", "p2", "open"], [
+    I("Lamb Loin Chops", 230, "protein"), I("Butter", 14, "fat"),
+  ], ["Sear the chops hard in the butter, basting as they finish."]),
+  M("Bacon, Eggs & Cheddar Stack", "american", 15, ["carnivore", "keto", "p0", "p2", "open"], [
+    I("Bacon, cooked", 70, "protein"), I("Eggs, whole, cooked", 140, "protein"),
+    I("Cheddar Cheese", 30, "fat"),
+  ], ["Fry the eggs in the bacon fat.", "Stack with the bacon and melt the cheddar over."]),
+  M("Ham & Buttered Eggs", "american", 12, ["carnivore", "keto", "p0", "p2", "open"], [
+    I("Ham", 130, "protein"), I("Eggs, whole, cooked", 140, "protein"), I("Butter", 12, "fat"),
+  ], ["Warm the ham in half the butter.", "Soft-scramble the eggs in the rest and plate together."]),
+  M("Skyr Breakfast Bowl", "american", 5, ["vegetarian", "p0", "p2", "open"], [
+    I("Greek yogurt, plain, nonfat (skyr-style)", 300, "protein"), I("Oats, rolled, dry", 40, "carb"),
+    I("Mixed berries", 100, "fruit"),
+  ], ["Stir oats into the skyr, top with berries, rest five minutes."]),
+  M("Tuna & Cucumber Light Plate", "american", 8, ["pescatarian", "p0", "p2", "open"], [
+    I("Fish, tuna, light, canned in water, drained solids", 130, "protein"),
+    I("White rice, cooked", 110, "carb"), I("Cucumber", 100, "veg"),
+  ], ["Flake the tuna over the rice with cucumber alongside."]),
+
+  // Batch 3 (same day, third sweep): the remaining zero corners. Vegan
+  // protein must arrive fat-free in MEAL slots (the shake is a snack, and
+  // 6m0s/3m0s structures cannot draw from the snack shelf); paleo needs
+  // ultra-lean mains; 6-meal structures need low-carb small meals.
+  M("Poached Haddock & Potato Plate", "american", 20, ["paleo", "pescatarian", "p0", "p2", "open"], [
+    I("Smoked Haddock", 200, "protein"), I("Potato, baked with skin", 240, "carb"),
+    I("Courgettes", 120, "veg"), I("Olive Oil", 6, "fat"),
+  ], ["Poach the haddock gently.", "Serve over crushed potatoes and pan-softened courgette."]),
+  M("Chicken & Courgette Roast Tray", "american", 25, ["paleo", "p0", "p2", "open"], [
+    I("Chicken breast, cooked, skinless", 220, "protein"), I("Potato, baked with skin", 220, "carb"),
+    I("Courgettes", 150, "veg"), I("Olive Oil", 6, "fat"),
+  ], ["Roast potato and courgette in the oil.", "Add the chicken to warm through."]),
+  M("Egg White & Potato Hash", "american", 15, ["paleo", "vegetarian", "p0", "p2", "open"], [
+    I("Egg White", 280, "protein"), I("Potato, baked with skin", 240, "carb"),
+    I("Bell peppers", 100, "veg"), I("Olive Oil", 6, "fat"),
+  ], ["Crisp the cubed potato and peppers in the oil.", "Scramble the egg whites through."]),
+  M("Seitan Power Plate", "american", 18, ["vegan", "open"], [
+    I("Seitan, prepared", 260, "protein"), I("Potato, baked with skin", 220, "carb"),
+    I("Broccoli, raw", 130, "veg"), I("Olive Oil", 6, "fat"),
+  ], ["Sear the seitan slices in the oil.", "Plate with potato and steamed broccoli."]),
+  M("Pea Protein Oat Bowl", "american", 6, ["vegan", "vegetarian", "open"], [
+    I("Pea protein powder", 40, "protein"), I("Oats, rolled, dry", 55, "carb"),
+    I("Mixed berries", 100, "fruit"), I("Almond milk, unsweetened, plain, refrigerated", 250, "other"),
+  ], ["Whisk the protein into the almond milk.", "Stir through the oats, top with berries, rest five minutes."]),
+  M("Tofu & Pea Protein Scramble", "american", 12, ["vegan", "vegan_gf", "open"], [
+    I("Tofu, firm, raw", 200, "protein"), I("Pea protein powder", 25, "protein"),
+    I("Broccoli, raw", 120, "veg"), I("Olive Oil", 6, "fat"),
+  ], ["Crumble and fry the tofu with the broccoli.", "Dust in the pea protein off the heat and fold through."]),
+  M("Tuna & Courgette Skillet", "american", 10, ["pescatarian", "p0", "p2", "open"], [
+    I("Fish, tuna, light, canned in water, drained solids", 150, "protein"),
+    I("Courgettes", 180, "veg"), I("Olive Oil", 6, "fat"),
+  ], ["Soften the courgette in the oil.", "Fold the tuna through to warm."]),
+  M("Prawn & Pepper Skillet", "mediterranean", 12, ["pescatarian", "p2", "open"], [
+    I("Prawns", 200, "protein"), I("Bell peppers", 150, "veg"), I("Olive Oil", 8, "fat"),
+  ], ["Sear the prawns hot.", "Toss with the softened peppers and the oil."]),
 ];

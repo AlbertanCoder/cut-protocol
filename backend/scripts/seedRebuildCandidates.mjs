@@ -29,6 +29,12 @@ const WRITE = process.argv.includes("--write");
 
 const AUDIENCE_PROFILES = {
   vegan_gf: { dietaryStyle: "vegan", excludedFoods: ["gluten"] },
+  // 2026-08-21 corner sweep: vegan WITHOUT the gluten wall (seitan lives
+  // here), plus the three styles whose pools measured 0% in-band.
+  vegan: { dietaryStyle: "vegan", excludedFoods: [] },
+  vegetarian: { dietaryStyle: "vegetarian", excludedFoods: [] },
+  pescatarian: { dietaryStyle: "pescatarian", excludedFoods: [] },
+  paleo: { dietaryStyle: "paleo", excludedFoods: [] },
   keto: { dietaryStyle: "keto", excludedFoods: [] },
   carnivore: { dietaryStyle: "carnivore", excludedFoods: [] },
   p0: { dietaryStyle: null, excludedFoods: ["shellfish", "gluten", "kiwi", "soy"] },
