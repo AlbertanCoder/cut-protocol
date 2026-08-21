@@ -60,6 +60,39 @@ const NOTE =
   `Net-carb band = your carb band minus a ${FIBER_ALLOWANCE_G} g/day fiber allowance. ` +
   `This is not the Plan tab's verdict and nothing here is saved.`;
 
+// Plain-language honesty (fleet, 2026-08-20): off-band days were marked
+// ok:false with a terse "off band: fatG over by 17.3" — customers read the
+// plates as fine anyway, then felt lied to when they added the numbers
+// themselves ("if the app knows the plate doesn't hit my numbers, why is it
+// serving it?"). Every not-ok day now leads with a sentence a person can
+// act on; the machine diagnosis underneath is unchanged.
+const MISS_LABEL = { kcal: "calories", proteinG: "protein", fatG: "fat", netCarbG: "net carbs" };
+function dayBanner(day, targets) {
+  if (day.ok) return null;
+  const parts = [];
+  const empty = (day.slots || []).filter((s) => !s.dishes || s.dishes.length === 0).length;
+  if (empty) parts.push(`${empty} slot${empty === 1 ? "" : "s"} came back empty (no eligible recipe was left for it)`);
+  for (const m of day.verdict?.misses || []) {
+    const unit = m.key === "kcal" ? " kcal" : " g";
+    let part = `${MISS_LABEL[m.key] || m.key} ${m.kind} by ${Math.round(m.by)}${unit}`;
+    if (m.key === "kcal" && m.kind === "under" && Number.isFinite(targets.floorKcal) && m.edge <= targets.floorKcal) {
+      part += " — your safety floor pins the low end, so this gap cannot be closed by eating less";
+    }
+    parts.push(part);
+  }
+  if (!parts.length) {
+    return day.diagnosis ? `This day could not be built: ${day.diagnosis}.` : "This day missed its targets.";
+  }
+  return `This day is NOT fully on target: ${parts.join("; ")}. It is the closest day the pool could honestly build for your settings — the gap is real, not rounding.`;
+}
+
+function previewSummary(days) {
+  const ok = days.filter((d) => d.ok).length;
+  if (ok === days.length) return days.length === 1 ? "The day lands inside every band." : `All ${days.length} days land inside every band.`;
+  if (ok === 0) return `None of these ${days.length === 1 ? "days" : `${days.length} days`} lands fully in band — your targets sit in a hard corner of the current recipe pool. Each day's banner says exactly what missed.`;
+  return `${ok} of ${days.length} days land inside every band; the banners on the others say exactly what missed.`;
+}
+
 router.get("/feasibility", async (req, res, next) => {
   try {
     const { profile, dailyTarget } = await planContext(req.userId);
@@ -94,7 +127,7 @@ router.post("/preview", async (req, res, next) => {
       });
       window.push(solved.slots.flatMap((s) => s.dishes.map((d) => d.recipeId)));
       if (window.length > 2) window.shift();
-      out.push({
+      const entry = {
         day,
         ok: solved.ok,
         totals: solved.totals,
@@ -102,9 +135,12 @@ router.post("/preview", async (req, res, next) => {
         scanLine: solved.scanLine,
         diagnosis: solved.diagnosis,
         slots: solved.slots,
-      });
+      };
+      const banner = dayBanner(entry, targets);
+      if (banner) entry.banner = banner;
+      out.push(entry);
     }
-    res.json({ seed, targets, feasibility, days: out, note: NOTE });
+    res.json({ seed, targets, feasibility, summary: previewSummary(out), days: out, note: NOTE });
   } catch (e) { next(e); }
 });
 

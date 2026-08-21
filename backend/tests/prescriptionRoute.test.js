@@ -120,3 +120,17 @@ test("the seed is deterministic and echoed — same seed, same preview", async (
   assert.equal(a.json.seed, 42);
   assert.deepEqual(a.json.days, b.json.days);
 });
+
+test("an off-band or unbuildable day carries a plain-language banner, and the response a summary", async () => {
+  // Fleet, 2026-08-20: days marked ok:false were still read as fine — the
+  // dishes rendered, the miss hid in verdict JSON. The banner is the
+  // sentence a person actually reads.
+  const r = await call("POST", "/api/prescription/preview", { days: 2, seed: 7 });
+  assert.equal(r.status, 200);
+  assert.match(r.json.summary || "", /None of these .*days lands fully in band/i);
+  for (const d of r.json.days) {
+    assert.equal(d.ok, false);
+    assert.ok(d.banner, "a not-ok day must carry a banner");
+    assert.match(d.banner, /could not be built|NOT fully on target|missed its targets/);
+  }
+});
