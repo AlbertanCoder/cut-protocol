@@ -393,6 +393,40 @@ CREATE TABLE "TrainingExercise" (
     CONSTRAINT "TrainingExercise_pkey" PRIMARY KEY ("id")
 );
 
+-- CreateTable
+CREATE TABLE "PrescriptionDay" (
+    "id" TEXT NOT NULL,
+    "userId" TEXT NOT NULL,
+    "date" TEXT NOT NULL,
+    "seed" INTEGER NOT NULL,
+    "targets" JSONB NOT NULL,
+    "verdict" JSONB NOT NULL,
+    "scanLine" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "PrescriptionDay_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "PrescriptionDish" (
+    "id" TEXT NOT NULL,
+    "dayId" TEXT NOT NULL,
+    "slotType" TEXT NOT NULL,
+    "slotIndex" INTEGER NOT NULL,
+    "dishIndex" INTEGER NOT NULL,
+    "recipeId" TEXT,
+    "recipeName" TEXT NOT NULL,
+    "scales" JSONB NOT NULL,
+    "ingredients" JSONB NOT NULL,
+    "kcal" DOUBLE PRECISION NOT NULL,
+    "protein" DOUBLE PRECISION NOT NULL,
+    "fat" DOUBLE PRECISION NOT NULL,
+    "carb" DOUBLE PRECISION NOT NULL,
+    "fiber" DOUBLE PRECISION NOT NULL,
+
+    CONSTRAINT "PrescriptionDish_pkey" PRIMARY KEY ("id")
+);
+
 -- CreateIndex
 CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
 
@@ -504,6 +538,12 @@ CREATE UNIQUE INDEX "TrainingSession_weekId_dayIndex_key" ON "TrainingSession"("
 -- CreateIndex
 CREATE UNIQUE INDEX "TrainingExercise_sessionId_order_key" ON "TrainingExercise"("sessionId", "order");
 
+-- CreateIndex
+CREATE UNIQUE INDEX "PrescriptionDay_userId_date_key" ON "PrescriptionDay"("userId", "date");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "PrescriptionDish_dayId_slotType_slotIndex_dishIndex_key" ON "PrescriptionDish"("dayId", "slotType", "slotIndex", "dishIndex");
+
 -- AddForeignKey
 ALTER TABLE "Subscription" ADD CONSTRAINT "Subscription_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
@@ -566,4 +606,7 @@ ALTER TABLE "TrainingSession" ADD CONSTRAINT "TrainingSession_weekId_fkey" FOREI
 
 -- AddForeignKey
 ALTER TABLE "TrainingExercise" ADD CONSTRAINT "TrainingExercise_sessionId_fkey" FOREIGN KEY ("sessionId") REFERENCES "TrainingSession"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "PrescriptionDish" ADD CONSTRAINT "PrescriptionDish_dayId_fkey" FOREIGN KEY ("dayId") REFERENCES "PrescriptionDay"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
