@@ -648,3 +648,19 @@ commit): seitan + pea protein + ketchup on paleo, and the aromatic cap's
 fdcCategory blind spot (135 g thyme). Remaining themes: spice/big-
 breakfast/grazer notes still only softly honored, mediterranean cuisine
 tagging thin, fat-over residue in paleo corners.
+
+---
+
+## Maintenance mode (2026-08-21, owner-directed: "Build the maintenance mode")
+
+Rate 0 = maintenance. deriveTarget's locked arithmetic yields exactly TDEE
+at rate 0 — no formula change; only the accepted menu widened, in
+routes/profile.js (MAINTENANCE_RATE). goalWeightGate stands aside for
+goal = current (±0.5 kg) at rate 0 ONLY — no deficit is being steered, so
+§8's BMI floor has nothing to hold; every other combination is gated
+exactly as before. Refuse/gain-gate copy now names the path; /meta leads
+rateOptions with 0; all three rate menus label it Maintain. Live: the
+dead-zone body (195 cm/55 kg, BMI 14.5) saves clean and solves in band at
+1,960 kcal TDEE. This was the single biggest scoring lever left (six 1★s
+per fleet run + "no maintenance option" a top named ask). Gaining remains
+the honest gap and the copy says so.
