@@ -87,6 +87,8 @@ test("paleo: bulgur, cornstarch, sugar, malt vinegar and named cheeses are all o
   assert.equal(recipeExcludedByStyle(recipe("Cornstarch"), "paleo"), true);
   assert.equal(recipeExcludedByStyle(recipe("Granulated Sugar"), "paleo"), true);
   assert.equal(recipeExcludedByStyle(recipe("Malt Vinegar"), "paleo"), true, "malt is barley");
+  assert.equal(recipeExcludedByStyle(recipe("Grits"), "paleo"), true, "corn grits carry no 'corn' word (re-run fleet)");
+  assert.equal(recipeExcludedByStyle(recipe("Polenta"), "paleo"), true);
   assert.equal(recipeExcludedByStyle(recipe("Parmesan"), "paleo"), true, "a cheese with no 'cheese' in the name");
   assert.equal(recipeExcludedByStyle(recipe("Gruyere"), "paleo"), true);
   // Butter stays the documented deliberate exception; sugar snap peas are a

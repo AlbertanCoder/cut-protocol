@@ -242,6 +242,10 @@ const GRAIN_KEYWORDS = [
   "cracker", "flour",
   "bulgur", "farro", "spelt", "semolina", "orzo", "millet", "teff",
   "amaranth", "sorghum", "malt", "cornstarch", "granola", "muesli",
+  // Re-run fleet (2026-08-20): "Grits" reached two paleo plates — corn
+  // grits carry no "corn" word. Same class: the other corn-preparation
+  // names the gluten-free-grain guard already knows.
+  "grits", "hominy", "polenta", "masa",
 ];
 const LEGUME_KEYWORDS = [
   "bean", "beans", "lentil", "lentils", "soy", "soya", "tofu", "tempeh",
