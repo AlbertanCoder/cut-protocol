@@ -246,10 +246,19 @@ const GRAIN_KEYWORDS = [
   // grits carry no "corn" word. Same class: the other corn-preparation
   // names the gluten-free-grain guard already knows.
   "grits", "hominy", "polenta", "masa",
+  // Slice 3 (2026-08-21): "Seitan, prepared" reached a paleo plate — it IS
+  // wheat gluten and carries no "wheat" word. (The gluten allergy list has
+  // always known it; paleo's grain list did not.)
+  "seitan",
 ];
 const LEGUME_KEYWORDS = [
   "bean", "beans", "lentil", "lentils", "soy", "soya", "tofu", "tempeh",
   "edamame", "chickpea", "chickpeas", "peanut", "peanuts",
+  // Slice 3 (2026-08-21): "Pea protein powder" reached two paleo plates —
+  // peas are legumes and "pea" was never on this list. Word-bounded, so
+  // "peach"/"peanut" (already present) are unaffected; "Frozen Peas"
+  // leaving paleo pools is the correct strict reading.
+  "pea", "peas",
 ];
 
 // Carnivore's inversion trap (fleet, 2026-08-20): a grain-dominant compound
@@ -1053,7 +1062,9 @@ function adjusterExcludedByStyle(adjuster, dietaryStyle) {
 function isRefinedSugarName(n) {
   const s = String(n || "");
   if (/\bsugar[\s-]?snap\b/i.test(s) || /\bsugar[\s-]?free\b/i.test(s)) return false;
-  return hasWordOrPlural(s, "sugar") || matchesAny(s, ["corn syrup", "golden syrup", "high fructose"]);
+  // Ketchup: ~25% sugar by weight and named nothing like it — reached a
+  // paleo plate in slice 3 (2026-08-21).
+  return hasWordOrPlural(s, "sugar") || hasWordOrPlural(s, "ketchup") || matchesAny(s, ["corn syrup", "golden syrup", "high fructose"]);
 }
 
 // Dairy butter/cream with the compound guards: "peanut butter", "butter

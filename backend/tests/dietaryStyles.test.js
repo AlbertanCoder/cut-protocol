@@ -89,12 +89,21 @@ test("paleo: bulgur, cornstarch, sugar, malt vinegar and named cheeses are all o
   assert.equal(recipeExcludedByStyle(recipe("Malt Vinegar"), "paleo"), true, "malt is barley");
   assert.equal(recipeExcludedByStyle(recipe("Grits"), "paleo"), true, "corn grits carry no 'corn' word (re-run fleet)");
   assert.equal(recipeExcludedByStyle(recipe("Polenta"), "paleo"), true);
+  // Slice 3 (2026-08-21): the pool batch's own proteins, correctly evicted.
+  assert.equal(recipeExcludedByStyle(recipe("Seitan, prepared"), "paleo"), true, "seitan IS wheat gluten");
+  assert.equal(recipeExcludedByStyle(recipe("Pea protein powder"), "paleo"), true, "peas are legumes");
+  assert.equal(recipeExcludedByStyle(recipe("Frozen Peas"), "paleo"), true);
+  assert.equal(recipeExcludedByStyle(recipe("Tomato Ketchup"), "paleo"), true, "~25% sugar with no sugar word");
+  assert.equal(recipeExcludedByStyle(recipe("Peach slices, raw"), "paleo"), false, "peach is not a pea");
   assert.equal(recipeExcludedByStyle(recipe("Parmesan"), "paleo"), true, "a cheese with no 'cheese' in the name");
   assert.equal(recipeExcludedByStyle(recipe("Gruyere"), "paleo"), true);
-  // Butter stays the documented deliberate exception; sugar snap peas are a
-  // vegetable; meat and potatoes stay on the plate.
+  // Snap peas are legumes and leave paleo with the green beans — the same
+  // strict reading this list has always applied to "beans". (The sugar-snap
+  // guard still protects them from the refined-SUGAR keyword specifically.)
+  assert.equal(recipeExcludedByStyle(recipe("Sugar snap peas, raw"), "paleo"), true);
+  // Butter stays the documented deliberate exception; meat and potatoes
+  // stay on the plate.
   assert.equal(recipeExcludedByStyle(recipe("Butter"), "paleo"), false);
-  assert.equal(recipeExcludedByStyle(recipe("Sugar snap peas, raw"), "paleo"), false);
   assert.equal(recipeExcludedByStyle(recipe("Sirloin steak, cooked, lean", "Potatoes, baked"), "paleo"), false);
 });
 

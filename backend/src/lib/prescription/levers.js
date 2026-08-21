@@ -138,10 +138,15 @@ function solveLevers(rows, target) {
 // (~250–350 kcal/100 g) from fresh (~25–100).
 const AROMATIC_DRIED_CAP_G = 10;
 const AROMATIC_FRESH_CAP_G = 60;
+// Name fallback: much of the pool carries NO fdcCategory (label-entered and
+// imported rows), and a 135 g thyme portion sailed past the category-only
+// check in slice 3 (2026-08-21). Word-bounded, so "sausage" never matches
+// "sage" and "peppermint" never matches "mint".
+const AROMATIC_NAME_RE = /\b(bay lea(?:f|ves)|thyme|rosemary|oregano|tarragon|marjoram|sage|dill|chives?|lime leaves|curry leaves|lemongrass|mint|parsley|cilantro|coriander|basil)\b/i;
 function aromaticCapG(food) {
   if (!food) return null;
   const cat = String(food.fdcCategory || "").toLowerCase();
-  if (cat !== "spices and herbs") return null;
+  if (cat !== "spices and herbs" && !AROMATIC_NAME_RE.test(String(food.name || ""))) return null;
   const dried = Number.isFinite(food.kcal) && food.kcal >= 150;
   return dried ? AROMATIC_DRIED_CAP_G : AROMATIC_FRESH_CAP_G;
 }

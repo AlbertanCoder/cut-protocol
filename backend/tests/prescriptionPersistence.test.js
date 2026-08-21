@@ -17,7 +17,7 @@ const QA_DB = path.join(BACKEND, "prisma", "rebuild-qa.db");
 const EMAIL = "cust-0252@qa.local"; // provisioned, unused by both fleets
 const PASSWORD = "Fleet!2026";
 
-let tmpDir, app, srv, base, prisma, cookie;
+let tmpDir, app, srv, base, prisma, cookie, userId;
 const haveQa = fs.existsSync(QA_DB);
 
 async function call(method, p, body) {
@@ -55,6 +55,9 @@ test.before(async (t) => {
   assert.equal(login.status, 200, "fleet account login");
   cookie = (login.headers.get("set-cookie") || "").split(";")[0];
 
+  const me = await prisma.user.findUnique({ where: { email: EMAIL } });
+  userId = me.id;
+
   const p = await call("PUT", "/api/profile", {
     unitPref: "metric", sex: "M", age: 32, heightCm: 180, startWeightKg: 90, goalWeightKg: 84,
     occupationKey: "desk-office", sessionsPerWeek: 3, trainingStyle: "mixed", minutesPerSession: 45,
@@ -82,7 +85,7 @@ test("commit re-solves the SAME days the preview showed, and stores them", { ski
     assert.deepEqual(com.json.days[i].totals, prev.json.days[i].totals, `day ${i + 1} totals must match the preview`);
     assert.equal(com.json.days[i].scanLine, prev.json.days[i].scanLine);
   }
-  const rows = await prisma.prescriptionDay.findMany({ where: { date: { gte: "2026-08-21" } }, include: { dishes: true } });
+  const rows = await prisma.prescriptionDay.findMany({ where: { userId, date: { gte: "2026-08-21" } }, include: { dishes: true } });
   assert.equal(rows.length, 2);
   assert.ok(rows.every((r) => r.dishes.length > 0), "stored days carry dishes");
   assert.ok(rows.every((r) => r.scanLine.includes("PASS")), "the §3.3.4 line travels with the stored food");
@@ -91,7 +94,7 @@ test("commit re-solves the SAME days the preview showed, and stores them", { ski
 test("commit is an upsert — recommitting a date replaces, never duplicates", { skip: !haveQa && "rebuild-qa.db not built" }, async () => {
   const again = await call("POST", "/api/prescription/commit", { days: 1, seed: 777, startDate: "2026-08-21" });
   assert.equal(again.status, 200);
-  const rows = await prisma.prescriptionDay.findMany({ where: { date: "2026-08-21" } });
+  const rows = await prisma.prescriptionDay.findMany({ where: { userId, date: "2026-08-21" } });
   assert.equal(rows.length, 1, "one committed day per user-date");
   assert.equal(rows[0].seed, 777, "the recommit replaced the stored day");
 });

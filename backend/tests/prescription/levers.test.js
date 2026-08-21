@@ -95,3 +95,13 @@ test("aromatics: applyLevers caps the plated grams even when the lever asked for
   );
   assert.equal(out[0].grams, 10, `50 g bay leaves x2.0 lever must plate 10 g, got ${out[0].grams}`);
 });
+
+test("aromatics: the NAME fallback caps herb rows that carry no FDC category", () => {
+  const { aromaticCapG } = require("../../src/lib/prescription/levers.js");
+  // Slice 3 (2026-08-21): a 135 g thyme portion sailed past the
+  // category-only check — label-entered rows carry no fdcCategory.
+  assert.equal(aromaticCapG({ name: "Thyme", kcal: 276 }), 10, "dried thyme by name alone");
+  assert.equal(aromaticCapG({ name: "Thyme, fresh", kcal: 101 }), 60);
+  assert.equal(aromaticCapG({ name: "Turkey sausages", kcal: 180 }), null, "'sage' inside 'sausages' never matches");
+  assert.equal(aromaticCapG({ name: "Peppermint tea", kcal: 1 }), null, "'mint' inside 'peppermint' never matches");
+});
