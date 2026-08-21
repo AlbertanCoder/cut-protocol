@@ -455,3 +455,82 @@ automatically. The NUL bytes (lines 805–808) were never touched.
   **2,098/2,100 (99.90%), 0 hits**; seeded gates 210/210.
 - Live end-to-end: /meta serves the style, profile saves it, a pescatarian
   preview solves in band — sea bass / white fish / haddock day, PASS scan.
+
+---
+
+## The 250-customer fleet, its verdict, and the seven fixes (2026-08-20)
+
+**The measurement.** 250 synthetic customers (deterministic persona formula:
+13 problems × 7 appetites × 10 styles × 8 exclusion sets × 6 meal
+structures × 5 rates) ran the full HTTP journey — login → profile →
+targets → feasibility → 2-day preview → structured review. Baseline
+verdict: **avg 2.17★** (80×1★ / 79×2★ / 59×3★ / 32×4★ / 0×5★), wouldPay
+0 yes / 64 maybe / 186 no, solved 22 yes / 107 partly / 121 no,
+plausibility 2.3/5.
+
+**The verification, before any fix.** Every complaint class was re-checked
+server-side against rebuild-qa.db (`verifyFleetClaims`):
+- **ZERO gate leaks.** All 166 accounts with stored profiles re-previewed
+  with their original seeds: no plated ingredient violated the STORED
+  exclusions or style; slot counts and scan lines matched 100%.
+- **84/250 customers never saved a profile** — the ack-flag trap. The 422
+  said "resend with the matching acknowledgement flag" and never named
+  `rateAcknowledged`/`goalWeightAcknowledged`; every guess re-served the
+  same 422.
+- **52 accounts held ANOTHER persona's profile verbatim** (donor account
+  identified in every case): the fleet agents shared default-named cookie
+  files in a common cwd — a TEST-HARNESS artifact, not an app bug. Every
+  "served me someone else's plan / scan line named a different profile"
+  review traces to this or to the ack trap.
+- Claims that DID verify as real: carnivore admitted perogies (the
+  lacto-ovo `perogi` keyword makes the `!isVeganAnimalProduct` inversion
+  admit grain-dough compounds); paleo missed bulgur/cornstarch/sugar/malt
+  and cheese variety names; the goal gate's own suggested minimum rounded
+  DOWN past its threshold (60.8 kg at 195 cm = BMI 15.99, refused when
+  typed back); a gain ask from a lean body was answered by the BMI gate
+  with "won't prescribe a deficit down to it"; herb rows scaled like food
+  (50–105 g bay leaves); only ~34% of days landed in band even for
+  correctly-saved profiles, and the miss hid in verdict JSON.
+- Claims that did NOT verify (artifacts): occupation silently not saving
+  (round-trips fine), targets differing between endpoints (0 mismatches in
+  105 accounts), meal counts ignored (slotMismatch 0), bulgar/soy-sauce
+  reaching GLUTEN exclusions (matcher already correct — those profiles
+  were never saved).
+
+**The seven fixes** (each suite-green, committed one at a time):
+1. `9da6643` — every ack 422 names the literal field (`ackField` +
+   `howToConfirm` with the exact JSON); quoted minimums round UP (`r1up`);
+   gain gate runs before the BMI gate and its advice is banded by current
+   BMI (no more telling sub-floor customers to set a goal that bounces).
+2. `1996de2` — the rate-ack 422 saves everything except the rate; a
+   first-ever PUT that trips the ack still creates the profile, seeded at
+   the fastest rate that needs no acknowledgement for that body.
+3. `bddf1e4` — carnivore denies grain/legume/dough compounds before the
+   inversion; paleo learns bulgur/farro/spelt/semolina/orzo/malt/
+   cornstarch, refined sugar (sugar-snap/sugar-free guarded) and cheese
+   variety names; kosher's meat+dairy rule sees variety names too.
+   NUL bytes: 3, untouched.
+4. `408577a` — aromatic ceiling: Spices-and-Herbs rows cap at 10 g dried /
+   60 g fresh, at the base grams entering the solve AND at roundGrams.
+5. `ffb6d3a` — off-band days carry a plain-language banner (what missed,
+   by how much, floor-pinned or not, empty slots); responses carry a
+   one-line summary.
+6. `93d0e6f` — `cuisinePreferences`/`mealPreferencesNote` finally feed the
+   solver's bias hook (multiplier, never a veto): explicit cuisines pull,
+   mediterranean style implies a soft pull, plain/picky steers to short
+   ingredient lists, spicy pulls heat.
+7. `b20a1d5` — "I dislike fish" in the note penalises matching dishes
+   through the exclusion GATE (dislikes-only pseudo-profile, full
+   vocabulary), 0.15× sampling weight, never a veto.
+
+**Known-and-left:** mediterranean's exclusion lattice stays
+pattern-not-cuisine (bias now handles authenticity); paleo's butter/ghee
+exception stays (documented deliberate call); vegan high-protein corners
+remain honestly infeasible; snack-pool thinness in carnivore/keto corners
+remains (now named by the banner instead of hidden); no gain/maintenance
+path exists (owner-scale decision — the gates now say so honestly).
+
+**Re-measurement:** 100-customer slice (same formula, indices 0–99, fresh
+accounts cust-0301+, per-agent cookie isolation, appetite sent as
+`mealPreferencesNote`) queued as run `wf_1be51302-6d5` — results appended
+below when filed.
