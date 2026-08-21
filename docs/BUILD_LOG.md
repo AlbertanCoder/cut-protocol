@@ -559,3 +559,41 @@ Structural ceiling on the score: the underweight dead-zone personas
 (~14% of the formula) are capped low until a maintenance/gain path
 exists — they now get an honest, well-written refusal instead of a loop,
 and several said exactly that in 3★ reviews.
+
+---
+
+## Option C migration + the pool-depth loop (2026-08-21, owner-directed)
+
+**Option C:** owner approved in-session. PrescriptionDay/PrescriptionDish
+migrated exactly as designed (`20260821000000_prescription_persistence`),
+applied to rebuild-qa.db via the documented diff+deploy route (migrate dev
+stays blocked by the 20260722045659 checksum drift). dev.db application
+needs the owner's own `npx prisma migrate deploy` from backend/ — the
+classifier correctly refused to let a session write his live DB, and the
+full suite's drift gate waits on it. The three routes
+(commit/current/swap) are the next session's work.
+
+**Pool-depth loop** — measured by the corner sweep (92 stored fleet
+profiles × 3 seeds × 2 days, in-process, scratchpad measureCorners):
+
+| step | change | days in band |
+|---|---|---|
+| start | (post-fleet fixes) | **29%** |
+| +pool batches 1-2 | 15 carnivore/vegan/vegetarian/paleo/light dishes | 39% |
+| +stage 4.5 swap, netCarb-aware, want-steered sampling | composition repair | 45% |
+| +batch 3 + carnivore arithmetic envelope | lean mains, honest ruler | 47% |
+| +5 g micro-moves on ordinary rows | last-mile harvest | **53%** |
+
+Where it landed: keto 100% (unchanged), none/mediterranean 83-100% at most
+structures, carnivore 0% → 50-75% (was structurally impossible), vegan/
+paleo/vegetarian 0% → 17-33% at most structures. Still hard: vegan|6m0s
+(protein-under + fat-over — six DIFFERENT vegan meals per day exhausts the
+lean shelf), paleo fat-over corners, pescatarian carb-over at 6 meals.
+Next levers, in order: more per-corner lean recipes (the loop is cheap to
+repeat — measure, author, dry-run, write), a second swap round budget, and
+honesty already covers the rest (banner + summary ship with every miss).
+
+Committed: d55c42f (carnivore ruler), be4c400 (solver stage 4.5 + 5 g),
+2a663d7 (49 candidates + 4 audience keys), 7a055e2 (Option C tables).
+Battery: 138 tests / 12 affected files / 0 failures; full suite pending
+the owner's dev.db deploy.
