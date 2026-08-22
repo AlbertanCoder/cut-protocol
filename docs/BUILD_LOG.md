@@ -664,3 +664,32 @@ dead-zone body (195 cm/55 kg, BMI 14.5) saves clean and solves in band at
 1,960 kcal TDEE. This was the single biggest scoring lever left (six 1★s
 per fleet run + "no maintenance option" a top named ask). Gaining remains
 the honest gap and the copy says so.
+
+---
+
+## Slice 4 — the maintenance fix, priced (2026-08-21)
+
+Run wf_30675877-83a: 100 customers, accounts cust-0501–0600, same formula
+and seeds; app delta = maintenance mode + slice-3 lattice fixes.
+
+| metric | baseline | slice 2 | slice 3 | **slice 4** |
+|---|---|---|---|---|
+| avg star | 2.17 | 2.82 | 3.15 | **3.31** |
+| 1★ count | 80/250 | 4 | 6 | **0 — first zero-1★ run** |
+| stars 2/3/4 | — | 32/42/22 | 17/33/44 | **12/45/43** |
+| would pay yes/maybe | 0/26% | 1/45% | 1/57% | **2/57%** |
+| solved yes/no | 9%/48% | 13%/18% | 34%/10% | **33%/6%** |
+| plausibility | 2.3 | 2.7 | 3.0 | **3.2** |
+| real hard-filter violations | 0 | 0 | 0 | **0 (fourth run)** |
+
+The six all-1★ dead-zone personas converted to 2–4★: they found Maintain
+from the gate copy itself. The residual 2★s there came for a CUT the app
+rightly refuses a BMI-15 body — capped by design; "no bulk/gain support"
+now surfaces as the next named ask. Saving again the run's most-loved
+(52 liked-tag mentions). One real lattice find, fixed same-day: Hummus on
+paleo (chickpea paste, no chickpea word). Every remaining dislike theme
+is appetite-fit — spice/picky/grazer/meat-and-potatoes notes only softly
+honored — which is the pool-tagging + two-pass preference work, and the
+~3.4 soft-bias ceiling estimate is holding. Next levers, in order:
+recipe-level taste tags + preference-first pool pass, gain path (owner
+scope), Today-tab surfacing of committed days.
