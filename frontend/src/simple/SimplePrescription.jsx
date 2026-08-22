@@ -87,8 +87,8 @@ export default function SimplePrescription() {
 
   if (locked) {
     return (
-      <Page title="Preview" sub="A day of food, solved to your numbers.">
-        <Note>The prescription preview is part of the paid plan tools.</Note>
+      <Page title="Your day" sub="A day of food, solved to your numbers.">
+        <Note>The day builder is part of the paid plan tools.</Note>
       </Page>
     );
   }
@@ -97,7 +97,7 @@ export default function SimplePrescription() {
   const v = day?.verdict;
 
   return (
-    <Page title="Preview" sub="A day of food, solved to your numbers and verified after rounding. Save it and it's yours for the day.">
+    <Page title="Your day" sub="A day of food, solved to your numbers and verified after rounding. Save it and it's yours for the day.">
       {error && <Panel tone="warn"><p className="text-sm">{error}</p></Panel>}
 
       {feas && feas.feasibility?.feasible === false && (

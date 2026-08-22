@@ -201,7 +201,9 @@ export const Tabs = ({ tabs, active, onSelect }) => {
     btnRefs.current[next]?.focus();
   };
   return (
-    <div className="flex gap-1 border-b border-border overflow-x-auto" role="tablist">
+    // flex-wrap: a fourth room made the row clip on narrow columns and the
+    // newest tab quietly scrolled out of sight — wrapping beats hiding.
+    <div className="flex flex-wrap gap-1 border-b border-border overflow-x-auto" role="tablist">
       {tabs.map((t, i) => {
         const on = t.id === active;
         return (

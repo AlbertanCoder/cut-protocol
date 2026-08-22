@@ -13,14 +13,17 @@ import SimpleDetails from "./SimpleDetails.jsx";
 import SimpleProgress from "./SimpleProgress.jsx";
 import { Screen, Big, Note, Details, Tabs, Busy } from "./parts.jsx";
 
-// The three rooms behind the Food door. Plan first — it is what the week is.
+// The four rooms behind the Food door, in plain words: the WEEK the solver
+// builds, the exact DAY the prescription ruler solves and saves (Option C —
+// no longer read-only; "Save this day" commits it), then Recipes and
+// Shopping. Ids are storage/routing keys and stay as they were (rule 3);
+// only the words on the doors changed (owner's simple-surface call,
+// 2026-08-22).
 const FOOD_ROOMS = [
-  { id: "plan", label: "Plan" },
+  { id: "plan", label: "Week" },
+  { id: "preview", label: "Day" },
   { id: "recipes", label: "Recipes" },
   { id: "shopping", label: "Shopping" },
-  // The prescription solver's preview room (Phase 5/6 increment): read-only,
-  // solved to the directive ruler, persists nothing.
-  { id: "preview", label: "Preview" },
 ];
 
 // The four doors. `built` marks which have a rebuilt room; the rest hand over

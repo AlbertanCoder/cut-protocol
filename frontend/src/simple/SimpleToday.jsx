@@ -76,6 +76,12 @@ export default function SimpleToday({ profile }) {
   const [diary, setDiary] = useState(null);
   const [logging, setLogging] = useState(false);
 
+  // A day SAVED in the day builder (Food › Day) is the most specific promise
+  // that exists for today — stored grams, verdict and allergen scan travel
+  // with it. Additive: the week plan below is untouched, and a failure to
+  // load this simply shows nothing (the week is still correct and useful).
+  const [savedDay, setSavedDay] = useState(null);
+
   const [swapSlot, setSwapSlot] = useState(null);
   const [alts, setAlts] = useState(null);
   const [altBusy, setAltBusy] = useState(false);
@@ -107,7 +113,16 @@ export default function SimpleToday({ profile }) {
     }
   }, [date]);
 
-  useEffect(() => { loadPlan(); loadDiary(); }, [loadPlan, loadDiary]);
+  const loadSavedDay = useCallback(async () => {
+    try {
+      const cur = await api.prescriptionCurrent();
+      setSavedDay((cur?.days || []).find((d) => d.date === date) || null);
+    } catch {
+      setSavedDay(null);
+    }
+  }, [date]);
+
+  useEffect(() => { loadPlan(); loadDiary(); loadSavedDay(); }, [loadPlan, loadDiary, loadSavedDay]);
 
   const slots = (plan && typeof plan === "object" && Array.isArray(plan.slots))
     ? plan.slots.filter((s) => s.dayOfWeek === isoWeekday())
@@ -237,6 +252,34 @@ export default function SimpleToday({ profile }) {
       </div>
 
       {planError && <Note>{planError}</Note>}
+
+      {savedDay && (
+        <section aria-label="Your saved day" className="flex flex-col gap-3">
+          <div className="flex items-baseline justify-between gap-3">
+            <h2 className="text-xl font-semibold">Your saved day</h2>
+            <p className="text-sm text-muted-foreground tabular-nums">
+              {kc(savedDay.slots?.reduce((t, s) => t + s.dishes.reduce((x, d) => x + (d.totals?.kcal || 0), 0), 0))} calories, weighed to the gram
+            </p>
+          </div>
+          {savedDay.banner && <Note>{savedDay.banner}</Note>}
+          <div className="flex flex-col gap-3">
+            {(savedDay.slots || []).flatMap((s) =>
+              (s.dishes || []).map((d, di) => (
+                <Row
+                  key={`${s.slotType}-${s.slotIndex}-${di}`}
+                  label={slotWord(s.slotType, s.slotIndex)}
+                  lead={d.recipeName}
+                  meta={`${kc(d.totals?.kcal)} calories — ${(d.ingredients || []).map((i) => `${i.grams} g ${i.name}`).join(", ")}`}
+                />
+              ))
+            )}
+          </div>
+          <Note>
+            Saved in Food › Day — grams, verdict and allergen check stored with it. Swap or
+            replace it there any time.
+          </Note>
+        </section>
+      )}
 
       {plan === "locked" ? (
         // The calm locked state. Never the error Note — a gate is not a
