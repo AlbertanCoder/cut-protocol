@@ -94,6 +94,8 @@ test("paleo: bulgur, cornstarch, sugar, malt vinegar and named cheeses are all o
   assert.equal(recipeExcludedByStyle(recipe("Pea protein powder"), "paleo"), true, "peas are legumes");
   assert.equal(recipeExcludedByStyle(recipe("Frozen Peas"), "paleo"), true);
   assert.equal(recipeExcludedByStyle(recipe("Tomato Ketchup"), "paleo"), true, "~25% sugar with no sugar word");
+  assert.equal(recipeExcludedByStyle(recipe("Hummus"), "paleo"), true, "chickpea paste with no chickpea word (slice 4)");
+  assert.equal(recipeExcludedByStyle(recipe("Falafel"), "paleo"), true);
   assert.equal(recipeExcludedByStyle(recipe("Peach slices, raw"), "paleo"), false, "peach is not a pea");
   assert.equal(recipeExcludedByStyle(recipe("Parmesan"), "paleo"), true, "a cheese with no 'cheese' in the name");
   assert.equal(recipeExcludedByStyle(recipe("Gruyere"), "paleo"), true);

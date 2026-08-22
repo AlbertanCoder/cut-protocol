@@ -259,6 +259,9 @@ const LEGUME_KEYWORDS = [
   // "peach"/"peanut" (already present) are unaffected; "Frozen Peas"
   // leaving paleo pools is the correct strict reading.
   "pea", "peas",
+  // Slice 4 (2026-08-21): "Hummus & Crunch Plate" reached a paleo plate —
+  // chickpea paste with no "chickpea" word. Falafel is the same food fried.
+  "hummus", "houmous", "falafel",
 ];
 
 // Carnivore's inversion trap (fleet, 2026-08-20): a grain-dominant compound
