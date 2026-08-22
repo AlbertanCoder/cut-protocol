@@ -49,6 +49,15 @@ function dislikesIn(note) {
 // What "reads as spicy" in a recipe name — the same literalness.
 const SPICY_NAME_RE = /\b(chili|chilli|chipotle|jalapeno|jalapeño|harissa|sriracha|cayenne|scotch bonnet|curry|szechuan|sichuan|gochujang|piri[\s-]?piri|spicy|arrabbiata|diablo)\b/i;
 
+// Heat hides in ingredient lists under bland names ("Thai-style steamed
+// fish" carries the scotch bonnet; slice 4's spice-lovers got "trace
+// chilli" because only NAMES were read). One pass over the rows.
+function readsSpicy(r) {
+  if (SPICY_NAME_RE.test(r.name || "")) return true;
+  const ings = Array.isArray(r.ingredients) ? r.ingredients : [];
+  return ings.some((i) => SPICY_NAME_RE.test((i?.food?.name || i?.name || "")));
+}
+
 // Multipliers. Explicit preferences pull harder than the implied
 // mediterranean-style pull; penalties never go near zero (soft, not a veto).
 const CUISINE_PREF_BOOST = 2.5;
@@ -100,10 +109,52 @@ function buildPreferenceBias(profile) {
       else if (rows > 0 && rows <= 6) m *= PLAIN_SIMPLE_BOOST;
       if (SPICY_NAME_RE.test(r.name || "")) m *= SPICY_AVOID_PENALTY;
     }
-    if (wantsSpicy && SPICY_NAME_RE.test(r.name || "")) m *= SPICY_BOOST;
+    if (wantsSpicy && readsSpicy(r)) m *= SPICY_BOOST;
     if (dislikes.length && isExcluded(r, { excludedFoods: dislikes })) m *= DISLIKE_PENALTY;
     return m;
   };
 }
 
-module.exports = { buildPreferenceBias };
+/**
+ * partitionByPreference(list, profile) → { preferred, note }
+ *
+ * The two-pass upgrade (2026-08-22): a soft multiplier still loses to
+ * macro fit when the pool is deep — slice 4's fish-disliker got salmon
+ * AND tuna, and every picky eater still toured the world. `preferred` is
+ * the subset a dish-level preference can hold for EVERY dish:
+ *   - none of the customer's DISLIKES (gate-checked, full vocabulary)
+ *   - not fussier than a plain eater tolerates, when the note says plain
+ *   - not a TAGGED-mismatching cuisine, when cuisines are chosen
+ *     (untagged rows stay in — absence of a tag is not a mismatch)
+ * Spice is deliberately NOT here: "loves spicy" means SOME heat, not six
+ * hot dishes a day — it stays a sampling boost. The caller falls back to
+ * the full list whenever `preferred` is too thin to sample from; taste
+ * must never make a day unsolvable.
+ */
+function partitionByPreference(list, profile) {
+  if (!profile) return { preferred: list, note: null };
+  // Only EXPLICIT cuisine choices partition; the mediterranean-style
+  // implied pull stays a bias multiplier — hard-partitioning a whole pool
+  // on an inference would trip the fallback constantly and change nothing.
+  const cuisines = (Array.isArray(profile.cuisinePreferences) ? profile.cuisinePreferences : [])
+    .map((c) => String(c).toLowerCase().trim())
+    .filter(Boolean);
+  const note = String(profile.mealPreferencesNote || "");
+  const wantsPlain = PLAIN_RE.test(note);
+  const dislikes = dislikesIn(note);
+  if (!cuisines.length && !wantsPlain && !dislikes.length) return { preferred: list, note: null };
+
+  const preferred = list.filter((r) => {
+    if (dislikes.length && isExcluded(r, { excludedFoods: dislikes })) return false;
+    if (wantsPlain) {
+      const rows = Array.isArray(r.ingredients) ? r.ingredients.length : 0;
+      if (rows > 9) return false;
+      if (SPICY_NAME_RE.test(r.name || "")) return false;
+    }
+    if (cuisines.length && r.cuisine && !cuisines.includes(String(r.cuisine).toLowerCase())) return false;
+    return true;
+  });
+  return { preferred, note: preferred.length < list.length ? "preference-first" : null };
+}
+
+module.exports = { buildPreferenceBias, partitionByPreference };

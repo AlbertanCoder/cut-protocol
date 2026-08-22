@@ -388,6 +388,7 @@ export const api = {
   prescriptionCommit: (days, seed, startDate, opts) => request("/prescription/commit", { method: "POST", body: JSON.stringify({ days, ...(seed != null ? { seed } : {}), ...(startDate ? { startDate } : {}) }), timeoutMs: TIMEOUT.SOLVER, ...opts }),
   prescriptionCurrent: (opts) => request("/prescription/current", { timeoutMs: TIMEOUT.SOLVER, ...opts }),
   prescriptionSwap: (body, opts) => request("/prescription/swap", { method: "POST", body: JSON.stringify(body), timeoutMs: TIMEOUT.SOLVER, ...opts }),
+  prescriptionGrocery: (opts) => request("/prescription/grocery", { timeoutMs: TIMEOUT.SOLVER, ...opts }),
   getDayOptions: (dayOfWeek, filters, opts) => request("/plans/day-options", { method: "POST", body: JSON.stringify({ dayOfWeek, filters }), timeoutMs: TIMEOUT.SOLVER, ...opts }),
   acceptDay: (dayOfWeek, slots, opts) => request("/plans/accept-day", { method: "POST", body: JSON.stringify({ dayOfWeek, slots }), timeoutMs: TIMEOUT.SOLVER, ...opts }),
   setSlotLock: (planId, slotId, locked, opts) => request(`/plans/${planId}/slots/${slotId}`, { method: "PUT", body: JSON.stringify({ locked }), timeoutMs: TIMEOUT.WRITE, ...opts }),

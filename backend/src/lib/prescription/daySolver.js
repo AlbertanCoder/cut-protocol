@@ -19,6 +19,7 @@
 "use strict";
 
 const { solveLevers, applyLevers, bundleByLever, LEVER_BOUNDS, aromaticCapG } = require("./levers.js");
+const { partitionByPreference } = require("./preferenceBias.js");
 const { dayVerdict, resolveBands, allergenScanLine } = require("./ruler.js");
 const { isExcluded } = require("../exclusionGate.js");
 
@@ -175,7 +176,16 @@ function solvePrescriptionDay({ pool, targets, mealConfig, profile = {}, rng, re
           protein: slotResidual.protein / dishesLeft,
           fat: slotResidual.fat / dishesLeft,
         };
-        const candidates = sampleCandidates(list, CANDIDATES_PER_SLOT, rng, dayMid, bias);
+        // Preference-FIRST (2026-08-22): sample from the subset every
+        // dish-level preference can hold for (no disliked foods, plain
+        // enough, chosen cuisines) — the soft multiplier alone kept losing
+        // to macro fit, and slice 4's fish-disliker still drew salmon AND
+        // tuna. Falls back to the full list the moment the preferred
+        // subset is too thin to sample honestly: taste never makes a day
+        // unsolvable, it just stops being the default loser.
+        const { preferred } = partitionByPreference(list, profile);
+        const sampleFrom = preferred.length >= CANDIDATES_PER_SLOT ? preferred : list;
+        const candidates = sampleCandidates(sampleFrom, CANDIDATES_PER_SLOT, rng, dayMid, bias);
         let best = null;
         for (const r of candidates) {
           const rows = rowsOf(r);
@@ -320,8 +330,12 @@ function solvePrescriptionDay({ pool, targets, mealConfig, profile = {}, rng, re
         if (!slot) continue;
         const others = new Set(allDishes.filter((x) => x !== dish).map((x) => x.recipe.id));
         others.add(dish.recipe.id); // never swap a dish for itself
-        const list = eligible(pool, slot.slotType, others, recentIds);
-        if (!list.length) continue;
+        const listAll = eligible(pool, slot.slotType, others, recentIds);
+        if (!listAll.length) continue;
+        // Same preference-first rule as stage 1 — a repair swap must not
+        // reintroduce a disliked or off-preference dish.
+        const { preferred: prefList } = partitionByPreference(listAll, profile);
+        const list = prefList.length >= CANDIDATES_PER_SLOT ? prefList : listAll;
         const want = {
           kcal: Math.max(100, dish.totals.kcal - gap.kcal),
           protein: Math.max(0, dish.totals.protein - gap.protein),

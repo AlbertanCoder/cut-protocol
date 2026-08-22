@@ -95,6 +95,42 @@ function Tick({ item, onToggle, busy }) {
   );
 }
 
+// The saved-days list: read-only lines, same section vocabulary as the week
+// list. Dates covered are stated so nobody shops for days they didn't save.
+function SavedDaysBlock({ grocery }) {
+  const groups = {};
+  for (const i of grocery.items || []) {
+    const sct = itemSection(i);
+    (groups[sct] = groups[sct] || []).push(i);
+  }
+  return (
+    <div className="flex flex-col gap-2">
+      <div className="flex items-baseline justify-between gap-3 px-4 pt-2">
+        <h2 className="text-xl font-semibold">From your saved days</h2>
+        <p className="text-sm text-muted-foreground tabular-nums">
+          {grocery.daysFound} day{grocery.daysFound === 1 ? "" : "s"} saved
+        </p>
+      </div>
+      {Object.entries(groups).map(([section, rows]) => (
+        <div key={section} className="flex flex-col gap-1">
+          <h3 className="text-sm text-muted-foreground px-4">{sectionWord(section)}</h3>
+          <Panel className="px-4 py-3">
+            {rows.map((i) => (
+              <p key={`${i.name}-${i.state || ""}`} className="text-base leading-relaxed tabular-nums">
+                {itemLine(i)}
+              </p>
+            ))}
+          </Panel>
+        </div>
+      ))}
+      <Note>
+        Covers {grocery.dates?.length ? grocery.dates.join(", ") : "your saved days"} — the days you
+        saved in Food › Day. Grams are the stored prescription, not estimates.
+      </Note>
+    </div>
+  );
+}
+
 export default function SimpleShopping({ onShowFull, onOpenPlan }) {
   const [plan, setPlan] = useState("loading");// "loading" | null (no plan) | "error" | plan
   const [error, setError] = useState(null);
@@ -104,6 +140,13 @@ export default function SimpleShopping({ onShowFull, onOpenPlan }) {
   // Purely visual: is the "start the list over" confirm sheet open.
   const [confirmingRestart, setConfirmingRestart] = useState(false);
 
+  // Saved days (Food > Day) carry their own frozen ingredients; the grocery
+  // endpoint consolidates the next week's worth through the same engine as
+  // the week list. Additive and read-only — there is no per-item check
+  // state stored for saved days, and inventing one client-side would lie
+  // across devices. A failed load shows nothing; the week list stands.
+  const [savedGrocery, setSavedGrocery] = useState(null);
+
   const load = useCallback(async () => {
     try {
       setPlan(await api.getCurrentPlan());
@@ -112,6 +155,12 @@ export default function SimpleShopping({ onShowFull, onOpenPlan }) {
       if (isAbortError(e)) return;
       setError(describeError(e));
       setPlan("error");
+    }
+    try {
+      const g = await api.prescriptionGrocery();
+      setSavedGrocery(g?.daysFound > 0 ? g : null);
+    } catch {
+      setSavedGrocery(null);
     }
   }, []);
 
@@ -199,6 +248,7 @@ export default function SimpleShopping({ onShowFull, onOpenPlan }) {
         {/* First visit lands here — there must be something to press. The
             button opens the Plan room, where the week gets built. Rendered
             only when the shell passes the navigation, never as a dead door. */}
+        {savedGrocery && <SavedDaysBlock grocery={savedGrocery} />}
         <Empty action={onOpenPlan ? <Big onClick={onOpenPlan}>Open Plan</Big> : undefined}>
           Your shopping list comes from your week&rsquo;s food. Build a week first and the
           list writes itself.
@@ -211,6 +261,7 @@ export default function SimpleShopping({ onShowFull, onOpenPlan }) {
     return (
       <Page title="Shopping">
         {error && <Note>{error}</Note>}
+        {savedGrocery && <SavedDaysBlock grocery={savedGrocery} />}
         <Empty action={<Big onClick={build} disabled={building}>{building ? "Working it out…" : "Make my list"}</Big>}>
           Everything this week&rsquo;s food needs, in one list, grouped by where it sits in the shop.
         </Empty>
@@ -236,6 +287,8 @@ export default function SimpleShopping({ onShowFull, onOpenPlan }) {
           </Panel>
         </div>
       ))}
+
+      {savedGrocery && <SavedDaysBlock grocery={savedGrocery} />}
 
       <div className="flex gap-2 flex-wrap">
         <Quiet onClick={copy}>{copied ? "Copied" : "Copy the list"}</Quiet>

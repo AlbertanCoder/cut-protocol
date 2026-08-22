@@ -71,3 +71,61 @@ test("dislike parsing reads verbs, not stray words", () => {
   const shroom = b(dish({ name: "Creamy Mushroom Skillet", ingredients: [{ food: { name: "Mushrooms, white, raw" } }] }));
   assert.ok(shroom < 0.5, `mushroom dish must yield, got ${shroom}`);
 });
+
+test("partitionByPreference: dislikes and plainness hold for every preferred dish; untagged cuisine stays in", () => {
+  const { partitionByPreference } = require("../../src/lib/prescription/preferenceBias.js");
+  const pool = [
+    { name: "Grilled Chicken Plate", cuisine: "american", ingredients: [{ food: { name: "Chicken breast, cooked, skinless" } }] },
+    { name: "Smoked Haddock & Pea Rice Bowl", cuisine: null, ingredients: [{ food: { name: "Smoked Haddock" } }] },
+    { name: "Jamaican Curry Shrimp", cuisine: null, ingredients: new Array(12).fill({ food: { name: "Shrimp" } }) },
+    { name: "Steak & Potato", cuisine: null, ingredients: [{ food: { name: "Sirloin steak, cooked, lean" } }] },
+  ];
+  // Fish-disliker: the haddock bowl leaves; everything else stays.
+  const fish = partitionByPreference(pool, { mealPreferencesNote: "you dislike fish" });
+  assert.deepEqual(fish.preferred.map((r) => r.name), ["Grilled Chicken Plate", "Jamaican Curry Shrimp", "Steak & Potato"], "prawns/shrimp are shellfish, not fish — only the true fish dish leaves");
+  // Picky: the 12-ingredient curry leaves.
+  const plain = partitionByPreference(pool, { mealPreferencesNote: "picky eater — plain, familiar food only" });
+  assert.ok(!plain.preferred.some((r) => r.name.includes("Curry")), "fussy dishes leave a plain eater's pool");
+  // Explicit cuisine: tagged mismatches leave, untagged stay.
+  const med = partitionByPreference(pool, { cuisinePreferences: ["mediterranean"] });
+  assert.ok(!med.preferred.some((r) => r.cuisine === "american"), "tagged-mismatching cuisine leaves");
+  assert.ok(med.preferred.some((r) => r.name === "Steak & Potato"), "untagged rows are not a mismatch");
+  // No preferences: the pool passes through untouched.
+  const none = partitionByPreference(pool, {});
+  assert.equal(none.preferred.length, pool.length);
+});
+
+test("the solver honors a dislike outright when the pool can afford it", () => {
+  const { solvePrescriptionDay } = require("../../src/lib/prescription/daySolver.js");
+  const { makeRng } = require("../../src/lib/prescription/rng.js");
+  const FOOD = {
+    chicken: { id: "f1", name: "Chicken breast, cooked, skinless", kcal: 165, protein: 31, fat: 3.6, carb: 0, fiber: 0 },
+    rice: { id: "f2", name: "White rice, cooked", kcal: 130, protein: 2.7, fat: 0.3, carb: 28, fiber: 0.4 },
+    fish: { id: "f3", name: "White Fish", kcal: 92, protein: 16.8, fat: 2.3, carb: 0, fiber: 0 },
+    oil: { id: "f4", name: "Olive Oil", kcal: 884, protein: 0, fat: 100, carb: 0, fiber: 0 },
+  };
+  const dish = (id, name, protFood) => ({
+    id, name, slotType: "meal", mealCategory: null, kcal: 500, protein: 40, fat: 12, carb: 45,
+    ingredients: [
+      { foodId: protFood.id, baseGrams: 200, scalable: true, role: "protein", food: protFood },
+      { foodId: FOOD.rice.id, baseGrams: 150, scalable: true, role: "carb", food: FOOD.rice },
+      { foodId: FOOD.oil.id, baseGrams: 8, scalable: true, role: "fat", food: FOOD.oil },
+    ],
+  });
+  // Plenty of chicken dishes, plenty of fish dishes — a fish-disliker's day
+  // must come out all-chicken, because the pool can afford it.
+  const pool = [];
+  for (let i = 0; i < 14; i++) pool.push(dish(`c${i}`, `Chicken Plate ${i}`, FOOD.chicken));
+  for (let i = 0; i < 14; i++) pool.push(dish(`f${i}`, `White Fish Plate ${i}`, FOOD.fish));
+  const solved = solvePrescriptionDay({
+    pool,
+    targets: { kcal: 1600, proteinG: { lo: 110, hi: 140 }, fatG: { lo: 40, hi: 60 }, netCarbG: { lo: 100, hi: 160 } },
+    mealConfig: { meals: 3, snacks: 0 },
+    profile: { mealPreferencesNote: "you dislike fish", excludedFoods: [] },
+    rng: makeRng(7),
+    bias: null,
+  });
+  const names = solved.slots.flatMap((s) => s.dishes.map((d) => d.recipeName));
+  assert.ok(names.length >= 3, `a day was built: ${names.join(", ")}`);
+  assert.ok(names.every((n) => !n.includes("Fish")), `no fish for a fish-disliker when chicken can carry the day: ${names.join(", ")}`);
+});
