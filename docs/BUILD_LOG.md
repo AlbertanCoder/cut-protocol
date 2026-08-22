@@ -693,3 +693,23 @@ honored — which is the pool-tagging + two-pass preference work, and the
 ~3.4 soft-bias ceiling estimate is holding. Next levers, in order:
 recipe-level taste tags + preference-first pool pass, gain path (owner
 scope), Today-tab surfacing of committed days.
+
+---
+
+## Appetite-fit round (2026-08-22, simple-surface backlog 1–3)
+
+`5b01345` + `e956094`. Preference-FIRST sampling: partitionByPreference()
+holds dislikes (gate-checked), plainness, and explicit cuisines for every
+dish, with automatic fallback when the subset is too thin — taste never
+makes a day unsolvable. Spice stays a boost and now reads ingredient rows.
+Cuisine backfilled across the QA pool (607 untagged → 0, app's own
+classifier). Measured: corner sweep 53% → 55%; 4 of 5 fleet
+fish-dislikers now draw ZERO fish (slice 4 served them salmon + tuna);
+the fifth is the thin carnivore corner falling back honestly. Simple
+surface: Food door reads Week · Day · Recipes · Shopping (tab row wraps —
+a fourth room can never clip out of sight again); Day room is "Your day"
+with Save; Today leads with the saved day; Shopping gains "From your
+saved days" through the existing grocery engine (and the api.js helper
+the grocery endpoint never got). The "nav ignores clicks" observation
+diagnosed as boot-timing (no nav exists during "Signing you in…"), not a
+bug. All walked live in the browser.
