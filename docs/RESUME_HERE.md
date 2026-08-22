@@ -40,6 +40,17 @@ Then `npm test` (backend) should say 155/1,852/0, and
   files (the whole `backend/src/lib/prescription/` pattern).
 - `dietaryFilter.js` has NUL bytes — `rg --text`, never trust bare grep.
 
+## THE PRODUCT DECISION (owner, 2026-08-22) — read before touching UI
+
+"This is the new one from now on. Let's rebuild this and work on ONLY
+this." **The SIMPLE surface (frontend/src/simple/) IS the product.**
+uiMode defaults to "simple" (d7a30d1); the full 8-tab app stays reachable
+("Open the full app" / ?simple=0) as the power escape hatch — never
+deleted, but NOT where new product work happens. All UI investment goes
+into the simple surface. Note: the old `simple-rebuild` branch /
+ux-simplify worktree is already fully contained in master (merge-base ==
+its HEAD) — do not "merge" it again; it is history, not a pending lane.
+
 ## Next work, in order (from FINAL_REPORT)
 
 1. **Owner cook-test** of `docs/P0_FOURTEEN_DAYS.md` — nothing else ranks
