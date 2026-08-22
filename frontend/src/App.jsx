@@ -486,8 +486,9 @@ function App() {
 // DO-NOT-TOUCH.md sits at line 355 or above, and this wrapper is below all of
 // them. `App` itself is not modified, not re-parented, and not passed a prop.
 //
-// Default is "full" (lib/uiMode.js), so nothing changes for anyone who does not
-// choose otherwise.
+// Default is "simple" (lib/uiMode.js) since 2026-08-22 — the owner's call:
+// the simple surface IS the product; the full app stays reachable via
+// "Open the full app" / `?simple=0`. A stored choice still wins.
 export default function AppWithTheme() {
   const [mode, setMode] = useState(() => uiMode.get());
   useEffect(() => onUiModeChange(setMode), []);

@@ -12,9 +12,11 @@
 // Storage: a NEW key. Nothing existing is renamed or reshaped. The prefix
 // matches the convention already used in lib/storage.js ("shadcut:").
 //
-// Default: "full". Nobody who already uses this app gets moved to a different
-// surface by installing this — the simple surface is opt-in, and the full UI
-// keeps working exactly as it did.
+// Default: "simple" — the OWNER'S CALL, 2026-08-22 ("this is the new one
+// from now on; work on ONLY this"). The simple surface is the product; the
+// full app remains reachable ("Open the full app" / `?simple=0`) as the
+// power escape hatch, never deleted. Anyone who explicitly chose a surface
+// keeps their choice — localStorage still wins over this default.
 
 const KEY = "shadcut:uiMode";
 const EVENT = "shadcut:uimode-changed";
@@ -25,15 +27,14 @@ export const uiMode = {
   get() {
     try {
       const v = window.localStorage.getItem(KEY);
-      return VALID.has(v) ? v : "full";
+      return VALID.has(v) ? v : "simple";
     } catch {
-      // Private mode / storage disabled — fall back to the surface that has
-      // always existed rather than to the new one.
-      return "full";
+      // Private mode / storage disabled — fall back to the product surface.
+      return "simple";
     }
   },
   set(mode) {
-    const next = VALID.has(mode) ? mode : "full";
+    const next = VALID.has(mode) ? mode : "simple";
     try {
       window.localStorage.setItem(KEY, next);
     } catch {
